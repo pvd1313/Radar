@@ -2,7 +2,7 @@
 
 namespace RisenBeast.Common
 {
-    public class RisenBeastMonoBehaviour : MonoBehaviour
+    public class BeastMonoBehaviour : MonoBehaviour
     {
         
     }

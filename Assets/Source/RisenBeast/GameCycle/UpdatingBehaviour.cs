@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RisenBeast.GameCycle
 {
-    public class UpdatingBehaviour : RisenBeastMonoBehaviour
+    public class UpdatingBehaviour : BeastMonoBehaviour
     {
         public event Action Updated;
         public event Action LateUpdated;

@@ -10,7 +10,7 @@ namespace RisenBeast.Coroutines
         
         public void Initialize()
         {
-            _behaviour = SceneUtil.NewObjectFor<CoroutineController>().AddComponent<RisenBeastMonoBehaviour>();
+            _behaviour = SceneUtil.NewObjectFor<CoroutineController>().AddComponent<BeastMonoBehaviour>();
         }
 
         public Coroutine StartCoroutine(IEnumerator routine)
