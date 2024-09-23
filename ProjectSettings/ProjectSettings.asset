@@ -876,7 +876,13 @@ PlayerSettings:
   XboxOneOverrideIdentityName: 
   XboxOneOverrideIdentityPublisher: 
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    Build: 0
+    Game Performance: 0
+    Legacy Analytics: 0
+    Purchasing: 0
+    UDP: 0
+    Unity Ads: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -896,10 +902,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 53ad7fe5-f19b-4040-bffc-3fc1b232a408
+  cloudProjectId: 58795515-7229-4cae-b909-b0606ab8b062
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Radar 2024-09-20_12-54-00
+  projectName: Radar
   organizationId: risenbeast
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
