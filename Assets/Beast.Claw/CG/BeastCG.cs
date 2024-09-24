@@ -1,10 +1,40 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Beast.Claw.Common;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 namespace Beast.Claw.CG
 {
     public static class BeastCG
     {
+        private static readonly StringBuilder TextBuilder;
+        private static readonly Dictionary<FormatUsage, string> FormatUsage2String;
+        private static readonly Dictionary<GraphicsFormat, string> GraphicsFormat2String;
+
+        static BeastCG()
+        {
+            try
+            {
+                TextBuilder = new StringBuilder();
+
+                FormatUsage2String = BeastUtil.GetEnumValues<FormatUsage>()
+                    .Distinct()
+                    .ToDictionary(x => x, x => x.ToString());
+
+                GraphicsFormat2String = BeastUtil.GetEnumValues<GraphicsFormat>()
+                    .Distinct()
+                    .ToDictionary(x => x, x => x.ToString());
+            }
+            catch (Exception e)
+            {
+                BeastLog.StaticException(e, "BeastCG cctor");
+            }
+        }
+        
         public static CommandBuffer GetTempBufferFor<T>()
         {
             return CommandBufferPool.Get(typeof(T).FullName);
@@ -22,6 +52,11 @@ namespace Beast.Claw.CG
 
         public static RenderTexture NewRenderTexture<T>(T owner, RenderTextureParameters input)
         {
+            if (!SystemInfo.IsFormatSupported(input.format, FormatUsage.Render))
+            {
+                throw new InvalidOperationException("RenderTexture graphics format is not supported: " + input.format);
+            }
+            
             RenderTexture texture = new (
                 input.size.x,
                 input.size.y,
@@ -62,6 +97,31 @@ namespace Beast.Claw.CG
                 input.camera,
                 input.layer,
                 input.materialProperties);
+        }
+
+        public static string GetSupportedGraphicsFormats()
+        {
+            TextBuilder.Clear();
+
+            TextBuilder.AppendLine("Supported Graphics Formats: ");
+
+            foreach (FormatUsage formatUsage in BeastUtil.GetEnumValues<FormatUsage>())
+            {
+                TextBuilder.Append("- ");
+                TextBuilder.Append(FormatUsage2String[formatUsage]);
+                TextBuilder.Append(": ");
+
+                foreach (GraphicsFormat graphicsFormat in BeastUtil.GetEnumValues<GraphicsFormat>())
+                {
+                    TextBuilder.Append(GraphicsFormat2String[graphicsFormat]);
+                    TextBuilder.Append(", ");
+                }
+
+                TextBuilder.AppendLine();
+                TextBuilder.AppendLine();
+            }
+
+            return TextBuilder.ToString();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.CG;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.CG;
@@ -34,6 +35,8 @@ namespace Beast.Radar.World
         
         public UniTask<InitializationResult> Initialize()
         {
+            BeastLog.Info(this, BeastCG.GetSupportedGraphicsFormats());
+            
             _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
             {
                 size = new int2(512, 512),
