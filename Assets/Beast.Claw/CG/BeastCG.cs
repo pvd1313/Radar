@@ -52,19 +52,15 @@ namespace Beast.Claw.CG
 
         public static RenderTexture NewRenderTexture<T>(T owner, RenderTextureParameters input)
         {
-            if (!SystemInfo.IsFormatSupported(input.format, FormatUsage.Render))
-            {
-                throw new InvalidOperationException("RenderTexture graphics format is not supported: " + input.format);
-            }
-            
             RenderTexture texture = new (
                 input.size.x,
                 input.size.y,
                 input.depth,
                 input.format,
-                input.mipCount);
-
-            texture.name = typeof(T).FullName + "(" + input.name + ")";
+                input.mipCount)
+            {
+                name = typeof(T).FullName + "(" + input.name + ")"
+            };
 
             return texture;
         }

@@ -6,7 +6,6 @@ using Beast.Radar.CG;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.World
@@ -15,7 +14,6 @@ namespace Beast.Radar.World
     {
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
-        private readonly ShaderLibrary _shaders;
         private readonly MeshLibrary _meshes;
 
         private RenderTexture _worldTexture;
@@ -24,24 +22,24 @@ namespace Beast.Radar.World
         public WorldMapRender(
             WorldMapConfig config, 
             IWorldMapBaker mapBaker, 
-            ShaderLibrary shaders,
             MeshLibrary meshes)
         {
             _config = config;
             _mapBaker = mapBaker;
-            _shaders = shaders;
             _meshes = meshes;
         }
         
         public UniTask<InitializationResult> Initialize()
         {
             BeastLog.Info(this, BeastCG.GetSupportedGraphicsFormats());
+
+            Application.targetFrameRate = 1000;
             
             _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
             {
                 size = new int2(512, 512),
                 depth = 0,
-                format = GraphicsFormat.R8_SNorm,
+                format = RenderTextureFormat.R8,
                 mipCount = 0,
                 name = "WorldMap"
             });

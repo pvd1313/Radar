@@ -1,5 +1,5 @@
 ﻿using Unity.Mathematics;
-using UnityEngine.Experimental.Rendering;
+using UnityEngine;
 
 namespace Beast.Claw.CG
 {
@@ -7,7 +7,7 @@ namespace Beast.Claw.CG
     {
         public int2 size;
         public int depth;
-        public GraphicsFormat format;
+        public RenderTextureFormat format;
         public int mipCount;
         public string name;
     }

@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Common
 {
-    public static class ListExtensions
+    public static class BeastListExtensions
     {
         public static T PopOrNull<T>(this IList<T> list) where T : class
         {
