@@ -337,7 +337,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "1753f76e1df3460096d92b29d3ebf1b3",
     "m_Id": 0,
-    "m_DisplayName": "Scale",
+    "m_DisplayName": "Scale99",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -354,10 +354,10 @@
     "m_Guid": {
         "m_GuidSerialized": "09b6535e-ed2b-44ae-9115-8f89565f46f0"
     },
-    "m_Name": "Seed",
+    "m_Name": "Seed01",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Seed",
-    "m_DefaultReferenceName": "_Seed",
+    "m_RefNameGeneratedByDisplayName": "Seed01",
+    "m_DefaultReferenceName": "_Seed01",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -763,7 +763,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "5ee2fa4bdf474bdea14a0fc23bd5ebd1",
     "m_Id": 0,
-    "m_DisplayName": "Seed",
+    "m_DisplayName": "Seed01",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -826,7 +826,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "6e93fb5efcc64ae38a09fe2113700008",
     "m_Id": 0,
-    "m_DisplayName": "Water",
+    "m_DisplayName": "Flood01",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -910,10 +910,10 @@
     "m_Guid": {
         "m_GuidSerialized": "52efbc61-c99e-4fe9-ac35-c9b72a3c87d5"
     },
-    "m_Name": "Water",
+    "m_Name": "Flood01",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Water",
-    "m_DefaultReferenceName": "_Water",
+    "m_RefNameGeneratedByDisplayName": "Flood01",
+    "m_DefaultReferenceName": "_Flood01",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1470,7 +1470,7 @@
     },
     "m_SourceType": 0,
     "m_FunctionName": "BeastFBM",
-    "m_FunctionSource": "da587a57a6bb0e7489ed90f35615581c",
+    "m_FunctionSource": "d211dd7597645ca40b1725f31999840b",
     "m_FunctionBody": "Enter function body here..."
 }
 
@@ -1678,10 +1678,10 @@
     "m_Guid": {
         "m_GuidSerialized": "04089e4e-4013-4b4a-be1f-ff32b2911a62"
     },
-    "m_Name": "Scale",
+    "m_Name": "Scale99",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Scale",
-    "m_DefaultReferenceName": "_Scale",
+    "m_RefNameGeneratedByDisplayName": "Scale99",
+    "m_DefaultReferenceName": "_Scale99",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

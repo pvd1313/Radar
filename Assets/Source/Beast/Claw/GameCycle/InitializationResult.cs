@@ -1,4 +1,6 @@
-﻿namespace Beast.Claw.GameCycle
+﻿using Cysharp.Threading.Tasks;
+
+namespace Beast.Claw.GameCycle
 {
     public struct InitializationResult
     {
@@ -10,6 +12,11 @@
             {
                 status = EInitializationStatus.Success
             };
+        }
+
+        public static UniTask<InitializationResult> SuccessNotAsync()
+        {
+            return UniTask.FromResult(Success());
         }
     }
 }

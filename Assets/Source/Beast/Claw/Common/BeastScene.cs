@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Common
 {
-    public static class SceneUtil
+    public static class BeastScene
     {
         public static GameObject NewObjectFor<T>()
         {

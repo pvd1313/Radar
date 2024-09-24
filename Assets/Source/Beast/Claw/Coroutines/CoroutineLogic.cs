@@ -10,11 +10,11 @@ namespace Beast.Claw.Coroutines
     {
         private MonoBehaviour _behaviour;
         
-        public async UniTask<InitializationResult> Initialize()
+        public UniTask<InitializationResult> Initialize()
         {
-            _behaviour = SceneUtil.NewObjectFor<CoroutineLogic>().AddComponent<BeastMono>();
+            _behaviour = BeastScene.NewObjectFor<CoroutineLogic>().AddComponent<BeastMono>();
             
-            return InitializationResult.Success();
+            return InitializationResult.SuccessNotAsync();
         }
 
         public Coroutine StartCoroutine(IEnumerator routine)

@@ -53,7 +53,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
             
-            _updateHandlerMono = SceneUtil.NewObjectFor<GameCycleLogic>().AddComponent<UpdateHandlerMono>();
+            _updateHandlerMono = BeastScene.NewObjectFor<GameCycleLogic>().AddComponent<UpdateHandlerMono>();
             _updateHandlerMono.FrameBegin += OnFrameBegin;
             _updateHandlerMono.FixedUpdated += OnFixedUpdate;
             _updateHandlerMono.FrameEnd += OnFrameEnd;

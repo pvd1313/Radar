@@ -6,6 +6,9 @@ namespace Beast.Claw.Common
 {
     public abstract class BeastInstaller : ScriptableObjectInstaller
     {
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.InlineEditor]
+#endif
         public List<BeastConfig> configs;
         
         public override void InstallBindings()

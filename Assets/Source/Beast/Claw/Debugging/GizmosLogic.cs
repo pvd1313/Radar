@@ -14,12 +14,12 @@ namespace Beast.Claw.Debugging
             _drawers = drawers;
         }
         
-        public async UniTask<InitializationResult> Initialize()
+        public UniTask<InitializationResult> Initialize()
         {
-            GizmosMono mono = SceneUtil.NewObjectFor<GizmosLogic>().AddComponent<GizmosMono>();
+            GizmosMono mono = BeastScene.NewObjectFor<GizmosLogic>().AddComponent<GizmosMono>();
             mono.GizmosDrawn += OnGizmosDraw;
 
-            return InitializationResult.Success();
+            return InitializationResult.SuccessNotAsync();
         }
 
         private void OnGizmosDraw()
