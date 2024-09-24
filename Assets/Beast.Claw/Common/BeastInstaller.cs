@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Attributes;
 using Zenject;
 
 namespace Beast.Claw.Common
 {
+    [FancyAsset]
     public abstract class BeastInstaller : ScriptableObjectInstaller
     {
 #if ODIN_INSPECTOR

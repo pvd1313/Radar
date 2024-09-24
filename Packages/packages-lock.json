@@ -7,13 +7,6 @@
       "dependencies": {},
       "hash": "f7b3c2fbe1628518a12340576e779fd80837480e"
     },
-    "com.risenbeast.claw": {
-      "version": "https://github.com/pvd1313/beast-claw.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "4568c0d89a59a080246264558259a25319637a07"
-    },
     "com.singularitygroup.hotreload": {
       "version": "file:com.singularitygroup.hotreload",
       "depth": 0,
