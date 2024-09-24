@@ -9,6 +9,7 @@ namespace Beast.Radar.Core
     {
         protected override IEnumerable<Type> CreateContract()
         {
+            yield return typeof(CameraController);
             yield return typeof(WorldMapBaker);
             yield return typeof(WorldMapRender);
         }

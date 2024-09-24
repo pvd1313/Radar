@@ -26,9 +26,9 @@ namespace Beast.Radar.World
 
         public void Bake(WorldMapBakerInput input)
         {
-            _material.SetFloat(ShaderProperty.WorldMapFlood.Flood01, input.waterFlood01);
-            _material.SetFloat(ShaderProperty.WorldMapFlood.Seed01, input.seed01);
-            _material.SetFloat(ShaderProperty.WorldMapFlood.Scale99, input.scale99);
+            _material.SetFloat(ShaderProperty.WorldMapFlood._Flood01, input.waterFlood01);
+            _material.SetFloat(ShaderProperty.WorldMapFlood._Seed01, input.seed01);
+            _material.SetFloat(ShaderProperty.WorldMapFlood._Scale99, input.scale99);
             
             BeastCG.Blit(new BlitParameters
             {

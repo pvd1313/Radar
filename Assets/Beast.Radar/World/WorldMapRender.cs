@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.CG;
-using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.CG;
@@ -12,35 +11,42 @@ namespace Beast.Radar.World
 {
     public class WorldMapRender : Initializable, IFrameEndUpdate
     {
+        public static readonly int2 WorldSize = new(4096, 4096);
+        
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
         private readonly MeshLibrary _meshes;
+        private readonly ICameraController _camera;
+        private readonly WorldCameraConfig _cameraConfig;
 
         private RenderTexture _worldTexture;
-        private Material _renderMaterial;
+        private Material _material;
 
         public WorldMapRender(
             WorldMapConfig config, 
             IWorldMapBaker mapBaker, 
-            MeshLibrary meshes)
+            MeshLibrary meshes,
+            ICameraController camera,
+            WorldCameraConfig cameraConfig)
         {
             _config = config;
             _mapBaker = mapBaker;
             _meshes = meshes;
+            _camera = camera;
+            _cameraConfig = cameraConfig;
         }
         
         public UniTask<InitializationResult> Initialize()
         {
-            BeastLog.Info(this, BeastCG.GetSupportedGraphicsFormats());
-
             Application.targetFrameRate = 1000;
             
             _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
             {
-                size = new int2(512, 512),
+                size = WorldSize,
                 depth = 0,
                 format = RenderTextureFormat.R8,
                 mipCount = 0,
+                filterMode = FilterMode.Point,
                 name = "WorldMap"
             });
 
@@ -52,7 +58,7 @@ namespace Beast.Radar.World
                 waterFlood01 = 0.5f
             });
             
-            _renderMaterial = BeastCG.NewMaterial(this, new MaterialParameters
+            _material = BeastCG.NewMaterial(this, new MaterialParameters
             {
                 name = "Render",
                 shader = _config.mapRenderShader,
@@ -65,11 +71,20 @@ namespace Beast.Radar.World
         public void OnFrameEnd()
         {
             float screenAspect = Screen.width / (float)Screen.height;
+            float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
+            Vector2 cameraPosition = _camera.State.position;
+            Vector2 worldSizeVector = new Vector2(WorldSize.x, WorldSize.y);
+            
+            _material.SetFloat(ShaderProperty.WorldMapRender._ScreenAspect, screenAspect);
+            _material.SetFloat(ShaderProperty.WorldMapRender._ViewDistance, viewDistance);
+            _material.SetVector(ShaderProperty.WorldMapRender._CameraPosition, cameraPosition);
+            _material.SetVector(ShaderProperty.WorldMapRender._WorldTextureSize, worldSizeVector);
+            _material.SetTexture(ShaderProperty.WorldMapRender._WorldTexture, _worldTexture);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {
                 mesh = _meshes.quad,
-                material = _renderMaterial,
+                material = _material,
                 matrix = float4x4.TRS(
                     float3.zero,  
                     BMath.Quaternion.EulerDeg(90, 0, 0),

@@ -10,5 +10,6 @@ namespace Beast.Claw.CG
         public RenderTextureFormat format;
         public int mipCount;
         public string name;
+        public FilterMode filterMode;
     }
 }

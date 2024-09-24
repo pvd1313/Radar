@@ -2,7 +2,11 @@
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _WorldTexture ("_WorldTexture", 2D) = "white" {}
+        _WorldTextureSize ("_WorldTextureSize", Vector) = (0, 0, 0, 0)
+        _ScreenAspect ("_ScreenAspect", Float) = 1
+        _ViewDistance ("_ViewDistance", Float) = 128
+        _CameraPosition ("_CameraPosition", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -36,19 +40,32 @@
                 float4 positionCS : SV_POSITION;
             };
 
-            sampler2D _MainTex;
+            sampler2D _WorldTexture;
+            float2 _WorldTextureSize;
+            float _ScreenAspect;
+            float2 _WorldSize;
+            float _ViewDistance;
+            float2 _CameraPosition;
 
             FragmentInput vertex(VertexInput input)
             {
-                FragmentInput o;
-                o.positionCS = UnityObjectToClipPos(input.positionOS);
-                o.uv = input.uv;
-                return o;
+                FragmentInput output;
+                
+                output.positionCS = UnityObjectToClipPos(input.positionOS);
+
+                output.uv = input.uv - float2(0.5f, 0.5f);
+                output.uv.y *= 1 / _ScreenAspect;
+
+                
+                output.uv *= _ViewDistance / _WorldTextureSize;
+                output.uv += _CameraPosition / _WorldTextureSize;
+                
+                return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                return tex2D(_MainTex, input.uv);
+                return tex2D(_WorldTexture, input.uv);
             }
             
             ENDCG

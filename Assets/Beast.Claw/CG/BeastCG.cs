@@ -59,7 +59,8 @@ namespace Beast.Claw.CG
                 input.format,
                 input.mipCount)
             {
-                name = typeof(T).FullName + "(" + input.name + ")"
+                name = typeof(T).FullName + "(" + input.name + ")",
+                filterMode = input.filterMode
             };
 
             return texture;
