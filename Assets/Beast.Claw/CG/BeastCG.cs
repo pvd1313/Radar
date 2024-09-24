@@ -20,27 +20,48 @@ namespace Beast.Claw.CG
             Graphics.ExecuteCommandBufferAsync(buffer, queueType);
         }
 
-        public static RenderTexture CreateRenderTexture<T>(T owner, RenderTextureParameters parameters)
+        public static RenderTexture NewRenderTexture<T>(T owner, RenderTextureParameters input)
         {
             RenderTexture texture = new (
-                parameters.size.x,
-                parameters.size.y,
-                parameters.depth,
-                parameters.format,
-                parameters.mipCount);
+                input.size.x,
+                input.size.y,
+                input.depth,
+                input.format,
+                input.mipCount);
 
-            texture.name = typeof(T).FullName + "(" + parameters.name + ")";
+            texture.name = typeof(T).FullName + "(" + input.name + ")";
 
             return texture;
         }
 
-        public static Material CreateMaterial<T>(T owner, MaterialParameters parameters)
+        public static Material NewMaterial<T>(T owner, MaterialParameters input)
         {
-            return new Material(parameters.shader)
+            return new Material(input.shader)
             {
-                name = typeof(T).FullName + "(" + parameters.name + ")",
-                mainTexture = parameters.mainTexture
+                name = typeof(T).FullName + "(" + input.name + ")",
+                mainTexture = input.mainTexture
             };
+        }
+
+        public static void Blit(BlitParameters input)
+        {
+            Graphics.Blit(
+                input.sourceTexture, 
+                input.targetTexture, 
+                input.material, 
+                input.shaderPass);
+        }
+
+        public static void DrawMesh(DrawMeshParameters input)
+        {
+            Graphics.DrawMesh(
+                input.mesh,
+                input.matrix,
+                input.material,
+                input.layer,
+                input.camera,
+                input.layer,
+                input.materialProperties);
         }
     }
 }

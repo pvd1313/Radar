@@ -1,5 +1,4 @@
 ﻿using System;
-using PlasticGui.WorkspaceWindow;
 using UnityEngine;
 
 namespace Beast.Claw.Common

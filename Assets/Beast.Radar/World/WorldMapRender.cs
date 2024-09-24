@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.CG;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Mathematics;
 using Beast.Radar.CG;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -9,22 +10,31 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.World
 {
-    public class WorldMapRender : Initializable
+    public class WorldMapRender : Initializable, IFrameEndUpdate
     {
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
+        private readonly ShaderLibrary _shaders;
+        private readonly MeshLibrary _meshes;
 
         private RenderTexture _worldTexture;
+        private Material _renderMaterial;
 
-        public WorldMapRender(WorldMapConfig config, IWorldMapBaker mapBaker)
+        public WorldMapRender(
+            WorldMapConfig config, 
+            IWorldMapBaker mapBaker, 
+            ShaderLibrary shaders,
+            MeshLibrary meshes)
         {
             _config = config;
             _mapBaker = mapBaker;
+            _shaders = shaders;
+            _meshes = meshes;
         }
         
         public UniTask<InitializationResult> Initialize()
         {
-            _worldTexture = BeastCG.CreateRenderTexture(this, new RenderTextureParameters
+            _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
             {
                 size = new int2(512, 512),
                 depth = 0,
@@ -41,19 +51,29 @@ namespace Beast.Radar.World
                 waterFlood01 = 0.5f
             });
             
-            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Quad);;
-            gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
-            
-            Material material = BeastCG.CreateMaterial(this, new MaterialParameters
+            _renderMaterial = BeastCG.NewMaterial(this, new MaterialParameters
             {
                 name = "Render",
                 shader = _config.mapRenderShader,
                 mainTexture = _worldTexture
             });
-
-            gameObject.GetComponent<MeshRenderer>().sharedMaterial = material;
             
             return InitializationResult.SuccessNotAsync();
+        }
+
+        public void OnFrameEnd()
+        {
+            float screenAspect = Screen.width / (float)Screen.height;
+            
+            BeastCG.DrawMesh(new DrawMeshParameters
+            {
+                mesh = _meshes.quad,
+                material = _renderMaterial,
+                matrix = float4x4.TRS(
+                    float3.zero,  
+                    BMath.Quaternion.EulerDeg(90, 0, 0),
+                    new float3(screenAspect, 1, 1))
+            });
         }
     }
 }

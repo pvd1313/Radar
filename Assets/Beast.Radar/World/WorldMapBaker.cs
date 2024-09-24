@@ -30,7 +30,12 @@ namespace Beast.Radar.World
             _material.SetFloat(ShaderProperty.WorldMapFlood.Seed01, input.seed01);
             _material.SetFloat(ShaderProperty.WorldMapFlood.Scale99, input.scale99);
             
-            Graphics.Blit(null, input.targetTexture, _material, 0);
+            BeastCG.Blit(new BlitParameters
+            {
+                targetTexture = input.targetTexture,
+                material = _material,
+                shaderPass = 0
+            });
         }
     }
 }
