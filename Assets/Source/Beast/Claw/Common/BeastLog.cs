@@ -1,25 +1,26 @@
 ﻿using System;
+using PlasticGui.WorkspaceWindow;
 using UnityEngine;
 
 namespace Beast.Claw.Common
 {
     public static class BeastLog
     {
-        public static void Error(string message)
-        {
-            Debug.LogError(message);
-        }
-
-        public static void ErrorFor<T>(string message)
+        public static void Error<T>(T owner, string message)
         {
             Error(typeof(T).FullName + ": " + message);
         }
 
-        public static void ExceptionFor<T>(Exception e, string message)
+        public static void Exception<T>(T owner, Exception e, string message)
         {
-            ErrorFor<T>(message);
+            Error(owner, message);
             
             Debug.LogException(e);
+        }
+        
+        private static void Error(string message)
+        {
+            Debug.LogError(message);
         }
     }
 }

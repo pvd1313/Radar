@@ -12,7 +12,7 @@ namespace Beast.Claw.Coroutines
         
         public UniTask<InitializationResult> Initialize()
         {
-            _behaviour = BeastScene.NewObjectFor<CoroutineLogic>().AddComponent<BeastMono>();
+            _behaviour = BeastScene.NewGameObject(this).AddComponent<BeastMono>();
             
             return InitializationResult.SuccessNotAsync();
         }

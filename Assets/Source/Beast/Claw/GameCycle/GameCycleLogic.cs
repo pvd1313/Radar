@@ -47,13 +47,13 @@ namespace Beast.Claw.GameCycle
 
                 if (result.status != EInitializationStatus.Success)
                 {
-                    BeastLog.ErrorFor<GameCycleLogic>($"Failed to initialize {controller.GetType()}");
+                    BeastLog.Error(this, $"Failed to initialize {controller.GetType()}");
                      
                     return;
                 }
             }
             
-            _updateHandlerMono = BeastScene.NewObjectFor<GameCycleLogic>().AddComponent<UpdateHandlerMono>();
+            _updateHandlerMono = BeastScene.NewGameObject(this).AddComponent<UpdateHandlerMono>();
             _updateHandlerMono.FrameBegin += OnFrameBegin;
             _updateHandlerMono.FixedUpdated += OnFixedUpdate;
             _updateHandlerMono.FrameEnd += OnFrameEnd;
@@ -146,7 +146,7 @@ namespace Beast.Claw.GameCycle
             object logic, 
             out bool canContinueExecution)
         {
-            BeastLog.ExceptionFor<GameCycleLogic>(e, logic.GetType() + "." + methodName + "()");
+            BeastLog.Exception(this, e, logic.GetType() + "." + methodName + "()");
             
             _errors.TryGetValue(logic, out int errorCount);
             errorCount++;

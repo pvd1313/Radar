@@ -16,7 +16,7 @@ namespace Beast.Claw.Debugging
         
         public UniTask<InitializationResult> Initialize()
         {
-            GizmosMono mono = BeastScene.NewObjectFor<GizmosLogic>().AddComponent<GizmosMono>();
+            GizmosMono mono = BeastScene.NewGameObject(this).AddComponent<GizmosMono>();
             mono.GizmosDrawn += OnGizmosDraw;
 
             return InitializationResult.SuccessNotAsync();
