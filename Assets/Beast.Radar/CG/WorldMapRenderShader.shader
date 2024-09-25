@@ -55,7 +55,6 @@
 
                 output.uv = input.uv - float2(0.5f, 0.5f);
                 output.uv.y *= 1 / _ScreenAspect;
-
                 
                 output.uv *= _ViewDistance / _WorldTextureSize;
                 output.uv += _CameraPosition / _WorldTextureSize;

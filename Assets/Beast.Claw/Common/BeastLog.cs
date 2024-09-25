@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Reflection;
 using UnityEngine;
 
 namespace Beast.Claw.Common
@@ -7,12 +8,12 @@ namespace Beast.Claw.Common
     {
         public static void Info<T>(T owner, string message)
         {
-            InternalLogInfo(typeof(T).FullName + ": " + message);
+            InternalLogInfo(BeastTypeStorage<T>.FullName + ": " + message);
         }
         
         public static void Error<T>(T owner, string message)
         {
-            InternalLogError(typeof(T).FullName + ": " + message);
+            InternalLogError(BeastTypeStorage<T>.FullName + ": " + message);
         }
         
         public static void StaticError(string message)
@@ -22,7 +23,7 @@ namespace Beast.Claw.Common
 
         public static void Exception<T>(T owner, Exception e, string message)
         {
-            InternalLogError(typeof(T).FullName + ": " + message);
+            InternalLogError(BeastTypeStorage<T>.FullName + ": " + message);
             InternalLogException(e);
         }
 

@@ -86,8 +86,8 @@ namespace Beast.Radar.World
                 mesh = _meshes.quad,
                 material = _material,
                 matrix = float4x4.TRS(
-                    float3.zero,  
-                    BMath.Quaternion.EulerDeg(90, 0, 0),
+                    new float3(0, 0, 1),  
+                    BMath.Quaternion.EulerDeg(0, 0, 0),
                     new float3(screenAspect, 1, 1))
             });
         }

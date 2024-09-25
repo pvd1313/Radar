@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Reflection;
+using UnityEngine;
 
 namespace Beast.Claw.Common
 {
@@ -6,7 +7,7 @@ namespace Beast.Claw.Common
     {
         public static GameObject NewGameObject<T>(T owner)
         {
-            GameObject gameObject = new GameObject(typeof(T).FullName);
+            GameObject gameObject = new (BeastTypeStorage<T>.FullName);
 
             return gameObject;
         }
