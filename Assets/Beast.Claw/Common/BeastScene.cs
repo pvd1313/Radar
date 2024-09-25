@@ -11,5 +11,10 @@ namespace Beast.Claw.Common
 
             return gameObject;
         }
+        
+        public static T NewInstance<T>(T prefab, Vector3 position, Quaternion rotation) where T : BeastMono
+        {
+            return Object.Instantiate(prefab, position, rotation);
+        }
     }
 }
