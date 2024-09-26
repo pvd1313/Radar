@@ -18,6 +18,7 @@ namespace Beast.Radar.Cinematic
         public int CurrentTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
         public float Zoom { get; private set; }
+        public float2 Move { get; private set; }
         private float LastZoomDistance { get; set; }
         
         private InputActions _actions;
@@ -34,6 +35,7 @@ namespace Beast.Radar.Cinematic
             _actions = new InputActions();
             _actions.Enable();
             
+            Debug.Log($"{_playerInputView} {float3.zero} {quaternion.identity}");
             PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
             newInstance.Initialize();
             _playerInputView = newInstance;
@@ -55,7 +57,9 @@ namespace Beast.Radar.Cinematic
             {
                 ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
-                CurrentTouchCount = Mouse.current.press.isPressed ? 1 : 0;
+                Move = _actions.Player.Move.ReadValue<Vector2>() * -1;
+                Debug.Log(Move);
+                CurrentTouchCount = Mouse.current.press.isPressed  ? 1 : 0;
             }
             else
             {
@@ -85,8 +89,9 @@ namespace Beast.Radar.Cinematic
                 }
             }
 
-            ScreenPointDelta = ScreenPoint - LastScreenPoint;
-            IsPressMove = CurrentTouchCount == 1;
+            ScreenPointDelta = Move.Equals(float2.zero) ? ScreenPoint - LastScreenPoint: Move;
+            IsPressMove =   !Move.Equals(float2.zero) || CurrentTouchCount == 1;
+                Debug.Log($"Delta {ScreenPointDelta} {IsPressMove} {CurrentTouchCount}|{LastTouchCount}");
         }
 
         public void LateInput()

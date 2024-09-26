@@ -79,7 +79,7 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 newPosition = State.position - _input.ScreenPointDelta * _config.motionSpeed; 
+            float2 newPosition = State.position - _input.ScreenPointDelta; 
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);

@@ -20,7 +20,7 @@ MonoBehaviour:
   startPosition:
     x: 0
     y: 0
-  motionSpeed: 2
+  motionSpeed: 0.5
   inertiaDeceleration:
     serializedVersion: 2
     m_Curve:

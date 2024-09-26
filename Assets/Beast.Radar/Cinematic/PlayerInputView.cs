@@ -17,7 +17,8 @@ namespace Beast.Radar.Cinematic
         
         public UniTask<InitializationResult> Initialize()
         {
-            RefreshCurrentScheme();
+            _playerInput = FindObjectOfType<PlayerInput>();
+            RefreshCurrentScheme(_playerInput);
             SubscribeToEvents(true);
             return InitializationResult.SuccessNotAsync();
         }
@@ -26,6 +27,11 @@ namespace Beast.Radar.Cinematic
         {
             SubscribeToEvents(false);
             return DispositionResult.SuccessNotAsync();
+        }
+
+        private void Update()
+        {
+            Debug.Log("scheme " +_playerInput.currentControlScheme);
         }
 
         private void SubscribeToEvents(bool flag)
@@ -42,13 +48,14 @@ namespace Beast.Radar.Cinematic
 
         private void OnControlsChanged(PlayerInput playerInput)
         {
-            RefreshCurrentScheme(); 
+            RefreshCurrentScheme(playerInput); 
             Debug.Log($"On Change player input scheme {_inputScheme}");
         }
 
-        private void RefreshCurrentScheme()
+        private void RefreshCurrentScheme(PlayerInput input)
         {
-            Enum.TryParse(_playerInput.currentControlScheme, out  _inputScheme);
+            Enum.TryParse(input.currentControlScheme, out  _inputScheme);
+            Debug.Log($"Refresh current scheme {_inputScheme}");
         }
     }
 }
