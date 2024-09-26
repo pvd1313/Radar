@@ -24,9 +24,11 @@ namespace Beast.Radar.Cinematic
         
         private InputActions _actions;
         private PlayerInputView _playerInputView;
+        private readonly CameraController _cameraController;
 
-        public CameraInput(PlayerInputView playerInputViewPrefab)
+        public CameraInput(CameraController cameraController, PlayerInputView playerInputViewPrefab)
         {
+            _cameraController = cameraController;
             _playerInputView = playerInputViewPrefab;
         }
 
@@ -97,7 +99,9 @@ namespace Beast.Radar.Cinematic
                 }
             }
 
-            ScreenPointDelta = Move.Equals(float2.zero) ? ScreenPoint - LastScreenPoint: Move;
+            ScreenPointDelta = Move.Equals(float2.zero) 
+                ? ScreenPoint - LastScreenPoint 
+                : Move;
             IsPressMove = CurrentTouchCount == 1;
         }
 
