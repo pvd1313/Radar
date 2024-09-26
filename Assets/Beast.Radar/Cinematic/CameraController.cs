@@ -1,5 +1,4 @@
-﻿using System;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.Debugging;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
@@ -57,22 +56,6 @@ namespace Beast.Radar.Cinematic
             _input.LateInput();
         }
 
-        public float2 ScreenPointToWorld(float2 screenPoint)
-        {
-            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
-
-            return ViewportToWorld(viewport);
-        }
-
-        private float2 ViewportToWorld(float2 viewport)
-        {
-            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
-            float screenAspect = Screen.width / (float)Screen.height;
-            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
-
-            return new float2(screen.x, screen.y);
-        }
         private void ProcessCamera()
         {
             if (_input.LastScreenPoint.Magnitude() == 0)
@@ -91,8 +74,9 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 delta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
-            float2 newPosition = State.position - delta;
+            float2 screenDelta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
+            float2 newPosition = State.position - screenDelta - _input.MoveDelta;
+         
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
@@ -115,38 +99,47 @@ namespace Beast.Radar.Cinematic
                 _config.zoomRange.min,
                 _config.zoomRange.max
             );
+       
             RefreshStateZoom(clampZoom);
-            Debug.Log($"Zoom Value: {_input.Zoom}, New Zoom: {clampZoom}");
 
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom; 
             float2 newPosition = State.position + pointDelta;
-            //Debug.Log($"Point Delta: {pointDelta}");
+
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
-               // Debug.Log($"New Position Updated: {newPosition}");
-            }
-            else
-            {
-                Debug.Log("Position not updated due to border check.");
             }
         }
 
         private bool BorderCheck(float2 position)
         {
-            var x = position.x;
-            var y = position.y;
+            float x = position.x;
+            float y = position.y;
 
-            var a = _config.ellipseSize.x;
-            var b = _config.ellipseSize.y;
+            float a = _config.ellipseSize.x;
+            float b = _config.ellipseSize.y;
 
-            var result = x * x / (a * a) + y * y / (b * b);
+            float result = x * x / (a * a) + y * y / (b * b);
 
             return result <= 1.0f;
         }
+        
+        private float2 ScreenPointToWorld(float2 screenPoint)
+        {
+            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+            return ViewportToWorld(viewport);
+        }
 
+        private float2 ViewportToWorld(float2 viewport)
+        {
+            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
+            float screenAspect = Screen.width / (float)Screen.height;
+            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
+            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
 
+            return new float2(screen.x, screen.y);
+        }
 
         private void RefreshStatePosition(float2 pos)
         {
@@ -173,12 +166,12 @@ namespace Beast.Radar.Cinematic
 
             for (var i = 0; i < segments; i++)
             {
-                var angle = i * angleIncrement * Mathf.Deg2Rad;
-                var x = _config.ellipseSize.x * Mathf.Cos(angle);
-                var y = _config.ellipseSize.y * Mathf.Sin(angle);
-                var point = new Vector3(x, y, 0);
+                float angle = i * angleIncrement * Mathf.Deg2Rad;
+                float x = _config.ellipseSize.x * Mathf.Cos(angle);
+                float y = _config.ellipseSize.y * Mathf.Sin(angle);
+                float3 point = new float3(x, y, 0);
 
-                if (previousPoint != Vector3.zero)
+                if (!previousPoint.Equals(Vector3.zero))
                 {
                     Gizmos.DrawLine(previousPoint, point);
                 }
