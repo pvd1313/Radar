@@ -14,10 +14,7 @@ namespace Beast.Radar.Cinematic
         [Space]
         public float2 ellipseSize;
         public float2 startPosition;
-        
-        [Space]
-        public float motionSpeed;
-        public AnimationCurve inertiaDeceleration;
+
         
         [Space]
         public Float2MinMax zoomRange;

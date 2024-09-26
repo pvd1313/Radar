@@ -39,7 +39,7 @@ namespace Beast.Radar.World
         
         public UniTask<InitializationResult> Initialize()
         {
-            Application.targetFrameRate = 1000;
+            Application.targetFrameRate = 4064;
             
             _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPersistentRenderTextureData
             {

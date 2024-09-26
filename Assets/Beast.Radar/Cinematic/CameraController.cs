@@ -16,10 +16,7 @@ namespace Beast.Radar.Cinematic
         private readonly CameraConfig _config;
         private CameraInput _input;
 
-        private float _startInertiaTime;
-        private float2 _startInertia;
-        private float2 _inertia;
-        
+     
         public CameraController(CameraConfig config)
         {
             _config = config;
@@ -37,7 +34,7 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _input = new CameraInput(_config.PlayerInputView);
+            _input = new CameraInput(this, _config.PlayerInputView);
             _input.Initialize();
             
             return InitializationResult.SuccessNotAsync();
@@ -60,6 +57,22 @@ namespace Beast.Radar.Cinematic
             _input.LateInput();
         }
 
+        public float2 ScreenPointToWorld(float2 screenPoint)
+        {
+            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+
+            return ViewportToWorld(viewport);
+        }
+
+        private float2 ViewportToWorld(float2 viewport)
+        {
+            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
+            float screenAspect = Screen.width / (float)Screen.height;
+            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
+            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
+
+            return new float2(screen.x, screen.y);
+        }
         private void ProcessCamera()
         {
             if (_input.LastScreenPoint.Magnitude() == 0)
@@ -69,7 +82,6 @@ namespace Beast.Radar.Cinematic
 
             Move();
             Zoom();
-            Inertia();
         }
 
         private void Move()
@@ -79,12 +91,11 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 newPosition = State.position - _input.ScreenPointDelta; 
+            float2 delta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
+            float2 newPosition = State.position - delta;
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
-                _startInertia = _input.ScreenPointDelta;
-                _startInertiaTime = -1;
             }
         }
 
@@ -105,7 +116,7 @@ namespace Beast.Radar.Cinematic
                 _config.zoomRange.max
             );
             RefreshStateZoom(clampZoom);
-            //Debug.Log($"Zoom Value: {inputZoom}, New Zoom: {clampZoom}");
+            Debug.Log($"Zoom Value: {_input.Zoom}, New Zoom: {clampZoom}");
 
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom; 
@@ -122,28 +133,6 @@ namespace Beast.Radar.Cinematic
             }
         }
 
-        private void Inertia()
-        {
-            if (_input.IsPressMove)
-            {
-                return;
-            }
-
-            if (Math.Abs(_startInertiaTime + 1f) < 0.0001f)
-            {
-                _startInertiaTime = Time.time;
-            }
-
-            float2 position = State.position - _inertia;
-            if (BorderCheck(position))
-            {
-                RefreshStatePosition(position);
-            }
-
-            _inertia = _config.inertiaDeceleration.Evaluate(Time.time - _startInertiaTime) * _startInertia;
-           
-        }
-
         private bool BorderCheck(float2 position)
         {
             var x = position.x;
@@ -157,22 +146,7 @@ namespace Beast.Radar.Cinematic
             return result <= 1.0f;
         }
 
-        private float2 ScreenPointToWorld(float2 screenPoint)
-        {
-            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
 
-            return ViewportToWorld(viewport);
-        }
-
-        private float2 ViewportToWorld(float2 viewport)
-        {
-            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
-            float screenAspect = Screen.width / (float)Screen.height;
-            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
-
-            return new float2(screen.x, screen.y);
-        }
 
         private void RefreshStatePosition(float2 pos)
         {
