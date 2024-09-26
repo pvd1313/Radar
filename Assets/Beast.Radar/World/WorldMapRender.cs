@@ -16,7 +16,7 @@ namespace Beast.Radar.World
         
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
-        private readonly MeshLibrary _meshes;
+        private readonly CGLibrary _cgLibrary;
         private readonly ICameraController _camera;
         private readonly CameraConfig _cameraConfig;
 
@@ -26,13 +26,13 @@ namespace Beast.Radar.World
         public WorldMapRender(
             WorldMapConfig config, 
             IWorldMapBaker mapBaker, 
-            MeshLibrary meshes,
+            CGLibrary cgLibrary,
             ICameraController camera,
             CameraConfig cameraConfig)
         {
             _config = config;
             _mapBaker = mapBaker;
-            _meshes = meshes;
+            _cgLibrary = cgLibrary;
             _camera = camera;
             _cameraConfig = cameraConfig;
         }
@@ -41,7 +41,7 @@ namespace Beast.Radar.World
         {
             Application.targetFrameRate = 1000;
             
-            _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
+            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPersistentRenderTextureData
             {
                 size = WorldSize,
                 depth = 0,
@@ -63,8 +63,7 @@ namespace Beast.Radar.World
             _material = BeastCG.NewMaterial(this, new MaterialParameters
             {
                 name = "Render",
-                shader = _config.mapRenderShader,
-                mainTexture = _worldTexture
+                shader = _cgLibrary.worldMapRenderShader,
             });
             
             return InitializationResult.SuccessNotAsync();
@@ -75,17 +74,17 @@ namespace Beast.Radar.World
             float screenAspect = Screen.width / (float)Screen.height;
             float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
             Vector2 cameraPosition = _camera.State.position;
-            Vector2 worldSizeVector = new Vector2(WorldSize.x, WorldSize.y);
+            Vector2 worldSizeVector = new (WorldSize.x, WorldSize.y);
             
-            _material.SetFloat(ShaderProperty.WorldMapRender._ScreenAspect, screenAspect);
-            _material.SetFloat(ShaderProperty.WorldMapRender._ViewDistance, viewDistance);
-            _material.SetVector(ShaderProperty.WorldMapRender._CameraPosition, cameraPosition);
-            _material.SetVector(ShaderProperty.WorldMapRender._WorldTextureSize, worldSizeVector);
-            _material.SetTexture(ShaderProperty.WorldMapRender._WorldTexture, _worldTexture);
+            _material.SetFloat("_ScreenAspect", screenAspect);
+            _material.SetFloat("_ViewDistance", viewDistance);
+            _material.SetVector("_CameraPosition", cameraPosition);
+            _material.SetVector("_WorldTextureSize", worldSizeVector);
+            _material.SetTexture("_WorldTexture", _cgLibrary.debug.bakedMap4096);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {
-                mesh = _meshes.quad,
+                mesh = _cgLibrary.quadMesh,
                 material = _material,
                 matrix = float4x4.TRS(
                     new float3(0, 0, 1),  
