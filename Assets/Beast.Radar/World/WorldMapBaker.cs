@@ -8,27 +8,31 @@ namespace Beast.Radar.World
 {
     public class WorldMapBaker : Initializable, IWorldMapBaker
     {
-        private readonly WorldMapConfig _config;
+        private readonly CGLibrary _cgLibrary;
 
         private Material _material;
 
-        public WorldMapBaker(WorldMapConfig config)
+        public WorldMapBaker(CGLibrary cgLibrary)
         {
-            _config = config;
+            _cgLibrary = cgLibrary;
         }
         
         public UniTask<InitializationResult> Initialize()
         {
-            _material = new Material(_config.mapFloodShader);
+            _material = new Material(_cgLibrary.worldMapBakeShader);
 
             return InitializationResult.SuccessNotAsync();
         }
 
         public void Bake(WorldMapBakerInput input)
         {
-            _material.SetFloat(ShaderProperty.WorldMapFlood._Flood01, input.waterFlood01);
-            _material.SetFloat(ShaderProperty.WorldMapFlood._Seed01, input.seed01);
-            _material.SetFloat(ShaderProperty.WorldMapFlood._Scale99, input.scale99);
+            _material.SetFloat("_Flood01", input.waterFlood01);
+            _material.SetFloat("_Seed01", input.seed01);
+            _material.SetFloat("_Scale99", input.scale99);
+            
+            _material.SetVector(
+                "_TextureSize", 
+                new Vector2(input.targetTexture.width, input.targetTexture.height));
             
             BeastCG.Blit(new BlitParameters
             {

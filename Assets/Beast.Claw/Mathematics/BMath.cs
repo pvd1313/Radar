@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Claw.Mathematics
 {
@@ -35,6 +36,18 @@ namespace Beast.Claw.Mathematics
         public static float Lerp(float min, float max, float t)
         {
             return math.lerp(min, max, t);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Floor(float a)
+        {
+            return math.floor(a);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FloorToInt(float a)
+        {
+            return (int)math.floor(a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -23,8 +23,13 @@ namespace Beast.Claw.Reflection
             }
         }
 
-        public static string FullNameWithPostfix(string postfix)
+        public static string FullNameWithPostfixOrFullName(string postfix)
         {
+            if (string.IsNullOrEmpty(postfix))
+            {
+                return FullName;
+            }
+            
             if (_fullNameWithPostfix.TryGetValue(postfix, out string text))
             {
                 return text;

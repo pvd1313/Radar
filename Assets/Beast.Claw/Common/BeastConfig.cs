@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.Common
 {
-    public class BeastConfig : BeastScriptable
+    public abstract class BeastConfig : BeastScriptable
     {
         
     }
