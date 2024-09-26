@@ -61,7 +61,8 @@ namespace Beast.Claw.CG
                 input.mipCount)
             {
                 name = BeastTypeStorage<T>.FullNameWithPostfix(input.name),
-                filterMode = input.filterMode
+                filterMode = input.filterMode,
+                wrapMode = input.wrapMode
             };
 
             return texture;
