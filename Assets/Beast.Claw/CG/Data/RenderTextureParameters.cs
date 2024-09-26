@@ -11,5 +11,6 @@ namespace Beast.Claw.CG
         public int mipCount;
         public string name;
         public FilterMode filterMode;
+        public TextureWrapMode wrapMode;
     }
 }

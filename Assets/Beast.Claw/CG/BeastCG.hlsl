@@ -35,25 +35,40 @@ float beast_noise(float2 uv, float seed)
 // Ported : v.fuchadzhy@risenbeast.com
 // Source : https://www.notion.so/ShaderToy-2D-Clouds-10ca45ace92d805ea7abccb3823037d2
 //        : https://www.shadertoy.com/view/4tdSWr
-void BeastFBM_float(in float2 UV,
-                    in float Turbulence,
-                    in float Quality,
-                    in float Seed,
-                    out float R)
+float beast_fbm(float2 uv,
+                float turbulence,
+                float quality,
+                float seed)
 {
     const float2x2 trans = float2x2(1.6, 1.2, -1.2, 1.6);
     
     float color = 0.0;
     float power = 1.0;
     
-    for (int i = 0; i < Quality; i++)
+    for (int i = 0; i < quality; i++)
     {
-        color += beast_noise(UV, Seed) * power;
-        UV = mul(trans, UV);
-        power *= Turbulence;
+        color += beast_noise(uv, seed) * power;
+        uv = mul(trans, uv);
+        power *= turbulence;
     }
 
-    R = color;
+    return color;
+}
+
+void BeastNoise_float(in float2 UV,
+                      in float seed,
+                      out float R)
+{
+    R = beast_noise(UV, seed);
+}
+
+void BeastFBM_float(in float2 UV,
+                    in float Turbulence,
+                    in float Quality,
+                    in float Seed,
+                    out float R)
+{
+    R = beast_fbm(UV, Turbulence, Quality, Seed);
 }
 
 #endif

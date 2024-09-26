@@ -43,7 +43,6 @@
             sampler2D _WorldTexture;
             float2 _WorldTextureSize;
             float _ScreenAspect;
-            float2 _WorldSize;
             float _ViewDistance;
             float2 _CameraPosition;
 
@@ -54,7 +53,7 @@
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
                 output.uv = input.uv - float2(0.5f, 0.5f);
-                output.uv.y *= 1 / _ScreenAspect;
+                output.uv.x *= _ScreenAspect;
                 
                 output.uv *= _ViewDistance / _WorldTextureSize;
                 output.uv += _CameraPosition / _WorldTextureSize;

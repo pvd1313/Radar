@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -21,7 +22,7 @@ namespace Beast.Radar.World
         {
             State = new CameraControllerState
             {
-                position = WorldMapRender.WorldSize / 2,
+                position = float2.zero,
                 zoom01 = 1
             };
             
@@ -47,7 +48,32 @@ namespace Beast.Radar.World
             
             cameraState.zoom01 = BMath.Clamp01(cameraState.zoom01 - zoomDelta);
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                float2 mousePosition = new (Input.mousePosition.x, Input.mousePosition.y);
+                float3 worldPoint = ScreenPointToWorld(mousePosition);
+                
+                BeastLog.Error(this, "Clicked at " + worldPoint);
+            }
+
             State = cameraState;
+        }
+
+        private float3 ScreenPointToWorld(float2 screenPoint)
+        {
+            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+
+            return ViewportToWorld(viewport);
+        }
+
+        private float3 ViewportToWorld(float2 viewport)
+        {
+            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
+            float screenAspect = Screen.width / (float)Screen.height;
+            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
+            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
+
+            return new float3(screen.x, 0, screen.y);
         }
     }
 }
