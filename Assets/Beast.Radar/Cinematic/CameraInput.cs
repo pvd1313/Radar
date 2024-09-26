@@ -8,18 +8,6 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraInput: Initializable
     {
-        private enum Phase
-        {
-            Early,
-            Late
-        }
-
-        private enum Scheme
-        {
-            Mouse,
-            Touch,
-        }
-
         public Vector3 CurrentScreenPoint { get; private set; }
         public Vector3 LastScreenPoint { get; private set; }
         public Vector3 ScreenPointDelta { get; private set; }
@@ -27,34 +15,26 @@ namespace Beast.Radar.Cinematic
         public int CurrentTouchCount { get; private set; }
         public float ZoomDelta { get; private set; }
         public float LastZoomDistance { get; private set; }
-
+        public bool IsPressMove { get; private set; }
+        
         private InputActions _actions;
-        private readonly Camera _camera;
 
-        private bool _isMouseButtonDown;
-        private Phase _phase;
-        private Scheme _scheme;
-
-        public CameraInput(Camera camera)
-        {
-            _camera = camera;
-        }
+        private InputScheme _inputScheme;
+        
 
         public UniTask<InitializationResult> Initialize()
         {
             _actions = new InputActions();
             _actions.Enable();
             PlayerInput playerInput = GameObject.FindObjectOfType<PlayerInput>();
-            Enum.TryParse(playerInput.currentControlScheme, out _scheme);
-            Debug.Log(_scheme);
+            Enum.TryParse(playerInput.currentControlScheme, out _inputScheme);
+            Debug.Log(_inputScheme);
             return InitializationResult.SuccessNotAsync();
         }
 
         public void EarlyInput()
         {
-            _phase = Phase.Early;
-
-            if (_scheme == Scheme.Mouse)
+            if (_inputScheme == InputScheme.Mouse)
             {
                 CurrentScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 ZoomDelta = _actions.Player.Scroll.ReadValue<float>();
@@ -89,14 +69,12 @@ namespace Beast.Radar.Cinematic
             }
 
             ScreenPointDelta = CurrentScreenPoint - LastScreenPoint;
-            _isMouseButtonDown = CurrentTouchCount > 0;
+            IsPressMove = CurrentTouchCount == 1;
         }
 
         public void LateInput()
         {
-            _phase = Phase.Late;
-
-            if (_scheme == Scheme.Mouse)
+            if (_inputScheme == InputScheme.Mouse)
             {
                 LastZoomDistance = 0f;
                 LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
@@ -124,12 +102,7 @@ namespace Beast.Radar.Cinematic
                 }
             }
         }
-
-        public bool IsMoving()
-        {
-            return _isMouseButtonDown;
-        }
-
+        
         public void BlockInput(bool isBlock)
         {
             if (isBlock)

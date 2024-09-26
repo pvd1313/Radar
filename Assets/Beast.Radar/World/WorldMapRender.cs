@@ -52,20 +52,9 @@ namespace Beast.Radar.World
                 name = "WorldMap"
             });
             
-            _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
-            {
-                size = WorldSize,
-                depth = 0,
-                format = RenderTextureFormat.Default,
-                mipCount = 0,
-                filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Repeat,
-                name = "WorldMap"
-            });
-
             _mapBaker.Bake(new WorldMapBakerInput
             {
-                scale99 = 1,
+                scale99 = 2,
                 seed01 = Random.value,
                 targetTexture = _worldTexture,
                 waterFlood01 = 0.5f

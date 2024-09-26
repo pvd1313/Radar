@@ -36,13 +36,13 @@ namespace Beast.Claw.Mathematics
         {
             return math.length(a);
         }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Magnitude(this float3 a)
         {
             return math.length(a);
         }
-        
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(Float2MinMax range, float t)
         {
