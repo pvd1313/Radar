@@ -17,8 +17,8 @@ namespace Beast.Radar.Cinematic
         private CameraInput _input;
 
         private float _startInertiaTime;
-        private Vector3 _startInertia;
-        private Vector3 _inertia;
+        private float2 _startInertia;
+        private float2 _inertia;
         
         public CameraController(CameraConfig config)
         {
@@ -27,7 +27,10 @@ namespace Beast.Radar.Cinematic
 
         public UniTask<InitializationResult> Initialize()
         {
-            CameraView view = BeastScene.NewInstance
+            RefreshStatePosition(float2.zero);
+            RefreshStateZoom(_config.zoomRange.min);
+            
+            BeastScene.NewInstance
             (
                 _config.viewPrefab,
                 _config.startPosition,
@@ -36,14 +39,14 @@ namespace Beast.Radar.Cinematic
 
             _input = new CameraInput();
             _input.Initialize();
-
+            
             return InitializationResult.SuccessNotAsync();
         }
 
         public void OnFrameBegin()
         {
             _input.EarlyInput();
-            ProcessCamera(_input.CurrentScreenPoint, _input.ZoomDelta);
+            ProcessCamera();
         }
 
         public void OnFrameEnd()
@@ -51,65 +54,61 @@ namespace Beast.Radar.Cinematic
             _input.LateInput();
         }
         
-        private void ProcessCamera(Vector3 currentScreenPoint, float zoomDelta)
+        private void ProcessCamera()
         {
             if (_input.LastScreenPoint.magnitude == 0)
             {
                 return;
             }
 
-            Move(_input.ScreenPointDelta);
-            Zoom(zoomDelta, currentScreenPoint);
+            Move();
+            Zoom();
             Inertia();
         }
 
-        private void Move(Vector3 screenPointDelta)
+        private void Move()
         {
             if (!_input.IsPressMove || _input.LastTouchCount != _input.CurrentTouchCount)
             {
                 return;
             }
 
-            if (BorderCheck(State.position - screenPointDelta.AsFloat2() * _config.motionSpeed))
+            float2 newPosition = State.position - _input.ScreenPointDelta.AsFloat2() * _config.motionSpeed; 
+            if (BorderCheck(newPosition))
             {
-                RefreshStatePosition(State.position - screenPointDelta.AsFloat2() * _config.motionSpeed);
-                _startInertia = screenPointDelta;
+                RefreshStatePosition(newPosition);
+                _startInertia = _input.ScreenPointDelta.AsFloat2();
                 _startInertiaTime = -1;
             }
         }
         
-        private void Zoom(float inputZoom, Vector3 inputPoint)
+        private void Zoom()
         {
-            if (inputZoom == 0)
+            if (_input.Zoom == 0)
             {
                 return;
             }
-            
-            Vector3 worldPointBeforeZoom = ScreenPointToWorld(inputPoint.AsFloat2());
 
-            float newZoom = State.zoom01 - inputZoom * _config.zoomSpeed;
+            float2 screenPoint = _input.ScreenPoint.AsFloat2();
+            float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
             
+            float newZoom = State.zoom01 - _input.Zoom * _config.zoomSpeed;
             float clampZoom = Mathf.Clamp(
                 newZoom,
                 _config.zoomRange.min,
                 _config.zoomRange.max
             );
-
             RefreshStateZoom(clampZoom);
+            //Debug.Log($"Zoom Value: {inputZoom}, New Zoom: {clampZoom}");
 
-            Debug.Log($"Zoom Value: {inputZoom}, New Zoom: {clampZoom}");
-
-            Vector3 worldPointAfterZoom = ScreenPointToWorld(inputPoint.AsFloat2());
-
-            Vector3 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-
-            float2 newPosition = State.position + pointDelta.AsFloat2();
-          
-            Debug.Log($"Point Delta: {pointDelta}");
+            float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
+            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom; 
+            float2 newPosition = State.position + pointDelta;
+            //Debug.Log($"Point Delta: {pointDelta}");
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
-                Debug.Log($"New Position Updated: {newPosition}");
+               // Debug.Log($"New Position Updated: {newPosition}");
             }
             else
             {
@@ -129,13 +128,14 @@ namespace Beast.Radar.Cinematic
                 _startInertiaTime = Time.time;
             }
 
-            float2 position = State.position - _inertia.AsFloat2();
+            float2 position = State.position - _inertia;
             if (BorderCheck(position))
             {
                 RefreshStatePosition(position);
             }
 
             _inertia = _config.inertiaDeceleration.Evaluate(Time.time - _startInertiaTime) * _startInertia;
+           
         }
 
         private bool BorderCheck(float2 position)
@@ -151,21 +151,21 @@ namespace Beast.Radar.Cinematic
             return result <= 1.0f;
         }
 
-        private float3 ScreenPointToWorld(float2 screenPoint)
+        private float2 ScreenPointToWorld(float2 screenPoint)
         {
             float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
 
             return ViewportToWorld(viewport);
         }
 
-        private float3 ViewportToWorld(float2 viewport)
+        private float2 ViewportToWorld(float2 viewport)
         {
             float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
             float screenAspect = Screen.width / (float)Screen.height;
             float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
             float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
 
-            return new float3(screen.x, screen.y, 0);
+            return new float2(screen.x, screen.y);
         }
 
         private void RefreshStatePosition(float2 pos)

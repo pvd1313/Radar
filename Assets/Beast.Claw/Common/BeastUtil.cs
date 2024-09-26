@@ -28,5 +28,10 @@ namespace Beast.Claw.Common
         {
             return new float2(value.x, value.y);
         }
+        
+        public static float3 AsFloat3(this float2 value)
+        {
+            return new float3(value.x, value.y,0);
+        }
     }
 }

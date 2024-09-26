@@ -8,12 +8,12 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraInput: Initializable
     {
-        public Vector3 CurrentScreenPoint { get; private set; }
         public Vector3 LastScreenPoint { get; private set; }
         public Vector3 ScreenPointDelta { get; private set; }
+        public Vector3 ScreenPoint { get; private set; }
         public int LastTouchCount { get; private set; }
         public int CurrentTouchCount { get; private set; }
-        public float ZoomDelta { get; private set; }
+        public float Zoom { get; private set; }
         public float LastZoomDistance { get; private set; }
         public bool IsPressMove { get; private set; }
         
@@ -36,8 +36,8 @@ namespace Beast.Radar.Cinematic
         {
             if (_inputScheme == InputScheme.Mouse)
             {
-                CurrentScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                ZoomDelta = _actions.Player.Scroll.ReadValue<float>();
+                ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
+                Zoom = _actions.Player.Scroll.ReadValue<float>();
                 CurrentTouchCount = Mouse.current.press.isPressed ? 1 : 0;
             }
             else
@@ -47,28 +47,28 @@ namespace Beast.Radar.Cinematic
                 switch (CurrentTouchCount)
                 {
                     case 1:
-                        CurrentScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                        ZoomDelta = 0;
+                        ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
+                        Zoom = 0;
                         break;
                     case 2:
                         Vector3 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
                         Vector3 t1 = _actions.Player.SecondPosition.ReadValue<Vector2>();
-                        CurrentScreenPoint = (t0 + t1) / 2f;
+                        ScreenPoint = (t0 + t1) / 2f;
                         float zoomDistance = Vector3.Distance(t0, t1);
 
                         if (LastZoomDistance == 0f)
                         {
-                            ZoomDelta = 0f;
+                            Zoom = 0f;
                         }
                         else
                         {
-                            ZoomDelta = zoomDistance - LastZoomDistance;
+                            Zoom = zoomDistance - LastZoomDistance;
                         }
                         break;
                 }
             }
 
-            ScreenPointDelta = CurrentScreenPoint - LastScreenPoint;
+            ScreenPointDelta = ScreenPoint - LastScreenPoint;
             IsPressMove = CurrentTouchCount == 1;
         }
 
@@ -114,7 +114,7 @@ namespace Beast.Radar.Cinematic
             }
             else
             {
-                ScreenPointDelta = CurrentScreenPoint - LastScreenPoint;
+                ScreenPointDelta = ScreenPoint - LastScreenPoint;
                 LastScreenPoint = Mouse.current.position.value;
             }
         }
