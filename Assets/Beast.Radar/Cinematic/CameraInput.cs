@@ -1,6 +1,8 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,9 +10,9 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraInput: Initializable
     {
-        public Vector3 LastScreenPoint { get; private set; }
-        public Vector3 ScreenPointDelta { get; private set; }
-        public Vector3 ScreenPoint { get; private set; }
+        public float2 LastScreenPoint { get; private set; }
+        public float2 ScreenPointDelta { get; private set; }
+        public float2 ScreenPoint { get; private set; }
         public int LastTouchCount { get; private set; }
         public int CurrentTouchCount { get; private set; }
         public float Zoom { get; private set; }
@@ -18,10 +20,8 @@ namespace Beast.Radar.Cinematic
         public bool IsPressMove { get; private set; }
         
         private InputActions _actions;
-
         private InputScheme _inputScheme;
         
-
         public UniTask<InitializationResult> Initialize()
         {
             _actions = new InputActions();
@@ -51,10 +51,10 @@ namespace Beast.Radar.Cinematic
                         Zoom = 0;
                         break;
                     case 2:
-                        Vector3 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                        Vector3 t1 = _actions.Player.SecondPosition.ReadValue<Vector2>();
+                        float2 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
+                        float2 t1 = _actions.Player.SecondPosition.ReadValue<Vector2>();
                         ScreenPoint = (t0 + t1) / 2f;
-                        float zoomDistance = Vector3.Distance(t0, t1);
+                        float zoomDistance = BMath.Distance(t0, t1);
 
                         if (LastZoomDistance == 0f)
                         {
@@ -94,10 +94,10 @@ namespace Beast.Radar.Cinematic
                         LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                         break;
                     case 2:
-                        Vector3 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                        Vector3 t1 = _actions.Player.SecondPosition.ReadValue<Vector2>();
+                        float2 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
+                        float2 t1 = _actions.Player.SecondPosition.ReadValue<Vector2>();
                         LastScreenPoint = (t0 + t1) / 2f;
-                        LastZoomDistance = Vector3.Distance(t0, t1);
+                        LastZoomDistance = BMath.Distance(t0, t1);
                         break;
                 }
             }
@@ -107,8 +107,8 @@ namespace Beast.Radar.Cinematic
         {
             if (isBlock)
             {
-                ScreenPointDelta = Vector3.zero;
-                LastScreenPoint = Vector3.zero;
+                ScreenPointDelta = float2.zero;
+                LastScreenPoint = float2.zero;
                 CurrentTouchCount = 0;
                 LastTouchCount = 0;
             }

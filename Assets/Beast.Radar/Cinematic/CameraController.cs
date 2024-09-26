@@ -56,7 +56,7 @@ namespace Beast.Radar.Cinematic
         
         private void ProcessCamera()
         {
-            if (_input.LastScreenPoint.magnitude == 0)
+            if (_input.LastScreenPoint.Magnitude() == 0)
             {
                 return;
             }
@@ -73,11 +73,11 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 newPosition = State.position - _input.ScreenPointDelta.AsFloat2() * _config.motionSpeed; 
+            float2 newPosition = State.position - _input.ScreenPointDelta * _config.motionSpeed; 
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
-                _startInertia = _input.ScreenPointDelta.AsFloat2();
+                _startInertia = _input.ScreenPointDelta;
                 _startInertiaTime = -1;
             }
         }
@@ -89,7 +89,7 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 screenPoint = _input.ScreenPoint.AsFloat2();
+            float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
             
             float newZoom = State.zoom01 - _input.Zoom * _config.zoomSpeed;
