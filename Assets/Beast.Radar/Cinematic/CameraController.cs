@@ -34,7 +34,7 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _input = new CameraInput(this, _config.PlayerInputView);
+            _input = new CameraInput(_config.PlayerInputView);
             _input.Initialize();
             
             return InitializationResult.SuccessNotAsync();
