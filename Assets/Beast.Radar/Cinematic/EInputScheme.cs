@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.Cinematic
 {
-    public enum InputScheme
+    public enum EInputScheme
     {
         Mouse,
         Touch,
