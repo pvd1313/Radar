@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : ICameraController, IFrameBeginUpdate, IFrameEndUpdate,IGizmos
+    public class CameraController : ICameraController, IGizmos
     {
         public CameraControllerState State { get; private set; }
 
@@ -27,20 +27,26 @@ namespace Beast.Radar.Cinematic
 
         public UniTask<InitializationResult> Initialize()
         {
-            RefreshStatePosition(float2.zero);
+            RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
             
             BeastScene.NewInstance
             (
                 _config.viewPrefab,
-                _config.startPosition,
-                Quaternion.identity
+                float3.zero, 
+                quaternion.identity
             );
 
-            _input = new CameraInput();
+            _input = new CameraInput(_config.PlayerInputView);
             _input.Initialize();
             
             return InitializationResult.SuccessNotAsync();
+        }
+
+        public UniTask<DispositionResult> Dispose()
+        {
+            _input.Dispose();
+            return DispositionResult.SuccessNotAsync();
         }
 
         public void OnFrameBegin()
@@ -53,7 +59,7 @@ namespace Beast.Radar.Cinematic
         {
             _input.LateInput();
         }
-        
+
         private void ProcessCamera()
         {
             if (_input.LastScreenPoint.Magnitude() == 0)
@@ -81,7 +87,7 @@ namespace Beast.Radar.Cinematic
                 _startInertiaTime = -1;
             }
         }
-        
+
         private void Zoom()
         {
             if (_input.Zoom == 0)

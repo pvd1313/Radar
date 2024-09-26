@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
@@ -8,33 +9,49 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraInput: Initializable
+    public class CameraInput: Initializable, Disposable
     {
         public float2 LastScreenPoint { get; private set; }
         public float2 ScreenPointDelta { get; private set; }
         public float2 ScreenPoint { get; private set; }
         public int LastTouchCount { get; private set; }
         public int CurrentTouchCount { get; private set; }
-        public float Zoom { get; private set; }
-        public float LastZoomDistance { get; private set; }
         public bool IsPressMove { get; private set; }
+        public float Zoom { get; private set; }
+        private float LastZoomDistance { get; set; }
         
         private InputActions _actions;
-        private InputScheme _inputScheme;
-        
+
+        private PlayerInputView _playerInputView;
+
+        public CameraInput(PlayerInputView playerInputViewPrefab)
+        {
+            _playerInputView = playerInputViewPrefab;
+        }
+
         public UniTask<InitializationResult> Initialize()
         {
             _actions = new InputActions();
             _actions.Enable();
-            PlayerInput playerInput = GameObject.FindObjectOfType<PlayerInput>();
-            Enum.TryParse(playerInput.currentControlScheme, out _inputScheme);
-            Debug.Log(_inputScheme);
+            
+            PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
+            newInstance.Initialize();
+            _playerInputView = newInstance;
+            
             return InitializationResult.SuccessNotAsync();
+        }
+
+        public UniTask<DispositionResult> Dispose()
+        {
+            _playerInputView.Dispose();
+            _actions.Dispose();
+
+            return DispositionResult.SuccessNotAsync();
         }
 
         public void EarlyInput()
         {
-            if (_inputScheme == InputScheme.Mouse)
+            if (_playerInputView.Scheme == EInputScheme.Mouse)
             {
                 ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
@@ -74,7 +91,7 @@ namespace Beast.Radar.Cinematic
 
         public void LateInput()
         {
-            if (_inputScheme == InputScheme.Mouse)
+            if (_playerInputView.Scheme == EInputScheme.Mouse)
             {
                 LastZoomDistance = 0f;
                 LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
@@ -102,7 +119,7 @@ namespace Beast.Radar.Cinematic
                 }
             }
         }
-        
+
         public void BlockInput(bool isBlock)
         {
             if (isBlock)
