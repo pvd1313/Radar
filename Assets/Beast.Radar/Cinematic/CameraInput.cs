@@ -20,9 +20,10 @@ namespace Beast.Radar.Cinematic
         public float Zoom { get; private set; }
         public float2 Move { get; private set; }
         private float LastZoomDistance { get; set; }
+
+        private float2 _screenCenter;
         
         private InputActions _actions;
-
         private PlayerInputView _playerInputView;
 
         public CameraInput(PlayerInputView playerInputViewPrefab)
@@ -34,7 +35,8 @@ namespace Beast.Radar.Cinematic
         {
             _actions = new InputActions();
             _actions.Enable();
-            
+            _screenCenter = new float2((float)Screen.width / 2,(float)Screen.height/ 2);
+
             Debug.Log($"{_playerInputView} {float3.zero} {quaternion.identity}");
             PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
             newInstance.Initialize();
@@ -57,11 +59,16 @@ namespace Beast.Radar.Cinematic
             {
                 ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
-                Move = _actions.Player.Move.ReadValue<Vector2>() * -1;
-                Debug.Log(Move);
                 CurrentTouchCount = Mouse.current.press.isPressed  ? 1 : 0;
             }
-            else
+            else if(_playerInputView.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
+            {
+                ScreenPoint = _screenCenter;
+                Move = _actions.Player.Move.ReadValue<Vector2>() * -1;
+                Zoom = _actions.Player.Scroll.ReadValue<float>();
+                CurrentTouchCount = Move.Equals(float2.zero) ? 0 : 1;
+            }
+            else if (_playerInputView.Scheme == EInputScheme.Touch)
             {
                 CurrentTouchCount = Touchscreen.current.primaryTouch.press.isPressed ? 1 : 0;
                 CurrentTouchCount += Touchscreen.current.touches[1].press.isPressed ? 1 : 0;
@@ -90,8 +97,7 @@ namespace Beast.Radar.Cinematic
             }
 
             ScreenPointDelta = Move.Equals(float2.zero) ? ScreenPoint - LastScreenPoint: Move;
-            IsPressMove =   !Move.Equals(float2.zero) || CurrentTouchCount == 1;
-                Debug.Log($"Delta {ScreenPointDelta} {IsPressMove} {CurrentTouchCount}|{LastTouchCount}");
+            IsPressMove = CurrentTouchCount == 1;
         }
 
         public void LateInput()
@@ -102,7 +108,13 @@ namespace Beast.Radar.Cinematic
                 LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 LastTouchCount = Mouse.current.press.isPressed ? 1 : 0;
             }
-            else
+            else if(_playerInputView.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
+            {
+                LastScreenPoint = _screenCenter;
+                LastZoomDistance = 0f;
+                LastTouchCount = Move.Equals(float2.zero) ? 0 : 1;
+            }
+            else if(_playerInputView.Scheme == EInputScheme.Touch)
             {
                 LastTouchCount = Touchscreen.current.primaryTouch.press.isPressed ? 1 : 0;
                 LastTouchCount += Touchscreen.current.touches[1].press.isPressed ? 1 : 0;
