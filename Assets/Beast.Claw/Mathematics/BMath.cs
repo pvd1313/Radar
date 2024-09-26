@@ -26,6 +26,24 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Distance(float2 a,float2 b)
+        {
+            return math.distance(a,b);
+        }
+            
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Magnitude(this float2 a)
+        {
+            return math.length(a);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Magnitude(this float3 a)
+        {
+            return math.length(a);
+        }
+        
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(Float2MinMax range, float t)
         {
             return math.lerp(range.min, range.max, t);

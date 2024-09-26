@@ -1,6 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
+using Beast.Radar.Cinematic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;

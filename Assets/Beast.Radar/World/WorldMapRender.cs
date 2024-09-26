@@ -2,6 +2,7 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.CG;
+using Beast.Radar.Cinematic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Beast.Radar.World
         private readonly IWorldMapBaker _mapBaker;
         private readonly MeshLibrary _meshes;
         private readonly ICameraController _camera;
-        private readonly WorldCameraConfig _cameraConfig;
+        private readonly CameraConfig _cameraConfig;
 
         private RenderTexture _worldTexture;
         private Material _material;
@@ -27,7 +28,7 @@ namespace Beast.Radar.World
             IWorldMapBaker mapBaker, 
             MeshLibrary meshes,
             ICameraController camera,
-            WorldCameraConfig cameraConfig)
+            CameraConfig cameraConfig)
         {
             _config = config;
             _mapBaker = mapBaker;
@@ -50,10 +51,21 @@ namespace Beast.Radar.World
                 wrapMode = TextureWrapMode.Clamp,
                 name = "WorldMap"
             });
+            
+            _worldTexture = BeastCG.NewRenderTexture(this, new RenderTextureParameters
+            {
+                size = WorldSize,
+                depth = 0,
+                format = RenderTextureFormat.Default,
+                mipCount = 0,
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Repeat,
+                name = "WorldMap"
+            });
 
             _mapBaker.Bake(new WorldMapBakerInput
             {
-                scale99 = 2,
+                scale99 = 1,
                 seed01 = Random.value,
                 targetTexture = _worldTexture,
                 waterFlood01 = 0.5f

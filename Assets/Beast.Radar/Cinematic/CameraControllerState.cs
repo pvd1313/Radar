@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.Cinematic
 {
     public struct CameraControllerState
     {
