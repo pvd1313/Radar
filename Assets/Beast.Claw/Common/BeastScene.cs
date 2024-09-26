@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Reflection;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Common
@@ -12,7 +13,7 @@ namespace Beast.Claw.Common
             return gameObject;
         }
         
-        public static T NewInstance<T>(T prefab, Vector3 position, Quaternion rotation) where T : BeastMono
+        public static T NewInstance<T>(T prefab, float3 position, quaternion rotation) where T : BeastMono
         {
             return Object.Instantiate(prefab, position, rotation);
         }
