@@ -24,11 +24,9 @@ namespace Beast.Radar.Cinematic
         
         private InputActions _actions;
         private PlayerInputView _playerInputView;
-        private readonly CameraController _cameraController;
 
-        public CameraInput(CameraController cameraController, PlayerInputView playerInputViewPrefab)
+        public CameraInput(PlayerInputView playerInputViewPrefab)
         {
-            _cameraController = cameraController;
             _playerInputView = playerInputViewPrefab;
         }
 
