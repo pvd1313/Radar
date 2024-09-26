@@ -1,5 +1,4 @@
-﻿using System;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
@@ -41,6 +40,8 @@ namespace Beast.Radar.Cinematic
             PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
             newInstance.Initialize();
             _playerInputView = newInstance;
+
+         
             
             return InitializationResult.SuccessNotAsync();
         }
@@ -134,22 +135,6 @@ namespace Beast.Radar.Cinematic
                         LastZoomDistance = BMath.Distance(t0, t1);
                         break;
                 }
-            }
-        }
-
-        public void BlockInput(bool isBlock)
-        {
-            if (isBlock)
-            {
-                ScreenPointDelta = float2.zero;
-                LastScreenPoint = float2.zero;
-                CurrentTouchCount = 0;
-                LastTouchCount = 0;
-            }
-            else
-            {
-                ScreenPointDelta = ScreenPoint - LastScreenPoint;
-                LastScreenPoint = Mouse.current.position.value;
             }
         }
     }

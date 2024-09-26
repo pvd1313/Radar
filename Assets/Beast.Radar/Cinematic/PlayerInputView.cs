@@ -29,33 +29,30 @@ namespace Beast.Radar.Cinematic
             return DispositionResult.SuccessNotAsync();
         }
 
-        private void Update()
-        {
-            Debug.Log("scheme " +_playerInput.currentControlScheme);
-        }
-
         private void SubscribeToEvents(bool flag)
         {
             if (flag)
             {
-                _playerInput.onControlsChanged += OnControlsChanged;
+                _playerInput.onControlsChanged += RefreshCurrentScheme;
             }
             else
             {
-                _playerInput.onControlsChanged -= OnControlsChanged;
+                _playerInput.onControlsChanged -= RefreshCurrentScheme;
             }
         }
-
-        private void OnControlsChanged(PlayerInput playerInput)
-        {
-            RefreshCurrentScheme(playerInput); 
-            Debug.Log($"On Change player input scheme {_inputScheme}");
-        }
-
+        
         private void RefreshCurrentScheme(PlayerInput input)
         {
-            Enum.TryParse(input.currentControlScheme, out  _inputScheme);
-            Debug.Log($"Refresh current scheme {_inputScheme}");
+            Enum.TryParse(_playerInput.currentControlScheme, out  _inputScheme);
+            
+            if (_inputScheme == EInputScheme.Mouse && Mouse.current == null)
+            {
+                BeastLog.Error(this,"Try setting the mouse scheme with an empty mouse device.");
+                _inputScheme = EInputScheme.Touch;
+                return;
+            }
+            
+            Debug.Log($"Current input scheme is being refreshed: {_inputScheme}");
         }
     }
 }
