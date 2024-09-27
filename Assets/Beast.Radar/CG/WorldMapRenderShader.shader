@@ -59,40 +59,38 @@
                 
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
-                output.mainUV = input.screenUV - float2(0.5f, 0.5f);
+                output.mainUV = input.screenUV - 0.5;
                 output.mainUV.x *= _ScreenAspect;
                 output.mainUV *= _ViewDistance / _WorldTextureSize;
                 output.mainUV += _CameraPosition / _WorldTextureSize;
-
-                output.noiseUV = input.screenUV - float2(0.5f, 0.5f);
+                
+                output.noiseUV = input.screenUV - 0.5;
                 output.noiseUV.x *= _ScreenAspect;
                 output.noiseUV *= _ViewDistance / _WorldNoiseTextureSize;
                 output.noiseUV += _CameraPosition / _WorldNoiseTextureSize;
 
-                //output.noiseUV = input.screenUV - float2(0.5f, 0.5f);
-
-
-                
-                
                 return output;
             }
 
             float2 unpack_normal(float2 color)
             {
-                return (color - 0.5f) * 2;
+                return (color - 0.5) * 2;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float2 noise = unpack_normal(tex2D(_WorldNoiseTexture, input.noiseUV).rg);
-                noise *= 4 / _WorldTextureSize;
+                float difference = _WorldTextureSize / _WorldNoiseTextureSize;
+                float2 noiseRG = tex2D(_WorldNoiseTexture, input.noiseUV * difference).xy;
+                float2 texelSize = _WorldTextureSize / _ViewDistance;
+                float2 noise = unpack_normal(noiseRG) * 0.2;
 
-                float color = tex2D(_WorldTexture, input.mainUV + noise);
+                input.mainUV = input.mainUV + noise * 8 / _WorldTextureSize;
+                input.mainUV = float2 (input.mainUV / texelSize) * texelSize;
                 
-                return float4(saturate(color * 90), 0, 0, 0);
+                float color = tex2D(_WorldTexture, input.mainUV);
+                
+                return float4(color, 0, 0, 0);
             }
-
-          
             
             ENDCG
         }
