@@ -17,7 +17,7 @@ namespace Beast.Radar.Cinematic
         public int CurrentTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
         public float Zoom { get; private set; }
-        public float2 Move { get; private set; }
+        public float2 MoveDelta { get; private set; }
         private float LastZoomDistance { get; set; }
 
         private float2 _screenCenter;
@@ -65,9 +65,9 @@ namespace Beast.Radar.Cinematic
             else if(_playerInputView.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
             {
                 ScreenPoint = _screenCenter;
-                Move = _actions.Player.Move.ReadValue<Vector2>() * -1;
+                MoveDelta = _actions.Player.Move.ReadValue<Vector2>() * -1;
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
-                CurrentTouchCount = Move.Equals(float2.zero) ? 0 : 1;
+                CurrentTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
             }
             else if (_playerInputView.Scheme == EInputScheme.Touch)
             {
@@ -97,9 +97,9 @@ namespace Beast.Radar.Cinematic
                 }
             }
 
-            ScreenPointDelta = Move.Equals(float2.zero) 
+            ScreenPointDelta = MoveDelta.Equals(float2.zero) 
                 ? ScreenPoint - LastScreenPoint 
-                : Move;
+                : MoveDelta;
             IsPressMove = CurrentTouchCount == 1;
         }
 
@@ -115,7 +115,7 @@ namespace Beast.Radar.Cinematic
             {
                 LastScreenPoint = _screenCenter;
                 LastZoomDistance = 0f;
-                LastTouchCount = Move.Equals(float2.zero) ? 0 : 1;
+                LastTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
             }
             else if(_playerInputView.Scheme == EInputScheme.Touch)
             {
