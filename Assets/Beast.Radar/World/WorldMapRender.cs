@@ -41,13 +41,13 @@ namespace Beast.Radar.World
         {
             Application.targetFrameRate = 4064;
             
-            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPersistentRenderTextureData
+            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPermaRenderTextureData
             {
                 size = WorldSize,
                 depth = 0,
                 format = RenderTextureFormat.R8,
                 mipCount = 0,
-                filterMode = FilterMode.Point,
+                filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp,
                 name = "WorldMap"
             });
@@ -79,8 +79,13 @@ namespace Beast.Radar.World
             _material.SetFloat("_ScreenAspect", screenAspect);
             _material.SetFloat("_ViewDistance", viewDistance);
             _material.SetVector("_CameraPosition", cameraPosition);
+            
             _material.SetVector("_WorldTextureSize", worldSizeVector);
-            _material.SetTexture("_WorldTexture", _cgLibrary.debug.bakedMap4096);
+            _material.SetTexture("_WorldTexture", _worldTexture);
+            
+            Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
+            _material.SetTexture("_WorldNoiseTexture", worldDetailNoise);
+            _material.SetVector("_WorldNoiseTextureSize", (Vector2)worldDetailNoise.WidthHeight());
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {

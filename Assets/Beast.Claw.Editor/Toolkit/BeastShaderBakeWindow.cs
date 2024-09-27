@@ -4,7 +4,7 @@ using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Editor
+namespace Beast.Claw.Editor.Toolkit
 {
     public class BeastShaderBakeWindow : BeastEditorWindow
     {
@@ -35,11 +35,11 @@ namespace Beast.Claw.Editor
         
         protected override void OnInspectorGUI()
         {
-            Vertical(
+            UI.Vertical(
                     () =>
                     {
                         _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
-                        BeastAssert.NotNull(_renderMaterial, nameof(_renderMaterial));
+                        BeastAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
                     },
                     () =>
                     {
@@ -54,11 +54,11 @@ namespace Beast.Claw.Editor
                     })
                 .Then(result =>
                 {
-                    HorizontalEnabledGroup(result.success, () =>
+                    UI.HorizontalEnabledGroup(result.success, () =>
                     {
                         UI.Button("Bake", BakeMap);
 
-                        EnabledGroup(_bakedTexture != null, () =>
+                        UI.EnabledGroup(_bakedTexture != null, () =>
                         {
                             UI.Button("Save", SaveTexture);
                         });
@@ -84,7 +84,7 @@ namespace Beast.Claw.Editor
         private void BakeMap()
         {
             RenderTexture renderTextureBig = BeastCG.NewRenderTextureTemporary(this,
-                new NewTemporaryRenderTextureData
+                new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
                     size = _outputTextureSize,
@@ -92,7 +92,7 @@ namespace Beast.Claw.Editor
                 });
 
             RenderTexture renderTextureSmall = BeastCG.NewRenderTextureTemporary(this,
-                new NewTemporaryRenderTextureData
+                new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
                     size = PreviewTextureSize,

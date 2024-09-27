@@ -17,6 +17,8 @@ namespace Beast.Radar.Cinematic
         public int LastTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
         public float Zoom { get; private set; }
+        public float2 MoveDelta { get; private set; }
+        private float LastZoomDistance { get; set; }
         
         private float2 _screenCenter;
         private float _lastZoomDistance;
@@ -34,9 +36,10 @@ namespace Beast.Radar.Cinematic
             _actions = new InputActions();
             _actions.Enable();
             _screenCenter = new float2((float)Screen.width / 2,(float)Screen.height/ 2);
-
+            
             PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
             await newInstance.Initialize();
+
             _playerInputView = newInstance;
             
             return InitializationResult.Success();
@@ -92,8 +95,8 @@ namespace Beast.Radar.Cinematic
                         break;
                 }
             }
-
-            _screenCenter = MoveDelta.Equals(float2.zero) 
+            
+            _screenCenter = MoveDelta.Equals(float2.zero)
                 ? ScreenPoint - LastScreenPoint 
                 : MoveDelta;
             IsPressMove = CurrentTouchCount == 1;

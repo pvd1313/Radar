@@ -14,7 +14,7 @@ namespace Beast.Radar.Cinematic
 
         private readonly CameraConfig _config;
         private CameraInput _input;
-        
+
         public CameraController(CameraConfig config)
         {
             _config = config;
@@ -25,7 +25,7 @@ namespace Beast.Radar.Cinematic
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
             
-            BeastScene.NewInstance
+            BeastScene.Instantiate
             (
                 _config.viewPrefab,
                 float3.zero, 

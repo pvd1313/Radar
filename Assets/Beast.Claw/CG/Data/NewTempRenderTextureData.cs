@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Claw.CG
 {
-    public struct NewTemporaryRenderTextureData : IValidatable
+    public struct NewTempRenderTextureData : IValidatable
     {
         public int2 size;
         public int depth;

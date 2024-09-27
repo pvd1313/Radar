@@ -51,7 +51,7 @@ namespace Beast.Claw.CG
             Graphics.ExecuteCommandBufferAsync(buffer, queueType);
         }
 
-        public static RenderTexture NewRenderTexturePermanent<T>(T owner, NewPersistentRenderTextureData input)
+        public static RenderTexture NewRenderTexturePermanent<T>(T owner, NewPermaRenderTextureData input)
         {
             input.ValidateThrowException();
             
@@ -75,7 +75,7 @@ namespace Beast.Claw.CG
             RenderTexture.ReleaseTemporary(renderTexture);
         }
 
-        public static RenderTexture NewRenderTextureTemporary<T>(T owner, NewTemporaryRenderTextureData input)
+        public static RenderTexture NewRenderTextureTemporary<T>(T owner, NewTempRenderTextureData input)
         {
             input.ValidateThrowException();
 
