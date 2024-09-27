@@ -10,6 +10,8 @@ namespace Beast.Radar.CG
         public Shader worldMapBakeShader;
         public Shader worldMapRenderShader;
 
+        public Texture2D worldDetailNoise;
+
         public Debug debug;
     }
 }
