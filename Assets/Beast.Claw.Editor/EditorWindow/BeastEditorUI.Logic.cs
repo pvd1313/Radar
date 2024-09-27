@@ -2,11 +2,9 @@
 
 namespace Beast.Claw.Editor
 {
-    public struct BeastEditorUIResult
+    partial struct BeastEditorUI
     {
-        public bool success;
-
-        public BeastEditorUIResult WhenSuccess(Action action)
+        public BeastEditorUI WhenSuccess(Action action)
         {
             if (success)
             {
@@ -16,7 +14,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public BeastEditorUIResult WhenFailed(Action action)
+        public BeastEditorUI WhenFailed(Action action)
         {
             if (!success)
             {
@@ -26,14 +24,14 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public BeastEditorUIResult Then(Action<BeastEditorUIResult> action)
+        public BeastEditorUI Then(Action<BeastEditorUI> action)
         {
             action.Invoke(this);
 
             return this;
         }
 
-        public BeastEditorUIResult WhenSuccess(Func<BeastEditorUIResult> action)
+        public BeastEditorUI WhenSuccess(Func<BeastEditorUI> action)
         {
             if (success)
             {
@@ -43,7 +41,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public BeastEditorUIResult WhenFailed(Func<BeastEditorUIResult> action)
+        public BeastEditorUI WhenFailed(Func<BeastEditorUI> action)
         {
             if (!success)
             {

@@ -4,7 +4,7 @@ using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Editor
+namespace Beast.Claw.Editor.Toolkit
 {
     public class BeastShaderBakeWindow : BeastEditorWindow
     {
@@ -35,7 +35,7 @@ namespace Beast.Claw.Editor
         
         protected override void OnInspectorGUI()
         {
-            Vertical(
+            UI.Vertical(
                     () =>
                     {
                         _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
@@ -54,11 +54,11 @@ namespace Beast.Claw.Editor
                     })
                 .Then(result =>
                 {
-                    HorizontalEnabledGroup(result.success, () =>
+                    UI.HorizontalEnabledGroup(result.success, () =>
                     {
                         UI.Button("Bake", BakeMap);
 
-                        EnabledGroup(_bakedTexture != null, () =>
+                        UI.EnabledGroup(_bakedTexture != null, () =>
                         {
                             UI.Button("Save", SaveTexture);
                         });
