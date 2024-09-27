@@ -20,7 +20,7 @@ MonoBehaviour:
     x: 0
     y: 0
   zoomRange:
-    min: 1000
+    min: 1
     max: 4000
   cameraParams:
   - inputSchemes: 0400000002000000
@@ -84,8 +84,8 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 0
+        inSlope: 2
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -102,5 +102,5 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    zoomSpeed: 15
-    motionSpeed: 0.1
+    zoomSpeed: 30
+    motionSpeed: 1
