@@ -15,11 +15,17 @@ namespace Beast.Radar.Cinematic
 
         private readonly CameraConfig _config;
         private readonly IInputController _input;
+        private readonly IPlayerInputProvider _inputProvider;
 
-        public CameraController(CameraConfig config, IInputController inputController)
+        private CameraParams _params;
+        
+        public CameraController(CameraConfig config, 
+            IInputController inputController,
+            IPlayerInputProvider inputProvider)
         {
             _config = config;
             _input = inputController;
+            _inputProvider = inputProvider;
         }
 
         public UniTask<InitializationResult> Initialize()
@@ -34,15 +40,36 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _input.ChangedEarlyValues += OnChangedEarlyInputValues;
+            _params = _config.GetParams(_inputProvider.Scheme);
+            
+            SubscribeToEvents(true);
 
             return InitializationResult.SuccessNotAsync();
         }
 
         public UniTask<DispositionResult> Dispose()
         {
-            _input.Dispose();
+            SubscribeToEvents(false);
             return DispositionResult.SuccessNotAsync();
+        }
+
+        private void SubscribeToEvents(bool flag)
+        {
+            if (flag)
+            {
+                _input.ChangedEarlyValues += OnChangedEarlyInputValues;
+                _inputProvider.ChangedScheme += OnChangedInputScheme;
+            }
+            else
+            {
+                _input.ChangedEarlyValues -= OnChangedEarlyInputValues;
+                _inputProvider.ChangedScheme -= OnChangedInputScheme;
+            }
+        }
+
+        private void OnChangedInputScheme(EInputScheme scheme)
+        {
+            _params = _config.GetParams(scheme);
         }
 
         private void OnChangedEarlyInputValues()
@@ -72,7 +99,7 @@ namespace Beast.Radar.Cinematic
             float2 direction = _input.MoveDelta.Equals(float2.zero) 
                 ?  ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint) 
                 : _input.MoveDelta;
-            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime * _config.motionSpeed;
+            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime * _params.motionSpeed;
 
             if (BorderCheck(newPosition))
             {
@@ -90,8 +117,8 @@ namespace Beast.Radar.Cinematic
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
 
-            float zoomDelta = _config.zoomSpeed * Time.deltaTime;
-            zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
+            float zoomDelta = _params.zoomSpeed * Time.deltaTime;
+            zoomDelta *= _params.zoomCurve.Evaluate(State.zoom01);
             zoomDelta = BMath.Max(0.001f, zoomDelta);
             zoomDelta *= _input.Zoom;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.Cinematic;
 using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -11,8 +10,9 @@ namespace Beast.Radar.InputControl
 {
     public class PlayerInputProvider: IPlayerInputProvider 
     {
+        public event Action<EInputScheme> ChangedScheme;
         public EInputScheme Scheme => _inputScheme;
-        
+
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
         
@@ -26,8 +26,9 @@ namespace Beast.Radar.InputControl
             PlayerInputView newInstance = BeastScene.Instantiate(_view, float3.zero, quaternion.identity);
             _view = newInstance;
             
-            _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
             RefreshCurrentScheme(_view.PlayerInput);
+            
+            _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
             
             return InitializationResult.SuccessNotAsync();
         }
@@ -35,6 +36,7 @@ namespace Beast.Radar.InputControl
         public UniTask<DispositionResult> Dispose()
         {
             _view.PlayerInput.onControlsChanged -= RefreshCurrentScheme;
+            
             return DispositionResult.SuccessNotAsync();
         }
         
@@ -47,6 +49,8 @@ namespace Beast.Radar.InputControl
                 BeastLog.Error(this,"Try setting the mouse scheme with an empty mouse device.");
                 _inputScheme = EInputScheme.Touch;
             }
+            
+            ChangedScheme?.Invoke(_inputScheme);
         }
     }
 }

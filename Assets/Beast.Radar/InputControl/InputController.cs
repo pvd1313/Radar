@@ -61,14 +61,14 @@ namespace Beast.Radar.InputControl
             if (_playerInput.Scheme is EInputScheme.Mouse or EInputScheme.Keyboard)
             {
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
-                MoveDelta = (float2)_actions.Player.Move.ReadValue<Vector2>() * -1;
-                ScreenPoint =(float2)_actions.Player.FirstPosition.ReadValue<Vector2>();
+                MoveDelta = _actions.Player.Move.ReadValue<Vector2>() * -1;
+                ScreenPoint =_actions.Player.FirstPosition.ReadValue<Vector2>();
                 CurrentTouchCount = Mouse.current.press.isPressed || !MoveDelta.Equals(float2.zero)  ? 1 : 0;
             }
             else if(_playerInput.Scheme is EInputScheme.Gamepad)
             {
                 ScreenPoint = _screenCenter;
-                MoveDelta = (float2)_actions.Player.Move.ReadValue<Vector2>() * -1;
+                MoveDelta = _actions.Player.Move.ReadValue<Vector2>() * -1;
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
                 CurrentTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
             }
@@ -112,7 +112,7 @@ namespace Beast.Radar.InputControl
             if (_playerInput.Scheme is EInputScheme.Mouse or EInputScheme.Keyboard)
             {
                 _lastZoomDistance = 0f;
-                LastScreenPoint = (float2)_actions.Player.FirstPosition.ReadValue<Vector2>();
+                LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 LastTouchCount = Mouse.current.press.isPressed || !MoveDelta.Equals(float2.zero)  ? 1 : 0;
             }
             else if(_playerInput.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
