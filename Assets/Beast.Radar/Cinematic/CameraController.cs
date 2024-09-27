@@ -14,14 +14,13 @@ namespace Beast.Radar.Cinematic
 
         private readonly CameraConfig _config;
         private CameraInput _input;
-
-     
+        
         public CameraController(CameraConfig config)
         {
             _config = config;
         }
 
-        public UniTask<InitializationResult> Initialize()
+        public async UniTask<InitializationResult> Initialize()
         {
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
@@ -34,9 +33,9 @@ namespace Beast.Radar.Cinematic
             );
 
             _input = new CameraInput(_config.PlayerInputView);
-            _input.Initialize();
+            await _input.Initialize();
             
-            return InitializationResult.SuccessNotAsync();
+            return InitializationResult.Success();
         }
 
         public UniTask<DispositionResult> Dispose()
@@ -92,16 +91,14 @@ namespace Beast.Radar.Cinematic
 
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
-            
-            float newZoom = State.zoom01 - _input.Zoom * _config.zoomSpeed;
-            float clampZoom = Mathf.Clamp(
-                newZoom,
-                _config.zoomRange.min,
-                _config.zoomRange.max
-            );
-       
-            RefreshStateZoom(clampZoom);
 
+            float zoomDelta = _config.zoomSpeed * Time.deltaTime;
+            zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
+            zoomDelta = BMath.Max(0.001f, zoomDelta);
+            zoomDelta *= _input.Zoom;
+            
+            RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
+            
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom; 
             float2 newPosition = State.position + pointDelta;
