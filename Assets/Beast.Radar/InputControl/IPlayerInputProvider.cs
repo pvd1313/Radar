@@ -1,9 +1,10 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.Cinematic;
 
-namespace Beast.Radar.Cinematic
+namespace Beast.Radar.InputControl
 {
     public interface IPlayerInputProvider : Initializable, Disposable
     {
-        EInputScheme InputScheme { get; }
+        EInputScheme Scheme { get; }
     }
 }

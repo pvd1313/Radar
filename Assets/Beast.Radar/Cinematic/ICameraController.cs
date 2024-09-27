@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public interface ICameraController : Initializable, Disposable, IFrameBeginUpdate, IFrameEndUpdate
+    public interface ICameraController : Initializable, Disposable
     {
         public CameraControllerState State { get; }
 

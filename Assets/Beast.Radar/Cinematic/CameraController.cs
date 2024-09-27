@@ -2,6 +2,7 @@
 using Beast.Claw.Debugging;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
+using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,14 +14,15 @@ namespace Beast.Radar.Cinematic
         public CameraControllerState State { get; private set; }
 
         private readonly CameraConfig _config;
-        private CameraInput _input;
+        private readonly IInputController _input;
 
-        public CameraController(CameraConfig config)
+        public CameraController(CameraConfig config, IInputController inputController)
         {
             _config = config;
+            _input = inputController;
         }
 
-        public async UniTask<InitializationResult> Initialize()
+        public UniTask<InitializationResult> Initialize()
         {
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
@@ -31,11 +33,10 @@ namespace Beast.Radar.Cinematic
                 float3.zero, 
                 quaternion.identity
             );
-
-            _input = new CameraInput(_config.PlayerInputView);
-            await _input.Initialize();
             
-            return InitializationResult.Success();
+            _input.ChangedEarlyValues += OnChangedEarlyInputValues;
+            
+            return InitializationResult.SuccessNotAsync();
         }
 
         public UniTask<DispositionResult> Dispose()
@@ -43,18 +44,12 @@ namespace Beast.Radar.Cinematic
             _input.Dispose();
             return DispositionResult.SuccessNotAsync();
         }
-
-        public void OnFrameBegin()
+        
+        private void OnChangedEarlyInputValues()
         {
-            _input.EarlyInput();
             ProcessCamera();
         }
-
-        public void OnFrameEnd()
-        {
-            _input.LateInput();
-        }
-
+        
         private void ProcessCamera()
         {
             if (_input.LastScreenPoint.Magnitude() == 0)

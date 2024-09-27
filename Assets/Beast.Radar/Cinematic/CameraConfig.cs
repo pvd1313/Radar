@@ -1,5 +1,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.Mathematics;
+using Beast.Radar.InputControl;
 using Unity.Mathematics;
 using UnityEngine;
 
