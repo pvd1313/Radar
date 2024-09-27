@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace Beast.Claw.Common
 {
+#if  UNITY_EDITOR
     [InitializeOnLoad]
+#endif
     public static class BeastLog
     {
         public static BeastLogStateStorage StateStorage { get; private set; }

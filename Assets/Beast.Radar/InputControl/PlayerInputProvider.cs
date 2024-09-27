@@ -4,6 +4,7 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
@@ -44,7 +45,7 @@ namespace Beast.Radar.InputControl
         {
             Enum.TryParse(_view.PlayerInput.currentControlScheme, out  _inputScheme);
             
-            if (_inputScheme == EInputScheme.Mouse && Mouse.current == null)
+            if (_inputScheme == EInputScheme.MouseAndKeyboard && Mouse.current == null)
             {
                 BeastLog.Error(this,"Try setting the mouse scheme with an empty mouse device.");
                 _inputScheme = EInputScheme.Touch;

@@ -16,9 +16,9 @@ namespace Beast.Radar.Cinematic
         private readonly CameraConfig _config;
         private readonly IInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
-
-        private CameraParams _params;
         
+        private CameraParams _currentParams;
+
         public CameraController(CameraConfig config, 
             IInputController inputController,
             IPlayerInputProvider inputProvider)
@@ -40,8 +40,7 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _params = _config.GetParams(_inputProvider.Scheme);
-            
+            _currentParams = _config.GetParams(_inputProvider.Scheme);
             SubscribeToEvents(true);
 
             return InitializationResult.SuccessNotAsync();
@@ -57,33 +56,24 @@ namespace Beast.Radar.Cinematic
         {
             if (flag)
             {
-                _input.ChangedEarlyValues += OnChangedEarlyInputValues;
+                _input.ChangedEarlyValues += ProcessCamera;
                 _inputProvider.ChangedScheme += OnChangedInputScheme;
             }
             else
             {
-                _input.ChangedEarlyValues -= OnChangedEarlyInputValues;
+                _input.ChangedEarlyValues -= ProcessCamera;
                 _inputProvider.ChangedScheme -= OnChangedInputScheme;
             }
         }
 
         private void OnChangedInputScheme(EInputScheme scheme)
         {
-            _params = _config.GetParams(scheme);
+            _currentParams = _config.GetParams(scheme);
+          //  Debug.Log($"Change param {_currentParams.zoomSpeed}");
         }
-
-        private void OnChangedEarlyInputValues()
-        {
-            ProcessCamera();
-        }
-
+        
         private void ProcessCamera()
         {
-            if (_input.LastScreenPoint.Magnitude() == 0)
-            {
-                return;
-            }
-
             Move();
             Zoom();
         }
@@ -95,11 +85,9 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
-            float2 direction = _input.MoveDelta.Equals(float2.zero) 
-                ?  ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint) 
-                : _input.MoveDelta;
-            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime * _params.motionSpeed;
+            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01) * 0.5f;
+            float2 direction = _input.MoveDelta * _currentParams.motionSpeed;
+            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime;
 
             if (BorderCheck(newPosition))
             {
@@ -117,13 +105,18 @@ namespace Beast.Radar.Cinematic
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
 
-            float zoomDelta = _params.zoomSpeed * Time.deltaTime;
-            zoomDelta *= _params.zoomCurve.Evaluate(State.zoom01);
+            float zoomDelta = _currentParams.zoomSpeed * Time.deltaTime;
+            zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
             zoomDelta = BMath.Max(0.001f, zoomDelta);
             zoomDelta *= _input.Zoom;
 
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
 
+            if (_inputProvider.Scheme is EInputScheme.Gamepad)
+            {
+                return;
+            }
+            
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
             float2 newPosition = State.position + pointDelta;
