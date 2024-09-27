@@ -58,16 +58,17 @@ namespace Beast.Radar.InputControl
 
         private void EarlyInput()
         {
-            if (_playerInput.Scheme == EInputScheme.Mouse)
+            if (_playerInput.Scheme is EInputScheme.Mouse or EInputScheme.Keyboard)
             {
-                ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
-                CurrentTouchCount = Mouse.current.press.isPressed  ? 1 : 0;
+                MoveDelta = (float2)_actions.Player.Move.ReadValue<Vector2>() * -1;
+                ScreenPoint =(float2)_actions.Player.FirstPosition.ReadValue<Vector2>();
+                CurrentTouchCount = Mouse.current.press.isPressed || !MoveDelta.Equals(float2.zero)  ? 1 : 0;
             }
-            else if(_playerInput.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
+            else if(_playerInput.Scheme is EInputScheme.Gamepad)
             {
                 ScreenPoint = _screenCenter;
-                MoveDelta = _actions.Player.Move.ReadValue<Vector2>() * -1;
+                MoveDelta = (float2)_actions.Player.Move.ReadValue<Vector2>() * -1;
                 Zoom = _actions.Player.Scroll.ReadValue<float>();
                 CurrentTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
             }
@@ -108,11 +109,11 @@ namespace Beast.Radar.InputControl
 
         private void LateInput()
         {
-            if (_playerInput.Scheme == EInputScheme.Mouse)
+            if (_playerInput.Scheme is EInputScheme.Mouse or EInputScheme.Keyboard)
             {
                 _lastZoomDistance = 0f;
-                LastScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                LastTouchCount = Mouse.current.press.isPressed ? 1 : 0;
+                LastScreenPoint = (float2)_actions.Player.FirstPosition.ReadValue<Vector2>();
+                LastTouchCount = Mouse.current.press.isPressed || !MoveDelta.Equals(float2.zero)  ? 1 : 0;
             }
             else if(_playerInput.Scheme is EInputScheme.Keyboard or EInputScheme.Gamepad)
             {

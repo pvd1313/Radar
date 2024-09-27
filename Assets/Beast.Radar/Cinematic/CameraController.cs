@@ -26,16 +26,16 @@ namespace Beast.Radar.Cinematic
         {
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
-            
+
             BeastScene.Instantiate
             (
                 _config.viewPrefab,
-                float3.zero, 
+                float3.zero,
                 quaternion.identity
             );
-            
+
             _input.ChangedEarlyValues += OnChangedEarlyInputValues;
-            
+
             return InitializationResult.SuccessNotAsync();
         }
 
@@ -44,12 +44,12 @@ namespace Beast.Radar.Cinematic
             _input.Dispose();
             return DispositionResult.SuccessNotAsync();
         }
-        
+
         private void OnChangedEarlyInputValues()
         {
             ProcessCamera();
         }
-        
+
         private void ProcessCamera()
         {
             if (_input.LastScreenPoint.Magnitude() == 0)
@@ -68,9 +68,12 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 screenDelta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
-            float2 newPosition = State.position - screenDelta - _input.MoveDelta;
-         
+            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
+            float2 direction = _input.MoveDelta.Equals(float2.zero) 
+                ?  ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint) 
+                : _input.MoveDelta;
+            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime * _config.motionSpeed;
+
             if (BorderCheck(newPosition))
             {
                 RefreshStatePosition(newPosition);
@@ -91,11 +94,11 @@ namespace Beast.Radar.Cinematic
             zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
             zoomDelta = BMath.Max(0.001f, zoomDelta);
             zoomDelta *= _input.Zoom;
-            
+
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
-            
+
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
-            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom; 
+            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
             float2 newPosition = State.position + pointDelta;
 
             if (BorderCheck(newPosition))
@@ -116,10 +119,10 @@ namespace Beast.Radar.Cinematic
 
             return result <= 1.0f;
         }
-        
+
         private float2 ScreenPointToWorld(float2 screenPoint)
         {
-            float2 viewport = new ( screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+            float2 viewport = new(screenPoint.x / Screen.width, screenPoint.y / Screen.height);
             return ViewportToWorld(viewport);
         }
 

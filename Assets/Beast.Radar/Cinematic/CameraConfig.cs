@@ -17,5 +17,8 @@ namespace Beast.Radar.Cinematic
         public Float2MinMax zoomRange;
         public float zoomSpeed;
         public AnimationCurve zoomCurve;
+
+        [Space] 
+        public float motionSpeed;
     }
 }
