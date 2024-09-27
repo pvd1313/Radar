@@ -1,58 +1,56 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Unity.Mathematics;
 using UnityEngine.InputSystem;
 
-namespace Beast.Radar.Cinematic
+namespace Beast.Radar.InputControl
 {
-    public class PlayerInputView: BeastMono, Initializable, Disposable
+    public class PlayerInputProvider: IPlayerInputProvider 
     {
+        public event Action<EInputScheme> ChangedScheme;
         public EInputScheme Scheme => _inputScheme;
 
         private EInputScheme _inputScheme;
+        private PlayerInputView _view;
         
-        [SerializeField] private PlayerInput _playerInput;
+        public PlayerInputProvider(PrefabsLibrary config)
+        {
+            _view = config.playerInputPrefab;
+        }
         
         public UniTask<InitializationResult> Initialize()
         {
-            _playerInput = FindObjectOfType<PlayerInput>();
-            RefreshCurrentScheme(_playerInput);
-            SubscribeToEvents(true);
+            PlayerInputView newInstance = BeastScene.Instantiate(_view, float3.zero, quaternion.identity);
+            _view = newInstance;
+            
+            RefreshCurrentScheme(_view.PlayerInput);
+            
+            _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
+            
             return InitializationResult.SuccessNotAsync();
         }
 
         public UniTask<DispositionResult> Dispose()
         {
-            SubscribeToEvents(false);
+            _view.PlayerInput.onControlsChanged -= RefreshCurrentScheme;
+            
             return DispositionResult.SuccessNotAsync();
-        }
-
-        private void SubscribeToEvents(bool flag)
-        {
-            if (flag)
-            {
-                _playerInput.onControlsChanged += RefreshCurrentScheme;
-            }
-            else
-            {
-                _playerInput.onControlsChanged -= RefreshCurrentScheme;
-            }
         }
         
         private void RefreshCurrentScheme(PlayerInput input)
         {
-            Enum.TryParse(_playerInput.currentControlScheme, out  _inputScheme);
+            Enum.TryParse(_view.PlayerInput.currentControlScheme, out  _inputScheme);
             
             if (_inputScheme == EInputScheme.Mouse && Mouse.current == null)
             {
                 BeastLog.Error(this,"Try setting the mouse scheme with an empty mouse device.");
                 _inputScheme = EInputScheme.Touch;
-                return;
             }
             
-            Debug.Log($"Current input scheme is being refreshed: {_inputScheme}");
+            ChangedScheme?.Invoke(_inputScheme);
         }
     }
 }
