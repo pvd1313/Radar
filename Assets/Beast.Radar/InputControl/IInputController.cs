@@ -4,12 +4,10 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IInputController : Initializable, Disposable, IFrameBeginUpdate, IFrameEndUpdate
+    public interface IInputController : Initializable, Disposable, IFrameBeginUpdate
     {
         public event Action ChangedEarlyValues;
-        
         public float2 ScreenPoint { get; }
-        public float2 LastScreenPoint { get; }
         public float2 MoveDelta{ get; }
         public int CurrentTouchCount { get; }
         public int LastTouchCount { get; }

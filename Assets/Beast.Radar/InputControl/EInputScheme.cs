@@ -3,9 +3,8 @@
     public enum EInputScheme
     {
         None,
-        Mouse,
+        MouseAndKeyboard,
         Gamepad,
         Touch,
-        Keyboard
     }
 }

@@ -73,5 +73,11 @@ namespace Beast.Claw.Mathematics
         {
             return math.clamp(x, 0, 1);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Clamp(float2 value, float min, float max)
+        {
+            return math.clamp(value, min, max);
+        }
     }
 }
