@@ -54,6 +54,8 @@ namespace Beast.Claw.Editor
 
             public static void SaveAssetDialog(string fileName, Action<string> action)
             {
+                BeastAssert.ArgumentNotNull(action, "SaveAssetDialog : action");
+                
                 string path = EditorUtility.SaveFilePanel(
                     "Save asset",
                     Application.dataPath,
@@ -75,7 +77,7 @@ namespace Beast.Claw.Editor
 
             public static void Button(string label, Action action)
             {
-                BeastAssert.NotNull(action, $"{NicifyLabel(label)} : action");
+                BeastAssert.ArgumentNotNull(action, $"{NicifyLabel(label)} : action");
                 
                 if (GUILayout.Button(NicifyLabel(label)))
                 {

@@ -41,7 +41,7 @@ namespace Beast.Radar.World
         {
             Application.targetFrameRate = 4064;
             
-            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPersistentRenderTextureData
+            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPermaRenderTextureData
             {
                 size = WorldSize,
                 depth = 0,

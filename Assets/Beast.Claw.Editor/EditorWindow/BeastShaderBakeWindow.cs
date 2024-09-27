@@ -39,7 +39,7 @@ namespace Beast.Claw.Editor
                     () =>
                     {
                         _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
-                        BeastAssert.NotNull(_renderMaterial, nameof(_renderMaterial));
+                        BeastAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
                     },
                     () =>
                     {
@@ -84,7 +84,7 @@ namespace Beast.Claw.Editor
         private void BakeMap()
         {
             RenderTexture renderTextureBig = BeastCG.NewRenderTextureTemporary(this,
-                new NewTemporaryRenderTextureData
+                new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
                     size = _outputTextureSize,
@@ -92,7 +92,7 @@ namespace Beast.Claw.Editor
                 });
 
             RenderTexture renderTextureSmall = BeastCG.NewRenderTextureTemporary(this,
-                new NewTemporaryRenderTextureData
+                new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
                     size = PreviewTextureSize,

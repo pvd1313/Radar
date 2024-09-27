@@ -2,11 +2,11 @@
 {
     public static class BeastAssert
     {
-        public static void NotNull<T>(T obj, string objectName)
+        public static void ArgumentNotNull<T>(T obj, string argumentName)
         {
             if (obj == null)
             {
-                throw new BeastAssertionException($"'{objectName}' can not be null");
+                throw new BeastAssertionException($"'{argumentName}' can not be null");
             }
         }
 

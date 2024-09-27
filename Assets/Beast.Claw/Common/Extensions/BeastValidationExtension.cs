@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Common
 {
-    public static class ValidationExtensions
+    public static class BeastValidationExtension
     {
         public static void ValidateThrowException<T>(this T data) where T : IValidatable
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Common
 {
-    public static class BeastUtil
+    public static class BeastVectorExtension
     {
         public static Vector3 AsVector3(this float2 value)
         {

@@ -37,7 +37,7 @@ namespace Beast.Radar.Cinematic
             _screenCenter = new float2((float)Screen.width / 2,(float)Screen.height/ 2);
 
             Debug.Log($"{_playerInputView} {float3.zero} {quaternion.identity}");
-            PlayerInputView newInstance = BeastScene.NewInstance(_playerInputView, float3.zero, quaternion.identity);
+            PlayerInputView newInstance = BeastScene.Instantiate(_playerInputView, float3.zero, quaternion.identity);
             newInstance.Initialize();
             _playerInputView = newInstance;
 
