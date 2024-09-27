@@ -7,17 +7,17 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.Cinematic
 {
-    public class PlayerInputView: BeastMono, Initializable, Disposable
+    public class PlayerInputView : BeastMono, Initializable, Disposable
     {
         public EInputScheme Scheme => _inputScheme;
 
         private EInputScheme _inputScheme;
+        public PlayerInput PlayerInput => _playerInput;
         
         [SerializeField] private PlayerInput _playerInput;
         
         public UniTask<InitializationResult> Initialize()
         {
-            _playerInput = FindObjectOfType<PlayerInput>();
             RefreshCurrentScheme(_playerInput);
             SubscribeToEvents(true);
             return InitializationResult.SuccessNotAsync();
