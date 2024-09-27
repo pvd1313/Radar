@@ -8,9 +8,15 @@ namespace Beast.Claw.Editor
     public partial struct BeastEditorUI
     {
         public bool success;
-
+        public bool niceLabelsEnabled;
+        
         private string NicifyLabel(string label)
         {
+            if (!niceLabelsEnabled)
+            {
+                return label;
+            }
+            
             return ObjectNames.NicifyVariableName(label);
         }
 

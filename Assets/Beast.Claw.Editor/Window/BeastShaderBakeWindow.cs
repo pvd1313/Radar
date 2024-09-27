@@ -4,7 +4,7 @@ using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Editor.Toolkit
+namespace Beast.Claw.Editor.Window
 {
     public class BeastShaderBakeWindow : BeastEditorWindow
     {

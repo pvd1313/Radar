@@ -51,6 +51,31 @@ namespace Beast.Claw.Editor
             return EditorGUILayout.IntField(NicifyLabel(label), value);
         }
 
+        public float FloatField(string label, float value)
+        {
+            return EditorGUILayout.FloatField(NicifyLabel(label), value);
+        }
+
+        public float2 Float2Field(string label, float2 value)
+        {
+            return EditorGUILayout.Vector2Field(NicifyLabel(label), value);
+        }
+        
+        public float3 Float3Field(string label, float3 value)
+        {
+            return EditorGUILayout.Vector3Field(NicifyLabel(label), value);
+        }
+        
+        public float4 Float4Field(string label, float4 value)
+        {
+            return EditorGUILayout.Vector4Field(NicifyLabel(label), value);
+        }
+
+        public string StringField(string label, string value)
+        {
+            return EditorGUILayout.TextField(label, value);
+        }
+
         public T AssetField<T>(string label, T obj) where T : Object
         {
             return (T)EditorGUILayout.ObjectField(NicifyLabel(label), obj, typeof(T), false);

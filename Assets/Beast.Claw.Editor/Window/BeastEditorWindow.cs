@@ -1,12 +1,12 @@
 ﻿using Beast.Claw.Attributes;
 using UnityEditor;
 
-namespace Beast.Claw.Editor
+namespace Beast.Claw.Editor.Window
 {
     [FancyAsset]
     public abstract class BeastEditorWindow : EditorWindow
     {
-        protected BeastEditorUI UI { get; private set; }
+        protected BeastEditorUI UI { get; set; }
 
         protected abstract void Initialize();
 
@@ -18,7 +18,8 @@ namespace Beast.Claw.Editor
         {
             UI = new BeastEditorUI
             {
-                success = true
+                success = true,
+                niceLabelsEnabled = true
             };
             
             Initialize();

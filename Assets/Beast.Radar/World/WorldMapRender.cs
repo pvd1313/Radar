@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.CG;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.CG;
@@ -71,6 +72,11 @@ namespace Beast.Radar.World
 
         public void OnFrameEnd()
         {
+            BeastLog.Float(this, "camera_x", _camera.State.position.x);
+            BeastLog.Float(this, "camera_y", _camera.State.position.y);
+            
+            BeastLog.Float2(this, "cameraPosition", _camera.State.position);
+            
             float screenAspect = Screen.width / (float)Screen.height;
             float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
             Vector2 cameraPosition = _camera.State.position;
