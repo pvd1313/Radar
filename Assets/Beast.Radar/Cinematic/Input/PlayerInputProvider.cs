@@ -21,7 +21,7 @@ namespace Beast.Radar.Cinematic
         
         public UniTask<InitializationResult> Initialize()
         {
-            PlayerInputView newInstance = BeastScene.NewInstance(_view, float3.zero, quaternion.identity);
+            PlayerInputView newInstance = BeastScene.Instantiate(_view, float3.zero, quaternion.identity);
             _view = newInstance;
             
             _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
