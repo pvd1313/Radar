@@ -93,7 +93,7 @@ namespace Beast.Radar.Cinematic
 
         private void Zoom()
         {
-            if (_input.Zoom == 0)
+            if (_input.ZoomAxis == 0)
             {
                 return;
             }
@@ -103,8 +103,7 @@ namespace Beast.Radar.Cinematic
 
             float zoomDelta = _currentParams.zoomSpeed * Time.deltaTime;
             zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
-            zoomDelta = BMath.Max(0.000f, zoomDelta);
-            zoomDelta *= _input.Zoom;
+            zoomDelta *= _input.ZoomAxis;
 
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
 

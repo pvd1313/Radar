@@ -12,6 +12,6 @@ namespace Beast.Radar.InputControl
         public int CurrentTouchCount { get; }
         public int LastTouchCount { get; }
         public bool IsPressMove { get; }
-        public float Zoom { get; }
+        public float ZoomAxis { get; }
     }
 }

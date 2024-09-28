@@ -17,7 +17,7 @@ namespace Beast.Radar.InputControl
         public int CurrentTouchCount { get; private set; }
         public int LastTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
-        public float Zoom { get; private set; }
+        public float ZoomAxis { get; private set; }
 
         private readonly IPlayerInputProvider _playerInput;
         private InputActions _actions;
@@ -53,7 +53,7 @@ namespace Beast.Radar.InputControl
         {
             if (_playerInput.Scheme is EInputScheme.MouseAndKeyboard)
             {
-                Zoom = _actions.Player.Scroll.ReadValue<float>();
+                ZoomAxis = _actions.Player.Scroll.ReadValue<float>();
                 ScreenPoint =_actions.Player.FirstPosition.ReadValue<Vector2>();
                 MoveDelta = _actions.Player.Move.IsPressed()
                     ? _actions.Player.Move.ReadValue<Vector2>()
@@ -64,7 +64,7 @@ namespace Beast.Radar.InputControl
             }
             else if(_playerInput.Scheme is EInputScheme.Gamepad)
             {
-                Zoom = _actions.Player.Scroll.ReadValue<float>();
+                ZoomAxis = _actions.Player.Scroll.ReadValue<float>();
                 MoveDelta = _actions.Player.Move.ReadValue<Vector2>();
                 ScreenPoint = float2.zero;
                 CurrentTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
@@ -77,11 +77,11 @@ namespace Beast.Radar.InputControl
                 switch (CurrentTouchCount)
                 {
                     case 0:
-                        Zoom = 0;
+                        ZoomAxis = 0;
                         break;
                     case 1:
                         ScreenPoint = _actions.Player.FirstPosition.ReadValue<Vector2>();
-                        Zoom = 0;
+                        ZoomAxis = 0;
                         break;
                     case 2:
                         float2 t0 = _actions.Player.FirstPosition.ReadValue<Vector2>();
@@ -91,11 +91,11 @@ namespace Beast.Radar.InputControl
 
                         if (_lastZoomDistance == 0f)
                         {
-                            Zoom = 0f;
+                            ZoomAxis = 0f;
                         }
                         else
                         {
-                            Zoom = zoomDistance - _lastZoomDistance;
+                            ZoomAxis = zoomDistance - _lastZoomDistance;
                         }
                         break;
                 }
