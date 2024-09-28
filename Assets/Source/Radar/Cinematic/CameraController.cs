@@ -68,43 +68,51 @@ namespace Beast.Radar.Cinematic
         private void OnChangedInputScheme(EInputScheme scheme)
         {
             _currentParams = _config.GetParams(scheme);
-          //  Debug.Log($"Change param {_currentParams.zoomSpeed}");
+  
         }
         
         private void ProcessCamera()
         {
+            if (_input.LastTouchCount != _input.CurrentTouchCount)
+            {
+                return;
+            }
+            
             Move();
             Zoom();
         }
 
         private void Move()
         {
-            if (!_input.IsPressMove || _input.LastTouchCount != _input.CurrentTouchCount)
+            if (!_input.IsPressMove)
             {
                 return;
             }
 
-            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01) * 0.5f;
-            float2 direction = _input.MoveDelta * _currentParams.motionSpeed;
-            float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime;
-
+            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01 * 0.2f);
+            float2 moveDelta = _input.MoveDelta.Equals(float2.zero)
+                ? ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint)
+                :_input.MoveDelta * _currentParams.motionSpeed * zoomDistance;
+            float2 newPosition = State.position - moveDelta;
+            
             RefreshStatePosition(newPosition);
         }
 
         private void Zoom()
         {
-            if (_input.ZoomAxis == 0)
+            if (_input.ScrollDelta == 0)
             {
                 return;
             }
-
+            
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
 
             float zoomDelta = _currentParams.zoomSpeed * Time.deltaTime;
             zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
-            zoomDelta *= _input.ZoomAxis;
-
+            zoomDelta = BMath.Max(0, zoomDelta);
+            zoomDelta *= _input.ScrollDelta;
+            
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
 
             if (_inputProvider.Scheme is EInputScheme.Gamepad)
@@ -149,5 +157,6 @@ namespace Beast.Radar.Cinematic
             state.zoom01 = zoom;
             State = state;
         }
+        
     }
 }

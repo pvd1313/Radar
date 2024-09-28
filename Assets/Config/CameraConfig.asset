@@ -23,14 +23,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.001
-      inSlope: 2
-      outSlope: 2
+      time: 0.0020828247
+      value: 0.8002014
+      inSlope: 0.5839381
+      outSlope: 0.5839381
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.08958332
     - serializedVersion: 3
       time: 1
       value: 1
@@ -38,18 +38,18 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.21666664
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraParams:
   - schemes: 01000000
-    zoomSpeed: 30
-    motionSpeed: 4
-  - schemes: 02000000
-    zoomSpeed: 3
-    motionSpeed: 4
+    zoomSpeed: 9
+    motionSpeed: 0.01
   - schemes: 03000000
-    zoomSpeed: 0.25
-    motionSpeed: 0.35
+    zoomSpeed: 0.15
+    motionSpeed: 1
+  - schemes: 02000000
+    zoomSpeed: 1.5
+    motionSpeed: 0.01
