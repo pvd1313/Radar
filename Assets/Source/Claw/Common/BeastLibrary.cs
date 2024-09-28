@@ -1,6 +1,9 @@
-﻿namespace Beast.Claw.Common
+﻿using Beast.Claw.Attributes;
+
+namespace Beast.Claw.Common
 {
-    public abstract class BeastLibrary : BeastConfig
+    [FancyAsset]
+    public abstract class BeastLibrary : BeastScriptable
     {
         
     }

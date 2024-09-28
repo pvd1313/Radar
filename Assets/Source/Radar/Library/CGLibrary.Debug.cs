@@ -10,6 +10,8 @@ namespace Beast.Radar.CG
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             public Texture bakedMap4096;
+
+            public Texture tileGrid;
 #endif
         }
     }

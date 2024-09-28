@@ -2,15 +2,7 @@
 {
     Properties
     {
-        _WorldTexture ("_WorldTexture", 2D) = "white" { }
-        _WorldTextureSize ("_WorldTextureSize", Vector) = (0, 0, 0, 0)
         
-        _ScreenAspect ("_ScreenAspect", Float) = 1
-        _ViewDistance ("_ViewDistance", Float) = 128
-        _CameraPosition ("_CameraPosition", Vector) = (0, 0, 0, 0)
-        
-        _WorldNoiseTexture ("_WorldNoiseTexture", 2D) = "black" { }
-        _WorldNoiseTextureSize ("_WorldNoiseTextureSize", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {

@@ -3,7 +3,7 @@ using Beast.Radar.InputControl;
 
 namespace Beast.Radar.Prefabs
 {
-    public class PrefabsLibrary: BeastLibrary
+    public class PrefabLibrary: BeastLibrary
     {
         public PlayerInputView playerInputPrefab;
     }

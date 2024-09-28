@@ -12,9 +12,19 @@ namespace Beast.Claw.Common
         [Sirenix.OdinInspector.InlineEditor]
 #endif
         public List<BeastConfig> configs;
+
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.InlineEditor]
+#endif
+        public List<BeastLibrary> libraries;
         
         public override void InstallBindings()
         {
+            foreach (BeastLibrary library in libraries)
+            {
+                Container.BindInterfacesAndSelfTo(library.GetType()).FromInstance(library).AsSingle();
+            }
+            
             foreach (BeastConfig config in configs)
             {
                 Container.BindInterfacesAndSelfTo(config.GetType()).FromInstance(config).AsSingle();

@@ -17,7 +17,7 @@ namespace Beast.Radar.InputControl
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
         
-        public PlayerInputProvider(PrefabsLibrary config)
+        public PlayerInputProvider(PrefabLibrary config)
         {
             _view = config.playerInputPrefab;
         }
