@@ -1,6 +1,6 @@
 {
     "name": "Beast.Claw.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "Beast.Claw.Editor",
     "references": [
         "GUID:3ca8674318e44f34db196a44ad18d7f8",
         "GUID:9191dbb2e27df304f93697312d879fb1",

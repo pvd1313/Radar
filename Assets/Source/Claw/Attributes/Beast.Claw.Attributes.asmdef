@@ -1,9 +1,7 @@
 {
     "name": "Beast.Claw.Attributes",
-    "rootNamespace": "",
-    "references": [
-        "GUID:3eae0364be2026648bf74846acb8a731"
-    ],
+    "rootNamespace": "Beast.Claw.Attributes",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

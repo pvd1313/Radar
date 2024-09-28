@@ -20,7 +20,7 @@ MonoBehaviour:
     x: 0
     y: 0
   zoomRange:
-    min: 100
+    min: 1
     max: 4000
   zoomCurve:
     serializedVersion: 2
@@ -48,8 +48,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   cameraParams:
   - schemes: 0100000002000000
-    zoomSpeed: 4
-    motionSpeed: 0.9
+    zoomSpeed: 3
+    motionSpeed: 4
   - schemes: 03000000
     zoomSpeed: 0.25
     motionSpeed: 0.35

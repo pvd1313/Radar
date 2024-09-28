@@ -107,7 +107,7 @@ namespace Beast.Radar.Cinematic
 
             float zoomDelta = _currentParams.zoomSpeed * Time.deltaTime;
             zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
-            zoomDelta = BMath.Max(0.001f, zoomDelta);
+            zoomDelta = BMath.Max(0.000f, zoomDelta);
             zoomDelta *= _input.Zoom;
 
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
@@ -166,6 +166,7 @@ namespace Beast.Radar.Cinematic
         private void RefreshStateZoom(float zoom)
         {
             CameraControllerState state = State;
+
             state.zoom01 = zoom;
             State = state;
         }

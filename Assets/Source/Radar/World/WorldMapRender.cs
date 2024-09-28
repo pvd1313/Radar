@@ -15,6 +15,7 @@ namespace Beast.Radar.World
     {
         public static readonly int2 WorldSize = new(4096, 4096);
         
+        
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
         private readonly CGLibrary _cgLibrary;
@@ -72,9 +73,6 @@ namespace Beast.Radar.World
 
         public void OnFrameEnd()
         {
-            BeastLog.Float(this, "camera_x", _camera.State.position.x);
-            BeastLog.Float(this, "camera_y", _camera.State.position.y);
-            
             BeastLog.Float2(this, "cameraPosition", _camera.State.position);
             
             float screenAspect = Screen.width / (float)Screen.height;
@@ -92,6 +90,11 @@ namespace Beast.Radar.World
             Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
             _material.SetTexture("_WorldNoiseTexture", worldDetailNoise);
             _material.SetVector("_WorldNoiseTextureSize", (Vector2)worldDetailNoise.WidthHeight());
+
+            float mapChunkSize = 100;
+            float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);
+
+            BeastLog.Float(this, "chunkTexelSize", chunkTexelSize);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {
