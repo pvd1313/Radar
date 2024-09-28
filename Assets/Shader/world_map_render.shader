@@ -103,10 +103,8 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float noisePower1 = NOISE_POWER_1 * 1;
-                
                 float4 color0 = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET_0, NOISE_POWER_0);
-                float4 color1 = noise_shift(input.mainUV, input.noiseUV * 1.5, NOISE_OFFSET_1, noisePower1);
+                float4 color1 = noise_shift(input.mainUV, input.noiseUV * 1.5, NOISE_OFFSET_1, NOISE_POWER_1);
 
                 float4 color = saturate((color0 + color1) * 90);
 
