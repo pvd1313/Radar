@@ -55,6 +55,25 @@ float beast_fbm(float2 uv,
     return color;
 }
 
+void BeastRect_float(in float2 UV,
+                     in float4 RGBA,
+                     in float4 RectColor,
+                     in float2 LineWidth,
+                     out float4 Out)
+{
+    if (UV.x < LineWidth.x ||
+        UV.y < LineWidth.y ||
+        UV.x > 1 - LineWidth.x ||
+        UV.y > 1 - LineWidth.y)
+    {
+        Out = RectColor;
+    }
+    else
+    {
+        Out = RGBA;
+    }
+}
+
 void BeastNoise_float(in float2 UV,
                       in float seed,
                       out float R)

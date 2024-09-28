@@ -13,8 +13,7 @@ namespace Beast.Radar.World
 {
     public class WorldMapRender : Initializable, IFrameEndUpdate
     {
-        public static readonly int2 WorldSize = new(4096, 4096);
-        
+        private static readonly int2 WorldSize = new(4096, 4096);
         
         private readonly WorldMapConfig _config;
         private readonly IWorldMapBaker _mapBaker;
@@ -80,7 +79,7 @@ namespace Beast.Radar.World
             Vector2 cameraPosition = _camera.State.position;
             Vector2 worldSizeVector = new (WorldSize.x, WorldSize.y);
             
-            _material.SetFloat("_ScreenAspect", screenAspect);
+            _material.SetFloat("_RenderAspect", screenAspect);
             _material.SetFloat("_ViewDistance", viewDistance);
             _material.SetVector("_CameraPosition", cameraPosition);
             

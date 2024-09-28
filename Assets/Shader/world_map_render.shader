@@ -39,7 +39,7 @@
 
             sampler2D _WorldTexture;
             float2 _WorldTextureSize;
-            float _ScreenAspect;
+            float _RenderAspect;
             float _ViewDistance;
             float2 _CameraPosition;
             sampler2D _WorldNoiseTexture;
@@ -52,12 +52,12 @@
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
                 output.mainUV = input.screenUV - 0.5;
-                output.mainUV.x *= _ScreenAspect;
+                output.mainUV.x *= _RenderAspect;
                 output.mainUV *= _ViewDistance / _WorldTextureSize;
                 output.mainUV += _CameraPosition / _WorldTextureSize;
                 
                 output.noiseUV = input.screenUV - 0.5;
-                output.noiseUV.x *= _ScreenAspect;
+                output.noiseUV.x *= _RenderAspect;
                 output.noiseUV *= _ViewDistance / _WorldNoiseTextureSize;
                 output.noiseUV += _CameraPosition / _WorldNoiseTextureSize;
 
@@ -66,17 +66,19 @@
 
             float2 unpack_normal(float2 color)
             {
-                return (color - 0.5) * 2;
+                return (color - float2(0.5, 0.5)) * float2(2, 2);
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float difference = _WorldTextureSize / _WorldNoiseTextureSize;
-                float2 noiseRG = tex2D(_WorldNoiseTexture, input.noiseUV * difference).xy;
+                float2 NoiseShift = float2(8, 8);
+                float2 noisePower = float2(0.3, 0.2);
+                
+                float2 noiseRG = tex2D(_WorldNoiseTexture, input.noiseUV * NoiseShift).rg;
                 float2 texelSize = _WorldTextureSize / _ViewDistance;
-                float2 noise = unpack_normal(noiseRG) * 0.2;
+                float2 noise = unpack_normal(noiseRG) * noisePower;
 
-                input.mainUV = input.mainUV + noise * 8 / _WorldTextureSize;
+                input.mainUV = input.mainUV + noise * NoiseShift / _WorldTextureSize;
                 input.mainUV = float2 (input.mainUV / texelSize) * texelSize;
                 
                 float color = tex2D(_WorldTexture, input.mainUV);
