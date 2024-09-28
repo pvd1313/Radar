@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Debugging;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.InputControl;
@@ -9,7 +8,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : ICameraController, IGizmos
+    public class CameraController : ICameraController
     {
         public CameraControllerState State { get; private set; }
 
@@ -89,10 +88,7 @@ namespace Beast.Radar.Cinematic
             float2 direction = _input.MoveDelta * _currentParams.motionSpeed;
             float2 newPosition = State.position - direction * zoomDistance * Time.deltaTime;
 
-            if (BorderCheck(newPosition))
-            {
-                RefreshStatePosition(newPosition);
-            }
+            RefreshStatePosition(newPosition);
         }
 
         private void Zoom()
@@ -121,23 +117,7 @@ namespace Beast.Radar.Cinematic
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
             float2 newPosition = State.position + pointDelta;
 
-            if (BorderCheck(newPosition))
-            {
-                RefreshStatePosition(newPosition);
-            }
-        }
-
-        private bool BorderCheck(float2 position)
-        {
-            float x = position.x;
-            float y = position.y;
-
-            float a = _config.ellipseSize.x;
-            float b = _config.ellipseSize.y;
-
-            float result = x * x / (a * a) + y * y / (b * b);
-
-            return result <= 1.0f;
+            RefreshStatePosition(newPosition);
         }
 
         private float2 ScreenPointToWorld(float2 screenPoint)
@@ -169,31 +149,6 @@ namespace Beast.Radar.Cinematic
 
             state.zoom01 = zoom;
             State = state;
-        }
-
-        public void OnDrawGizmos()
-        {
-            Gizmos.color = Color.blue;
-
-            const int segments = 100;
-            const float angleIncrement = 360.0f / segments;
-
-            var previousPoint = Vector3.zero;
-
-            for (var i = 0; i < segments; i++)
-            {
-                float angle = i * angleIncrement * Mathf.Deg2Rad;
-                float x = _config.ellipseSize.x * Mathf.Cos(angle);
-                float y = _config.ellipseSize.y * Mathf.Sin(angle);
-                float3 point = new float3(x, y, 0);
-
-                if (!previousPoint.Equals(Vector3.zero))
-                {
-                    Gizmos.DrawLine(previousPoint, point);
-                }
-
-                previousPoint = point;
-            }
         }
     }
 }
