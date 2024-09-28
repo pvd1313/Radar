@@ -27,7 +27,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.001
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -47,11 +47,11 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraParams:
-  - schemes: 02000000
-    zoomSpeed: 3
-    motionSpeed: 4
   - schemes: 01000000
     zoomSpeed: 30
+    motionSpeed: 4
+  - schemes: 02000000
+    zoomSpeed: 3
     motionSpeed: 4
   - schemes: 03000000
     zoomSpeed: 0.25
