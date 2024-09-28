@@ -47,8 +47,11 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraParams:
-  - schemes: 0100000002000000
+  - schemes: 02000000
     zoomSpeed: 3
+    motionSpeed: 4
+  - schemes: 01000000
+    zoomSpeed: 30
     motionSpeed: 4
   - schemes: 03000000
     zoomSpeed: 0.25
