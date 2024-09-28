@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
   viewPrefab: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
-  ellipseSize:
-    x: 5000
-    y: 5000
   startPosition:
     x: 0
     y: 0
