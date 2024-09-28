@@ -17,4 +17,5 @@ MonoBehaviour:
   worldMapRenderShader: {fileID: 4800000, guid: 65927220e261484ba1bfac59916bdc0d, type: 3}
   worldDetailNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
-    bakedMap4096: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
+    bakedWorldMap: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
+    worldGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}

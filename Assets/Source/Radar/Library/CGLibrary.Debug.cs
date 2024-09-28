@@ -9,9 +9,9 @@ namespace Beast.Radar.CG
         public class Debug
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            public Texture bakedMap4096;
+            public Texture2D bakedWorldMap;
 
-            public Texture tileGrid;
+            public Texture2D worldGrid;
 #endif
         }
     }

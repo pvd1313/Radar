@@ -76,19 +76,20 @@ namespace Beast.Radar.World
             
             float screenAspect = Screen.width / (float)Screen.height;
             float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
-            Vector2 cameraPosition = _camera.State.position;
-            Vector2 worldSizeVector = new (WorldSize.x, WorldSize.y);
             
             _material.SetFloat("_RenderAspect", screenAspect);
-            _material.SetFloat("_ViewDistance", viewDistance);
-            _material.SetVector("_CameraPosition", cameraPosition);
+            _material.SetFloat("_RenderSizeY", viewDistance);
+            _material.SetVector("_RenderCenter", _camera.State.position);
             
-            _material.SetVector("_WorldTextureSize", worldSizeVector);
-            _material.SetTexture("_WorldTexture", _worldTexture);
+            _material.SetTexture("_MainMap", _worldTexture);
+            _material.SetVector("_MainMapSize", WorldSize);
+            
+            _material.SetTexture("_GridMap", _cgLibrary.debug.worldGrid);
+            _material.SetVector("_GridMapSize", _cgLibrary.debug.worldGrid.WidthHeight());
             
             Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
-            _material.SetTexture("_WorldNoiseTexture", worldDetailNoise);
-            _material.SetVector("_WorldNoiseTextureSize", (Vector2)worldDetailNoise.WidthHeight());
+            _material.SetTexture("_NoiseMap", worldDetailNoise);
+            _material.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeight());
 
             float mapChunkSize = 100;
             float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);

@@ -24,6 +24,8 @@
 
             #include "UnityCG.cginc"
 
+            #define WORLD_MAP_RENDER_GRID
+
             struct VertexInput
             {
                 float4 positionOS : POSITION;
@@ -34,16 +36,35 @@
             {
                 float2 mainUV : TEXCOORD0;
                 float2 noiseUV : TEXCOORD1;
+
+#ifdef  WORLD_MAP_RENDER_GRID
+                float2 gridUV : TEXCOORD2;
+#endif
+                
                 float4 positionCS : SV_POSITION;
             };
 
-            sampler2D _WorldTexture;
-            float2 _WorldTextureSize;
+            sampler2D _MainMap;
+            float2 _MainMapSize;
+
+            sampler2D _NoiseMap;
+            float2 _NoiseMapSize;
+
+            sampler2D _GridMap;
+            float2 _GridMapSize;
+            
             float _RenderAspect;
-            float _ViewDistance;
-            float2 _CameraPosition;
-            sampler2D _WorldNoiseTexture;
-            float2 _WorldNoiseTextureSize;
+            float _RenderSizeY;
+            float2 _RenderCenter;
+
+            #define BEAST_WORLD_MAP_RENDER_PPU 100;
+            #define BEAST_WORLD_MAP_RENDER_NOISE_SHIFT float2(8, 8)
+            #define BEAST_WORLD_MAP_RENDER_NOISE_POWER float2(0.3, 0.2)
+            
+            inline float2 unpack_normal_2d(float2 color)
+            {
+                return (color - 0.5) * 2;
+            }
 
             FragmentInput vertex(VertexInput input)
             {
@@ -51,39 +72,40 @@
                 
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
-                output.mainUV = input.screenUV - 0.5;
-                output.mainUV.x *= _RenderAspect;
-                output.mainUV *= _ViewDistance / _WorldTextureSize;
-                output.mainUV += _CameraPosition / _WorldTextureSize;
-                
-                output.noiseUV = input.screenUV - 0.5;
-                output.noiseUV.x *= _RenderAspect;
-                output.noiseUV *= _ViewDistance / _WorldNoiseTextureSize;
-                output.noiseUV += _CameraPosition / _WorldNoiseTextureSize;
+                float2 uv = (input.screenUV - 0.5) * float2(_RenderAspect, 1);
+
+                output.mainUV = uv * (_RenderSizeY / _MainMapSize) + _RenderCenter / _MainMapSize;
+                output.noiseUV = uv * (_RenderSizeY / _NoiseMapSize) + _RenderCenter / _NoiseMapSize;
+
+#ifdef WORLD_MAP_RENDER_GRID
+                output.gridUV = uv * (_RenderSizeY / _GridMapSize) + _RenderCenter / _GridMapSize;
+                output.gridUV *= BEAST_WORLD_MAP_RENDER_PPU;
+#endif
 
                 return output;
             }
 
-            float2 unpack_normal(float2 color)
-            {
-                return (color - float2(0.5, 0.5)) * float2(2, 2);
-            }
-
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float2 NoiseShift = float2(8, 8);
-                float2 noisePower = float2(0.3, 0.2);
+                float2 NOISE_SHIFT = BEAST_WORLD_MAP_RENDER_NOISE_SHIFT;
+                float2 NOISE_POWER = BEAST_WORLD_MAP_RENDER_NOISE_POWER;
                 
-                float2 noiseRG = tex2D(_WorldNoiseTexture, input.noiseUV * NoiseShift).rg;
-                float2 texelSize = _WorldTextureSize / _ViewDistance;
-                float2 noise = unpack_normal(noiseRG) * noisePower;
+                float2 noiseRG = tex2D(_NoiseMap, input.noiseUV * NOISE_SHIFT).rg;
+                float2 noise = unpack_normal_2d(noiseRG) * NOISE_POWER;
 
-                input.mainUV = input.mainUV + noise * NoiseShift / _WorldTextureSize;
+                float2 texelSize = _MainMapSize / _RenderSizeY;
+                input.mainUV = input.mainUV + noise * NOISE_SHIFT / _MainMapSize;
                 input.mainUV = float2 (input.mainUV / texelSize) * texelSize;
                 
-                float color = tex2D(_WorldTexture, input.mainUV);
+                float mainColor = tex2D(_MainMap, input.mainUV).r;
+
+#ifdef WORLD_MAP_RENDER_GRID
+                float gridColor = tex2D(_GridMap, input.gridUV).r;
+                float gridTexelSize = _RenderSizeY / _GridMapSize.y;
+                mainColor = lerp(mainColor, gridColor, 0.25 * saturate(1 - gridTexelSize));
+#endif
                 
-                return float4(color, 0, 0, 0);
+                return mainColor;
             }
             
             ENDCG
