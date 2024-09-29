@@ -13,21 +13,39 @@ namespace Beast.Claw.CG
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetVector(this Material material, string name, float2 vector)
+        public static void SetVector(this Material material, string name, float2 vector2)
         {
-            material.SetVector(name, (Vector2)vector);
+            material.SetVector(name, (Vector2)vector2);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetVector(this Material material, string name, float3 vector)
+        public static void SetVector(this Material material, string name, float3 vector3)
         {
-            material.SetVector(name, (Vector3)vector);
+            material.SetVector(name, (Vector3)vector3);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetVector(this Material material, string name, float4 vector)
+        public static void SetVector(this Material material, string name, float4 vector4)
         {
-            material.SetVector(name, vector);
+            material.SetVector(name, vector4);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetVector(this MaterialPropertyBlock propertyBlock, string name, float2 vector2)
+        {
+            propertyBlock.SetVector(name, (Vector2)vector2);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetVector(this MaterialPropertyBlock propertyBlock, string name, float3 vector3)
+        {
+            propertyBlock.SetVector(name, (Vector3)vector3);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetVector(this MaterialPropertyBlock propertyBlock, string name, float4 vector4)
+        {
+            propertyBlock.SetVector(name, vector4);
         }
     }
 }

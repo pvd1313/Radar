@@ -1,4 +1,4 @@
-﻿Shader "Beast/Radar/WorldMapRenderShader"
+﻿Shader "Beast/Radar/WorldMapRender"
 {
     Properties
     {
