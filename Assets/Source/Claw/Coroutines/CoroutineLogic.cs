@@ -24,6 +24,10 @@ namespace Beast.Claw.Coroutines
 
         public void StopCoroutine(Coroutine routine)
         {
+            if (routine == null)
+            {
+                throw new BeastException("Can`t stop a null coroutine.");
+            }
             _behaviour.StopCoroutine(routine);
         }
     }
