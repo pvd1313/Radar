@@ -44,11 +44,12 @@ public class IsometricRender2 : MonoBehaviour
         renderParams.matProps.SetVector("_CameraDirection", cameraObj.transform.forward);
         renderParams.matProps.SetVector("_RenderSize", screenSize);
         renderParams.matProps.SetTexture("_TileTexture", texture);
+        renderParams.matProps.SetTexture("_Texture", texture);
         renderParams.matProps.SetTexture("_NoiseTexture", noiseTexture);
         renderParams.matProps.SetVector("_NoiseTextureSize", noiseTexture.WidthHeight());
         renderParams.matProps.SetFloat("_VertexSize", vertexSize);
         renderParams.matProps.SetVector("_LayoutMatrix", layoutMatrix);
 
-        Graphics.RenderMeshPrimitives(renderParams, mesh, 0, (int)(gSize.x * gSize.y));
+        Graphics.RenderMeshPrimitives(renderParams, mesh, 0, (int)(gSize.x * gSize.y) + (int)(gSize.x - 1) * (int)(gSize.y - 1));
     }
 }

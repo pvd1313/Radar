@@ -53,6 +53,13 @@
             {
                 FragmentInput output;
 
+                // if (instanceID > ((_GridSize.x * _GridSize.y) + (_GridSize.x - 1) * (_GridSize.y - 1))
+                //     * frac(_Time.y))
+                // {
+                //     output.positionCS = 0;
+                //     return output;
+                // }
+
                 float aspect = _RenderSize.x / _RenderSize.y;
 
                 float2 gridScale = _VertexSize * 0.25;
@@ -94,7 +101,7 @@
 
                 input.vertex.y *= -1 * _ProjectionParams.x;
 
-                output.noiseUV = instanceID / (_GridSize.x * _GridSize.y);
+                output.noiseUV = instanceID / (_GridSize.x * _GridSize.y + (_GridSize.x - 1) * (_GridSize.y - 1));
 
                 output.mainUV = input.texcoord.xy;
                 output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1);
@@ -120,7 +127,7 @@
 
                 // mainColor = lerp(mainColor, centerColor, t);
                 
-                return mainColor * 0.5 + mainColor * input.noiseUV.x;
+                return input.noiseUV.x;
             }
             
             ENDCG
