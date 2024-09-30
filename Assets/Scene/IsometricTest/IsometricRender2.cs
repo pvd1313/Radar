@@ -1,15 +1,17 @@
 ﻿using Beast.Claw.CG;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class IsometricRender2 : MonoBehaviour
 {
     public Shader shader;
 
-    public int gridSize;
+    public int2 gridSize;
     public Camera cameraObj;
     public Texture2D texture;
     public Texture2D noiseTexture;
     public float vertexSize;
+    public Vector4 layoutMatrix;
 
     private Material _material;
 
@@ -19,7 +21,7 @@ public class IsometricRender2 : MonoBehaviour
     {
         _material = new Material(shader);
 
-        Application.targetFrameRate = 666;
+        Application.targetFrameRate = 4096;
     }
 
     private void Update()
@@ -34,14 +36,19 @@ public class IsometricRender2 : MonoBehaviour
 
         Vector2 screenSize = new Vector2(Screen.width, Screen.height);
 
-        renderParams.matProps.SetFloat("_GridSize", gridSize);
+        Vector4 gSize = new Vector4(gridSize.x, gridSize.y);
+        gSize.x = Mathf.Max(1, gridSize.x);
+        gSize.y = Mathf.Max(1, gridSize.y);
+        
+        renderParams.matProps.SetVector("_GridSize", gSize);
         renderParams.matProps.SetVector("_CameraDirection", cameraObj.transform.forward);
         renderParams.matProps.SetVector("_RenderSize", screenSize);
         renderParams.matProps.SetTexture("_TileTexture", texture);
         renderParams.matProps.SetTexture("_NoiseTexture", noiseTexture);
         renderParams.matProps.SetVector("_NoiseTextureSize", noiseTexture.WidthHeight());
         renderParams.matProps.SetFloat("_VertexSize", vertexSize);
-        
-        Graphics.RenderMeshPrimitives(renderParams, mesh, 0, gridSize * gridSize);
+        renderParams.matProps.SetVector("_LayoutMatrix", layoutMatrix);
+
+        Graphics.RenderMeshPrimitives(renderParams, mesh, 0, (int)(gSize.x * gSize.y));
     }
 }

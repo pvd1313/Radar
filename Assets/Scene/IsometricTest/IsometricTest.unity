@@ -510,7 +510,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22451668, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_Pivot.x
@@ -597,54 +597,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
---- !u!1 &739262436
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 739262438}
-  - component: {fileID: 739262437}
-  m_Layer: 0
-  m_Name: Render
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &739262437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739262436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df900d5e9ab2ac49a283b59ab2bc1d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: a23f5f0d0f5836d4299d779daf4c3d12, type: 3}
-  gridSize: 16
-  cameraObj: {fileID: 119508389}
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &739262438
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739262436}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.7261678, y: -5.3926864, z: 4.5519457}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &802321849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1769,11 +1721,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: 17939efe0997449a83497b956f7bac8a, type: 3}
-  gridSize: 4
+  gridSize:
+    x: 3
+    y: 3
   cameraObj: {fileID: 119508389}
-  texture: {fileID: 2800000, guid: b38429a702bc5c440b39fb08af5e7cce, type: 3}
+  texture: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
-  vertexSize: 0.5
+  vertexSize: 0.2
+  layoutMatrix: {x: 1, y: 1, z: 0, w: 2}
   mesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
 --- !u!4 &1922191046
 Transform:
@@ -2009,7 +1964,6 @@ SceneRoots:
   - {fileID: 142499019}
   - {fileID: 628494737}
   - {fileID: 678037821}
-  - {fileID: 739262438}
   - {fileID: 1922191046}
   - {fileID: 950237411}
   - {fileID: 1607201206}
