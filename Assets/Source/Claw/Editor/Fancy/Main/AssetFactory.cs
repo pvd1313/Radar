@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Beast.Claw.Common;
 using Beast.Claw.Editor.Fancy.Data;
 using Beast.Claw.Editor.Fancy.Tools;
 using Beast.Claw.Editor.Fancy.Views;
@@ -22,7 +23,7 @@ namespace Beast.Claw.Editor.Fancy.Main
 
         public AssetFactory()
         {
-            _scannerWindow = new TypeScannerWindow(typeof(ScriptableObject), typeof(EditorWindow));
+            _scannerWindow = new TypeScannerWindow(typeof(BeastScriptable));
             _repaintEvents = new RepaintEventsView(this);
         }
 
