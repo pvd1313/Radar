@@ -16,6 +16,13 @@
         "com.unity.modules.unitywebrequest": "1.0.0"
       }
     },
+    "com.svermeulen.extenject": {
+      "version": "https://github.com/Mathijs-Bakker/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#master",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "acfb232f623bcd3573935ac6023ee9b2eaaddb06"
+    },
     "com.tayx.graphy": {
       "version": "3.0.5",
       "depth": 0,
