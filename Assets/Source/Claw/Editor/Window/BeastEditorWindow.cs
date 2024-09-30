@@ -1,9 +1,7 @@
-﻿using Beast.Claw.Attributes;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace Beast.Claw.Editor.Window
 {
-    [FancyAsset]
     public abstract class BeastEditorWindow : EditorWindow
     {
         protected BeastEditorUI UI { get; set; }
