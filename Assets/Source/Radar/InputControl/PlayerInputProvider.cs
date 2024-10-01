@@ -4,7 +4,6 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl

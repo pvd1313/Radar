@@ -14,5 +14,6 @@ namespace Beast.Radar.InputControl
         public int LastTouchCount { get; }
         public bool IsPressMove { get; }
         public float ScrollDelta { get; }
+        void Block(bool over);
     }
 }

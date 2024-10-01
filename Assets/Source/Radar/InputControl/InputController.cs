@@ -18,9 +18,11 @@ namespace Beast.Radar.InputControl
         public int LastTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
         public float ScrollDelta { get; private set; }
+
         private readonly IPlayerInputProvider _playerInput;
         private InputActions _actions;
         private float _lastZoomDistance;
+        private bool _isBlock;
 
         public InputController(IPlayerInputProvider inputProvider)
         {
@@ -42,10 +44,15 @@ namespace Beast.Radar.InputControl
 
         public void OnFrameBegin()
         {
+            if (_isBlock)
+            {
+                return;
+            }
+            
             EarlyInput();   
             LateInput();
         }
-        
+
         private void EarlyInput()
         {
             if (_playerInput.Scheme is EInputScheme.MouseAndKeyboard)
@@ -130,6 +137,20 @@ namespace Beast.Radar.InputControl
                         LastScreenPoint = (t0 + t1) / 2f;
                         break;
                 }
+            }
+        }
+
+        public void Block(bool over)
+        {
+            _isBlock = over;
+            if (_isBlock)
+            {
+                
+            }
+            else
+            {
+                LastTouchCount = 0;
+                IsPressMove = false;
             }
         }
     }
