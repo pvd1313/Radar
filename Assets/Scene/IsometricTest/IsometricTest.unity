@@ -807,98 +807,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 933847516}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &950237408
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 950237411}
-  - component: {fileID: 950237410}
-  - component: {fileID: 950237409}
-  m_Layer: 0
-  m_Name: Camera (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!81 &950237409
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950237408}
-  m_Enabled: 1
---- !u!20 &950237410
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950237408}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 0.03645528, b: 0, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 1
-  orthographic size: 0.5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &950237411
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950237408}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &985471810
 GameObject:
   m_ObjectHideFlags: 0
@@ -1706,7 +1614,7 @@ GameObject:
   - component: {fileID: 1922191046}
   - component: {fileID: 1922191045}
   m_Layer: 0
-  m_Name: Render (1)
+  m_Name: IsometricRender
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1725,16 +1633,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
-  gridSize:
-    x: 30
-    y: 30
-  tileTexture: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
+  quadMesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
+  tileAtlas: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
+  tileAtlasSize:
+    x: 1
+    y: 1
   tileCenter:
     x: 0.5
     y: 0.23
+  tileAtlasPPU: 64
+  gridSize:
+    x: 1
+    y: 1
+  renderOffset01:
+    x: 0.5
+    y: 0.5
+  renderTileHeight: 1
+  worldTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
+  worldTextureSize:
+    x: 64
+    y: 64
+  worldTextureOffset:
+    x: 0
+    y: 63
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
-  vertexSize: 0.2
-  quadMesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
+  noiseTextureSize:
+    x: 512
+    y: 512
+  noiseTextureOffset:
+    x: 0
+    y: 0
 --- !u!4 &1922191046
 Transform:
   m_ObjectHideFlags: 0
@@ -1970,5 +1898,4 @@ SceneRoots:
   - {fileID: 628494737}
   - {fileID: 678037821}
   - {fileID: 1922191046}
-  - {fileID: 950237411}
   - {fileID: 1607201206}
