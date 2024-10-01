@@ -32,8 +32,9 @@ namespace Beast.Radar.Cinematic
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
 
-            BeastScene.Instantiate
+            BeastScene.InstantiateMono
             (
+                this,
                 _config.viewPrefab,
                 float3.zero,
                 quaternion.identity

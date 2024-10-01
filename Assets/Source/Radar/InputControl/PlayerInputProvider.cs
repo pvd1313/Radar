@@ -24,7 +24,7 @@ namespace Beast.Radar.InputControl
         
         public UniTask<InitializationResult> Initialize()
         {
-            PlayerInputView newInstance = BeastScene.Instantiate(_view, float3.zero, quaternion.identity);
+            PlayerInputView newInstance = BeastScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
             
             RefreshCurrentScheme(_view.PlayerInput);
