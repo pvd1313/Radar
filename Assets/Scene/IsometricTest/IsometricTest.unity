@@ -1728,12 +1728,13 @@ MonoBehaviour:
   gridSize:
     x: 30
     y: 30
-  cameraObj: {fileID: 119508389}
-  texture: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
+  tileTexture: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
+  tileCenter:
+    x: 0.5
+    y: 0.23
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   vertexSize: 0.2
-  layoutMatrix: {x: 2, y: 0, z: 2, w: 2}
-  mesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
+  quadMesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
 --- !u!4 &1922191046
 Transform:
   m_ObjectHideFlags: 0
