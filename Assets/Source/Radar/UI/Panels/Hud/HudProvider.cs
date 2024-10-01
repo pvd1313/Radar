@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Beast.Radar.UI.Enums;
 using Beast.Radar.UI.Panels.Base;
 
@@ -18,8 +17,6 @@ namespace Beast.Radar.UI.Panels.Hud
 
         public void Initialize()
         {
-            BeastLog.Info(this, "Initialize");
-
             SubscribeToEvents(true);
         }
         
@@ -52,7 +49,6 @@ namespace Beast.Radar.UI.Panels.Hud
 
         private void OnPauseButtonPressed()
         {
-            BeastLog.Info(this, "OnPauseButtonPressed");
             InvokeOtherPanelCall(EPanelType.Pause);
         }
     }

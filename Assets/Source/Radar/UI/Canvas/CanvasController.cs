@@ -5,7 +5,6 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.UI.Enums;
 using Beast.Radar.UI.Factory;
 using Beast.Radar.UI.Panels.Base;
-using Beast.Radar.UI.Panels.Hud;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI.Canvas
@@ -59,8 +58,6 @@ namespace Beast.Radar.UI.Canvas
                 ? _childProviders[type]
                 : null;
             
-            BeastLog.Info(this, $"OnOtherPanelCalled {type} {newProvider != null}");
-
             if (newProvider == null || !newProvider.ShowsBlackOverlay)
             {
                  _canvasProvider.HideBlackOverlay();
@@ -76,7 +73,6 @@ namespace Beast.Radar.UI.Canvas
                 _currentOpenedProvider = newProvider;
                 _currentOpenedProvider?.OpenPanel();
             });
-      
         }
     }
 }

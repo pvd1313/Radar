@@ -8,12 +8,13 @@ namespace Beast.Radar.UI.Panels.Pause
     public class PauseProvider : BProvider
     {
         public override bool ShowsBlackOverlay => true;
-        public PauseView _view;
-
         public event Action LoadButtonPressed;
         public event Action NewGameButtonPressed;
         public event Action SaveButtonPressed;
+        
+        private readonly PauseView _view;
 
+        
         public PauseProvider(PauseView view)
         {
             _view = view;
@@ -32,7 +33,6 @@ namespace Beast.Radar.UI.Panels.Pause
         public override void OpenPanel(Action onCompleted = null)
         {
             _view.body.gameObject.SetActive(true);
-            BeastLog.Info(this,$"OpenPanel");
             onCompleted?.Invoke();
         }
 
