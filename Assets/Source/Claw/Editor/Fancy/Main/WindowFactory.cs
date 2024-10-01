@@ -21,7 +21,7 @@ namespace Beast.Claw.Editor.Fancy.Main
 
         public WindowFactory()
         {
-            _scannerWindow = new TypeScannerWindow(typeof(EditorWindow));
+            _scannerWindow = new TypeScannerWindow(new []{typeof(EditorWindow)});
             _repaintEvents = new RepaintEventsView(this);
         }
 

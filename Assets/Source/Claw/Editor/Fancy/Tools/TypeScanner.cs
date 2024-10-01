@@ -30,9 +30,13 @@ namespace Beast.Claw.Editor.Fancy.Tools
             }
         }
 
-        public static void SearchTypes(Type type, string name, List<FancyTypeInfo> result, params Type[] excludeTypes)
+        public static void SearchTypes(Type[] types, string name, List<FancyTypeInfo> result, params Type[] excludeTypes)
         {
-            IEnumerable<FancyTypeInfo> cash = GetCash(type, excludeTypes);
+            List<FancyTypeInfo> cash = new List<FancyTypeInfo>();
+            foreach (var type in types)
+            {
+                cash.AddRange(GetCash(type, excludeTypes));
+            }
             name = name.ToLowerInvariant();
             result.Clear();
             result.AddRange(cash.Where(typeInfo => typeInfo.nameShortLowerInvariant.Contains(name)));
@@ -47,7 +51,6 @@ namespace Beast.Claw.Editor.Fancy.Tools
             
             IEnumerable<Type> derivedTypes = AllTypes
                 .Where(baseType.IsAssignableFrom)
-                // TODO: Exclude types is not working : https://risenbeast.youtrack.cloud/issues?preview=R-24
                 .Where(type => !excludeTypes.Any(type.IsAssignableFrom));
             
             result = new List<FancyTypeInfo>();
