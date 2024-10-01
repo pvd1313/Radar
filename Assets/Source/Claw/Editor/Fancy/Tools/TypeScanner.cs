@@ -51,7 +51,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
             
             IEnumerable<Type> derivedTypes = AllTypes
                 .Where(baseType.IsAssignableFrom)
-                .Where(type => !excludeTypes.Any(type.IsAssignableFrom));
+                .Where(type => !excludeTypes.Any(excludeType => excludeType.IsAssignableFrom(type)));
             
             result = new List<FancyTypeInfo>();
             
