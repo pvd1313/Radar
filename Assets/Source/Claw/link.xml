@@ -1,0 +1,3 @@
+<linker>
+	<assembly fullname = "Beast.Claw" preserve = "all" />
+</linker>

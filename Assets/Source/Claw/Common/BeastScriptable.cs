@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Beast.Claw.Common
 {
     [FancyAsset]
-    public class BeastScriptable : ScriptableObject
+    public abstract class BeastScriptable : ScriptableObject
     {
         
     }
