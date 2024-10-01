@@ -12,16 +12,16 @@ namespace Beast.Claw.Editor.Fancy.Views
         private const string FilterFocusControlName = "FilterFocusControlName";
         
         private readonly SelectableListView<FancyTypeInfo> _listView;
-        private readonly Type _targetType;
+        private readonly Type[] _targetTypes;
         private readonly Type[] _excludeTypes;
         private readonly List<FancyTypeInfo> _filteredTypes;
 
         private bool _focusedOnce;
         private string _filter;
 
-        public TypeScannerWindow(Type targetType, params Type[] excludeTypes)
+        public TypeScannerWindow(Type[] targetTypes, params Type[] excludeTypes)
         {
-            _targetType = targetType;
+            _targetTypes = targetTypes;
             _filteredTypes = new List<FancyTypeInfo>();
             _excludeTypes = excludeTypes;
             _listView = new SelectableListView<FancyTypeInfo>(t => t.nameShort);
@@ -36,7 +36,7 @@ namespace Beast.Claw.Editor.Fancy.Views
             GUI.SetNextControlName(FilterFocusControlName);
             _filter = EditorGUILayout.TextField(_filter, searchTextStyle);
 
-            TypeScanner.SearchTypes(_targetType, _filter, _filteredTypes, _excludeTypes);
+            TypeScanner.SearchTypes(_targetTypes, _filter, _filteredTypes, _excludeTypes);
 
             int selectedIndex = _listView.OnGUI(-1, _filteredTypes);
             if (selectedIndex >= 0)

@@ -23,7 +23,7 @@ namespace Beast.Claw.Editor.Fancy.Main
 
         public AssetFactory()
         {
-            _scannerWindow = new TypeScannerWindow(typeof(BeastScriptable));
+            _scannerWindow = new TypeScannerWindow(new []{typeof(BeastScriptable),typeof(BeastInstaller)});
             _repaintEvents = new RepaintEventsView(this);
         }
 
