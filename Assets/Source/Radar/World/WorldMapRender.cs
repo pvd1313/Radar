@@ -89,7 +89,7 @@ namespace Beast.Radar.World
             
             Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
             _material.SetTexture("_NoiseMap", worldDetailNoise);
-            _material.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeight());
+            _material.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeightFloat());
 
             float mapChunkSize = 100;
             float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);
