@@ -18,7 +18,7 @@ namespace Beast.Radar.UI.Canvas
         
         public void AddChildPanel(BView bView, bool asLastSibling)
         {
-            bView.transform.SetParent(_view.body);
+            bView.transform.SetParent(_view.body, false);
             
             if (asLastSibling)
             {
@@ -28,9 +28,6 @@ namespace Beast.Radar.UI.Canvas
             {
                 bView.transform.SetAsFirstSibling();
             }
-
-            bView.rect.offsetMax = float2.zero;
-            bView.rect.offsetMin = float2.zero;
         }
 
         public void ShowBlackOverlay()
