@@ -263,7 +263,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.40251565, g: 0.40251565, b: 0.40251565, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -288,7 +288,7 @@ Camera:
   far clip plane: 6000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 1
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -312,45 +312,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119508387}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -300}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 142499019}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &142499018
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 142499019}
-  m_Layer: 0
-  m_Name: Camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &142499019
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 142499018}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 119508390}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &191537845
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,6 +1602,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solverShader: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
   renderShader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
+  unlitShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   tileAtlas: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
   tileAtlasSize:
@@ -1644,8 +1613,8 @@ MonoBehaviour:
     y: 0.23
   tileAtlasPPU: 64
   gridSize:
-    x: 6
-    y: 6
+    x: 3
+    y: 2
   renderOffset01:
     x: 0.5
     y: 0.5
@@ -1655,8 +1624,8 @@ MonoBehaviour:
     x: 64
     y: 64
   worldTextureOffset:
-    x: 0
-    y: 63
+    x: 6
+    y: 17
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   noiseTextureSize:
     x: 512
@@ -1678,7 +1647,7 @@ Transform:
   m_GameObject: {fileID: 1922191044}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.7261678, y: -5.3926864, z: 4.5519457}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1900,7 +1869,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1873285959}
   - {fileID: 1449076860}
-  - {fileID: 142499019}
+  - {fileID: 119508390}
   - {fileID: 628494737}
   - {fileID: 678037821}
   - {fileID: 1922191046}

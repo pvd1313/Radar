@@ -20,6 +20,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
+            #include "Assets/Source/Claw/CG/BeastCG.cginc"
 
             struct VertexInput
             {
@@ -34,7 +35,7 @@
             };
 
             // Rename to tile grid size
-            float2 _gridSize;
+            float2 _GridSize;
             
             // Rename to terrain
             sampler2D _WorldTexture;
@@ -57,8 +58,14 @@
                 uint x = floor(input.uv.x * _OutputTextureSize);
                 uint y = floor(input.uv.y * _OutputTextureSize);
                 uint instanceID = y * (uint)_OutputTextureSize + x;
+
+                BeastIsometricTile tile = beast_isometric_tile(instanceID, _GridSize.x);
+                float2 offset = beast_isometric_world_offset(tile, _GridSize.x);
+                offset += _WorldTextureOffset;
+
+                return tex2D(_WorldTexture, offset / _WorldTextureSize);
                 
-                return instanceID / (_OutputTextureSize * _OutputTextureSize);
+                return instanceID / (_GridSize.x * _GridSize.y + (_GridSize.x - 1) * (_GridSize.y - 1));
             }
             ENDCG
         }

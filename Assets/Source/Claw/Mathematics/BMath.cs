@@ -7,6 +7,7 @@ namespace Beast.Claw.Mathematics
     public static partial class BMath
     {
         public const float Deg2Rad = 0.017453292f;
+        public const float Rad2Deg = 57.29578f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Max(float x, float y)
@@ -69,6 +70,18 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Ceil(float x)
+        {
+            return math.ceil(x);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int CeilToInt(float x)
+        {
+            return (int)math.ceil(x);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp01(float x)
         {
             return math.clamp(x, 0, 1);
@@ -78,6 +91,12 @@ namespace Beast.Claw.Mathematics
         public static float2 Clamp(float2 value, float min, float max)
         {
             return math.clamp(value, min, max);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Sqrt(float x)
+        {
+            return math.sqrt(x);
         }
     }
 }

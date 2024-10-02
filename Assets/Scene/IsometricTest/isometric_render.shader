@@ -91,15 +91,10 @@
                 // input.vertex.x += sign(input.vertex.x) * (1 / _RenderSize.x);
 
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _GridSize.x);
-                float2 offset = beast_isometric_screen_offset(tile, _GridSize.x);
+                float2 screenOffset = beast_isometric_screen_offset(tile, _GridSize.x);
                 
-                input.vertex.x += offset.x * gridScale.x;
-                input.vertex.y += offset.y * gridScale.y;
-
-                //input.vertex.y += offset.x * gridScale.y * _LayoutMatrix.y;
-
-                // input.vertex.x -= offset.y * gridScale.x * _LayoutMatrix.z;
-                // input.vertex.y -= offset.y * gridScale.x * _LayoutMatrix.w;
+                input.vertex.x += screenOffset.x * gridScale.x;
+                input.vertex.y += screenOffset.y * gridScale.y;
 
                 input.vertex.y *= _ProjectionParams.x;
 
