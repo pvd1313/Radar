@@ -8,7 +8,7 @@
     {
         Cull Off
         ZWrite Off
-        ZTest Always
+        ZTest Off
 
         Pass
         {
@@ -33,14 +33,12 @@
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
             };
-
-            // Rename to tile grid size
-            float2 _GridSize;
             
-            // Rename to terrain
-            sampler2D _WorldTexture;
-            float2 _WorldTextureSize;
-            float2 _WorldTextureOffset;
+            float2 _TileGridSize;
+            
+            sampler2D _TerrainTexture;
+            float2 _TerrainSize;
+            float2 _TerrainOffset;
             
             float _OutputTextureSize;
 
@@ -59,13 +57,13 @@
                 uint y = floor(input.uv.y * _OutputTextureSize);
                 uint instanceID = y * (uint)_OutputTextureSize + x;
 
-                BeastIsometricTile tile = beast_isometric_tile(instanceID, _GridSize.x);
-                float2 offset = beast_isometric_world_offset(tile, _GridSize.x);
-                offset += _WorldTextureOffset;
+                BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
+                float2 offset = beast_isometric_world_offset(tile, _TileGridSize.x);
+                offset += _TerrainOffset;
 
-                return tex2D(_WorldTexture, offset / _WorldTextureSize);
+                return tex2D(_TerrainTexture, offset / _TerrainSize);
                 
-                return instanceID / (_GridSize.x * _GridSize.y + (_GridSize.x - 1) * (_GridSize.y - 1));
+                return instanceID / (_TileGridSize.x * _TileGridSize.y + (_TileGridSize.x - 1) * (_TileGridSize.y - 1));
             }
             ENDCG
         }

@@ -1612,18 +1612,18 @@ MonoBehaviour:
     x: 0.5
     y: 0.23
   tileAtlasPPU: 64
-  gridSize:
+  tileGridSize:
     x: 3
     y: 2
-  renderOffset01:
+  renderOffset:
     x: 0.5
     y: 0.5
   renderTileHeight: 0.05
-  worldTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
-  worldTextureSize:
+  terrainTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
+  terrainSize:
     x: 64
     y: 64
-  worldTextureOffset:
+  terrainOffset:
     x: 6
     y: 17
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
@@ -1633,11 +1633,6 @@ MonoBehaviour:
   noiseTextureOffset:
     x: 0
     y: 0
-  layoutMatrix:
-    x: 0
-    y: 0
-    z: 0
-    w: 0
 --- !u!4 &1922191046
 Transform:
   m_ObjectHideFlags: 0
