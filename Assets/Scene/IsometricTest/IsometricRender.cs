@@ -1,10 +1,12 @@
 ﻿using Beast.Claw.CG;
+using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class IsometricRender : MonoBehaviour
 {
-    public Shader shader;
+    public Shader solverShader;
+    public Shader renderShader;
     public Mesh quadMesh;
     
     [Space]
@@ -30,11 +32,15 @@ public class IsometricRender : MonoBehaviour
     public float2 noiseTextureSize;
     public float2 noiseTextureOffset;
 
-    private Material _material;
+    public float4 layoutMatrix;
+
+    private Material _renderMaterial;
+    private Material _solverMaterial;
     
     private void Start()
     {
-        _material = new Material(shader);
+        _renderMaterial = new Material(renderShader);
+        _solverMaterial = new Material(solverShader);
 
         Application.targetFrameRate = 4096;
     }
@@ -44,12 +50,12 @@ public class IsometricRender : MonoBehaviour
         RenderParams renderParams = new ()
         {
             worldBounds = new Bounds(Vector3.zero, Vector3.one),
-            material = _material,
+            material = _renderMaterial,
             matProps = new MaterialPropertyBlock()
         };
-
+        
         renderSize = new float2(Screen.width, Screen.height);
-
+        
         int2 gSize = gridSize;
         gSize.x = Mathf.Max(1, gridSize.x);
         gSize.y = Mathf.Max(1, gridSize.y);
@@ -73,7 +79,23 @@ public class IsometricRender : MonoBehaviour
         renderParams.matProps.SetVector("_NoiseTextureSize", noiseTextureSize);
         renderParams.matProps.SetVector("_NoiseTextureOffset", noiseTextureOffset);
 
+        renderParams.matProps.SetVector("_LayoutMatrix", layoutMatrix);
+        
+        BeastLog.Int(this, "tileCount", GetTileCount(gSize));
         Graphics.RenderMeshPrimitives(renderParams, quadMesh, 0, GetTileCount(gSize));
+        
+        _solverMaterial.SetTexture("_WorldTexture", worldTexture);
+        _solverMaterial.SetVector("_WorldTextureSize", worldTextureSize);
+        _solverMaterial.SetVector("_WorldTextureOffset", worldTextureOffset);
+        //
+        // _solverMaterial.SetFloat("_OutputTextureSize", 4);
+        //
+        // BeastCG.DrawMesh(new DrawMeshParameters
+        // {
+        //     mesh = zBackwardQuad,
+        //     material = _solverMaterial,
+        //     matrix = float4x4.identity,
+        // });
     }
 
     private int GetTileCount(int2 gSize)
