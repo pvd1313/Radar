@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.GameSave;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
@@ -6,11 +7,13 @@ namespace Beast.Radar.UI
     public class PauseController : Initializable, Disposable
     {
         private readonly IPanelDispatcher _panelDispatcher;
+        private readonly ISaveService _saveService;
         private PauseView _view;
 
-        public PauseController(IPanelDispatcher panelDispatcher)
+        public PauseController(IPanelDispatcher panelDispatcher, ISaveService saveService)
         {
             _panelDispatcher = panelDispatcher;
+            _saveService = saveService;
         }
         
         public UniTask<InitializationResult> Initialize()
@@ -63,11 +66,13 @@ namespace Beast.Radar.UI
 
         private void OnClickedSaveButton()
         {
+            _saveService.SaveData();
             //todo invoke save action 
         }
 
         private void OnClickedLoadButton()
         {
+            _saveService.LoadData();
             //todo invoke load action 
         }
     }
