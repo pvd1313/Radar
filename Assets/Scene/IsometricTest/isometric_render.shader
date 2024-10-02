@@ -28,15 +28,20 @@
             struct FragmentInput
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
+                float2 vertexUV : TEXCOORD0;
+                float2 solverUV : TEXCOORD1;
             };
 
             float2 _TileGridSize;
             
             sampler2D _TileAtlas;
-            float2 _TileAtlasSize;
+            float2 _TileAtlasWidthHeight;
+            float2 _TileAtlasTileCount;
             float2 _TileCenter;
             float _TileAtlasPPU;
+
+            sampler2D _SolverTexture;
+            float _SolverSize;
             
             float2 _OutputSize;
             float2 _OutputOffset;
@@ -77,17 +82,34 @@
 
                 input.vertex.y *= _ProjectionParams.x;
 
-                output.uv = input.texcoord.xy;
-                output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1);
+                output.vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
+
+                float solverX = instanceID % (uint) _SolverSize;
+                float solverY = instanceID / (uint) _SolverSize;
+                float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
+                output.solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                
+                output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float4 tileColor = tex2D(_TileAtlas, input.uv);
+                float2 solverColor = tex2D(_SolverTexture, input.solverUV);
                 
-                clip(tileColor.r + tileColor.g + tileColor.b - 0.01);
+                uint tileIndex = solverColor.r;
+                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
+                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
+                float2 tileUV = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                
+                float4 color = tex2D(_TileAtlas, input.vertexUV + tileUV);
+
+                clip(color.r + color.g + color.b - 0.01f);
+
+                return color;
+                
+                //uint tileIndex = tex2D(_TileAtlas, input.uv);
                 
                 // float4 noiseColor = tex2D(_NoiseTexture, input.noiseUV);
                 //
@@ -99,7 +121,7 @@
                 //
                 // tileColor = lerp(tileColor, centerColor, t);
                 
-                return tileColor;
+                return 0;
             }
             
             ENDCG

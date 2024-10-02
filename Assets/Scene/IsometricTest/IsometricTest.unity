@@ -1604,10 +1604,13 @@ MonoBehaviour:
   renderShader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
   unlitShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  tileAtlas: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
-  tileAtlasSize:
-    x: 1
-    y: 1
+  tileAtlas: {fileID: 2800000, guid: bbe489f11d3aa5f4e9348a5a83584fea, type: 3}
+  tileAtlasWidthHeight:
+    x: 128
+    y: 128
+  tileAtlasTileCount:
+    x: 2
+    y: 2
   tileCenter:
     x: 0.5
     y: 0.23
@@ -1624,8 +1627,8 @@ MonoBehaviour:
     x: 64
     y: 64
   terrainOffset:
-    x: 6
-    y: 17
+    x: 5
+    y: 5
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   noiseTextureSize:
     x: 512

@@ -8,20 +8,23 @@ struct BeastIsometricTile
     float isInner01;
 };
 
-BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
+// 0 1 2
+//  3 4
+// 5 6 7
+inline BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
 {
     BeastIsometricTile output;
 
-    uint innerGridSizeX = gridSizeX - 1;
+    uint innerGridSizeX = gridSizeX - 1u;
 
     output.mainY = floor(instanceID / (gridSizeX + innerGridSizeX));
     output.innerX = instanceID - output.mainY * (innerGridSizeX + gridSizeX);
-    output.isInner01 = output.innerX / gridSizeX >= 1;
+    output.isInner01 = output.innerX / gridSizeX >= 1u;
 
     return output;
 }
 
-float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
+inline float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     tile.innerX -= gridSizeX * tile.isInner01;
 
@@ -47,7 +50,7 @@ float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
     return output;
 }
 
-float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
+inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     float2 output = 0;
 
@@ -65,6 +68,26 @@ float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
     }
 
     return output;
+}
+
+// https://stackoverflow.com/questions/32915724/pack-two-floats-within-range-into-one-float
+inline float beast_pack_float2(float2 v)
+{
+    uint aScaled = v.x * 0xFFFF;
+    uint bScaled = v.y * 0xFFFF;
+    uint abPacked = (aScaled << 16) | (bScaled & 0xFFFF);
+
+    return asfloat(abPacked);
+}
+
+// https://stackoverflow.com/questions/32915724/pack-two-floats-within-range-into-one-float
+inline float2 beast_unpack_float(float v)
+{
+    uint uintInput = asuint(v);
+    float x = (uintInput >> 16) / 65535.0f;
+    float y = (uintInput & 0xFFFF) / 65535.0f;
+
+    return float2(x, y);
 }
 
 // Ported : v.fuchadzhy@risenbeast.com

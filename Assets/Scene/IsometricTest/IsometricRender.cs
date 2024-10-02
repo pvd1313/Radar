@@ -13,7 +13,8 @@ public class IsometricRender : MonoBehaviour
     
     [Space]
     public Texture2D tileAtlas;
-    public int2 tileAtlasSize;
+    public int2 tileAtlasWidthHeight;
+    public int2 tileAtlasTileCount;
     public float2 tileCenter;
     public float tileAtlasPPU;
     
@@ -57,35 +58,15 @@ public class IsometricRender : MonoBehaviour
         int tileCount = GetTileCount(gSize);
         BeastLog.Int(this, "tileCount", tileCount);
         
-        RenderParams renderParams = new ()
-        {
-            worldBounds = new Bounds(Vector3.zero, Vector3.one),
-            material = _renderMaterial,
-            matProps = new MaterialPropertyBlock()
-        };
+        // -- Solver \/
         
-        renderParams.matProps.SetVector("_TileGridSize", gSize);
-        
-        renderParams.matProps.SetTexture("_TileAtlas", tileAtlas);
-        renderParams.matProps.SetVector("_TileAtlasSize", tileAtlasSize);
-        renderParams.matProps.SetVector("_TileCenter", tileCenter);
-        renderParams.matProps.SetFloat("_TileAtlasPPU", tileAtlasPPU);
-        
-        renderParams.matProps.SetVector("_OutputSize", screenSize);
-        renderParams.matProps.SetVector("_OutputOffset", renderOffset);
-        renderParams.matProps.SetFloat("_OutputTileHeight", renderTileHeight);
-        
-        Graphics.RenderMeshPrimitives(renderParams, quadMesh, 0, tileCount);
-        
-
         int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
-        
+        _solverMaterial.SetVector("_TileGridSize", tileGridSize);
+        _solverMaterial.SetTexture("_TileAtlas", tileAtlas);
+        _solverMaterial.SetVector("_TileAtlasWidthHeight", tileAtlasWidthHeight);
         _solverMaterial.SetTexture("_TerrainTexture", terrainTexture);
         _solverMaterial.SetVector("_TerrainSize", terrainSize);
         _solverMaterial.SetVector("_TerrainOffset", terrainOffset);
-        
-        _solverMaterial.SetVector("_TileGridSize", tileGridSize);
-        
         _solverMaterial.SetFloat("_OutputTextureSize", solverTextureSize);
         
         RenderTexture solverTexture = BeastCG.NewRenderTextureTemporary(this, new NewTempRenderTextureData
@@ -93,7 +74,7 @@ public class IsometricRender : MonoBehaviour
             size = new int2(solverTextureSize, solverTextureSize),
             antiAliasing = 1,
             readWrite = RenderTextureReadWrite.Linear, 
-            format = RenderTextureFormat.ARGB32,
+            format = RenderTextureFormat.RGFloat,
             filterMode = FilterMode.Point
         });
         
@@ -104,14 +85,37 @@ public class IsometricRender : MonoBehaviour
             targetTexture = solverTexture
         });
         
-        _unlitMaterial.mainTexture = solverTexture;
+        // -- Render \/
         
-        BeastCG.DrawMesh(new DrawMeshParameters
+        RenderParams renderParams = new ()
         {
-            mesh = quadMesh,
-            material = _unlitMaterial,
-            matrix = float4x4.identity,
-        });
+            worldBounds = new Bounds(Vector3.zero, Vector3.one),
+            material = _renderMaterial,
+            matProps = new MaterialPropertyBlock()
+        };
+        
+        renderParams.matProps.SetVector("_TileGridSize", gSize);
+        renderParams.matProps.SetTexture("_TileAtlas", tileAtlas);
+        renderParams.matProps.SetVector("_TileAtlasWidthHeight", tileAtlasWidthHeight);
+        renderParams.matProps.SetVector("_TileAtlasTileCount", tileAtlasTileCount);
+        renderParams.matProps.SetVector("_TileCenter", tileCenter);
+        renderParams.matProps.SetFloat("_TileAtlasPPU", tileAtlasPPU);
+        renderParams.matProps.SetTexture("_SolverTexture", solverTexture);
+        renderParams.matProps.SetFloat("_SolverSize", solverTextureSize);
+        renderParams.matProps.SetVector("_OutputSize", screenSize);
+        renderParams.matProps.SetVector("_OutputOffset", renderOffset);
+        renderParams.matProps.SetFloat("_OutputTileHeight", renderTileHeight);
+        
+        Graphics.RenderMeshPrimitives(renderParams, quadMesh, 0, tileCount);
+        
+        // _unlitMaterial.mainTexture = solverTexture;
+        //
+        // BeastCG.DrawMesh(new DrawMeshParameters
+        // {
+        //     mesh = quadMesh,
+        //     material = _unlitMaterial,
+        //     matrix = float4x4.identity,
+        // });
         
         BeastCG.ReleaseTemporaryRenderTexture(solverTexture);
     }
