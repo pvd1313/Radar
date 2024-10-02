@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Beast.Radar.UI.Data
+namespace Beast.Radar.UI
 {
     [Serializable]
     public struct CanvasPrefabData
     {
         public string ID;
-        public UICanvasView view;
+        public CanvasView view;
     }
 }

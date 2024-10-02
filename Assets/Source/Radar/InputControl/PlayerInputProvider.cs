@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class PlayerInputProvider: IPlayerInputProvider 
+    public class PlayerInputProvider : IPlayerInputProvider 
     {
         public event Action<EInputScheme> ChangedScheme;
         public EInputScheme Scheme => _inputScheme;
@@ -33,11 +33,9 @@ namespace Beast.Radar.InputControl
             return InitializationResult.SuccessNotAsync();
         }
 
-        public UniTask<DispositionResult> Dispose()
+        public void Dispose()
         {
             _view.PlayerInput.onControlsChanged -= RefreshCurrentScheme;
-            
-            return DispositionResult.SuccessNotAsync();
         }
         
         private void RefreshCurrentScheme(PlayerInput input)

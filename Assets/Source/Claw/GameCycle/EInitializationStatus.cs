@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public enum EControllerStatus
+    public enum EInitializationStatus
     {
         Invalid = 0,
         Success = 1,

@@ -4,32 +4,31 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.InputControl
 {
-    public class InputBlockerOnUIHover: Initializable, Disposable
+    public class InputBlockerOnUIHover: Initializable, IDisposable
     {
-        private readonly IPanelDispatcher _panelDispatcher;
+        private readonly IWindowManager _windowManager;
         private readonly IInputController _input;
 
-        public InputBlockerOnUIHover(IPanelDispatcher panelDispatcher, IInputController inputController)
+        public InputBlockerOnUIHover(IWindowManager windowManager, IInputController inputController)
         {
-            _panelDispatcher = panelDispatcher;
+            _windowManager = windowManager;
             _input = inputController;
         }
 
         public UniTask<InitializationResult> Initialize()
         {
-            _panelDispatcher.MouseOverUI += OnMouseOverUI;
+            _windowManager.MouseOverUI += OnMouseOverUI;
             return InitializationResult.SuccessNotAsync();
+        }
+
+        public void Dispose()
+        {
+            _windowManager.MouseOverUI -= OnMouseOverUI;
         }
 
         private void OnMouseOverUI(bool over)
         {
             _input.Block(over);
-        }
-
-        public UniTask<DispositionResult> Dispose()
-        {
-            
-            return DispositionResult.SuccessNotAsync();
         }
     }
 }

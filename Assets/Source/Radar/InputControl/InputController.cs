@@ -36,10 +36,9 @@ namespace Beast.Radar.InputControl
             return InitializationResult.SuccessNotAsync();
         }
 
-        public UniTask<DispositionResult> Dispose()
+        public void Dispose()
         {
             _actions.Dispose();
-            return DispositionResult.SuccessNotAsync();
         }
 
         public void OnFrameBegin()

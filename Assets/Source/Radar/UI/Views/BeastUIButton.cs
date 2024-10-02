@@ -1,11 +1,10 @@
 ﻿using System;
-using Beast.Claw.Common;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class UIButtonView : BeastMono
+    public class BeastUIButton : BeastUIView
     {
         public event Action Clicked;
         

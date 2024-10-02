@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Beast.Radar.UI.Data
+namespace Beast.Radar.UI
 {
     [Serializable]
     public struct PanelPrefabData
     {
         public string ID;
-        public UIPanelView view;
+        public BeastUIWindowView view;
     }
 }

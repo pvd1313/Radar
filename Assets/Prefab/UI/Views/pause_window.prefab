@@ -76,12 +76,12 @@ GameObject:
   - component: {fileID: 3911504496362304569}
   - component: {fileID: 6800508196268221077}
   m_Layer: 5
-  m_Name: Panel_Pause
+  m_Name: pause_window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3911504496362304569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -115,14 +115,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea338fbd6a649039e795dece7f04626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 3911504496362304569}
-  isShowsBlackOverlay: 1
-  closePanelButtons:
-  - {fileID: 8953883056171597012}
-  - {fileID: 4172134840260665740}
   newGameButton: {fileID: 7283499713551124004}
   saveButton: {fileID: 8772721634209767301}
   loadButton: {fileID: 4627110817624831672}
+  closePanelButtons:
+  - {fileID: 8953883056171597012}
+  - {fileID: 4172134840260665740}
 --- !u!1 &2930167025779058022
 GameObject:
   m_ObjectHideFlags: 0
@@ -802,7 +800,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2657556014363080172, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Color.a
-      value: 0
+      value: 0.39215687
       objectReference: {fileID: 0}
     - target: {fileID: 2657556014363080172, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Color.b

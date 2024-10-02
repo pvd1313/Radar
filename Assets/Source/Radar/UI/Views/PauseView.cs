@@ -2,12 +2,12 @@
 
 namespace Beast.Radar.UI
 {
-    public class PauseView : UIPanelView
+    public class PauseView : BeastUIWindowView
     {
         [Space]
-        public UIButtonView newGameButton;
-        public UIButtonView saveButton;
-        public UIButtonView loadButton;
-        public UIButtonView[] closePanelButtons;
+        public BeastUIButton newGameButton;
+        public BeastUIButton saveButton;
+        public BeastUIButton loadButton;
+        public BeastUIButton[] closePanelButtons;
     }
 }
