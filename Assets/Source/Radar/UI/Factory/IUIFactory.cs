@@ -1,9 +1,13 @@
-﻿using Beast.Radar.UI.Panels.Base;
+﻿using Cysharp.Threading.Tasks;
 
-namespace Beast.Radar.UI.Factory
+namespace Beast.Radar.UI
 {
     public interface IUIFactory
     {
-        public T CreatePanel<T>() where T : BView;
+        public UICanvasView CreateCanvas(string canvasID);
+
+        public UIPanelView CreatePanel(string panelID, string canvasID, bool isLastSabling);
+
+        public UIOverlayView CreateOverlay(string overlayID, string canvasID, bool isLastSabling);
     }
 }
