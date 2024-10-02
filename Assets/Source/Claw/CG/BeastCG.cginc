@@ -121,7 +121,7 @@ float beast_fbm(float2 uv,
     return color;
 }
 
-void BeastRect_float(in float2 UV,
+void shadergraph_rect_float(in float2 UV,
                      in float4 RGBA,
                      in float4 RectColor,
                      in float2 LineWidth,
@@ -140,14 +140,14 @@ void BeastRect_float(in float2 UV,
     }
 }
 
-void BeastNoise_float(in float2 UV,
+void shadergraph_noise_float(in float2 UV,
                       in float seed,
                       out float R)
 {
     R = beast_noise(UV, seed);
 }
 
-void BeastFBM_float(in float2 UV,
+void shadergraph_fbm_float(in float2 UV,
                     in float Turbulence,
                     in float Quality,
                     in float Seed,

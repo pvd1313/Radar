@@ -85,7 +85,7 @@ namespace Beast.Radar.World
             _material.SetVector("_MainMapSize", WorldSize);
             
             _material.SetTexture("_GridMap", _cgLibrary.debug.worldGrid);
-            _material.SetVector("_GridMapSize", _cgLibrary.debug.worldGrid.WidthHeight());
+            _material.SetVector("_GridMapSize", _cgLibrary.debug.worldGrid.WidthHeightFloat());
             
             Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
             _material.SetTexture("_NoiseMap", worldDetailNoise);
