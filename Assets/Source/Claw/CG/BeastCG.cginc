@@ -1,6 +1,73 @@
 ﻿#ifndef BEAST_CG_INCLUDE
 #define BEAST_CG_INCLUDE
 
+struct BeastIsometricTile
+{
+    uint mainY;
+    uint innerX;
+    float isInner01;
+};
+
+BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
+{
+    BeastIsometricTile output;
+
+    uint innerGridSizeX = gridSizeX - 1;
+
+    output.mainY = floor(instanceID / (gridSizeX + innerGridSizeX));
+    output.innerX = instanceID - output.mainY * (innerGridSizeX + gridSizeX);
+    output.isInner01 = output.innerX / gridSizeX >= 1;
+
+    return output;
+}
+
+float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
+{
+    tile.innerX -= gridSizeX * tile.isInner01;
+
+    float2 output = 0;
+
+    // TODO: Pack this.
+    if (tile.isInner01)
+    {
+        output.x += tile.mainY;
+        output.y += tile.mainY;
+        output.x += tile.innerX;
+        output.y -= tile.innerX;
+        output.x += 1;
+    }
+    else
+    {
+        output.x += tile.mainY;
+        output.y += tile.mainY;
+        output.x += tile.innerX;
+        output.y -= tile.innerX;
+    }
+
+    return output;
+}
+
+float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
+{
+    float2 output = 0;
+
+    // TODO: Pack this.
+    if (tile.isInner01)
+    {
+        tile.innerX -= gridSizeX;
+        output.y = tile.mainY * -1.0f - 0.5f;
+        output.x = tile.innerX + 0.5f;
+    }
+    else
+    {
+        tile.innerX %= gridSizeX;
+        output.y = tile.mainY * -1.0f;
+        output.x = tile.innerX;
+    }
+
+    return output;
+}
+
 // Ported : v.fuchadzhy@risenbeast.com
 // Source : https://www.notion.so/ShaderToy-2D-Clouds-10ca45ace92d805ea7abccb3823037d2
 //        : https://www.shadertoy.com/view/4tdSWr

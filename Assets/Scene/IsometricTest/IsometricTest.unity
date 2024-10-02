@@ -263,7 +263,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1632,8 +1632,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc8d0d929c84ddb8a1c5d75903e3dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
-  quadMesh: {fileID: -3769926536300526863, guid: e921cf59c2a1cfa428796c1f1e755a5b, type: 3}
+  solverShader: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
+  renderShader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
+  quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   tileAtlas: {fileID: 2800000, guid: 6c1271e4ea8f6154eae1e6bbf1b87d7e, type: 3}
   tileAtlasSize:
     x: 1
@@ -1643,12 +1644,12 @@ MonoBehaviour:
     y: 0.23
   tileAtlasPPU: 64
   gridSize:
-    x: 1
-    y: 1
+    x: 6
+    y: 6
   renderOffset01:
     x: 0.5
     y: 0.5
-  renderTileHeight: 1
+  renderTileHeight: 0.05
   worldTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
   worldTextureSize:
     x: 64
@@ -1663,6 +1664,11 @@ MonoBehaviour:
   noiseTextureOffset:
     x: 0
     y: 0
+  layoutMatrix:
+    x: 0
+    y: 0
+    z: 0
+    w: 0
 --- !u!4 &1922191046
 Transform:
   m_ObjectHideFlags: 0
