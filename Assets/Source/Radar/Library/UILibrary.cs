@@ -1,17 +1,50 @@
 ﻿using System.Linq;
 using Beast.Claw.Common;
-using Beast.Radar.UI.Panels.Base;
+using Beast.Radar.UI;
+using Beast.Radar.UI.Data;
 
 namespace Beast.Radar
 {
     public class UILibrary: BeastLibrary
     {
-        public BView[] views;
+        public CanvasPrefabData[] canvases;
+        public PanelPrefabData[] panels;
+        public OverlayPrefabData[] overlays;
 
-        public bool TryGetViewPrefab<T>(out T viewPrefab) where T : BView
+        public UICanvasView GetCanvasPrefab(string id)
         {
-            viewPrefab = views.FirstOrDefault(v => v is T) as T;
-            return viewPrefab != null;
+            UICanvasView view = canvases.FirstOrDefault(d => d.ID == id).view;
+           
+            if (view == null)
+            {
+                throw new BeastException($"UI library cannot find a canvas prefab with id #{id}");
+            }
+            
+            return view;
+        }
+
+        public UIPanelView GetPanelPrefab(string id)
+        {
+            UIPanelView view = panels.FirstOrDefault(d => d.ID == id).view;
+           
+            if (view == null)
+            {
+                throw new BeastException($"UI library cannot find a panel prefab with id #{id}");
+            }
+            
+            return view;
+        }
+        
+        public UIOverlayView GetOverlayPrefab(string id)
+        {
+            UIOverlayView view = overlays.FirstOrDefault(d => d.ID == id).view;
+           
+            if (view == null)
+            {
+                throw new BeastException($"UI library cannot find a overlay prefab with id #{id}");
+            }
+            
+            return view;
         }
     }
 }

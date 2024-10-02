@@ -1,23 +1,23 @@
 ﻿using Beast.Claw.GameCycle;
-using Beast.Radar.UI.Canvas;
+using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.InputControl
 {
     public class InputBlockerOnUIHover: Initializable, Disposable
     {
-        private readonly ICanvas _canvas;
+        private readonly IPanelDispatcher _panelDispatcher;
         private readonly IInputController _input;
 
-        public InputBlockerOnUIHover(ICanvas canvas, IInputController inputController)
+        public InputBlockerOnUIHover(IPanelDispatcher panelDispatcher, IInputController inputController)
         {
-            _canvas = canvas;
+            _panelDispatcher = panelDispatcher;
             _input = inputController;
         }
 
         public UniTask<InitializationResult> Initialize()
         {
-            _canvas.MouseOverUI += OnMouseOverUI;
+            _panelDispatcher.MouseOverUI += OnMouseOverUI;
             return InitializationResult.SuccessNotAsync();
         }
 
