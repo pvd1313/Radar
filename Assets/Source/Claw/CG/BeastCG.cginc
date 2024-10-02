@@ -30,16 +30,16 @@ float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
     // TODO: Pack this.
     if (tile.isInner01)
     {
-        output.x += tile.mainY;
-        output.y += tile.mainY;
+        output.x -= tile.mainY;
+        output.y -= tile.mainY;
         output.x += tile.innerX;
         output.y -= tile.innerX;
-        output.x += 1;
+        output.y -= 1;
     }
     else
     {
-        output.x += tile.mainY;
-        output.y += tile.mainY;
+        output.x -= tile.mainY;
+        output.y -= tile.mainY;
         output.x += tile.innerX;
         output.y -= tile.innerX;
     }
@@ -60,7 +60,6 @@ float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
     }
     else
     {
-        tile.innerX %= gridSizeX;
         output.y = tile.mainY * -1.0f;
         output.x = tile.innerX;
     }
