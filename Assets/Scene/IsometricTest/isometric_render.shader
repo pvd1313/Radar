@@ -37,8 +37,10 @@
             sampler2D _TileAtlas;
             float2 _TileAtlasWidthHeight;
             float2 _TileAtlasTileCount;
-            float2 _TileCenter;
+            float2 _TileBlendCenter;
             float _TileAtlasPPU;
+
+            float _RenderYCrop;
 
             sampler2D _SolverTexture;
             float _SolverSize;
@@ -63,6 +65,9 @@
 
                 float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
                 gridScale.x *= 1.0f / (aspect * 0.5f);
+
+                input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
+                input.texcoord.y *= _RenderYCrop;
 
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
@@ -110,8 +115,8 @@
 
                 float noisePower = solverRG.g;
                 float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
-                float2 centerUV = tileUVShift + _TileCenter / _TileAtlasTileCount;
-                centerUV = lerp(tileUV, centerUV, t * 0.5 + t * noisePower * 0.5);
+                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
+                centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
                 
                 float4 centerColor = tex2D(_TileAtlas, centerUV);
                 

@@ -1611,17 +1611,18 @@ MonoBehaviour:
   tileAtlasTileCount:
     x: 2
     y: 2
-  tileCenter:
+  tileBlendCenter:
     x: 0.5
     y: 0.23
   tileAtlasPPU: 64
   tileGridSize:
-    x: 50
-    y: 20
+    x: 200
+    y: 200
   renderOffset:
     x: 0
     y: 0
-  renderTileHeight: 0.1
+  renderTileHeight: 0.005
+  renderYCrop: 0.63
   terrainTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
   terrainSize:
     x: 64

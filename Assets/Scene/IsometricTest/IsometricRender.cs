@@ -15,14 +15,14 @@ public class IsometricRender : MonoBehaviour
     public Texture2D tileAtlas;
     public int2 tileAtlasWidthHeight;
     public int2 tileAtlasTileCount;
-    public float2 tileCenter;
+    public float2 tileBlendCenter;
     public float tileAtlasPPU;
     
     [Space]
     public int2 tileGridSize;
-
     public float2 renderOffset;
     public float renderTileHeight;
+    public float renderYCrop;
 
     [Space]
     public Texture2D terrainTexture;
@@ -99,8 +99,9 @@ public class IsometricRender : MonoBehaviour
         renderParams.matProps.SetTexture("_TileAtlas", tileAtlas);
         renderParams.matProps.SetVector("_TileAtlasWidthHeight", tileAtlasWidthHeight);
         renderParams.matProps.SetVector("_TileAtlasTileCount", tileAtlasTileCount);
-        renderParams.matProps.SetVector("_TileCenter", tileCenter);
+        renderParams.matProps.SetVector("_TileBlendCenter", tileBlendCenter);
         renderParams.matProps.SetFloat("_TileAtlasPPU", tileAtlasPPU);
+        renderParams.matProps.SetFloat("_RenderYCrop", renderYCrop);
         renderParams.matProps.SetTexture("_SolverTexture", solverTexture);
         renderParams.matProps.SetFloat("_SolverSize", solverTextureSize);
         renderParams.matProps.SetVector("_OutputSize", screenSize);
