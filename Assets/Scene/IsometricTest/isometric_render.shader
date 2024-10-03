@@ -21,15 +21,15 @@
 
             #include "UnityCG.cginc"
             #include "Assets/Source/Claw/CG/BeastCG.cginc"
-
             
             // #define DEBUG_DRAW_TILES_ONE_SECOND
 
             struct FragmentInput
             {
                 float4 positionCS : SV_POSITION;
-                float2 vertexUV : TEXCOORD0;
-                float2 solverUV : TEXCOORD1;
+                half2 mainUV : TEXCOORD0;
+                half2 centerUV : TEXCOORD1;
+                fixed t : TEXCOORD2;
             };
 
             float2 _TileGridSize;
@@ -87,12 +87,26 @@
 
                 input.vertex.y *= _ProjectionParams.x;
 
-                output.vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
+                float2 vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
 
                 float solverX = instanceID % (uint) _SolverSize;
                 float solverY = instanceID / (uint) _SolverSize;
                 float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
-                output.solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                float2 solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                float2 solverRG = tex2Dlod(_SolverTexture, float4(solverUV.x, solverUV.y, 0, 0));
+                uint tileIndex = f32tof16(solverRG.r);
+                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
+                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
+                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                float2 tileUV = vertexUV + tileUVShift;
+                output.mainUV = tileUV;
+
+                float noisePower = solverRG.g;
+                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
+                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
+                output.centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+
+                output.t = t;
                 
                 output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 
@@ -101,26 +115,15 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float2 solverRG = tex2D(_SolverTexture, input.solverUV);
+                half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
-                uint tileIndex = f32tof16(solverRG.r);
-                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
-                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
-                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
-                float2 tileUV = input.vertexUV + tileUVShift;
-                
-                float4 atlasColor = tex2D(_TileAtlas, input.vertexUV + tileUVShift);
+                clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
 
-                clip(atlasColor.r + atlasColor.g + atlasColor.b - 0.01f);
-
-                float noisePower = solverRG.g;
-                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
-                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
-                centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+                half3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 
-                float4 centerColor = tex2D(_TileAtlas, centerUV);
+                mainColor = lerp(mainColor, centerColor, input.t);
                 
-                return lerp(atlasColor, centerColor, t);
+                return half4(mainColor.r, mainColor.g, mainColor.b, 1);
             }
             
             ENDCG
