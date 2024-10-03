@@ -70,24 +70,9 @@ inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSi
     return output;
 }
 
-// https://stackoverflow.com/questions/32915724/pack-two-floats-within-range-into-one-float
-inline float beast_pack_float2(float2 v)
+inline float2 beast_unpack_normal_2d(float2 color)
 {
-    uint aScaled = v.x * 0xFFFF;
-    uint bScaled = v.y * 0xFFFF;
-    uint abPacked = (aScaled << 16) | (bScaled & 0xFFFF);
-
-    return asfloat(abPacked);
-}
-
-// https://stackoverflow.com/questions/32915724/pack-two-floats-within-range-into-one-float
-inline float2 beast_unpack_float(float v)
-{
-    uint uintInput = asuint(v);
-    float x = (uintInput >> 16) / 65535.0f;
-    float y = (uintInput & 0xFFFF) / 65535.0f;
-
-    return float2(x, y);
+    return (color - 0.5) * 2;
 }
 
 // Ported : v.fuchadzhy@risenbeast.com
