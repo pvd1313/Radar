@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IInputController : Initializable, Disposable, IFrameBeginUpdate
+    public interface ICameraInputController :  IFrameBeginUpdate
     {
         public event Action ChangedEarlyValues;
         public float2 ScreenPoint { get; }
@@ -14,5 +14,6 @@ namespace Beast.Radar.InputControl
         public int LastTouchCount { get; }
         public bool IsPressMove { get; }
         public float ScrollDelta { get; }
+        void Block(bool isBlock);
     }
 }

@@ -4,13 +4,13 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class PlayerInputProvider: IPlayerInputProvider 
+    public class PlayerInputProvider : IPlayerInputProvider 
     {
+        public InputActions Actions { get; private set; }
         public event Action<EInputScheme> ChangedScheme;
         public EInputScheme Scheme => _inputScheme;
 
@@ -24,21 +24,21 @@ namespace Beast.Radar.InputControl
         
         public UniTask<InitializationResult> Initialize()
         {
+            Actions = new InputActions();
+            Actions.Enable();
+            
             PlayerInputView newInstance = BeastScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
-            
             RefreshCurrentScheme(_view.PlayerInput);
-            
             _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
             
             return InitializationResult.SuccessNotAsync();
         }
 
-        public UniTask<DispositionResult> Dispose()
+        public void Dispose()
         {
             _view.PlayerInput.onControlsChanged -= RefreshCurrentScheme;
-            
-            return DispositionResult.SuccessNotAsync();
+            Actions.Disable();
         }
         
         private void RefreshCurrentScheme(PlayerInput input)

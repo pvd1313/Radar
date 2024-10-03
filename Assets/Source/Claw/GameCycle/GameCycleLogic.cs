@@ -45,7 +45,7 @@ namespace Beast.Claw.GameCycle
             {
                 InitializationResult result = await controller.Initialize();
 
-                if (result.status != EControllerStatus.Success)
+                if (result.status != EInitializationStatus.Success)
                 {
                     BeastLog.Error(this, $"Failed to initialize {controller.GetType()}");
                      

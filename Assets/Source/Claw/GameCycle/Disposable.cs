@@ -4,6 +4,6 @@ namespace Beast.Claw.GameCycle
 {
     public interface Disposable
     {
-        public UniTask<DispositionResult> Dispose();
+        public void Dispose();
     }
 }
