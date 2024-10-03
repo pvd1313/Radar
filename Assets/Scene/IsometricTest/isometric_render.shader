@@ -39,7 +39,7 @@
             float2 _TileAtlasTileCount;
             float2 _TileBlendCenter;
             float _TileAtlasPPU;
-
+            
             float _RenderYCrop;
 
             sampler2D _SolverTexture;
@@ -63,32 +63,35 @@
                 
                 float aspect = _OutputSize.x / _OutputSize.y;
 
-                float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
-                gridScale.x *= 1.0f / (aspect * 0.5f);
-
+                // Y crop, reduce rasterizer load. Will be obtained from config texture in future.
                 input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
                 input.texcoord.y *= 1 - _RenderYCrop;
 
+                // Scale vertex to desired size.
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
 
-                input.vertex.x += _OutputOffset.x * 2.0f - 1.0f;
-                input.vertex.y -= _OutputOffset.y * 2.0f - _OutputTileHeight - 1.0f;
+                // Prevent transparent lines glitches.
+                input.vertex.x += sign(input.vertex.x) * (1.0f / _OutputSize.x);
+                input.vertex.y += sign(input.vertex.y) * (1.0f / _OutputSize.y);
 
-                // Fix transparent lines glitch.
-                // input.vertex.y += sign(input.vertex.y) * (1 / _RenderSize.y);
-                // input.vertex.x += sign(input.vertex.x) * (1 / _RenderSize.x);
-
+                // Isometric to screen layout.
+                float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
+                gridScale.x *= 1.0f / (aspect * 0.5f);
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
                 float2 screenOffset = beast_isometric_screen_offset(tile, _TileGridSize.x);
-                
                 input.vertex.x += screenOffset.x * gridScale.x;
                 input.vertex.y += screenOffset.y * gridScale.y;
 
+                // Viewport offset. Must be applied after isometric layout to prevent transparent line glitches.
+                input.vertex.x += _OutputOffset.x * 2.0f - 1.0f;
+                input.vertex.y -= _OutputOffset.y * 2.0f - _OutputTileHeight - 1.0f;
+
+                // Projection flip
                 input.vertex.y *= _ProjectionParams.x;
 
+                // Get tile data from solver.
                 float2 vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
-
                 float solverX = instanceID % (uint) _SolverSize;
                 float solverY = instanceID / (uint) _SolverSize;
                 float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
@@ -101,6 +104,7 @@
                 float2 tileUV = vertexUV + tileUVShift;
                 output.mainUV = tileUV;
 
+                // Second UV to reduce glitches when tiles are small. Blend center will be obtained from tile config in future.
                 float noisePower = solverRG.g;
                 float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
                 float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
