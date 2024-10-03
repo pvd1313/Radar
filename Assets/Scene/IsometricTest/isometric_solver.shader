@@ -35,13 +35,14 @@
             };
             
             float2 _TileGridSize;
-
-            sampler2D _TileAtlas;
-            float2 _TileAtlasWidthHeight;
             
             sampler2D _TerrainTexture;
             float2 _TerrainSize;
             float2 _TerrainOffset;
+
+            sampler2D _NoiseTexture;
+            float2 _NoiseSize;
+            float2 _NoiseOffset;
             
             float _OutputTextureSize;
 
@@ -68,15 +69,14 @@
                 uint instanceID = y * (uint)_OutputTextureSize + x;
 
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
-                float2 offset = beast_isometric_world_offset(tile, _TileGridSize.x);
-                offset += _TerrainOffset;
+                float2 worldOffset = beast_isometric_world_offset(tile, _TileGridSize.x);
 
-                float4 terrainColor = tex2D(_TerrainTexture, offset / _TerrainSize);
+                float terrainColor = tex2D(_TerrainTexture, (worldOffset + _TerrainOffset) / _TerrainSize).r;
+                uint tileIndex = terrain_color_to_tile_index(terrainColor);
 
-                uint tileIndex = terrain_color_to_tile_index(terrainColor.r);
-
-                // TODO: This might be not save to transfer raw float.
-                return float4(tileIndex, 0, 0, 0);
+                float noiseColor = tex2D(_NoiseTexture, (worldOffset + _NoiseOffset) / _NoiseSize).r;
+                
+                return float4(f16tof32(tileIndex), noiseColor, 0, 0);
             }
             ENDCG
         }

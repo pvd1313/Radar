@@ -23,6 +23,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
+            #include "Assets/Source/Claw/CG/BeastCG.cginc"
 
             #define DEBUG_GRID_MAP
 
@@ -62,11 +63,6 @@
             #define NOISE_POWER_0 float2(0.3, 0.2)
             #define NOISE_OFFSET_1 float2(16, 16)
             #define NOISE_POWER_1 float2(0.1, 0.075)
-            
-            inline float2 unpack_normal_2d(float2 color)
-            {
-                return (color - 0.5) * 2;
-            }
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
@@ -95,7 +91,7 @@
             float4 noise_shift(float2 mainUV, float2 noiseUV, float2 offset, float2 power)
             {
                 float2 noiseRG = tex2D(_NoiseMap, noiseUV * offset).rg;
-                float2 noise = unpack_normal_2d(noiseRG) * power;
+                float2 noise = beast_unpack_normal_2d(noiseRG) * power;
                 mainUV = mainUV + noise * offset / _MainMapSize;
                 
                 return tex2D(_MainMap, mainUV).r;

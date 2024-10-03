@@ -37,8 +37,10 @@
             sampler2D _TileAtlas;
             float2 _TileAtlasWidthHeight;
             float2 _TileAtlasTileCount;
-            float2 _TileCenter;
+            float2 _TileBlendCenter;
             float _TileAtlasPPU;
+
+            float _RenderYCrop;
 
             sampler2D _SolverTexture;
             float _SolverSize;
@@ -63,6 +65,9 @@
 
                 float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
                 gridScale.x *= 1.0f / (aspect * 0.5f);
+
+                input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
+                input.texcoord.y *= 1 - _RenderYCrop;
 
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
@@ -96,32 +101,26 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float2 solverColor = tex2D(_SolverTexture, input.solverUV);
-                
-                uint tileIndex = solverColor.r;
+                float2 solverRG = tex2D(_SolverTexture, input.solverUV);
+
+                uint tileIndex = f32tof16(solverRG.r);
                 float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
                 float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
-                float2 tileUV = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                float2 tileUV = input.vertexUV + tileUVShift;
                 
-                float4 color = tex2D(_TileAtlas, input.vertexUV + tileUV);
+                float4 atlasColor = tex2D(_TileAtlas, input.vertexUV + tileUVShift);
 
-                clip(color.r + color.g + color.b - 0.01f);
+                clip(atlasColor.r + atlasColor.g + atlasColor.b - 0.01f);
 
-                return color;
+                float noisePower = solverRG.g;
+                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
+                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
+                centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
                 
-                //uint tileIndex = tex2D(_TileAtlas, input.uv);
+                float4 centerColor = tex2D(_TileAtlas, centerUV);
                 
-                // float4 noiseColor = tex2D(_NoiseTexture, input.noiseUV);
-                //
-                // float t = saturate(_TileAtlasPPU / (_RenderSize.y * _RenderTileHeight));
-                //
-                // float2 centerUV = lerp(input.tileUV, _TileCenter, t * 0.5 + t * noiseColor.r * 0.5);
-                //
-                // float4 centerColor = tex2D(_TileAtlas, centerUV);
-                //
-                // tileColor = lerp(tileColor, centerColor, t);
-                
-                return 0;
+                return lerp(atlasColor, centerColor, t);
             }
             
             ENDCG

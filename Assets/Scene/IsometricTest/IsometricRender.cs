@@ -15,14 +15,14 @@ public class IsometricRender : MonoBehaviour
     public Texture2D tileAtlas;
     public int2 tileAtlasWidthHeight;
     public int2 tileAtlasTileCount;
-    public float2 tileCenter;
+    public float2 tileBlendCenter;
     public float tileAtlasPPU;
     
     [Space]
     public int2 tileGridSize;
-
     public float2 renderOffset;
     public float renderTileHeight;
+    public float renderYCrop;
 
     [Space]
     public Texture2D terrainTexture;
@@ -31,8 +31,8 @@ public class IsometricRender : MonoBehaviour
     
     [Space]
     public Texture2D noiseTexture;
-    public float2 noiseTextureSize;
-    public float2 noiseTextureOffset;
+    public float2 noiseSize;
+    public float2 noiseOffset;
 
     private Material _renderMaterial;
     private Material _solverMaterial;
@@ -49,7 +49,7 @@ public class IsometricRender : MonoBehaviour
 
     private void Update()
     {
-        float2 screenSize = new float2(Screen.width, Screen.height);
+        float2 screenSize = new (Screen.width, Screen.height);
         
         int2 gSize = tileGridSize;
         gSize.x = Mathf.Max(1, tileGridSize.x);
@@ -62,11 +62,12 @@ public class IsometricRender : MonoBehaviour
         
         int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
         _solverMaterial.SetVector("_TileGridSize", tileGridSize);
-        _solverMaterial.SetTexture("_TileAtlas", tileAtlas);
-        _solverMaterial.SetVector("_TileAtlasWidthHeight", tileAtlasWidthHeight);
         _solverMaterial.SetTexture("_TerrainTexture", terrainTexture);
         _solverMaterial.SetVector("_TerrainSize", terrainSize);
         _solverMaterial.SetVector("_TerrainOffset", terrainOffset);
+        _solverMaterial.SetTexture("_NoiseTexture", noiseTexture);
+        _solverMaterial.SetVector("_NoiseSize", noiseSize);
+        _solverMaterial.SetVector("_NoiseOffset", noiseOffset);
         _solverMaterial.SetFloat("_OutputTextureSize", solverTextureSize);
         
         RenderTexture solverTexture = BeastCG.NewRenderTextureTemporary(this, new NewTempRenderTextureData
@@ -74,7 +75,7 @@ public class IsometricRender : MonoBehaviour
             size = new int2(solverTextureSize, solverTextureSize),
             antiAliasing = 1,
             readWrite = RenderTextureReadWrite.Linear, 
-            format = RenderTextureFormat.RGFloat,
+            format = RenderTextureFormat.RGHalf,
             filterMode = FilterMode.Point
         });
         
@@ -98,8 +99,9 @@ public class IsometricRender : MonoBehaviour
         renderParams.matProps.SetTexture("_TileAtlas", tileAtlas);
         renderParams.matProps.SetVector("_TileAtlasWidthHeight", tileAtlasWidthHeight);
         renderParams.matProps.SetVector("_TileAtlasTileCount", tileAtlasTileCount);
-        renderParams.matProps.SetVector("_TileCenter", tileCenter);
+        renderParams.matProps.SetVector("_TileBlendCenter", tileBlendCenter);
         renderParams.matProps.SetFloat("_TileAtlasPPU", tileAtlasPPU);
+        renderParams.matProps.SetFloat("_RenderYCrop", renderYCrop);
         renderParams.matProps.SetTexture("_SolverTexture", solverTexture);
         renderParams.matProps.SetFloat("_SolverSize", solverTextureSize);
         renderParams.matProps.SetVector("_OutputSize", screenSize);

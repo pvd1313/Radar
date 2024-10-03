@@ -263,7 +263,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.40251565, g: 0.40251565, b: 0.40251565, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -478,7 +478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22451668, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_Pivot.x
@@ -1611,17 +1611,18 @@ MonoBehaviour:
   tileAtlasTileCount:
     x: 2
     y: 2
-  tileCenter:
+  tileBlendCenter:
     x: 0.5
     y: 0.23
   tileAtlasPPU: 64
   tileGridSize:
-    x: 3
-    y: 2
+    x: 200
+    y: 200
   renderOffset:
-    x: 0.5
-    y: 0.5
-  renderTileHeight: 0.05
+    x: 0
+    y: 0
+  renderTileHeight: 0.005
+  renderYCrop: 0.5
   terrainTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
   terrainSize:
     x: 64
@@ -1630,10 +1631,10 @@ MonoBehaviour:
     x: 5
     y: 5
   noiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
-  noiseTextureSize:
+  noiseSize:
     x: 512
     y: 512
-  noiseTextureOffset:
+  noiseOffset:
     x: 0
     y: 0
 --- !u!4 &1922191046
