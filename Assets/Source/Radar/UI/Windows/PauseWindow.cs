@@ -43,8 +43,8 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-            SetActive(true);
             _selectionLoop.Enable();
+            SetActive(true);
         }
 
         public void Close()

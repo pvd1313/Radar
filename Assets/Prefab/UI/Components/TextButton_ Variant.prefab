@@ -92,12 +92,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 50
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 50
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -144,7 +144,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 677521541624871196, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Name
-      value: TextButton_ Variant
+      value: textButton_ Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2571603028301061545, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Pivot.x
