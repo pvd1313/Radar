@@ -13,13 +13,13 @@ namespace Beast.Radar.Cinematic
         public CameraControllerState State { get; private set; }
 
         private readonly CameraConfig _config;
-        private readonly IInputController _input;
+        private readonly ICameraInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
 
         private CameraParams _currentParams;
 
         public CameraController(CameraConfig config,
-            IInputController inputController,
+            ICameraInputController inputController,
             IPlayerInputProvider inputProvider)
         {
             _config = config;

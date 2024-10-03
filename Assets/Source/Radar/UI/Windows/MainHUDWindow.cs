@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class MainHUDWindow : Initializable, IDisposable
+    public class MainHUDWindow : Initializable, Disposable
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;

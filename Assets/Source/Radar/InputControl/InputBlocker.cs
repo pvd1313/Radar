@@ -4,18 +4,18 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.InputControl
 {
-    public class InputBlocker: Initializable, IDisposable
+    public class InputBlocker: Initializable, Disposable
     {
         private readonly IWindowManager _windowManager;
-        private readonly IInputController _input;
+        private readonly ICameraInputController _cameraInput;
 
         private int _blockCount;
         private bool _isBlock;
 
-        public InputBlocker(IWindowManager windowManager, IInputController inputController)
+        public InputBlocker(IWindowManager windowManager, ICameraInputController cameraInputController)
         {
             _windowManager = windowManager;
-            _input = inputController;
+            _cameraInput = cameraInputController;
         }
 
         public UniTask<InitializationResult> Initialize()
@@ -74,12 +74,12 @@ namespace Beast.Radar.InputControl
             if (_blockCount != 0 && !_isBlock)
             {
                 _isBlock = true;
-                _input.Block(_isBlock);
+                _cameraInput.Block(_isBlock);
             }
             else if (_blockCount == 0 && _isBlock)
             {
                 _isBlock = false;
-                _input.Block(_isBlock);
+                _cameraInput.Block(_isBlock);
             }
         }
     }

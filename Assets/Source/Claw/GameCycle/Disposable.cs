@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.GameCycle
 {
-    public interface IDisposable
+    public interface Disposable
     {
         public void Dispose();
     }

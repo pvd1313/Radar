@@ -12,7 +12,8 @@ namespace Beast.Radar.Core
         protected override IEnumerable<Type> CreateContract()
         {
             yield return typeof(PlayerInputProvider);
-            yield return typeof(InputController);
+            yield return typeof(UIInputController);
+            yield return typeof(CameraInputController);
             yield return typeof(CameraController);
             yield return typeof(WorldMapBaker);
             yield return typeof(WorldMapRender);

@@ -1,8 +1,9 @@
 ﻿using System;
+using Beast.Claw.GameCycle;
 
 namespace Beast.Radar.UI
 {
-    public interface IWindowManager
+    public interface IWindowManager : Initializable, Disposable
     {
         event Action<bool> WindowChanged; 
         event Action<bool> MouseOverUI;

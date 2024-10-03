@@ -1,12 +1,12 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
-using IDisposable = Beast.Claw.GameCycle.IDisposable;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IPlayerInputProvider : Initializable, IDisposable
+    public interface IPlayerInputProvider : Initializable, Disposable
     {
         EInputScheme Scheme { get; }
+        public InputActions Actions { get; }
         event Action<EInputScheme> ChangedScheme;
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
 using Unity.Mathematics;
-using IDisposable = Beast.Claw.GameCycle.IDisposable;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IInputController : Initializable, IDisposable, IFrameBeginUpdate
+    public interface ICameraInputController :  IFrameBeginUpdate
     {
         public event Action ChangedEarlyValues;
         public float2 ScreenPoint { get; }

@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class PauseWindow : Initializable, IDisposable
+    public class PauseWindow : Initializable, Disposable
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
