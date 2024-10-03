@@ -67,7 +67,7 @@
                 gridScale.x *= 1.0f / (aspect * 0.5f);
 
                 input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
-                input.texcoord.y *= _RenderYCrop;
+                input.texcoord.y *= 1 - _RenderYCrop;
 
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
