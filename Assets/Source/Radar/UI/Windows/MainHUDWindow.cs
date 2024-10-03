@@ -1,9 +1,10 @@
 ﻿using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
+using UnityEngine.EventSystems;
 
 namespace Beast.Radar.UI
 {
-    public class MainHUDWindow : Initializable, Disposable
+    public class MainHUDWindow : BeastUIWindow, Initializable, Disposable
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
@@ -19,7 +20,7 @@ namespace Beast.Radar.UI
         public UniTask<InitializationResult> Initialize()
         { 
             _view = _uiFactory.CreateWindowView(UIPrefabsID.WindowMainHUD) as MainHUDView;
-            _windowManager.RegisterPanel(UIWindowID.MainHUD, _view);
+            _windowManager.RegisterWindow(UIWindowID.MainHUD, _view, this);
             Subscribe();
             return InitializationResult.SuccessNotAsync();
         }
@@ -29,6 +30,22 @@ namespace Beast.Radar.UI
             Unsubscribe();
         }
 
+        public void Open()
+        {
+           SetActive(true);
+           EventSystem.current.SetSelectedGameObject(_view.pauseButton.gameObject);
+        }
+
+        public void Close()
+        {
+            SetActive(false);
+        }
+
+        private void SetActive(bool isActive)
+        {
+            _view.pauseButton.SetInteractable(isActive);
+        }
+        
         private void Subscribe()
         {
             _view.pauseButton.Clicked += OnClickedPauseButton;
@@ -43,5 +60,6 @@ namespace Beast.Radar.UI
         {
             _windowManager.ShowWindow(UIWindowID.Pause);
         }
+        
     }
 }

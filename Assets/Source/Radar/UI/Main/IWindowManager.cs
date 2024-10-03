@@ -7,7 +7,7 @@ namespace Beast.Radar.UI
     {
         event Action<bool> WindowChanged; 
         event Action<bool> MouseOverUI;
-        public void RegisterPanel(string windowID, BeastUIWindowView view);
+        public void RegisterWindow(string windowID, BeastUIWindowView view, BeastUIWindow window);
         public void ShowWindow(string windowID);
     }
 }

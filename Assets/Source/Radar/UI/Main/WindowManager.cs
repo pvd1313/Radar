@@ -14,10 +14,10 @@ namespace Beast.Radar.UI
 
         private readonly IUIFactory _uiFactory;
         private readonly IUIInputController _uiInputController;
-        private readonly Dictionary<string, BeastUIWindowView> _allViews = new();
+        private readonly Dictionary<string, BeastUIWindow> _allWindows = new();
 
         private CanvasView _canvas;
-        private BeastUIWindowView _currentOpenedView;
+        private BeastUIWindow _currentOpenedWindow;
 
         public WindowManager(IUIFactory uiFactory, IUIInputController uiInputController)
         {
@@ -37,37 +37,29 @@ namespace Beast.Radar.UI
             Unsubscribe();
         }
         
-        public void RegisterPanel(string windowID, BeastUIWindowView view)
+        public void RegisterWindow(string windowID, BeastUIWindowView view, BeastUIWindow window)
         {
-            if (_allViews.ContainsKey(windowID))
+            if (_allWindows.ContainsKey(windowID))
             {
                 throw new BeastException($"Window with id #{windowID} already exists");
             }
             
             view.transform.SetParent(_canvas.transform, false);
-            _allViews.Add(windowID, view);
+            _allWindows.Add(windowID, window);
         }
 
         public void ShowWindow(string windowID)
         {
-            if (!_allViews.ContainsKey(windowID))
+            if (!_allWindows.ContainsKey(windowID))
             {
                 throw new BeastException($"Window with id #{windowID} already exists");
             }
+
+            _currentOpenedWindow?.Close();
+            _currentOpenedWindow = _allWindows[windowID];
+            _currentOpenedWindow.Open();
             
-            if (_currentOpenedView != null && _currentOpenedView as MainHUDView == null)
-            {
-                _currentOpenedView.gameObject.SetActive(false);
-            }
-
-            _currentOpenedView = _allViews[windowID];
-            bool isHasOpenedWindow = false;
-
-            if (_currentOpenedView as MainHUDView == null)
-            {
-                _currentOpenedView.gameObject.SetActive(true);
-                isHasOpenedWindow = true;
-            }
+            bool isHasOpenedWindow = windowID != UIWindowID.MainHUD;
             
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
@@ -75,13 +67,13 @@ namespace Beast.Radar.UI
         private void Subscribe()
         {
             _canvas.MouseOverUI += OnMouseOverUI;
-            _uiInputController.PausePressed += OnPausePressed;
+            _uiInputController.PausePressed += OnPauseKeyPressed;
         }
 
         private void Unsubscribe()
         {
             _canvas.MouseOverUI -= OnMouseOverUI;
-            _uiInputController.PausePressed -= OnPausePressed;
+            _uiInputController.PausePressed -= OnPauseKeyPressed;
         }
 
         private void OnMouseOverUI(bool isOver)
@@ -89,9 +81,9 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isOver);       
         }
 
-        private void OnPausePressed()
+        private void OnPauseKeyPressed()
         {
-            ShowWindow(_currentOpenedView as PauseView == null ? UIWindowID.Pause : UIWindowID.MainHUD);
+            ShowWindow(_currentOpenedWindow is not PauseWindow ? UIWindowID.Pause : UIWindowID.MainHUD);
         }
     }
 }
