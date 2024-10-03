@@ -6,11 +6,13 @@ namespace Beast.Radar.UI
 {
     public class BeastUIButton : BeastUIView
     {
+        public Selectable Selectable => _selectable;
         public event Action Clicked;
-        
+
+        [SerializeField] private Selectable _selectable;
         [SerializeField] private Button _button;
         
-        private void Start()
+        public void Start()
         {
             _button.onClick.AddListener(Click);
         }

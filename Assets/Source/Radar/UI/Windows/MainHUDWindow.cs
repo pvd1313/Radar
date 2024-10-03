@@ -1,6 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
-using UnityEngine.EventSystems;
 
 namespace Beast.Radar.UI
 {
@@ -22,6 +21,7 @@ namespace Beast.Radar.UI
             _view = _uiFactory.CreateWindowView(UIPrefabsID.WindowMainHUD) as MainHUDView;
             _windowManager.RegisterWindow(UIWindowID.MainHUD, _view, this);
             Subscribe();
+            Open();
             return InitializationResult.SuccessNotAsync();
         }
 
@@ -33,7 +33,6 @@ namespace Beast.Radar.UI
         public void Open()
         {
            SetActive(true);
-           EventSystem.current.SetSelectedGameObject(_view.pauseButton.gameObject);
         }
 
         public void Close()
@@ -60,6 +59,5 @@ namespace Beast.Radar.UI
         {
             _windowManager.ShowWindow(UIWindowID.Pause);
         }
-        
     }
 }

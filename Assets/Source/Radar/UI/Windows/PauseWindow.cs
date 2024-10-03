@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
-using UnityEngine.EventSystems;
 
 namespace Beast.Radar.UI
 {
@@ -8,19 +8,30 @@ namespace Beast.Radar.UI
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
+        private readonly IUIInputController _uiInput;
 
+        private UISelectionLoop _selectionLoop;
         private PauseView _view;
 
-        public PauseWindow(IUIFactory uiFactory, IWindowManager windowManager)
+        public PauseWindow(IUIFactory uiFactory, IWindowManager windowManager, IUIInputController uiInputController)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
+            _uiInput = uiInputController;
         }
 
         public UniTask<InitializationResult> Initialize()
         {
             _view = _uiFactory.CreateWindowView(UIPrefabsID.PanelPause) as PauseView;
             _windowManager.RegisterWindow(UIWindowID.Pause, _view, this);
+
+            _selectionLoop = new UISelectionLoop(_uiInput, new[]
+            {
+                _view.newGameButton.Selectable,
+                _view.saveButton.Selectable,
+                _view.loadButton.Selectable,
+            });
+
             Subscribe();
             return InitializationResult.SuccessNotAsync();
         }
@@ -32,13 +43,14 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-           SetActive(true); 
-           EventSystem.current.SetSelectedGameObject(_view.newGameButton.gameObject);
+            SetActive(true);
+            _selectionLoop.Enable();
         }
-        
+
         public void Close()
         {
             SetActive(false);
+            _selectionLoop.Disable();
         }
 
         private void SetActive(bool isActive)
@@ -50,10 +62,10 @@ namespace Beast.Radar.UI
             {
                 closeButton.SetInteractable(isActive);
             }
-            
+
             _view.gameObject.SetActive(isActive);
         }
-        
+
         private void Subscribe()
         {
             _view.loadButton.Clicked += OnClickedLoadButton;
