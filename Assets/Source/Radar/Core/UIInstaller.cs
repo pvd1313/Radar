@@ -14,7 +14,7 @@ namespace Beast.Radar.Core
             yield return typeof(WindowManager);
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseWindow);
-            yield return typeof(InputBlockerOnUIHover);
+            yield return typeof(InputBlocker);
         }
     }
 }

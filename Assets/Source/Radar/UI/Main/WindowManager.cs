@@ -8,6 +8,7 @@ namespace Beast.Radar.UI
 {
     public class WindowManager : IWindowManager, Initializable
     {
+        public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
 
         private readonly IUIFactory _uiFactory;
@@ -16,7 +17,6 @@ namespace Beast.Radar.UI
         private CanvasView _canvas;
         private BeastUIWindowView _currentOpenedView;
 
-        
         public WindowManager(IUIFactory uiFactory)
         {
             _uiFactory = uiFactory;
@@ -47,13 +47,21 @@ namespace Beast.Radar.UI
                 throw new BeastException($"Window with id #{windowID} already exists");
             }
             
-            if (_currentOpenedView != null && _currentOpenedView is not MainHUDView)
+            if (_currentOpenedView != null && _currentOpenedView as MainHUDView == null)
             {
                 _currentOpenedView.gameObject.SetActive(false);
             }
 
             _currentOpenedView = _allViews[windowID];
-            _currentOpenedView.gameObject.SetActive(true);
+            bool isHasOpenedWindow = false;
+
+            if (_currentOpenedView as MainHUDView == null)
+            {
+                _currentOpenedView.gameObject.SetActive(true);
+                isHasOpenedWindow = true;
+            }
+            
+            WindowChanged?.Invoke(isHasOpenedWindow);
         }
     }
 }

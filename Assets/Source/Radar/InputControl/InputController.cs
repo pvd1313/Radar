@@ -139,14 +139,10 @@ namespace Beast.Radar.InputControl
             }
         }
 
-        public void Block(bool over)
+        public void Block(bool isBlock)
         {
-            _isBlock = over;
+            _isBlock = isBlock;
             if (_isBlock)
-            {
-                
-            }
-            else
             {
                 LastTouchCount = 0;
                 IsPressMove = false;
