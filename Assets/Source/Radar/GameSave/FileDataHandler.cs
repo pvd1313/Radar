@@ -6,20 +6,11 @@ using Newtonsoft.Json;
 
 namespace Beast.Radar.GameSave
 {
-    public class FileDataHandler<T>
+    public class FileDataHandler
     {
-        private readonly string _dataDirPath;
-        private readonly string _dataFileName;
-
-        public FileDataHandler(string dataDirPath, string dataFileName)
+        public void Save<TData>(TData savedData, string dirPath, string fileName)
         {
-            _dataDirPath = dataDirPath;
-            _dataFileName = dataFileName;
-        }
-
-        public void Save(T savedData)
-        {
-            string fullPath = Path.Combine(_dataDirPath, _dataFileName + ".gz"); 
+            string fullPath = Path.Combine(dirPath, fileName + ".gz"); 
             try
             {
                 Directory.CreateDirectory
@@ -45,10 +36,9 @@ namespace Beast.Radar.GameSave
             }
         }
 
-        public T Load()
+        public TData Load<TData>(string dirPath, string fileName)
         {
-            string fullPath = Path.Combine(_dataDirPath, _dataFileName + ".gz");
-            T loadedSavedData;
+            string fullPath = Path.Combine(dirPath, fileName + ".gz");
 
             if (!File.Exists(fullPath))
             {
@@ -61,13 +51,12 @@ namespace Beast.Radar.GameSave
                 using StreamReader reader = new StreamReader(decompressionStream);
 
                 string dataToLoad = reader.ReadToEnd();
-                loadedSavedData = JsonConvert.DeserializeObject<T>(dataToLoad);
+                return JsonConvert.DeserializeObject<TData>(dataToLoad);
             }
             catch (Exception e)
             {
                 throw new BeastException("Error occurred when trying to load data from file: " + fullPath + "\n" + e);
             }
-            return loadedSavedData;
         }
     }
 }

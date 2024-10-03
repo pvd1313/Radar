@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.GameSave;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
 
@@ -9,15 +10,21 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
         private readonly IUIInputController _uiInput;
+        private readonly ISaveService _saveService;
 
         private UISelectionLoop _selectionLoop;
         private PauseView _view;
 
-        public PauseWindow(IUIFactory uiFactory, IWindowManager windowManager, IUIInputController uiInputController)
+        public PauseWindow(
+            IUIFactory uiFactory, 
+            IWindowManager windowManager, 
+            IUIInputController uiInputController,
+            ISaveService saveService)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _uiInput = uiInputController;
+            _saveService = saveService;
         }
 
         public UniTask<InitializationResult> Initialize()
@@ -100,12 +107,12 @@ namespace Beast.Radar.UI
 
         private void OnClickedSaveButton()
         {
-            //todo invoke save action 
+            _saveService.SaveData();
         }
 
         private void OnClickedLoadButton()
         {
-            //todo invoke load action 
+            _saveService.LoadData();
         }
     }
 }

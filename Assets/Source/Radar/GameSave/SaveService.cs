@@ -10,8 +10,8 @@ namespace Beast.Radar.GameSave
     {
         private const string _fileName = "test_data.json";
         private readonly List<ISavedDataReader> _readers;
-
-        private FileDataHandler<SavedData> _dataHandler;
+        
+        private FileDataHandler _dataHandler;
         private SavedData _savedData;
 
         public SaveService(List<ISavedDataReader> readers)
@@ -21,13 +21,13 @@ namespace Beast.Radar.GameSave
 
         public UniTask<InitializationResult> Initialize()
         {
-            _dataHandler = new FileDataHandler<SavedData>(Application.persistentDataPath, _fileName);
+            _dataHandler = new FileDataHandler();
             return InitializationResult.SuccessNotAsync();
         }
 
         public void LoadData()
         {
-            _savedData = _dataHandler.Load();
+            _savedData = _dataHandler.Load<SavedData>(Application.persistentDataPath, _fileName);
 
             if (_savedData == null)
             {
@@ -39,6 +39,7 @@ namespace Beast.Radar.GameSave
             {
                 dataReader.LoadData(_savedData);
             }
+            BeastLog.Info(this, "Data loaded");
         }
 
         public void SaveData()
@@ -54,7 +55,8 @@ namespace Beast.Radar.GameSave
                 savedData.SaveData(_savedData);
             }
             
-            _dataHandler.Save(_savedData);
+            _dataHandler.Save(_savedData, Application.persistentDataPath, _fileName);
+            BeastLog.Info(this, "Data saved");
         }
 
         private void NewProgress()
@@ -63,7 +65,7 @@ namespace Beast.Radar.GameSave
             {
                 seed = Random.Range(0,10)
             };
-            _dataHandler.Save(_savedData);
+            _dataHandler.Save(_savedData, Application.persistentDataPath, _fileName);
         }
     }
 }
