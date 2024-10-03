@@ -847,7 +847,7 @@
     "m_Group": {
         "m_Id": ""
     },
-    "m_Name": "BeastRect (Custom Function)",
+    "m_Name": "shadergraph_rect (Custom Function)",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
@@ -887,8 +887,8 @@
         "m_SerializableColors": []
     },
     "m_SourceType": 0,
-    "m_FunctionName": "BeastRect",
-    "m_FunctionSource": "d211dd7597645ca40b1725f31999840b",
+    "m_FunctionName": "shadergraph_rect",
+    "m_FunctionSource": "1441a31482e7e3547b58b115514be685",
     "m_FunctionBody": "Enter function body here..."
 }
 
@@ -2033,15 +2033,15 @@
     "m_Group": {
         "m_Id": ""
     },
-    "m_Name": "BeastFBM (Custom Function)",
+    "m_Name": "shadergraph_fbm (Custom Function)",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 111.9998779296875,
-            "y": -798.6666870117188,
-            "width": 213.99996948242188,
-            "height": 352.0
+            "x": 125.3333740234375,
+            "y": -798.666748046875,
+            "width": 213.99993896484376,
+            "height": 352.0000305175781
         }
     },
     "m_Slots": [
@@ -2073,8 +2073,8 @@
         "m_SerializableColors": []
     },
     "m_SourceType": 0,
-    "m_FunctionName": "BeastFBM",
-    "m_FunctionSource": "d211dd7597645ca40b1725f31999840b",
+    "m_FunctionName": "shadergraph_fbm",
+    "m_FunctionSource": "1441a31482e7e3547b58b115514be685",
     "m_FunctionBody": "Enter function body here..."
 }
 

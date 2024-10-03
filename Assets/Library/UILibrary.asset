@@ -16,10 +16,7 @@ MonoBehaviour:
   - ID: canvas_main
     view: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
   panels:
-  - ID: panel_mainHUD
+  - ID: mainHUD_window
     view: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
-  - ID: panel_pause
+  - ID: pause_window
     view: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}
-  overlays:
-  - ID: overlay_black
-    view: {fileID: 7235275386258349840, guid: b09a144bc9322b24789f31401c610dfc, type: 3}

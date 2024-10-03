@@ -4,13 +4,13 @@ namespace Beast.Claw.GameCycle
 {
     public struct InitializationResult
     {
-        public EControllerStatus status;
+        public EInitializationStatus status;
 
         public static InitializationResult Success()
         {
             return new InitializationResult
             {
-                status = EControllerStatus.Success
+                status = EInitializationStatus.Success
             };
         }
 

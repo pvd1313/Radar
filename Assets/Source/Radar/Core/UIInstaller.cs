@@ -11,10 +11,10 @@ namespace Beast.Radar.Core
         protected override IEnumerable<Type> CreateContract()
         {
             yield return typeof(UIFactory);
-            yield return typeof(PanelDispatcher);
-            yield return typeof(MainHUDController);
-            yield return typeof(PauseController);
-            yield return typeof(InputBlockerOnUIHover);
+            yield return typeof(WindowManager);
+            yield return typeof(MainHUDWindow);
+            yield return typeof(PauseWindow);
+            yield return typeof(InputBlocker);
         }
     }
 }

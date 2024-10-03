@@ -78,8 +78,8 @@ namespace Beast.Claw.CG
         public static RenderTexture NewRenderTextureTemporary<T>(T owner, NewTempRenderTextureData input)
         {
             input.ValidateThrowException();
-
-            return RenderTexture.GetTemporary(
+            
+            RenderTexture texture = RenderTexture.GetTemporary(
                 input.size.x,
                 input.size.y,
                 input.depth,
@@ -88,6 +88,10 @@ namespace Beast.Claw.CG
                 input.antiAliasing,
                 input.memoryless,
                 input.vrUsage);
+
+            texture.filterMode = input.filterMode;
+
+            return texture;
         }
 
         public static Material NewMaterial<T>(T owner, MaterialParameters input)

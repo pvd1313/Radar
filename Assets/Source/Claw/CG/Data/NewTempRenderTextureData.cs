@@ -13,6 +13,7 @@ namespace Beast.Claw.CG
         public int antiAliasing;
         public RenderTextureMemoryless memoryless;
         public VRTextureUsage vrUsage;
+        public FilterMode filterMode;
         
         public bool IsValid(out string errorMessage)
         {

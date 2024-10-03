@@ -8,20 +8,23 @@ struct BeastIsometricTile
     float isInner01;
 };
 
-BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
+// 0 1 2
+//  3 4
+// 5 6 7
+inline BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
 {
     BeastIsometricTile output;
 
-    uint innerGridSizeX = gridSizeX - 1;
+    uint innerGridSizeX = gridSizeX - 1u;
 
     output.mainY = floor(instanceID / (gridSizeX + innerGridSizeX));
     output.innerX = instanceID - output.mainY * (innerGridSizeX + gridSizeX);
-    output.isInner01 = output.innerX / gridSizeX >= 1;
+    output.isInner01 = output.innerX / gridSizeX >= 1u;
 
     return output;
 }
 
-float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
+inline float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     tile.innerX -= gridSizeX * tile.isInner01;
 
@@ -30,16 +33,16 @@ float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
     // TODO: Pack this.
     if (tile.isInner01)
     {
-        output.x += tile.mainY;
-        output.y += tile.mainY;
+        output.x -= tile.mainY;
+        output.y -= tile.mainY;
         output.x += tile.innerX;
         output.y -= tile.innerX;
-        output.x += 1;
+        output.y -= 1;
     }
     else
     {
-        output.x += tile.mainY;
-        output.y += tile.mainY;
+        output.x -= tile.mainY;
+        output.y -= tile.mainY;
         output.x += tile.innerX;
         output.y -= tile.innerX;
     }
@@ -47,7 +50,7 @@ float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
     return output;
 }
 
-float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
+inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     float2 output = 0;
 
@@ -60,12 +63,16 @@ float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
     }
     else
     {
-        tile.innerX %= gridSizeX;
         output.y = tile.mainY * -1.0f;
         output.x = tile.innerX;
     }
 
     return output;
+}
+
+inline float2 beast_unpack_normal_2d(float2 color)
+{
+    return (color - 0.5) * 2;
 }
 
 // Ported : v.fuchadzhy@risenbeast.com
@@ -122,7 +129,7 @@ float beast_fbm(float2 uv,
     return color;
 }
 
-void BeastRect_float(in float2 UV,
+void shadergraph_rect_float(in float2 UV,
                      in float4 RGBA,
                      in float4 RectColor,
                      in float2 LineWidth,
@@ -141,14 +148,14 @@ void BeastRect_float(in float2 UV,
     }
 }
 
-void BeastNoise_float(in float2 UV,
+void shadergraph_noise_float(in float2 UV,
                       in float seed,
                       out float R)
 {
     R = beast_noise(UV, seed);
 }
 
-void BeastFBM_float(in float2 UV,
+void shadergraph_fbm_float(in float2 UV,
                     in float Turbulence,
                     in float Quality,
                     in float Seed,

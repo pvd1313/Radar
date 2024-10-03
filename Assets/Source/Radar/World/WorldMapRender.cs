@@ -46,7 +46,7 @@ namespace Beast.Radar.World
             {
                 size = WorldSize,
                 depth = 0,
-                format = RenderTextureFormat.R8,
+                format = RenderTextureFormat.RGFloat,
                 mipCount = 0,
                 filterMode = FilterMode.Point,
                 wrapMode = TextureWrapMode.Clamp,
