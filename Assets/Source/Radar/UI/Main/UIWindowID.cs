@@ -2,7 +2,7 @@
 {
     public static class UIWindowID
     {
-        public static readonly string Pause = "pause";
-        public static readonly string MainHUD = "mainHUD";
+        public static readonly string Pause = "pause_window";
+        public static readonly string MainHUD = "main_hud_window";
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccefdf7fc78443bfb1e9b78b79d4cc6a, type: 3}
-  m_Name: CGLibrary
+  m_Name: GraphicLibrary
   m_EditorClassIdentifier: 
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   worldMapBakeShader: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}

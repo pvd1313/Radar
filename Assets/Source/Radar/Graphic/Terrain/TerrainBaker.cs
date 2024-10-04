@@ -1,30 +1,29 @@
 ﻿using Beast.Claw.CG;
 using Beast.Claw.GameCycle;
-using Beast.Radar.CG;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Beast.Radar.World
 {
-    public class WorldMapBaker : Initializable, IWorldMapBaker
+    public class TerrainBaker : Initializable, ITerrainBaker
     {
-        private readonly CGLibrary _cgLibrary;
+        private readonly GraphicLibrary _graphicLibrary;
 
         private Material _material;
 
-        public WorldMapBaker(CGLibrary cgLibrary)
+        public TerrainBaker(GraphicLibrary graphicLibrary)
         {
-            _cgLibrary = cgLibrary;
+            _graphicLibrary = graphicLibrary;
         }
         
         public UniTask<InitializationResult> Initialize()
         {
-            _material = new Material(_cgLibrary.worldMapBakeShader);
+            _material = new Material(_graphicLibrary.worldMapBakeShader);
 
             return InitializationResult.SuccessNotAsync();
         }
 
-        public void Bake(WorldMapBakerInput input)
+        public void Bake(TerrainBakerInput input)
         {
             _material.SetFloat("_Flood01", input.waterFlood01);
             _material.SetFloat("_Seed01", input.seed01);

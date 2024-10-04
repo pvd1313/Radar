@@ -14,7 +14,7 @@
         {
             CGPROGRAM
 
-            #pragma target 2.0
+            #pragma target 1.0
             
             #pragma vertex vertex
             #pragma fragment fragment
@@ -63,7 +63,7 @@
                 
                 float aspect = _OutputSize.x / _OutputSize.y;
 
-                // Y crop, reduce rasterizer load. Will be obtained from config texture in future.
+                // Y crop, reduce rasterizer overlload. Will be obtained from config texture in future.
                 input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
                 input.texcoord.y *= 1 - _RenderYCrop;
 

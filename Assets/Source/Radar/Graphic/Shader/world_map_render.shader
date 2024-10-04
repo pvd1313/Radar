@@ -6,18 +6,15 @@
     }
     SubShader
     {
-        Tags
-        {
-            "RenderType" = "Opaque"
-        }
-        
-        LOD 100
+        Cull Off
+        ZWrite Off
+        ZTest Off
 
         Pass
         {
             CGPROGRAM
 
-            #pragma target 2.0
+            #pragma target 1.0
             
             #pragma vertex vertex
             #pragma fragment fragment

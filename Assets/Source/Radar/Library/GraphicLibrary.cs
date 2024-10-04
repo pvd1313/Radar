@@ -1,9 +1,9 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Radar.CG
+namespace Beast.Radar
 {
-    public partial class CGLibrary : BeastLibrary
+    public partial class GraphicLibrary : BeastLibrary
     {
         public Mesh quadMesh;
         
@@ -12,6 +12,6 @@ namespace Beast.Radar.CG
 
         public Texture2D worldDetailNoise;
 
-        public Debug debug;
+        public GraphicLibrary.Debug debug;
     }
 }
