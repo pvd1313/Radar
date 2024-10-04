@@ -56,7 +56,7 @@ public class IsometricRenderOld : MonoBehaviour
         gSize.y = Mathf.Max(1, tileGridSize.y);
 
         int tileCount = GetTileCount(gSize);
-        BeastLog.Int(this, "tileCount", tileCount);
+        BLog.Int(this, "tileCount", tileCount);
         
         // -- Solver \/
         

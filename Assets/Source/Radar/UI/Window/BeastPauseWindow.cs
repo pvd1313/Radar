@@ -4,11 +4,11 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastPauseWindow : IBeastUIWindow, Initializable, Disposable
+    public class BeastPauseWindow : IBeastUIWindow, IBeastInitialize, IBeastDispose
     {
         private readonly IBeastUIFactory _uiFactory;
         private readonly IBeastWindowManager _windowManager;
-        private readonly IUIInputController _uiInput;
+        private readonly IBeastUIInputController _uiInput;
 
         private BeastUISelectionLoop _selectionLoop;
         private BeastPauseMenuView _menuView;
@@ -16,14 +16,14 @@ namespace Beast.Radar.UI
         public BeastPauseWindow(
             IBeastUIFactory uiFactory,
             IBeastWindowManager windowManager,
-            IUIInputController uiInputController)
+            IBeastUIInputController uiInputController)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _uiInput = uiInputController;
         }
 
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             _menuView = _uiFactory.NewWindow<BeastPauseWindow, BeastPauseMenuView>(this, BeastUIPrefabID.PauseWindow);
             _windowManager.Register(this, BeastUIWindowID.Pause, _menuView);
@@ -36,7 +36,7 @@ namespace Beast.Radar.UI
             });
 
             Subscribe();
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Dispose()

@@ -17,11 +17,11 @@ namespace Beast.Radar.Core
             yield return typeof(BeastWindowManager);
             yield return typeof(BeastHUDWindow);
             yield return typeof(BeastPauseWindow);
-            yield return typeof(InputBlocker);
+            yield return typeof(BeastInputBlocker);
             
-            yield return typeof(PlayerInputProvider);
-            yield return typeof(UIInputController);
-            yield return typeof(CameraInputController);
+            yield return typeof(BeastPlayerInputProvider);
+            yield return typeof(BeastUIInputController);
+            yield return typeof(BeastCameraInputController);
             yield return typeof(CameraController);
             yield return typeof(TerrainBaker);
             yield return typeof(WorldMapRender);

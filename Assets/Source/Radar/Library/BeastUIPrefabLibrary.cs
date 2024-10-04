@@ -15,11 +15,11 @@ namespace Beast.Radar
 
         private Dictionary<string, BeastUIView> _window;
         
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             _window = window.ToDictionary(w => w.id, w => w.prefab);
 
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public BeastUIView GetWindow(string prefabID)

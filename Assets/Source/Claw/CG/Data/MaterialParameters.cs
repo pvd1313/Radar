@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Claw.CG
 {
-    public struct MaterialParameters : IValidatable
+    public struct MaterialParameters : IBeastValidatable
     {
         public Shader shader;
         public string name;

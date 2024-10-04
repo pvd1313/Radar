@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.World
 {
-    public class WorldMapRender : Initializable, IFrameEndUpdate
+    public class WorldMapRender : IBeastInitialize, IBeastFrameEnd
     {
         private static readonly int2 WorldSize = new(4096, 4096);
         
@@ -37,7 +37,7 @@ namespace Beast.Radar.World
             _cameraConfig = cameraConfig;
         }
         
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             Application.targetFrameRate = 4064;
             
@@ -66,12 +66,12 @@ namespace Beast.Radar.World
                 shader = _graphicLibrary.worldMapRenderShader,
             });
             
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void OnFrameEnd()
         {
-            BeastLog.Float2(this, "cameraPosition", _camera.State.position);
+            BLog.Float2(this, "cameraPosition", _camera.State.position);
             
             float screenAspect = Screen.width / (float)Screen.height;
             float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
@@ -93,7 +93,7 @@ namespace Beast.Radar.World
             float mapChunkSize = 100;
             float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);
 
-            BeastLog.Float(this, "chunkTexelSize", chunkTexelSize);
+            BLog.Float(this, "chunkTexelSize", chunkTexelSize);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {
