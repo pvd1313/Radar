@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.GameCycle;
 using Beast.Radar.InputControl;
+using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
@@ -9,6 +10,7 @@ namespace Beast.Radar.UI
         private readonly IBeastUIFactory _uiFactory;
         private readonly IBeastWindowManager _windowManager;
         private readonly IBeastUIInputController _uiInput;
+        private readonly IBeastGameSaveManager _gameSave;
 
         private BeastUISelectionLoop _selectionLoop;
         private BeastPauseMenuView _menuView;
@@ -16,11 +18,13 @@ namespace Beast.Radar.UI
         public BeastPauseWindow(
             IBeastUIFactory uiFactory,
             IBeastWindowManager windowManager,
-            IBeastUIInputController uiInputController)
+            IBeastUIInputController uiInputController,
+            IBeastGameSaveManager gameSave)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _uiInput = uiInputController;
+            _gameSave = gameSave;
         }
 
         public UniTask<BeastInitializationResult> Initialize()
@@ -36,6 +40,7 @@ namespace Beast.Radar.UI
             });
 
             Subscribe();
+            
             return BeastInitializationResult.SuccessNotAsync();
         }
 
@@ -47,12 +52,14 @@ namespace Beast.Radar.UI
         public void Open()
         {
             _selectionLoop.Enable();
+            
             SetActive(true);
         }
 
         public void Close()
         {
             SetActive(false);
+            
             _selectionLoop.Disable();
         }
 
@@ -61,6 +68,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.SetInteractable(isActive);
             _menuView.saveButton.SetInteractable(isActive);
             _menuView.newGameButton.SetInteractable(isActive);
+            
             foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.SetInteractable(isActive);
@@ -74,6 +82,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.Clicked += OnClickedLoadButton;
             _menuView.saveButton.Clicked += OnClickedSaveButton;
             _menuView.newGameButton.Clicked += OnClickedNewGameButton;
+            
             foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked += OnClickedClosePanelButton;
@@ -85,6 +94,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.Clicked -= OnClickedLoadButton;
             _menuView.saveButton.Clicked -= OnClickedSaveButton;
             _menuView.newGameButton.Clicked -= OnClickedNewGameButton;
+            
             foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked -= OnClickedClosePanelButton;
@@ -98,17 +108,18 @@ namespace Beast.Radar.UI
 
         private void OnClickedNewGameButton()
         {
-            //todo invoke newGame action 
+            // TODO: Invoke newGame action. We probably can load "default" save.
+            //     : Or we can open new map generation window.
         }
 
         private void OnClickedSaveButton()
         {
-            //todo invoke save action 
+            _gameSave.Save("default", "default"); 
         }
 
         private void OnClickedLoadButton()
         {
-            //todo invoke load action 
+            _gameSave.Load("default", "default");
         }
     }
 }

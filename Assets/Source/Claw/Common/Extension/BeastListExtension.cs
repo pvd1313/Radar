@@ -17,5 +17,13 @@ namespace Beast.Claw.Common
 
             return item;
         }
+
+        public static void AddRange<T>(this IList<T> list, IList<T> range)
+        {
+            foreach (T item in range)
+            {
+                list.Add(item);
+            }
+        }
     }
 }

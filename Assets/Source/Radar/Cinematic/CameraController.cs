@@ -1,14 +1,16 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
+using Beast.Claw.Serialization;
 using Beast.Radar.InputControl;
+using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : ICameraController
+    public class CameraController : ICameraController, IBeastSerializableModule
     {
         public CameraControllerState State { get; private set; }
 
@@ -18,7 +20,8 @@ namespace Beast.Radar.Cinematic
 
         private CameraParams _currentParams;
 
-        public CameraController(CameraConfig config,
+        public CameraController(
+            CameraConfig config,
             IBeastCameraInputController inputController,
             IBeastPlayerInputProvider inputProvider)
         {
@@ -41,9 +44,35 @@ namespace Beast.Radar.Cinematic
             );
 
             _currentParams = _config.GetParams(_inputProvider.Scheme);
+            
             Subscribe();
 
             return BeastInitializationResult.SuccessNotAsync();
+        }
+        
+        public void OnModuleSerialize(IBeastBlobStreamWriter stream)
+        {
+            // For the test purposes we will save json and binary variant. We also swap order.
+            
+            stream.WriteJson(this, "camera_state_json", State);
+
+            stream.WriteBinary(this, "camera_state_bin", State);
+        }
+
+        public void OnModuleDeserialize(IBeastBlobStreamReader stream)
+        {
+            // For the test purposes we will save json and binary variant. We also swap order.
+            
+            stream.TryReadJson(this, "camera_state_json", out CameraControllerState stateJson);
+
+            stream.TryReadBinaryNew(this, "camera_state_bin", out CameraControllerState stateBin);
+
+            if (!CameraControllerState.AreSame(stateJson, stateBin))
+            {
+                BLog.Error(this, "Something went wrong during serialization. Binary and json are differs");
+            }
+
+            State = stateJson;
         }
 
         public void Dispose()
@@ -87,9 +116,17 @@ namespace Beast.Radar.Cinematic
             }
 
             float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01 * 0.2f);
-            float2 moveDelta = _input.MoveDelta.Equals(float2.zero)
-                ? ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint)
-                : _input.MoveDelta * _currentParams.motionSpeed * zoomDistance;
+            float2 moveDelta;
+            
+            if (_input.MoveDelta.Equals(float2.zero))
+            {
+                moveDelta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
+            }
+            else
+            {
+                moveDelta = _input.MoveDelta * _currentParams.motionSpeed * zoomDistance;
+            }
+            
             float2 newPosition = State.position - moveDelta;
 
             RefreshStatePosition(newPosition);
