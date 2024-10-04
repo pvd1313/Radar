@@ -52,6 +52,8 @@ namespace Beast.Radar.Serialization
                     }
                 }
                 
+                fileStream.Close();
+                
                 BLog.Info(this, $"Loaded game state from '{filePath}'");
             }
             catch (Exception e)
@@ -86,6 +88,9 @@ namespace Beast.Radar.Serialization
                         BLog.Exception(this, e, message);
                     }
                 }
+
+                fileStream.Flush();
+                fileStream.Close();
                 
                 BLog.Info(this, $"Saved game state to '{filePath}'");
             }

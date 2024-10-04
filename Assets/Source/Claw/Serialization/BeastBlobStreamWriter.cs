@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Beast.Claw.Common;
 using Beast.Claw.Reflection;
+using Beast.Claw.Serialization.Json;
 using Newtonsoft.Json;
 
 namespace Beast.Claw.Serialization
@@ -23,8 +24,10 @@ namespace Beast.Claw.Serialization
             _stream = stream;
             _binaryWriter = new BinaryWriter(_stream);
             _jsonWriter = new JsonTextWriter(new StreamWriter(_stream));
-            _jsonSerializer = new JsonSerializer();
             _blobID2Owner = new Dictionary<string, string>();
+
+            _jsonSerializer = new JsonSerializer();
+            _jsonSerializer.Converters.AddRange(BeastJsonConverters.All);
             
             if (!stream.CanSeek)
             {
@@ -43,6 +46,7 @@ namespace Beast.Claw.Serialization
                 try
                 {
                     _jsonSerializer.Serialize(_jsonWriter, data);
+                    _jsonWriter.Flush();
                 }
                 catch (Exception e)
                 {

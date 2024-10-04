@@ -72,7 +72,7 @@ namespace Beast.Radar.Cinematic
                 BLog.Error(this, "Something went wrong during serialization. Binary and json are differs");
             }
 
-            State = stateBin;
+            State = stateJson;
         }
 
         public void Dispose()

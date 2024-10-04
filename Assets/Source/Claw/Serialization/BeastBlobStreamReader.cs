@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Beast.Claw.Common;
+using Beast.Claw.Serialization.Json;
 using Newtonsoft.Json;
 
 namespace Beast.Claw.Serialization
@@ -25,8 +26,10 @@ namespace Beast.Claw.Serialization
             _stream = stream;
             _binaryReader = new BinaryReader(_stream);
             _jsonReader = new JsonTextReader(new StreamReader(stream));
-            _jsonSerializer = new JsonSerializer();
             _headers = new Dictionary<string, Header>();
+            
+            _jsonSerializer = new JsonSerializer();
+            _jsonSerializer.Converters.AddRange(BeastJsonConverters.All);
 
             if (!stream.CanSeek)
             {
@@ -126,12 +129,20 @@ namespace Beast.Claw.Serialization
         {
             if (!_headers.TryGetValue(blobID, out Header header))
             {
-                throw new InvalidOperationException($"'{blobID}' was not found in stream");
+                string message = $"'{blobID}' was not found in stream";
+                throw new InvalidOperationException(message);
             }
 
             if (header.blob.type != blobType)
             {
-                throw new InvalidOperationException($"'{blobID}' expected to be '{blobType}', but was '{header.blob.type}'");
+                string message = $"'{blobID}' expected to be '{blobType}', but was '{header.blob.type}'";
+                throw new InvalidOperationException(message);
+            }
+
+            if (header.blob.length <= 0)
+            {
+                string message = $"'{blobID}' has not correct length ({header.blob.length})";
+                throw new InvalidOperationException(message);
             }
             
             _stream.Position = header.dataOffset;
