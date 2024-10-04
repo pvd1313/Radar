@@ -10,6 +10,36 @@ namespace Beast.Claw.Mathematics
         public const float Rad2Deg = 57.29578f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float a, float b)
+        {
+            return Mathf.Approximately(a, b);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float2 a, float2 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float3 a, float3 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y) &&
+                   Mathf.Approximately(a.z, b.z);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float4 a, float4 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y) &&
+                   Mathf.Approximately(a.z, b.z) &&
+                   Mathf.Approximately(a.w, b.w);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Max(float x, float y)
         {
             return math.max(x, y);

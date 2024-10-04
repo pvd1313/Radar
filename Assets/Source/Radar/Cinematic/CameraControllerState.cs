@@ -1,8 +1,12 @@
-﻿using Unity.Mathematics;
+﻿using System.IO;
+using Beast.Claw.Mathematics;
+using Beast.Radar.Serialization;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public struct CameraControllerState
+    public struct CameraControllerState : IBeastBinarySerializable
     {
         public float zoom01;
         public float2 position;
@@ -10,6 +14,30 @@ namespace Beast.Radar.Cinematic
         public override string ToString()
         {
             return $"{{zoom01: {zoom01:N3}; position: ({position.x:N0}, {position.y:N0})}}";
+        }
+
+        public void Write(BinaryWriter stream)
+        {
+            // TODO: This is very bad. It is not obvious what types are serialized. We need our own interface...
+            stream.Write(zoom01);
+            stream.Write(position.x);
+            stream.Write(position.y);
+        }
+
+        public void Read(BinaryReader stream)
+        {
+            zoom01 = stream.ReadSingle();
+            position.x = stream.ReadSingle();
+            position.y = stream.ReadSingle();
+        }
+
+        /// <summary>
+        /// Only for test purposes. Can be removed once not used.
+        /// </summary>
+        public static bool AreSame(CameraControllerState a, CameraControllerState b)
+        {
+            return BMath.Approximately(a.zoom01, b.zoom01) &&
+                   BMath.Approximately(a.position, b.position);
         }
     }
 }

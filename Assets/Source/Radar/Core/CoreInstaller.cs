@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.Cinematic;
 using Beast.Radar.InputControl;
+using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;
 
@@ -18,6 +19,8 @@ namespace Beast.Radar.Core
             yield return typeof(BeastHUDWindow);
             yield return typeof(BeastPauseWindow);
             yield return typeof(BeastInputBlocker);
+
+            yield return typeof(BeastGameSaveManager);
             
             yield return typeof(BeastPlayerInputProvider);
             yield return typeof(BeastUIInputController);

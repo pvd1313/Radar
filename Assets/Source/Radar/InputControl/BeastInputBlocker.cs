@@ -74,12 +74,12 @@ namespace Beast.Radar.InputControl
             if (_blockCount != 0 && !_isBlock)
             {
                 _isBlock = true;
-                _cameraInput.Block(_isBlock);
+                _cameraInput.ChangeBlock(_isBlock);
             }
             else if (_blockCount == 0 && _isBlock)
             {
                 _isBlock = false;
-                _cameraInput.Block(_isBlock);
+                _cameraInput.ChangeBlock(_isBlock);
             }
         }
     }
