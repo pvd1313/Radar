@@ -66,7 +66,7 @@ namespace Beast.Radar.Graphic.Terrain
             }
 
             int yTileCount = BMath.CeilToInt(1f / tileHeight + 1);
-            int xTileCount = BMath.CeilToInt(1f / tileHeight * _screen.Aspect);
+            int xTileCount = BMath.CeilToInt(1f / tileHeight * 0.5f + 1);
             
             int2 gridSize = new (xTileCount, yTileCount);
             
@@ -96,38 +96,23 @@ namespace Beast.Radar.Graphic.Terrain
             
             BDebug.TrackFloat(this, "TargetViewDistance", _camera.TargetViewDistance);
 
-            float2 terrainSize = _terrainDetail.RenderTexture.SizeFloat();
-            float rSize = _camera.TargetViewDistance / terrainSize.y * 100;
+            float2 terrainOldSize = _terrainDetail.RenderTexture.SizeFloat();
+            float rSize = _camera.TargetViewDistance / terrainOldSize.y * 100;
 
-            float2 terrainNewSize = terrainSize * rSize;
+            float2 terrainNewSize = terrainOldSize * rSize;
 
             BDebug.TrackFloat(this, "rSize", rSize);
             
             _solverMaterial.SetVector("_TerrainSize", terrainNewSize);
 
             BDebug.TrackFloat2(this, "terrainNewSize", terrainNewSize);
-            BDebug.TrackFloat2(this, "terrainOldSize", terrainSize);
+            BDebug.TrackFloat2(this, "terrainOldSize", terrainOldSize);
             
-            BDebug.TrackFloat2(this, "gridSIze", gridSize);
+            BDebug.TrackFloat2(this, "gridSize", gridSize);
             
-            float tileHeight = 0.01f / _camera.TargetViewDistance;
-            
-            // TODO : Not correct.
-            //_solverMaterial.SetVector("_TerrainOffset", _terrainDetail.RenderTexture.SizeFloat() * screenOffset);
-
-            float magic0 = terrainNewSize.x - terrainNewSize.x * rSize;
-            float magic1 = terrainNewSize.y + terrainNewSize.y * rSize;
-            float magic2 = 1 / terrainNewSize.x;
-
-            BDebug.TrackFloat(this, "magic0", magic0);
-            BDebug.TrackFloat(this, "magic1", magic1);
-            BDebug.TrackFloat(this, "magic2", magic2);
-
-            float archiMagic = 2.585420625f;
-            archiMagic = tileHeight * terrainSize.x;
-            
-            _solverMaterial.SetVector("_TerrainOffset", new float2(magic0 + archiMagic * 0, magic1 - archiMagic * 0));
-            //_solverMaterial.SetVector("_TerrainOffset", new float2(258, 566));
+            float xOffset = terrainNewSize.x - terrainNewSize.x * 0.25f;
+            float yOffset = terrainNewSize.y + terrainNewSize.y * 0.25f;
+            _solverMaterial.SetVector("_TerrainOffset", new float2(xOffset, yOffset));
             
             
             
@@ -178,7 +163,17 @@ namespace Beast.Radar.Graphic.Terrain
             renderParams.matProps.SetFloat("_SolverSize", solverTexture.width);
             renderParams.matProps.SetVector("_OutputSize", _screen.Size);
             // TODO : Not correct.
-            renderParams.matProps.SetVector("_OutputOffset", new float2(0.0f, 0.0f));
+
+
+            float2 screenSize = _screen.Size;
+            BDebug.TrackFloat2(this, "screenSize", screenSize);
+
+            BDebug.TrackFloat(this, "screenAspect", _screen.Aspect);
+            
+            float2 outputOffset = new float2(0.5f - 0.5f / _screen.Aspect, 0);
+            BDebug.TrackFloat2(this, "outputOffset", outputOffset);
+            
+            renderParams.matProps.SetVector("_OutputOffset", outputOffset);
             renderParams.matProps.SetFloat("_OutputTileHeight", tileHeight);
         
             int tileCount = TileCountFromGridSize(gridSize);
