@@ -5,22 +5,22 @@ using UnityEngine;
 
 namespace Beast.Radar.World
 {
-    public class TerrainBaker : Initializable, ITerrainBaker
+    public class TerrainBaker : IBeastInitialize, ITerrainBaker
     {
-        private readonly GraphicLibrary _graphicLibrary;
+        private readonly BeastGraphicLibrary _graphicLibrary;
 
         private Material _material;
 
-        public TerrainBaker(GraphicLibrary graphicLibrary)
+        public TerrainBaker(BeastGraphicLibrary graphicLibrary)
         {
             _graphicLibrary = graphicLibrary;
         }
         
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             _material = new Material(_graphicLibrary.worldMapBakeShader);
 
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Bake(TerrainBakerInput input)

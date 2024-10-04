@@ -19,7 +19,7 @@ namespace Beast.Claw.Reflection
             }
             catch (Exception e)
             {
-                BeastLog.StaticException(e, "TypeNameStorage<T> cctor");
+                BLog.StaticException(e, "TypeNameStorage<T> cctor");
             }
         }
 

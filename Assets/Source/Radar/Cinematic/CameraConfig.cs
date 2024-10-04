@@ -11,11 +11,11 @@ namespace Beast.Radar.Cinematic
     {
         public CameraView viewPrefab;
         public float2 startPosition;
-        public Float2MinMax zoomRange;   
+        public BeastFloatMinMax zoomRange;   
         public AnimationCurve zoomCurve;
         public CameraParams[] cameraParams;
         
-        public CameraParams GetParams(EInputScheme scheme)
+        public CameraParams GetParams(EBeastInputScheme scheme)
         {
             return cameraParams.FirstOrDefault(p => p.schemes.Contains(scheme));
         }

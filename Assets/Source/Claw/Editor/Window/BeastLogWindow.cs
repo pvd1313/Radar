@@ -26,32 +26,32 @@ namespace Beast.Claw.Editor.Window
                 niceLabelsEnabled = false
             };
             
-            foreach ((string id, float value) in BeastLog.StateStorage.ReadAllFloat())
+            foreach ((string id, float value) in BLog.StateStorage.ReadAllFloat())
             {
                 ui.FloatField(id, value);
             }
 
-            foreach ((string id, int value) in BeastLog.StateStorage.ReadAllInt())
+            foreach ((string id, int value) in BLog.StateStorage.ReadAllInt())
             {
                 ui.IntField(id, value);
             }
 
-            foreach ((string id, float2 value) in BeastLog.StateStorage.ReadAllFloat2())
+            foreach ((string id, float2 value) in BLog.StateStorage.ReadAllFloat2())
             {
                 ui.Float2Field(id, value);
             }
             
-            foreach ((string id, float3 value) in BeastLog.StateStorage.ReadAllFloat3())
+            foreach ((string id, float3 value) in BLog.StateStorage.ReadAllFloat3())
             {
                 ui.Float3Field(id, value);
             }
             
-            foreach ((string id, float4 value) in BeastLog.StateStorage.ReadAllFloat4())
+            foreach ((string id, float4 value) in BLog.StateStorage.ReadAllFloat4())
             {
                 ui.Float4Field(id, value);
             }
             
-            foreach ((string id, string value) in BeastLog.StateStorage.ReadAllString())
+            foreach ((string id, string value) in BLog.StateStorage.ReadAllString())
             {
                 ui.StringField(id, value);
             }

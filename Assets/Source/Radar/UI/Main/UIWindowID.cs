@@ -1,8 +1,0 @@
-﻿namespace Beast.Radar.UI
-{
-    public static class UIWindowID
-    {
-        public static readonly string Pause = "pause_window";
-        public static readonly string MainHUD = "main_hud_window";
-    }
-}
