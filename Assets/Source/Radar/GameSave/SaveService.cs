@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Radar.GameSave
 {
-    public class SaveService : Initializable, ISaveService
+    public class SaveService : IBeastInitialize, ISaveService
     {
         private const string _fileName = "test_data.json";
         private readonly List<ISavedDataReader> _readers;
@@ -19,10 +19,11 @@ namespace Beast.Radar.GameSave
             _readers = readers;
         }
 
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             _dataHandler = new FileDataHandler();
-            return InitializationResult.SuccessNotAsync();
+            
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void LoadData()
@@ -31,7 +32,8 @@ namespace Beast.Radar.GameSave
 
             if (_savedData == null)
             {
-                BeastLog.Info(this, "No data was found. Initializing data to defaults.");
+                BLog.Info(this, "No data was found. Initializing data to defaults.");
+                
                 NewProgress();
             }
             
@@ -39,14 +41,15 @@ namespace Beast.Radar.GameSave
             {
                 dataReader.LoadData(_savedData);
             }
-            BeastLog.Info(this, "Data loaded");
+            
+            BLog.Info(this, "Data loaded");
         }
 
         public void SaveData()
         {
             if (_savedData == null)
             {
-                BeastLog.Info(this, "No data was found. Initializing data to defaults.");
+                BLog.Info(this, "No data was found. Initializing data to defaults.");
                 NewProgress();
             }
 
@@ -56,15 +59,17 @@ namespace Beast.Radar.GameSave
             }
             
             _dataHandler.Save(_savedData, Application.persistentDataPath, _fileName);
-            BeastLog.Info(this, "Data saved");
+            
+            BLog.Info(this, "Data saved");
         }
 
         private void NewProgress()
         {
             _savedData = new SavedData()
             {
-                seed = Random.Range(0,10)
+                seed = Random.Range(0, 10)
             };
+            
             _dataHandler.Save(_savedData, Application.persistentDataPath, _fileName);
         }
     }

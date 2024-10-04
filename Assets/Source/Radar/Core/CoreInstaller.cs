@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.Cinematic;
-using Beast.Radar.GameSave;
 using Beast.Radar.InputControl;
 using Beast.Radar.UI;
 using Beast.Radar.World;
@@ -26,7 +25,6 @@ namespace Beast.Radar.Core
             yield return typeof(CameraController);
             yield return typeof(TerrainBaker);
             yield return typeof(WorldMapRender);
-            yield return typeof(SaveService);
         }
     }
 }
