@@ -8,7 +8,7 @@ namespace Beast.Radar.UI
     {
         private readonly Selectable[] _selectables; 
         private readonly IUIInputController _input;
-        private int currentIndex; 
+        private int _currentIndex; 
         
         public BeastUISelectionLoop(IUIInputController inputController, Selectable[] selectables)
         {
@@ -19,14 +19,14 @@ namespace Beast.Radar.UI
         public void Enable()
         {
             _input.NavigationPressed += OnMove;
-            currentIndex = 0; 
-            _selectables[currentIndex].Select();                 
+            _currentIndex = 0; 
+            _selectables[_currentIndex].Select();                 
         }
 
         public void Disable()
         {
             _input.NavigationPressed -= OnMove;
-            _selectables[currentIndex].OnDeselect(null);
+            _selectables[_currentIndex].OnDeselect(null);
         }
 
         private void OnMove(float2 moveInput)
@@ -44,9 +44,9 @@ namespace Beast.Radar.UI
 
         private void MoveSelection(int direction)
         {
-            _selectables[currentIndex]?.OnDeselect(null);
-            currentIndex = (currentIndex + direction + _selectables.Length) % _selectables.Length;
-            _selectables[currentIndex].Select();
+            _selectables[_currentIndex]?.OnDeselect(null);
+            _currentIndex = (_currentIndex + direction + _selectables.Length) % _selectables.Length;
+            _selectables[_currentIndex].Select();
         }
     }
 }

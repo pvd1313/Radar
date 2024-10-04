@@ -48,7 +48,7 @@ namespace Beast.Radar.World
                 format = RenderTextureFormat.RGFloat,
                 mipCount = 0,
                 filterMode = FilterMode.Point,
-                wrapMode = TextureWrapMode.Clamp,
+                wrapMode = TextureWrapMode.Repeat,
                 name = "WorldMap"
             });
             

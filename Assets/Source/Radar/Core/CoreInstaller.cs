@@ -17,6 +17,7 @@ namespace Beast.Radar.Core
             yield return typeof(BeastWindowManager);
             yield return typeof(BeastHUDWindow);
             yield return typeof(BeastPauseWindow);
+            yield return typeof(BeastMapGenerationWindow);
             yield return typeof(InputBlocker);
             
             yield return typeof(PlayerInputProvider);

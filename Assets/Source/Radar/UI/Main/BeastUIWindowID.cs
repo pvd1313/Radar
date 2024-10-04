@@ -4,5 +4,6 @@
     {
         public static readonly string Pause = "pause_window";
         public static readonly string MainHUD = "hud_window";
+        public static readonly string MapGeneration = "map_generation_window";
     }
 }
