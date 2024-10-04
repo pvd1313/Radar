@@ -478,7 +478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22451668, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_Pivot.x
@@ -1616,13 +1616,13 @@ MonoBehaviour:
     y: 0.23
   tileAtlasPPU: 64
   tileGridSize:
-    x: 200
-    y: 200
+    x: 130
+    y: 201
   renderOffset:
     x: 0
     y: 0
   renderTileHeight: 0.005
-  renderYCrop: 0.5
+  renderYCrop: 0
   terrainTexture: {fileID: 2800000, guid: a5ca6b9658464b74b89b01acc361704e, type: 3}
   terrainSize:
     x: 64
@@ -1637,6 +1637,7 @@ MonoBehaviour:
   noiseOffset:
     x: 0
     y: 0
+  _yFix: 0
 --- !u!4 &1922191046
 Transform:
   m_ObjectHideFlags: 0

@@ -21,15 +21,15 @@
 
             #include "UnityCG.cginc"
             #include "Assets/Source/Claw/CG/BeastCG.cginc"
-
             
             // #define DEBUG_DRAW_TILES_ONE_SECOND
 
             struct FragmentInput
             {
                 float4 positionCS : SV_POSITION;
-                float2 vertexUV : TEXCOORD0;
-                float2 solverUV : TEXCOORD1;
+                half2 mainUV : TEXCOORD0;
+                half2 centerUV : TEXCOORD1;
+                fixed t : TEXCOORD2;
             };
 
             float2 _TileGridSize;
@@ -39,7 +39,7 @@
             float2 _TileAtlasTileCount;
             float2 _TileBlendCenter;
             float _TileAtlasPPU;
-
+            
             float _RenderYCrop;
 
             sampler2D _SolverTexture;
@@ -63,36 +63,54 @@
                 
                 float aspect = _OutputSize.x / _OutputSize.y;
 
-                float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
-                gridScale.x *= 1.0f / (aspect * 0.5f);
-
+                // Y crop, reduce rasterizer load. Will be obtained from config texture in future.
                 input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
                 input.texcoord.y *= 1 - _RenderYCrop;
 
+                // Scale vertex to desired size.
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
 
-                input.vertex.x += _OutputOffset.x * 2.0f - 1.0f;
-                input.vertex.y -= _OutputOffset.y * 2.0f - _OutputTileHeight - 1.0f;
+                // Prevent transparent lines glitches.
+                input.vertex.x += sign(input.vertex.x) * (1.0f / _OutputSize.x);
+                input.vertex.y += sign(input.vertex.y) * (1.0f / _OutputSize.y);
 
-                // Fix transparent lines glitch.
-                // input.vertex.y += sign(input.vertex.y) * (1 / _RenderSize.y);
-                // input.vertex.x += sign(input.vertex.x) * (1 / _RenderSize.x);
-
+                // Isometric to screen layout.
+                float2 gridScale = float2(_OutputTileHeight, _OutputTileHeight) * 2.0f;
+                gridScale.x *= 1.0f / (aspect * 0.5f);
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
                 float2 screenOffset = beast_isometric_screen_offset(tile, _TileGridSize.x);
-                
                 input.vertex.x += screenOffset.x * gridScale.x;
                 input.vertex.y += screenOffset.y * gridScale.y;
 
+                // Viewport offset. Must be applied after isometric layout to prevent transparent line glitches.
+                input.vertex.x += _OutputOffset.x * 2.0f - 1.0f;
+                input.vertex.y -= _OutputOffset.y * 2.0f - _OutputTileHeight - 1.0f;
+
+                // Projection flip
                 input.vertex.y *= _ProjectionParams.x;
 
-                output.vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
-
+                // Get tile data from solver.
+                float2 vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
                 float solverX = instanceID % (uint) _SolverSize;
                 float solverY = instanceID / (uint) _SolverSize;
                 float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
-                output.solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                float2 solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                float2 solverRG = tex2Dlod(_SolverTexture, float4(solverUV.x, solverUV.y, 0, 0));
+                uint tileIndex = f32tof16(solverRG.r);
+                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
+                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
+                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                float2 tileUV = vertexUV + tileUVShift;
+                output.mainUV = tileUV;
+
+                // Second UV to reduce glitches when tiles are small. Blend center will be obtained from tile config in future.
+                float noisePower = solverRG.g;
+                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
+                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
+                output.centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+
+                output.t = t;
                 
                 output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 
@@ -101,26 +119,15 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float2 solverRG = tex2D(_SolverTexture, input.solverUV);
+                half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
-                uint tileIndex = f32tof16(solverRG.r);
-                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
-                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
-                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
-                float2 tileUV = input.vertexUV + tileUVShift;
-                
-                float4 atlasColor = tex2D(_TileAtlas, input.vertexUV + tileUVShift);
+                clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
 
-                clip(atlasColor.r + atlasColor.g + atlasColor.b - 0.01f);
-
-                float noisePower = solverRG.g;
-                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
-                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
-                centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+                half3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 
-                float4 centerColor = tex2D(_TileAtlas, centerUV);
+                mainColor = lerp(mainColor, centerColor, input.t);
                 
-                return lerp(atlasColor, centerColor, t);
+                return half4(mainColor.r, mainColor.g, mainColor.b, 1);
             }
             
             ENDCG
