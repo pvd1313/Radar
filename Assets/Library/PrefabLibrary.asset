@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInputPrefab: {fileID: 4224351025066411129, guid: 1ac131d24ff3f1d4ea677835b9ba7cc6, type: 3}
   ui:
-    canvas:
-    - id: main_canvas
-      prefab: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
+    canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
     window:
-    - id: main_hud_window
+    - id: hud_window
       prefab: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
     - id: pause_window
       prefab: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}

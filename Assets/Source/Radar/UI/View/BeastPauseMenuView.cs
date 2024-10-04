@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.UI
 {
-    public class BeastCorePauseMenuView : BeastUIWindowView
+    public class BeastPauseMenuView : BeastUIView
     {
         [Space]
         public BeastUIButton newGameButton;

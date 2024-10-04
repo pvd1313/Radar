@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastWindowManager : IBeastWindowManager
+    public class BeastWindowManager : IBeastWindowManager, Initializable, Disposable
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _uiInputController;
         private readonly Dictionary<string, IBeastUIWindow> _allWindows = new();
 
-        private BeastCanvasView _beastCanvas;
+        private BeastCanvasView _canvas;
         private IBeastUIWindow _currentOpenedWindowController;
 
         public BeastWindowManager(IBeastUIFactory uiFactory, IUIInputController uiInputController)
@@ -27,8 +27,9 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         {
-            _beastCanvas = _uiFactory.NewCanvas(BeastUIPrefabID.Canvas);
+            _canvas = _uiFactory.NewCanvas(this);
             Subscribe();
+            
             return InitializationResult.SuccessNotAsync();
         }
 
@@ -37,14 +38,14 @@ namespace Beast.Radar.UI
             Unsubscribe();
         }
         
-        public void Register(IBeastUIWindow window, string windowID, BeastUIWindowView view)
+        public void Register(IBeastUIWindow window, string windowID, BeastUIView view)
         {
             if (_allWindows.ContainsKey(windowID))
             {
                 throw new InvalidOperationException($"'{windowID}' is already registered");
             }
             
-            view.transform.SetParent(_beastCanvas.transform, false);
+            view.transform.SetParent(_canvas.transform, false);
             _allWindows.Add(windowID, window);
         }
 
@@ -66,13 +67,13 @@ namespace Beast.Radar.UI
 
         private void Subscribe()
         {
-            _beastCanvas.MouseOverUI += OnMouseOverUI;
+            _canvas.MouseOverUI += OnMouseOverUI;
             _uiInputController.PausePressed += OnPauseKeyPressed;
         }
 
         private void Unsubscribe()
         {
-            _beastCanvas.MouseOverUI -= OnMouseOverUI;
+            _canvas.MouseOverUI -= OnMouseOverUI;
             _uiInputController.PausePressed -= OnPauseKeyPressed;
         }
 

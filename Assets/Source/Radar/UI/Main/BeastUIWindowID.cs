@@ -3,6 +3,6 @@
     public static class BeastUIWindowID
     {
         public static readonly string Pause = "pause_window";
-        public static readonly string MainHUD = "main_hud_window";
+        public static readonly string MainHUD = "hud_window";
     }
 }

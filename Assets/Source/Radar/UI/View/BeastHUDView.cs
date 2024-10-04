@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.UI
 {
-    public class BeastCoreHUDView : BeastUIWindowView
+    public class BeastHUDView : BeastUIView
     {
         public BeastUIButton pauseButton;
     }

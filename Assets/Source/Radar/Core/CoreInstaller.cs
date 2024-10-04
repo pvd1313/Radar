@@ -15,7 +15,7 @@ namespace Beast.Radar.Core
             // UI
             yield return typeof(BeastUIFactory);
             yield return typeof(BeastWindowManager);
-            yield return typeof(BeastMainHUDWindow);
+            yield return typeof(BeastHUDWindow);
             yield return typeof(BeastPauseWindow);
             yield return typeof(InputBlocker);
             

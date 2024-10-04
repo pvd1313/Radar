@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4958695143381959080}
   - component: {fileID: 5485325825281228348}
   m_Layer: 0
-  m_Name: main_hud_window
+  m_Name: hud_window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

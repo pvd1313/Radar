@@ -11,9 +11,12 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _uiInput;
 
         private BeastUISelectionLoop _selectionLoop;
-        private BeastCorePauseMenuView _menuView;
+        private BeastPauseMenuView _menuView;
 
-        public BeastPauseWindow(IBeastUIFactory uiFactory, IBeastWindowManager windowManager, IUIInputController uiInputController)
+        public BeastPauseWindow(
+            IBeastUIFactory uiFactory,
+            IBeastWindowManager windowManager,
+            IUIInputController uiInputController)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
@@ -22,7 +25,7 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         {
-            _menuView = _uiFactory.NewWindow(BeastUIPrefabID.PauseWindow) as BeastCorePauseMenuView;
+            _menuView = _uiFactory.NewWindow<BeastPauseWindow, BeastPauseMenuView>(this, BeastUIPrefabID.PauseWindow);
             _windowManager.Register(this, BeastUIWindowID.Pause, _menuView);
 
             _selectionLoop = new BeastUISelectionLoop(_uiInput, new[]
@@ -58,7 +61,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.SetInteractable(isActive);
             _menuView.saveButton.SetInteractable(isActive);
             _menuView.newGameButton.SetInteractable(isActive);
-            foreach (var closeButton in _menuView.closePanelButtons)
+            foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.SetInteractable(isActive);
             }
@@ -71,7 +74,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.Clicked += OnClickedLoadButton;
             _menuView.saveButton.Clicked += OnClickedSaveButton;
             _menuView.newGameButton.Clicked += OnClickedNewGameButton;
-            foreach (var closeButton in _menuView.closePanelButtons)
+            foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked += OnClickedClosePanelButton;
             }
@@ -82,7 +85,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.Clicked -= OnClickedLoadButton;
             _menuView.saveButton.Clicked -= OnClickedSaveButton;
             _menuView.newGameButton.Clicked -= OnClickedNewGameButton;
-            foreach (var closeButton in _menuView.closePanelButtons)
+            foreach (BeastUIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked -= OnClickedClosePanelButton;
             }

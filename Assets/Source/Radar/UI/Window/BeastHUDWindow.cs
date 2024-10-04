@@ -3,14 +3,14 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastMainHUDWindow : IBeastUIWindow, Initializable, Disposable
+    public class BeastHUDWindow : IBeastUIWindow, Initializable, Disposable
     {
         private readonly IBeastUIFactory _uiFactory;
         private readonly IBeastWindowManager _windowManager;
         
-        private BeastCoreHUDView _view;
+        private BeastHUDView _view;
 
-        public BeastMainHUDWindow(IBeastUIFactory uiFactory, IBeastWindowManager windowManager)
+        public BeastHUDWindow(IBeastUIFactory uiFactory, IBeastWindowManager windowManager)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         { 
-            _view = _uiFactory.NewWindow(BeastUIPrefabID.MainHudWindow) as BeastCoreHUDView;
+            _view = _uiFactory.NewWindow<BeastHUDWindow, BeastHUDView>(this, BeastUIPrefabID.HudWindow);
             _windowManager.Register(this, BeastUIWindowID.MainHUD, _view);
             Subscribe();
             Open();
