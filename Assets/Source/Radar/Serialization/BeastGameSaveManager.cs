@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
@@ -12,14 +13,20 @@ namespace Beast.Radar.Serialization
     public class BeastGameSaveManager : IBeastInitialize, IBeastGameSaveManager
     {
         private readonly List<IBeastSerializableModule> _modules;
+        private readonly BeastGameSaveConfig _config;
 
-        public BeastGameSaveManager(List<IBeastSerializableModule> modules)
+        private BeastFileCompressor _fileCompressor;
+
+        public BeastGameSaveManager(List<IBeastSerializableModule> modules, BeastGameSaveConfig config)
         {
             _modules = modules;
+            _config = config;
         }
 
         public UniTask<BeastInitializationResult> Initialize()
         {
+            _fileCompressor = new BeastFileCompressor();
+            
             return BeastInitializationResult.SuccessNotAsync();
         }
         
@@ -27,11 +34,15 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
-                using FileStream fileStream = new (filePath, FileMode.Open);
+                string realFilePath = InternalGetOrCreateFilePath(folderName, fileName);
+                string tempFilePath = realFilePath + ".temp";
+
+                if (_config.useCompression)
+                {
+                    _fileCompressor.Decompress(realFilePath, tempFilePath);
+                }
                 
-                // TODO : Can not seek positions in GZipStream.
-                // GZipStream zipStream = new (fileStream, CompressionLevel.Fastest);
+                using FileStream fileStream = new (_config.useCompression ? tempFilePath : realFilePath, FileMode.Open);
                 
                 BeastBlobStreamReader blobStream = new (fileStream);
                 
@@ -53,8 +64,13 @@ namespace Beast.Radar.Serialization
                 }
                 
                 fileStream.Close();
+
+                if (_config.useCompression)
+                {
+                    File.Delete(tempFilePath);
+                }
                 
-                BLog.Info(this, $"Loaded game state from '{filePath}'");
+                BLog.Info(this, $"Loaded game state from '{realFilePath}' compression: {_config.useCompression}");
             }
             catch (Exception e)
             {
@@ -66,12 +82,10 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
-                using FileStream fileStream = new (filePath, FileMode.Create);
+                string realFilePath = InternalGetOrCreateFilePath(folderName, fileName);
+                string tempFilePath = realFilePath + ".open";
                 
-                // TODO : Can not seek positions in GZipStream.
-                // GZipStream zipStream = new (fileStream, CompressionLevel.Fastest);
-                
+                using FileStream fileStream = new (_config.useCompression ? tempFilePath : realFilePath, FileMode.Create);
                 BeastBlobStreamWriter blobStream = new (fileStream);
                 
                 foreach (IBeastSerializableModule module in _modules)
@@ -91,8 +105,15 @@ namespace Beast.Radar.Serialization
 
                 fileStream.Flush();
                 fileStream.Close();
+
+                if (_config.useCompression)
+                {
+                    _fileCompressor.Compress(tempFilePath, realFilePath);
+
+                    File.Delete(tempFilePath);
+                }
                 
-                BLog.Info(this, $"Saved game state to '{filePath}'");
+                BLog.Info(this, $"Saved game state to '{realFilePath}' compression: {_config.useCompression}");
             }
             catch (Exception e)
             {

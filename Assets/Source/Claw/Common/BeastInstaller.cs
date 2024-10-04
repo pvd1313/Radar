@@ -8,8 +8,15 @@ namespace Beast.Claw.Common
     [FancyAsset]
     public abstract class BeastInstaller : ScriptableObjectInstaller
     {
-        [BeastInlineEditor] public List<BeastConfig> configs;
-        [BeastInlineEditor] public List<BeastLibrary> libraries;
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.InlineEditorAttribute]
+#endif 
+        public List<BeastConfig> configs;
+        
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.InlineEditorAttribute]
+#endif 
+        public List<BeastLibrary> libraries;
         
         public override void InstallBindings()
         {
