@@ -2,8 +2,8 @@
 {
     public interface IBeastUIFactory
     {
-        BeastCanvasView NewCanvas<TOwner>(TOwner owner);
+        BeastCanvasView CreateCanvas<TOwner>(TOwner owner);
 
-        TView NewWindow<TOwner, TView>(TOwner owner, string prefabID) where TView : BeastUIView;
+        void Create<TOwner, TView>(TOwner owner, string prefabID, out TView newView) where TView : BeastUIView;
     }
 }

@@ -25,7 +25,7 @@ namespace Beast.Radar.UI
 
         public UniTask<BeastInitializationResult> Initialize()
         {
-            _menuView = _uiFactory.NewWindow<BeastPauseWindow, BeastPauseMenuView>(this, BeastUIPrefabID.PauseWindow);
+            _uiFactory.Create(this, BeastUIPrefabID.PauseWindow, out _menuView);
             _windowManager.Register(this, BeastUIWindowID.Pause, _menuView);
 
             _selectionLoop = new BeastUISelectionLoop(_uiInput, new[]

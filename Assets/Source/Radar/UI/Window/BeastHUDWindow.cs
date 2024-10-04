@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
 
         public UniTask<BeastInitializationResult> Initialize()
         { 
-            _view = _uiFactory.NewWindow<BeastHUDWindow, BeastHUDView>(this, BeastUIPrefabID.HudWindow);
+            _uiFactory.Create(this, BeastUIPrefabID.HudWindow, out _view);
             _windowManager.Register(this, BeastUIWindowID.MainHUD, _view);
             Subscribe();
             Open();
