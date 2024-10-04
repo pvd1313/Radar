@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Beast.Radar.CG
+namespace Beast.Radar
 {
-    public partial class CGLibrary
+    public partial class GraphicLibrary
     {
         [Serializable]
         public class Debug

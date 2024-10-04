@@ -15,7 +15,7 @@ namespace Beast.Radar.Core
             yield return typeof(UIInputController);
             yield return typeof(CameraInputController);
             yield return typeof(CameraController);
-            yield return typeof(WorldMapBaker);
+            yield return typeof(TerrainBaker);
             yield return typeof(WorldMapRender);
         }
     }

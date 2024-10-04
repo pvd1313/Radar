@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         {
-            _canvas = _uiFactory.CreateCanvas(UIPrefabsID.Canvas);
+            _canvas = _uiFactory.CreateCanvas(UIPrefabID.Canvas);
             Subscribe();
             return InitializationResult.SuccessNotAsync();
         }

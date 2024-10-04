@@ -14,7 +14,7 @@
         {
             CGPROGRAM
 
-            #pragma target 2.0
+            #pragma target 1.0
             
             #pragma vertex vertex
             #pragma fragment fragment

@@ -2,7 +2,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
-using Beast.Radar.CG;
 using Beast.Radar.Cinematic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -16,8 +15,8 @@ namespace Beast.Radar.World
         private static readonly int2 WorldSize = new(4096, 4096);
         
         private readonly WorldMapConfig _config;
-        private readonly IWorldMapBaker _mapBaker;
-        private readonly CGLibrary _cgLibrary;
+        private readonly ITerrainBaker _mapBaker;
+        private readonly GraphicLibrary _graphicLibrary;
         private readonly ICameraController _camera;
         private readonly CameraConfig _cameraConfig;
 
@@ -26,14 +25,14 @@ namespace Beast.Radar.World
 
         public WorldMapRender(
             WorldMapConfig config, 
-            IWorldMapBaker mapBaker, 
-            CGLibrary cgLibrary,
+            ITerrainBaker mapBaker, 
+            GraphicLibrary graphicLibrary,
             ICameraController camera,
             CameraConfig cameraConfig)
         {
             _config = config;
             _mapBaker = mapBaker;
-            _cgLibrary = cgLibrary;
+            _graphicLibrary = graphicLibrary;
             _camera = camera;
             _cameraConfig = cameraConfig;
         }
@@ -53,7 +52,7 @@ namespace Beast.Radar.World
                 name = "WorldMap"
             });
             
-            _mapBaker.Bake(new WorldMapBakerInput
+            _mapBaker.Bake(new TerrainBakerInput
             {
                 scale99 = 2,
                 seed01 = Random.value,
@@ -64,7 +63,7 @@ namespace Beast.Radar.World
             _material = BeastCG.NewMaterial(this, new MaterialParameters
             {
                 name = "Render",
-                shader = _cgLibrary.worldMapRenderShader,
+                shader = _graphicLibrary.worldMapRenderShader,
             });
             
             return InitializationResult.SuccessNotAsync();
@@ -84,10 +83,10 @@ namespace Beast.Radar.World
             _material.SetTexture("_MainMap", _worldTexture);
             _material.SetVector("_MainMapSize", WorldSize);
             
-            _material.SetTexture("_GridMap", _cgLibrary.debug.worldGrid);
-            _material.SetVector("_GridMapSize", _cgLibrary.debug.worldGrid.WidthHeightFloat());
+            _material.SetTexture("_GridMap", _graphicLibrary.debug.worldGrid);
+            _material.SetVector("_GridMapSize", _graphicLibrary.debug.worldGrid.WidthHeightFloat());
             
-            Texture2D worldDetailNoise = _cgLibrary.worldDetailNoise;
+            Texture2D worldDetailNoise = _graphicLibrary.worldDetailNoise;
             _material.SetTexture("_NoiseMap", worldDetailNoise);
             _material.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeightFloat());
 
@@ -98,7 +97,7 @@ namespace Beast.Radar.World
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {
-                mesh = _cgLibrary.quadMesh,
+                mesh = _graphicLibrary.quadMesh,
                 material = _material,
                 matrix = float4x4.TRS(
                     new float3(0, 0, 1),  

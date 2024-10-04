@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd12afd3959a47ed89a784784f80c815, type: 3}
   m_Name: UILibrary
   m_EditorClassIdentifier: 
-  canvases:
-  - ID: canvas_main
-    view: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
-  panels:
-  - ID: mainHUD_window
-    view: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
-  - ID: pause_window
-    view: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}
+  canvas:
+  - id: main_canvas
+    prefab: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
+  window:
+  - id: main_hud_window
+    prefab: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
+  - id: pause_window
+    prefab: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}

@@ -22,7 +22,7 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         {
-            _view = _uiFactory.CreateWindowView(UIPrefabsID.PanelPause) as PauseView;
+            _view = _uiFactory.CreateWindowView(UIPrefabID.PauseWindow) as PauseView;
             _windowManager.RegisterWindow(UIWindowID.Pause, _view, this);
 
             _selectionLoop = new UISelectionLoop(_uiInput, new[]

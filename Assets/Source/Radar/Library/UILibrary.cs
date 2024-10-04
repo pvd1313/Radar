@@ -1,36 +1,47 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Radar.UI;
+using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar
 {
-    public class UILibrary: BeastLibrary
+    public class UILibrary : BeastLibrary, Initializable
     {
-        public CanvasPrefabData[] canvases;
-        public PanelPrefabData[] panels;
+        public CanvasPrefabClass[] canvas;
+        public WindowPrefabClass[] window;
 
-        public CanvasView GetCanvasPrefab(string id)
+        private Dictionary<string, CanvasView> _canvas;
+        private Dictionary<string, BeastUIWindowView> _window;
+        
+        public UniTask<InitializationResult> Initialize()
         {
-            CanvasView view = canvases.FirstOrDefault(d => d.ID == id).view;
-           
-            if (view == null)
-            {
-                throw new BeastException($"UI library cannot find a canvas prefab with id #{id}");
-            }
-            
-            return view;
+            _canvas = canvas.ToDictionary(c => c.id, c => c.prefab);
+            _window = window.ToDictionary(w => w.id, w => w.prefab);
+
+            return InitializationResult.SuccessNotAsync();
         }
 
-        public BeastUIWindowView GetPanelPrefab(string id)
+        public CanvasView GetCanvas(string prefabID)
         {
-            BeastUIWindowView view = panels.FirstOrDefault(d => d.ID == id).view;
-           
-            if (view == null)
+            if (_canvas.TryGetValue(prefabID, out CanvasView prefab))
             {
-                throw new BeastException($"UI library cannot find a panel prefab with id #{id}");
+                return prefab;
             }
             
-            return view;
+            throw new InvalidOperationException($"Prefab '{prefabID}' was not found");
+        }
+
+        public BeastUIWindowView GetPanel(string prefabID)
+        {
+            if (_window.TryGetValue(prefabID, out BeastUIWindowView prefab))
+            {
+                return prefab;
+            }
+            
+            throw new InvalidOperationException($"Prefab '{prefabID}' was not found");
         }
     }
 }

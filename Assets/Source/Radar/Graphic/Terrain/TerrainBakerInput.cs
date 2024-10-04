@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.World
 {
-    public struct WorldMapBakerInput
+    public struct TerrainBakerInput
     {
         public float scale99;
         public float seed01;

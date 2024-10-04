@@ -4,7 +4,7 @@ using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class IsometricRender : MonoBehaviour
+public class IsometricRenderOld : MonoBehaviour
 {
     public Shader solverShader;
     public Shader renderShader;
