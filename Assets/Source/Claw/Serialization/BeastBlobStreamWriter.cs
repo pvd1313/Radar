@@ -5,7 +5,7 @@ using Beast.Claw.Common;
 using Beast.Claw.Reflection;
 using Newtonsoft.Json;
 
-namespace Beast.Radar.Serialization
+namespace Beast.Claw.Serialization
 {
     public class BeastBlobStreamWriter : IBeastBlobStreamWriter
     {
@@ -16,6 +16,7 @@ namespace Beast.Radar.Serialization
         private readonly JsonSerializer _jsonSerializer;
         
         private long _writeBeginPosition;
+        private long _blobHeaderSize;
 
         public BeastBlobStreamWriter(Stream stream)
         {
@@ -24,6 +25,11 @@ namespace Beast.Radar.Serialization
             _jsonWriter = new JsonTextWriter(new StreamWriter(_stream));
             _jsonSerializer = new JsonSerializer();
             _blobID2Owner = new Dictionary<string, string>();
+            
+            if (!stream.CanSeek)
+            {
+                throw new InvalidOperationException("Stream must support seeking");
+            }
         }
         
         public void WriteJson<TOwner, TJson>(TOwner owner, string blobID, TJson data)
@@ -40,14 +46,14 @@ namespace Beast.Radar.Serialization
                 }
                 catch (Exception e)
                 {
-                    BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}'");
+                    BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}' #B");
                 }
                 
                 InternalEndWrite(blobID, EBeastBlobType.Json);
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}'");
+                BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}' #A");
             }
         }
 
@@ -62,18 +68,18 @@ namespace Beast.Radar.Serialization
 
                 try
                 {
-                    writer.Write(_binaryWriter);
+                    writer.BinarySerialize(_binaryWriter);
                 }
                 catch (Exception e)
                 {
-                    BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}'");
+                    BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
                 }
                 
                 InternalEndWrite(blobID, EBeastBlobType.Binary);
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}'");
+                BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
             }
         }
 
@@ -94,13 +100,15 @@ namespace Beast.Radar.Serialization
             };
             
             header.WriteToBinaryStream(_binaryWriter);
+            
+            _blobHeaderSize = _stream.Position - _writeBeginPosition;
         }
 
         private void InternalEndWrite(string blobID, EBeastBlobType blobType)
         {
             long streamPositionBackup = _stream.Position;
             
-            int blobSize = (int)(streamPositionBackup - _writeBeginPosition);
+            int blobSize = (int)(streamPositionBackup - _writeBeginPosition - _blobHeaderSize);
 
             _stream.Position = _writeBeginPosition;
 

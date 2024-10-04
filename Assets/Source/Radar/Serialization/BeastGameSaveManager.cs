@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 

@@ -1,6 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
+using Beast.Claw.Serialization;
 using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
@@ -64,9 +65,7 @@ namespace Beast.Radar.Cinematic
             
             stream.TryReadJson(this, "camera_state_json", out CameraControllerState stateJson);
 
-            CameraControllerState stateBin = new ();
-
-            stream.TryReadBinary(this, "camera_state_bin", stateBin);
+            stream.TryReadBinaryStruct(this, "camera_state_bin", out CameraControllerState stateBin);
 
             if (!CameraControllerState.AreSame(stateJson, stateBin))
             {

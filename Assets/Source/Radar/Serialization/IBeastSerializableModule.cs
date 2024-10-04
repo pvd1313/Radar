@@ -1,4 +1,6 @@
-﻿namespace Beast.Radar.Serialization
+﻿using Beast.Claw.Serialization;
+
+namespace Beast.Radar.Serialization
 {
     public interface IBeastSerializableModule
     {

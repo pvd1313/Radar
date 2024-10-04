@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Serialization;
+using Beast.Claw.Serialization;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
@@ -16,7 +15,7 @@ namespace Beast.Radar.Cinematic
             return $"{{zoom01: {zoom01:N3}; position: ({position.x:N0}, {position.y:N0})}}";
         }
 
-        public void Write(BinaryWriter stream)
+        public void BinarySerialize(BinaryWriter stream)
         {
             // TODO: This is very bad. It is not obvious what types are serialized. We need our own interface...
             stream.Write(zoom01);
@@ -24,7 +23,7 @@ namespace Beast.Radar.Cinematic
             stream.Write(position.y);
         }
 
-        public void Read(BinaryReader stream)
+        public void BinaryDeserialize(BinaryReader stream)
         {
             zoom01 = stream.ReadSingle();
             position.x = stream.ReadSingle();

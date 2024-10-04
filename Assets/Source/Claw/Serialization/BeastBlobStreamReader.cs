@@ -4,13 +4,13 @@ using System.IO;
 using Beast.Claw.Common;
 using Newtonsoft.Json;
 
-namespace Beast.Radar.Serialization
+namespace Beast.Claw.Serialization
 {
     public class BeastBlobStreamReader : IBeastBlobStreamReader
     {
         private struct Header
         {
-            public BeastBlobHeader header;
+            public BeastBlobHeader blob;
             public long dataOffset;
         }
 
@@ -27,6 +27,11 @@ namespace Beast.Radar.Serialization
             _jsonReader = new JsonTextReader(new StreamReader(stream));
             _jsonSerializer = new JsonSerializer();
             _headers = new Dictionary<string, Header>();
+
+            if (!stream.CanSeek)
+            {
+                throw new InvalidOperationException("Stream must support seeking");
+            }
         }
 
         public void ReadHeaders()
@@ -42,15 +47,19 @@ namespace Beast.Radar.Serialization
 
                     _headers.Add(header.id, new Header
                     {
-                        header = header,
-                        dataOffset = _stream.Position
+                        blob = header,
+                        dataOffset = _stream.Position,
                     });
+
+                    _stream.Position += header.length;
                 }
                 catch (EndOfStreamException)
                 {
                     
                 }
             }
+
+            _stream.Position = 0;
         }
         
         public bool TryReadJson<TOwner, TJson>(TOwner owner, string blobID, out TJson output)
@@ -73,14 +82,35 @@ namespace Beast.Radar.Serialization
             return true;
         }
 
-        public bool TryReadBinary<TOwner, TDataReader>(TOwner owner, string blobID, TDataReader reader)
-            where TDataReader : IBeastBinaryReader
+        public bool TryReadBinaryStruct<TOwner, TDataReader>(TOwner owner, string blobID, out TDataReader reader)
+            where TDataReader : struct, IBeastBinaryReader
+        {
+            reader = new TDataReader();
+            
+            try
+            {
+                InternalBeginRead(blobID, EBeastBlobType.Binary);
+                
+                reader.BinaryDeserialize(_binaryReader);
+            }
+            catch (Exception e)
+            {
+                BLog.Exception(owner, e, $"Failed to deserialize binary blob '{blobID}'");
+                
+                return false;
+            }
+
+            return true;
+        }
+        
+        public bool TryReadBinaryClass<TOwner, TDataReader>(TOwner owner, string blobID, TDataReader reader)
+            where TDataReader : class, IBeastBinaryReader
         {
             try
             {
                 InternalBeginRead(blobID, EBeastBlobType.Binary);
                 
-                reader.Read(_binaryReader);
+                reader.BinaryDeserialize(_binaryReader);
             }
             catch (Exception e)
             {
@@ -99,9 +129,9 @@ namespace Beast.Radar.Serialization
                 throw new InvalidOperationException($"'{blobID}' was not found in stream");
             }
 
-            if (header.header.type != EBeastBlobType.Binary)
+            if (header.blob.type != blobType)
             {
-                throw new InvalidOperationException($"'{blobID}' expected to be '{blobType}', but was '{header.header.type}'");
+                throw new InvalidOperationException($"'{blobID}' expected to be '{blobType}', but was '{header.blob.type}'");
             }
             
             _stream.Position = header.dataOffset;

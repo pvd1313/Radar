@@ -1,4 +1,4 @@
-﻿namespace Beast.Radar.Serialization
+﻿namespace Beast.Claw.Serialization
 {
     public interface IBeastBlobStreamWriter
     {

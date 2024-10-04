@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Beast.Radar.Serialization
+namespace Beast.Claw.Serialization
 {
     public struct BeastBlobHeader
     {
