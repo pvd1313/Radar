@@ -1,19 +1,18 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameCycle;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class BeastMapGenerationWindow : IBeastUIWindow, Initializable, Disposable
+    public class BeastMapGenerationWindow : IBeastUIWindow, IBeastInitialize, IBeastDispose
     {
         private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" }; 
         private static readonly int[] Sizes = { 512, 1024, 2058, 4096 }; 
         
         private readonly IBeastWindowManager _windowManager;
         private readonly IBeastUIFactory _uiFactory;
-        private readonly IUIInputController _input;
+        private readonly IBeastUIInputController _input;
 
         private BeastUISelectionLoop _uiSelectableLoop;
         private BeastMapGenerationView _menuView;
@@ -22,17 +21,16 @@ namespace Beast.Radar.UI
         public BeastMapGenerationWindow(
             IBeastUIFactory uiFactory, 
             IBeastWindowManager windowManager, 
-            IUIInputController input)
+            IBeastUIInputController input)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _input = input;
         }
 
-        public UniTask<InitializationResult> Initialize()
-        {
-            _menuView = _uiFactory
-                .NewWindow<BeastMapGenerationWindow, BeastMapGenerationView>(this, UIPrefabID.MapGenerationWindow);
+        public UniTask<BeastInitializationResult> Initialize()
+        { 
+            _uiFactory.Create(this, UIPrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, BeastUIWindowID.MapGeneration, _menuView);
             
             _uiSelectableLoop = new BeastUISelectionLoop(_input, new[]
@@ -48,7 +46,7 @@ namespace Beast.Radar.UI
             });
             
             Subscribe();
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Dispose()
@@ -95,13 +93,11 @@ namespace Beast.Radar.UI
         private void OnEndedChangeWater(float value)
         {
             _data.water = value;
-            BeastLog.String(this, "data", _data.ToString());
         }
 
         private void OnEndedChangeForest(float value)
         {
             _data.forest = value;
-            BeastLog.String(this, "data", _data.ToString());
         }
 
         private void OnClickSeedButton()
@@ -109,13 +105,11 @@ namespace Beast.Radar.UI
             string seedName = Seeds[Random.Range(0, Seeds.Length)];
             _menuView.seedResult.SetText(seedName);
             _data.seed = seedName.GetHashCode();
-            BeastLog.String(this, "data", _data.ToString());
         }
 
         private void OnClickSizeButton(int index)
         {
             _data.size = Sizes[index];
-            BeastLog.String(this, "data", _data.ToString());
         }
 
         private void OnCreateMapButton()
