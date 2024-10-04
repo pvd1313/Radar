@@ -7,10 +7,11 @@ namespace Beast.Radar.UI
     public class BeastUISelectionLoop 
     {
         private readonly Selectable[] _selectables; 
-        private readonly IUIInputController _input;
+        private readonly IBeastUIInputController _input;
         private int _currentIndex; 
+
         
-        public BeastUISelectionLoop(IUIInputController inputController, Selectable[] selectables)
+        public BeastUISelectionLoop(IBeastUIInputController inputController, Selectable[] selectables)
         {
             _selectables = selectables;
             _input = inputController;

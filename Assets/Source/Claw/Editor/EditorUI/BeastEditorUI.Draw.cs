@@ -12,7 +12,7 @@ namespace Beast.Claw.Editor
     {
         public void Button(string label, Action action)
         {
-            BeastAssert.ArgumentNotNull(action, $"{NicifyLabel(label)} : action");
+            BAssert.ArgumentNotNull(action, $"{NicifyLabel(label)} : action");
 
             if (GUILayout.Button(NicifyLabel(label)))
             {

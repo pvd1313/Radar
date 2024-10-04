@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Cinematic
 {
-    public interface ICameraController : Initializable, Disposable
+    public interface ICameraController : IBeastInitialize, IBeastDispose
     {
         public CameraControllerState State { get; }
 

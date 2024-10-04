@@ -7,30 +7,30 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastWindowManager : IBeastWindowManager, Initializable, Disposable
+    public class BeastWindowManager : IBeastWindowManager, IBeastInitialize, IBeastDispose
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
 
         private readonly IBeastUIFactory _uiFactory;
-        private readonly IUIInputController _uiInputController;
+        private readonly IBeastUIInputController _uiInputController;
         private readonly Dictionary<string, IBeastUIWindow> _allWindows = new();
 
         private BeastCanvasView _canvas;
         private IBeastUIWindow _currentOpenedWindowController;
 
-        public BeastWindowManager(IBeastUIFactory uiFactory, IUIInputController uiInputController)
+        public BeastWindowManager(IBeastUIFactory uiFactory, IBeastUIInputController uiInputController)
         {
             _uiFactory = uiFactory;
             _uiInputController = uiInputController;
         }
 
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
-            _canvas = _uiFactory.NewCanvas(this);
+            _canvas = _uiFactory.CreateCanvas(this);
             Subscribe();
             
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Dispose()

@@ -39,7 +39,7 @@ namespace Beast.Claw.Editor.Window
                     () =>
                     {
                         _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
-                        BeastAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
+                        BAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
                     },
                     () =>
                     {
@@ -50,7 +50,7 @@ namespace Beast.Claw.Editor.Window
                     {
                         _outputTextureFormat = UI.EnumSingleField(nameof(_outputTextureFormat), _outputTextureFormat);
                         _outputTextureSize = UI.Int2Field(nameof(_outputTextureSize), _outputTextureSize);
-                        BeastAssert.IsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
+                        BAssert.IsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
                     })
                 .Then(result =>
                 {

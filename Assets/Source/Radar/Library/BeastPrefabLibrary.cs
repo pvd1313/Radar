@@ -5,17 +5,17 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar
 {
-    public class BeastPrefabLibrary : BeastLibrary, Initializable
+    public class BeastPrefabLibrary : BeastLibrary, IBeastInitialize
     {
-        public PlayerInputView playerInputPrefab;
+        public BeastPlayerInputView playerInputPrefab;
 
         public BeastUIPrefabLibrary ui;
         
-        public async UniTask<InitializationResult> Initialize()
+        public async UniTask<BeastInitializationResult> Initialize()
         {
             await ui.Initialize();
 
-            return InitializationResult.Success();
+            return BeastInitializationResult.Success();
         }
     }
 }

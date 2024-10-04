@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Claw.CG
 {
-    public struct Texture2DParametersA : IValidatable
+    public struct Texture2DParametersA : IBeastValidatable
     {
         public RenderTexture sourceTexture;
         public TextureFormat format;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Beast.Radar.World
 {
-    public class TerrainBaker : Initializable, ITerrainBaker
+    public class TerrainBaker : IBeastInitialize, ITerrainBaker
     {
         private readonly BeastGraphicLibrary _graphicLibrary;
 
@@ -16,11 +16,11 @@ namespace Beast.Radar.World
             _graphicLibrary = graphicLibrary;
         }
         
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             _material = new Material(_graphicLibrary.worldMapBakeShader);
 
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Bake(TerrainBakerInput input)

@@ -13,21 +13,21 @@ namespace Beast.Radar.Cinematic
         public CameraControllerState State { get; private set; }
 
         private readonly CameraConfig _config;
-        private readonly ICameraInputController _input;
-        private readonly IPlayerInputProvider _inputProvider;
+        private readonly IBeastCameraInputController _input;
+        private readonly IBeastPlayerInputProvider _inputProvider;
 
         private CameraParams _currentParams;
 
         public CameraController(CameraConfig config,
-            ICameraInputController inputController,
-            IPlayerInputProvider inputProvider)
+            IBeastCameraInputController inputController,
+            IBeastPlayerInputProvider inputProvider)
         {
             _config = config;
             _input = inputController;
             _inputProvider = inputProvider;
         }
 
-        public UniTask<InitializationResult> Initialize()
+        public UniTask<BeastInitializationResult> Initialize()
         {
             RefreshStatePosition(_config.startPosition);
             RefreshStateZoom(_config.zoomRange.min);
@@ -43,7 +43,7 @@ namespace Beast.Radar.Cinematic
             _currentParams = _config.GetParams(_inputProvider.Scheme);
             Subscribe();
 
-            return InitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Dispose()
@@ -63,7 +63,7 @@ namespace Beast.Radar.Cinematic
             _inputProvider.ChangedScheme -= OnChangedInputScheme;
         }
 
-        private void OnChangedInputScheme(EInputScheme scheme)
+        private void OnChangedInputScheme(EBeastInputScheme scheme)
         {
             _currentParams = _config.GetParams(scheme);
         }
@@ -112,7 +112,7 @@ namespace Beast.Radar.Cinematic
 
             RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
 
-            if (_inputProvider.Scheme is EInputScheme.Gamepad)
+            if (_inputProvider.Scheme is EBeastInputScheme.Gamepad)
             {
                 return;
             }

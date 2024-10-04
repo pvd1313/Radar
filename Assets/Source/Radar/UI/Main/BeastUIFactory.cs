@@ -12,7 +12,7 @@ namespace Beast.Radar.UI
             _prefabs = prefabs;
         }
 
-        public BeastCanvasView NewCanvas<TOwner>(TOwner owner)
+        public BeastCanvasView CreateCanvas<TOwner>(TOwner owner)
         {
             BeastCanvasView prefab = _prefabs.ui.canvas;
             BeastCanvasView view = BeastScene.InstantiateMono(owner, prefab, float3.zero, quaternion.identity);
@@ -20,12 +20,11 @@ namespace Beast.Radar.UI
             return view;
         }
 
-        public TView NewWindow<TOwner, TView>(TOwner owner, string windowPrefabID) where TView : BeastUIView
+        public void Create<TOwner, TView>(TOwner owner, string prefabID, out TView newView) where TView : BeastUIView
         {
-            TView prefab = (TView) _prefabs.ui.GetWindow(windowPrefabID);
-            TView view = BeastScene.InstantiateMono(owner, prefab, float3.zero, quaternion.identity);
+            TView prefab = (TView) _prefabs.ui.GetWindow(prefabID);
             
-            return view;
+            newView = BeastScene.InstantiateMono(owner, prefab, float3.zero, quaternion.identity);
         }
     }
 }
