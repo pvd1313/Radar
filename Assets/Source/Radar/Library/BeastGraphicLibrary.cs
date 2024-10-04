@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Radar
 {
-    public partial class GraphicLibrary : BeastLibrary
+    public partial class BeastGraphicLibrary : BeastLibrary
     {
         public Mesh quadMesh;
         
@@ -12,6 +12,6 @@ namespace Beast.Radar
 
         public Texture2D worldDetailNoise;
 
-        public GraphicLibrary.Debug debug;
+        public Debug debug;
     }
 }

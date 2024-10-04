@@ -1,7 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.Prefabs;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine.InputSystem;
@@ -17,7 +16,7 @@ namespace Beast.Radar.InputControl
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
         
-        public PlayerInputProvider(PrefabLibrary config)
+        public PlayerInputProvider(BeastPrefabLibrary config)
         {
             _view = config.playerInputPrefab;
         }

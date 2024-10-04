@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.UI
 {
-    public interface  BeastUIWindow 
+    public interface IBeastUIWindow 
     {
         public void Open();
         public void Close();

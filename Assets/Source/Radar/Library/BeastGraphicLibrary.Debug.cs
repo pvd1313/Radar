@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Radar
 {
-    public partial class GraphicLibrary
+    public partial class BeastGraphicLibrary
     {
         [Serializable]
         public class Debug

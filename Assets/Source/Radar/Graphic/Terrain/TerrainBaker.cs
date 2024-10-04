@@ -7,11 +7,11 @@ namespace Beast.Radar.World
 {
     public class TerrainBaker : Initializable, ITerrainBaker
     {
-        private readonly GraphicLibrary _graphicLibrary;
+        private readonly BeastGraphicLibrary _graphicLibrary;
 
         private Material _material;
 
-        public TerrainBaker(GraphicLibrary graphicLibrary)
+        public TerrainBaker(BeastGraphicLibrary graphicLibrary)
         {
             _graphicLibrary = graphicLibrary;
         }

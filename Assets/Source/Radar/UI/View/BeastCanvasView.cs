@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace Beast.Radar.UI
 {
-    public class CanvasView : BeastUIView, IPointerEnterHandler, IPointerExitHandler
+    public class BeastCanvasView : BeastUIView, IPointerEnterHandler, IPointerExitHandler
     {
         public event Action<bool> MouseOverUI;
         

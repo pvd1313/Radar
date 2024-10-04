@@ -7,19 +7,19 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class WindowManager : IWindowManager
+    public class BeastWindowManager : IBeastWindowManager
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
 
-        private readonly IUIFactory _uiFactory;
+        private readonly IBeastUIFactory _uiFactory;
         private readonly IUIInputController _uiInputController;
-        private readonly Dictionary<string, BeastUIWindow> _allWindows = new();
+        private readonly Dictionary<string, IBeastUIWindow> _allWindows = new();
 
-        private CanvasView _canvas;
-        private BeastUIWindow _currentOpenedWindow;
+        private BeastCanvasView _beastCanvas;
+        private IBeastUIWindow _currentOpenedWindowController;
 
-        public WindowManager(IUIFactory uiFactory, IUIInputController uiInputController)
+        public BeastWindowManager(IBeastUIFactory uiFactory, IUIInputController uiInputController)
         {
             _uiFactory = uiFactory;
             _uiInputController = uiInputController;
@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
 
         public UniTask<InitializationResult> Initialize()
         {
-            _canvas = _uiFactory.CreateCanvas(UIPrefabID.Canvas);
+            _beastCanvas = _uiFactory.NewCanvas(BeastUIPrefabID.Canvas);
             Subscribe();
             return InitializationResult.SuccessNotAsync();
         }
@@ -37,42 +37,42 @@ namespace Beast.Radar.UI
             Unsubscribe();
         }
         
-        public void RegisterWindow(string windowID, BeastUIWindowView view, BeastUIWindow window)
+        public void Register(IBeastUIWindow window, string windowID, BeastUIWindowView view)
         {
             if (_allWindows.ContainsKey(windowID))
             {
-                throw new BeastException($"Window with id #{windowID} already exists");
+                throw new InvalidOperationException($"'{windowID}' is already registered");
             }
             
-            view.transform.SetParent(_canvas.transform, false);
+            view.transform.SetParent(_beastCanvas.transform, false);
             _allWindows.Add(windowID, window);
         }
 
-        public void ShowWindow(string windowID)
+        public void Show(string windowID)
         {
             if (!_allWindows.ContainsKey(windowID))
             {
-                throw new BeastException($"Window with id #{windowID} already exists");
+                throw new InvalidOperationException($"'{windowID}' is already shown");
             }
 
-            _currentOpenedWindow?.Close();
-            _currentOpenedWindow = _allWindows[windowID];
-            _currentOpenedWindow.Open();
+            _currentOpenedWindowController?.Close();
+            _currentOpenedWindowController = _allWindows[windowID];
+            _currentOpenedWindowController.Open();
             
-            bool isHasOpenedWindow = windowID != UIWindowID.MainHUD;
+            bool isHasOpenedWindow = windowID != BeastUIWindowID.MainHUD;
             
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
 
         private void Subscribe()
         {
-            _canvas.MouseOverUI += OnMouseOverUI;
+            _beastCanvas.MouseOverUI += OnMouseOverUI;
             _uiInputController.PausePressed += OnPauseKeyPressed;
         }
 
         private void Unsubscribe()
         {
-            _canvas.MouseOverUI -= OnMouseOverUI;
+            _beastCanvas.MouseOverUI -= OnMouseOverUI;
             _uiInputController.PausePressed -= OnPauseKeyPressed;
         }
 
@@ -83,7 +83,7 @@ namespace Beast.Radar.UI
 
         private void OnPauseKeyPressed()
         {
-            ShowWindow(_currentOpenedWindow is not PauseWindow ? UIWindowID.Pause : UIWindowID.MainHUD);
+            Show(_currentOpenedWindowController is not BeastPauseWindow ? BeastUIWindowID.Pause : BeastUIWindowID.MainHUD);
         }
     }
 }

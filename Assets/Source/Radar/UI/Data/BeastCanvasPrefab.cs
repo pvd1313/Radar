@@ -3,9 +3,9 @@
 namespace Beast.Radar.UI
 {
     [Serializable]
-    public class WindowPrefabClass
+    public class BeastCanvasPrefab
     {
         public string id;
-        public BeastUIWindowView prefab;
+        public BeastCanvasView prefab;
     }
 }

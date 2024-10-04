@@ -6,13 +6,13 @@ namespace Beast.Radar.InputControl
 {
     public class InputBlocker: Initializable, Disposable
     {
-        private readonly IWindowManager _windowManager;
+        private readonly IBeastWindowManager _windowManager;
         private readonly ICameraInputController _cameraInput;
 
         private int _blockCount;
         private bool _isBlock;
 
-        public InputBlocker(IWindowManager windowManager, ICameraInputController cameraInputController)
+        public InputBlocker(IBeastWindowManager windowManager, ICameraInputController cameraInputController)
         {
             _windowManager = windowManager;
             _cameraInput = cameraInputController;

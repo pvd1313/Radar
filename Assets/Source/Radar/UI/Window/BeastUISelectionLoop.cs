@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class UISelectionLoop 
+    public class BeastUISelectionLoop 
     {
         private readonly Selectable[] _selectables; 
         private readonly IUIInputController _input;
         private int currentIndex; 
         
-        public UISelectionLoop(IUIInputController inputController, Selectable[] selectables)
+        public BeastUISelectionLoop(IUIInputController inputController, Selectable[] selectables)
         {
             _selectables = selectables;
             _input = inputController;

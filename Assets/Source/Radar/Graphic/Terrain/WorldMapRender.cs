@@ -16,7 +16,7 @@ namespace Beast.Radar.World
         
         private readonly WorldMapConfig _config;
         private readonly ITerrainBaker _mapBaker;
-        private readonly GraphicLibrary _graphicLibrary;
+        private readonly BeastGraphicLibrary _graphicLibrary;
         private readonly ICameraController _camera;
         private readonly CameraConfig _cameraConfig;
 
@@ -26,7 +26,7 @@ namespace Beast.Radar.World
         public WorldMapRender(
             WorldMapConfig config, 
             ITerrainBaker mapBaker, 
-            GraphicLibrary graphicLibrary,
+            BeastGraphicLibrary graphicLibrary,
             ICameraController camera,
             CameraConfig cameraConfig)
         {

@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.UI
 {
-    public static class UIPrefabID
+    public static class BeastUIPrefabID
     {
         public static readonly string Canvas = "main_canvas";
         public static readonly string PauseWindow = "pause_window";
