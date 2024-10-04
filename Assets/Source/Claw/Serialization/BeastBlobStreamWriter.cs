@@ -12,7 +12,7 @@ namespace Beast.Claw.Serialization
     {
         private readonly Stream _stream;
         private readonly Dictionary<string, string> _blobID2Owner;
-        private readonly BinaryWriter _binaryWriter;
+        private readonly IBeastBinaryWriter _binaryWriter;
         private readonly JsonWriter _jsonWriter;
         private readonly JsonSerializer _jsonSerializer;
         
@@ -22,7 +22,7 @@ namespace Beast.Claw.Serialization
         public BeastBlobStreamWriter(Stream stream)
         {
             _stream = stream;
-            _binaryWriter = new BinaryWriter(_stream);
+            _binaryWriter = new BeastBinaryWriter(_stream);
             _jsonWriter = new JsonTextWriter(new StreamWriter(_stream));
             _blobID2Owner = new Dictionary<string, string>();
 
@@ -61,8 +61,8 @@ namespace Beast.Claw.Serialization
             }
         }
 
-        public void WriteBinary<TOwner, TWriter>(TOwner owner, string blobID, TWriter writer) 
-            where TWriter : IBeastBinaryWriter
+        public void WriteBinary<TOwner, TData>(TOwner owner, string blobID, TData data) 
+            where TData : IBeastBinarySerializable
         {
             try
             {
@@ -72,7 +72,33 @@ namespace Beast.Claw.Serialization
 
                 try
                 {
-                    writer.BinarySerialize(_binaryWriter);
+                    _binaryWriter.Write(data);
+                }
+                catch (Exception e)
+                {
+                    BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
+                }
+                
+                InternalEndWrite(blobID, EBeastBlobType.Binary);
+            }
+            catch (Exception e)
+            {
+                BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
+            }
+        }
+        
+        public void WriteBinaryRef<TOwner, TData>(TOwner owner, string blobID, ref TData data) 
+            where TData : struct, IBeastBinarySerializable
+        {
+            try
+            {
+                InternalBeginWrite(blobID, EBeastBlobType.Binary);
+                
+                _blobID2Owner[blobID] = BeastTypeStorage<TOwner>.FullName;
+
+                try
+                {
+                    _binaryWriter.Write(data);
                 }
                 catch (Exception e)
                 {
@@ -95,15 +121,13 @@ namespace Beast.Claw.Serialization
             }
 
             _writeBeginPosition = _stream.Position;
-
-            BeastBlobHeader header = new ()
+            
+            _binaryWriter.Write(new BeastBlobHeader
             {
                 id = blobID,
                 type = blobType,
                 length = 0
-            };
-            
-            header.WriteToBinaryStream(_binaryWriter);
+            });
             
             _blobHeaderSize = _stream.Position - _writeBeginPosition;
         }
@@ -115,15 +139,13 @@ namespace Beast.Claw.Serialization
             int blobSize = (int)(streamPositionBackup - _writeBeginPosition - _blobHeaderSize);
 
             _stream.Position = _writeBeginPosition;
-
-            BeastBlobHeader header = new()
+            
+            _binaryWriter.Write(new BeastBlobHeader
             {
                 id = blobID,
                 type = blobType,
                 length = blobSize
-            };
-
-            header.WriteToBinaryStream(_binaryWriter);
+            });
 
             _stream.Position = streamPositionBackup;
         }

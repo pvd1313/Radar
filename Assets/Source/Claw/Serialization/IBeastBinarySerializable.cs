@@ -1,7 +1,9 @@
 ﻿namespace Beast.Claw.Serialization
 {
-    public interface IBeastBinarySerializable : IBeastBinaryReader, IBeastBinaryWriter
+    public interface IBeastBinarySerializable
     {
-        
+        void Serialize(IBeastBinaryWriter stream);
+
+        void Deserialize(IBeastBinaryReader stream);
     }
 }

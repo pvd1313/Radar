@@ -65,7 +65,7 @@ namespace Beast.Radar.Cinematic
             
             stream.TryReadJson(this, "camera_state_json", out CameraControllerState stateJson);
 
-            stream.TryReadBinaryStruct(this, "camera_state_bin", out CameraControllerState stateBin);
+            stream.TryReadBinaryNew(this, "camera_state_bin", out CameraControllerState stateBin);
 
             if (!CameraControllerState.AreSame(stateJson, stateBin))
             {

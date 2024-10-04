@@ -16,7 +16,7 @@ namespace Beast.Claw.Serialization
         }
 
         private readonly Stream _stream;
-        private readonly BinaryReader _binaryReader;
+        private readonly IBeastBinaryReader _binaryReader;
         private readonly JsonReader _jsonReader;
         private readonly JsonSerializer _jsonSerializer;
         private readonly Dictionary<string, Header> _headers;
@@ -24,7 +24,7 @@ namespace Beast.Claw.Serialization
         public BeastBlobStreamReader(Stream stream)
         {
             _stream = stream;
-            _binaryReader = new BinaryReader(_stream);
+            _binaryReader = new BeastBinaryReader(_stream);
             _jsonReader = new JsonTextReader(new StreamReader(stream));
             _headers = new Dictionary<string, Header>();
             
@@ -45,8 +45,7 @@ namespace Beast.Claw.Serialization
             {
                 try
                 {
-                    BeastBlobHeader header = new();
-                    header.ReadFromBinaryStream(_binaryReader);
+                    BeastBlobHeader header = _binaryReader.ReadNew<BeastBlobHeader>();
 
                     _headers.Add(header.id, new Header
                     {
@@ -85,16 +84,16 @@ namespace Beast.Claw.Serialization
             return true;
         }
 
-        public bool TryReadBinaryStruct<TOwner, TDataReader>(TOwner owner, string blobID, out TDataReader reader)
-            where TDataReader : struct, IBeastBinaryReader
+        public bool TryReadBinaryNew<TOwner, TData>(TOwner owner, string blobID, out TData data)
+            where TData : IBeastBinarySerializable, new()
         {
-            reader = new TDataReader();
+            data = default;
             
             try
             {
                 InternalBeginRead(blobID, EBeastBlobType.Binary);
-                
-                reader.BinaryDeserialize(_binaryReader);
+
+                data = _binaryReader.ReadNew<TData>();
             }
             catch (Exception e)
             {
@@ -106,14 +105,14 @@ namespace Beast.Claw.Serialization
             return true;
         }
         
-        public bool TryReadBinaryClass<TOwner, TDataReader>(TOwner owner, string blobID, TDataReader reader)
-            where TDataReader : class, IBeastBinaryReader
+        public bool TryReadBinaryClass<TOwner, TData>(TOwner owner, string blobID, TData data)
+            where TData : class, IBeastBinarySerializable
         {
             try
             {
                 InternalBeginRead(blobID, EBeastBlobType.Binary);
-                
-                reader.BinaryDeserialize(_binaryReader);
+
+                _binaryReader.ReadClass(data);
             }
             catch (Exception e)
             {
