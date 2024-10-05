@@ -71,7 +71,7 @@ namespace Beast.Claw.Editor
                 
                 EditorGUILayout.TextArea(e.StackTrace);
 
-                BLog.StaticException(e, "BeastEditorWindow unhandled exception");
+                BDebug.LogStaticException(e, "BeastEditorWindow unhandled exception");
             }
         }
     }

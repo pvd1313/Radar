@@ -56,7 +56,7 @@ public class IsometricRenderOld : MonoBehaviour
         gSize.y = Mathf.Max(1, tileGridSize.y);
 
         int tileCount = GetTileCount(gSize);
-        BLog.Int(this, "tileCount", tileCount);
+        BDebug.TrackInt(this, "tileCount", tileCount);
         
         // -- Solver \/
         

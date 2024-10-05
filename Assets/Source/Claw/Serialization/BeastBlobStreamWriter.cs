@@ -50,14 +50,14 @@ namespace Beast.Claw.Serialization
                 }
                 catch (Exception e)
                 {
-                    BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}' #B");
+                    BDebug.LogException(owner, e, $"Failed to serialize json blob '{blobID}' #B");
                 }
                 
                 InternalEndWrite(blobID, EBeastBlobType.Json);
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to serialize json blob '{blobID}' #A");
+                BDebug.LogException(owner, e, $"Failed to serialize json blob '{blobID}' #A");
             }
         }
 
@@ -76,14 +76,14 @@ namespace Beast.Claw.Serialization
                 }
                 catch (Exception e)
                 {
-                    BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
+                    BDebug.LogException(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
                 }
                 
                 InternalEndWrite(blobID, EBeastBlobType.Binary);
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
+                BDebug.LogException(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
             }
         }
         
@@ -102,14 +102,14 @@ namespace Beast.Claw.Serialization
                 }
                 catch (Exception e)
                 {
-                    BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
+                    BDebug.LogException(owner, e, $"Failed to serialize binary blob '{blobID}' #B");
                 }
                 
                 InternalEndWrite(blobID, EBeastBlobType.Binary);
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
+                BDebug.LogException(owner, e, $"Failed to serialize binary blob '{blobID}' #A");
             }
         }
 

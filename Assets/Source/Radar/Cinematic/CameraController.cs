@@ -69,7 +69,7 @@ namespace Beast.Radar.Cinematic
 
             if (!CameraControllerState.AreSame(stateJson, stateBin))
             {
-                BLog.Error(this, "Something went wrong during serialization. Binary and json are differs");
+                BDebug.LogError(this, "Something went wrong during serialization. Binary and json are differs");
             }
 
             State = stateJson;

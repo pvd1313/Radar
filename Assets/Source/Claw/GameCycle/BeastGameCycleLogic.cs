@@ -47,7 +47,7 @@ namespace Beast.Claw.GameCycle
 
                 if (result.status != EBeastInitializationStatus.Success)
                 {
-                    BLog.Error(this, $"Failed to initialize {controller.GetType()}");
+                    BDebug.LogError(this, $"Failed to initialize {controller.GetType()}");
                      
                     return;
                 }
@@ -146,7 +146,7 @@ namespace Beast.Claw.GameCycle
             object logic, 
             out bool canContinueExecution)
         {
-            BLog.Exception(this, e, logic.GetType() + "." + methodName + "()");
+            BDebug.LogException(this, e, logic.GetType() + "." + methodName + "()");
             
             _errors.TryGetValue(logic, out int errorCount);
             errorCount++;

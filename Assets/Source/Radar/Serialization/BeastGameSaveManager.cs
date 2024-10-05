@@ -59,7 +59,7 @@ namespace Beast.Radar.Serialization
                         string message =
                             $"Error during game state loading '{folderName}/{fileName}'({module.GetType()})";
                         
-                        BLog.Exception(this, e, message);
+                        BDebug.LogException(this, e, message);
                     }
                 }
                 
@@ -70,11 +70,11 @@ namespace Beast.Radar.Serialization
                     File.Delete(tempFilePath);
                 }
                 
-                BLog.Info(this, $"Loaded game state from '{realFilePath}' compression: {_config.useCompression}");
+                BDebug.LogInfo(this, $"Loaded game state from '{realFilePath}' compression: {_config.useCompression}");
             }
             catch (Exception e)
             {
-                BLog.Exception(this, e, $"Failed to load game state '{folderName}/{fileName}'");
+                BDebug.LogException(this, e, $"Failed to load game state '{folderName}/{fileName}'");
             }
         }
 
@@ -99,7 +99,7 @@ namespace Beast.Radar.Serialization
                         string message =
                             $"Error during game state saving '{folderName}/{fileName}'({module.GetType()})";
                         
-                        BLog.Exception(this, e, message);
+                        BDebug.LogException(this, e, message);
                     }
                 }
 
@@ -113,11 +113,11 @@ namespace Beast.Radar.Serialization
                     File.Delete(tempFilePath);
                 }
                 
-                BLog.Info(this, $"Saved game state to '{realFilePath}' compression: {_config.useCompression}");
+                BDebug.LogInfo(this, $"Saved game state to '{realFilePath}' compression: {_config.useCompression}");
             }
             catch (Exception e)
             {
-                BLog.Exception(this, e, $"Failed to save game state '{folderName}/{fileName}'");
+                BDebug.LogException(this, e, $"Failed to save game state '{folderName}/{fileName}'");
             }
         }
 

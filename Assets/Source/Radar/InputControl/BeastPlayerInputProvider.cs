@@ -46,7 +46,7 @@ namespace Beast.Radar.InputControl
             
             if (_inputScheme == EBeastInputScheme.MouseAndKeyboard && Mouse.current == null)
             {
-                BLog.Error(this,"Try setting the mouse scheme with an empty mouse device.");
+                BDebug.LogError(this,"Try setting the mouse scheme with an empty mouse device.");
                 _inputScheme = EBeastInputScheme.Touch;
             }
             

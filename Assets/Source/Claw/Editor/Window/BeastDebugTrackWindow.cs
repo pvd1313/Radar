@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace Beast.Claw.Editor.Window
 {
-    public class BeastLogWindow : BeastEditorWindow
+    public class BeastDebugTrackWindow : BeastEditorWindow
     {
         protected override void Initialize()
         {
@@ -26,32 +26,32 @@ namespace Beast.Claw.Editor.Window
                 niceLabelsEnabled = false
             };
             
-            foreach ((string id, float value) in BLog.StateStorage.ReadAllFloat())
+            foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())
             {
                 ui.FloatField(id, value);
             }
 
-            foreach ((string id, int value) in BLog.StateStorage.ReadAllInt())
+            foreach ((string id, int value) in BDebug.StateStorage.ReadAllInt())
             {
                 ui.IntField(id, value);
             }
 
-            foreach ((string id, float2 value) in BLog.StateStorage.ReadAllFloat2())
+            foreach ((string id, float2 value) in BDebug.StateStorage.ReadAllFloat2())
             {
                 ui.Float2Field(id, value);
             }
             
-            foreach ((string id, float3 value) in BLog.StateStorage.ReadAllFloat3())
+            foreach ((string id, float3 value) in BDebug.StateStorage.ReadAllFloat3())
             {
                 ui.Float3Field(id, value);
             }
             
-            foreach ((string id, float4 value) in BLog.StateStorage.ReadAllFloat4())
+            foreach ((string id, float4 value) in BDebug.StateStorage.ReadAllFloat4())
             {
                 ui.Float4Field(id, value);
             }
             
-            foreach ((string id, string value) in BLog.StateStorage.ReadAllString())
+            foreach ((string id, string value) in BDebug.StateStorage.ReadAllString())
             {
                 ui.StringField(id, value);
             }

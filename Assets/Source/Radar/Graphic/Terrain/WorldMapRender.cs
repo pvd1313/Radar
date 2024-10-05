@@ -71,7 +71,7 @@ namespace Beast.Radar.World
 
         public void OnFrameEnd()
         {
-            BLog.Float2(this, "cameraPosition", _camera.State.position);
+            BDebug.TrackFloat2(this, "cameraPosition", _camera.State.position);
             
             float screenAspect = Screen.width / (float)Screen.height;
             float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
@@ -93,7 +93,7 @@ namespace Beast.Radar.World
             float mapChunkSize = 100;
             float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);
 
-            BLog.Float(this, "chunkTexelSize", chunkTexelSize);
+            BDebug.TrackFloat(this, "chunkTexelSize", chunkTexelSize);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {

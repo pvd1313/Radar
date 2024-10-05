@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace Beast.Claw.Common
 {
-    partial class BeastLogStateStorage
+    partial class BeastDebugTrackStorage
     {
-        private struct StringDictionary<T>
+        private readonly struct StringDictionary<T>
         {
             private readonly Dictionary<string, T> _values;
 

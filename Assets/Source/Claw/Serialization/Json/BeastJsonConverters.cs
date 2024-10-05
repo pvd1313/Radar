@@ -22,7 +22,7 @@ namespace Beast.Claw.Serialization.Json
             }
             catch (Exception e)
             {
-                BLog.StaticException(e, $"{nameof(BeastJsonConverters)} static cctor");
+                BDebug.LogStaticException(e, $"{nameof(BeastJsonConverters)} static cctor");
             }
         }
     }

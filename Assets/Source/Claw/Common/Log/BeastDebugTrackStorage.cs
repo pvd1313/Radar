@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace Beast.Claw.Common
 {
-    public partial class BeastLogStateStorage
+    public partial class BeastDebugTrackStorage
     {
         private const int StateStorageCapacity = 0;
         

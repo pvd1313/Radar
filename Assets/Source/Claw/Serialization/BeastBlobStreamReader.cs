@@ -76,7 +76,7 @@ namespace Beast.Claw.Serialization
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to deserialize json blob '{blobID}'");
+                BDebug.LogException(owner, e, $"Failed to deserialize json blob '{blobID}'");
 
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Beast.Claw.Serialization
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to deserialize binary blob '{blobID}'");
+                BDebug.LogException(owner, e, $"Failed to deserialize binary blob '{blobID}'");
                 
                 return false;
             }
@@ -116,7 +116,7 @@ namespace Beast.Claw.Serialization
             }
             catch (Exception e)
             {
-                BLog.Exception(owner, e, $"Failed to deserialize binary blob '{blobID}'");
+                BDebug.LogException(owner, e, $"Failed to deserialize binary blob '{blobID}'");
                 
                 return false;
             }

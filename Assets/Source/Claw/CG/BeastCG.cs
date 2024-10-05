@@ -32,7 +32,7 @@ namespace Beast.Claw.CG
             }
             catch (Exception e)
             {
-                BLog.StaticException(e, "BeastCG cctor");
+                BDebug.LogStaticException(e, "BeastCG cctor");
             }
         }
         
