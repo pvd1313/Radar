@@ -14,7 +14,15 @@ namespace Beast.Claw.GameCycle
             };
         }
 
-        public static UniTask<BeastInitializationResult> SuccessNotAsync()
+        public static BeastInitializationResult Failed()
+        {
+            return new BeastInitializationResult
+            {
+                status = EBeastInitializationStatus.Failed
+            };
+        }
+
+        public static UniTask<BeastInitializationResult> SuccessSync()
         {
             return UniTask.FromResult(Success());
         }

@@ -83,7 +83,7 @@ namespace Beast.Claw.Editor.Window
         
         private void BakeMap()
         {
-            RenderTexture renderTextureBig = BeastCG.NewRenderTextureTemporary(this,
+            RenderTexture renderTextureBig = BeastCG.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
@@ -91,7 +91,7 @@ namespace Beast.Claw.Editor.Window
                     antiAliasing = 1
                 });
 
-            RenderTexture renderTextureSmall = BeastCG.NewRenderTextureTemporary(this,
+            RenderTexture renderTextureSmall = BeastCG.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
@@ -120,7 +120,7 @@ namespace Beast.Claw.Editor.Window
                     DestroyImmediate(_bakedTexture);
                 }
                 
-                _bakedTexture = BeastCG.NewTexture2DFromRenderTexture(this, new Texture2DParametersA
+                _bakedTexture = BeastCG.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
                 {
                     format = _outputTextureFormat,
                     isLinear = true,
@@ -133,7 +133,7 @@ namespace Beast.Claw.Editor.Window
                     DestroyImmediate(_previewTexture);
                 }
 
-                _previewTexture = BeastCG.NewTexture2DFromRenderTexture(this, new Texture2DParametersA
+                _previewTexture = BeastCG.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
                 {
                     format = TextureFormat.RGBA32,
                     isLinear = true,
@@ -143,8 +143,8 @@ namespace Beast.Claw.Editor.Window
             }
             finally
             {
-                BeastCG.ReleaseTemporaryRenderTexture(renderTextureBig);
-                BeastCG.ReleaseTemporaryRenderTexture(renderTextureSmall);
+                BeastCG.ReleaseRenderTexture(renderTextureBig);
+                BeastCG.ReleaseRenderTexture(renderTextureSmall);
             }
             
         }

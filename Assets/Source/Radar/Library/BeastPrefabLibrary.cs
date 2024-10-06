@@ -5,17 +5,28 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar
 {
-    public class BeastPrefabLibrary : BeastLibrary, IBeastInitialize
+    public class BeastPrefabLibrary : BeastLibrary, IBeastGameCycleListener
     {
         public BeastPlayerInputView playerInputPrefab;
-
         public BeastUIPrefabLibrary ui;
         
-        public async UniTask<BeastInitializationResult> Initialize()
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
         {
-            await ui.Initialize();
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+        }
 
+        private async UniTask<BeastInitializationResult> Warmup()
+        {
+            BeastInitializationResult result = await ui.Initialize();
+            
+            if (result.status != EBeastInitializationStatus.Success)
+            {
+                return result;
+            }
+            
             return BeastInitializationResult.Success();
         }
+
+        
     }
 }

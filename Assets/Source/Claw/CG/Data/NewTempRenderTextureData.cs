@@ -14,6 +14,7 @@ namespace Beast.Claw.CG
         public RenderTextureMemoryless memoryless;
         public VRTextureUsage vrUsage;
         public FilterMode filterMode;
+        public TextureWrapMode wrapMode;
         
         public bool IsValid(out string errorMessage)
         {

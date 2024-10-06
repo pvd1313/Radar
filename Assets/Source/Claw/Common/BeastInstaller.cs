@@ -29,15 +29,18 @@ namespace Beast.Claw.Common
             {
                 Container.BindInterfacesAndSelfTo(config.GetType()).FromInstance(config).AsSingle();
             }
+
+            BindCustom(Container);
             
-            IEnumerable<Type> contract = CreateContract();
-            
-            foreach (Type logicType in contract)
+            IEnumerable<Type> interfaceContract = BindInterfaces();
+            foreach (Type logicType in interfaceContract)
             {
                 Container.BindInterfacesTo(logicType).AsSingle();
             }
         }
 
-        protected abstract IEnumerable<Type> CreateContract();
+        protected abstract IEnumerable<Type> BindInterfaces();
+
+        protected abstract void BindCustom(DiContainer diContainer);
     }
 }

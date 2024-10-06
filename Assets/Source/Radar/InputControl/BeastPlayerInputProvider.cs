@@ -7,10 +7,11 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class BeastPlayerInputProvider : IBeastPlayerInputProvider 
+    public class BeastPlayerInputProvider : IBeastPlayerInputProvider, IBeastGameCycleListener
     {
-        public InputActions Actions { get; private set; }
         public event Action<EBeastInputScheme> ChangedScheme;
+        
+        public InputActions Actions { get; private set; }
         public EBeastInputScheme Scheme => _inputScheme;
 
         private EBeastInputScheme _inputScheme;
@@ -21,7 +22,13 @@ namespace Beast.Radar.InputControl
             _view = config.playerInputPrefab;
         }
         
-        public UniTask<BeastInitializationResult> Initialize()
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
         {
             Actions = new InputActions();
             Actions.Enable();
@@ -31,13 +38,15 @@ namespace Beast.Radar.InputControl
             RefreshCurrentScheme(_view.playerInput);
             _view.playerInput.onControlsChanged += RefreshCurrentScheme;
             
-            return BeastInitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Dispose()
         {
             _view.playerInput.onControlsChanged -= RefreshCurrentScheme;
             Actions.Disable();
+
+            return BeastInitializationResult.SuccessSync();
         }
         
         private void RefreshCurrentScheme(PlayerInput input)

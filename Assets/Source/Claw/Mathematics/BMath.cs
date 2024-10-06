@@ -8,6 +8,18 @@ namespace Beast.Claw.Mathematics
     {
         public const float Deg2Rad = 0.017453292f;
         public const float Rad2Deg = 57.29578f;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Sin(float angleRag)
+        {
+            return math.sin(angleRag);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Cos(float angleRad)
+        {
+            return math.cos(angleRad);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float a, float b)

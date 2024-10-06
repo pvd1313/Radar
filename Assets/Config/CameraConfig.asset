@@ -13,12 +13,7 @@ MonoBehaviour:
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
   viewPrefab: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
-  startPosition:
-    x: 0
-    y: 0
-  zoomRange:
-    min: 1
-    max: 4000
+  minViewDistance: 1
   zoomCurve:
     serializedVersion: 2
     m_Curve:
@@ -43,7 +38,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  cameraParams:
+  motion:
   - schemes: 01000000
     zoomSpeed: 30
     motionSpeed: 0.01

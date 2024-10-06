@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class BeastUIInputController : IBeastUIInputController
+    public class BeastUIInputController : IBeastUIInputController, IBeastGameCycleListener
     {
         private const float NavigationCooldown = 0.2f;
         public event Action<float2> NavigationPressed;
@@ -21,19 +21,29 @@ namespace Beast.Radar.InputControl
         {
             _input = inputProvider;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
         {
-            Subscribe();
-            return BeastInitializationResult.SuccessNotAsync();
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+            handle.ListenUpdate(this, BeastCycleEventID.FrameBegin, FrameBegin);
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Warmup()
         {
-            Unsubscribe();
+            SubscribeInputActions();
+
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void OnFrameBegin()
+        private UniTask<BeastInitializationResult> Dispose()
+        {
+            UnsubscribeInputActions();
+
+            return BeastInitializationResult.SuccessSync();
+        }
+
+        private void FrameBegin()
         {
             Navigate();
         }
@@ -60,12 +70,12 @@ namespace Beast.Radar.InputControl
             }
         }
 
-        private void Subscribe()
+        private void SubscribeInputActions()
         {
             _input.Actions.Player.Pause.started += OnStartedPause;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeInputActions()
         {
             _input.Actions.Player.Pause.started -= OnStartedPause;
         }

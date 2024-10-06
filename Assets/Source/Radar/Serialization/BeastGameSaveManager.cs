@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
@@ -10,114 +8,95 @@ using UnityEngine;
 
 namespace Beast.Radar.Serialization
 {
-    public class BeastGameSaveManager : IBeastInitialize, IBeastGameSaveManager
+    public class BeastGameSaveManager : IBeastGameSaveManager
     {
-        private readonly List<IBeastSerializableModule> _modules;
+        private readonly BeastGameModel _gameModel;
+        private readonly IBeastGameCycle _gameCycle;
         private readonly BeastGameSaveConfig _config;
 
-        private BeastFileCompressor _fileCompressor;
-
-        public BeastGameSaveManager(List<IBeastSerializableModule> modules, BeastGameSaveConfig config)
+        public BeastGameSaveManager(
+            BeastGameModel gameModel, 
+            IBeastGameCycle gameCycle,
+            BeastGameSaveConfig config)
         {
-            _modules = modules;
+            _gameModel = gameModel;
+            _gameCycle = gameCycle;
             _config = config;
         }
 
-        public UniTask<BeastInitializationResult> Initialize()
-        {
-            _fileCompressor = new BeastFileCompressor();
-            
-            return BeastInitializationResult.SuccessNotAsync();
-        }
-        
-        public void Load(string folderName, string fileName)
+        public async UniTask<BeastInitializationResult> LoadDefaultSave()
         {
             try
             {
-                string realFilePath = InternalGetOrCreateFilePath(folderName, fileName);
-                string tempFilePath = realFilePath + ".temp";
+                _gameModel.CopyFrom(_config.defaultSave);
 
-                if (_config.useCompression)
-                {
-                    _fileCompressor.Decompress(realFilePath, tempFilePath);
-                }
+                return await _gameCycle.Execute(this, BeastCycleEventID.GameLoading);
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(this, e, "Failed to load default game save");
                 
-                using FileStream fileStream = new (_config.useCompression ? tempFilePath : realFilePath, FileMode.Open);
-                
-                BeastBlobStreamReader blobStream = new (fileStream);
-                
-                blobStream.ReadHeaders();
+                return BeastInitializationResult.Failed();
+            }
+        }
 
-                foreach (IBeastSerializableModule module in _modules)
-                {
-                    try
-                    {
-                        module.OnModuleDeserialize(blobStream);
-                    }
-                    catch (Exception e)
-                    {
-                        string message =
-                            $"Error during game state loading '{folderName}/{fileName}'({module.GetType()})";
-                        
-                        BDebug.LogException(this, e, message);
-                    }
-                }
+        public async UniTask<BeastInitializationResult> Load(string folderName, string fileName)
+        {
+            try
+            {
+                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
+                
+                using FileStream fileStream = new (filePath, FileMode.Open);
+                BeastBinaryReader binaryReader = new (fileStream);
+
+                binaryReader.Read(_gameModel);
                 
                 fileStream.Close();
-
-                if (_config.useCompression)
-                {
-                    File.Delete(tempFilePath);
-                }
                 
-                BDebug.LogInfo(this, $"Loaded game state from '{realFilePath}' compression: {_config.useCompression}");
+                BeastInitializationResult result = await _gameCycle.Execute(this, BeastCycleEventID.GameLoading);
+                
+                BDebug.LogInfo(this, $"Loaded game state from '{filePath}'");
+
+                return result;
             }
             catch (Exception e)
             {
                 BDebug.LogException(this, e, $"Failed to load game state '{folderName}/{fileName}'");
+                
+                return BeastInitializationResult.Failed();
             }
         }
 
-        public void Save(string folderName, string fileName)
+        public async UniTask<BeastInitializationResult> Save(string folderName, string fileName)
         {
             try
             {
-                string realFilePath = InternalGetOrCreateFilePath(folderName, fileName);
-                string tempFilePath = realFilePath + ".open";
-                
-                using FileStream fileStream = new (_config.useCompression ? tempFilePath : realFilePath, FileMode.Create);
-                BeastBlobStreamWriter blobStream = new (fileStream);
-                
-                foreach (IBeastSerializableModule module in _modules)
+                BeastInitializationResult result = await _gameCycle.Execute(this, BeastCycleEventID.GameSaving);
+
+                if (result.status != EBeastInitializationStatus.Success)
                 {
-                    try
-                    {
-                        module.OnModuleSerialize(blobStream);
-                    }
-                    catch (Exception e)
-                    {
-                        string message =
-                            $"Error during game state saving '{folderName}/{fileName}'({module.GetType()})";
-                        
-                        BDebug.LogException(this, e, message);
-                    }
+                    return result;
                 }
+                
+                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
+                
+                using FileStream fileStream = new (filePath, FileMode.Create);
+                BeastBinaryWriter binaryWriter = new BeastBinaryWriter(fileStream);
+
+                binaryWriter.Write(_gameModel);
 
                 fileStream.Flush();
                 fileStream.Close();
-
-                if (_config.useCompression)
-                {
-                    _fileCompressor.Compress(tempFilePath, realFilePath);
-
-                    File.Delete(tempFilePath);
-                }
                 
-                BDebug.LogInfo(this, $"Saved game state to '{realFilePath}' compression: {_config.useCompression}");
+                BDebug.LogInfo(this, $"Saved game state to '{filePath}'");
+
+                return result;
             }
             catch (Exception e)
             {
                 BDebug.LogException(this, e, $"Failed to save game state '{folderName}/{fileName}'");
+                
+                return BeastInitializationResult.Failed();
             }
         }
 

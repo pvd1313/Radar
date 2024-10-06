@@ -6,13 +6,13 @@ namespace Beast.Claw.Common
     public static class BeastBinaryWriterExtension
     {
         public static void Write<TData>(this IBeastBinaryWriter stream, TData data) 
-            where TData : IBeastBinarySerializable
+            where TData : IBeastSerializable
         {
             data.Serialize(stream);
         }
 
-        public static void WriteRef<TData>(this IBeastBinaryWriter stream, ref TData data)
-            where TData : struct, IBeastBinarySerializable
+        public static void Write<TData>(this IBeastBinaryWriter stream, ref TData data)
+            where TData : struct, IBeastSerializable
         {
             data.Serialize(stream);
         }

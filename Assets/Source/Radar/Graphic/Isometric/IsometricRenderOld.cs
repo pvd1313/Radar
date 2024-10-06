@@ -70,7 +70,7 @@ public class IsometricRenderOld : MonoBehaviour
         _solverMaterial.SetVector("_NoiseOffset", noiseOffset);
         _solverMaterial.SetFloat("_OutputTextureSize", solverTextureSize);
         
-        RenderTexture solverTexture = BeastCG.NewRenderTextureTemporary(this, new NewTempRenderTextureData
+        RenderTexture solverTexture = BeastCG.CreateTemporaryRenderTexture(this, new NewTempRenderTextureData
         {
             size = new int2(solverTextureSize, solverTextureSize),
             antiAliasing = 1,
@@ -119,7 +119,7 @@ public class IsometricRenderOld : MonoBehaviour
         //     matrix = float4x4.identity,
         // });
         
-        BeastCG.ReleaseTemporaryRenderTexture(solverTexture);
+        BeastCG.ReleaseRenderTexture(solverTexture);
     }
 
     private int GetTileCount(int2 gSize)

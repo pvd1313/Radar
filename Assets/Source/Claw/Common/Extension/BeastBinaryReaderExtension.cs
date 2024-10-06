@@ -5,8 +5,8 @@ namespace Beast.Claw.Common
 {
     public static class BeastBinaryReaderExtension
     {
-        public static TData ReadNew<TData>(this IBeastBinaryReader stream) 
-            where TData : IBeastBinarySerializable, new()
+        public static TData Read<TData>(this IBeastBinaryReader stream) 
+            where TData : IBeastSerializable, new()
         {
             TData data = new TData();
 
@@ -15,14 +15,14 @@ namespace Beast.Claw.Common
             return data;
         }
 
-        public static void ReadClass<TData>(this IBeastBinaryReader stream, TData data) 
-            where TData : class, IBeastBinarySerializable
+        public static void Read<TData>(this IBeastBinaryReader stream, TData data) 
+            where TData : class, IBeastSerializable
         {
             data.Deserialize(stream);
         }
 
-        public static void ReadRef<TData>(this IBeastBinaryReader stream, ref TData data) 
-            where TData : struct, IBeastBinarySerializable
+        public static void Read<TData>(this IBeastBinaryReader stream, ref TData data) 
+            where TData : struct, IBeastSerializable
         {
             data.Deserialize(stream);
         }

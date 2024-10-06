@@ -4,7 +4,8 @@ namespace Beast.Claw.GameCycle
 {
     public class BeastGameCycleConfig : BeastConfig
     {
-        public bool exceptionStopsExecution;
-        public int exceptionThreshold;
+        public bool exceptionStopsUpdates;
+        public int updateExceptionThreshold;
+        public bool preventDuplicatingSubscription;
     }
 }

@@ -19,7 +19,7 @@ namespace Beast.Radar
         {
             _window = window.ToDictionary(w => w.id, w => w.prefab);
 
-            return BeastInitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessSync();
         }
 
         public BeastUIView GetWindow(string prefabID)

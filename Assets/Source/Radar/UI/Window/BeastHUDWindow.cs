@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastHUDWindow : IBeastUIWindow, IBeastInitialize, IBeastDispose
+    public class BeastHUDWindow : IBeastUIWindow, IBeastGameCycleListener
     {
         private readonly IBeastUIFactory _uiFactory;
         private readonly IBeastWindowManager _windowManager;
@@ -15,19 +15,29 @@ namespace Beast.Radar.UI
             _uiFactory = uiFactory;
             _windowManager = windowManager;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
-        { 
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
+        {
             _uiFactory.Create(this, BeastUIPrefabID.HudWindow, out _view);
+                
             _windowManager.Register(this, BeastUIWindowID.MainHUD, _view);
-            Subscribe();
-            Open();
-            return BeastInitializationResult.SuccessNotAsync();
+                
+            SubscribeView();
+            
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        public UniTask<BeastInitializationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeView();
+
+            return BeastInitializationResult.SuccessSync();
         }
 
         public void Open()
@@ -45,12 +55,12 @@ namespace Beast.Radar.UI
             _view.pauseButton.SetInteractable(isActive);
         }
         
-        private void Subscribe()
+        private void SubscribeView()
         {
             _view.pauseButton.Clicked += OnClickedPauseButton;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeView()
         {
             _view.pauseButton.Clicked -= OnClickedPauseButton;
         }

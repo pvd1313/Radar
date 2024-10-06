@@ -6,7 +6,7 @@ namespace Beast.Claw.Common
 {
     public static class BeastScene
     {
-        public static GameObject NewGameObject<TOwner>(TOwner owner)
+        public static GameObject CreateGameObject<TOwner>(TOwner owner)
         {
             GameObject gameObject = new (BeastTypeStorage<TOwner>.FullName);
 

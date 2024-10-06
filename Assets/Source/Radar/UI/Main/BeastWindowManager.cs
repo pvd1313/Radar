@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastWindowManager : IBeastWindowManager, IBeastInitialize, IBeastDispose
+    public class BeastWindowManager : IBeastWindowManager, IBeastGameCycleListener
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
@@ -23,18 +23,27 @@ namespace Beast.Radar.UI
             _uiFactory = uiFactory;
             _uiInputController = uiInputController;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
         {
             _canvas = _uiFactory.CreateCanvas(this);
-            Subscribe();
+                
+            SubscribeUI();
             
-            return BeastInitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeUI();
+
+            return BeastInitializationResult.SuccessSync();
         }
         
         public void Register(IBeastUIWindow window, string windowID, BeastUIView view)
@@ -64,13 +73,13 @@ namespace Beast.Radar.UI
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
 
-        private void Subscribe()
+        private void SubscribeUI()
         {
             _canvas.MouseOverUI += OnMouseOverUI;
             _uiInputController.PausePressed += OnPauseKeyPressed;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeUI()
         {
             _canvas.MouseOverUI -= OnMouseOverUI;
             _uiInputController.PausePressed -= OnPauseKeyPressed;

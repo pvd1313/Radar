@@ -1,9 +1,8 @@
 ﻿using System;
-using Beast.Claw.GameCycle;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IBeastPlayerInputProvider : IBeastInitialize, IBeastDispose
+    public interface IBeastPlayerInputProvider
     {
         EBeastInputScheme Scheme { get; }
         public InputActions Actions { get; }

@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.InputControl
 {
-    public class BeastInputBlocker : IBeastInitialize, IBeastDispose
+    public class BeastInputBlocker : IBeastGameCycleListener
     {
         private readonly IBeastWindowManager _windowManager;
         private readonly IBeastCameraInputController _cameraInput;
@@ -17,25 +17,34 @@ namespace Beast.Radar.InputControl
             _windowManager = windowManager;
             _cameraInput = cameraInputController;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
         {
-            Subscribe();
-            return BeastInitializationResult.SuccessNotAsync();
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
+        {
+            SubscribeWindowManager();
+
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeWindowManager();
+            
+            return BeastInitializationResult.SuccessSync();
         }
 
-        private void Subscribe()
+        private void SubscribeWindowManager()
         {
             _windowManager.MouseOverUI += OnMouseOverUI;
             _windowManager.WindowChanged += OnWindowChanged;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeWindowManager()
         {
             _windowManager.MouseOverUI -= OnMouseOverUI;
             _windowManager.WindowChanged -= OnWindowChanged;

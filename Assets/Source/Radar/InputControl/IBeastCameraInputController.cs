@@ -1,10 +1,9 @@
 ﻿using System;
-using Beast.Claw.GameCycle;
 using Unity.Mathematics;
 
 namespace Beast.Radar.InputControl
 {
-    public interface IBeastCameraInputController :  IBeastFrameBegin
+    public interface IBeastCameraInputController
     {
         public event Action ChangedEarlyValues;
         public float2 ScreenPoint { get; }

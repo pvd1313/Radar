@@ -8,13 +8,13 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class BeastCameraInputController : IBeastCameraInputController
+    public class BeastCameraInputController : IBeastCameraInputController, IBeastGameCycleListener
     {
         public event Action ChangedEarlyValues;
         
         public float2 LastScreenPoint { get; private set; }
         public float2 ScreenPoint { get; private set; }
-        public float2 MoveDelta{ get; private set; }
+        public float2 MoveDelta { get; private set; }
         public int CurrentTouchCount { get; private set; }
         public int LastTouchCount { get; private set; }
         public bool IsPressMove { get; private set; }
@@ -29,13 +29,13 @@ namespace Beast.Radar.InputControl
         {
             _input = inputProvider;
         }
-
-        public  UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
         {
-            return BeastInitializationResult.SuccessNotAsync();
+            handle.ListenUpdate(this, BeastCycleEventID.FrameBegin, FrameBegin);
         }
 
-        public void OnFrameBegin()
+        private void FrameBegin()
         {
             if (_isBlock)
             {

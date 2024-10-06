@@ -12,4 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a66f73f00c3448e296dbebdc6f5bb6d3, type: 3}
   m_Name: BeastGameSaveConfig
   m_EditorClassIdentifier: 
-  useCompression: 1
+  defaultSave:
+    seed: 1
+    terrain:
+      size:
+        x: 4096
+        y: 4096
+      biomeScale99: 2
+      waterFlood01: 0.5
+    camera:
+      zoom01: 0.5
+      position:
+        x: 2048
+        y: 2048

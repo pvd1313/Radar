@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class BeastPauseWindow : IBeastUIWindow, IBeastInitialize, IBeastDispose
+    public class BeastPauseWindow : IBeastUIWindow, IBeastGameCycleListener
     {
         private readonly IBeastUIFactory _uiFactory;
         private readonly IBeastWindowManager _windowManager;
@@ -26,10 +26,17 @@ namespace Beast.Radar.UI
             _uiInput = uiInputController;
             _gameSave = gameSave;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
         {
             _uiFactory.Create(this, BeastUIPrefabID.PauseWindow, out _menuView);
+                
             _windowManager.Register(this, BeastUIWindowID.Pause, _menuView);
 
             _selectionLoop = new BeastUISelectionLoop(_uiInput, new[]
@@ -39,14 +46,16 @@ namespace Beast.Radar.UI
                 _menuView.loadButton.Selectable,
             });
 
-            Subscribe();
+            SubscribeView();
             
-            return BeastInitializationResult.SuccessNotAsync();
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeView();
+            
+            return BeastInitializationResult.SuccessSync();
         }
 
         public void Open()
@@ -77,7 +86,7 @@ namespace Beast.Radar.UI
             _menuView.gameObject.SetActive(isActive);
         }
 
-        private void Subscribe()
+        private void SubscribeView()
         {
             _menuView.loadButton.Clicked += OnClickedLoadButton;
             _menuView.saveButton.Clicked += OnClickedSaveButton;
@@ -89,7 +98,7 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeView()
         {
             _menuView.loadButton.Clicked -= OnClickedLoadButton;
             _menuView.saveButton.Clicked -= OnClickedSaveButton;

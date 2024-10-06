@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class BeastMapGenerationWindow : IBeastUIWindow, IBeastInitialize, IBeastDispose
+    public class BeastMapGenerationWindow : IBeastUIWindow, IBeastGameCycleListener
     {
         private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" }; 
         private static readonly int[] Sizes = { 512, 1024, 2058, 4096 }; 
@@ -27,9 +27,15 @@ namespace Beast.Radar.UI
             _windowManager = windowManager;
             _input = input;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
-        { 
+        
+        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
+            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
+        }
+        
+        private UniTask<BeastInitializationResult> Warmup()
+        {
             _uiFactory.Create(this, UIPrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, BeastUIWindowID.MapGeneration, _menuView);
             
@@ -45,13 +51,16 @@ namespace Beast.Radar.UI
                 _menuView.createMapButton.Selectable
             });
             
-            Subscribe();
-            return BeastInitializationResult.SuccessNotAsync();
+            SubscribeView();
+            
+            return BeastInitializationResult.SuccessSync();
         }
 
-        public void Dispose()
+        private UniTask<BeastInitializationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeView();
+            
+            return BeastInitializationResult.SuccessSync();
         }
         
         public void Open()
@@ -66,7 +75,7 @@ namespace Beast.Radar.UI
             _uiSelectableLoop.Disable();
         }
 
-        private void Subscribe()
+        private void SubscribeView()
         {
             for (int i = 0; i < _menuView.sizeButtons.Length; i++)
             {
@@ -81,7 +90,7 @@ namespace Beast.Radar.UI
             _menuView.waterSlider.EndedChange += OnEndedChangeWater;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeView()
         {
             _menuView.closeButton.Clicked -= OnClickCloseButton;
             _menuView.createMapButton.Clicked -= OnCreateMapButton;
