@@ -108,8 +108,7 @@ namespace Beast.Radar.UI
 
         private void OnClickedNewGameButton()
         {
-            // TODO: Invoke newGame action. We probably can load "default" save.
-            //     : Or we can open new map generation window.
+            _windowManager.Show(BeastUIWindowID.MapGeneration);
         }
 
         private void OnClickedSaveButton()
