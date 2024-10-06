@@ -98,7 +98,7 @@ namespace Beast.Radar.UI
 
         private void OnClickedNewGameButton()
         {
-            //todo invoke newGame action 
+            _windowManager.Show(BeastUIWindowID.MapGeneration);
         }
 
         private void OnClickedSaveButton()
