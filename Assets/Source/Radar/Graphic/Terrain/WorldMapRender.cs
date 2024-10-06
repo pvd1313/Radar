@@ -3,40 +3,42 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
+using Beast.Radar.GameCycle;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.Graphic
 {
-    public class WorldMapRender : IBeastGameCycleListener
+    public class WorldMapRender : IGameCycleListener
     {
         private static readonly int2 WorldSize = new(4096, 4096);
         
-        private readonly IBeastTerrainTexture _terrainTexture;
-        private readonly BeastGraphicLibrary _graphicLibrary;
-        private readonly IBeastCameraController _camera;
+        private readonly ITerrainTexture _terrainTexture;
+        private readonly GraphicLibrary _graphicLibrary;
+        private readonly ICameraController _camera;
 
         private Material _material;
 
         public WorldMapRender(
-            IBeastTerrainTexture terrainTexture, 
-            BeastGraphicLibrary graphicLibrary,
-            IBeastCameraController camera)
+            ITerrainTexture terrainTexture, 
+            GraphicLibrary graphicLibrary,
+            ICameraController camera)
         {
             _terrainTexture = terrainTexture;
             _graphicLibrary = graphicLibrary;
             _camera = camera;
         }
         
-        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, BeastCycleEventID.Warmup, Warmup);
-            handle.ListenOperation(this, BeastCycleEventID.Dispose, Dispose);
-            handle.ListenUpdate(this, BeastCycleEventID.FrameEnd, FrameEnd);
+            handle.ListenOperation(this, OperationID.Warmup, Warmup);
+            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenUpdate(this, UpdateID.FrameEnd, FrameEnd);
         }
 
-        private UniTask<BeastInitializationResult> Warmup()
+        private UniTask<OperationResult> Warmup()
         {
             Application.targetFrameRate = 4064;
 
@@ -46,10 +48,10 @@ namespace Beast.Radar.World
                 shader = _graphicLibrary.worldMapRenderShader,
             });
             
-            return BeastInitializationResult.SuccessSync();
+            return OperationResult.SuccessSync();
         }
         
-        private UniTask<BeastInitializationResult> Dispose()
+        private UniTask<OperationResult> Dispose()
         {
             if (_material != null)
             {
@@ -57,7 +59,7 @@ namespace Beast.Radar.World
                 _material = null;
             }
 
-            return BeastInitializationResult.SuccessSync();
+            return OperationResult.SuccessSync();
         }
 
         private void FrameEnd()

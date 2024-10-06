@@ -6,7 +6,7 @@
         {
             if (obj == null)
             {
-                throw new BeastAssertionException($"'{argumentName}' can not be null");
+                throw new AssertionException($"'{argumentName}' can not be null");
             }
         }
 
@@ -14,7 +14,7 @@
         {
             if (!condition)
             {
-                throw new BeastAssertionException(message);
+                throw new AssertionException(message);
             }
         }
     }

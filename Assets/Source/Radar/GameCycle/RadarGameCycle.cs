@@ -2,38 +2,38 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 
-namespace Beast.Radar
+namespace Beast.Radar.GameCycle
 {
     public class RadarGameCycle : Zenject.IInitializable
     {
-        private readonly IBeastGameCycle _gameCycle;
+        private readonly IGameCycle _gameCycle;
 
-        private BeastGameUpdateHandlerMono _mono;
+        private GameUpdateHandler _mono;
 
-        public RadarGameCycle(IBeastGameCycle gameCycle)
+        public RadarGameCycle(IGameCycle gameCycle)
         {
             _gameCycle = gameCycle;
         }
 
         public async void Initialize()
         {
-            bool success = _gameCycle.TryInitializeSelf(new BeastGameCycleParameters
+            bool success = _gameCycle.TryInitializeSelf(new GameCycleParameters
             {
                 initializationEventIDs = new HashSet<string>
                 {
-                    BeastCycleEventID.Boot,
-                    BeastCycleEventID.Warmup,
-                    BeastCycleEventID.GameSaving,
-                    BeastCycleEventID.GameLoading,
-                    BeastCycleEventID.Dispose
+                    OperationID.Boot,
+                    OperationID.Warmup,
+                    OperationID.GameSaving,
+                    OperationID.GameLoading,
+                    OperationID.Dispose
                 },
 
                 updateEventIDs = new HashSet<string>
                 {
-                    BeastCycleEventID.FrameBegin,
-                    BeastCycleEventID.FrameEnd,
-                    BeastCycleEventID.FixedUpdate,
-                    BeastCycleEventID.GizmosDraw
+                    UpdateID.FrameBegin,
+                    UpdateID.FrameEnd,
+                    UpdateID.FixedUpdate,
+                    UpdateID.GizmosDraw
                 }
             });
 
@@ -42,20 +42,20 @@ namespace Beast.Radar
                 return;
             }
 
-            _mono = BeastScene.CreateGameObject(this).AddComponent<BeastGameUpdateHandlerMono>();
-            _mono.FixedUpdated += () => _gameCycle.Update(this, BeastCycleEventID.FixedUpdate);
-            _mono.GizmosDraw += () => _gameCycle.Update(this, BeastCycleEventID.GizmosDraw);
-            _mono.FrameBegin += () => _gameCycle.Update(this, BeastCycleEventID.FrameBegin);
-            _mono.FrameEnd += () => _gameCycle.Update(this, BeastCycleEventID.FrameEnd);
-            _mono.Destroyed += () => _gameCycle.Execute(this, BeastCycleEventID.Dispose);
+            _mono = BeastScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
+            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
+            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
+            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.FrameBegin);
+            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.FrameEnd);
+            _mono.Destroyed += () => _gameCycle.Execute(this, OperationID.Dispose);
             
-            BeastInitializationResult result = await _gameCycle.Execute(this, BeastCycleEventID.Warmup);
-            if (result.status != EBeastInitializationStatus.Success)
+            OperationResult result = await _gameCycle.Execute(this, OperationID.Warmup);
+            if (result.status != EOperationStatus.Success)
             {
                 return;
             }
 
-            await _gameCycle.Execute(this, BeastCycleEventID.Boot);
+            await _gameCycle.Execute(this, OperationID.Boot);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Graphic
 {
-    public class IsometricRenderConfig : BeastConfig
+    public class IsometricRenderConfig : Config
     {
         
     }

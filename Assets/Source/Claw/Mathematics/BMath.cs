@@ -88,7 +88,7 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Lerp(BeastFloatMinMax range, float t)
+        public static float Lerp(FloatMinMax range, float t)
         {
             return math.lerp(range.min, range.max, t);
         }

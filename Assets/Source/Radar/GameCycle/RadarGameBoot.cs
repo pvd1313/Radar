@@ -4,25 +4,25 @@ using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Beast.Radar
+namespace Beast.Radar.GameCycle
 {
-    public class RadarGameBoot : IBeastGameCycleListener
+    public class RadarGameBoot : IGameCycleListener
     {
-        private readonly IBeastWindowManager _windows;
-        private readonly IBeastGameSaveManager _gameSave;
+        private readonly IWindowManager _windows;
+        private readonly IGameSaveManager _gameSave;
 
-        public RadarGameBoot(IBeastWindowManager windows, IBeastGameSaveManager gameSave)
+        public RadarGameBoot(IWindowManager windows, IGameSaveManager gameSave)
         {
             _windows = windows;
             _gameSave = gameSave;
         }
         
-        public void ListenGameCycle(IBeastGameCycleHandle handle)
+        public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, BeastCycleEventID.Boot, OnGameBoot);
+            handle.ListenOperation(this, OperationID.Boot, OnGameBoot);
         }
 
-        private UniTask<BeastInitializationResult> OnGameBoot()
+        private UniTask<OperationResult> OnGameBoot()
         {
             if (Application.isEditor)
             {
@@ -30,10 +30,10 @@ namespace Beast.Radar
             }
             else
             {
-                _windows.Show(BeastUIWindowID.MapGeneration);
+                _windows.Show(WindowID.MapGeneration);
             }
 
-            return BeastInitializationResult.SuccessSync();
+            return OperationResult.SuccessSync();
         }
     }
 }

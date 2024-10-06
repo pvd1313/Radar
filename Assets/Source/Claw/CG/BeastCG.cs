@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.CG
 {
-    [BeastDomainInitialize]
+    [DomainInitialize]
     public static class BeastCG
     {
         private static readonly StringBuilder _textBuilder;
@@ -27,11 +27,11 @@ namespace Beast.Claw.CG
             {
                 _textBuilder = new StringBuilder();
 
-                _formatUsage2String = BeastEnumStorage<FormatUsage>.Values
+                _formatUsage2String = EnumStorage<FormatUsage>.Values
                     .Distinct()
                     .ToDictionary(x => x, x => x.ToString());
 
-                _graphicsFormat2String = BeastEnumStorage<GraphicsFormat>.Values
+                _graphicsFormat2String = EnumStorage<GraphicsFormat>.Values
                     .Distinct()
                     .ToDictionary(x => x, x => x.ToString());
 
@@ -47,7 +47,7 @@ namespace Beast.Claw.CG
         
         public static CommandBuffer GetTempBufferFor<T>()
         {
-            return CommandBufferPool.Get(BeastTypeStorage<T>.FullName);
+            return CommandBufferPool.Get(TypeStorage<T>.FullName);
         }
 
         public static void ReleaseBuffer(CommandBuffer buffer)
@@ -71,7 +71,7 @@ namespace Beast.Claw.CG
                 input.format,
                 input.mipCount)
             {
-                name = BeastTypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
+                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
                 filterMode = input.filterMode,
                 wrapMode = input.wrapMode
             };
@@ -128,7 +128,7 @@ namespace Beast.Claw.CG
             
             return new Material(input.shader)
             {
-                name = BeastTypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
+                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
             };
         }
 
@@ -151,7 +151,7 @@ namespace Beast.Claw.CG
                 input.isLinear,
                 true)
             {
-                name = BeastTypeStorage<T>.FullNameWithPostfixOrFullName(input.name)
+                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name)
             };
             
             RenderTexture renderTextureBak = RenderTexture.active;
@@ -200,13 +200,13 @@ namespace Beast.Claw.CG
 
             _textBuilder.AppendLine("Supported Graphics Formats: ");
 
-            foreach (FormatUsage formatUsage in BeastEnumStorage<FormatUsage>.Values)
+            foreach (FormatUsage formatUsage in EnumStorage<FormatUsage>.Values)
             {
                 _textBuilder.Append("- ");
                 _textBuilder.Append(_formatUsage2String[formatUsage]);
                 _textBuilder.Append(": ");
 
-                foreach (GraphicsFormat graphicsFormat in BeastEnumStorage<GraphicsFormat>.Values)
+                foreach (GraphicsFormat graphicsFormat in EnumStorage<GraphicsFormat>.Values)
                 {
                     _textBuilder.Append(_graphicsFormat2String[graphicsFormat]);
                     _textBuilder.Append(", ");

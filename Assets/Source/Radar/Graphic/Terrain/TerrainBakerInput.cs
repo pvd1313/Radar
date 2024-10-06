@@ -1,9 +1,9 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.Graphic
 {
-    public struct TerrainBakerInput : IBeastValidatable
+    public struct TerrainBakerInput : IValidatable
     {
         public float biomeScale99;
         public float seed01;
