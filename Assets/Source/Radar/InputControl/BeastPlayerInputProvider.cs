@@ -28,21 +28,21 @@ namespace Beast.Radar.InputControl
             
             BeastPlayerInputView newInstance = BeastScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
-            RefreshCurrentScheme(_view.PlayerInput);
-            _view.PlayerInput.onControlsChanged += RefreshCurrentScheme;
+            RefreshCurrentScheme(_view.playerInput);
+            _view.playerInput.onControlsChanged += RefreshCurrentScheme;
             
             return BeastInitializationResult.SuccessNotAsync();
         }
 
         public void Dispose()
         {
-            _view.PlayerInput.onControlsChanged -= RefreshCurrentScheme;
+            _view.playerInput.onControlsChanged -= RefreshCurrentScheme;
             Actions.Disable();
         }
         
         private void RefreshCurrentScheme(PlayerInput input)
         {
-            Enum.TryParse(_view.PlayerInput.currentControlScheme, out  _inputScheme);
+            Enum.TryParse(_view.playerInput.currentControlScheme, out  _inputScheme);
             
             if (_inputScheme == EBeastInputScheme.MouseAndKeyboard && Mouse.current == null)
             {

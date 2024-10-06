@@ -1,13 +1,10 @@
-﻿using Beast.Claw.Common;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine.InputSystem;
+using Beast.Claw.Common;
 
 namespace Beast.Radar.InputControl
 {
     public class BeastPlayerInputView : BeastMono
     {
-        public PlayerInput PlayerInput => _playerInput;
-        
-        [SerializeField] private PlayerInput _playerInput;
+        public PlayerInput playerInput;
     }
 }
