@@ -5,7 +5,7 @@ namespace Beast.Radar.Debug
 {
     public class BeastDebugConfig : BeastConfig
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if BEAST_DEVELOPMENT
         
         public GameObject logConsolePrefab;
         public GameObject fpsCounterPrefab;

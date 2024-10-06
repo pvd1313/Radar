@@ -15,7 +15,7 @@ namespace Beast.Radar.Debug
         
         public void Initialize()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if BEAST_DEVELOPMENT
             
             if (_config.enableLogConsole)
             {
@@ -26,6 +26,7 @@ namespace Beast.Radar.Debug
             {
                 BeastScene.InstantiateGameObject(this, _config.fpsCounterPrefab, float3.zero, quaternion.identity);
             }
+            
 #endif
         }
     }

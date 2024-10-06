@@ -8,7 +8,7 @@ namespace Beast.Radar
         [Serializable]
         public class Debug
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if BEAST_DEVELOPMENT
             public Texture2D bakedWorldMap;
 
             public Texture2D worldGrid;
