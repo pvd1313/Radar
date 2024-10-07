@@ -21,6 +21,26 @@ namespace Beast.Claw.Mathematics
             return math.cos(angleRad);
         }
 
+        /// <summary>
+        /// opposite_edge / diagonal
+        /// </summary>
+        /// <returns>radians</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ASin(float x)
+        {
+            return math.asin(x);
+        }
+
+        /// <summary>
+        /// near_edge / diagonal
+        /// </summary>
+        /// <returns>radians</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ACos(float x)
+        {
+            return math.acos(x);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float a, float b)
         {

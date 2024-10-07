@@ -12,6 +12,10 @@ namespace Beast.Radar
             public Texture2D bakedWorldMap;
 
             public Texture2D worldGrid;
+
+            public Shader unlitTextureShader;
+
+            public Shader unlitColorShader;
 #endif
         }
     }

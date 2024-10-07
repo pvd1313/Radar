@@ -26,6 +26,8 @@ namespace Beast.Claw.Editor.Window
                 niceLabelsEnabled = false
             };
             
+            ui.Button("Clear", Clear);
+            
             foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())
             {
                 ui.FloatField(id, value);
@@ -57,6 +59,11 @@ namespace Beast.Claw.Editor.Window
             }
             
             Repaint();
+        }
+
+        private void Clear()
+        {
+            BDebug.StateStorage.Clear();
         }
     }
 }
