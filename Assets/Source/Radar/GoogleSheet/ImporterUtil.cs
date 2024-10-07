@@ -5,9 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GoogleSheetsToUnity;
 using Unity.Plastic.Newtonsoft.Json;
-using UnityEngine;
 
-namespace TheGame.GoogleSheet
+namespace Beast.Radar.GoogleSheet
 {
     public static class ImporterUtil
     {
@@ -21,7 +20,7 @@ namespace TheGame.GoogleSheet
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                UnityEngine.Debug.LogException(e);
             }
         }
         
@@ -31,11 +30,11 @@ namespace TheGame.GoogleSheet
             {
                 if (successCount == depth)
                 {
-                    Debug.Log("All done");
+                    UnityEngine.Debug.Log("All done");
                 }
                 else
                 {
-                    Debug.LogError($"Finished with errors. Check log for details. Imported {successCount} / {config.sheets.Count}");
+                    UnityEngine.Debug.LogError($"Finished with errors. Check log for details. Imported {successCount} / {config.sheets.Count}");
                 }
                 
                 return;
@@ -43,7 +42,7 @@ namespace TheGame.GoogleSheet
 
             string sheetName = config.sheets[depth];
             
-            Debug.Log($"Fetching '{sheetName}' ({depth} / {config.sheets.Count})...");
+            UnityEngine.Debug.Log($"Fetching '{sheetName}' ({depth} / {config.sheets.Count})...");
             
             GoogleSheetManager.Read(new GoogleSheetRequest(config.fileId, sheetName), 
                 data =>
@@ -56,10 +55,8 @@ namespace TheGame.GoogleSheet
 
         private static bool TryParseAndSaveData(string outputFolder, string sheetName, SpreadsheetData data)
         {
-            Debug.Log($"{data != null} {data?.values != null} {data?.values?.Count} ");
             if (data?.values == null || data.values.Count == 0 || data.values[0] == null)
             {
-                Debug.LogError($"{sheetName} has no values");
                 return false;
             }
 
@@ -67,20 +64,12 @@ namespace TheGame.GoogleSheet
 
             try
             {
-                foreach (var dataValue in data.values)
-                {
-                    foreach (var value in dataValue)
-                    {
-                     Debug.Log(value);   
-                    }
-                }
-                //Debug.Log(data.values[0][0]);
                 fileMeta = JsonConvert.DeserializeObject<FileMeta>(data.values[0][0]);
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
-                Debug.LogError($"Failed to deserialize {nameof(FileMeta)} in '{sheetName}'");
+                UnityEngine.Debug.LogException(e);
+                UnityEngine.Debug.LogError($"Failed to deserialize {nameof(FileMeta)} in '{sheetName}'");
                 return false;
             }
 
@@ -108,10 +97,9 @@ namespace TheGame.GoogleSheet
                     }
                 }
 
-                for (int row = fileMeta.headerRowCount; row < data.values.Count; row++)
+                for (int row = fileMeta.rowCount; row < data.values.Count; row++)
                 {
                     List<string> currentRow = data.values[row];
-
                     JsonObject jsonObject = new ();
 
                     for (int col = 1; col < Math.Min(currentRow.Count, metaRow.Count); col++)
@@ -121,7 +109,7 @@ namespace TheGame.GoogleSheet
                             continue;
                         }
 
-                        jsonObject.Add(headersMeta[col], currentRow[col].Replace("$", ""));
+                        jsonObject.Add(headersMeta[col] , currentRow[col].Replace("$", ""));
                     }
 
                     objects.Add(jsonObject);
@@ -137,12 +125,15 @@ namespace TheGame.GoogleSheet
 
                 JsonObject.PrintArray(jsonOutput, string.Empty, objects);
 
-                File.WriteAllText(Path.Combine(outputFolder, fileMeta.fileName), jsonOutput.stream.ToString(), Encoding.Unicode);
+                File.WriteAllText(
+                    Path.Combine(outputFolder, fileMeta.name),
+                    jsonOutput.stream.ToString(), 
+                    Encoding.Unicode);
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
-                Debug.LogError($"Exception when importing '{sheetName}'");
+                UnityEngine.Debug.LogException(e);
+                UnityEngine.Debug.LogError($"Exception when importing '{sheetName}'");
                 return false;
             }
 

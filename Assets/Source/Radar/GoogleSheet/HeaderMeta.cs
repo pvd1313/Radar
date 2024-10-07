@@ -1,4 +1,4 @@
-namespace TheGame.GoogleSheet
+namespace Beast.Radar.GoogleSheet
 {
     public struct HeaderMeta
     {

@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e86c65a5d14ccb81a5aef7596f1979, type: 3}
   m_Name: GoogleSheetConfig
   m_EditorClassIdentifier: 
-  fileId: 17cFdYxAfD6zz_0fi6p84sC2BbC3vUOEuLOa9E0Auyoo
+  fileId: 1T-Xza3cqWYOP8WFkeeKw7yXsIH8a4hXOG0saeS_PWj8
   outputPath: Definition/
   sheets:
+  - ItemTag
   - Item
-  - ItemShape
-  - Augmentation
-  - AugmentationCategory
-  - Recipe
-  - RecipeGroup
+  - Vital
+  - Craft

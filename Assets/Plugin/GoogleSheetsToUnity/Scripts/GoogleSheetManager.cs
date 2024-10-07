@@ -96,7 +96,6 @@ namespace GoogleSheetsToUnity
                     yield break;
                 }
 
-                Debug.Log(request.downloadHandler.text);
                 SpreadsheetData rawData = JsonConvert.DeserializeObject<SpreadsheetData>(request.downloadHandler.text);;
 
                 callback?.Invoke(rawData);

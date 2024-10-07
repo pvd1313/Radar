@@ -1,8 +1,9 @@
-namespace TheGame.GoogleSheet
+namespace Beast.Radar.GoogleSheet
 {
     public class FileMeta
     {
-        public string fileName;
-        public int headerRowCount;
+        public string name;
+        public string type;
+        public int rowCount;
     }
 }
