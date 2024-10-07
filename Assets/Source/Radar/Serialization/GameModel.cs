@@ -23,8 +23,8 @@ namespace Beast.Radar.Serialization
         public void Deserialize(IBinaryReader stream)
         {
             seed = stream.ReadInt32();
-            stream.Read(ref camera);
             stream.Read(ref terrain);
+            stream.Read(ref camera);
         }
 
         public void CopyFrom(GameModel source)
