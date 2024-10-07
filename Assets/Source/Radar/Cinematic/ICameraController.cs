@@ -1,10 +1,10 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Unity.Mathematics;
 
 namespace Beast.Radar.Cinematic
 {
-    public interface ICameraController : IBeastInitialize, IBeastDispose
+    public interface ICameraController
     {
-        public CameraControllerState State { get; }
-
+        public float2 Position { get; }
+        public float ViewDistance { get; }
     }
 }

@@ -1,23 +1,29 @@
+using System;
 using System.Linq;
 using Beast.Claw.Common;
-using Beast.Claw.Mathematics;
 using Beast.Radar.InputControl;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraConfig : BeastConfig
+    public class CameraConfig : Config
     {
         public CameraView viewPrefab;
-        public float2 startPosition;
-        public BeastFloatMinMax zoomRange;   
+        public float minViewDistance;   
         public AnimationCurve zoomCurve;
-        public CameraParams[] cameraParams;
+        public CameraMotionParameters[] motion;
         
-        public CameraParams GetParams(EBeastInputScheme scheme)
+        public CameraMotionParameters GetMotionParameters(EInputScheme scheme)
         {
-            return cameraParams.FirstOrDefault(p => p.schemes.Contains(scheme));
+            foreach (CameraMotionParameters parameter in motion)
+            {
+                if (parameter.schemes.Contains(scheme))
+                {
+                    return parameter;
+                }
+            }
+
+            throw new InvalidOperationException($"Failed to find motion parameters for scheme '{scheme}'");
         }
     }
 }

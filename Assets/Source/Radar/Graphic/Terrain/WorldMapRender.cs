@@ -3,84 +3,82 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
+using Beast.Radar.GameCycle;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.Graphic
 {
-    public class WorldMapRender : IBeastInitialize, IBeastFrameEnd
+    public class WorldMapRender : IGameCycleListener
     {
         private static readonly int2 WorldSize = new(4096, 4096);
         
-        private readonly WorldMapConfig _config;
-        private readonly ITerrainBaker _mapBaker;
-        private readonly BeastGraphicLibrary _graphicLibrary;
+        private readonly ITerrainTexture _terrainTexture;
+        private readonly GraphicLibrary _graphicLibrary;
         private readonly ICameraController _camera;
-        private readonly CameraConfig _cameraConfig;
 
-        private RenderTexture _worldTexture;
         private Material _material;
 
         public WorldMapRender(
-            WorldMapConfig config, 
-            ITerrainBaker mapBaker, 
-            BeastGraphicLibrary graphicLibrary,
-            ICameraController camera,
-            CameraConfig cameraConfig)
+            ITerrainTexture terrainTexture, 
+            GraphicLibrary graphicLibrary,
+            ICameraController camera)
         {
-            _config = config;
-            _mapBaker = mapBaker;
+            _terrainTexture = terrainTexture;
             _graphicLibrary = graphicLibrary;
             _camera = camera;
-            _cameraConfig = cameraConfig;
         }
         
-        public UniTask<BeastInitializationResult> Initialize()
+        public void ListenGameCycle(IGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, OperationID.Warmup, Warmup);
+            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenUpdate(this, UpdateID.FrameEnd, FrameEnd);
+        }
+
+        private UniTask<OperationResult> Warmup()
         {
             Application.targetFrameRate = 4064;
-            
-            _worldTexture = BeastCG.NewRenderTexturePermanent(this, new NewPermaRenderTextureData
-            {
-                size = WorldSize,
-                depth = 0,
-                format = RenderTextureFormat.RGFloat,
-                mipCount = 0,
-                filterMode = FilterMode.Point,
-                wrapMode = TextureWrapMode.Repeat,
-                name = "WorldMap"
-            });
-            
-            _mapBaker.Bake(new TerrainBakerInput
-            {
-                scale99 = 2,
-                seed01 = Random.value,
-                targetTexture = _worldTexture,
-                waterFlood01 = 0.5f
-            });
-            
-            _material = BeastCG.NewMaterial(this, new MaterialParameters
+
+            _material = BeastCG.CreateMaterial(this, new MaterialParameters
             {
                 name = "Render",
                 shader = _graphicLibrary.worldMapRenderShader,
             });
             
-            return BeastInitializationResult.SuccessNotAsync();
+            return OperationResult.SuccessSync();
+        }
+        
+        private UniTask<OperationResult> Dispose()
+        {
+            if (_material != null)
+            {
+                BeastCG.ReleaseMaterial(_material);
+                _material = null;
+            }
+
+            return OperationResult.SuccessSync();
         }
 
-        public void OnFrameEnd()
+        private void FrameEnd()
         {
-            BLog.Float2(this, "cameraPosition", _camera.State.position);
+            if (!_terrainTexture.IsReady)
+            {
+                return;
+            }
+            
+            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            BDebug.TrackFloat(this, "viewDistance", _camera.ViewDistance);
             
             float screenAspect = Screen.width / (float)Screen.height;
-            float viewDistance = BMath.Lerp(_cameraConfig.zoomRange, _camera.State.zoom01);
             
             _material.SetFloat("_RenderAspect", screenAspect);
-            _material.SetFloat("_RenderSizeY", viewDistance);
-            _material.SetVector("_RenderCenter", _camera.State.position);
+            _material.SetFloat("_RenderSizeY", _camera.ViewDistance);
+            _material.SetVector("_RenderCenter", _camera.Position);
             
-            _material.SetTexture("_MainMap", _worldTexture);
+            _material.SetTexture("_MainMap", _terrainTexture.Texture);
             _material.SetVector("_MainMapSize", WorldSize);
             
             _material.SetTexture("_GridMap", _graphicLibrary.debug.worldGrid);
@@ -90,11 +88,6 @@ namespace Beast.Radar.World
             _material.SetTexture("_NoiseMap", worldDetailNoise);
             _material.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeightFloat());
 
-            float mapChunkSize = 100;
-            float chunkTexelSize = Screen.height / (viewDistance * mapChunkSize);
-
-            BLog.Float(this, "chunkTexelSize", chunkTexelSize);
-            
             BeastCG.DrawMesh(new DrawMeshParameters
             {
                 mesh = _graphicLibrary.quadMesh,

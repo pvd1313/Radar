@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09725c04129443a6aa132f725231ce35, type: 3}
   m_Name: GameCycleConfig
   m_EditorClassIdentifier: 
-  exceptionStopsExecution: 1
-  exceptionThreshold: 5
+  exceptionStopsUpdates: 1
+  updateExceptionThreshold: 0
+  preventDuplicatingSubscription: 1

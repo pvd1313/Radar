@@ -8,6 +8,48 @@ namespace Beast.Claw.Mathematics
     {
         public const float Deg2Rad = 0.017453292f;
         public const float Rad2Deg = 57.29578f;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Sin(float angleRag)
+        {
+            return math.sin(angleRag);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Cos(float angleRad)
+        {
+            return math.cos(angleRad);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float a, float b)
+        {
+            return Mathf.Approximately(a, b);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float2 a, float2 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float3 a, float3 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y) &&
+                   Mathf.Approximately(a.z, b.z);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float4 a, float4 b)
+        {
+            return Mathf.Approximately(a.x, b.x) &&
+                   Mathf.Approximately(a.y, b.y) &&
+                   Mathf.Approximately(a.z, b.z) &&
+                   Mathf.Approximately(a.w, b.w);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Max(float x, float y)
@@ -46,7 +88,7 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Lerp(BeastFloatMinMax range, float t)
+        public static float Lerp(FloatMinMax range, float t)
         {
             return math.lerp(range.min, range.max, t);
         }

@@ -1,37 +1,50 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
+using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
+using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : ICameraController
+    public class CameraController : ICameraController, IGameCycleListener
     {
-        public CameraControllerState State { get; private set; }
+        public float2 Position => _game.camera.position;
 
+        public float ViewDistance => BMath.Lerp(_config.minViewDistance, _maxViewDistance, _game.camera.zoom01);
+        
+        private readonly GameModel _game;
         private readonly CameraConfig _config;
-        private readonly IBeastCameraInputController _input;
-        private readonly IBeastPlayerInputProvider _inputProvider;
+        private readonly ICameraInputController _input;
+        private readonly IPlayerInputProvider _inputProvider;
 
-        private CameraParams _currentParams;
+        private CameraMotionParameters _motion;
+        private float _maxViewDistance;
 
-        public CameraController(CameraConfig config,
-            IBeastCameraInputController inputController,
-            IBeastPlayerInputProvider inputProvider)
+        public CameraController(
+            GameModel game,
+            CameraConfig config,
+            ICameraInputController inputController,
+            IPlayerInputProvider inputProvider)
         {
+            _game = game;
             _config = config;
             _input = inputController;
             _inputProvider = inputProvider;
         }
-
-        public UniTask<BeastInitializationResult> Initialize()
+        
+        public void ListenGameCycle(IGameCycleHandle handle)
         {
-            RefreshStatePosition(_config.startPosition);
-            RefreshStateZoom(_config.zoomRange.min);
+            handle.ListenOperation(this, OperationID.Warmup, Warmup);
+            handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
+            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+        }
 
+        private UniTask<OperationResult> Warmup()
+        {
             BeastScene.InstantiateMono
             (
                 this,
@@ -40,32 +53,42 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _currentParams = _config.GetParams(_inputProvider.Scheme);
-            Subscribe();
-
-            return BeastInitializationResult.SuccessNotAsync();
+            _motion = _config.GetMotionParameters(_inputProvider.Scheme);
+            
+            SubscribeInput();
+            
+            return OperationResult.SuccessSync();
         }
-
-        public void Dispose()
+        
+        private UniTask<OperationResult> GameLoading()
         {
-            Unsubscribe();
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * 0.5f;
+
+            return OperationResult.SuccessSync();
         }
 
-        private void Subscribe()
+        private UniTask<OperationResult> Dispose()
+        {
+            UnsubscribeInput();
+
+            return OperationResult.SuccessSync();
+        }
+
+        private void SubscribeInput()
         {
             _input.ChangedEarlyValues += ProcessCamera;
             _inputProvider.ChangedScheme += OnChangedInputScheme;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeInput()
         {
             _input.ChangedEarlyValues -= ProcessCamera;
             _inputProvider.ChangedScheme -= OnChangedInputScheme;
         }
 
-        private void OnChangedInputScheme(EBeastInputScheme scheme)
+        private void OnChangedInputScheme(EInputScheme scheme)
         {
-            _currentParams = _config.GetParams(scheme);
+            _motion = _config.GetMotionParameters(scheme);
         }
 
         private void ProcessCamera()
@@ -75,27 +98,33 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            Move();
-            Zoom();
+            Move(ref _game.camera);
+            Zoom(ref _game.camera);
         }
 
-        private void Move()
+        private void Move(ref CameraState state)
         {
             if (!_input.IsPressMove)
             {
                 return;
             }
 
-            float zoomDistance = BMath.Lerp(_config.zoomRange, State.zoom01 * 0.2f);
-            float2 moveDelta = _input.MoveDelta.Equals(float2.zero)
-                ? ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint)
-                : _input.MoveDelta * _currentParams.motionSpeed * zoomDistance;
-            float2 newPosition = State.position - moveDelta;
-
-            RefreshStatePosition(newPosition);
+            float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
+            float2 moveDelta;
+            
+            if (_input.MoveDelta.Equals(float2.zero))
+            {
+                moveDelta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
+            }
+            else
+            {
+                moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance;
+            }
+            
+            state.position -= moveDelta;
         }
 
-        private void Zoom()
+        private void Zoom(ref CameraState state)
         {
             if (_input.ScrollDelta == 0)
             {
@@ -105,54 +134,39 @@ namespace Beast.Radar.Cinematic
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
 
-            float zoomDelta = _currentParams.zoomSpeed * Time.deltaTime;
-            zoomDelta *= _config.zoomCurve.Evaluate(State.zoom01);
+            float zoomDelta = _motion.zoomSpeed * Time.deltaTime;
+            zoomDelta *= _config.zoomCurve.Evaluate(state.zoom01);
             zoomDelta = BMath.Max(0, zoomDelta);
             zoomDelta *= _input.ScrollDelta;
+            state.zoom01 = BMath.Clamp01(state.zoom01 - zoomDelta);
 
-            RefreshStateZoom(BMath.Clamp01(State.zoom01 - zoomDelta));
-
-            if (_inputProvider.Scheme is EBeastInputScheme.Gamepad)
+            if (_inputProvider.Scheme is EInputScheme.Gamepad)
             {
                 return;
             }
 
             float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            float2 newPosition = State.position + pointDelta;
-
-            RefreshStatePosition(newPosition);
+            state.position += pointDelta;
         }
 
         private float2 ScreenPointToWorld(float2 screenPoint)
         {
             float2 viewport = new(screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+            
             return ViewportToWorld(viewport);
         }
 
         private float2 ViewportToWorld(float2 viewport)
         {
-            float viewDistance = BMath.Lerp(_config.zoomRange, State.zoom01);
+            CameraState state = _game.camera;
+            
+            float viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01);
             float screenAspect = Screen.width / (float)Screen.height;
-            float2 bottomLeft = State.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
+            float2 bottomLeft = state.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
             float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
 
             return new float2(screen.x, screen.y);
-        }
-
-        private void RefreshStatePosition(float2 pos)
-        {
-            CameraControllerState state = State;
-            state.position = pos;
-            State = state;
-        }
-
-        private void RefreshStateZoom(float zoom)
-        {
-            CameraControllerState state = State;
-
-            state.zoom01 = zoom;
-            State = state;
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Claw.CG
 {
-    public struct NewTempRenderTextureData : IBeastValidatable
+    public struct NewTempRenderTextureData : IValidatable
     {
         public int2 size;
         public int depth;
@@ -14,6 +14,7 @@ namespace Beast.Claw.CG
         public RenderTextureMemoryless memoryless;
         public VRTextureUsage vrUsage;
         public FilterMode filterMode;
+        public TextureWrapMode wrapMode;
         
         public bool IsValid(out string errorMessage)
         {
