@@ -88,8 +88,10 @@ namespace Beast.Radar.Graphic
             _renderMaterial.SetTexture("_MainMap", _terrainTexture.Texture);
             _renderMaterial.SetVector("_MainMapSize", WorldSize);
             
+#if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_GridMap", _graphicLibrary.debug.worldGrid);
             _renderMaterial.SetVector("_GridMapSize", _graphicLibrary.debug.worldGrid.WidthHeightFloat());
+#endif
             
             Texture2D worldDetailNoise = _graphicLibrary.worldDetailNoise;
             _renderMaterial.SetTexture("_NoiseMap", worldDetailNoise);
