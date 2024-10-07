@@ -13,6 +13,11 @@ namespace Beast.Claw.Common
                 _values = new Dictionary<string, T>();
             }
 
+            public void Clear()
+            {
+                _values.Clear();
+            }
+
             public IEnumerable<KeyValuePair<string, T>> ReadAll()
             {
                 return _values;

@@ -2,9 +2,9 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.CG
+namespace Beast.Claw.Common
 {
-    public static class BeastCGExtension
+    public static class GraphicExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 WidthHeightFloat(this Texture2D texture2D)

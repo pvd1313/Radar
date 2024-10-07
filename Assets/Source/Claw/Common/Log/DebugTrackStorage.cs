@@ -14,6 +14,16 @@ namespace Beast.Claw.Common
         private readonly StringDictionary<float4> _float4 = new(StateStorageCapacity);
         private readonly StringDictionary<string> _string = new(StateStorageCapacity);
 
+        public void Clear()
+        {
+            _int.Clear();
+            _float.Clear();
+            _float2.Clear();
+            _float3.Clear();
+            _float4.Clear();
+            _string.Clear();
+        }
+
         public IEnumerable<KeyValuePair<string, float>> ReadAllFloat() => ReadAll(_float);
 
         public IEnumerable<KeyValuePair<string, int>> ReadAllInt() => ReadAll(_int);

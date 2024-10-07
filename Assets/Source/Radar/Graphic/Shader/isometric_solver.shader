@@ -6,9 +6,9 @@
     }
     SubShader
     {
-        Cull Off
-        ZWrite Off
-        ZTest Off
+        cull off
+        zwrite off
+        ztest off
 
         Pass
         {
