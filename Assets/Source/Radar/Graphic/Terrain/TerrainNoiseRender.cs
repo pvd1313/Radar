@@ -21,7 +21,7 @@ namespace Beast.Radar.Graphic
         private readonly ITerrainBakedTexture _terrainTexture;
         private readonly ITerrainBaker _baker;
         private readonly GraphicLibrary _library;
-        private readonly ICameraController _camera;
+        private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
         private RenderTexture _renderedTexture;
@@ -35,7 +35,7 @@ namespace Beast.Radar.Graphic
             ITerrainBakedTexture terrainTexture, 
             ITerrainBaker baker,
             GraphicLibrary library,
-            ICameraController camera)
+            ICameraTransform camera)
         {
             _game = game;
             _screen = screen;
@@ -93,8 +93,6 @@ namespace Beast.Radar.Graphic
 
             int2 textureSize = _screen.WidthHeight;
 
-            float renderScale = 1;
-
             if (_renderedTexture == null || 
                 _renderedTexture.width != textureSize.x || 
                 _renderedTexture.height != textureSize.y)
@@ -112,7 +110,7 @@ namespace Beast.Radar.Graphic
             float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.RotationRad.roll);
 
             _renderCenter = rotation.Multiply(scale.Multiply(_camera.Position));
-            _renderDistance = _camera.ViewDistance * renderScale;
+            _renderDistance = _camera.ViewDistance * IsometricCameraRotation.GetScaleY(_camera.RotationRad.pitch);
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _renderDistance);

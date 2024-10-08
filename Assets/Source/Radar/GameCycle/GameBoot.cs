@@ -2,16 +2,15 @@
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace Beast.Radar.GameCycle
 {
-    public class RadarGameBoot : IGameCycleListener
+    public class GameBoot : IGameCycleListener
     {
         private readonly IWindowManager _windows;
         private readonly IGameSaveManager _gameSave;
 
-        public RadarGameBoot(IWindowManager windows, IGameSaveManager gameSave)
+        public GameBoot(IWindowManager windows, IGameSaveManager gameSave)
         {
             _windows = windows;
             _gameSave = gameSave;
@@ -24,7 +23,7 @@ namespace Beast.Radar.GameCycle
 
         private UniTask<OperationResult> OnGameBoot()
         {
-            if (Application.isEditor)
+            if (true)
             {
                 _gameSave.LoadDefaultSave();
             }

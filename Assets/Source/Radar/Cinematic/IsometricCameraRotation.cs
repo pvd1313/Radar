@@ -18,6 +18,11 @@ namespace Beast.Radar.Cinematic
                 roll = rotation.roll * scale
             };
         }
+
+        public static float GetScaleY(float pitchRad)
+        {
+            return BMath.Cos(pitchRad);
+        }
         
         public static float2x2 GetScaleMatrix(float pitchRad)
         {

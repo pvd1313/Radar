@@ -15,7 +15,7 @@ namespace Beast.Radar.Graphic.World
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
         private readonly ITerrainNoiseRender _terrain;
-        private readonly ICameraController _camera;
+        private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
 
@@ -23,7 +23,7 @@ namespace Beast.Radar.Graphic.World
             IScreen screen,
             GraphicLibrary library, 
             ITerrainNoiseRender terrain,
-            ICameraController camera)
+            ICameraTransform camera)
         {
             _screen = screen;
             _library = library;
@@ -78,13 +78,11 @@ namespace Beast.Radar.Graphic.World
             _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderedTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
 
-            // float2x2 rotation = float2x2.Rotate(_camera.RotationDeg.roll * BMath.Deg2Rad * -1);
             _renderMaterial.SetMatrix("_UVMatrix0", rotation);
             _renderMaterial.SetMatrix("_UVMatrix1", scale);
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
-            //_renderMaterial.SetFloat("_OutputHeight", _screen.Height / BMath.Sin(45 * BMath.Deg2Rad));
-            _renderMaterial.SetFloat("_OutputHeight", _screen.Height * BMath.Cos(_camera.RotationRad.roll));
+            _renderMaterial.SetFloat("_OutputHeight", _screen.Height);
             _renderMaterial.SetVector("_OutputCenter", renderTextureSize * 0.5f);
             
             BeastCG.DrawMesh(new DrawMeshParameters

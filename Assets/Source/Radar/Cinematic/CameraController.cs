@@ -11,41 +11,31 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : ICameraController, IGameCycleListener
+    public class CameraController : IGameCycleListener
     {
-        public float2 Position => _game.camera.position;
-
-        public float ViewDistance => BMath.Lerp(_config.minViewDistance, _maxViewDistance, _game.camera.zoom01);
-
-        public IsometricCameraRotation RotationRad => _config.rotationDeg * BMath.Deg2Rad;
-
-        private readonly GameModel _game;
-        private readonly IScreen _screen;
         private readonly CameraConfig _config;
         private readonly ICameraInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
+        private readonly ICameraTransform _transform;
 
         private CameraMotionParameters _motion;
         private float _maxViewDistance;
 
         public CameraController(
-            GameModel game,
-            IScreen screen,
             CameraConfig config,
             ICameraInputController inputController,
-            IPlayerInputProvider inputProvider)
+            IPlayerInputProvider inputProvider,
+            ICameraTransform transform)
         {
-            _game = game;
-            _screen = screen;
             _config = config;
             _input = inputController;
             _inputProvider = inputProvider;
+            _transform = transform;
         }
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
         }
 
@@ -63,13 +53,6 @@ namespace Beast.Radar.Cinematic
             
             SubscribeInput();
             
-            return OperationResult.SuccessSync();
-        }
-        
-        private UniTask<OperationResult> GameLoading()
-        {
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _config.maxViewDistance01;
-
             return OperationResult.SuccessSync();
         }
 
@@ -104,33 +87,45 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            Move(ref _game.camera);
-            Zoom(ref _game.camera);
+            if (!_transform.IsReady)
+            {
+                return;
+            }
+
+            Move();
+            Zoom();
         }
 
-        private void Move(ref CameraState state)
+        private void Move()
         {
             if (!_input.IsPressMove)
             {
                 return;
             }
 
-            float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
+            // TODO : What was the magic 0.2 number?
+            // https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
+            // float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
+            float zoomDistance = _transform.ViewDistance;
             float2 moveDelta;
             
             if (_input.MoveDelta.Equals(float2.zero))
             {
-                moveDelta = ScreenPointToWorld(_input.ScreenPoint) - ScreenPointToWorld(_input.LastScreenPoint);
+                // TODO : This is not correct. Zoom distance will float, we need to remember positions instead. 
+                //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
+                float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
+                float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
+                moveDelta = a - b;
             }
             else
             {
                 moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance;
             }
             
-            state.position -= moveDelta;
+            _transform.AddPosition(moveDelta * -1);
         }
 
-        private void Zoom(ref CameraState state)
+        private void Zoom()
         {
             if (_input.ScrollDelta == 0)
             {
@@ -138,40 +133,22 @@ namespace Beast.Radar.Cinematic
             }
 
             float2 screenPoint = _input.ScreenPoint;
-            float2 worldPointBeforeZoom = ScreenPointToWorld(screenPoint);
+            float2 worldPointBeforeZoom = _transform.ScreenPointToWorld(screenPoint);
 
             float zoomDelta = _motion.zoomSpeed * Time.deltaTime;
-            zoomDelta *= _config.zoomCurve.Evaluate(state.zoom01);
+            zoomDelta *= _config.zoomCurve.Evaluate(_transform.Zoom01);
             zoomDelta = BMath.Max(0, zoomDelta);
             zoomDelta *= _input.ScrollDelta;
-            state.zoom01 = BMath.Clamp01(state.zoom01 - zoomDelta);
+            _transform.AddZoom(zoomDelta * -1);
 
             if (_inputProvider.Scheme is EInputScheme.Gamepad)
             {
                 return;
             }
 
-            float2 worldPointAfterZoom = ScreenPointToWorld(screenPoint);
+            float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            state.position += pointDelta;
-        }
-
-        private float2 ScreenPointToWorld(float2 screenPoint)
-        {
-            float2 viewport = new(screenPoint.x / _screen.Width, screenPoint.y / _screen.Height);
-            
-            return ViewportToWorld(viewport);
-        }
-
-        private float2 ViewportToWorld(float2 viewport)
-        {
-            CameraState state = _game.camera;
-            
-            float viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01);
-            float2 bottomLeft = state.position - new float2(_screen.Aspect, 1) * viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * viewDistance;
-
-            return new float2(screen.x, screen.y);
+            _transform.AddPosition(pointDelta);
         }
     }
 }

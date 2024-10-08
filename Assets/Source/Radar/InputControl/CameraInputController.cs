@@ -82,7 +82,7 @@ namespace Beast.Radar.InputControl
                         case 2:
                             float2 t0 = _input.Actions.Player.FirstPosition.ReadValue<Vector2>();
                             float2 t1 = _input.Actions.Player.SecondPosition.ReadValue<Vector2>();
-                            ScreenPoint = (t0 + t1) / 2f;
+                            ScreenPoint = (t0 + t1) * 0.5f;
                             float zoomDistance = BMath.Distance(t0, t1);
 
                             if (_lastZoomDistance == 0f)
@@ -137,7 +137,7 @@ namespace Beast.Radar.InputControl
                             float2 t0 = _input.Actions.Player.FirstPosition.ReadValue<Vector2>();
                             float2 t1 = _input.Actions.Player.SecondPosition.ReadValue<Vector2>();
                             _lastZoomDistance = BMath.Distance(t0, t1);
-                            LastScreenPoint = (t0 + t1) / 2f;
+                            LastScreenPoint = (t0 + t1) * 0.5f;
                             break;
                     }
 

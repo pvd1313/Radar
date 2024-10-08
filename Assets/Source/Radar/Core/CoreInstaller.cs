@@ -20,8 +20,8 @@ namespace Beast.Radar.Core
         protected override IEnumerable<Type> BindInterfaces()
         {
             // Main
-            yield return typeof(RadarGameCycle);
-            yield return typeof(RadarGameBoot);
+            yield return typeof(GameCycle.GameCycle);
+            yield return typeof(GameBoot);
             yield return typeof(GameSaveManager);
             yield return typeof(DeviceScreen);
             
@@ -36,6 +36,7 @@ namespace Beast.Radar.Core
             yield return typeof(MapGenerationWindow);
             
             // Input & Camera
+            yield return typeof(CameraTransform);
             yield return typeof(PlayerInputProvider);
             yield return typeof(UIInputController);
             yield return typeof(CameraInputController);

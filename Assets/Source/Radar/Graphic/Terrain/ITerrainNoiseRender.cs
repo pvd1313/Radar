@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Common;
+using UnityEngine;
 
 namespace Beast.Radar.Graphic
 {
-    public interface ITerrainNoiseRender
+    public interface ITerrainNoiseRender : IReady
     {
-        bool IsReady { get; }
         Texture RenderedTexture { get; }
     }
 }

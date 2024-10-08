@@ -4,13 +4,13 @@ using Beast.Claw.GameCycle;
 
 namespace Beast.Radar.GameCycle
 {
-    public class RadarGameCycle : Zenject.IInitializable
+    public class GameCycle : Zenject.IInitializable
     {
         private readonly IGameCycle _gameCycle;
 
         private GameUpdateHandler _mono;
 
-        public RadarGameCycle(IGameCycle gameCycle)
+        public GameCycle(IGameCycle gameCycle)
         {
             _gameCycle = gameCycle;
         }

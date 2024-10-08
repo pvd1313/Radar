@@ -9,9 +9,6 @@ namespace Beast.Radar.Cinematic
     public class CameraConfig : Config
     {
         public CameraView viewPrefab;
-        public float minViewDistance;
-        public float maxViewDistance01;
-        public IsometricCameraRotation rotationDeg;
         public AnimationCurve zoomCurve;
         public CameraMotionParameters[] motion;
         
