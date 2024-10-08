@@ -8,7 +8,7 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.World
+namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainColorRender : IGameCycleListener
     {
@@ -41,11 +41,8 @@ namespace Beast.Radar.Graphic.World
         private UniTask<OperationResult> Warmup()
         {
             Application.targetFrameRate = 4096;
-            
-            _renderMaterial = BeastCG.CreateMaterial(this, new MaterialParameters
-            {
-                shader = _library.terrainColorRenderShader
-            });
+
+            _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainColorShader);
 
             return OperationResult.SuccessSync();
         }
@@ -68,21 +65,30 @@ namespace Beast.Radar.Graphic.World
                 return;
             }
 
-            float2 renderTextureSize = _terrain.RenderedTexture.WidthHeightFloat();
+            float2 renderTextureSize = _terrain.RenderTexture.WidthHeightFloat();
+            
+            float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
 
             BDebug.TrackFloat(this, "viewDistance", _camera.ViewDistance);
+            BDebug.TrackFloat(this, "yScaleDistance", _camera.ViewDistance * yScale);
 
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.RotationRad.roll);
-            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.RotationRad.pitch);
+            float rollAngleRad = _camera.CurrentRotationRad.roll;
+            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(rollAngleRad);
+            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.CurrentRotationRad.pitch);
             
-            _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderedTexture);
+
+            BDebug.TrackFloat(this, "yScale", yScale);
+            BDebug.TrackFloat(this, "cameraRoll", _camera.CurrentRotationRad.roll * BMath.Rad2Deg);
+            BDebug.TrackFloat(this, "cameraPitch", _camera.CurrentRotationRad.pitch * BMath.Rad2Deg);
+            
+            _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
 
             _renderMaterial.SetMatrix("_UVMatrix0", rotation);
             _renderMaterial.SetMatrix("_UVMatrix1", scale);
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
-            _renderMaterial.SetFloat("_OutputHeight", _screen.Height);
+            _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
             _renderMaterial.SetVector("_OutputCenter", renderTextureSize * 0.5f);
             
             BeastCG.DrawMesh(new DrawMeshParameters

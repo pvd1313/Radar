@@ -9,7 +9,7 @@ namespace Beast.Radar.Cinematic
     {
         public float roll;
         public float pitch;
-
+        
         public static IsometricCameraRotation operator *(IsometricCameraRotation rotation, float scale)
         {
             return new IsometricCameraRotation
@@ -17,11 +17,6 @@ namespace Beast.Radar.Cinematic
                 pitch = rotation.pitch * scale,
                 roll = rotation.roll * scale
             };
-        }
-
-        public static float GetScaleY(float pitchRad)
-        {
-            return BMath.Cos(pitchRad);
         }
         
         public static float2x2 GetScaleMatrix(float pitchRad)

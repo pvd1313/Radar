@@ -2,6 +2,7 @@
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Beast.Radar.GameCycle
 {
@@ -18,12 +19,12 @@ namespace Beast.Radar.GameCycle
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Boot, OnGameBoot);
+            handle.ListenOperation(this, OperationID.Boot, Boot);
         }
 
-        private UniTask<OperationResult> OnGameBoot()
+        private UniTask<OperationResult> Boot()
         {
-            if (true)
+            if (Application.isEditor)
             {
                 _gameSave.LoadDefaultSave();
             }

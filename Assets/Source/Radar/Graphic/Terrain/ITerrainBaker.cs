@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     public interface ITerrainBaker
     {

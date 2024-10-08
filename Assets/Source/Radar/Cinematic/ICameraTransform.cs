@@ -5,8 +5,9 @@ namespace Beast.Radar.Cinematic
 {
     public interface ICameraTransform : IReady
     {
+        public IsometricCameraRotation MaxRotationRad { get; }
         public float2 Position { get; }
-        public IsometricCameraRotation RotationRad { get; }
+        public IsometricCameraRotation CurrentRotationRad { get; }
         public float Zoom01 { get; }
         float ViewDistance { get; }
         

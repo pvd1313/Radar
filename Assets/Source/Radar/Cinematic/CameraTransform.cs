@@ -11,8 +11,10 @@ namespace Beast.Radar.Cinematic
     public class CameraTransform : IGameCycleListener, ICameraTransform
     {
         public bool IsReady { get; private set; }
+        
+        public IsometricCameraRotation MaxRotationRad => _config.isometricRotationDeg * BMath.Deg2Rad;
         public float2 Position => _position;
-        public IsometricCameraRotation RotationRad => _rotationRad;
+        public IsometricCameraRotation CurrentRotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
         public float ViewDistance => _viewDistance;
 
@@ -24,7 +26,10 @@ namespace Beast.Radar.Cinematic
         private float _viewDistance;
         private float _maxViewDistance;
         private float _zoom01;
+        private float _zoomMax;
         private float2 _position;
+        private float _pitchMax;
+        private float _rollMax;
         
         public CameraTransform(IScreen screen, CameraTransformConfig config, GameModel game)
         {
@@ -40,7 +45,7 @@ namespace Beast.Radar.Cinematic
         
         public float2 ScreenPointToWorld(float2 screenPoint)
         {
-            return ViewportToWorld(screenPoint / _screen.WidthHeight);
+            return ViewportToWorld(screenPoint / _screen.Size);
         }
 
         public void AddZoom(float zoomDelta)
@@ -64,7 +69,11 @@ namespace Beast.Radar.Cinematic
         private UniTask<OperationResult> GameLoading()
         {
             _position = _game.camera.position;
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * 1f;
+
+            _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
+            _pitchMax = _config.isometricRotationDeg.pitch * BMath.Deg2Rad;
+            _rollMax = _config.isometricRotationDeg.roll * BMath.Deg2Rad;
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
 
             InternalSetZoom(_game.camera.zoom01);
             
@@ -76,14 +85,16 @@ namespace Beast.Radar.Cinematic
         private void InternalSetZoom(float zoom)
         {
             _zoom01 = BMath.Clamp01(zoom);
-            _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, Zoom01);
-
-            // Zoom01 = zoom;
-            // RotationRad = new IsometricCameraRotation
-            // {
-            //     pitch = BMath.Lerp(0, _config.isometricRotationDeg.pitch * BMath.Deg2Rad, zoom),
-            //     roll = BMath.Lerp(0, _config.isometricRotationDeg.roll * BMath.Deg2Rad, zoom)
-            // };
+            _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, _zoom01);
+            
+            // Convert to full isometric on half max zoom
+            float isometric01 = BMath.Clamp01((1 - _zoom01 / (_zoomMax * 0.5f)));
+            
+            _rotationRad = new IsometricCameraRotation
+            {
+                pitch = BMath.Lerp(0, _pitchMax, isometric01),
+                roll = BMath.Lerp(0, _rollMax, isometric01)
+            };
         }
     }
 }

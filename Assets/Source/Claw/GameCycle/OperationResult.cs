@@ -6,6 +6,16 @@ namespace Beast.Claw.GameCycle
     {
         public EOperationStatus status;
 
+        public bool IsSuccess()
+        {
+            return status == EOperationStatus.Success;
+        }
+
+        public bool IsFailed()
+        {
+            return status != EOperationStatus.Success;
+        }
+
         public static OperationResult Success()
         {
             return new OperationResult

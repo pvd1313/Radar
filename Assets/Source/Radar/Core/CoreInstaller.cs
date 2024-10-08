@@ -6,7 +6,7 @@ using Beast.Radar.Cinematic;
 using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
-using Beast.Radar.Graphic.World;
+using Beast.Radar.Graphic.Terrain;
 using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;

@@ -3,7 +3,7 @@ using Beast.Claw.Common;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     [Serializable]
     public struct TerrainData : ISerializable, IValidatable

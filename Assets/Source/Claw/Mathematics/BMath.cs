@@ -76,6 +76,18 @@ namespace Beast.Claw.Mathematics
         {
             return math.max(x, y);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Max(int x, int y)
+        {
+            return math.max(x, y);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Min(float x, float y)
+        {
+            return math.min(x, y);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Normalize(float2 x)
@@ -151,6 +163,12 @@ namespace Beast.Claw.Mathematics
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Clamp(float2 value, float min, float max)
+        {
+            return math.clamp(value, min, max);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Clamp(float value, float min, float max)
         {
             return math.clamp(value, min, max);
         }

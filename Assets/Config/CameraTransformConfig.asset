@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: CameraTransformConfig
   m_EditorClassIdentifier: 
   isometricRotationDeg:
-    roll: 0
-    pitch: 0
-  minViewDistance: 0.1
+    roll: 45
+    pitch: 60
+  minViewDistance: 0.01
+  plainModeViewDistance01: 1
   enablePlanetMode: 0

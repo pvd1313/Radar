@@ -41,21 +41,25 @@ namespace Beast.Radar.GameCycle
             {
                 return;
             }
+            
+            OperationResult result = await _gameCycle.Execute(this, OperationID.Warmup);
+            if (result.IsFailed())
+            {
+                return;
+            }
 
+            result = await _gameCycle.Execute(this, OperationID.Boot);
+            if (result.IsFailed())
+            {
+                return;
+            }
+            
             _mono = BeastScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
             _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
             _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
             _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.FrameBegin);
             _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.FrameEnd);
             _mono.Destroyed += () => _gameCycle.Execute(this, OperationID.Dispose);
-            
-            OperationResult result = await _gameCycle.Execute(this, OperationID.Warmup);
-            if (result.status != EOperationStatus.Success)
-            {
-                return;
-            }
-
-            await _gameCycle.Execute(this, OperationID.Boot);
         }
     }
 }

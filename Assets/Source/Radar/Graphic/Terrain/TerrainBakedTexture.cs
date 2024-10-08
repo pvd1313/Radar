@@ -1,11 +1,11 @@
-﻿using Beast.Claw.Graphic;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainBakedTexture : ITerrainBakedTexture, IGameCycleListener
     {

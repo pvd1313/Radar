@@ -1,10 +1,11 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     public interface ITerrainNoiseRender : IReady
     {
-        Texture RenderedTexture { get; }
+        Texture RenderTexture { get; }
+        float RenderDistance { get; }
     }
 }
