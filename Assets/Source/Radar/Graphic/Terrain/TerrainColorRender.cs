@@ -69,21 +69,22 @@ namespace Beast.Radar.Graphic.Terrain
             
             float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
 
-            BDebug.TrackFloat(this, "viewDistance", _camera.ViewDistance);
-            BDebug.TrackFloat(this, "yScaleDistance", _camera.ViewDistance * yScale);
+            BDebug.TrackFloat(this, "viewDistance", _camera.TargetViewDistance);
+            BDebug.TrackFloat(this, "yScaleDistance", _camera.TargetViewDistance * yScale);
 
-            float rollAngleRad = _camera.CurrentRotationRad.roll;
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(rollAngleRad);
+            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.CurrentRotationRad.roll);
             float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.CurrentRotationRad.pitch);
             
-
             BDebug.TrackFloat(this, "yScale", yScale);
             BDebug.TrackFloat(this, "cameraRoll", _camera.CurrentRotationRad.roll * BMath.Rad2Deg);
             BDebug.TrackFloat(this, "cameraPitch", _camera.CurrentRotationRad.pitch * BMath.Rad2Deg);
             
             _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
-
+            
+            _renderMaterial.SetMatrix("_UVMatrix0", float2x2.identity);
+            _renderMaterial.SetMatrix("_UVMatrix1", float2x2.identity);
+            
             _renderMaterial.SetMatrix("_UVMatrix0", rotation);
             _renderMaterial.SetMatrix("_UVMatrix1", scale);
             

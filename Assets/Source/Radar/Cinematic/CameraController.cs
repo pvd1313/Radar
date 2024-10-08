@@ -106,23 +106,25 @@ namespace Beast.Radar.Cinematic
             // TODO : What was the magic 0.2 number?
             // https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
             // float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
-            float zoomDistance = _transform.ViewDistance;
-            float2 moveDelta;
+            float zoomDistance = _transform.TargetViewDistance * BMath.Cos(_transform.CurrentRotationRad.roll);
+            float2 moveDelta = float2.zero;
             
             if (_input.MoveDelta.Equals(float2.zero))
             {
                 // TODO : This is not correct. Zoom distance will float, we need to remember positions instead. 
                 //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
-                float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
-                float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
-                moveDelta = a - b;
+                // float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
+                // float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
+                // moveDelta = a - b;
             }
             else
             {
-                moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance;
+                moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
             }
             
-            _transform.AddPosition(moveDelta * -1);
+            BDebug.TrackFloat2(this, "moveDelta", moveDelta);
+            
+            _transform.AddLocalPosition(moveDelta);
         }
 
         private void Zoom()
@@ -148,7 +150,7 @@ namespace Beast.Radar.Cinematic
 
             float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            _transform.AddPosition(pointDelta);
+            _transform.AddLocalPosition(pointDelta);
         }
     }
 }

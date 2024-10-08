@@ -114,7 +114,7 @@ namespace Beast.Radar.Graphic.Terrain
             float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.CurrentRotationRad.roll);
 
             _renderCenter = rotation.Multiply(scale.Multiply(_camera.Position));
-            _renderDistance = _camera.ViewDistance / BMath.Cos(_camera.MaxRotationRad.roll);
+            _renderDistance = _camera.TargetViewDistance / BMath.Cos(_camera.MaxRotationRad.roll);
             
             _renderMaterial.SetFloat("_OutputAspect", _renderTextureAspect);
             _renderMaterial.SetFloat("_OutputHeight", _renderDistance);

@@ -1,10 +1,12 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
@@ -16,7 +18,7 @@ namespace Beast.Radar.Cinematic
         public float2 Position => _position;
         public IsometricCameraRotation CurrentRotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
-        public float ViewDistance => _viewDistance;
+        public float TargetViewDistance => _viewDistance;
 
         private readonly IScreen _screen;
         private readonly CameraTransformConfig _config;
@@ -53,9 +55,9 @@ namespace Beast.Radar.Cinematic
             InternalSetZoom(_zoom01 + zoomDelta);
         }
 
-        public void AddPosition(float2 delta)
+        public void AddLocalPosition(float2 delta)
         {
-            _position += delta;
+            _position += TransformVector(delta);
         }
 
         public float2 ViewportToWorld(float2 viewport)
@@ -64,6 +66,14 @@ namespace Beast.Radar.Cinematic
             float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * _viewDistance;
 
             return new float2(screen.x, screen.y);
+        }
+
+        private float2 TransformVector(float2 vector)
+        {
+            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_rotationRad.roll);
+            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_rotationRad.pitch);
+
+            return scale.Inverse().Multiply(rotation.Inverse().Multiply(vector));
         }
 
         private UniTask<OperationResult> GameLoading()
@@ -89,7 +99,9 @@ namespace Beast.Radar.Cinematic
             
             // Convert to full isometric on half max zoom
             float isometric01 = BMath.Clamp01((1 - _zoom01 / (_zoomMax * 0.5f)));
-            
+
+            _rotationRad = MaxRotationRad;
+
             _rotationRad = new IsometricCameraRotation
             {
                 pitch = BMath.Lerp(0, _pitchMax, isometric01),

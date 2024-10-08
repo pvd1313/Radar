@@ -9,12 +9,12 @@ namespace Beast.Radar.Cinematic
         public float2 Position { get; }
         public IsometricCameraRotation CurrentRotationRad { get; }
         public float Zoom01 { get; }
-        float ViewDistance { get; }
+        float TargetViewDistance { get; }
         
         float2 ScreenPointToWorld(float2 screenPoint);
         float2 ViewportToWorld(float2 viewport);
         
-        void AddPosition(float2 delta);
+        void AddLocalPosition(float2 delta);
         
         void AddZoom(float zoomDelta);
     }
