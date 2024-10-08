@@ -22,3 +22,7 @@ MonoBehaviour:
       prefab: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}
     - id: map_generation_window
       prefab: {fileID: 8042904576330020168, guid: ee2e1f39d664940468d1bd98676f200f, type: 3}
+    - id: debug_window
+      prefab: {fileID: 5656068328770286066, guid: 6058ed36518bdf945b5ec02f91221128, type: 3}
+    - id: debug_item_button
+      prefab: {fileID: 5689346852516115500, guid: c4b7b2a852e16114ea451382d987f0b6, type: 3}

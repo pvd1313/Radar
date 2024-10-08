@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameCycle;
+﻿using System.Collections.Generic;
+using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
@@ -8,6 +9,8 @@ namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : IWindow, IGameCycleListener
     {
+        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; }
+        
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
         private readonly IUIInputController _uiInput;
@@ -15,7 +18,7 @@ namespace Beast.Radar.UI
 
         private UISelectionLoop _selectionLoop;
         private PauseMenuView _menuView;
-
+        
         public PauseMenuWindow(
             IUIFactory uiFactory,
             IWindowManager windowManager,
@@ -27,13 +30,13 @@ namespace Beast.Radar.UI
             _uiInput = uiInputController;
             _gameSave = gameSave;
         }
-        
+
         public void ListenGameCycle(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
         }
-        
+
         private UniTask<OperationResult> Warmup()
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
@@ -59,17 +62,16 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
+
         public void Open()
         {
             _selectionLoop.Enable();
-            
             SetActive(true);
         }
 
         public void Close()
         {
             SetActive(false);
-            
             _selectionLoop.Disable();
         }
 

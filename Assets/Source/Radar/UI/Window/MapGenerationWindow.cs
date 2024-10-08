@@ -1,46 +1,49 @@
-﻿using Beast.Claw.GameCycle;
+﻿using System.Collections.Generic;
+using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
-using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Unity.Mathematics;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
     public class MapGenerationWindow : IWindow, IGameCycleListener
     {
-        private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" }; 
-        private static readonly int[] Sizes = { 512, 1024, 2058, 4096 }; 
+        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
         
-        private readonly IWindowManager _windowManager;
-        private readonly IUIFactory _uiFactory;
-        private readonly IUIInputController _input;
+        private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" };
+        private static readonly int[] Sizes = { 512, 1024, 2058, 4096 };
 
-        private UISelectionLoop _uiSelectableLoop;
+        private readonly IWindowManager _windowManager;
+        private readonly ISelectionZoneBuilder _selectionBuilder;
+        private readonly IUIFactory _uiFactory;
+
         private MapGenerationView _menuView;
-        private GenerationMapData _data = new();
+        private GenerationMapData _data;
 
         public MapGenerationWindow(
             IUIFactory uiFactory, 
             IWindowManager windowManager, 
-            IUIInputController input)
+            ISelectionZoneBuilder selectionBuilder)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
-            _input = input;
+            _selectionBuilder = selectionBuilder;
         }
-        
+
         public void ListenGameCycle(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
         }
-        
+
         private UniTask<OperationResult> Warmup()
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
             
-            _uiSelectableLoop = new UISelectionLoop(_input, new[]
+            Selectable[] selections = 
             {
                 _menuView.seedButton.Selectable,
                 _menuView.sizeButtons[0].Selectable,
@@ -50,7 +53,10 @@ namespace Beast.Radar.UI
                 _menuView.forestSlider.Selectable,
                 _menuView.waterSlider.Selectable,
                 _menuView.createMapButton.Selectable
-            });
+            };
+            
+            SelectableGridData dpadGrid = _selectionBuilder.Build(selections, new int2(1, selections.Length), false);
+            Selections = new Dictionary<ESelectionZone, SelectableGridData>() { { ESelectionZone.DPad, dpadGrid } };
             
             SubscribeView();
             
@@ -66,14 +72,12 @@ namespace Beast.Radar.UI
         
         public void Open()
         {
-            _uiSelectableLoop.Enable();
             _menuView.gameObject.SetActive(true);
         }
 
         public void Close()
         {
             _menuView.gameObject.SetActive(false);
-            _uiSelectableLoop.Disable();
         }
 
         private void SubscribeView()

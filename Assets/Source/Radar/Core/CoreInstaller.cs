@@ -29,11 +29,14 @@ namespace Beast.Radar.Core
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
             yield return typeof(InputBlocker);
-            
+            yield return typeof(SelectionZoneBuilder);
+            yield return typeof(SelectionManager);
+
             // UI Windows
             yield return typeof(HUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
+            yield return typeof(DebugMenuWindow);
             
             // Input & Camera
             yield return typeof(CameraTransform);
