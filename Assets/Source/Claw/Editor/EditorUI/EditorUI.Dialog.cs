@@ -16,7 +16,8 @@ namespace Beast.Claw.Editor
 
         public void SaveAssetDialog(string fileName, Action<string> action)
         {
-            BAssert.ArgumentNotNull(action, "SaveAssetDialog : action");
+            fileName.ValidateNotEmpty(nameof(fileName));
+            action.ValidateNotNull("SaveAssetDialog : action");
 
             string path = EditorUtility.SaveFilePanel(
                 "Save asset",

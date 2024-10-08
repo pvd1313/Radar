@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
@@ -15,8 +16,11 @@ namespace Beast.Radar.Cinematic
         public float2 Position => _game.camera.position;
 
         public float ViewDistance => BMath.Lerp(_config.minViewDistance, _maxViewDistance, _game.camera.zoom01);
-        
+
+        public int2 ScreenSize => _screen.WidthHeight;
+
         private readonly GameModel _game;
+        private readonly IScreen _screen;
         private readonly CameraConfig _config;
         private readonly ICameraInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
@@ -26,11 +30,13 @@ namespace Beast.Radar.Cinematic
 
         public CameraController(
             GameModel game,
+            IScreen screen,
             CameraConfig config,
             ICameraInputController inputController,
             IPlayerInputProvider inputProvider)
         {
             _game = game;
+            _screen = screen;
             _config = config;
             _input = inputController;
             _inputProvider = inputProvider;
@@ -62,7 +68,7 @@ namespace Beast.Radar.Cinematic
         
         private UniTask<OperationResult> GameLoading()
         {
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * 0.5f;
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _config.maxViewDistance01;
 
             return OperationResult.SuccessSync();
         }
@@ -152,7 +158,7 @@ namespace Beast.Radar.Cinematic
 
         private float2 ScreenPointToWorld(float2 screenPoint)
         {
-            float2 viewport = new(screenPoint.x / Screen.width, screenPoint.y / Screen.height);
+            float2 viewport = new(screenPoint.x / _screen.Width, screenPoint.y / _screen.Height);
             
             return ViewportToWorld(viewport);
         }
@@ -162,9 +168,8 @@ namespace Beast.Radar.Cinematic
             CameraState state = _game.camera;
             
             float viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01);
-            float screenAspect = Screen.width / (float)Screen.height;
-            float2 bottomLeft = state.position - new float2(screenAspect, 1) * viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(screenAspect, 1) * viewDistance;
+            float2 bottomLeft = state.position - new float2(_screen.Aspect, 1) * viewDistance * 0.5f;
+            float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * viewDistance;
 
             return new float2(screen.x, screen.y);
         }

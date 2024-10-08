@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Beast.Claw.CG;
+using Beast.Claw.Graphic;
 using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
@@ -39,7 +39,7 @@ namespace Beast.Claw.Editor.Window
                     () =>
                     {
                         _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
-                        BAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
+                        _renderMaterial.ValidateNotNull(nameof(_renderMaterial));
                     },
                     () =>
                     {
@@ -143,8 +143,8 @@ namespace Beast.Claw.Editor.Window
             }
             finally
             {
-                BeastCG.ReleaseRenderTexture(renderTextureBig);
-                BeastCG.ReleaseRenderTexture(renderTextureSmall);
+                BeastCG.DisposeRenderTexture(renderTextureBig);
+                BeastCG.DisposeRenderTexture(renderTextureSmall);
             }
             
         }

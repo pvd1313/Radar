@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.CG
+namespace Beast.Claw.Graphic
 {
     public struct NewTempRenderTextureData : IValidatable
     {

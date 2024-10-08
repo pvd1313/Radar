@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
   viewPrefab: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
-  minViewDistance: 1
+  minViewDistance: 0.1
+  maxViewDistance01: 1
   zoomCurve:
     serializedVersion: 2
     m_Curve:

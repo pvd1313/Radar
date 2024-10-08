@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Claw.CG
+namespace Beast.Claw.Graphic
 {
     public struct Texture2DParametersA : IValidatable
     {

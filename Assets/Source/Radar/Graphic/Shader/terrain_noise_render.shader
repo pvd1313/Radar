@@ -1,4 +1,4 @@
-﻿Shader "Beast/Radar/WorldMapRender"
+﻿Shader "Beast/Radar/TerrainNoiseRender"
 {
     Properties
     {
@@ -8,7 +8,7 @@
     {
         cull off
         zwrite off
-        ztest on
+        ztest off
 
         Pass
         {
@@ -20,9 +20,9 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Claw/CG/BeastCG.cginc"
+            #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
 
-            #define DEBUG_GRID_MAP
+            #define DRAW_DEBUG_GRID_TEXTURE
 
             struct VertexInput
             {
@@ -35,25 +35,25 @@
                 float2 mainUV : TEXCOORD0;
                 float2 noiseUV : TEXCOORD1;
 
-#ifdef DEBUG_GRID_MAP
+#ifdef DRAW_DEBUG_GRID_TEXTURE
                 float2 gridUV : TEXCOORD2;
 #endif
                 
                 float4 positionCS : SV_POSITION;
             };
 
-            sampler2D _MainMap;
-            float2 _MainMapSize;
+            sampler2D _TerrainTexture;
+            float2 _TerrainTextureSize;
 
             sampler2D _NoiseMap;
             float2 _NoiseMapSize;
 
-            sampler2D _GridMap;
-            float2 _GridMapSize;
+            sampler2D _DebugGridTexture;
+            float2 _DebugGridTextureSize;
             
-            float _RenderAspect;
-            float _RenderSizeY;
-            float2 _RenderCenter;
+            float _OutputAspect;
+            float _OutputHeight;
+            float2 _OutputCenter;
 
             #define MAP_RENDER_PPU 100;
             #define NOISE_OFFSET_0 float2(8, 8)
@@ -63,7 +63,7 @@
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
-                return uv * (_RenderSizeY / mapSize) + _RenderCenter / mapSize;
+                return uv * (_OutputHeight / mapSize) + _OutputCenter / mapSize;
             }
 
             FragmentInput vertex(VertexInput input)
@@ -72,13 +72,13 @@
                 
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
-                float2 uv = (input.screenUV - 0.5) * float2(_RenderAspect, 1);
+                float2 uv = (input.screenUV - 0.5) * float2(_OutputAspect, 1);
 
-                output.mainUV = screen_to_world_uv(uv, _MainMapSize);
+                output.mainUV = screen_to_world_uv(uv, _TerrainTextureSize);
                 output.noiseUV = screen_to_world_uv(uv, _NoiseMapSize);
 
-#ifdef DEBUG_GRID_MAP
-                output.gridUV = screen_to_world_uv(uv, _GridMapSize);
+#ifdef DRAW_DEBUG_GRID_TEXTURE
+                output.gridUV = screen_to_world_uv(uv, _DebugGridTextureSize);
                 output.gridUV *= MAP_RENDER_PPU;
 #endif
 
@@ -89,9 +89,9 @@
             {
                 float2 noiseRG = tex2D(_NoiseMap, noiseUV * offset).rg;
                 float2 noise = beast_unpack_normal_2d(noiseRG) * power;
-                mainUV = mainUV + noise * offset / _MainMapSize;
+                mainUV = mainUV + noise * offset / _TerrainTextureSize;
                 
-                return tex2D(_MainMap, mainUV).r;
+                return tex2D(_TerrainTexture, mainUV).r;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
@@ -101,9 +101,9 @@
 
                 float4 color = saturate((color0 + color1) * 90);
 
-#ifdef DEBUG_GRID_MAP
-                float gridColor = tex2D(_GridMap, input.gridUV).r;
-                float gridTexelSize = _RenderSizeY / _GridMapSize.y;
+#ifdef DRAW_DEBUG_GRID_TEXTURE
+                float gridColor = tex2D(_DebugGridTexture, input.gridUV).r;
+                float gridTexelSize = _OutputHeight / _DebugGridTextureSize.y;
                 color = lerp(color, gridColor, 0.25 * saturate(1 - gridTexelSize));
 #endif
                 

@@ -10,7 +10,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Beast.Claw.CG
+namespace Beast.Claw.Graphic
 {
     [DomainInitialize]
     public static class BeastCG
@@ -50,7 +50,7 @@ namespace Beast.Claw.CG
             return CommandBufferPool.Get(TypeStorage<T>.FullName);
         }
 
-        public static void ReleaseBuffer(CommandBuffer buffer)
+        public static void DisposeBuffer(CommandBuffer buffer)
         {
             CommandBufferPool.Release(buffer);
         }
@@ -62,7 +62,7 @@ namespace Beast.Claw.CG
 
         public static RenderTexture CreatePermanentRenderTexture<T>(T owner, NewPermaRenderTextureData input)
         {
-            input.ValidateThrowException();
+            input.Validate();
             
             RenderTexture texture = new (
                 input.size.x,
@@ -81,9 +81,9 @@ namespace Beast.Claw.CG
             return texture;
         }
 
-        public static void ReleaseRenderTexture(RenderTexture renderTexture)
+        public static void DisposeRenderTexture(RenderTexture renderTexture)
         {
-            BAssert.ArgumentNotNull(renderTexture, nameof(renderTexture));
+            renderTexture.ValidateNotNull(nameof(renderTexture));
             
             if (_permanentTextures.Remove(renderTexture))
             {
@@ -97,12 +97,12 @@ namespace Beast.Claw.CG
                 return;
             }
             
-            BDebug.LogStaticError($"Failed to release render texture '{renderTexture.name}'. As it was not found in list.");
+            BDebug.LogStaticError($"Failed to dispose render texture '{renderTexture.name}'. As it was not found in list.");
         }
 
         public static RenderTexture CreateTemporaryRenderTexture<T>(T owner, NewTempRenderTextureData input)
         {
-            input.ValidateThrowException();
+            input.Validate();
             
             RenderTexture texture = RenderTexture.GetTemporary(
                 input.size.x,
@@ -122,9 +122,10 @@ namespace Beast.Claw.CG
             return texture;
         }
 
-        public static Material CreateMaterial<T>(T owner, MaterialParameters input)
+        public static Material CreateMaterial<T>(T owner, MaterialParameters input) where T : class
         {
-            input.ValidateThrowException();
+            owner.ValidateNotNull(nameof(owner));
+            input.Validate();
             
             return new Material(input.shader)
             {
@@ -132,16 +133,16 @@ namespace Beast.Claw.CG
             };
         }
 
-        public static void ReleaseMaterial(Material material)
+        public static void DisposeMaterial(Material material)
         {
-            BAssert.ArgumentNotNull(material, nameof(material));
+            material.ValidateNotNull(nameof(material));
             
             Object.Destroy(material);
         }
 
         public static Texture2D CreateTexture2DFromRenderTexture<T>(T owner, Texture2DParametersA input)
         {
-            input.ValidateThrowException();
+            input.Validate();
 
             Texture2D texture = new (
                 input.sourceTexture.width,

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.Graphic
 {
-    public interface ITerrainTexture
+    public interface ITerrainBakedTexture
     {
         public RenderTexture Texture { get; }
         
