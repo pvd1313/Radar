@@ -5,8 +5,8 @@ namespace Beast.Radar.Graphic
 {
     public interface ITerrainBaker
     {
-        public void BakeTexture(TerrainBakerInput input);
+        void Bake(TerrainData terrain, RenderTexture targetTexture);
         
-        RenderTexture CreateTexture<TOwner>(TOwner owner, int2 size, bool isTemporary);
+        RenderTexture Create<TOwner>(TOwner owner, int2 size, bool isTemporary);
     }
 }

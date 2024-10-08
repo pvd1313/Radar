@@ -1,4 +1,4 @@
-﻿using Beast.Claw.CG;
+﻿using Beast.Claw.Graphic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
@@ -33,7 +33,7 @@ namespace Beast.Radar.Graphic
         {
             _material = BeastCG.CreateMaterial(this, new MaterialParameters
             {
-                shader = _graphicLibrary.worldMapBakeShader,
+                shader = _graphicLibrary.terrainBakeShader,
                 name = "TerrainBake",
             });
             
@@ -44,14 +44,14 @@ namespace Beast.Radar.Graphic
         {
             if (_material != null)
             {
-                BeastCG.ReleaseMaterial(_material);
+                BeastCG.DisposeMaterial(_material);
                 _material = null;
             }
 
             return OperationResult.SuccessSync();
         }
 
-        public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 size, bool isTemporary)
+        public RenderTexture Create<TOwner>(TOwner owner, int2 size, bool isTemporary)
         {
             if (isTemporary)
             {
@@ -76,21 +76,22 @@ namespace Beast.Radar.Graphic
             });
         }
 
-        public void BakeTexture(TerrainBakerInput input)
+        public void Bake(TerrainData terrain, RenderTexture targetTexture)
         {
-            input.ValidateThrowException();
+            terrain.Validate();
+            targetTexture.ValidateNotNull(nameof(targetTexture));
             
-            _material.SetFloat("_Flood01", input.waterFlood01);
-            _material.SetFloat("_Seed01", input.seed01);
-            _material.SetFloat("_Scale99", input.biomeScale99);
+            _material.SetFloat("_Flood01", terrain.waterFlood01);
+            _material.SetFloat("_Seed01", terrain.seed01);
+            _material.SetFloat("_Scale99", terrain.biomeScale99);
             
             _material.SetVector(
                 "_TextureSize", 
-                new Vector2(input.targetTexture.width, input.targetTexture.height));
+                new Vector2(targetTexture.width, targetTexture.height));
             
             BeastCG.Blit(new BlitParameters
             {
-                targetTexture = input.targetTexture,
+                targetTexture = targetTexture,
                 material = _material,
                 shaderPass = 0
             });

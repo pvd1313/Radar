@@ -52,7 +52,7 @@ namespace Beast.Claw.GameCycle
         
         public bool TryInitializeSelf(GameCycleParameters input)
         {
-            input.ValidateThrowException();
+            input.Validate();
             
             _isSubscribingListeners = true;
 
@@ -106,9 +106,11 @@ namespace Beast.Claw.GameCycle
             return true;
         }
 
-        public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID)
+        public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) 
+            where TOwner : class
         {
-            BAssert.ArgumentNotNull(owner, nameof(owner));
+            eventID.ValidateNotEmpty(nameof(eventID));
+            owner.ValidateNotNull(nameof(owner));
             
             if (_isSubscribingListeners)
             {
@@ -154,14 +156,15 @@ namespace Beast.Claw.GameCycle
             return result;
         }
 
-        public void Update<TOwner>(TOwner owner, string eventID)
+        public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
         {
+            eventID.ValidateNotEmpty(nameof(eventID));
+            owner.ValidateNotNull(nameof(owner));
+            
             if (_allUpdateIsBroken)
             {
                 return;
             }
-            
-            BAssert.ArgumentNotNull(owner, nameof(owner));
             
             if (_isSubscribingListeners)
             {
@@ -205,13 +208,17 @@ namespace Beast.Claw.GameCycle
             string eventID, 
             Func<UniTask<OperationResult>> action) where TOwner : class, IGameCycleListener
         {
+            eventID.ValidateNotEmpty(nameof(eventID));
+            owner.ValidateNotNull(nameof(owner));
+            action.ValidateNotNull(nameof(action));
+            
+            
+            
             if (!_initializationEventIDs.Contains(eventID))
             {
                 throw new InvalidOperationException(
                     $"'{eventID}' is not valid initialization eventID ({typeof(TOwner)})");
             }
-            
-            BAssert.ArgumentNotNull(action, nameof(action));
 
             if (_config.preventDuplicatingSubscription)
             {
@@ -234,13 +241,15 @@ namespace Beast.Claw.GameCycle
             string eventID, 
             Action action) where TOwner : class, IGameCycleListener
         {
+            owner.ValidateNotNull(nameof(owner));
+            eventID.ValidateNotEmpty(nameof(eventID));
+            action.ValidateNotNull(nameof(action));
+            
             if (!_updateEventIDs.Contains(eventID))
             {
                 throw new InvalidOperationException(
                     $"'{eventID}' is not valid update eventID ({typeof(TOwner)})");
             }
-
-            BAssert.ArgumentNotNull(action, nameof(action));
 
             if (_config.preventDuplicatingSubscription)
             {

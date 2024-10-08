@@ -7,15 +7,22 @@ namespace Beast.Claw.Common
     public static class GraphicExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float2 WidthHeightFloat(this Texture2D texture2D)
+        public static float2 WidthHeightFloat(this Texture texture)
         {
-            return new float2(texture2D.width, texture2D.height);
+            return new float2(texture.width, texture.height);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int2 WidthHeightInt(this Texture2D texture2D)
+        public static int2 WidthHeightInt(this Texture texture)
         {
-            return new int2(texture2D.width, texture2D.height);
+            return new int2(texture.width, texture.height);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetMatrix(this Material material, string name, float2x2 matrix)
+        {
+            Vector4 vector = new (matrix.c0.x, matrix.c0.y, matrix.c1.x, matrix.c1.y);
+            material.SetVector(name, vector);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

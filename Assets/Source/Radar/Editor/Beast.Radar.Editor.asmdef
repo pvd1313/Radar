@@ -1,0 +1,16 @@
+{
+    "name": "Radar.Editor",
+    "rootNamespace": "Beast.Radar.Editor",
+    "references": ["GUID:7fa11e63903d1b44493986f75a774321"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

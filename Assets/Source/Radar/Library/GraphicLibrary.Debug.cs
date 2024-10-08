@@ -9,9 +9,9 @@ namespace Beast.Radar
         public class Debug
         {
 #if BEAST_DEVELOPMENT
-            public Texture2D bakedWorldMap;
+            public Texture2D bakedTerrain;
 
-            public Texture2D worldGrid;
+            public Texture2D terrainGrid;
 
             public Shader unlitTextureShader;
 

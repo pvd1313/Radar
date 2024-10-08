@@ -7,10 +7,11 @@ namespace Beast.Radar
     {
         public Mesh quadMesh;
         
-        public Shader worldMapBakeShader;
-        public Shader worldMapRenderShader;
+        public Shader terrainBakeShader;
+        public Shader terrainNoiseRenderShader;
+        public Shader terrainColorRenderShader;
 
-        public Texture2D worldDetailNoise;
+        public Texture2D worldNoiseTexture;
 
         public Debug debug;
     }

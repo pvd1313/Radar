@@ -6,6 +6,8 @@ namespace Beast.Claw.Attributes
     
     #if UNITY_EDITOR
     : InitializeOnLoadAttribute
+    #else
+    : System.Attribute
     #endif
     {
         

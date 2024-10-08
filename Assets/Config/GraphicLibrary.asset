@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: GraphicLibrary
   m_EditorClassIdentifier: 
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  worldMapBakeShader: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
-  worldMapRenderShader: {fileID: 4800000, guid: a124b3f876bc6fc4e92c69b6cffb310c, type: 3}
-  worldDetailNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+  terrainBakeShader: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
+  terrainNoiseRenderShader: {fileID: 4800000, guid: c2f487fe8fc4dc7439cd7214f133af3b, type: 3}
+  terrainColorRenderShader: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
+  worldNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
-    bakedWorldMap: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
-    worldGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}
+    bakedTerrain: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
+    terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}
     unlitTextureShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
     unlitColorShader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}

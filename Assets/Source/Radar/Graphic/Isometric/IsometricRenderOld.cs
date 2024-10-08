@@ -1,4 +1,4 @@
-﻿using Beast.Claw.CG;
+﻿using Beast.Claw.Graphic;
 using Beast.Claw.Common;
 using Beast.Claw.Mathematics;
 using Unity.Mathematics;
@@ -121,7 +121,7 @@ namespace Beast.Radar.Graphic
             //     matrix = float4x4.identity,
             // });
         
-            BeastCG.ReleaseRenderTexture(solverTexture);
+            BeastCG.DisposeRenderTexture(solverTexture);
         }
 
         private int GetTileCount(int2 gSize)

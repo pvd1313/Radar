@@ -1,0 +1,89 @@
+﻿using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
+using Beast.Claw.Mathematics;
+using Beast.Radar.GameCycle;
+using Beast.Radar.Serialization;
+using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
+
+namespace Beast.Radar.Cinematic
+{
+    public class CameraTransform : IGameCycleListener, ICameraTransform
+    {
+        public bool IsReady { get; private set; }
+        public float2 Position => _position;
+        public IsometricCameraRotation RotationRad => _rotationRad;
+        public float Zoom01 => _zoom01;
+        public float ViewDistance => _viewDistance;
+
+        private readonly IScreen _screen;
+        private readonly CameraTransformConfig _config;
+        private readonly GameModel _game;
+
+        private IsometricCameraRotation _rotationRad;
+        private float _viewDistance;
+        private float _maxViewDistance;
+        private float _zoom01;
+        private float2 _position;
+        
+        public CameraTransform(IScreen screen, CameraTransformConfig config, GameModel game)
+        {
+            _screen = screen;
+            _config = config;
+            _game = game;
+        }
+        
+        public void ListenGameCycle(IGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
+        }
+        
+        public float2 ScreenPointToWorld(float2 screenPoint)
+        {
+            return ViewportToWorld(screenPoint / _screen.WidthHeight);
+        }
+
+        public void AddZoom(float zoomDelta)
+        {
+            InternalSetZoom(_zoom01 + zoomDelta);
+        }
+
+        public void AddPosition(float2 delta)
+        {
+            _position += delta;
+        }
+
+        public float2 ViewportToWorld(float2 viewport)
+        {
+            float2 bottomLeft = _position - new float2(_screen.Aspect, 1) * _viewDistance * 0.5f;
+            float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * _viewDistance;
+
+            return new float2(screen.x, screen.y);
+        }
+
+        private UniTask<OperationResult> GameLoading()
+        {
+            _position = _game.camera.position;
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * 1f;
+
+            InternalSetZoom(_game.camera.zoom01);
+            
+            IsReady = true;
+            
+            return OperationResult.SuccessSync();
+        }
+
+        private void InternalSetZoom(float zoom)
+        {
+            _zoom01 = BMath.Clamp01(zoom);
+            _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, Zoom01);
+
+            // Zoom01 = zoom;
+            // RotationRad = new IsometricCameraRotation
+            // {
+            //     pitch = BMath.Lerp(0, _config.isometricRotationDeg.pitch * BMath.Deg2Rad, zoom),
+            //     roll = BMath.Lerp(0, _config.isometricRotationDeg.roll * BMath.Deg2Rad, zoom)
+            // };
+        }
+    }
+}
