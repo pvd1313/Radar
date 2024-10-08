@@ -33,14 +33,12 @@ namespace Beast.Radar.InputControl
         private UniTask<OperationResult> Warmup()
         {
             SubscribeInputActions();
-
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()
         {
             UnsubscribeInputActions();
-
             return OperationResult.SuccessSync();
         }
 
@@ -65,7 +63,7 @@ namespace Beast.Radar.InputControl
                     _currentNavigationCooldown = NavigationCooldown;
                 }
             }
-            else if (_currentNavigationCooldown != 0)
+            else
             {
                 _currentNavigationCooldown = 0;
             }
@@ -73,12 +71,12 @@ namespace Beast.Radar.InputControl
 
         private void SubscribeInputActions()
         {
-            _input.Actions.Player.Pause.started += OnStartedPause;
+            _input.Actions.UI.Cancel.started += OnStartedPause;
         }
 
         private void UnsubscribeInputActions()
         {
-            _input.Actions.Player.Pause.started -= OnStartedPause;
+            _input.Actions.UI.Cancel.started -= OnStartedPause;
         }
 
         private void OnStartedPause(InputAction.CallbackContext obj)

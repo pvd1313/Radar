@@ -12,7 +12,6 @@ namespace Beast.Radar.UI
         public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
 
         private static readonly float[] ItemsCount = { 1, 10, 100 };
-        private static readonly int2 ItemMapSize = new int2(15, 5);
         
         private readonly ItemData[] _itemsData;
         private readonly DebugItemFolderView _view;
@@ -111,7 +110,7 @@ namespace Beast.Radar.UI
             _selectedButton.SetSelectedMode();
             
             _view.itemName.SetText(button.Item.name);
-            _view.itemWeight.SetText($"{button.Item.weight}kg");
+            _view.itemWeight.SetText($"{button.Item.weight} kg");
         }
 
         private void OnGrantButtonClicked(int index)

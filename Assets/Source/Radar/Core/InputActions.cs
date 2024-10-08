@@ -572,6 +572,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""b096f497-785d-427d-8e83-57fa71bb7aee"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""5239d8b5-c124-43f6-a1ae-7f20085f3896"",
                     ""path"": ""<Mouse>/position"",
                     ""interactions"": """",

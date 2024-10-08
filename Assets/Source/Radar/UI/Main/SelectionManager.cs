@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Beast.Radar.InputControl;
+using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -19,7 +21,19 @@ namespace Beast.Radar.UI
             public void Set(Dictionary<ESelectionZone, SelectableGridData> selectables)
             {
                 _selectableGrids = selectables;
-                SelectableGridData grid = selectables[ESelectionZone.DPad];
+
+                if (selectables == null)
+                {
+                    return;
+                }
+                
+                SelectableGridData grid = selectables.FirstOrDefault().Value; 
+                
+                if (grid.selectables.Length == 0 || grid.selectables.Rank == 0)
+                {
+                    return;
+                }
+                
                 _currentSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
                 _currentSelectable.Select();
            
@@ -38,7 +52,12 @@ namespace Beast.Radar.UI
 
             private void Subscribe()
             {
-                
+                _input.NavigationPressed += OnNavigationPressed;
+            }
+
+            private void OnNavigationPressed(float2 obj)
+            {
+                throw new System.NotImplementedException();
             }
 
             private void Unsubscribe()
