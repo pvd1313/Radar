@@ -6,5 +6,7 @@ namespace Beast.Radar.Cinematic
     {
         public float2 Position { get; }
         public float ViewDistance { get; }
+        
+        public IsometricCameraRotation RotationRad { get; }
     }
 }

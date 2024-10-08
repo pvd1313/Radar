@@ -55,6 +55,9 @@
             float _OutputHeight;
             float2 _OutputCenter;
 
+            float4 _UVMatrix0;
+            float4 _UVMatrix1;
+
             #define MAP_RENDER_PPU 100;
             #define NOISE_OFFSET_0 float2(8, 8)
             #define NOISE_POWER_0 float2(0.3, 0.2)
@@ -74,7 +77,11 @@
 
                 float2 uv = (input.screenUV - 0.5) * float2(_OutputAspect, 1);
 
+                uv = mul(float2x2(_UVMatrix0), uv);
+                uv = mul(float2x2(_UVMatrix1), uv);
+
                 output.mainUV = screen_to_world_uv(uv, _TerrainTextureSize);
+                
                 output.noiseUV = screen_to_world_uv(uv, _NoiseMapSize);
 
 #ifdef DRAW_DEBUG_GRID_TEXTURE

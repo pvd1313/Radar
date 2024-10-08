@@ -68,7 +68,9 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                return tex2D(_TerrainTexture, input.uv);
+                float color = tex2D(_TerrainTexture, input.uv).r;
+                
+                return color;
             }
             
             ENDCG

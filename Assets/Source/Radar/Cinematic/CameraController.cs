@@ -17,7 +17,7 @@ namespace Beast.Radar.Cinematic
 
         public float ViewDistance => BMath.Lerp(_config.minViewDistance, _maxViewDistance, _game.camera.zoom01);
 
-        public int2 ScreenSize => _screen.WidthHeight;
+        public IsometricCameraRotation RotationRad => _config.rotationDeg * BMath.Deg2Rad;
 
         private readonly GameModel _game;
         private readonly IScreen _screen;

@@ -11,6 +11,7 @@ namespace Beast.Radar.Cinematic
         public CameraView viewPrefab;
         public float minViewDistance;
         public float maxViewDistance01;
+        public IsometricCameraRotation rotationDeg;
         public AnimationCurve zoomCurve;
         public CameraMotionParameters[] motion;
         

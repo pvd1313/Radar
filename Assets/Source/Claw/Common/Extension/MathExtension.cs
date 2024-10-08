@@ -1,0 +1,25 @@
+﻿using Unity.Mathematics;
+
+namespace Beast.Claw.Common
+{
+    public static class MathExtension
+    {
+        public static float2 Multiply(this float2x2 matrix, float2 vector)
+        {
+            float x = matrix.c0.x * vector.x + matrix.c1.x * vector.y;
+            float y = matrix.c0.y * vector.x + matrix.c1.y * vector.y;
+
+            return new float2(x, y);
+        }
+
+        public static float2x2 Inverse(this float2x2 matrix)
+        {
+            float a = matrix.c0.x;
+            float b = matrix.c1.x;
+            float c = matrix.c0.y;
+            float d = matrix.c1.y;
+            
+            return new float2x2(d, -b, -c, a) * (1 / (a * d - b * c));
+        }
+    }
+}

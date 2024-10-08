@@ -91,14 +91,13 @@ namespace Beast.Radar.Graphic
                 return;
             }
 
-            float cos60 = BMath.Cos(60 * BMath.Deg2Rad);
-            float cos30 = BMath.Cos(30 * BMath.Deg2Rad);
-            float renderScale = (1 + _screen.Aspect) / cos60;
-            int textureSize = BMath.CeilToInt(renderScale * _screen.Height);
+            int2 textureSize = _screen.WidthHeight;
+
+            float renderScale = 1;
 
             if (_renderedTexture == null || 
-                _renderedTexture.width != textureSize || 
-                _renderedTexture.height != textureSize)
+                _renderedTexture.width != textureSize.x || 
+                _renderedTexture.height != textureSize.y)
             {
                 if (_renderedTexture != null)
                 {
@@ -106,18 +105,24 @@ namespace Beast.Radar.Graphic
                     _renderedTexture = null;
                 }
 
-                _renderedTexture = _baker.Create(this, new int2(textureSize, textureSize), false);
+                _renderedTexture = _baker.Create(this, textureSize, false);
             }
 
-            _renderCenter = _camera.Position;
+            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.RotationRad.pitch);
+            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.RotationRad.roll);
+
+            _renderCenter = rotation.Multiply(scale.Multiply(_camera.Position));
             _renderDistance = _camera.ViewDistance * renderScale;
             
-            _renderMaterial.SetFloat("_OutputAspect", 1);
+            _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _renderDistance);
             _renderMaterial.SetVector("_OutputCenter", _renderCenter);
             
             _renderMaterial.SetTexture("_TerrainTexture", _terrainTexture.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", _game.terrain.size);
+            
+            _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
+            _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
             
 #if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);

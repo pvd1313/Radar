@@ -45,7 +45,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainBaker);
             yield return typeof(TerrainNoiseRender);
             yield return typeof(TerrainBakedTexture);
-            yield return typeof(WorldRender);
+            yield return typeof(TerrainColorRender);
             
             // Debug
             yield return typeof(DebugController);
