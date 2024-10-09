@@ -7,8 +7,8 @@
     SubShader
     {
         cull off
-        zwrite off
-        ztest off
+        zwrite on
+        ztest on
 
         Pass
         {
@@ -121,7 +121,7 @@
             {
                 half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
-                clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
+                clip(mainColor.r + mainColor.g + mainColor.b - 0.5f);
 
                 half3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 

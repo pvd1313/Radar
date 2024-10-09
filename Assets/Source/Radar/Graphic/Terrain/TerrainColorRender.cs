@@ -67,8 +67,10 @@ namespace Beast.Radar.Graphic.Terrain
             
             float2 renderTextureSize = _terrain.RenderTexture.WidthHeightFloat();
             
+            
+            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            
             float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
-            yScale *= yScale;
 
             BDebug.TrackFloat(this, "viewDistance", _camera.TargetViewDistance);
             BDebug.TrackFloat(this, "yScaleDistance", _camera.TargetViewDistance * yScale);

@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Radar.Graphic.Terrain;
 using UnityEngine;
 
 namespace Beast.Radar
@@ -10,6 +11,10 @@ namespace Beast.Radar
         public Shader terrainBakeShader;
         public Shader terrainNoiseShader;
         public Shader terrainColorShader;
+
+        public Shader isometricSolverShader;
+        public Shader isometricRenderShader;
+        public TerrainTileAtlas terrainTileAtlas;
 
         public Texture2D worldNoiseTexture;
 

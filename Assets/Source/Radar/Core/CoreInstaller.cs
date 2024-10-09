@@ -12,6 +12,7 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Zenject;
 using Installer = Beast.Claw.Common.Installer;
+using TerrainTileRender = Beast.Radar.Graphic.Terrain.TerrainTileRender;
 
 namespace Beast.Radar.Core
 {
@@ -47,6 +48,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainNoiseRender);
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
+            yield return typeof(TerrainTileRender);
             
             // Debug
             yield return typeof(DebugController);

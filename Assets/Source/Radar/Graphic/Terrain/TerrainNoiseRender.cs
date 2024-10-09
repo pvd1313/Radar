@@ -115,9 +115,9 @@ namespace Beast.Radar.Graphic.Terrain
             _renderCenter = _camera.Position;
             _renderDistance = _camera.TargetViewDistance;
             
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
-            float2x2 rotate = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
-            _renderCenter = rotate.Multiply(scale.Multiply(_camera.Position));
+            // float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
+            // float2x2 rotate = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
+            // _renderCenter = rotate.Multiply(scale.Multiply(_camera.Position));
 
             float screenScale = ((float)_renderTextureSize.y / _screen.Height);
             
@@ -132,8 +132,11 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_TerrainTexture", _terrainTexture.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", _game.terrain.size);
             
-            _renderMaterial.SetMatrix("_UVMatrix0", rotate);
-            _renderMaterial.SetMatrix("_UVMatrix1", scale);
+            // _renderMaterial.SetMatrix("_UVMatrix0", rotate);
+            // _renderMaterial.SetMatrix("_UVMatrix1", scale);
+            
+            _renderMaterial.SetMatrix("_UVMatrix0", float2x2.identity);
+            _renderMaterial.SetMatrix("_UVMatrix1", float2x2.identity);
             
 #if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);

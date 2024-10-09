@@ -113,18 +113,28 @@ namespace Beast.Radar.Cinematic
             {
                 // TODO : This is not correct. Zoom distance will float, we need to remember positions instead. 
                 //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
-                // float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
-                // float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
-                // moveDelta = a - b;
+
+
+                BDebug.TrackFloat2(this, "screenPoint", _input.ScreenPoint);
+                
+                float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
+
+
+                BDebug.TrackFloat2(this, "worldPoint", a);
+                
+                float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
+                moveDelta = b - a;
+                _transform.AddPosition(moveDelta, Space.World);
             }
             else
             {
                 moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
+                _transform.AddPosition(moveDelta, Space.Self);
             }
             
             BDebug.TrackFloat2(this, "moveDelta", moveDelta);
             
-            _transform.AddLocalPosition(moveDelta);
+            
         }
 
         private void Zoom()
@@ -148,9 +158,9 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
-            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            _transform.AddLocalPosition(pointDelta);
+            // float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
+            // float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
+            // _transform.AddAbsPosition(pointDelta);
         }
     }
 }

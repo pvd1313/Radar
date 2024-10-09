@@ -44,36 +44,45 @@ namespace Beast.Radar.Cinematic
         {
             handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
         }
-        
-        public float2 ScreenPointToWorld(float2 screenPoint)
+
+        public void AddPosition(float2 delta, Space space)
         {
-            return ViewportToWorld(screenPoint / _screen.Size);
+            if (space == Space.Self)
+            {
+                _position += LocalToWorld(delta);
+            }
+            else
+            {
+                _position += delta;
+            }
         }
 
         public void AddZoom(float zoomDelta)
         {
             InternalSetZoom(_zoom01 + zoomDelta);
         }
-
-        public void AddLocalPosition(float2 delta)
+        
+        public float2 ScreenPointToWorld(float2 screenPoint)
         {
-            _position += TransformVector(delta);
+            return ViewportToWorld(screenPoint / _screen.Size);
         }
 
         public float2 ViewportToWorld(float2 viewport)
         {
-            float2 bottomLeft = _position - new float2(_screen.Aspect, 1) * _viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * _viewDistance;
+            float viewDistance = _viewDistance * BMath.Cos(_rotationRad.roll);
+            
+            float2 bottomLeft = _position - LocalToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
+            float2 screen = bottomLeft + LocalToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
 
             return new float2(screen.x, screen.y);
         }
 
-        private float2 TransformVector(float2 vector)
+        private float2 LocalToWorld(float2 vector)
         {
-            double2x2 rotation = float2x2.Rotate(_rotationRad.roll);
-            double2x2 scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
+            float2x2 rotation = float2x2.Rotate(_rotationRad.roll * -1);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
 
-            return (float2) scale.Inverse().Multiply(rotation.Multiply(vector));
+            return rotation.Multiply((scale.Inverse().Multiply(vector)));
         }
 
         private UniTask<OperationResult> GameLoading()
@@ -102,11 +111,11 @@ namespace Beast.Radar.Cinematic
 
             _rotationRad = MaxRotationRad;
 
-            _rotationRad = new IsometricCameraRotation
-            {
-                pitch = BMath.Lerp(0, _pitchMax, isometric01),
-                roll = BMath.Lerp(0, _rollMax, isometric01)
-            };
+            // _rotationRad = new IsometricCameraRotation
+            // {
+            //     pitch = BMath.Lerp(0, _pitchMax, isometric01),
+            //     roll = BMath.Lerp(0, _rollMax, isometric01)
+            // };
         }
     }
 }
