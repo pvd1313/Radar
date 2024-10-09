@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Common;
+﻿using System;
 
 namespace Beast.Radar.UI
 {
@@ -6,9 +6,12 @@ namespace Beast.Radar.UI
     {
         public IWindow CurrentFolder { get; private set; }
 
+        public event Action<IFolder, IFolder> FolderSwitched;
+        
         private readonly UIButton[] _buttons;
         private readonly IFolder[] _folders;
         private int _currentIndex;
+        
         public WindowFoldersController(UIButton[] buttons, IFolder[] folders)
         {
             _buttons = buttons;
@@ -39,30 +42,11 @@ namespace Beast.Radar.UI
             }
         }
         
-        public void OpenNext()
-        {
-            int nextIndex = _currentIndex + 1;
-            if (nextIndex >= _folders.Length)
-            {
-                nextIndex = 0;
-            }
-            SwitchFolder(nextIndex);
-        }
-
-        public void OpenPrevious()
-        {
-            int nextIndex = _currentIndex - 1;
-            if (nextIndex < 0)
-            {
-                nextIndex = _folders.Length - 1;
-            }
-            SwitchFolder(nextIndex);
-        }
-
         private void SwitchFolder(int index)
         {
             _buttons[_currentIndex].SetInteractable(true);
             _folders[_currentIndex].Close();
+            FolderSwitched?.Invoke(_folders[_currentIndex], _folders[index]);
             _currentIndex = index;
             _buttons[_currentIndex].SetInteractable(false);
             _folders[_currentIndex].Open();

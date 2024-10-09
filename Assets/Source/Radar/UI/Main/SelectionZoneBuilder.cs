@@ -34,6 +34,10 @@ namespace Beast.Radar.UI
                 }
             }
 
+                   
+            int rows = selectionsGrid.GetLength(0);
+            int cols = selectionsGrid.GetLength(1);
+            UnityEngine.Debug.Log($"End build {size} vs {rows},{cols}");
             return new SelectableGridData()
             {
                 selectables = selectionsGrid,

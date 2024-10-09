@@ -94,7 +94,7 @@ namespace Beast.Radar.UI
             SelectableGridData triggerGrid = _selectionZoneBuilder.Build
             (
                 selectables: _view.folderButtons.Select(b => b.Selectable).ToArray(),
-                size: new int2(3, 1),
+                size: new int2(2, 1),
                 isLooping: false
             );
 
@@ -111,12 +111,14 @@ namespace Beast.Radar.UI
 
         private void Subscribe()
         {
+            _foldersController.FolderSwitched += OnFolderSwitched;
             _view.openButton.Clicked += OnOpenButtonClicked;
             _view.closeButton.Clicked += OnCloseButtonClicked;
         }
 
         private void Unsubscribe()
         {
+            _foldersController.FolderSwitched -= OnFolderSwitched;
             _view.openButton.Clicked -= OnOpenButtonClicked;
             _view.closeButton.Clicked -= OnCloseButtonClicked;
         }
@@ -129,6 +131,19 @@ namespace Beast.Radar.UI
         private void OnOpenButtonClicked()
         {
             _windowManager.Show(WindowID.Debug);
+        }
+
+        private void OnFolderSwitched(IFolder oldFolder, IFolder newFolder)
+        {
+            foreach (var oldSelection in oldFolder.Selections)
+            {
+                Selections.Remove(oldSelection.Key);
+            }
+
+            foreach (var newSelection in newFolder.Selections)
+            {
+                Selections.Add(newSelection.Key, newSelection.Value);
+            }
         }
     }
 }
