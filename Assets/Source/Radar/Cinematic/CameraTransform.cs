@@ -70,10 +70,10 @@ namespace Beast.Radar.Cinematic
 
         private float2 TransformVector(float2 vector)
         {
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_rotationRad.roll);
-            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_rotationRad.pitch);
+            double2x2 rotation = float2x2.Rotate(_rotationRad.roll);
+            double2x2 scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
 
-            return scale.Inverse().Multiply(rotation.Inverse().Multiply(vector));
+            return (float2) scale.Inverse().Multiply(rotation.Multiply(vector));
         }
 
         private UniTask<OperationResult> GameLoading()

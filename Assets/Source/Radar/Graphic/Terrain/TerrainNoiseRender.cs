@@ -68,9 +68,11 @@ namespace Beast.Radar.Graphic.Terrain
             });
 
             _renderTextureForScreenSize = _screen.Size;
-            _renderTextureSize.x = BMath.CeilToInt(_screen.Width / BMath.Cos(_camera.MaxRotationRad.roll));
-            _renderTextureSize.y = BMath.CeilToInt(_screen.Height / BMath.Cos(_camera.MaxRotationRad.roll));
-            _renderTextureAspect = _renderTextureSize.x / (float)_renderTextureSize.y;
+
+            float size = BMath.Max(_screen.Width, _screen.Height) / BMath.Cos(_camera.MaxRotationRad.roll);
+            _renderTextureSize.x = BMath.CeilToInt(size);
+            _renderTextureSize.y = BMath.CeilToInt(size);
+            _renderTextureAspect = 1;
             _renderTexture = _baker.Create(this, _renderTextureSize, false);
             
             return OperationResult.SuccessSync();
@@ -109,12 +111,19 @@ namespace Beast.Radar.Graphic.Terrain
                 Dispose();
                 Warmup();
             }
-            
-            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.CurrentRotationRad.pitch);
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.CurrentRotationRad.roll);
 
-            _renderCenter = rotation.Multiply(scale.Multiply(_camera.Position));
-            _renderDistance = _camera.TargetViewDistance / BMath.Cos(_camera.MaxRotationRad.roll);
+            _renderCenter = _camera.Position;
+            _renderDistance = _camera.TargetViewDistance;
+            
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
+            float2x2 rotate = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
+            _renderCenter = rotate.Multiply(scale.Multiply(_camera.Position));
+
+            float screenScale = ((float)_renderTextureSize.y / _screen.Height);
+            
+            BDebug.TrackFloat(this, "_screenScale", screenScale);
+            
+            _renderDistance = _camera.TargetViewDistance * screenScale;
             
             _renderMaterial.SetFloat("_OutputAspect", _renderTextureAspect);
             _renderMaterial.SetFloat("_OutputHeight", _renderDistance);
@@ -123,8 +132,8 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_TerrainTexture", _terrainTexture.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", _game.terrain.size);
             
-            _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
-            _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
+            _renderMaterial.SetMatrix("_UVMatrix0", rotate);
+            _renderMaterial.SetMatrix("_UVMatrix1", scale);
             
 #if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);

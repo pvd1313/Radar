@@ -40,7 +40,7 @@ namespace Beast.Radar.Graphic.Terrain
 
         private UniTask<OperationResult> Warmup()
         {
-            Application.targetFrameRate = 4096;
+            Application.targetFrameRate = 999;
 
             _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainColorShader);
 
@@ -64,16 +64,17 @@ namespace Beast.Radar.Graphic.Terrain
             {
                 return;
             }
-
+            
             float2 renderTextureSize = _terrain.RenderTexture.WidthHeightFloat();
             
             float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
+            yScale *= yScale;
 
             BDebug.TrackFloat(this, "viewDistance", _camera.TargetViewDistance);
             BDebug.TrackFloat(this, "yScaleDistance", _camera.TargetViewDistance * yScale);
 
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.CurrentRotationRad.roll);
-            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.CurrentRotationRad.pitch);
+            float2x2 rotation = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
             
             BDebug.TrackFloat(this, "yScale", yScale);
             BDebug.TrackFloat(this, "cameraRoll", _camera.CurrentRotationRad.roll * BMath.Rad2Deg);
@@ -82,11 +83,8 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
             
-            _renderMaterial.SetMatrix("_UVMatrix0", float2x2.identity);
-            _renderMaterial.SetMatrix("_UVMatrix1", float2x2.identity);
-            
-            _renderMaterial.SetMatrix("_UVMatrix0", rotation);
-            _renderMaterial.SetMatrix("_UVMatrix1", scale);
+            _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
+            _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
