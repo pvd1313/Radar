@@ -59,20 +59,13 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
             
-            ConfigureSelectables();
+            InitializeSelectable();
             SubscribeView();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
-        {
-            UnsubscribeView();
-            
-            return OperationResult.SuccessSync();
-        }
-
-        private void ConfigureSelectables()
+        private void InitializeSelectable()
         {
             Selectable[] selections =
             {
@@ -94,6 +87,13 @@ namespace Beast.Radar.UI
             {
                 { ESelectionZone.DPad, dpadGrid }
             });
+        }
+
+        private UniTask<OperationResult> Dispose()
+        {
+            UnsubscribeView();
+            
+            return OperationResult.SuccessSync();
         }
 
         private void SubscribeView()

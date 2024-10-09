@@ -88,7 +88,7 @@ namespace Beast.Radar.UI
             _input.NavigationPressed -= OnDpadPressed;
             _input.TriggerPressed -= OnTriggerPressed;
         }
-
+        
         private void OnDpadPressed(float2 direction)
         {
             if (!_selectableGrids.ContainsKey(ESelectionZone.DPad))
@@ -100,45 +100,47 @@ namespace Beast.Radar.UI
 
             int rows = grid.selectables.Length; 
             int currentRow = grid.currentIndex.y;
+            int currentCol = grid.currentIndex.x;
 
-            if (currentRow >= rows)
+            int newRow = currentRow;
+            int newCol = currentCol;
+
+            if (direction.x != 0)
             {
-                BDebug.LogError(this, "Current row index is out of bounds");
-                return;
+                newCol += (int)direction.x;
+
+                int currentRowLength = grid.selectables[currentRow].Length; 
+                if (newCol < 0)
+                {
+                    newCol = grid.isLooping ? currentRowLength - 1 : 0;
+                }
+                else if (newCol >= currentRowLength)
+                {
+                    newCol = grid.isLooping ? 0 : currentRowLength - 1;
+                }
             }
 
-            int cols = grid.selectables[currentRow].Length; 
-            int currentCol = grid.currentIndex.x; 
+            if (direction.y != 0)
+            {
+                newRow += (int)direction.y;
 
-            if (currentCol >= cols)
-            {
-                BDebug.LogError(this, "Current column index is out of bounds");
-                return;
-            }
+                if (newRow < 0)
+                {
+                    newRow = grid.isLooping ? rows - 1 : 0;
+                }
+                else if (newRow >= rows)
+                {
+                    newRow = grid.isLooping ? 0 : rows - 1;
+                }
 
-            int newRow = currentRow + (int)direction.y;
-            int newCol = currentCol + (int)direction.x;
-
-            if (newRow < 0)
-            {
-                newRow = grid.isLooping ? rows - 1 : currentRow;
-            }
-            else if (newRow >= rows)
-            {
-                newRow = grid.isLooping ? 0 : currentRow;
-            }
-
-            if (newCol < 0)
-            {
-                newCol = grid.isLooping ? cols - 1 : currentCol;
-            }
-            else if (newCol >= cols)
-            {
-                newCol = grid.isLooping ? 0 : currentCol;
+                int newRowLength = grid.selectables[newRow].Length; 
+                if (newCol >= newRowLength)
+                {
+                    newCol = newRowLength - 1;
+                }
             }
 
             grid.currentIndex = new int2(newCol, newRow);
-
             _selectableGrids[ESelectionZone.DPad] = grid;
 
             var selectable = grid.selectables[newRow][newCol];
@@ -146,10 +148,14 @@ namespace Beast.Radar.UI
             {
                 BDebug.LogError(this, "Selectable is null");
             }
-            
-            SwitchSelectable(selectable);
+            else
+            {
+                SwitchSelectable(selectable);
+            }
+            UnityEngine.Debug.Log($"dir {direction} index {grid.currentIndex}");
         }
-
+    
+        
         private void OnTriggerPressed(float value)
         {
             if (!_selectableGrids.ContainsKey(ESelectionZone.Trigger))
@@ -189,7 +195,7 @@ namespace Beast.Radar.UI
         private void SwitchSelectable(Selectable selectable)
         {
             //delete this
-            if (selectable == null || selectable == _currentSelectable)
+            if (selectable == _currentSelectable)
             {
                 return;
             }
@@ -198,8 +204,7 @@ namespace Beast.Radar.UI
             {
                 _currentSelectable.OnDeselect(null);
             }
-
-   
+            
             
             _currentSelectable = selectable;
             _currentSelectable.Select();

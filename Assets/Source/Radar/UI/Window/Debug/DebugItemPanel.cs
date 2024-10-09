@@ -76,8 +76,8 @@ namespace Beast.Radar.UI
 
             Selectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
             SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables, 
-                size: new int2(15, 5),
-                isFillHorizontally: false,
+                rows: 5,
+                isFillHorizontally: true,
                 isLooping: false);
 
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>

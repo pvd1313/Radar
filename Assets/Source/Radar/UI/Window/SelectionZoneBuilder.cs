@@ -1,82 +1,80 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
     public class SelectionZoneBuilder : ISelectionZoneBuilder
     {
-        public SelectableGridData Build(Selectable[] selectables, int2 size, bool isFillHorizontally, bool isLooping)
+        public SelectableGridData Build(Selectable[] selectables, int rows, bool isFillHorizontally, bool isLooping)
         {
-            Selectable[][] selectionsGrid = isFillHorizontally
-                ? new Selectable[size.y][]
-                : new Selectable[size.x][];
+            List<Selectable[]> selectionsGrid = new List<Selectable[]>();
 
-            for (int i = 0; i < (isFillHorizontally ? size.y : size.x); i++)
-            {
-                selectionsGrid[i] = new Selectable[isFillHorizontally ? size.x : size.y];
-            }
-
+            int totalItems = selectables.Length;
             int index = 0;
-            for (int outer = 0; outer < (isFillHorizontally ? size.y : size.x); outer++)
-            {
-                for (int inner = 0; inner < (isFillHorizontally ? size.x : size.y); inner++)
-                {
-                    if (index < selectables.Length)
-                    {
-                        if (isFillHorizontally)
-                        {
-                            selectionsGrid[outer][inner] = selectables[index];
-                        }
-                        else
-                        {
-                            selectionsGrid[inner][outer] = selectables[index];
-                        }
 
-                        index++;
-                    }
-                    else
+            if (isFillHorizontally)
+            {
+                for (int i = 0; i < rows; i++)
+                {
+                    Selectable[] column = new Selectable[totalItems / rows + (i < totalItems % rows ? 1 : 0)];
+
+                    for (int j = 0; j < column.Length; j++)
                     {
-                        break;
+                        int itemIndex = i + j * rows;
+                        if (itemIndex < totalItems)
+                        {
+                            column[j] = selectables[itemIndex];
+                        }
                     }
+
+                    selectionsGrid.Add(column);
+                }
+            }
+            else
+            {
+                while (index < totalItems)
+                {
+                    int itemsInThisColumn = Math.Min(rows, totalItems - index);
+                    Selectable[] column = new Selectable[itemsInThisColumn];
+
+                    Array.Copy(selectables, index, column, 0, itemsInThisColumn);
+                    selectionsGrid.Add(column);
+
+                    index += itemsInThisColumn;
                 }
             }
 
             return new SelectableGridData()
             {
-                selectables = selectionsGrid,
+                selectables = selectionsGrid.ToArray(), 
                 currentIndex = int2.zero,
                 isLooping = isLooping
             };
         }
 
-        public SelectableGridData Build(Selectable[] selectables,bool isFillHorizontally, bool isLooping)
+        public SelectableGridData Build(Selectable[] selectables, bool isFillHorizontally, bool isLooping)
         {
-            Selectable[][] selectablesGrid;
-
+            List<Selectable[]> selectablesGrid = new List<Selectable[]>();
+       
             if (isFillHorizontally)
             {
-                selectablesGrid = new Selectable[1][];
-                selectablesGrid[0] = new Selectable[selectables.Length];
-        
-                for (int i = 0; i < selectables.Length; i++)
-                {
-                    selectablesGrid[0][i] = selectables[i];
-                }
+              
+                selectablesGrid.Add(selectables);
+              
             }
             else
             {
-                selectablesGrid = new Selectable[selectables.Length][];
-        
-                for (int i = 0; i < selectables.Length; i++)
+                foreach (var selectable in selectables)
                 {
-                    selectablesGrid[i] = new Selectable[1];
-                    selectablesGrid[i][0] = selectables[i];
+                    selectablesGrid.Add(new[] { selectable });
                 }
             }
 
             return new SelectableGridData()
             {
-                selectables = selectablesGrid,
+                selectables = selectablesGrid.ToArray(),
                 currentIndex = int2.zero,
                 isLooping = isLooping
             };
