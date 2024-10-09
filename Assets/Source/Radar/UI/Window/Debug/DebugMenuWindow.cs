@@ -102,7 +102,7 @@ namespace Beast.Radar.UI
             SelectableGridData triggerGrid = _zoneBuilder.Build
             (
                 selectables: _view.folderButtons.Select(b => b.Selectable).ToArray(),
-                isFillHorizontally: false,
+                isFillHorizontally: true,
                 isLooping: false
             );
 

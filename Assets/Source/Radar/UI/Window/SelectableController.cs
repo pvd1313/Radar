@@ -14,9 +14,7 @@ namespace Beast.Radar.UI
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
         private Selectable _currentSelectable;
 
-        public SelectableController(
-            IUIInputController input, 
-            Dictionary<ESelectionZone, SelectableGridData> selectables)
+        public SelectableController(IUIInputController input, Dictionary<ESelectionZone, SelectableGridData> selectables)
         {
             _input = input;
             _selectableGrids = selectables;
@@ -27,8 +25,7 @@ namespace Beast.Radar.UI
             if (_selectableGrids.ContainsKey(zone))
             {
                 int2 currentIndex = _selectableGrids[zone].currentIndex;
-
-                // Проверяем индексацию с учетом длины зубчатого массива
+                
                 if (currentIndex.x >= grid.selectables[currentIndex.y].Length)
                 {
                     currentIndex.x = grid.selectables[currentIndex.y].Length - 1;
@@ -61,8 +58,12 @@ namespace Beast.Radar.UI
                 SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
                 _currentSelectable = grid.selectables[grid.currentIndex.y][grid.currentIndex.x];
             }
+
+            if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
+            {
+                _currentSelectable.Select();
+            }
             
-            _currentSelectable.Select();
             Subscribe();
         }
 
@@ -176,34 +177,29 @@ namespace Beast.Radar.UI
 
             _selectableGrids[ESelectionZone.Trigger] = grid;
 
-            SwitchSelectable(grid.selectables[grid.currentIndex.y][newCol]);
-
-            if (_currentSelectable is Button button)
+            Selectable triggerSelectable = grid.selectables[grid.currentIndex.y][grid.currentIndex.x];
+            if (triggerSelectable is Button button)
             {
                 button.onClick.Invoke();
             }
 
-            if (!_selectableGrids.ContainsKey(ESelectionZone.DPad))
-            {
-                return;
-            }
-
-            SelectableGridData dpadGrid = _selectableGrids[ESelectionZone.DPad];
-            SwitchSelectable(dpadGrid.selectables[dpadGrid.currentIndex.y][dpadGrid.currentIndex.x]);
+            UnityEngine.Debug.Log($"{value} {triggerSelectable?.name} {newCol}/{cols}");
         }
 
         private void SwitchSelectable(Selectable selectable)
         {
+            //delete this
+            if (selectable == null || selectable == _currentSelectable)
+            {
+                return;
+            }
+            
             if (_currentSelectable != null)
             {
                 _currentSelectable.OnDeselect(null);
             }
 
-            //delete this
-            if (selectable == null)
-            {
-                return;
-            }
+   
             
             _currentSelectable = selectable;
             _currentSelectable.Select();
