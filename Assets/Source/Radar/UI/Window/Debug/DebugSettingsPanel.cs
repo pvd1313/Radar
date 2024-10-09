@@ -1,38 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
-using Unity.Mathematics;
+using Beast.Radar.InputControl;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class DebugSettingsFolder: IFolder
+    public class DebugSettingsPanel: IPanel
     {
-        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
         private static readonly float[] TimeScales = { 1, 3, 10 };
         
-        private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly DebugSettingsFolderView _view;
+        private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _input;
+
+        private SelectableController _selectableController;
         
-        public DebugSettingsFolder(DebugSettingsFolderView view, ISelectionZoneBuilder zoneBuilder)
+        public DebugSettingsPanel(
+            DebugSettingsFolderView view, 
+            ISelectionZoneBuilder zoneBuilder,
+            IUIInputController input)
         {
             _zoneBuilder = zoneBuilder;
+            _input = input;
             _view = view;
         }
         
         public void Warmup()
         {
-            SelectableGridData dpadGrid = _zoneBuilder.Build(
-                _view.timeScaleButtons.Select(b => b.Selectable).ToArray(), 
-                new int2(1, 3),
+            SelectableGridData dpadGrid = _zoneBuilder.Build(_view.timeScaleButtons.Select(b => b.Selectable).ToArray(),
+                isFillHorizontally: false,
                 isLooping: false);
-        
-            Selections = new Dictionary<ESelectionZone, SelectableGridData>()
+
+            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.DPad , dpadGrid}
-            };
-            
-            Subscribe();
+            });
+
+            SubscribeView();
         }
 
         public void Dispose()
@@ -41,15 +46,17 @@ namespace Beast.Radar.UI
         
         public void Open()
         {
+            _selectableController.Enable();
             _view.body.SetActive(true);    
         }
 
         public void Close()
         {
             _view.body.SetActive(false);
+            _selectableController.Disable();
         }
 
-        private void Subscribe()
+        private void SubscribeView()
         {
             for (int i = 0; i < _view.timeScaleButtons.Length; i++)
             {

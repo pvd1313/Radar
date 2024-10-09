@@ -1,36 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
+using Beast.Radar.InputControl;
 using Beast.Radar.UI.Debug;
 using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class DebugItemFolder : IFolder
+    public class DebugItemPanel : IPanel
     {
-        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
-
         private static readonly float[] ItemsCount = { 1, 10, 100 };
         
         private readonly ItemData[] _itemsData;
         private readonly DebugItemFolderView _view;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _input;
 
+        private SelectableController _selectableController; 
         private DebugItemBuilder _builder;
-
+        
         private DebugItemButton _selectedButton;
         
-        public DebugItemFolder(
+        public DebugItemPanel(
             DebugItemFolderView view, 
             IUIFactory uiFactory, 
             ISelectionZoneBuilder zoneBuilder,
+            IUIInputController input,
             ItemData[] itemsData)
         {
             _view = view;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
+            _input = input;
             _itemsData = itemsData;
         }
 
@@ -50,31 +53,38 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
+            _selectableController.Enable();
             _view.body.SetActive(true);
         }
 
         public void Close()
         {
             _view.body.SetActive(false);
+            _selectableController.Disable();
             Reset();
         }
 
         private void InitializeSelectables()
         {
-            List<Selectable> dpadSelectables = new List<Selectable>();
-            dpadSelectables.Add(_view.previousItems.Selectable);
-            dpadSelectables.Add(_view.nextItems.Selectable);
-            dpadSelectables.AddRange(_view.itemGrantButtons.Select(b => b.Selectable));
-            SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables.ToArray(), new int2(5, 1), false);
+            List<Selectable> rightStickSelectables = new List<Selectable>();
+            rightStickSelectables.Add(_view.previousItems.Selectable);
+            rightStickSelectables.Add(_view.nextItems.Selectable);
+            rightStickSelectables.AddRange(_view.itemGrantButtons.Select(b => b.Selectable));
+            SelectableGridData rightStickGrid = _zoneBuilder.Build(rightStickSelectables.ToArray(),
+                isFillHorizontally: true,
+                isLooping: false);
 
-            Selectable[] rightStickSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
-            SelectableGridData rightStickGrid = _zoneBuilder.Build(rightStickSelectables, new int2(15, 5), false);
+            Selectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
+            SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables, 
+                size: new int2(15, 5),
+                isFillHorizontally: false,
+                isLooping: false);
 
-            Selections = new Dictionary<ESelectionZone, SelectableGridData>()
+            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.DPad, dpadGrid },
                 { ESelectionZone.RightStick, rightStickGrid }
-            };
+            } );
         }
 
         private void Subscribe()
@@ -115,6 +125,7 @@ namespace Beast.Radar.UI
 
         private void OnGrantButtonClicked(int index)
         {
+            //todo Add an action to issue an item 
             BDebug.LogInfo(this, $"Granted {ItemsCount[index]} {_selectedButton.Item.name}");
         }
 

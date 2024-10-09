@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
+using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -9,25 +10,27 @@ namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : IWindow, IGameCycleListener
     {
-        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
-        
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
         private readonly IGameSaveManager _gameSave;
-        private readonly ISelectionZoneBuilder _selectionZoneBuilder;
+        private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _input;
 
         private PauseMenuView _menuView;
+        private SelectableController _selectableController;
         
         public PauseMenuWindow(
             IUIFactory uiFactory,
             IWindowManager windowManager,
             IGameSaveManager gameSave,
-            ISelectionZoneBuilder selectionZoneBuilder)
+            ISelectionZoneBuilder zoneBuilder,
+            IUIInputController input)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _gameSave = gameSave;
-            _selectionZoneBuilder = selectionZoneBuilder;
+            _zoneBuilder = zoneBuilder;
+            _input = input;
         }
 
         public void ListenGameCycle(IGameCycleHandle handle)
@@ -42,19 +45,19 @@ namespace Beast.Radar.UI
                 
             _windowManager.Register(this, WindowID.Pause, _menuView);
             
-            SelectableGridData dpadSelectable = _selectionZoneBuilder.Build(new[]
+            SelectableGridData dpadSelectable = _zoneBuilder.Build(new[]
             {
                 _menuView.newGameButton.Selectable,
                 _menuView.saveButton.Selectable,
                 _menuView.loadButton.Selectable,
-            }, new int2(1, 3), isLooping: true);
+            }, isFillHorizontally: false, isLooping: true);
 
-            Selections = new Dictionary<ESelectionZone, SelectableGridData>()
+            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.DPad, dpadSelectable }
-            };
-            SubscribeView();
+            });
             
+            SubscribeView();
             return OperationResult.SuccessSync();
         }
 
@@ -67,26 +70,14 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-            SetActive(true);
+            _selectableController.Enable();
+            _menuView.gameObject.SetActive(true);
         }
 
         public void Close()
         {
-            SetActive(false);
-        }
-
-        private void SetActive(bool isActive)
-        {
-            _menuView.loadButton.SetInteractable(isActive);
-            _menuView.saveButton.SetInteractable(isActive);
-            _menuView.newGameButton.SetInteractable(isActive);
-            
-            foreach (UIButton closeButton in _menuView.closePanelButtons)
-            {
-                closeButton.SetInteractable(isActive);
-            }
-
-            _menuView.gameObject.SetActive(isActive);
+            _menuView.gameObject.SetActive(false);
+            _selectableController.Disable();
         }
 
         private void SubscribeView()

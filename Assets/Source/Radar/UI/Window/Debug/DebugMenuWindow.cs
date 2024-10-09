@@ -2,30 +2,32 @@
 using System.Linq;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
+using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class DebugMenuWindow : IWindow, IGameCycleListener
     {
-        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; private set; }
-
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
-        private readonly ISelectionZoneBuilder _selectionZoneBuilder;
+        private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _input;
 
+        private SelectableController _selectableController;
         private DebugMenuView _view;
-        private WindowFoldersController _foldersController;
+        private WindowPanelsController _panelsController;
 
         public DebugMenuWindow(
             IWindowManager windowManager,
             IUIFactory uiFactory,
-            ISelectionZoneBuilder selectionZoneBuilder)
+            ISelectionZoneBuilder zoneBuilder,
+            IUIInputController input)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
-            _selectionZoneBuilder = selectionZoneBuilder;
+            _zoneBuilder = zoneBuilder;
+            _input = input;
         }
 
         public void ListenGameCycle(IGameCycleHandle handle)
@@ -38,12 +40,16 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
+            _panelsController.Enable();
+            _selectableController.Enable();
             _view.screen.SetActive(true);
         }
 
         public void Close()
         {
             _view.screen.SetActive(false);
+            _panelsController.Disable();
+            _selectableController.Disable();
         }
 
         private UniTask<OperationResult> Warmup()
@@ -52,28 +58,28 @@ namespace Beast.Radar.UI
             _windowManager.Register(this, WindowID.Debug, _view);
 
             InitializeFolders();
-            InitializeSelectables();
+            ConfigureSelectables();
 
-            Subscribe();
+            SubscribeView();
 
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()
         {
-            Unsubscribe();
+            UnsubscribeView();
 
-            _foldersController.Dispose();
+            _panelsController.Dispose();
 
             return OperationResult.SuccessSync();
         }
 
         private void InitializeFolders()
         {
-            _foldersController = new WindowFoldersController(_view.folderButtons, new IFolder[]
+            _panelsController = new WindowPanelsController(_view.folderButtons, new IPanel[]
             {
                 //todo replace itemsData with data from the configuration file.
-                new DebugItemFolder(_view.itemView, _uiFactory, _selectionZoneBuilder, itemsData: new ItemData[]
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, new ItemData[]
                 {
                     new() { type = EItemType.Equipment, name = "shirt", weight = 1 },
                     new() { type = EItemType.Equipment, name = "pants", weight = 1.2f },
@@ -85,41 +91,35 @@ namespace Beast.Radar.UI
                     new() { type = EItemType.Eat, name = "dirty water", weight = 0.2f },
                     new() { type = EItemType.Eat, name = "meat", weight = 0.7f },
                 }),
-                new DebugSettingsFolder(_view.settingsView, _selectionZoneBuilder),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _input),
             });
-            _foldersController.Warmup();
+            
+            _panelsController.Warmup();
         }
 
-        private void InitializeSelectables()
+        private void ConfigureSelectables()
         {
-            SelectableGridData triggerGrid = _selectionZoneBuilder.Build
+            SelectableGridData triggerGrid = _zoneBuilder.Build
             (
                 selectables: _view.folderButtons.Select(b => b.Selectable).ToArray(),
-                size: new int2(2, 1),
+                isFillHorizontally: false,
                 isLooping: false
             );
 
-            Selections = new Dictionary<ESelectionZone, SelectableGridData>
+            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.Trigger, triggerGrid }
-            };
-
-            foreach (var folderSelection in _foldersController.CurrentFolder.Selections)
-            {
-                Selections.TryAdd(folderSelection.Key, folderSelection.Value);
-            }
+            });
         }
 
-        private void Subscribe()
+        private void SubscribeView()
         {
-            _foldersController.FolderSwitched += OnFolderSwitched;
             _view.openButton.Clicked += OnOpenButtonClicked;
             _view.closeButton.Clicked += OnCloseButtonClicked;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeView()
         {
-            _foldersController.FolderSwitched -= OnFolderSwitched;
             _view.openButton.Clicked -= OnOpenButtonClicked;
             _view.closeButton.Clicked -= OnCloseButtonClicked;
         }
@@ -132,19 +132,6 @@ namespace Beast.Radar.UI
         private void OnOpenButtonClicked()
         {
             _windowManager.Show(WindowID.Debug);
-        }
-
-        private void OnFolderSwitched(IFolder oldFolder, IFolder newFolder)
-        {
-            foreach (var oldSelection in oldFolder.Selections)
-            {
-                Selections.Remove(oldSelection.Key);
-            }
-
-            foreach (var newSelection in newFolder.Selections)
-            {
-                Selections.Add(newSelection.Key, newSelection.Value);
-            }
         }
     }
 }

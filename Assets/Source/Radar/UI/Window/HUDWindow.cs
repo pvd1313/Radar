@@ -7,14 +7,11 @@ namespace Beast.Radar.UI
 {
     public class HUDWindow : IWindow, IGameCycleListener
     {
-        public Dictionary<ESelectionZone, SelectableGridData> Selections { get; } = new();
-        
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
 
         private HUDView _view;
-
-
+        
         public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager)
         {
             _uiFactory = uiFactory;
@@ -25,6 +22,16 @@ namespace Beast.Radar.UI
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
+        }
+
+        public void Open()
+        {
+           SetActive(true);
+        }
+
+        public void Close()
+        {
+            SetActive(false);
         }
 
         private UniTask<OperationResult> Warmup()
@@ -38,22 +45,11 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        public UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> Dispose()
         {
             UnsubscribeView();
 
             return OperationResult.SuccessSync();
-        }
-
-
-        public void Open()
-        {
-           SetActive(true);
-        }
-
-        public void Close()
-        {
-            SetActive(false);
         }
 
         private void SetActive(bool isActive)

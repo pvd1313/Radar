@@ -14,17 +14,15 @@ namespace Beast.Radar.UI
 
         private readonly IUIFactory _uiFactory;
         private readonly IUIInputController _uiInputController;
-        private readonly ISelectableManager _selectableManager;
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
         private IWindow _currentOpenedWindowController;
 
-        public WindowManager(IUIFactory uiFactory, IUIInputController input, ISelectableManager selectableManager)
+        public WindowManager(IUIFactory uiFactory, IUIInputController input)
         {
             _uiFactory = uiFactory;
             _uiInputController = input;
-            _selectableManager = selectableManager;
         }
         
         public void ListenGameCycle(IGameCycleHandle handle)
@@ -64,14 +62,12 @@ namespace Beast.Radar.UI
         {
             if (!_allWindows.ContainsKey(windowID))
             {
-                throw new InvalidOperationException($"'{windowID}' is already shown");
+                throw new InvalidOperationException($"Window with ID '{windowID}' is not registered or does not exist.");
             }
 
             _currentOpenedWindowController?.Close();
-            _selectableManager.Reset();
             _currentOpenedWindowController = _allWindows[windowID];
             _currentOpenedWindowController.Open();
-            _selectableManager.Set(_currentOpenedWindowController.Selections);
             
             bool isHasOpenedWindow = windowID != WindowID.MainHUD;
             
