@@ -1331,7 +1331,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_text
-      value: name
+      value: <b>name</b>
       objectReference: {fileID: 0}
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_fontSize
@@ -1887,7 +1887,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_text
-      value: "time \nscale"
+      value: "<b>time \nscale</b>"
       objectReference: {fileID: 0}
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_fontSize

@@ -72,6 +72,7 @@ namespace Beast.Radar.UI
         {
             _foldersController = new WindowFoldersController(_view.folderButtons, new IFolder[]
             {
+                //todo replace itemsData with data from the configuration file.
                 new DebugItemFolder(_view.itemView, _uiFactory, _selectionZoneBuilder, itemsData: new ItemData[]
                 {
                     new() { type = EItemType.Equipment, name = "shirt", weight = 1 },

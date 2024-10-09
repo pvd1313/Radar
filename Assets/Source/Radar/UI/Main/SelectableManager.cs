@@ -2,7 +2,6 @@
 using System.Linq;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -153,6 +152,14 @@ namespace Beast.Radar.UI
             {
                 button.onClick.Invoke();
             }
+            
+            if (!_selectableGrids.ContainsKey(ESelectionZone.DPad))
+            {
+                return; 
+            }
+            
+            _currentSelectable = _selectableGrids[ESelectionZone.DPad].selectables[0,0];
+            _currentSelectable.Select();
         }
     }
 }

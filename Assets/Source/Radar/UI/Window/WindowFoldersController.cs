@@ -4,7 +4,7 @@ namespace Beast.Radar.UI
 {
     public class WindowFoldersController
     {
-        public IWindow CurrentFolder { get; private set; }
+        public IFolder CurrentFolder { get; private set; }
 
         public event Action<IFolder, IFolder> FolderSwitched;
         

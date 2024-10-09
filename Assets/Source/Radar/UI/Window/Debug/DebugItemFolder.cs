@@ -28,10 +28,10 @@ namespace Beast.Radar.UI
             ISelectionZoneBuilder zoneBuilder,
             ItemData[] itemsData)
         {
-            _itemsData = itemsData;
             _view = view;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
+            _itemsData = itemsData;
         }
 
         public void Warmup()
@@ -124,6 +124,7 @@ namespace Beast.Radar.UI
             {
                 _selectedButton.SetDefaultMode();
             }
+            
             _view.itemName.SetText("name");
             _view.itemWeight.SetText("weight");
         }
