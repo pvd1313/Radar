@@ -39,11 +39,11 @@ MonoBehaviour:
     m_RotationOrder: 4
   motion:
   - schemes: 01000000
-    zoomSpeed: 30
+    zoomSpeed: 1
     motionSpeed: 0.01
   - schemes: 03000000
     zoomSpeed: 0.15
     motionSpeed: 1
   - schemes: 02000000
-    zoomSpeed: 1
-    motionSpeed: 0.001
+    zoomSpeed: 0.1
+    motionSpeed: 0.005

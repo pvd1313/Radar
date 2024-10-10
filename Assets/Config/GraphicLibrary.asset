@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   terrainBakeShader: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
-  terrainNoiseShader: {fileID: 4800000, guid: c2f487fe8fc4dc7439cd7214f133af3b, type: 3}
+  terrainDetailShader: {fileID: 4800000, guid: 568914bca48ac924486ebb6fe636d42d, type: 3}
   terrainColorShader: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
   isometricSolverShader: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
   isometricRenderShader: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}

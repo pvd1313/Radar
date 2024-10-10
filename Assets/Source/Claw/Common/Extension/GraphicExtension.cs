@@ -7,7 +7,7 @@ namespace Beast.Claw.Common
     public static class GraphicExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float2 WidthHeightFloat(this Texture texture)
+        public static float2 SizeFloat(this Texture texture)
         {
             return new float2(texture.width, texture.height);
         }

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic.Terrain
 {
-    public class TerrainNoiseRender : ITerrainNoiseRender, IGameCycleListener
+    public class TerrainDetailRender : ITerrainDetailRender, IGameCycleListener
     {
         public bool IsReady => _isReady;
         public Texture RenderTexture => _renderTexture;
@@ -34,7 +34,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         private bool _isReady;
 
-        public TerrainNoiseRender(
+        public TerrainDetailRender(
             GameModel game,
             IScreen screen,
             ITerrainBakedTexture terrainTexture, 
@@ -64,7 +64,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial = BeastCG.CreateMaterial(this, new MaterialParameters
             {
                 name = "Render",
-                shader = _library.terrainNoiseShader,
+                shader = _library.terrainDetailShader,
             });
 
             _renderTextureForScreenSize = _screen.Size;
@@ -72,7 +72,9 @@ namespace Beast.Radar.Graphic.Terrain
             float size = BMath.Max(_screen.Width, _screen.Height) / BMath.Cos(_camera.MaxRotationRad.roll);
             _renderTextureSize.x = BMath.CeilToInt(size);
             _renderTextureSize.y = BMath.CeilToInt(size);
-            _renderTextureAspect = 1;
+            _renderTextureSize.x = _screen.Height;
+            _renderTextureSize.y = _screen.Height;
+            _renderTextureAspect = _renderTextureSize.x / (float)_renderTextureSize.y;
             _renderTexture = _baker.Create(this, _renderTextureSize, false);
             
             return OperationResult.SuccessSync();
@@ -119,11 +121,20 @@ namespace Beast.Radar.Graphic.Terrain
             // float2x2 rotate = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
             // _renderCenter = rotate.Multiply(scale.Multiply(_camera.Position));
 
-            float screenScale = ((float)_renderTextureSize.y / _screen.Height);
+           // float screenScale = ((float)_renderTextureSize.y / _screen.Height);
+            //BDebug.TrackFloat(this, "_screenScale", screenScale);
+            _renderDistance = _camera.TargetViewDistance * 1;
+
+            float chunkSize = _camera.TargetViewDistance / _renderDistance;
+
+            if (chunkSize > 100)
+            {
+                _renderDistance *= (chunkSize / 100);
+            }
             
-            BDebug.TrackFloat(this, "_screenScale", screenScale);
+            BDebug.TrackFloat(this, "chunkSize", chunkSize);
             
-            _renderDistance = _camera.TargetViewDistance * screenScale;
+            
             
             _renderMaterial.SetFloat("_OutputAspect", _renderTextureAspect);
             _renderMaterial.SetFloat("_OutputHeight", _renderDistance);
@@ -140,12 +151,12 @@ namespace Beast.Radar.Graphic.Terrain
             
 #if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);
-            _renderMaterial.SetVector("_DebugGridTextureSize", _library.debug.terrainGrid.WidthHeightFloat());
+            _renderMaterial.SetVector("_DebugGridTextureSize", _library.debug.terrainGrid.SizeFloat());
 #endif
             
             Texture2D worldDetailNoise = _library.worldNoiseTexture;
             _renderMaterial.SetTexture("_NoiseMap", worldDetailNoise);
-            _renderMaterial.SetVector("_NoiseMapSize", worldDetailNoise.WidthHeightFloat());
+            _renderMaterial.SetVector("_NoiseMapSize", worldDetailNoise.SizeFloat());
             
             BeastCG.Blit(new BlitParameters
             {

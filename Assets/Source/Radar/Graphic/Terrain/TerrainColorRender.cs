@@ -14,7 +14,7 @@ namespace Beast.Radar.Graphic.Terrain
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
-        private readonly ITerrainNoiseRender _terrain;
+        private readonly ITerrainDetailRender _terrain;
         private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
@@ -22,7 +22,7 @@ namespace Beast.Radar.Graphic.Terrain
         public TerrainColorRender(
             IScreen screen,
             GraphicLibrary library, 
-            ITerrainNoiseRender terrain,
+            ITerrainDetailRender terrain,
             ICameraTransform camera)
         {
             _screen = screen;
@@ -65,22 +65,14 @@ namespace Beast.Radar.Graphic.Terrain
                 return;
             }
             
-            float2 renderTextureSize = _terrain.RenderTexture.WidthHeightFloat();
-            
-            
-            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            float2 renderTextureSize = _terrain.RenderTexture.SizeFloat();
             
             float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
-
-            BDebug.TrackFloat(this, "viewDistance", _camera.TargetViewDistance);
-            BDebug.TrackFloat(this, "yScaleDistance", _camera.TargetViewDistance * yScale);
 
             float2x2 rotation = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
             
             BDebug.TrackFloat(this, "yScale", yScale);
-            BDebug.TrackFloat(this, "cameraRoll", _camera.CurrentRotationRad.roll * BMath.Rad2Deg);
-            BDebug.TrackFloat(this, "cameraPitch", _camera.CurrentRotationRad.pitch * BMath.Rad2Deg);
             
             _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);

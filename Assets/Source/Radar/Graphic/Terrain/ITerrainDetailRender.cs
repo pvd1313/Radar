@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic.Terrain
 {
-    public interface ITerrainNoiseRender : IReady
+    public interface ITerrainDetailRender : IReady
     {
         Texture RenderTexture { get; }
         float RenderDistance { get; }

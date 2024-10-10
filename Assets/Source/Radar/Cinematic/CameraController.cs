@@ -115,13 +115,9 @@ namespace Beast.Radar.Cinematic
                 //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
 
 
-                BDebug.TrackFloat2(this, "screenPoint", _input.ScreenPoint);
-                
                 float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
 
 
-                BDebug.TrackFloat2(this, "worldPoint", a);
-                
                 float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
                 moveDelta = b - a;
                 _transform.AddPosition(moveDelta, Space.World);
@@ -131,10 +127,6 @@ namespace Beast.Radar.Cinematic
                 moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
                 _transform.AddPosition(moveDelta, Space.Self);
             }
-            
-            BDebug.TrackFloat2(this, "moveDelta", moveDelta);
-            
-            
         }
 
         private void Zoom()

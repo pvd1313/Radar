@@ -7,8 +7,6 @@ using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.WSA;
-using Screen = UnityEngine.Device.Screen;
 
 namespace Beast.Radar.Graphic.Terrain
 {
@@ -17,7 +15,7 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
-        private readonly ITerrainNoiseRender _terrainNoise;
+        private readonly ITerrainDetailRender _terrainDetail;
         private readonly ITerrainBakedTexture _terrainBaked;
 
         private Material _renderMaterial;
@@ -27,13 +25,13 @@ namespace Beast.Radar.Graphic.Terrain
             ICameraTransform camera, 
             GraphicLibrary library, 
             IScreen screen,
-            ITerrainNoiseRender terrainNoise,
+            ITerrainDetailRender terrainDetail,
             ITerrainBakedTexture terrainBaked)
         {
             _camera = camera;
             _library = library;
             _screen = screen;
-            _terrainNoise = terrainNoise;
+            _terrainDetail = terrainDetail;
             _terrainBaked = terrainBaked;
         }
         
@@ -54,10 +52,18 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void FrameEnd()
         {
-            float viewDistance = _camera.TargetViewDistance;
+            // if (Time.time % 1 > 0.5f)
+            // {
+            //     return;
+            // }
             
-            float tileHeight = (1f / _camera.TargetViewDistance);
+            float tileHeight = 0.01f / _camera.TargetViewDistance;
             BDebug.TrackFloat(this, "tileHeight", tileHeight);
+
+            if (tileHeight < 1f / Screen.height)
+            {
+                return;
+            }
 
             int yTileCount = BMath.CeilToInt(1f / tileHeight + 1);
             int xTileCount = BMath.CeilToInt(1f / tileHeight * _screen.Aspect);
@@ -65,11 +71,6 @@ namespace Beast.Radar.Graphic.Terrain
             int2 gridSize = new (xTileCount, yTileCount);
             
             int tileCount = TileCountFromGridSize(gridSize);
-
-            if (tileCount > 100000)
-            {
-                return;
-            }
             
             BDebug.TrackInt(this, "tileCount", tileCount);
             
@@ -82,18 +83,56 @@ namespace Beast.Radar.Graphic.Terrain
 
         private RenderTexture CreateSolverTexture(int2 gridSize)
         {
+            //float screenScale = _screen.Height / (float)_terrainDetail.RenderTexture.height;
+            //float2 screenScale = _screen.Size / _terrainDetail.RenderTexture.SizeFloat();
             int tileCount = TileCountFromGridSize(gridSize);
+
             
             BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
             
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _solverMaterial.SetVector("_TileGridSize", gridSize);
-            _solverMaterial.SetTexture("_TerrainTexture", _terrainBaked.Texture);
-            _solverMaterial.SetVector("_TerrainSize", _terrainBaked.Texture.WidthHeightFloat());
+            _solverMaterial.SetTexture("_TerrainTexture", _terrainDetail.RenderTexture);
+            
+            BDebug.TrackFloat(this, "TargetViewDistance", _camera.TargetViewDistance);
+
+            float2 terrainSize = _terrainDetail.RenderTexture.SizeFloat();
+            float rSize = _camera.TargetViewDistance / terrainSize.y * 100;
+
+            float2 terrainNewSize = terrainSize * rSize;
+
+            BDebug.TrackFloat(this, "rSize", rSize);
+            
+            _solverMaterial.SetVector("_TerrainSize", terrainNewSize);
+
+            BDebug.TrackFloat2(this, "terrainNewSize", terrainNewSize);
+            BDebug.TrackFloat2(this, "terrainOldSize", terrainSize);
+            
+            BDebug.TrackFloat2(this, "gridSIze", gridSize);
+            
+            float tileHeight = 0.01f / _camera.TargetViewDistance;
+            
             // TODO : Not correct.
-            _solverMaterial.SetVector("_TerrainOffset", _camera.ViewportToWorld(new float2(0, 1)));
+            //_solverMaterial.SetVector("_TerrainOffset", _terrainDetail.RenderTexture.SizeFloat() * screenOffset);
+
+            float magic0 = terrainNewSize.x - terrainNewSize.x * rSize;
+            float magic1 = terrainNewSize.y + terrainNewSize.y * rSize;
+            float magic2 = 1 / terrainNewSize.x;
+
+            BDebug.TrackFloat(this, "magic0", magic0);
+            BDebug.TrackFloat(this, "magic1", magic1);
+            BDebug.TrackFloat(this, "magic2", magic2);
+
+            float archiMagic = 2.585420625f;
+            archiMagic = tileHeight * terrainSize.x;
+            
+            _solverMaterial.SetVector("_TerrainOffset", new float2(magic0 + archiMagic * 0, magic1 - archiMagic * 0));
+            //_solverMaterial.SetVector("_TerrainOffset", new float2(258, 566));
+            
+            
+            
             _solverMaterial.SetTexture("_NoiseTexture", _library.worldNoiseTexture);
-            _solverMaterial.SetVector("_NoiseSize", _library.worldNoiseTexture.WidthHeightFloat());
+            _solverMaterial.SetVector("_NoiseSize", _library.worldNoiseTexture.SizeFloat());
             // TODO : Not correct.
             _solverMaterial.SetVector("_NoiseOffset", _camera.Position);
             _solverMaterial.SetFloat("_OutputTextureSize", solverTextureSize);
@@ -130,7 +169,7 @@ namespace Beast.Radar.Graphic.Terrain
         
             renderParams.matProps.SetVector("_TileGridSize", gridSize);
             renderParams.matProps.SetTexture("_TileAtlas", atlas.atlasTexture);
-            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.WidthHeightFloat());
+            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.SizeFloat());
             renderParams.matProps.SetVector("_TileAtlasTileCount", atlas.tileCount);
             renderParams.matProps.SetVector("_TileBlendCenter", atlas.tileBlendCenter);
             renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.astlasPPU);
