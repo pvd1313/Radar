@@ -11,6 +11,6 @@ namespace Beast.Radar.UI
         public UIButton[] panelButtons;
         public DebugItemFolderView itemView;
         public DebugSettingsFolderView settingsView;
-        
+        public InputIconDisplay[] inputIcons;
     }
 }

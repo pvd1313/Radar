@@ -13,6 +13,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
+        private readonly IPlayerInputProvider _inputProvider;
 
         private SelectableController _selectableController;
         private DebugMenuView _view;
@@ -22,12 +23,14 @@ namespace Beast.Radar.UI
             IWindowManager windowManager,
             IUIFactory uiFactory,
             ISelectionZoneBuilder zoneBuilder,
-            IUIInputController input)
+            IUIInputController input,
+            IPlayerInputProvider inputProvider)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _input = input;
+            _inputProvider = inputProvider;
         }
 
         public void ListenGameCycle(IGameCycleHandle handle)
@@ -57,10 +60,16 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _windowManager.Register(this, WindowID.Debug, _view);
 
+            foreach (var icon in _view.inputIcons)
+            {
+                icon.Refresh(_inputProvider.Scheme);
+            }
+            
             InitializePanels();
             ConfigureSelectables();
 
             SubscribeView();
+            SubscribeInput();
 
             return OperationResult.SuccessSync();
         }
@@ -122,6 +131,19 @@ namespace Beast.Radar.UI
         {
             _view.openButton.Clicked -= OnOpenButtonClicked;
             _view.closeButton.Clicked -= OnCloseButtonClicked;
+        }
+
+        private void SubscribeInput()
+        {
+            _inputProvider.ChangedScheme += OnInputSchemeChanged;
+        }
+
+        private void OnInputSchemeChanged(EInputScheme obj)
+        {
+            foreach (var icon in _view.inputIcons)
+            {
+                icon.Refresh(obj);
+            }
         }
 
         private void OnCloseButtonClicked()
