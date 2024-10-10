@@ -1,11 +1,16 @@
 ﻿using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
 {
     public class DebugTrackWindow : EditorWindow
     {
+        [SerializeField] private bool _clearOnEnterPlayerMode;
+
+        private bool _isPlaying;
+        
         protected override void Initialize()
         {
             
@@ -18,15 +23,35 @@ namespace Beast.Claw.Editor.Window
 
         protected override void OnInspectorGUI()
         {
-            EditorGUIUtility.labelWidth = 400;
+            if (_isPlaying != Application.isPlaying)
+            {
+                _isPlaying = Application.isPlaying;
 
+                if (_isPlaying && _clearOnEnterPlayerMode)
+                {
+                    Clear();
+                }
+            }
+            
+            EditorGUIUtility.labelWidth = 200;
+
+            new EditorUI()
+            {
+                niceLabelsEnabled = false
+            }
+                .Horizontal(() =>
+            {
+                UI.Button("Clear", Clear);
+                _clearOnEnterPlayerMode = UI.CheckBox(nameof(_clearOnEnterPlayerMode), _clearOnEnterPlayerMode);
+            });
+            
+            EditorGUIUtility.labelWidth = 400;
+            
             EditorUI ui = new ()
             {
                 success = true,
-                niceLabelsEnabled = false
+                niceLabelsEnabled = true
             };
-            
-            ui.Button("Clear", Clear);
             
             foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())
             {

@@ -60,6 +60,11 @@ namespace Beast.Claw.Editor
         {
             return EditorGUILayout.Vector2Field(NicifyLabel(label), value);
         }
+
+        public bool CheckBox(string label, bool value)
+        {
+            return EditorGUILayout.Toggle(NicifyLabel(label), value);
+        }
         
         public float3 Float3Field(string label, float3 value)
         {
