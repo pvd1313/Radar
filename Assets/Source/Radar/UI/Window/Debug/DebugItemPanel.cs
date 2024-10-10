@@ -3,7 +3,6 @@ using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Beast.Radar.UI.Debug;
-using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -19,7 +18,7 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _input;
 
         private SelectableController _selectableController; 
-        private DebugItemBuilder _builder;
+        private DebugItemPanelBuilder _builder;
         
         private DebugItemButton _selectedButton;
         
@@ -39,10 +38,10 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            _builder = new DebugItemBuilder(_uiFactory, _view.itemsRoot);
+            _builder = new DebugItemPanelBuilder(_uiFactory, _view.itemsRoot);
             _view.itemButtons = _builder.BuildItemButtons(_itemsData);
 
-            InitializeSelectables();
+            ConfigureSelectables();
             Subscribe();
         }
 
@@ -64,7 +63,7 @@ namespace Beast.Radar.UI
             Reset();
         }
 
-        private void InitializeSelectables()
+        private void ConfigureSelectables()
         {
             List<Selectable> rightStickSelectables = new List<Selectable>();
             rightStickSelectables.Add(_view.previousItems.Selectable);

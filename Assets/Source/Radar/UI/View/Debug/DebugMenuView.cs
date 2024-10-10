@@ -8,8 +8,9 @@ namespace Beast.Radar.UI
         public GameObject screen;
         public UIButton openButton;
         public UIButton closeButton;
-        public UIButton[] folderButtons;
+        public UIButton[] panelButtons;
         public DebugItemFolderView itemView;
         public DebugSettingsFolderView settingsView;
+        
     }
 }

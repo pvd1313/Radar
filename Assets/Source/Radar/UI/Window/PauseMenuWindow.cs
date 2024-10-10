@@ -4,7 +4,6 @@ using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
@@ -45,6 +44,14 @@ namespace Beast.Radar.UI
                 
             _windowManager.Register(this, WindowID.Pause, _menuView);
             
+            ConfigureSelectables();
+
+            SubscribeView();
+            return OperationResult.SuccessSync();
+        }
+
+        private void ConfigureSelectables()
+        {
             SelectableGridData dpadSelectable = _zoneBuilder.Build(new[]
             {
                 _menuView.newGameButton.Selectable,
@@ -56,9 +63,6 @@ namespace Beast.Radar.UI
             {
                 { ESelectionZone.DPad, dpadSelectable }
             });
-            
-            SubscribeView();
-            return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()

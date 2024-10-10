@@ -205,7 +205,6 @@ namespace Beast.Radar.UI
                 _currentSelectable.OnDeselect(null);
             }
             
-            
             _currentSelectable = selectable;
             _currentSelectable.Select();
         }

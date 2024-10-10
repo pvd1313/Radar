@@ -57,7 +57,7 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _windowManager.Register(this, WindowID.Debug, _view);
 
-            InitializeFolders();
+            InitializePanels();
             ConfigureSelectables();
 
             SubscribeView();
@@ -74,9 +74,9 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        private void InitializeFolders()
+        private void InitializePanels()
         {
-            _panelsController = new WindowPanelsController(_view.folderButtons, new IPanel[]
+            _panelsController = new WindowPanelsController(_view.panelButtons, new IPanel[]
             {
                 //todo replace itemsData with data from the configuration file.
                 new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, new ItemData[]
@@ -101,7 +101,7 @@ namespace Beast.Radar.UI
         {
             SelectableGridData triggerGrid = _zoneBuilder.Build
             (
-                selectables: _view.folderButtons.Select(b => b.Selectable).ToArray(),
+                selectables: _view.panelButtons.Select(b => b.Selectable).ToArray(),
                 isFillHorizontally: true,
                 isLooping: false
             );

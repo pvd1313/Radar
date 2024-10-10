@@ -2,12 +2,12 @@
 
 namespace Beast.Radar.UI
 {
-    public class DebugItemBuilder
+    public class DebugItemPanelBuilder
     {
         private readonly IUIFactory _factory;
         private readonly Transform _buttonsRoot;
 
-        public DebugItemBuilder(IUIFactory factory, Transform buttonsRoot)
+        public DebugItemPanelBuilder(IUIFactory factory, Transform buttonsRoot)
         {
             _factory = factory;
             _buttonsRoot = buttonsRoot;
