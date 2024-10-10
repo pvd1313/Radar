@@ -8,5 +8,6 @@ namespace Beast.Radar.UI
         public SelectableGridData Build(Selectable[] selectables, int cols, int rows, bool isFillHorizontally, bool isLooping);
         SelectableGridData Build(Selectable[] selectables, bool isFillHorizontally, bool isLooping);
         SelectableGridData Build(Selectable[,] selectables, bool isLooping);
+        SelectableGridData Build(Selectable selectables);
     }
 }

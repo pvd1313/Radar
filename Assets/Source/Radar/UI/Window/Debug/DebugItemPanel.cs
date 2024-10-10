@@ -3,7 +3,6 @@ using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Beast.Radar.UI.Debug;
-using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -11,21 +10,21 @@ namespace Beast.Radar.UI
     public class DebugItemPanel : IPanel
     {
         private static readonly float[] ItemsCount = { 1, 10, 100 };
-        
+
         private readonly ItemData[] _itemsData;
         private readonly DebugItemFolderView _view;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
 
-        private SelectableController _selectableController; 
+        private SelectableController _selectableController;
         private DebugItemPanelBuilder _builder;
-        
+
         private DebugItemButton _selectedButton;
-        
+
         public DebugItemPanel(
-            DebugItemFolderView view, 
-            IUIFactory uiFactory, 
+            DebugItemFolderView view,
+            IUIFactory uiFactory,
             ISelectionZoneBuilder zoneBuilder,
             IUIInputController input,
             ItemData[] itemsData)
@@ -66,16 +65,21 @@ namespace Beast.Radar.UI
 
         private void ConfigureSelectables()
         {
-            List<Selectable> rightStickSelectables = new List<Selectable>();
-            rightStickSelectables.Add(_view.previousItems.Selectable);
-            rightStickSelectables.Add(_view.nextItems.Selectable);
-            rightStickSelectables.AddRange(_view.itemGrantButtons.Select(b => b.Selectable));
-            SelectableGridData rightStickGrid = _zoneBuilder.Build(rightStickSelectables.ToArray(),
+            SelectableGridData shoulderGrid = _zoneBuilder.Build(new[]
+                {
+                    _view.previousItems.Selectable,
+                    _view.nextItems.Selectable,
+                },
                 isFillHorizontally: true,
                 isLooping: false);
 
+
+            SelectableGridData west = _zoneBuilder.Build(_view.itemGrantButtons[0].Selectable);
+            SelectableGridData north = _zoneBuilder.Build(_view.itemGrantButtons[1].Selectable);
+            SelectableGridData east = _zoneBuilder.Build(_view.itemGrantButtons[2].Selectable);
+
             Selectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
-            SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables, 
+            SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables,
                 cols: 15, rows: 5,
                 isFillHorizontally: false,
                 isLooping: false);
@@ -83,8 +87,11 @@ namespace Beast.Radar.UI
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.DPad, dpadGrid },
-                { ESelectionZone.RightStick, rightStickGrid }
-            } );
+                { ESelectionZone.Shoulder, shoulderGrid },
+                { ESelectionZone.WestButton, west },
+                { ESelectionZone.NorthButton, north },
+                { ESelectionZone.EastButton, east },
+            });
         }
 
         private void SubscribeView()
@@ -118,7 +125,7 @@ namespace Beast.Radar.UI
 
             _selectedButton = button;
             _selectedButton.SetSelectedMode();
-            
+
             _view.itemName.SetText(button.Item.name);
             _view.itemWeight.SetText($"{button.Item.weight} kg");
         }
@@ -135,7 +142,7 @@ namespace Beast.Radar.UI
             {
                 _selectedButton.SetDefaultMode();
             }
-            
+
             _view.itemName.SetText("name");
             _view.itemWeight.SetText("weight");
         }

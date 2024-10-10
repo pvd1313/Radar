@@ -50,6 +50,9 @@ namespace Beast.Radar.UI
             _input.NavigationPressed += OnDpadPressed;
             _input.TriggerPressed += OnTriggerPressed;
             _input.RightStickPressed += OnRightStickPressed;
+            _input.WestPressed += OnWestPressed;
+            _input.NorthPressed += OnNorthPressed;
+            _input.EastPressed += OnEastPressed;
         }
 
         private void UnsubscribeInput()
@@ -57,13 +60,31 @@ namespace Beast.Radar.UI
             _input.NavigationPressed -= OnDpadPressed;
             _input.TriggerPressed -= OnTriggerPressed;
             _input.RightStickPressed -= OnRightStickPressed;
+            _input.WestPressed -= OnWestPressed;
+            _input.NorthPressed -= OnNorthPressed;
+            _input.EastPressed -= OnEastPressed;
+        }
+
+        private void OnEastPressed()
+        {
+            PerformButtonAction(ESelectionZone.EastButton);
+        }
+
+        private void OnNorthPressed()
+        {
+            PerformButtonAction(ESelectionZone.NorthButton);
+        }
+
+        private void OnWestPressed()
+        {
+            PerformButtonAction(ESelectionZone.WestButton);
         }
 
         private void OnDpadPressed(float2 direction)
         {
             PerformVectorAction(ESelectionZone.DPad, direction);
         }
-        
+
         private void OnRightStickPressed(float2 direction)
         {
             UnityEngine.Debug.Log(direction);
@@ -99,6 +120,19 @@ namespace Beast.Radar.UI
 
             Selectable triggerSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
             if (triggerSelectable is Button button)
+            {
+                button.onClick.Invoke();
+            }
+        }
+
+        private void PerformButtonAction(ESelectionZone zone)
+        {
+            if (!_selectableGrids.ContainsKey(zone))
+            {
+                return;
+            }
+
+            if (_selectableGrids[zone].selectables[0, 0] is Button button)
             {
                 button.onClick.Invoke();
             }

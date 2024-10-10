@@ -7,6 +7,9 @@
         LeftStick,
         RightStick,
         DPad,
-        Shoulder
+        Shoulder,
+        NorthButton,
+        EastButton,
+        WestButton
     }
 }

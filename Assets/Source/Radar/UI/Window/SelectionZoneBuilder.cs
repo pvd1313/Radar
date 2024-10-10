@@ -98,5 +98,15 @@ namespace Beast.Radar.UI
                 isLooping = isLooping
             };
         }
+
+        public SelectableGridData Build(Selectable selectables)
+        {
+            return new SelectableGridData()
+            {
+                selectables = new[,]{{selectables}},
+                currentIndex = int2.zero,
+                isLooping = false
+            };
+        }
     }
 }

@@ -364,24 +364,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""MiddleClick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""dc6bb8dd-caf3-42ea-9e94-c062eb3ea6f0"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""RightClick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""98e72e87-13b3-4320-bc31-fe48cd152afa"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Trigger"",
                     ""type"": ""Value"",
                     ""id"": ""20d76a98-ca11-49e2-b4ec-25392fa1a6cd"",
@@ -395,6 +377,33 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""type"": ""PassThrough"",
                     ""id"": ""3e877188-a0b9-4191-a719-50dfdf2ce884"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NorthButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""51696313-4048-4d59-8677-0576af36a136"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EastButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""57a1f420-9d32-41ca-bca7-e006fccb639d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WestButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""5e0a0c09-c79f-41b5-8436-17fdcb25d102"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -590,17 +599,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d7b97e07-021d-49d2-af83-7b72d20fc205"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""99e64253-03ec-42fe-9ef7-bd7d59f2222e"",
                     ""path"": ""<Mouse>/scroll"",
                     ""interactions"": """",
@@ -609,127 +607,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ScrollWheel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e7bfe1f4-51cb-4a9e-8784-a1b7f6530b71"",
-                    ""path"": ""<Mouse>/middleButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;MouseAndKeyboard"",
-                    ""action"": ""MiddleClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0d682a5b-cf1f-423d-aeb1-d003aa53dd17"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;MouseAndKeyboard"",
-                    ""action"": ""RightClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""e0bd8e82-96af-46a8-befb-79fb78ccf279"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Point"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""52145c01-ac51-40f8-a2be-476b43b2e67b"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""56cdfb1e-dfc2-4126-bb5b-ac69c9947691"",
-                    ""path"": ""<Gamepad>/rightStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""8f6d3a5d-2129-45a6-9500-14dc10d9b297"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""f3fa0b33-88e4-4eb7-a65c-a1ad562d3879"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""8df05ac0-edb3-41e3-80f2-844f74ebc7b0"",
-                    ""path"": ""<Gamepad>/leftStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""958e8b8a-abbd-4ea4-b423-4f59b85b2401"",
-                    ""path"": ""<Gamepad>/rightStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""7afc9593-e3d8-4407-a08f-c6ab9f3ac072"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""287d6758-f3fa-4ff8-8bfa-a260a5ee3e38"",
-                    ""path"": ""<Gamepad>/rightStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Triggers"",
@@ -807,6 +684,50 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""RightStick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d54b1d46-3f29-4941-848b-dc285be54155"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""NorthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""253be179-e421-4e82-9d1c-8bfcbdf5fa69"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""EastButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b41d4f8d-6fea-49ad-b403-d6b0bd6df0b5"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""WestButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7b97e07-021d-49d2-af83-7b72d20fc205"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -873,10 +794,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
-        m_UI_MiddleClick = m_UI.FindAction("MiddleClick", throwIfNotFound: true);
-        m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
         m_UI_Trigger = m_UI.FindAction("Trigger", throwIfNotFound: true);
         m_UI_RightStick = m_UI.FindAction("RightStick", throwIfNotFound: true);
+        m_UI_NorthButton = m_UI.FindAction("NorthButton", throwIfNotFound: true);
+        m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
+        m_UI_WestButton = m_UI.FindAction("WestButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1030,10 +952,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Point;
     private readonly InputAction m_UI_Click;
     private readonly InputAction m_UI_ScrollWheel;
-    private readonly InputAction m_UI_MiddleClick;
-    private readonly InputAction m_UI_RightClick;
     private readonly InputAction m_UI_Trigger;
     private readonly InputAction m_UI_RightStick;
+    private readonly InputAction m_UI_NorthButton;
+    private readonly InputAction m_UI_EastButton;
+    private readonly InputAction m_UI_WestButton;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
@@ -1044,10 +967,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Point => m_Wrapper.m_UI_Point;
         public InputAction @Click => m_Wrapper.m_UI_Click;
         public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
-        public InputAction @MiddleClick => m_Wrapper.m_UI_MiddleClick;
-        public InputAction @RightClick => m_Wrapper.m_UI_RightClick;
         public InputAction @Trigger => m_Wrapper.m_UI_Trigger;
         public InputAction @RightStick => m_Wrapper.m_UI_RightStick;
+        public InputAction @NorthButton => m_Wrapper.m_UI_NorthButton;
+        public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
+        public InputAction @WestButton => m_Wrapper.m_UI_WestButton;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1075,18 +999,21 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ScrollWheel.started += instance.OnScrollWheel;
             @ScrollWheel.performed += instance.OnScrollWheel;
             @ScrollWheel.canceled += instance.OnScrollWheel;
-            @MiddleClick.started += instance.OnMiddleClick;
-            @MiddleClick.performed += instance.OnMiddleClick;
-            @MiddleClick.canceled += instance.OnMiddleClick;
-            @RightClick.started += instance.OnRightClick;
-            @RightClick.performed += instance.OnRightClick;
-            @RightClick.canceled += instance.OnRightClick;
             @Trigger.started += instance.OnTrigger;
             @Trigger.performed += instance.OnTrigger;
             @Trigger.canceled += instance.OnTrigger;
             @RightStick.started += instance.OnRightStick;
             @RightStick.performed += instance.OnRightStick;
             @RightStick.canceled += instance.OnRightStick;
+            @NorthButton.started += instance.OnNorthButton;
+            @NorthButton.performed += instance.OnNorthButton;
+            @NorthButton.canceled += instance.OnNorthButton;
+            @EastButton.started += instance.OnEastButton;
+            @EastButton.performed += instance.OnEastButton;
+            @EastButton.canceled += instance.OnEastButton;
+            @WestButton.started += instance.OnWestButton;
+            @WestButton.performed += instance.OnWestButton;
+            @WestButton.canceled += instance.OnWestButton;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1109,18 +1036,21 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ScrollWheel.started -= instance.OnScrollWheel;
             @ScrollWheel.performed -= instance.OnScrollWheel;
             @ScrollWheel.canceled -= instance.OnScrollWheel;
-            @MiddleClick.started -= instance.OnMiddleClick;
-            @MiddleClick.performed -= instance.OnMiddleClick;
-            @MiddleClick.canceled -= instance.OnMiddleClick;
-            @RightClick.started -= instance.OnRightClick;
-            @RightClick.performed -= instance.OnRightClick;
-            @RightClick.canceled -= instance.OnRightClick;
             @Trigger.started -= instance.OnTrigger;
             @Trigger.performed -= instance.OnTrigger;
             @Trigger.canceled -= instance.OnTrigger;
             @RightStick.started -= instance.OnRightStick;
             @RightStick.performed -= instance.OnRightStick;
             @RightStick.canceled -= instance.OnRightStick;
+            @NorthButton.started -= instance.OnNorthButton;
+            @NorthButton.performed -= instance.OnNorthButton;
+            @NorthButton.canceled -= instance.OnNorthButton;
+            @EastButton.started -= instance.OnEastButton;
+            @EastButton.performed -= instance.OnEastButton;
+            @EastButton.canceled -= instance.OnEastButton;
+            @WestButton.started -= instance.OnWestButton;
+            @WestButton.performed -= instance.OnWestButton;
+            @WestButton.canceled -= instance.OnWestButton;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1182,9 +1112,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnPoint(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
         void OnScrollWheel(InputAction.CallbackContext context);
-        void OnMiddleClick(InputAction.CallbackContext context);
-        void OnRightClick(InputAction.CallbackContext context);
         void OnTrigger(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
+        void OnNorthButton(InputAction.CallbackContext context);
+        void OnEastButton(InputAction.CallbackContext context);
+        void OnWestButton(InputAction.CallbackContext context);
     }
 }

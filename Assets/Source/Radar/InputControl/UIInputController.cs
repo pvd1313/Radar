@@ -11,10 +11,13 @@ namespace Beast.Radar.InputControl
 {
     public class UIInputController : IUIInputController, IGameCycleListener
     {
+        public event Action WestPressed;
+        public event Action PausePressed;
+        public event Action NorthPressed;
+        public event Action EastPressed;
         public event Action<float2> NavigationPressed;
         public event Action<float2> RightStickPressed;
         public event Action<int> TriggerPressed;
-        public event Action PausePressed;
 
         private readonly IPlayerInputProvider _input;
 
@@ -48,7 +51,10 @@ namespace Beast.Radar.InputControl
 
         private void SubscribeInputActions()
         {
-            _input.Actions.UI.Cancel.started += OnStartedPause;
+            _input.Actions.UI.Cancel.started += OnPressPause;
+            _input.Actions.UI.NorthButton.started += OnPressNorth;
+            _input.Actions.UI.EastButton.started += OnPressEast;
+            _input.Actions.UI.WestButton.started += OnPressWest;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
             _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
@@ -56,13 +62,31 @@ namespace Beast.Radar.InputControl
 
         private void UnsubscribeInputActions()
         {
-            _input.Actions.UI.Cancel.started -= OnStartedPause;
-            _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
+            _input.Actions.UI.Cancel.started -= OnPressPause;
+            _input.Actions.UI.NorthButton.started -= OnPressNorth;
+            _input.Actions.UI.EastButton.started -= OnPressEast;
+            _input.Actions.UI.WestButton.started -= OnPressWest;
+            _input.Actions.UI.Navigate.performed -= OnPerformedNavigate;
             _input.Actions.UI.Trigger.started -= OnPerformedTrigger;
             _input.Actions.UI.RightStick.started -= OnRightStickPerformed;
         }
 
-        private void OnStartedPause(InputAction.CallbackContext obj)
+        private void OnPressWest(InputAction.CallbackContext obj)
+        {
+            WestPressed?.Invoke();
+        }
+
+        private void OnPressEast(InputAction.CallbackContext obj)
+        {
+            EastPressed?.Invoke();
+        }
+
+        private void OnPressNorth(InputAction.CallbackContext obj)
+        {
+            NorthPressed?.Invoke();
+        }
+
+        private void OnPressPause(InputAction.CallbackContext obj)
         {
             PausePressed?.Invoke();
         }

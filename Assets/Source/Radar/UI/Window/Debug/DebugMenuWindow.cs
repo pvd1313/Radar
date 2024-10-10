@@ -105,7 +105,7 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: false
             );
-
+            
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { ESelectionZone.Trigger, triggerGrid }
@@ -126,6 +126,7 @@ namespace Beast.Radar.UI
 
         private void OnCloseButtonClicked()
         {
+            UnityEngine.Debug.Log("click close");
             _windowManager.Show(WindowID.MainHUD);
         }
 
