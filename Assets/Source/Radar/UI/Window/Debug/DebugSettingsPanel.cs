@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class DebugSettingsPanel: IPanel
+    public class DebugSettingsPanel : IPanel
     {
         private readonly DebugSettingsFolderView _view;
         private readonly ISelectionZoneBuilder _zoneBuilder;
@@ -14,11 +14,11 @@ namespace Beast.Radar.UI
 
         private readonly float[] _timeScales = { 1, 3, 10 };
         private int[] _frameRates;
-        
+
         private SelectableController _selectableController;
-        
+
         public DebugSettingsPanel(
-            DebugSettingsFolderView view, 
+            DebugSettingsFolderView view,
             ISelectionZoneBuilder zoneBuilder,
             IUIInputController input)
         {
@@ -26,7 +26,7 @@ namespace Beast.Radar.UI
             _input = input;
             _view = view;
         }
-        
+
         public void Warmup()
         {
             InitializeFrameRates();
@@ -41,7 +41,7 @@ namespace Beast.Radar.UI
         public void Open()
         {
             _selectableController.Enable();
-            _view.body.SetActive(true);    
+            _view.body.SetActive(true);
         }
 
         public void Close()
@@ -52,13 +52,13 @@ namespace Beast.Radar.UI
 
         private void ConfigureSelectables()
         {
-            Selectable[][] selectables =
+            Selectable[,] selectables =
             {
-                new[] { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, },
-                new[] { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, },
-                new[] { _view.timeScaleButtons[2].Selectable, _view.frameRateButtons[2].Selectable, },
-                new[] { null, _view.frameRateButtons[3].Selectable, },
-                new[] { null, _view.frameRateButtons[4].Selectable, },
+                { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, },
+                { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, },
+                { _view.timeScaleButtons[2].Selectable, _view.frameRateButtons[2].Selectable, },
+                { null, _view.frameRateButtons[3].Selectable, },
+                { null, _view.frameRateButtons[4].Selectable, },
             };
 
             SelectableGridData dpadGrid = _zoneBuilder.Build(selectables, isLooping: false);
@@ -86,7 +86,7 @@ namespace Beast.Radar.UI
                 int index = i;
                 _view.timeScaleButtons[i].Clicked += () => OnTimeScaleButtonClicked(index);
             }
-            
+
             for (int i = 0; i < _view.frameRateButtons.Length; i++)
             {
                 int index = i;

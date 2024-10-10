@@ -20,43 +20,14 @@ namespace Beast.Radar.UI
             _selectableGrids = selectables;
         }
 
-        public void Refresh(ESelectionZone zone, SelectableGridData grid)
-        {
-            if (_selectableGrids.ContainsKey(zone))
-            {
-                int2 currentIndex = _selectableGrids[zone].currentIndex;
-                
-                if (currentIndex.x >= grid.selectables[currentIndex.y].Length)
-                {
-                    currentIndex.x = grid.selectables[currentIndex.y].Length - 1;
-                }
-
-                if (currentIndex.y >= grid.selectables.Length)
-                {
-                    currentIndex.y = grid.selectables.Length - 1;
-                }
-
-                grid.currentIndex = currentIndex;
-
-                if (_currentSelectable != grid.selectables[currentIndex.y][currentIndex.x])
-                {
-                    SwitchSelectable(grid.selectables[currentIndex.y][currentIndex.x]);
-                }
-
-                _selectableGrids[zone] = grid;
-            }
-            else
-            {
-                _selectableGrids.Add(zone, grid);
-            }
-        }
+ 
 
         public void Enable()
         {
             if (_currentSelectable == null)
             {
                 SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
-                _currentSelectable = grid.selectables[grid.currentIndex.y][grid.currentIndex.x];
+                _currentSelectable = grid.selectables[grid.currentIndex.x,grid.currentIndex.y];
             }
 
             if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
@@ -98,25 +69,25 @@ namespace Beast.Radar.UI
 
             SelectableGridData grid = _selectableGrids[ESelectionZone.DPad];
 
-            int rows = grid.selectables.Length; 
+            int rows = grid.selectables.GetLength(0); //y
+            int cols = grid.selectables.GetLength(1); //x
             int currentRow = grid.currentIndex.y;
             int currentCol = grid.currentIndex.x;
 
             int newRow = currentRow;
             int newCol = currentCol;
-
+            
             if (direction.x != 0)
             {
                 newCol += (int)direction.x;
 
-                int currentRowLength = grid.selectables[currentRow].Length; 
                 if (newCol < 0)
                 {
-                    newCol = grid.isLooping ? currentRowLength - 1 : 0;
+                    newCol = grid.isLooping ? cols - 1 : 0;
                 }
-                else if (newCol >= currentRowLength)
+                else if (newCol >= cols)
                 {
-                    newCol = grid.isLooping ? 0 : currentRowLength - 1;
+                    newCol = grid.isLooping ? 0 : cols - 1;
                 }
             }
 
@@ -132,27 +103,17 @@ namespace Beast.Radar.UI
                 {
                     newRow = grid.isLooping ? 0 : rows - 1;
                 }
-
-                int newRowLength = grid.selectables[newRow].Length; 
-                if (newCol >= newRowLength)
-                {
-                    newCol = newRowLength - 1;
-                }
             }
 
-            grid.currentIndex = new int2(newCol, newRow);
-            _selectableGrids[ESelectionZone.DPad] = grid;
-
-            var selectable = grid.selectables[newRow][newCol];
-            if (selectable == null)
+            int2 index = new int2(newCol, newRow);
+            Selectable selectable = grid.selectables[index.y, index.x];
+            
+            if (selectable != null)
             {
-                BDebug.LogError(this, "Selectable is null");
-            }
-            else
-            {
+                grid.currentIndex = index;
+                _selectableGrids[ESelectionZone.DPad] = grid;
                 SwitchSelectable(selectable);
             }
-            UnityEngine.Debug.Log($"dir {direction} index {grid.currentIndex}");
         }
     
         
@@ -168,7 +129,7 @@ namespace Beast.Radar.UI
             int current = grid.currentIndex.x;
             int newCol = current + (int)value;
 
-            int cols = grid.selectables[grid.currentIndex.y].Length;
+            int cols = grid.selectables.GetLength(0);
 
             if (newCol >= cols)
             {
@@ -183,13 +144,11 @@ namespace Beast.Radar.UI
 
             _selectableGrids[ESelectionZone.Trigger] = grid;
 
-            Selectable triggerSelectable = grid.selectables[grid.currentIndex.y][grid.currentIndex.x];
+            Selectable triggerSelectable = grid.selectables[grid.currentIndex.x,grid.currentIndex.y];
             if (triggerSelectable is Button button)
             {
                 button.onClick.Invoke();
             }
-
-            UnityEngine.Debug.Log($"{value} {triggerSelectable?.name} {newCol}/{cols}");
         }
 
         private void SwitchSelectable(Selectable selectable)

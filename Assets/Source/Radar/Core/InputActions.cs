@@ -496,7 +496,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""id"": ""a35ab195-3b80-48ea-b182-19e10a514c66"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
-                    ""processors"": ""InvertVector2(invertX=false)"",
+                    ""processors"": ""InvertVector2(invertX=false,invertY=false)"",
                     ""groups"": """",
                     ""action"": ""Navigate"",
                     ""isComposite"": true,

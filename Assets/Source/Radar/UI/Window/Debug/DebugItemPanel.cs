@@ -3,6 +3,7 @@ using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Beast.Radar.UI.Debug;
+using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -42,12 +43,12 @@ namespace Beast.Radar.UI
             _view.itemButtons = _builder.BuildItemButtons(_itemsData);
 
             ConfigureSelectables();
-            Subscribe();
+            SubscribeView();
         }
 
         public void Dispose()
         {
-            Unsubscribe();
+            UnsubscribeView();
         }
 
         public void Open()
@@ -75,8 +76,8 @@ namespace Beast.Radar.UI
 
             Selectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
             SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables, 
-                rows: 5,
-                isFillHorizontally: true,
+                cols: 15, rows: 5,
+                isFillHorizontally: false,
                 isLooping: false);
 
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
@@ -86,7 +87,7 @@ namespace Beast.Radar.UI
             } );
         }
 
-        private void Subscribe()
+        private void SubscribeView()
         {
             foreach (DebugItemButton button in _view.itemButtons)
             {
@@ -100,7 +101,7 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeView()
         {
             foreach (DebugItemButton button in _view.itemButtons)
             {
