@@ -117,7 +117,7 @@ namespace Beast.Radar.UI
         }
     
         
-        private void OnTriggerPressed(float value)
+        private void OnTriggerPressed(int value)
         {
             if (!_selectableGrids.ContainsKey(ESelectionZone.Trigger))
             {
@@ -127,10 +127,9 @@ namespace Beast.Radar.UI
             SelectableGridData grid = _selectableGrids[ESelectionZone.Trigger];
 
             int current = grid.currentIndex.x;
-            int newCol = current + (int)value;
-
-            int cols = grid.selectables.GetLength(0);
-
+            int newCol = current + value;
+            int cols = grid.selectables.GetLength(1);
+            
             if (newCol >= cols)
             {
                 newCol = grid.isLooping ? 0 : current;
@@ -140,11 +139,12 @@ namespace Beast.Radar.UI
                 newCol = grid.isLooping ? cols - 1 : current;
             }
 
-            grid.currentIndex.x = newCol;
+            UnityEngine.Debug.Log($"{newCol}/{cols}");
+            grid.currentIndex.y = newCol;
 
             _selectableGrids[ESelectionZone.Trigger] = grid;
 
-            Selectable triggerSelectable = grid.selectables[grid.currentIndex.x,grid.currentIndex.y];
+            Selectable triggerSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
             if (triggerSelectable is Button button)
             {
                 button.onClick.Invoke();
@@ -153,7 +153,6 @@ namespace Beast.Radar.UI
 
         private void SwitchSelectable(Selectable selectable)
         {
-            //delete this
             if (selectable == _currentSelectable)
             {
                 return;

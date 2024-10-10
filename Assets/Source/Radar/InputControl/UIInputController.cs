@@ -12,7 +12,7 @@ namespace Beast.Radar.InputControl
     {
         public event Action<float2> NavigationPressed;
         public event Action<float2> RightStickPressed;
-        public event Action<float> TriggerPressed;
+        public event Action<int> TriggerPressed;
         public event Action PausePressed;
 
         private readonly IPlayerInputProvider _input;
@@ -47,7 +47,7 @@ namespace Beast.Radar.InputControl
         {
             _input.Actions.UI.Cancel.started += OnStartedPause;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
-            _input.Actions.UI.Trigger.performed += OnPerformedTrigger;
+            _input.Actions.UI.Trigger.started += OnPerformedTrigger;
         }
 
         private void UnsubscribeInputActions()
@@ -73,7 +73,9 @@ namespace Beast.Radar.InputControl
 
         private void OnPerformedTrigger(InputAction.CallbackContext obj)
         {
-            TriggerPressed?.Invoke(obj.ReadValue<float>());
+            float value = obj.ReadValue<float>();
+            int roundValue = value > 0 ? 1 : -1;
+            TriggerPressed?.Invoke(roundValue);
         }
     }
 }

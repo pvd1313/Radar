@@ -61,18 +61,18 @@ namespace Beast.Radar.UI
 
             if (isFillHorizontally)
             {
-                selectionsGrid = new Selectable[selectables.Length, 1];
-                for (int i = 0; i < selectables.Length; i++)
+                selectionsGrid = new Selectable[1, selectables.Length];
+                for (int col = 0; col < selectables.Length; col++)
                 {
-                    selectionsGrid[i, 0] = selectables[i];
+                    selectionsGrid[0, col] = selectables[col];
                 }
             }
             else
             {
-                selectionsGrid = new Selectable[1, selectables.Length];
-                for (int i = 0; i < selectables.Length; i++)
+                selectionsGrid = new Selectable[selectables.Length, 1];
+                for (int row = 0; row < selectables.Length; row++)
                 {
-                    selectionsGrid[0, i] = selectables[i];
+                    selectionsGrid[row, 0] = selectables[row];
                 }
             }
 

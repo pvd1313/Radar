@@ -8,7 +8,7 @@ namespace Beast.Radar.InputControl
         public event Action PausePressed;
         public event Action<float2> NavigationPressed;
         public event Action<float2> RightStickPressed;
-        public event Action<float> TriggerPressed;
+        public event Action<int> TriggerPressed;
         
     }
 }
