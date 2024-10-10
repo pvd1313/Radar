@@ -8,5 +8,6 @@ namespace Beast.Radar.UI
     {
         public GameObject body;
         public UIButton[] timeScaleButtons;
+        public UIButton[] frameRateButtons;
     }
 }
