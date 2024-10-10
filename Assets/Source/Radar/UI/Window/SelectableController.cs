@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
 using UnityEngine.UI;
@@ -20,8 +19,6 @@ namespace Beast.Radar.UI
             _selectableGrids = selectables;
         }
 
- 
-
         public void Enable()
         {
             if (_currentSelectable == null)
@@ -35,7 +32,7 @@ namespace Beast.Radar.UI
                 _currentSelectable.Select();
             }
             
-            Subscribe();
+            SubscribeInput();
         }
 
         public void Disable()
@@ -45,78 +42,34 @@ namespace Beast.Radar.UI
                 _currentSelectable.OnDeselect(null);
             }
 
-            Unsubscribe();
+            UnsubscribeInput();
         }
 
-        private void Subscribe()
+        private void SubscribeInput()
         {
             _input.NavigationPressed += OnDpadPressed;
             _input.TriggerPressed += OnTriggerPressed;
+            _input.RightStickPressed += OnRightStickPressed;
         }
 
-        private void Unsubscribe()
+        private void UnsubscribeInput()
         {
             _input.NavigationPressed -= OnDpadPressed;
             _input.TriggerPressed -= OnTriggerPressed;
+            _input.RightStickPressed -= OnRightStickPressed;
         }
-        
+
         private void OnDpadPressed(float2 direction)
         {
-            if (!_selectableGrids.ContainsKey(ESelectionZone.DPad))
-            {
-                return;
-            }
-
-            SelectableGridData grid = _selectableGrids[ESelectionZone.DPad];
-
-            int rows = grid.selectables.GetLength(0); //y
-            int cols = grid.selectables.GetLength(1); //x
-            int currentRow = grid.currentIndex.y;
-            int currentCol = grid.currentIndex.x;
-
-            int newRow = currentRow;
-            int newCol = currentCol;
-            
-            if (direction.x != 0)
-            {
-                newCol += (int)direction.x;
-
-                if (newCol < 0)
-                {
-                    newCol = grid.isLooping ? cols - 1 : 0;
-                }
-                else if (newCol >= cols)
-                {
-                    newCol = grid.isLooping ? 0 : cols - 1;
-                }
-            }
-
-            if (direction.y != 0)
-            {
-                newRow += (int)direction.y;
-
-                if (newRow < 0)
-                {
-                    newRow = grid.isLooping ? rows - 1 : 0;
-                }
-                else if (newRow >= rows)
-                {
-                    newRow = grid.isLooping ? 0 : rows - 1;
-                }
-            }
-
-            int2 index = new int2(newCol, newRow);
-            Selectable selectable = grid.selectables[index.y, index.x];
-            
-            if (selectable != null)
-            {
-                grid.currentIndex = index;
-                _selectableGrids[ESelectionZone.DPad] = grid;
-                SwitchSelectable(selectable);
-            }
+            PerformVectorAction(ESelectionZone.DPad, direction);
         }
-    
         
+        private void OnRightStickPressed(float2 direction)
+        {
+            UnityEngine.Debug.Log(direction);
+            PerformVectorAction(ESelectionZone.RightStick, direction);
+        }
+
         private void OnTriggerPressed(int value)
         {
             if (!_selectableGrids.ContainsKey(ESelectionZone.Trigger))
@@ -148,6 +101,62 @@ namespace Beast.Radar.UI
             if (triggerSelectable is Button button)
             {
                 button.onClick.Invoke();
+            }
+        }
+
+        private void PerformVectorAction(ESelectionZone zone, float2 direction)
+        {
+            if (!_selectableGrids.ContainsKey(zone))
+            {
+                return;
+            }
+
+            SelectableGridData grid = _selectableGrids[zone];
+
+            int rows = grid.selectables.GetLength(0); //y
+            int cols = grid.selectables.GetLength(1); //x
+            int currentRow = grid.currentIndex.y;
+            int currentCol = grid.currentIndex.x;
+
+            int newRow = currentRow;
+            int newCol = currentCol;
+
+            if (direction.x != 0)
+            {
+                newCol += (int)direction.x;
+
+                if (newCol < 0)
+                {
+                    newCol = grid.isLooping ? cols - 1 : 0;
+                }
+                else if (newCol >= cols)
+                {
+                    newCol = grid.isLooping ? 0 : cols - 1;
+                }
+            }
+
+            if (direction.y != 0)
+            {
+                newRow += (int)direction.y;
+
+                if (newRow < 0)
+                {
+                    newRow = grid.isLooping ? rows - 1 : 0;
+                }
+                else if (newRow >= rows)
+                {
+                    newRow = grid.isLooping ? 0 : rows - 1;
+                }
+            }
+
+            int2 index = new int2(newCol, newRow);
+            Selectable selectable = grid.selectables[index.y, index.x];
+
+            if (selectable != null)
+            {
+                grid.currentIndex = index;
+                _selectableGrids[zone] = grid;
+                SwitchSelectable(selectable);
             }
         }
 

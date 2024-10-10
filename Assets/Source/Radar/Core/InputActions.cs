@@ -389,6 +389,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightStick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""3e877188-a0b9-4191-a719-50dfdf2ce884"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -492,59 +501,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Joystick"",
-                    ""id"": ""a35ab195-3b80-48ea-b182-19e10a514c66"",
-                    ""path"": ""2DVector"",
+                    ""name"": """",
+                    ""id"": ""3aa5ac9e-216c-4497-880a-de1f7c149efb"",
+                    ""path"": ""<Gamepad>/dpad"",
                     ""interactions"": """",
                     ""processors"": ""InvertVector2(invertX=false)"",
                     ""groups"": """",
                     ""action"": ""Navigate"",
-                    ""isComposite"": true,
+                    ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""0cfdfc2b-5923-4e05-b5b7-89ac3780066c"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Joystick;Gamepad"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""79e3ce58-5309-437a-bc8b-31ba7d153ef2"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Joystick;Gamepad"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""38567b2f-36ea-4165-879d-19f28c9fcea8"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Joystick;Gamepad"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""28a52ce7-9fcb-4ee3-9ae4-7525a57970f7"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Joystick;Gamepad"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -767,7 +732,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""trigger"",
+                    ""name"": ""Triggers"",
                     ""id"": ""33e28972-2b8f-439f-9136-2c611275ae1d"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -800,7 +765,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""keyboardKey"",
+                    ""name"": ""KeyboardKeys"",
                     ""id"": ""03b00696-b658-4b38-b52c-0f9e87f4126e"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -831,6 +796,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Trigger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e7317f96-f02d-4575-9e41-77efd075a2cc"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""RightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -900,6 +876,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_MiddleClick = m_UI.FindAction("MiddleClick", throwIfNotFound: true);
         m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
         m_UI_Trigger = m_UI.FindAction("Trigger", throwIfNotFound: true);
+        m_UI_RightStick = m_UI.FindAction("RightStick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1056,6 +1033,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_MiddleClick;
     private readonly InputAction m_UI_RightClick;
     private readonly InputAction m_UI_Trigger;
+    private readonly InputAction m_UI_RightStick;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
@@ -1069,6 +1047,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @MiddleClick => m_Wrapper.m_UI_MiddleClick;
         public InputAction @RightClick => m_Wrapper.m_UI_RightClick;
         public InputAction @Trigger => m_Wrapper.m_UI_Trigger;
+        public InputAction @RightStick => m_Wrapper.m_UI_RightStick;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1105,6 +1084,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Trigger.started += instance.OnTrigger;
             @Trigger.performed += instance.OnTrigger;
             @Trigger.canceled += instance.OnTrigger;
+            @RightStick.started += instance.OnRightStick;
+            @RightStick.performed += instance.OnRightStick;
+            @RightStick.canceled += instance.OnRightStick;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1136,6 +1118,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Trigger.started -= instance.OnTrigger;
             @Trigger.performed -= instance.OnTrigger;
             @Trigger.canceled -= instance.OnTrigger;
+            @RightStick.started -= instance.OnRightStick;
+            @RightStick.performed -= instance.OnRightStick;
+            @RightStick.canceled -= instance.OnRightStick;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1200,5 +1185,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnMiddleClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
         void OnTrigger(InputAction.CallbackContext context);
+        void OnRightStick(InputAction.CallbackContext context);
     }
 }

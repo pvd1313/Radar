@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -16,6 +17,8 @@ namespace Beast.Radar.InputControl
         public event Action PausePressed;
 
         private readonly IPlayerInputProvider _input;
+
+        private float2 _lastRightStickValue;
 
         public UIInputController(IPlayerInputProvider inputProvider)
         {
@@ -48,12 +51,15 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.Cancel.started += OnStartedPause;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
+            _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
         }
 
         private void UnsubscribeInputActions()
         {
             _input.Actions.UI.Cancel.started -= OnStartedPause;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
+            _input.Actions.UI.Trigger.started -= OnPerformedTrigger;
+            _input.Actions.UI.RightStick.started -= OnRightStickPerformed;
         }
 
         private void OnStartedPause(InputAction.CallbackContext obj)
@@ -71,11 +77,43 @@ namespace Beast.Radar.InputControl
             NavigationPressed?.Invoke(value);
         }
 
+        private void OnRightStickPerformed(InputAction.CallbackContext obj)
+        {
+            float2 value = obj.ReadValue<Vector2>();
+            float2 roundValue = RoundValue(value);
+            
+            if (roundValue.Equals(_lastRightStickValue))
+            {
+                return;
+            }
+
+            if (!roundValue.Equals(float2.zero))
+            {
+                RightStickPressed?.Invoke(roundValue);
+            }
+            
+            _lastRightStickValue = roundValue;
+        }
+
         private void OnPerformedTrigger(InputAction.CallbackContext obj)
         {
             float value = obj.ReadValue<float>();
-            int roundValue = value > 0 ? 1 : -1;
-            TriggerPressed?.Invoke(roundValue);
+            TriggerPressed?.Invoke((int)RoundValue(value));
+        }
+
+        private float2 RoundValue(float2 vector)
+        {
+            return new float2(RoundValue(vector.x), RoundValue(vector.y));
+        }
+
+        private float RoundValue(float value)
+        {
+            return value switch
+            {
+                > 0.8f => BMath.Ceil(value),
+                < -0.8f => BMath.Floor(value),
+                _ => 0
+            };
         }
     }
 }
