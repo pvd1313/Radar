@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
@@ -13,6 +12,8 @@ namespace Beast.Radar.InputControl
 {
     public class UIInputController : IUIInputController, IGameCycleListener
     {
+        public bool IsHardwareInput { get; private set; }
+        public event Action IsEnabledChanged;
         public event Action PauseButtonPressed;
         public event Action<ESelectionZone> ActionButtonPressed;
         public event Action<int2> DpadPressed;
@@ -22,7 +23,7 @@ namespace Beast.Radar.InputControl
         private readonly IPlayerInputProvider _input;
 
         private int2 _lastRightStickValue;
-
+        
         public UIInputController(IPlayerInputProvider inputProvider)
         {
             _input = inputProvider;
@@ -36,21 +37,60 @@ namespace Beast.Radar.InputControl
 
         private UniTask<OperationResult> Warmup()
         {
-            _input.Actions.UI.Enable();
-            SubscribeInputActions();
+            SubscribeToInputSchemeChange();
+            
+            IsHardwareInput = _input.Scheme is not EInputScheme.Touch;
+            
+            if (IsHardwareInput)
+            {
+                SubscribeInputActions();
+            }
+            
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()
         {
-            _input.Actions.UI.Disable();
+            UnsubscribeToInputSchemeChange();
 
-            UnsubscribeInputActions();
+            if (IsHardwareInput)
+            {
+                UnsubscribeInputActions();
+            }
+
             return OperationResult.SuccessSync();
+        }
+        
+        private void SubscribeToInputSchemeChange()
+        {
+            _input.ChangedScheme += InputOnChangedScheme;
+        }
+        
+        private void UnsubscribeToInputSchemeChange()
+        {
+            _input.ChangedScheme -= InputOnChangedScheme;
+        }
+        
+        private void InputOnChangedScheme(EInputScheme scheme)
+        {
+            switch (IsHardwareInput)
+            {
+                case false when scheme is not EInputScheme.Touch:
+                    IsHardwareInput = true;
+                    SubscribeInputActions();
+                    IsEnabledChanged?.Invoke();
+                    break;
+                case true when scheme is EInputScheme.Touch:
+                    IsHardwareInput = false;
+                    UnsubscribeInputActions();
+                    IsEnabledChanged?.Invoke();
+                    break;
+            }
         }
 
         private void SubscribeInputActions()
         {
+            _input.Actions.UI.Enable();
             _input.Actions.UI.Cancel.started += OnPressPause;
             _input.Actions.UI.NorthButton.started += OnPressNorth;
             _input.Actions.UI.EastButton.started += OnPressEast;
@@ -58,17 +98,11 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
             _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
-            
-            _input.ChangedScheme += InputOnChangedScheme;
-        }
-
-        private void InputOnChangedScheme(EInputScheme obj)
-        {
-            BDebug.LogInfo(this, $"change scheme {obj}");
         }
 
         private void UnsubscribeInputActions()
         {
+            _input.Actions.UI.Disable();
             _input.Actions.UI.Cancel.started -= OnPressPause;
             _input.Actions.UI.NorthButton.started -= OnPressNorth;
             _input.Actions.UI.EastButton.started -= OnPressEast;

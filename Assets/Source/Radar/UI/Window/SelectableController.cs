@@ -12,7 +12,9 @@ namespace Beast.Radar.UI
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
 
         private UISelectable _currentSelectable;
-
+        private bool _isSubscribedToInput;
+        private bool _isUsed;
+        
         public SelectableController(
             IUIInputController input,
             Dictionary<ESelectionZone, SelectableGridData> selectables)
@@ -23,40 +25,57 @@ namespace Beast.Radar.UI
         
         public void Warmup()
         {
+            SubscribeInputState();
             SubscribeSelectables();  
         }
 
         public void Dispose()
         {
+            UnsubscribeInputState();
             UnsubscribeSelectables();
         }
 
         public void Enable()
         {
-            if (_currentSelectable == null)
-            {
-                SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
-                _currentSelectable = grid.selectables[grid.currentIndex.x,grid.currentIndex.y];
-            }
-
-            if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
-            {
-                _currentSelectable.Select();
-            }
-            
-            SubscribeInput();
+            _isUsed = true;
+            SetupCurrentSelectable();
         }
 
         public void Disable()
         {
-            if (_currentSelectable != null)
-            {
-                _currentSelectable.OnDeselect(null);
-            }
+            _isUsed = false;
+            CleanupInputSubscription();
+        }
+        
 
-            UnsubscribeInput();
+        #region Input state event
+
+        private void SubscribeInputState()
+        {
+            _input.IsEnabledChanged += OnChangedControllerState;
         }
 
+        private void UnsubscribeInputState()
+        {
+            _input.IsEnabledChanged -= OnChangedControllerState;
+        }
+
+        private void OnChangedControllerState()
+        {
+            if (_input.IsHardwareInput)
+            {
+                SetupCurrentSelectable();
+            }
+            else
+            {
+                CleanupInputSubscription();
+            }
+        }
+
+        #endregion
+        
+        #region Selectables events
+        
         private void SubscribeSelectables()
         {
             foreach (KeyValuePair<ESelectionZone, SelectableGridData> grids in _selectableGrids)
@@ -94,20 +113,26 @@ namespace Beast.Radar.UI
             _selectableGrids[zone] = grid;
         }
         
-        private void SubscribeInput()
+        #endregion
+
+        #region Input action events
+        
+        private void SubscribeInputActions()
         {
             _input.DpadPressed += OnDpadPressed;
             _input.TriggerPressed += OnTriggerPressed;
             _input.RightStickMoved += OnRightStickMoved;
             _input.ActionButtonPressed += OnActionButtonPressed;
+            _isSubscribedToInput = true;
         }
 
-        private void UnsubscribeInput()
+        private void UnsubscribeInputActions()
         {
             _input.DpadPressed -= OnDpadPressed;
             _input.TriggerPressed -= OnTriggerPressed;
             _input.RightStickMoved -= OnRightStickMoved;
             _input.ActionButtonPressed -= OnActionButtonPressed;
+            _isSubscribedToInput = false;
         }
 
         private void OnActionButtonPressed(ESelectionZone zone)
@@ -240,5 +265,40 @@ namespace Beast.Radar.UI
             _currentSelectable = selectable;
             _currentSelectable.Select();
         }
+        
+        #endregion
+
+        private void SetupCurrentSelectable()
+        {
+            if (_isUsed && _input.IsHardwareInput && !_isSubscribedToInput)
+            {
+                if (_currentSelectable == null)
+                {
+                    SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
+                    _currentSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
+                }
+
+                if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
+                {
+                    _currentSelectable.Select();
+                }
+
+                SubscribeInputActions();
+            }
+        }
+
+        private void CleanupInputSubscription()
+        {
+            if (_isSubscribedToInput)
+            {
+                if (_currentSelectable != null)
+                {
+                    _currentSelectable.OnDeselect(null);
+                }
+
+                UnsubscribeInputActions();
+            }
+        }
+
     }
 }

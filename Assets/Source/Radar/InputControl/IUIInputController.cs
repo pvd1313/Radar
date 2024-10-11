@@ -6,6 +6,8 @@ namespace Beast.Radar.InputControl
 {
     public interface IUIInputController
     {
+        public bool IsHardwareInput { get; }
+        public event Action IsEnabledChanged;
         public event Action<ESelectionZone> ActionButtonPressed;
         public event Action PauseButtonPressed;
         public event Action<int2> DpadPressed;
