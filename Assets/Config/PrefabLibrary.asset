@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc684d3e0d624c38a9ed5c2711908367, type: 3}
   m_Name: PrefabLibrary
   m_EditorClassIdentifier: 
+  cameraPrefab: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
   playerInputPrefab: {fileID: 4224351025066411129, guid: 1ac131d24ff3f1d4ea677835b9ba7cc6, type: 3}
   ui:
     canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}

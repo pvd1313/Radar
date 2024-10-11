@@ -72,8 +72,6 @@ namespace Beast.Radar.Graphic.Terrain
             float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
-            BDebug.Track(this, "yScale", yScale);
-            
             _renderMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
             

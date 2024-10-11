@@ -30,10 +30,10 @@ namespace Beast.Radar.Cinematic
         private float _zoomMax;
         private float2 _position;
         
-        public CameraTransform(IScreen screen, CameraTransformConfig config, GameModel game)
+        public CameraTransform(IScreen screen, CameraConfig config, GameModel game)
         {
             _screen = screen;
-            _config = config;
+            _config = config.transform;
             _game = game;
         }
         
@@ -116,10 +116,10 @@ namespace Beast.Radar.Cinematic
 
         private void DebugTrack()
         {
-            BDebug.Track(this, "position", _position);
-            BDebug.Track(this, "viewDistance", _viewDistance);
-            BDebug.Track(this, "maxViewDistance", _maxViewDistance);
-            BDebug.Track(this, "zoom01", _zoom01);
+            BDebug.Track(this, nameof(_position), _position);
+            BDebug.Track(this, nameof(_viewDistance), _viewDistance);
+            BDebug.Track(this, nameof(_maxViewDistance), _maxViewDistance);
+            BDebug.Track(this, nameof(_zoom01), _zoom01);
             BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
             BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
         }

@@ -24,8 +24,8 @@ namespace Beast.Radar.Graphic
 
         private void FrameBegin()
         {
-            BDebug.Track(this, "size", Size);
-            BDebug.Track(this, "aspect", Aspect);
+            BDebug.Track(this, nameof(Size), Size);
+            BDebug.Track(this, nameof(Aspect), Aspect);
         }
     }
 }

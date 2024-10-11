@@ -51,14 +51,14 @@ namespace Beast.Radar.Graphic.Terrain
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, _Dispose);
-            handle.ListenUpdate(this, UpdateID.FrameEnd, _FrameEnd);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenUpdate(this, UpdateID.FrameEnd, _frameEnd);
         }
 
-        private UniTask<OperationResult> _Warmup()
+        private UniTask<OperationResult> _warmup()
         {
-            _Dispose();
+            _dispose();
             
             _renderMaterial = BeastCG.CreateMaterial(this, new MaterialParameters
             {
@@ -85,7 +85,7 @@ namespace Beast.Radar.Graphic.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _FrameEnd()
+        private void _frameEnd()
         {
             _isReady = false;
             
@@ -96,8 +96,8 @@ namespace Beast.Radar.Graphic.Terrain
 
             if (!_screen.Size.Equals(_renderTextureForScreenSize))
             {
-                _Dispose();
-                _Warmup();
+                _dispose();
+                _warmup();
             }
 
             float renderDistance = _camera.ViewDistance * _textureYScale;
@@ -132,18 +132,10 @@ namespace Beast.Radar.Graphic.Terrain
 
             _isReady = true;
             
-            _DebugTrack();
-        }
-
-        private void _DebugTrack()
-        {
-            BDebug.Track(this, "textureSize", _detailTexture.height);
-            BDebug.Track(this, "textureYScale", _textureYScale);
-            BDebug.Track(this, "chunkSize", _chunkSize);
-            BDebug.Track(this, "texelSize", _texelSize);
+            _debugTrack();
         }
         
-        private UniTask<OperationResult> _Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             _isReady = false;
             
@@ -160,6 +152,14 @@ namespace Beast.Radar.Graphic.Terrain
             }
 
             return OperationResult.SuccessSync();
+        }
+        
+        private void _debugTrack()
+        {
+            BDebug.Track(this, "textureSize", _detailTexture.height);
+            BDebug.Track(this, nameof(_textureYScale), _textureYScale);
+            BDebug.Track(this, nameof(_chunkSize), _chunkSize);
+            BDebug.Track(this, nameof(_texelSize), _texelSize);
         }
     }
 }

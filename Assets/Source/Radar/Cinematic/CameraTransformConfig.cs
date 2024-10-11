@@ -1,8 +1,9 @@
-﻿using Beast.Claw.Common;
+﻿using System;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransformConfig : Config
+    [Serializable]
+    public class CameraTransformConfig
     {
         public IsometricCameraRotation isometricRotationDeg;
         public float minViewDistance;

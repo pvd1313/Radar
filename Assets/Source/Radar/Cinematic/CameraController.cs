@@ -15,21 +15,23 @@ namespace Beast.Radar.Cinematic
         private readonly ICameraInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
         private readonly ICameraTransform _transform;
+        private readonly PrefabLibrary _prefabs;
 
         private CameraMotionParameters _motion;
         private float _maxViewDistance;
 
         public CameraController(
             CameraConfig cameraConfig,
-            CameraTransformConfig transformConfig,
             ICameraInputController inputController,
             IPlayerInputProvider inputProvider,
-            ICameraTransform transform)
+            ICameraTransform transform,
+            PrefabLibrary prefabs)
         {
             _cameraConfig = cameraConfig;
             _input = inputController;
             _inputProvider = inputProvider;
             _transform = transform;
+            _prefabs = prefabs;
         }
         
         public void ListenGameCycle(IGameCycleHandle handle)
@@ -43,7 +45,7 @@ namespace Beast.Radar.Cinematic
             BeastScene.InstantiateMono
             (
                 this,
-                _cameraConfig.viewPrefab,
+                _prefabs.cameraPrefab,
                 float3.zero,
                 quaternion.identity
             );

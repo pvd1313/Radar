@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00694f2dc4f4fa79b709cb15ee52b41, type: 3}
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
-  viewPrefab: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
+  transform:
+    isometricRotationDeg:
+      roll: 45
+      pitch: 60
+    minViewDistance: 0.1
+    plainModeViewDistance01: 1
+    enablePlanetMode: 0
   motion:
   - schemes: 01000000
     zoomSpeed: 50

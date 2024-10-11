@@ -16,30 +16,35 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
         private readonly ITerrainDetailRender _terrain;
+        private readonly RenderConfig _config;
 
         private Material _renderMaterial;
         private Material _solverMaterial;
+        private float _tileHeight;
+        private int _tileCount;
 
         public TerrainTileRender(
             ICameraTransform camera, 
             GraphicLibrary library, 
             IScreen screen,
-            ITerrainDetailRender terrain)
+            ITerrainDetailRender terrain,
+            RenderConfig config)
         {
             _camera = camera;
             _library = library;
             _screen = screen;
             _terrain = terrain;
+            _config = config;
         }
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
             handle.ListenUpdate(this, UpdateID.FrameEnd, FrameEnd);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainTileRender);
             _solverMaterial = BeastCG.CreateMaterial(this, _library.terrainTileSolver);
@@ -59,36 +64,36 @@ namespace Beast.Radar.Graphic.Terrain
             //     return;
             // }
 
-            float tileHeight = 1f / _camera.ViewDistance / GlobalConfig.CellTileCount;
-            BDebug.Track(this, "tileHeight", tileHeight);
-
-            if (tileHeight < 1f / Screen.height)
+            _tileHeight = 1f / _camera.ViewDistance / GlobalConfig.CellTileCount;
+            if (_tileHeight < _config.terrainTilePixelSizeMin / (float)_screen.Height)
             {
                 return;
             }
 
-            int yTileCount = BMath.CeilToInt(1f / tileHeight);
-            int xTileCount = BMath.CeilToInt(1f / tileHeight * _screen.Aspect * 0.5f + 1);
-
-            float2 viewportPoint = new float2(0, 1f);
+            int yTileCount = BMath.CeilToInt(1f / _tileHeight);
+            int xTileCount = BMath.CeilToInt(1f / _tileHeight * _screen.Aspect * 0.5f + 1);
+            int2 gridSize = new (xTileCount, yTileCount);
+            _tileCount = _tileCountFromGridSize(gridSize);
+            if (_tileCount > _config.terrainTileCountLimit)
+            {
+                return;
+            }
+            
+            float2 viewportPoint = new (0, 1f);
             float2 worldPoint = _camera.ViewportToWorld(viewportPoint);
             
-            int2 gridSize = new (xTileCount, yTileCount);
+            RenderTexture solverTexture = _runTileSolver(worldPoint, gridSize);
             
-            int tileCount = TileCountFromGridSize(gridSize);
-            
-            BDebug.Track(this, "tileCount", tileCount);
-            
-            RenderTexture solverTexture = RunTileSolver(worldPoint, gridSize);
-            
-            RenderTileGrid(viewportPoint, gridSize, solverTexture, tileHeight);
+            _renderTileGrid(viewportPoint, gridSize, solverTexture, _tileHeight);
+
+            _debugTrack();
 
             BeastCG.DisposeRenderTexture(solverTexture);
         }
 
-        private RenderTexture RunTileSolver(float2 worldOrigin, int2 gridSize)
+        private RenderTexture _runTileSolver(float2 worldOrigin, int2 gridSize)
         {
-            int tileCount = TileCountFromGridSize(gridSize);
+            int tileCount = _tileCountFromGridSize(gridSize);
             
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _solverMaterial.SetVector("_TileGridSize", gridSize);
@@ -126,7 +131,7 @@ namespace Beast.Radar.Graphic.Terrain
             return solverTexture;
         }
 
-        private void RenderTileGrid(
+        private void _renderTileGrid(
             float2 viewportOrigin, 
             int2 gridSize, 
             RenderTexture solverTexture, 
@@ -158,14 +163,17 @@ namespace Beast.Radar.Graphic.Terrain
             renderParams.matProps.SetVector("_OutputOffset", viewportOrigin);
             renderParams.matProps.SetFloat("_OutputTileHeight", tileHeight);
         
-            int tileCount = TileCountFromGridSize(gridSize);
-            
-            BDebug.Track(this, "outputOffset", viewportOrigin);
+            int tileCount = _tileCountFromGridSize(gridSize);
             
             Graphics.RenderMeshPrimitives(renderParams, _library.quadMesh, 0, tileCount);
         }
+        
+        private static int _tileCountFromGridSize(int2 gridSize)
+        {
+            return gridSize.x * gridSize.y + (gridSize.x - 1) * (gridSize.y - 1);
+        }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             if (_renderMaterial != null)
             {
@@ -181,10 +189,11 @@ namespace Beast.Radar.Graphic.Terrain
 
             return OperationResult.SuccessSync();
         }
-        
-        private static int TileCountFromGridSize(int2 gridSize)
+
+        private void _debugTrack()
         {
-            return gridSize.x * gridSize.y + (gridSize.x - 1) * (gridSize.y - 1);
+            BDebug.Track(this, nameof(_tileHeight), _tileHeight);
+            BDebug.Track(this, nameof(_tileCount), _tileCount);
         }
     }
 }
