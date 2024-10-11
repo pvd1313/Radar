@@ -93,7 +93,7 @@ namespace Beast.Radar.UI
 
         private void OnPauseButtonPressed()
         {
-            Show(_currentOpenedWindowController is not PauseMenuWindow ? WindowID.Pause : WindowID.MainHUD);
+            Show(_currentOpenedWindowController is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
         }
     }
 }
