@@ -168,7 +168,7 @@ namespace Beast.Claw.Mathematics
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float2 Clamp(float value, float min, float max)
+        public static float Clamp(float value, float min, float max)
         {
             return math.clamp(value, min, max);
         }

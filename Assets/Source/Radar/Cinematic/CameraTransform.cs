@@ -108,8 +108,8 @@ namespace Beast.Radar.Cinematic
 
         private void InternalSetZoom(float zoom)
         {
-            _zoom01 = BMath.Clamp01(zoom);
-            _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, _zoom01);
+            _zoom01 = BMath.Clamp(zoom, _config.minViewDistance / _maxViewDistance, 1f);
+            _viewDistance = _maxViewDistance * _zoom01;
 
             DebugTrack();
         }
@@ -118,6 +118,8 @@ namespace Beast.Radar.Cinematic
         {
             BDebug.Track(this, "position", _position);
             BDebug.Track(this, "viewDistance", _viewDistance);
+            BDebug.Track(this, "maxViewDistance", _maxViewDistance);
+            BDebug.Track(this, "zoom01", _zoom01);
             BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
             BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
         }

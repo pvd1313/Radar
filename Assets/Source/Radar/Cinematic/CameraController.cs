@@ -1,10 +1,8 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
-using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +11,7 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraController : IGameCycleListener
     {
-        private readonly CameraConfig _config;
+        private readonly CameraConfig _cameraConfig;
         private readonly ICameraInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
         private readonly ICameraTransform _transform;
@@ -22,12 +20,13 @@ namespace Beast.Radar.Cinematic
         private float _maxViewDistance;
 
         public CameraController(
-            CameraConfig config,
+            CameraConfig cameraConfig,
+            CameraTransformConfig transformConfig,
             ICameraInputController inputController,
             IPlayerInputProvider inputProvider,
             ICameraTransform transform)
         {
-            _config = config;
+            _cameraConfig = cameraConfig;
             _input = inputController;
             _inputProvider = inputProvider;
             _transform = transform;
@@ -44,12 +43,12 @@ namespace Beast.Radar.Cinematic
             BeastScene.InstantiateMono
             (
                 this,
-                _config.viewPrefab,
+                _cameraConfig.viewPrefab,
                 float3.zero,
                 quaternion.identity
             );
 
-            _motion = _config.GetMotionParameters(_inputProvider.Scheme);
+            _motion = _cameraConfig.GetMotionParameters(_inputProvider.Scheme);
             
             SubscribeInput();
             
@@ -77,7 +76,7 @@ namespace Beast.Radar.Cinematic
 
         private void OnChangedInputScheme(EInputScheme scheme)
         {
-            _motion = _config.GetMotionParameters(scheme);
+            _motion = _cameraConfig.GetMotionParameters(scheme);
         }
 
         private void ProcessCamera()
@@ -138,10 +137,8 @@ namespace Beast.Radar.Cinematic
 
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = _transform.ScreenPointToWorld(screenPoint);
-
-            float zoomDelta = _motion.zoomSpeed * Time.deltaTime;
-            zoomDelta *= _config.zoomCurve.Evaluate(_transform.Zoom01);
-            zoomDelta = BMath.Max(0, zoomDelta);
+            
+            float zoomDelta = _transform.Zoom01 * Time.deltaTime * _motion.zoomSpeed;
             zoomDelta *= _input.ScrollDelta;
             _transform.AddZoom(zoomDelta * -1);
 

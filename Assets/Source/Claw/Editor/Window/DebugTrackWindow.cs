@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEditor;
@@ -31,11 +32,9 @@ namespace Beast.Claw.Editor.Window
 
                 if (_isPlaying && _clearOnEnterPlayerMode)
                 {
-                    Clear();
+                    BDebug.ClearTrackStorage();
                 }
             }
-            
-            EditorGUIUtility.labelWidth = 200;
 
             new EditorUI
             {
@@ -44,8 +43,10 @@ namespace Beast.Claw.Editor.Window
             }
                 .Horizontal(() =>
             {
-                UI.Button("Clear", Clear);
-                _clearOnEnterPlayerMode = UI.CheckBox("Enter Play Mode Clear", _clearOnEnterPlayerMode);
+                UI.Button("Clear", BDebug.ClearTrackStorage);
+                UI.Button("Open All", () => _SetAllFolds(true));
+                UI.Button("Collapse", () => _SetAllFolds(false));
+                _clearOnEnterPlayerMode = UI.CheckBox("Play Mode Clear", _clearOnEnterPlayerMode);
             });
             
             _folds ??= new Dictionary<string, bool>();
@@ -59,7 +60,7 @@ namespace Beast.Claw.Editor.Window
                 if (foldState)
                 {
                     EditorGUI.indentLevel++;
-                    TrackStorageUI(storage);
+                    _TrackStorageUI(storage);
                     EditorGUI.indentLevel--;
                     GUILayout.Space(8);
                 }
@@ -68,7 +69,7 @@ namespace Beast.Claw.Editor.Window
             Repaint();
         }
 
-        private void TrackStorageUI(DebugTrackStorage storage)
+        private void _TrackStorageUI(DebugTrackStorage storage)
         {
             foreach ((string id, float value) in storage.ReadAllFloat())
             {
@@ -101,9 +102,12 @@ namespace Beast.Claw.Editor.Window
             }
         }
 
-        private void Clear()
+        private void _SetAllFolds(bool isOpen)
         {
-            BDebug.ClearTrackStorage();
+            foreach (string id in _folds.Keys.ToList())
+            {
+                _folds[id] = isOpen;
+            }
         }
     }
 }
