@@ -52,6 +52,8 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void FrameEnd()
         {
+            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            
             // if (Time.time % 1 > 0.5f)
             // {
             //     return;
@@ -65,8 +67,8 @@ namespace Beast.Radar.Graphic.Terrain
                 return;
             }
 
-            int yTileCount = BMath.CeilToInt(1f / tileHeight + 1);
-            int xTileCount = BMath.CeilToInt(1f / tileHeight * 0.5f + 1);
+            int yTileCount = BMath.CeilToInt(1f / tileHeight);
+            int xTileCount = BMath.CeilToInt(1f / tileHeight * _screen.Aspect * 0.5f + 1);
             
             int2 gridSize = new (xTileCount, yTileCount);
             
@@ -83,12 +85,12 @@ namespace Beast.Radar.Graphic.Terrain
 
         private RenderTexture CreateSolverTexture(int2 gridSize)
         {
-            //float screenScale = _screen.Height / (float)_terrainDetail.RenderTexture.height;
+            float screenScale = (float)_terrainDetail.RenderTexture.height / _screen.Height;
             //float2 screenScale = _screen.Size / _terrainDetail.RenderTexture.SizeFloat();
             int tileCount = TileCountFromGridSize(gridSize);
-
             
-            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            BDebug.TrackFloat(this, "screenScale", screenScale);
+
             
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _solverMaterial.SetVector("_TileGridSize", gridSize);
@@ -99,19 +101,34 @@ namespace Beast.Radar.Graphic.Terrain
             float2 terrainOldSize = _terrainDetail.RenderTexture.SizeFloat();
             float rSize = _camera.TargetViewDistance / terrainOldSize.y * 100;
 
-            float2 terrainNewSize = terrainOldSize * rSize;
+            float2 terrainNewSize = terrainOldSize * rSize * screenScale;
 
             BDebug.TrackFloat(this, "rSize", rSize);
             
             _solverMaterial.SetVector("_TerrainSize", terrainNewSize);
+            
+            BDebug.TrackFloat(this, "sizeRel", terrainNewSize.x / terrainOldSize.x);
 
             BDebug.TrackFloat2(this, "terrainNewSize", terrainNewSize);
             BDebug.TrackFloat2(this, "terrainOldSize", terrainOldSize);
             
             BDebug.TrackFloat2(this, "gridSize", gridSize);
             
-            float xOffset = terrainNewSize.x - terrainNewSize.x * 0.25f;
-            float yOffset = terrainNewSize.y + terrainNewSize.y * 0.25f;
+            // Unknown magic here... Works only with square terrain textures.
+            // 1 screen height : 1 detailed render height
+            float xOffset = terrainNewSize.x * (1f - 0.25f * _screen.Aspect);
+            float yOffset = terrainNewSize.y * (1f + 0.25f * _screen.Aspect);
+            
+            // 1 screen height : 2 detailed render height
+            // float xOffset = terrainNewSize.x * (0.75f - 0.125f * _screen.Aspect);
+            // float yOffset = terrainNewSize.y * (0.75f + 0.125f * _screen.Aspect);
+            //
+            // float xOffset = terrainNewSize.x * _library.xOffset;
+            // float yOffset = terrainNewSize.y * _library.yOffset;
+            
+            BDebug.TrackFloat(this, "xOffset", xOffset);
+            BDebug.TrackFloat(this, "yOffset", yOffset);
+            
             _solverMaterial.SetVector("_TerrainOffset", new float2(xOffset, yOffset));
             
             
@@ -169,8 +186,9 @@ namespace Beast.Radar.Graphic.Terrain
             BDebug.TrackFloat2(this, "screenSize", screenSize);
 
             BDebug.TrackFloat(this, "screenAspect", _screen.Aspect);
+            BDebug.TrackFloat(this, "screenAspectInv", 1 / _screen.Aspect);
             
-            float2 outputOffset = new float2(0.5f - 0.5f / _screen.Aspect, 0);
+            float2 outputOffset = new float2(0, 0);
             BDebug.TrackFloat2(this, "outputOffset", outputOffset);
             
             renderParams.matProps.SetVector("_OutputOffset", outputOffset);

@@ -121,9 +121,9 @@ namespace Beast.Radar.Graphic.Terrain
             // float2x2 rotate = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
             // _renderCenter = rotate.Multiply(scale.Multiply(_camera.Position));
 
-           // float screenScale = ((float)_renderTextureSize.y / _screen.Height);
-            //BDebug.TrackFloat(this, "_screenScale", screenScale);
-            _renderDistance = _camera.TargetViewDistance * 1;
+            float screenScale = ((float)_renderTextureSize.y / _screen.Height);
+            BDebug.TrackFloat(this, "_screenScale", screenScale);
+            _renderDistance = _camera.TargetViewDistance * screenScale;
 
             float chunkSize = _camera.TargetViewDistance / _renderDistance;
 

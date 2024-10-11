@@ -18,6 +18,9 @@ namespace Beast.Radar
 
         public Texture2D worldNoiseTexture;
 
+        public float xOffset;
+        public float yOffset;
+
         public Debug debug;
     }
 }
