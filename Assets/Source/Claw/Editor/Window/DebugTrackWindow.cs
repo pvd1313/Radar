@@ -10,7 +10,8 @@ namespace Beast.Claw.Editor.Window
     public class DebugTrackWindow : EditorWindow
     {
         [SerializeField] private bool _clearOnEnterPlayerMode;
-
+        [SerializeField] private Vector2 _scrollPosition;
+        
         private bool _isPlaying;
         private Dictionary<string, bool> _folds;
         
@@ -36,12 +37,7 @@ namespace Beast.Claw.Editor.Window
                 }
             }
 
-            new EditorUI
-            {
-                success = true,
-                niceLabelsEnabled = true
-            }
-                .Horizontal(() =>
+            UI.Horizontal(() =>
             {
                 UI.Button("Clear", BDebug.ClearTrackStorage);
                 UI.Button("Open All", () => _SetAllFolds(true));
@@ -50,21 +46,25 @@ namespace Beast.Claw.Editor.Window
             });
             
             _folds ??= new Dictionary<string, bool>();
-
-            foreach ((string storageName, DebugTrackStorage storage) in BDebug.TrackStorages)
+            
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
             {
-                _folds.TryGetValue(storageName, out bool foldState);
-                foldState = EditorGUILayout.Foldout(foldState, storageName);
-                _folds[storageName] = foldState;
-
-                if (foldState)
+                foreach ((string storageName, DebugTrackStorage storage) in BDebug.TrackStorages)
                 {
-                    EditorGUI.indentLevel++;
-                    _TrackStorageUI(storage);
-                    EditorGUI.indentLevel--;
-                    GUILayout.Space(8);
+                    _folds.TryGetValue(storageName, out bool foldState);
+                    foldState = EditorGUILayout.Foldout(foldState, storageName);
+                    _folds[storageName] = foldState;
+
+                    if (foldState)
+                    {
+                        EditorGUI.indentLevel++;
+                        _TrackStorageUI(storage);
+                        EditorGUI.indentLevel--;
+                        GUILayout.Space(8);
+                    }
                 }
             }
+            EditorGUILayout.EndScrollView();
             
             Repaint();
         }

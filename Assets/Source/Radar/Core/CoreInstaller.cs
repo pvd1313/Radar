@@ -12,7 +12,6 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Zenject;
 using Installer = Beast.Claw.Common.Installer;
-using TerrainTileRender = Beast.Radar.Graphic.Terrain.TerrainTileRender;
 
 namespace Beast.Radar.Core
 {

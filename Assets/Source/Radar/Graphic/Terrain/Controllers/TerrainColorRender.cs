@@ -65,7 +65,7 @@ namespace Beast.Radar.Graphic.Terrain
                 return;
             }
             
-            float2 renderTextureSize = _terrain.DetailTexture.Size();
+            float2 renderTextureSize = _terrain.Texture.Size();
             
             float yScale = BMath.Cos(_camera.RotationRad.roll);
 
@@ -74,7 +74,7 @@ namespace Beast.Radar.Graphic.Terrain
             
             BDebug.Track(this, "yScale", yScale);
             
-            _renderMaterial.SetTexture("_TerrainTexture", _terrain.DetailTexture);
+            _renderMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
             
             _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());

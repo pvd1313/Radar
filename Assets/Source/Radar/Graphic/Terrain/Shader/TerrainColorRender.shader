@@ -20,7 +20,6 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
 
             struct VertexInput
             {

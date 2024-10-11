@@ -22,7 +22,7 @@
             #include "UnityCG.cginc"
             #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
 
-            #define DRAW_DEBUG_GRID_TEXTURE
+            //#define DRAW_DEBUG_GRID_TEXTURE
 
             struct VertexInput
             {

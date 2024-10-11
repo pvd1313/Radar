@@ -1,4 +1,4 @@
-﻿Shader "Beast/IsometricRender"
+﻿Shader "Beast/TerrainTileRender"
 {
     Properties
     {
@@ -63,7 +63,7 @@
                 
                 float aspect = _OutputSize.x / _OutputSize.y;
 
-                // Y crop, reduce rasterizer overlload. Will be obtained from config texture in future.
+                // Y crop, reduce rasterizer overload. Will be obtained from the config texture in future.
                 input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
                 input.texcoord.y *= 1 - _RenderYCrop;
 
@@ -104,7 +104,8 @@
                 float2 tileUV = vertexUV + tileUVShift;
                 output.mainUV = tileUV;
 
-                // Second UV to reduce glitches when tiles are small. Blend center will be obtained from tile config in future.
+                // Second UV to reduce glitches when tiles are small.
+                // Blend center will be obtained from tile config in future.
                 float noisePower = solverRG.g;
                 float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
                 float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
@@ -121,6 +122,7 @@
             {
                 half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
+                // TODO: 0.5 here is temp here for test purposes.
                 clip(mainColor.r + mainColor.g + mainColor.b - 0.5f);
 
                 half3 centerColor = tex2D(_TileAtlas, input.centerUV);

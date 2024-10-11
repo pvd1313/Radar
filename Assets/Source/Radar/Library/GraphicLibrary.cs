@@ -12,14 +12,11 @@ namespace Beast.Radar
         public Shader terrainDetailShader;
         public Shader terrainColorShader;
 
-        public Shader isometricSolverShader;
-        public Shader isometricRenderShader;
+        public Shader terrainTileSolver;
+        public Shader terrainTileRender;
         public TerrainTileAtlas terrainTileAtlas;
 
         public Texture2D worldNoiseTexture;
-
-        public float xOffset;
-        public float yOffset;
 
         public Debug debug;
     }
