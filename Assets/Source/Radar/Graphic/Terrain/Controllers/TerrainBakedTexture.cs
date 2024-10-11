@@ -1,11 +1,11 @@
-﻿using Beast.Claw.Graphic;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainBakedTexture : ITerrainBakedTexture, IGameCycleListener
     {
@@ -21,7 +21,7 @@ namespace Beast.Radar.Graphic
             _baker = baker;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);

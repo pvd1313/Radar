@@ -8,13 +8,13 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.World
+namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainColorRender : IGameCycleListener
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
-        private readonly ITerrainNoiseRender _terrain;
+        private readonly ITerrainDetailRender _terrain;
         private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
@@ -22,7 +22,7 @@ namespace Beast.Radar.Graphic.World
         public TerrainColorRender(
             IScreen screen,
             GraphicLibrary library, 
-            ITerrainNoiseRender terrain,
+            ITerrainDetailRender terrain,
             ICameraTransform camera)
         {
             _screen = screen;
@@ -31,26 +31,23 @@ namespace Beast.Radar.Graphic.World
             _camera = camera;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
-            handle.ListenUpdate(this, UpdateID.FrameEnd, FrameEnd);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenUpdate(this, UpdateID.Render, _render);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
-            Application.targetFrameRate = 4096;
-            
-            _renderMaterial = BeastCG.CreateMaterial(this, new MaterialParameters
-            {
-                shader = _library.terrainColorRenderShader
-            });
+            Application.targetFrameRate = 999;
+
+            _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainColorShader);
 
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             if (_renderMaterial != null)
             {
@@ -61,28 +58,28 @@ namespace Beast.Radar.Graphic.World
             return OperationResult.SuccessSync();
         }
         
-        private void FrameEnd()
+        private void _render()
         {
             if (!_terrain.IsReady)
             {
                 return;
             }
-
-            float2 renderTextureSize = _terrain.RenderedTexture.WidthHeightFloat();
-
-            BDebug.TrackFloat(this, "viewDistance", _camera.ViewDistance);
-
-            float2x2 rotation = IsometricCameraRotation.GetRotationMatrix(_camera.RotationRad.roll);
-            float2x2 scale = IsometricCameraRotation.GetScaleMatrix(_camera.RotationRad.pitch);
             
-            _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderedTexture);
-            _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
+            float2 renderTextureSize = _terrain.Texture.Size();
+            
+            float yScale = BMath.Cos(_camera.RotationRad.roll);
 
-            _renderMaterial.SetMatrix("_UVMatrix0", rotation);
-            _renderMaterial.SetMatrix("_UVMatrix1", scale);
+            float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
+            
+            _renderMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
+            _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
+            
+            _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
+            _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
-            _renderMaterial.SetFloat("_OutputHeight", _screen.Height);
+            _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
             _renderMaterial.SetVector("_OutputCenter", renderTextureSize * 0.5f);
             
             BeastCG.DrawMesh(new DrawMeshParameters

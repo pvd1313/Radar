@@ -1,12 +1,12 @@
-﻿using Beast.Claw.Graphic;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic
+namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainBaker : ITerrainBaker, IGameCycleListener
     {
@@ -23,7 +23,7 @@ namespace Beast.Radar.Graphic
             _graphicLibrary = graphicLibrary;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
@@ -31,11 +31,7 @@ namespace Beast.Radar.Graphic
         
         private UniTask<OperationResult> Warmup()
         {
-            _material = BeastCG.CreateMaterial(this, new MaterialParameters
-            {
-                shader = _graphicLibrary.terrainBakeShader,
-                name = "TerrainBake",
-            });
+            _material = BeastCG.CreateMaterial(this, _graphicLibrary.terrainBakeShader);
             
             return OperationResult.SuccessSync();
         }

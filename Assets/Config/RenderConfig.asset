@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 675fa3608d124c98bf394ac7be17f2f2, type: 3}
-  m_Name: CameraTransformConfig
+  m_Script: {fileID: 11500000, guid: dbb0de7657414ae8a837f9c29914de50, type: 3}
+  m_Name: RenderConfig
   m_EditorClassIdentifier: 
-  isometricRotationDeg:
-    roll: 0
-    pitch: 0
-  minViewDistance: 0.1
-  enablePlanetMode: 0
+  terrainTileCountLimit: 200000
+  terrainTilePixelSizeMin: 4

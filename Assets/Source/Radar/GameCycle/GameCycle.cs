@@ -30,8 +30,8 @@ namespace Beast.Radar.GameCycle
 
                 updateEventIDs = new HashSet<string>
                 {
-                    UpdateID.FrameBegin,
-                    UpdateID.FrameEnd,
+                    UpdateID.Tick,
+                    UpdateID.Render,
                     UpdateID.FixedUpdate,
                     UpdateID.GizmosDraw
                 }
@@ -41,21 +41,25 @@ namespace Beast.Radar.GameCycle
             {
                 return;
             }
-
-            _mono = BeastScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
-            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
-            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
-            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.FrameBegin);
-            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.FrameEnd);
-            _mono.Destroyed += () => _gameCycle.Execute(this, OperationID.Dispose);
             
             OperationResult result = await _gameCycle.Execute(this, OperationID.Warmup);
-            if (result.status != EOperationStatus.Success)
+            if (result.IsFailed())
             {
                 return;
             }
 
-            await _gameCycle.Execute(this, OperationID.Boot);
+            result = await _gameCycle.Execute(this, OperationID.Boot);
+            if (result.IsFailed())
+            {
+                return;
+            }
+            
+            _mono = BeastScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
+            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
+            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
+            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.Tick);
+            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.Render);
+            _mono.Destroyed += () => _gameCycle.Execute(this, OperationID.Dispose);
         }
     }
 }

@@ -2,14 +2,12 @@ using System;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
-using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
     public class CameraConfig : Config
     {
-        public CameraView viewPrefab;
-        public AnimationCurve zoomCurve;
+        public CameraTransformConfig transform;
         public CameraMotionParameters[] motion;
         
         public CameraMotionParameters GetMotionParameters(EInputScheme scheme)

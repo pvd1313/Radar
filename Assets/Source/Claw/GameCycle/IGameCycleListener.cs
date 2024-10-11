@@ -2,6 +2,6 @@
 {
     public interface IGameCycleListener
     {
-        void ListenGameCycle(IGameCycleHandle handle);
+        void Register(IGameCycleHandle handle);
     }
 }

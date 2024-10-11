@@ -29,13 +29,14 @@ namespace Beast.Radar.InputControl
             _input = inputProvider;
         }
 
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             SubscribeToInputSchemeChange();
             
@@ -49,7 +50,7 @@ namespace Beast.Radar.InputControl
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             UnsubscribeToInputSchemeChange();
 

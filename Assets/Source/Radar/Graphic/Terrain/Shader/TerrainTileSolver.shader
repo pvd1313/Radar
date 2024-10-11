@@ -37,14 +37,14 @@
             float2 _TileGridSize;
             
             sampler2D _TerrainTexture;
-            float2 _TerrainSize;
-            float2 _TerrainOffset;
+            float2 _TerrainUVOffset;
+            float2 _TerrainTexelSize;
 
             sampler2D _NoiseTexture;
-            float2 _NoiseSize;
-            float2 _NoiseOffset;
+            float2 _NoiseTextureSize;
+            float2 _NoiseWorldOffset;
             
-            float _OutputTextureSize;
+            float _SolverTextureSize;
 
             FragmentInput vertex(VertexInput input)
             {
@@ -64,17 +64,17 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                uint x = floor(input.uv.x * _OutputTextureSize);
-                uint y = floor(input.uv.y * _OutputTextureSize);
-                uint instanceID = y * (uint)_OutputTextureSize + x;
+                uint x = floor(input.uv.x * _SolverTextureSize);
+                uint y = floor(input.uv.y * _SolverTextureSize);
+                uint instanceID = y * (uint)_SolverTextureSize + x;
 
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
-                float2 worldOffset = beast_isometric_world_offset(tile, _TileGridSize.x);
+                float2 offset = beast_isometric_world_offset(tile, _TileGridSize.x);
 
-                float terrainColor = tex2D(_TerrainTexture, (worldOffset + _TerrainOffset) / _TerrainSize).r;
+                float terrainColor = tex2D(_TerrainTexture, _TerrainUVOffset + offset * _TerrainTexelSize).r;
                 uint tileIndex = terrain_color_to_tile_index(terrainColor);
 
-                float noiseColor = tex2D(_NoiseTexture, (worldOffset + _NoiseOffset) / _NoiseSize).r;
+                float noiseColor = tex2D(_NoiseTexture, (offset + _NoiseWorldOffset) / _NoiseTextureSize).r;
                 
                 return float4(f16tof32(tileIndex), noiseColor, 0, 0);
             }

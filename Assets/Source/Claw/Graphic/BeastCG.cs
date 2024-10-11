@@ -122,14 +122,25 @@ namespace Beast.Claw.Graphic
             return texture;
         }
 
-        public static Material CreateMaterial<T>(T owner, MaterialParameters input) where T : class
+        public static Material CreateMaterial<TOwner>(TOwner owner, MaterialParameters input) where TOwner : class
         {
             owner.ValidateNotNull(nameof(owner));
             input.Validate();
             
             return new Material(input.shader)
             {
-                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+            };
+        }
+
+        public static Material CreateMaterial<TOwner>(TOwner owner, Shader shader) where TOwner : class
+        {
+            owner.ValidateNotNull(nameof(owner));
+            shader.ValidateNotNull(nameof(shader));
+
+            return new Material(shader)
+            {
+                name = TypeStorage<TOwner>.FullName
             };
         }
 

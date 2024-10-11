@@ -6,7 +6,7 @@ using Beast.Radar.Cinematic;
 using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
-using Beast.Radar.Graphic.World;
+using Beast.Radar.Graphic.Terrain;
 using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
@@ -47,9 +47,10 @@ namespace Beast.Radar.Core
             
             // Render
             yield return typeof(TerrainBaker);
-            yield return typeof(TerrainNoiseRender);
+            yield return typeof(TerrainDetailRender);
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
+            yield return typeof(TerrainTileRender);
             
             // Debug
             yield return typeof(DebugController);

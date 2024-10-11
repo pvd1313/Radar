@@ -4,9 +4,9 @@ namespace Beast.Claw.Graphic
 {
     public interface IScreen
     {
-        public int2 WidthHeight { get; }
+        public int2 Size { get; }
         public float Aspect { get; }
-        public float Width { get; }
-        public float Height { get; }
+        public int Width { get; }
+        public int Height { get; }
     }
 }

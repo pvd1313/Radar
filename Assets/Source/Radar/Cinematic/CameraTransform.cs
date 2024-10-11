@@ -1,16 +1,19 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
     public class CameraTransform : IGameCycleListener, ICameraTransform
     {
         public bool IsReady { get; private set; }
+        
         public float2 Position => _position;
         public IsometricCameraRotation RotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
@@ -20,70 +23,132 @@ namespace Beast.Radar.Cinematic
         private readonly CameraTransformConfig _config;
         private readonly GameModel _game;
 
+        private float2x2 _rotation;
+        private float2x2 _scale;
+        private float2x2 _rotationInverse;
+        private float2x2 _scaleInverse;
+        private float _yScaleRollCos;
+        
         private IsometricCameraRotation _rotationRad;
         private float _viewDistance;
         private float _maxViewDistance;
         private float _zoom01;
+        private float _zoomMax;
         private float2 _position;
         
-        public CameraTransform(IScreen screen, CameraTransformConfig config, GameModel game)
+        public CameraTransform(IScreen screen, CameraConfig config, GameModel game)
         {
             _screen = screen;
-            _config = config;
+            _config = config.transform;
             _game = game;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
-        }
-        
-        public float2 ScreenPointToWorld(float2 screenPoint)
-        {
-            return ViewportToWorld(screenPoint / _screen.WidthHeight);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.GameLoading, _gameLoading);
         }
 
-        public void AddZoom(float zoomDelta)
+        private UniTask<OperationResult> _warmup()
         {
-            InternalSetZoom(_zoom01 + zoomDelta);
+            _rotationRad = _config.isometricRotationDeg * BMath.Deg2Rad;
+            
+            _rotation = float2x2.Rotate(_rotationRad.roll);
+            _rotationInverse = float2x2.Rotate(_rotationRad.roll * -1);
+
+            _scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
+            _scaleInverse = _scale.Inverse();
+
+            _yScaleRollCos = BMath.Cos(_rotationRad.roll);
+
+            return OperationResult.SuccessSync();
         }
 
-        public void AddPosition(float2 delta)
-        {
-            _position += delta;
-        }
-
-        public float2 ViewportToWorld(float2 viewport)
-        {
-            float2 bottomLeft = _position - new float2(_screen.Aspect, 1) * _viewDistance * 0.5f;
-            float2 screen = bottomLeft + viewport * new float2(_screen.Aspect, 1) * _viewDistance;
-
-            return new float2(screen.x, screen.y);
-        }
-
-        private UniTask<OperationResult> GameLoading()
+        private UniTask<OperationResult> _gameLoading()
         {
             _position = _game.camera.position;
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * 1f;
 
-            InternalSetZoom(_game.camera.zoom01);
+            _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
+
+            _setZoom(_game.camera.zoom01);
             
             IsReady = true;
             
             return OperationResult.SuccessSync();
         }
 
-        private void InternalSetZoom(float zoom)
+        public void AddPosition(float2 delta, Space space)
         {
-            _zoom01 = BMath.Clamp01(zoom);
-            _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, Zoom01);
+            if (space == Space.Self)
+            {
+                _position += _localToWorld(delta);
+            }
+            else
+            {
+                _position += delta;
+            }
+            
+            _debugTrack();
+        }
 
-            // Zoom01 = zoom;
-            // RotationRad = new IsometricCameraRotation
-            // {
-            //     pitch = BMath.Lerp(0, _config.isometricRotationDeg.pitch * BMath.Deg2Rad, zoom),
-            //     roll = BMath.Lerp(0, _config.isometricRotationDeg.roll * BMath.Deg2Rad, zoom)
-            // };
+        public void AddZoom(float zoomDelta)
+        {
+            _setZoom(_zoom01 + zoomDelta);
+        }
+        
+        public float2 ScreenPointToWorld(float2 screenPoint)
+        {
+            return ViewportToWorld(screenPoint / _screen.Size);
+        }
+
+        public float2 ViewportToWorld(float2 viewport)
+        {
+            float viewDistance = _viewDistance * BMath.Cos(_rotationRad.roll);
+            
+            float2 bottomLeft = _position - _localToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
+            float2 screen = bottomLeft + _localToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
+
+            return new float2(screen.x, screen.y);
+        }
+        
+        public float2 WorldToViewport(float2 worldPoint)
+        {
+            float2 localPoint = _worldToLocal(worldPoint - _position);
+
+            localPoint.x /= _viewDistance * _yScaleRollCos * _screen.Aspect;
+            localPoint.y /= _viewDistance * _yScaleRollCos;
+            
+            return localPoint + 0.5f;
+        }
+
+        private float2 _worldToLocal(float2 vector)
+        {
+            return _scale.Multiply(_rotation.Multiply(vector));
+        }
+
+        private float2 _localToWorld(float2 vector)
+        {
+            return _rotationInverse.Multiply(_scaleInverse.Multiply(vector));
+        }
+
+        private void _setZoom(float zoom)
+        {
+            _zoom01 = BMath.Clamp(zoom, _config.minViewDistance / _maxViewDistance, 1f);
+            _viewDistance = _maxViewDistance * _zoom01;
+
+            _debugTrack();
+        }
+
+        private void _debugTrack()
+        {
+            BDebug.Track(this, nameof(_position), _position);
+            BDebug.Track(this, nameof(_viewDistance), _viewDistance);
+            BDebug.Track(this, nameof(_maxViewDistance), _maxViewDistance);
+            BDebug.Track(this, nameof(_zoom01), _zoom01);
+            BDebug.Track(this, nameof(_yScaleRollCos), _yScaleRollCos);
+            BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
+            BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
         }
     }
 }

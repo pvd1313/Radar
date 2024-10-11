@@ -76,6 +76,18 @@ namespace Beast.Claw.Mathematics
         {
             return math.max(x, y);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Max(int x, int y)
+        {
+            return math.max(x, y);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Min(float x, float y)
+        {
+            return math.min(x, y);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Normalize(float2 x)
@@ -126,6 +138,30 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Floor(float2 vector)
+        {
+            return math.floor(vector);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double2 Floor(double2 vector)
+        {
+            return math.floor(vector);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Floor(double a)
+        {
+            return math.floor(a);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Round(float a)
+        {
+            return math.round(a);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int FloorToInt(float a)
         {
             return (int)math.floor(a);
@@ -133,6 +169,12 @@ namespace Beast.Claw.Mathematics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Ceil(float x)
+        {
+            return math.ceil(x);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Ceil(double x)
         {
             return math.ceil(x);
         }
@@ -151,6 +193,12 @@ namespace Beast.Claw.Mathematics
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Clamp(float2 value, float min, float max)
+        {
+            return math.clamp(value, min, max);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(float value, float min, float max)
         {
             return math.clamp(value, min, max);
         }

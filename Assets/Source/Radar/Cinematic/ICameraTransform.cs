@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
@@ -12,9 +13,8 @@ namespace Beast.Radar.Cinematic
         
         float2 ScreenPointToWorld(float2 screenPoint);
         float2 ViewportToWorld(float2 viewport);
-        
-        void AddPosition(float2 delta);
-        
+        float2 WorldToViewport(float2 worldPoint);
+        void AddPosition(float2 delta, Space space);
         void AddZoom(float zoomDelta);
     }
 }

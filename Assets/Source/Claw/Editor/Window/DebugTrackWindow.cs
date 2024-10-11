@@ -1,11 +1,20 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
 {
     public class DebugTrackWindow : EditorWindow
     {
+        [SerializeField] private bool _clearOnEnterPlayerMode;
+        [SerializeField] private Vector2 _scrollPosition;
+        
+        private bool _isPlaying;
+        private Dictionary<string, bool> _folds;
+        
         protected override void Initialize()
         {
             
@@ -18,52 +27,87 @@ namespace Beast.Claw.Editor.Window
 
         protected override void OnInspectorGUI()
         {
-            EditorGUIUtility.labelWidth = 400;
+            if (_isPlaying != Application.isPlaying)
+            {
+                _isPlaying = Application.isPlaying;
 
-            EditorUI ui = new ()
-            {
-                success = true,
-                niceLabelsEnabled = false
-            };
-            
-            ui.Button("Clear", Clear);
-            
-            foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())
-            {
-                ui.FloatField(id, value);
+                if (_isPlaying && _clearOnEnterPlayerMode)
+                {
+                    BDebug.ClearTrackStorage();
+                }
             }
 
-            foreach ((string id, int value) in BDebug.StateStorage.ReadAllInt())
+            UI.Horizontal(() =>
             {
-                ui.IntField(id, value);
-            }
+                UI.Button("Clear", BDebug.ClearTrackStorage);
+                UI.Button("Open All", () => _SetAllFolds(true));
+                UI.Button("Collapse", () => _SetAllFolds(false));
+                _clearOnEnterPlayerMode = UI.CheckBox("Play Mode Clear", _clearOnEnterPlayerMode);
+            });
+            
+            _folds ??= new Dictionary<string, bool>();
+            
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+            {
+                foreach ((string storageName, DebugTrackStorage storage) in BDebug.TrackStorages)
+                {
+                    _folds.TryGetValue(storageName, out bool foldState);
+                    foldState = EditorGUILayout.Foldout(foldState, storageName);
+                    _folds[storageName] = foldState;
 
-            foreach ((string id, float2 value) in BDebug.StateStorage.ReadAllFloat2())
-            {
-                ui.Float2Field(id, value);
+                    if (foldState)
+                    {
+                        EditorGUI.indentLevel++;
+                        _TrackStorageUI(storage);
+                        EditorGUI.indentLevel--;
+                        GUILayout.Space(8);
+                    }
+                }
             }
-            
-            foreach ((string id, float3 value) in BDebug.StateStorage.ReadAllFloat3())
-            {
-                ui.Float3Field(id, value);
-            }
-            
-            foreach ((string id, float4 value) in BDebug.StateStorage.ReadAllFloat4())
-            {
-                ui.Float4Field(id, value);
-            }
-            
-            foreach ((string id, string value) in BDebug.StateStorage.ReadAllString())
-            {
-                ui.StringField(id, value);
-            }
+            EditorGUILayout.EndScrollView();
             
             Repaint();
         }
 
-        private void Clear()
+        private void _TrackStorageUI(DebugTrackStorage storage)
         {
-            BDebug.StateStorage.Clear();
+            foreach ((string id, float value) in storage.ReadAllFloat())
+            {
+                UI.FloatField(id, value);
+            }
+            
+            foreach ((string id, int value) in storage.ReadAllInt())
+            {
+                UI.IntField(id, value);
+            }
+            
+            foreach ((string id, float2 value) in storage.ReadAllFloat2())
+            {
+                UI.Float2Field(id, value);
+            }
+            
+            foreach ((string id, float3 value) in storage.ReadAllFloat3())
+            {
+                UI.Float3Field(id, value);
+            }
+            
+            foreach ((string id, float4 value) in storage.ReadAllFloat4())
+            {
+                UI.Float4Field(id, value);
+            }
+            
+            foreach ((string id, string value) in storage.ReadAllString())
+            {
+                UI.StringField(id, value);
+            }
+        }
+
+        private void _SetAllFolds(bool isOpen)
+        {
+            foreach (string id in _folds.Keys.ToList())
+            {
+                _folds[id] = isOpen;
+            }
         }
     }
 }

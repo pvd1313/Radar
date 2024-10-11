@@ -91,7 +91,7 @@ namespace Beast.Claw.GameCycle
             {
                 try
                 {
-                    subscriber.ListenGameCycle(_proxy);
+                    subscriber.Register(_proxy);
                 }
                 catch (Exception e)
                 {
