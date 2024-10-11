@@ -31,12 +31,12 @@ namespace Beast.Radar.InputControl
             _input = inputProvider;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.FrameBegin, FrameBegin);
+            handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
-        private void FrameBegin()
+        private void _tick()
         {
             if (_isBlock)
             {

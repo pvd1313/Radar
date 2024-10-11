@@ -2,9 +2,9 @@
 {
     public static class UpdateID
     {
-        public static string FrameBegin = "frame_begin";
-        public static string FrameEnd = "frame_end";
-        public static string FixedUpdate = "fixed_update";
-        public static string GizmosDraw = "gizmos_draw";
+        public const string Tick = "tick";
+        public const string Render = "render";
+        public const string FixedUpdate = "fixed_update";
+        public const string GizmosDraw = "gizmos_draw";
     }
 }

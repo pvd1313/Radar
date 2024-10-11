@@ -28,7 +28,7 @@ namespace Beast.Radar.UI
             _gameSave = gameSave;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);

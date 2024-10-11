@@ -49,11 +49,11 @@ namespace Beast.Radar.Graphic.Terrain
             _camera = camera;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
-            handle.ListenUpdate(this, UpdateID.FrameEnd, _frameEnd);
+            handle.ListenUpdate(this, UpdateID.Render, _render);
         }
 
         private UniTask<OperationResult> _warmup()
@@ -85,7 +85,7 @@ namespace Beast.Radar.Graphic.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _frameEnd()
+        private void _render()
         {
             _isReady = false;
             

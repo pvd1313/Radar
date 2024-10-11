@@ -13,7 +13,7 @@ namespace Beast.Radar
         public PlayerInputView playerInputPrefab;
         public UIPrefabLibrary ui;
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
         }

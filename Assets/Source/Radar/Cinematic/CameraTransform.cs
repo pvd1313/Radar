@@ -37,7 +37,7 @@ namespace Beast.Radar.Cinematic
             _game = game;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.GameLoading, _gameLoading);

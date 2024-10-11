@@ -17,12 +17,12 @@ namespace Beast.Radar.Graphic
         
         public int Height => Screen.height;
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.FrameBegin, FrameBegin);
+            handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
-        private void FrameBegin()
+        private void _tick()
         {
             BDebug.Track(this, nameof(Size), Size);
             BDebug.Track(this, nameof(Aspect), Aspect);

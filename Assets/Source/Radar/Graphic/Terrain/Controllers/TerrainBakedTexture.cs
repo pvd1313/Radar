@@ -21,7 +21,7 @@ namespace Beast.Radar.Graphic.Terrain
             _baker = baker;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);

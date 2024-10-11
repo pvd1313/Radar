@@ -29,7 +29,7 @@ namespace Beast.Radar.UI
             _input = input;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);

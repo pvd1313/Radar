@@ -31,14 +31,14 @@ namespace Beast.Radar.Graphic.Terrain
             _camera = camera;
         }
         
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
-            handle.ListenUpdate(this, UpdateID.FrameEnd, FrameEnd);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenUpdate(this, UpdateID.Render, _render);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             Application.targetFrameRate = 999;
 
@@ -47,7 +47,7 @@ namespace Beast.Radar.Graphic.Terrain
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             if (_renderMaterial != null)
             {
@@ -58,7 +58,7 @@ namespace Beast.Radar.Graphic.Terrain
             return OperationResult.SuccessSync();
         }
         
-        private void FrameEnd()
+        private void _render()
         {
             if (!_terrain.IsReady)
             {
