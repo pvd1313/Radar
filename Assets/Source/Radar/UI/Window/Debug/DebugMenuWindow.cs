@@ -34,7 +34,7 @@ namespace Beast.Radar.UI
             _inputProvider = inputProvider;
         }
 
-        public void ListenGameCycle(IGameCycleHandle handle)
+        public void Register(IGameCycleHandle handle)
         {
 #if BEAST_DEVELOPMENT
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
@@ -164,5 +164,6 @@ namespace Beast.Radar.UI
         {
             _windowManager.Show(WindowID.Debug);
         }
+        
     }
 }

@@ -33,7 +33,6 @@ namespace Beast.Radar.InputControl
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
-            handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
         private UniTask<OperationResult> _warmup()
