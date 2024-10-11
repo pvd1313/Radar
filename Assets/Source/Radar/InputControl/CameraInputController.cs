@@ -12,7 +12,6 @@ namespace Beast.Radar.InputControl
     public class CameraInputController : ICameraInputController, IGameCycleListener
     {
         public event Action ChangedEarlyValues;
-        
         public float2 LastScreenPoint { get; private set; }
         public float2 ScreenPoint { get; private set; }
         public float2 MoveDelta { get; private set; }

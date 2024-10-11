@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Beast.Radar.UI.Debug;
-using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
@@ -43,11 +43,15 @@ namespace Beast.Radar.UI
 
             ConfigureSelectables();
             SubscribeView();
+            
+            _selectableController.Warmup();
         }
 
         public void Dispose()
         {
             UnsubscribeView();
+            
+            _selectableController.Dispose();
         }
 
         public void Open()
@@ -65,7 +69,9 @@ namespace Beast.Radar.UI
 
         private void ConfigureSelectables()
         {
-            SelectableGridData shoulderGrid = _zoneBuilder.Build(new[]
+            Tuple<ESelectionZone, SelectableGridData> shoulderGrid = _zoneBuilder.Build(
+                ESelectionZone.Shoulder,
+                new[]
                 {
                     _view.previousItems.Selectable,
                     _view.nextItems.Selectable,
@@ -73,24 +79,30 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: false);
 
+            Tuple<ESelectionZone, SelectableGridData> west = _zoneBuilder.Build(
+                ESelectionZone.WestButton, _view.itemGrantButtons[0].Selectable);
 
-            SelectableGridData west = _zoneBuilder.Build(_view.itemGrantButtons[0].Selectable);
-            SelectableGridData north = _zoneBuilder.Build(_view.itemGrantButtons[1].Selectable);
-            SelectableGridData east = _zoneBuilder.Build(_view.itemGrantButtons[2].Selectable);
+            Tuple<ESelectionZone, SelectableGridData> north = _zoneBuilder.Build(
+                ESelectionZone.NorthButton, _view.itemGrantButtons[1].Selectable);
 
-            Selectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
-            SelectableGridData dpadGrid = _zoneBuilder.Build(dpadSelectables,
+            Tuple<ESelectionZone, SelectableGridData> east = _zoneBuilder.Build(
+                ESelectionZone.EastButton, _view.itemGrantButtons[2].Selectable);
+
+            UISelectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
+                zone: ESelectionZone.DPad,
+                selectables: dpadSelectables,
                 cols: 15, rows: 5,
                 isFillHorizontally: false,
                 isLooping: false);
 
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
-                { ESelectionZone.DPad, dpadGrid },
-                { ESelectionZone.Shoulder, shoulderGrid },
-                { ESelectionZone.WestButton, west },
-                { ESelectionZone.NorthButton, north },
-                { ESelectionZone.EastButton, east },
+                { shoulderGrid.Item1, shoulderGrid.Item2 },
+                { dpadGrid.Item1, dpadGrid.Item2 },
+                { north.Item1, north.Item2 },
+                { west.Item1, west.Item2 },
+                { east.Item1, east.Item2 },
             });
         }
 
@@ -101,7 +113,7 @@ namespace Beast.Radar.UI
                 button.Clicked += OnItemButtonClicked;
             }
 
-            for (var i = 0; i < _view.itemGrantButtons.Length; i++)
+            for (int i = 0; i < _view.itemGrantButtons.Length; i++)
             {
                 int index = i;
                 _view.itemGrantButtons[i].Clicked += () => OnGrantButtonClicked(index);

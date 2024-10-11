@@ -7,12 +7,12 @@ namespace Beast.Radar.UI
 {
     public class UISlider : UIView, IPointerUpHandler
     {
-        public Selectable Selectable => _selectable;
+        public UISelectable Selectable => _selectable;
 
         public event Action<float> EndedChange;
         
         [SerializeField] private Slider _slider;
-        [SerializeField] private Selectable _selectable;
+        [SerializeField] private UISelectable _selectable;
         
         public void SetValue(float value, bool withNotify)
         {

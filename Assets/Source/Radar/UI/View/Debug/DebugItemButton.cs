@@ -9,7 +9,7 @@ namespace Beast.Radar.UI
     public class DebugItemButton : UIView
     {
         public ItemData Item { get; private set; }
-        public Selectable Selectable => _selectable;
+        public UISelectable Selectable => _selectable;
 
         public event Action<DebugItemButton> Clicked;
         
@@ -19,7 +19,7 @@ namespace Beast.Radar.UI
         [SerializeField] private Button _button;
         [SerializeField] private Image _icon;
         [SerializeField] private TextMeshProUGUI _textMeshPro;
-        [SerializeField] private Selectable _selectable;
+        [SerializeField] private UISelectable _selectable;
         
         private void Start()
         {

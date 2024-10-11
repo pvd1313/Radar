@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 5710985596304890813}
   - component: {fileID: 5258268452734518016}
   - component: {fileID: 5689346852516115500}
+  - component: {fileID: 1883369800143888722}
   m_Layer: 0
   m_Name: debug_item_button
   m_TagString: Untagged
@@ -213,6 +214,19 @@ MonoBehaviour:
   _button: {fileID: 5258268452734518016}
   _icon: {fileID: 5306946386086805809}
   _textMeshPro: {fileID: 904184661844821890}
+  _selectable: {fileID: 1883369800143888722}
+--- !u!114 &1883369800143888722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7117935335787059021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3247ee9c49794888b7bf2e37ef66120b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _selectable: {fileID: 5258268452734518016}
 --- !u!1001 &869221612438662387
 PrefabInstance:

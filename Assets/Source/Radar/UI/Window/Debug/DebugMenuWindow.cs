@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
@@ -60,7 +61,7 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _windowManager.Register(this, WindowID.Debug, _view);
 
-            foreach (var icon in _view.inputIcons)
+            foreach (InputIconDisplay icon in _view.inputIcons)
             {
                 icon.Refresh(_inputProvider.Scheme);
             }
@@ -70,15 +71,20 @@ namespace Beast.Radar.UI
 
             SubscribeView();
             SubscribeInput();
-
+            
+            _panelsController.Warmup();
+            _selectableController.Warmup();
+                        
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()
         {
             UnsubscribeView();
-
+            UnsubscribeInput();
+            
             _panelsController.Dispose();
+            _selectableController.Dispose();
 
             return OperationResult.SuccessSync();
         }
@@ -102,22 +108,19 @@ namespace Beast.Radar.UI
                 }),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _input),
             });
-            
-            _panelsController.Warmup();
         }
 
         private void ConfigureSelectables()
         {
-            SelectableGridData triggerGrid = _zoneBuilder.Build
-            (
+            Tuple<ESelectionZone, SelectableGridData> triggerGrid = _zoneBuilder.Build(
+                zone: ESelectionZone.Trigger,
                 selectables: _view.panelButtons.Select(b => b.Selectable).ToArray(),
                 isFillHorizontally: true,
-                isLooping: false
-            );
+                isLooping: false);
             
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
-                { ESelectionZone.Trigger, triggerGrid }
+                { triggerGrid.Item1, triggerGrid.Item2 }
             });
         }
 
@@ -138,11 +141,16 @@ namespace Beast.Radar.UI
             _inputProvider.ChangedScheme += OnInputSchemeChanged;
         }
 
-        private void OnInputSchemeChanged(EInputScheme obj)
+        private void UnsubscribeInput()
         {
-            foreach (var icon in _view.inputIcons)
+            _inputProvider.ChangedScheme -= OnInputSchemeChanged;
+        }
+        
+        private void OnInputSchemeChanged(EInputScheme scheme)
+        {
+            foreach (InputIconDisplay icon in _view.inputIcons)
             {
-                icon.Refresh(obj);
+                icon.Refresh(scheme);
             }
         }
 

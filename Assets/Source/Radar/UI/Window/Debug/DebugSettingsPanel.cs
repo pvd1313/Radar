@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
@@ -11,8 +11,8 @@ namespace Beast.Radar.UI
         private readonly DebugSettingsFolderView _view;
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
-
         private readonly float[] _timeScales = { 1, 3, 10 };
+
         private int[] _frameRates;
 
         private SelectableController _selectableController;
@@ -32,10 +32,13 @@ namespace Beast.Radar.UI
             InitializeFrameRates();
             ConfigureSelectables();
             SubscribeView();
+            
+            _selectableController.Warmup();
         }
 
         public void Dispose()
         {
+            _selectableController.Dispose();
         }
 
         public void Open()
@@ -52,7 +55,7 @@ namespace Beast.Radar.UI
 
         private void ConfigureSelectables()
         {
-            Selectable[,] selectables =
+            UISelectable[,] selectables =
             {
                 { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, },
                 { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, },
@@ -61,11 +64,14 @@ namespace Beast.Radar.UI
                 { null, _view.frameRateButtons[4].Selectable, },
             };
 
-            SelectableGridData dpadGrid = _zoneBuilder.Build(selectables, isLooping: false);
+           Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
+               zone: ESelectionZone.DPad,
+               selectionsGrid: selectables, 
+               isLooping: false);
 
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
-                { ESelectionZone.DPad, dpadGrid }
+                { dpadGrid.Item1, dpadGrid.Item2 }
             });
         }
 

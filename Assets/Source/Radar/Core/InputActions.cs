@@ -139,7 +139,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""AWDSA"",
+                    ""name"": ""WSAD"",
                     ""id"": ""4737d585-ec06-4d05-a8a6-ce0888ae23a7"",
                     ""path"": ""2DVector(mode=1)"",
                     ""interactions"": """",

@@ -19,7 +19,7 @@
                 int index = i;
                 _buttons[i].Clicked += () => SwitchFolder(index);
             }    
-            foreach (var folder in _folders)
+            foreach (IPanel folder in _folders)
             {
                 folder.Warmup();
             }
@@ -27,7 +27,7 @@
 
         public void Dispose()
         {
-            foreach (var folder in _folders)
+            foreach (IPanel folder in _folders)
             {
                 folder.Dispose();
             }

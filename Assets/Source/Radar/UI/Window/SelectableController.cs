@@ -9,14 +9,26 @@ namespace Beast.Radar.UI
     public class SelectableController
     {
         private readonly IUIInputController _input;
-
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
-        private Selectable _currentSelectable;
 
-        public SelectableController(IUIInputController input, Dictionary<ESelectionZone, SelectableGridData> selectables)
+        private UISelectable _currentSelectable;
+
+        public SelectableController(
+            IUIInputController input,
+            Dictionary<ESelectionZone, SelectableGridData> selectables)
         {
             _input = input;
             _selectableGrids = selectables;
+        }
+        
+        public void Warmup()
+        {
+            SubscribeSelectables();  
+        }
+
+        public void Dispose()
+        {
+            UnsubscribeSelectables();
         }
 
         public void Enable()
@@ -45,47 +57,80 @@ namespace Beast.Radar.UI
             UnsubscribeInput();
         }
 
+        private void SubscribeSelectables()
+        {
+            foreach (KeyValuePair<ESelectionZone, SelectableGridData> grids in _selectableGrids)
+            {
+                foreach (UISelectable selectable in grids.Value.selectables)
+                {
+                    if (selectable == null)
+                    {
+                        continue;
+                    }
+                    selectable.Selected += OnSelected;
+                }
+            }
+        }
+        
+        private void UnsubscribeSelectables()
+        {
+            foreach (KeyValuePair<ESelectionZone, SelectableGridData> grids in _selectableGrids)
+            {
+                foreach (UISelectable selectable in grids.Value.selectables)
+                {
+                    if (selectable == null)
+                    {
+                        continue;
+                    }
+                    selectable.Selected -= OnSelected;
+                }
+            }
+        }
+        
+        private void OnSelected(ESelectionZone zone, int2 index)
+        {
+            SelectableGridData grid = _selectableGrids[zone]; 
+            grid.currentIndex = index;
+            _selectableGrids[zone] = grid;
+        }
+        
         private void SubscribeInput()
         {
-            _input.NavigationPressed += OnDpadPressed;
+            _input.DpadPressed += OnDpadPressed;
             _input.TriggerPressed += OnTriggerPressed;
-            _input.RightStickPressed += OnRightStickPressed;
-            _input.WestPressed += OnWestPressed;
-            _input.NorthPressed += OnNorthPressed;
-            _input.EastPressed += OnEastPressed;
+            _input.RightStickMoved += OnRightStickMoved;
+            _input.ActionButtonPressed += OnActionButtonPressed;
+
         }
 
         private void UnsubscribeInput()
         {
-            _input.NavigationPressed -= OnDpadPressed;
+            _input.DpadPressed -= OnDpadPressed;
             _input.TriggerPressed -= OnTriggerPressed;
-            _input.RightStickPressed -= OnRightStickPressed;
-            _input.WestPressed -= OnWestPressed;
-            _input.NorthPressed -= OnNorthPressed;
-            _input.EastPressed -= OnEastPressed;
+            _input.RightStickMoved -= OnRightStickMoved;
+            _input.ActionButtonPressed -= OnActionButtonPressed;
         }
 
-        private void OnEastPressed()
+        private void OnActionButtonPressed(ESelectionZone zone)
         {
-            PerformButtonAction(ESelectionZone.EastButton);
-        }
+            if (!_selectableGrids.ContainsKey(zone))
+            {
+                return;
+            }
 
-        private void OnNorthPressed()
-        {
-            PerformButtonAction(ESelectionZone.NorthButton);
+            if (_selectableGrids[zone].selectables[0, 0].TryGetComponent(out Button button))
+            {
+                button.onClick.Invoke();
+            }
         }
-
-        private void OnWestPressed()
+        
+        private void OnDpadPressed(int2 direction)
         {
-            PerformButtonAction(ESelectionZone.WestButton);
-        }
-
-        private void OnDpadPressed(float2 direction)
-        {
+            UnityEngine.Debug.Log(direction);
             PerformVectorAction(ESelectionZone.DPad, direction);
         }
 
-        private void OnRightStickPressed(float2 direction)
+        private void OnRightStickMoved(int2 direction)
         {
             UnityEngine.Debug.Log(direction);
             PerformVectorAction(ESelectionZone.RightStick, direction);
@@ -113,32 +158,18 @@ namespace Beast.Radar.UI
                 newCol = grid.isLooping ? cols - 1 : current;
             }
 
-            UnityEngine.Debug.Log($"{newCol}/{cols}");
             grid.currentIndex.y = newCol;
 
             _selectableGrids[ESelectionZone.Trigger] = grid;
 
-            Selectable triggerSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
-            if (triggerSelectable is Button button)
+            UISelectable triggerSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
+            if (triggerSelectable.TryGetComponent(out Button button))
             {
                 button.onClick.Invoke();
             }
         }
-
-        private void PerformButtonAction(ESelectionZone zone)
-        {
-            if (!_selectableGrids.ContainsKey(zone))
-            {
-                return;
-            }
-
-            if (_selectableGrids[zone].selectables[0, 0] is Button button)
-            {
-                button.onClick.Invoke();
-            }
-        }
-
-        private void PerformVectorAction(ESelectionZone zone, float2 direction)
+        
+        private void PerformVectorAction(ESelectionZone zone, int2 direction)
         {
             if (!_selectableGrids.ContainsKey(zone))
             {
@@ -147,17 +178,17 @@ namespace Beast.Radar.UI
 
             SelectableGridData grid = _selectableGrids[zone];
 
-            int rows = grid.selectables.GetLength(0); //y
-            int cols = grid.selectables.GetLength(1); //x
+            int rows = grid.selectables.GetLength(1);
+            int cols = grid.selectables.GetLength(0);
             int currentRow = grid.currentIndex.y;
             int currentCol = grid.currentIndex.x;
 
             int newRow = currentRow;
             int newCol = currentCol;
 
-            if (direction.x != 0)
+            if (direction.y != 0)
             {
-                newCol += (int)direction.x;
+                newCol += direction.y;
 
                 if (newCol < 0)
                 {
@@ -169,9 +200,9 @@ namespace Beast.Radar.UI
                 }
             }
 
-            if (direction.y != 0)
+            if (direction.x != 0)
             {
-                newRow += (int)direction.y;
+                newRow += direction.x;
 
                 if (newRow < 0)
                 {
@@ -184,7 +215,8 @@ namespace Beast.Radar.UI
             }
 
             int2 index = new int2(newCol, newRow);
-            Selectable selectable = grid.selectables[index.y, index.x];
+            UnityEngine.Debug.Log($"index = {index} / size {new int2(cols, rows)}");
+            UISelectable selectable = grid.selectables[index.x, index.y];
 
             if (selectable != null)
             {
@@ -194,7 +226,7 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void SwitchSelectable(Selectable selectable)
+        private void SwitchSelectable(UISelectable selectable)
         {
             if (selectable == _currentSelectable)
             {

@@ -2,6 +2,7 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
+using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -11,17 +12,15 @@ namespace Beast.Radar.InputControl
 {
     public class UIInputController : IUIInputController, IGameCycleListener
     {
-        public event Action WestPressed;
-        public event Action PausePressed;
-        public event Action NorthPressed;
-        public event Action EastPressed;
-        public event Action<float2> NavigationPressed;
-        public event Action<float2> RightStickPressed;
+        public event Action PauseButtonPressed;
+        public event Action<ESelectionZone> ActionButtonPressed;
+        public event Action<int2> DpadPressed;
+        public event Action<int2> RightStickMoved;
         public event Action<int> TriggerPressed;
 
         private readonly IPlayerInputProvider _input;
 
-        private float2 _lastRightStickValue;
+        private int2 _lastRightStickValue;
 
         public UIInputController(IPlayerInputProvider inputProvider)
         {
@@ -73,47 +72,50 @@ namespace Beast.Radar.InputControl
 
         private void OnPressWest(InputAction.CallbackContext obj)
         {
-            WestPressed?.Invoke();
+            ActionButtonPressed?.Invoke(ESelectionZone.WestButton);
         }
 
         private void OnPressEast(InputAction.CallbackContext obj)
         {
-            EastPressed?.Invoke();
+            ActionButtonPressed?.Invoke(ESelectionZone.EastButton);
         }
 
         private void OnPressNorth(InputAction.CallbackContext obj)
         {
-            NorthPressed?.Invoke();
+            ActionButtonPressed?.Invoke(ESelectionZone.NorthButton);
         }
 
         private void OnPressPause(InputAction.CallbackContext obj)
         {
-            PausePressed?.Invoke();
+            PauseButtonPressed?.Invoke();
         }
 
         private void OnPerformedNavigate(InputAction.CallbackContext obj)
         {
             float2 value = obj.ReadValue<Vector2>();
-            if (value.Equals(float2.zero))
+            int2 roundValue = RoundValue(value);
+            
+            if (roundValue.Equals(int2.zero))
             {
                 return;
             }
-            NavigationPressed?.Invoke(value);
+            
+            DpadPressed?.Invoke(roundValue);
         }
 
         private void OnRightStickPerformed(InputAction.CallbackContext obj)
         {
             float2 value = obj.ReadValue<Vector2>();
-            float2 roundValue = RoundValue(value);
+            int2 roundValue = RoundValue(value);
             
             if (roundValue.Equals(_lastRightStickValue))
             {
                 return;
             }
 
-            if (!roundValue.Equals(float2.zero))
+            if (!roundValue.Equals(int2.zero))
             {
-                RightStickPressed?.Invoke(roundValue);
+                RightStickMoved?.Invoke(roundValue);
             }
             
             _lastRightStickValue = roundValue;
@@ -122,20 +124,20 @@ namespace Beast.Radar.InputControl
         private void OnPerformedTrigger(InputAction.CallbackContext obj)
         {
             float value = obj.ReadValue<float>();
-            TriggerPressed?.Invoke((int)RoundValue(value));
+            TriggerPressed?.Invoke(RoundValue(value));
         }
 
-        private float2 RoundValue(float2 vector)
+        private int2 RoundValue(float2 vector)
         {
-            return new float2(RoundValue(vector.x), RoundValue(vector.y));
+            return new int2(RoundValue(vector.x), RoundValue(vector.y));
         }
 
-        private float RoundValue(float value)
+        private int RoundValue(float value)
         {
             return value switch
             {
-                > 0.8f => BMath.Ceil(value),
-                < -0.8f => BMath.Floor(value),
+                > 0.8f => BMath.CeilToInt(value),
+                < -0.8f => BMath.FloorToInt(value),
                 _ => 0
             };
         }

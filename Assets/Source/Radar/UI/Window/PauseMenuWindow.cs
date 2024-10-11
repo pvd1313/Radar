@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
@@ -17,7 +18,7 @@ namespace Beast.Radar.UI
 
         private PauseMenuView _menuView;
         private SelectableController _selectableController;
-        
+
         public PauseMenuWindow(
             IUIFactory uiFactory,
             IWindowManager windowManager,
@@ -38,40 +39,6 @@ namespace Beast.Radar.UI
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
         }
 
-        private UniTask<OperationResult> Warmup()
-        {
-            _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
-                
-            _windowManager.Register(this, WindowID.Pause, _menuView);
-            
-            ConfigureSelectables();
-
-            SubscribeView();
-            return OperationResult.SuccessSync();
-        }
-
-        private void ConfigureSelectables()
-        {
-            SelectableGridData dpadSelectable = _zoneBuilder.Build(new[]
-            {
-                _menuView.newGameButton.Selectable,
-                _menuView.saveButton.Selectable,
-                _menuView.loadButton.Selectable,
-            }, isFillHorizontally: false, isLooping: true);
-
-            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
-            {
-                { ESelectionZone.DPad, dpadSelectable }
-            });
-        }
-
-        private UniTask<OperationResult> Dispose()
-        {
-            UnsubscribeView();
-            
-            return OperationResult.SuccessSync();
-        }
-
         public void Open()
         {
             _selectableController.Enable();
@@ -84,12 +51,53 @@ namespace Beast.Radar.UI
             _selectableController.Disable();
         }
 
+        private UniTask<OperationResult> Warmup()
+        {
+            _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
+            _windowManager.Register(this, WindowID.Pause, _menuView);
+            
+            ConfigureSelectables();
+            SubscribeView();
+            
+            _selectableController.Warmup();
+            
+            return OperationResult.SuccessSync();
+        }
+
+        private UniTask<OperationResult> Dispose()
+        {
+            UnsubscribeView();
+            
+            _selectableController.Dispose();
+            
+            return OperationResult.SuccessSync();
+        }
+
+        private void ConfigureSelectables()
+        {
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
+                zone: ESelectionZone.DPad, 
+                selectables: new[]
+                {
+                    _menuView.newGameButton.Selectable,
+                    _menuView.saveButton.Selectable,
+                    _menuView.loadButton.Selectable,
+                }, 
+                isFillHorizontally: false, 
+                isLooping: true);
+
+            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            {
+                { dpadGrid.Item1, dpadGrid.Item2 }
+            });
+        }
+
         private void SubscribeView()
         {
             _menuView.loadButton.Clicked += OnClickedLoadButton;
             _menuView.saveButton.Clicked += OnClickedSaveButton;
             _menuView.newGameButton.Clicked += OnClickedNewGameButton;
-            
+
             foreach (UIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked += OnClickedClosePanelButton;
@@ -101,7 +109,7 @@ namespace Beast.Radar.UI
             _menuView.loadButton.Clicked -= OnClickedLoadButton;
             _menuView.saveButton.Clicked -= OnClickedSaveButton;
             _menuView.newGameButton.Clicked -= OnClickedNewGameButton;
-            
+
             foreach (UIButton closeButton in _menuView.closePanelButtons)
             {
                 closeButton.Clicked -= OnClickedClosePanelButton;
@@ -120,7 +128,7 @@ namespace Beast.Radar.UI
 
         private void OnClickedSaveButton()
         {
-            _gameSave.Save("default", "default"); 
+            _gameSave.Save("default", "default");
         }
 
         private void OnClickedLoadButton()

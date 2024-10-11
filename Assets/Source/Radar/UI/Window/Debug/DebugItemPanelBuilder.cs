@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
         public DebugItemButton[] BuildItemButtons(ItemData[] items)
         {
             DebugItemButton[] buttons = new DebugItemButton[items.Length];
-            for (var index = 0; index < items.Length; index++)
+            for (int index = 0; index < items.Length; index++)
             {
                 _factory.Create(this, PrefabID.DebugItemButton, out DebugItemButton button);
                 button.transform.SetParent(_buttonsRoot, false);

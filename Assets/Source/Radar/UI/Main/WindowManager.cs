@@ -77,13 +77,13 @@ namespace Beast.Radar.UI
         private void SubscribeUI()
         {
             _canvas.MouseOverUI += OnMouseOverUI;
-            _uiInputController.PausePressed += OnPauseKeyPressed;
+            _uiInputController.PauseButtonPressed += OnPauseButtonPressed;
         }
 
         private void UnsubscribeUI()
         {
             _canvas.MouseOverUI -= OnMouseOverUI;
-            _uiInputController.PausePressed -= OnPauseKeyPressed;
+            _uiInputController.PauseButtonPressed -= OnPauseButtonPressed;
         }
 
         private void OnMouseOverUI(bool isOver)
@@ -91,7 +91,7 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isOver);       
         }
 
-        private void OnPauseKeyPressed()
+        private void OnPauseButtonPressed()
         {
             Show(_currentOpenedWindowController is not PauseMenuWindow ? WindowID.Pause : WindowID.MainHUD);
         }

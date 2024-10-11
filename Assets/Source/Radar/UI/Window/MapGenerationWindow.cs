@@ -1,18 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
-using Codice.Utils;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
     public class MapGenerationWindow : IWindow, IGameCycleListener
     {
-        
         private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" };
         private static readonly int[] Sizes = { 512, 1024, 2058, 4096 };
 
@@ -22,7 +19,6 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
 
         private SelectableController _selectableController;
-        
         private MapGenerationView _menuView;
         private GenerationMapData _data;
 
@@ -46,12 +42,14 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
+            _selectableController.Enable();
             _menuView.gameObject.SetActive(true);
         }
 
         public void Close()
         {
             _menuView.gameObject.SetActive(false);
+            _selectableController.Disable();
         }
 
         private UniTask<OperationResult> Warmup()
@@ -59,15 +57,26 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
             
-            InitializeSelectable();
+            ConfigureSelectables();
             SubscribeView();
+            
+            _selectableController.Warmup();
             
             return OperationResult.SuccessSync();
         }
 
-        private void InitializeSelectable()
+        private UniTask<OperationResult> Dispose()
         {
-            Selectable[] selections =
+            UnsubscribeView();
+            
+            _selectableController.Dispose();
+            
+            return OperationResult.SuccessSync();
+        }
+
+        private void ConfigureSelectables()
+        {
+            UISelectable[] selections =
             {
                 _menuView.seedButton.Selectable,
                 _menuView.sizeButtons[0].Selectable,
@@ -79,21 +88,16 @@ namespace Beast.Radar.UI
                 _menuView.createMapButton.Selectable
             };
 
-            SelectableGridData dpadGrid = _selectionBuilder.Build(selections,
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectionBuilder.Build(
+                zone: ESelectionZone.DPad,
+                selectables: selections,
                 isFillHorizontally: false,
                 isLooping: true);
 
             _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
-                { ESelectionZone.DPad, dpadGrid }
+                { dpadGrid.Item1, dpadGrid.Item2 }
             });
-        }
-
-        private UniTask<OperationResult> Dispose()
-        {
-            UnsubscribeView();
-            
-            return OperationResult.SuccessSync();
         }
 
         private void SubscribeView()
