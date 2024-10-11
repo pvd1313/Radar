@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private bool _clearOnEnterPlayerMode;
 
         private bool _isPlaying;
+        private Dictionary<string, bool> _folds;
         
         protected override void Initialize()
         {
@@ -43,53 +45,65 @@ namespace Beast.Claw.Editor.Window
                 .Horizontal(() =>
             {
                 UI.Button("Clear", Clear);
-                _clearOnEnterPlayerMode = UI.CheckBox(nameof(_clearOnEnterPlayerMode), _clearOnEnterPlayerMode);
+                _clearOnEnterPlayerMode = UI.CheckBox("Enter Play Mode Clear", _clearOnEnterPlayerMode);
             });
             
-            EditorGUIUtility.labelWidth = 500;
-            
-            EditorUI ui = new ()
-            {
-                success = true,
-                niceLabelsEnabled = false
-            };
-            
-            foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())
-            {
-                ui.FloatField(id, value);
-            }
+            _folds ??= new Dictionary<string, bool>();
 
-            foreach ((string id, int value) in BDebug.StateStorage.ReadAllInt())
+            foreach ((string storageName, DebugTrackStorage storage) in BDebug.TrackStorages)
             {
-                ui.IntField(id, value);
-            }
+                _folds.TryGetValue(storageName, out bool foldState);
+                foldState = EditorGUILayout.Foldout(foldState, storageName);
+                _folds[storageName] = foldState;
 
-            foreach ((string id, float2 value) in BDebug.StateStorage.ReadAllFloat2())
-            {
-                ui.Float2Field(id, value);
-            }
-            
-            foreach ((string id, float3 value) in BDebug.StateStorage.ReadAllFloat3())
-            {
-                ui.Float3Field(id, value);
-            }
-            
-            foreach ((string id, float4 value) in BDebug.StateStorage.ReadAllFloat4())
-            {
-                ui.Float4Field(id, value);
-            }
-            
-            foreach ((string id, string value) in BDebug.StateStorage.ReadAllString())
-            {
-                ui.StringField(id, value);
+                if (foldState)
+                {
+                    EditorGUI.indentLevel++;
+                    TrackStorageUI(storage);
+                    EditorGUI.indentLevel--;
+                    GUILayout.Space(8);
+                }
             }
             
             Repaint();
         }
 
+        private void TrackStorageUI(DebugTrackStorage storage)
+        {
+            foreach ((string id, float value) in storage.ReadAllFloat())
+            {
+                UI.FloatField(id, value);
+            }
+            
+            foreach ((string id, int value) in storage.ReadAllInt())
+            {
+                UI.IntField(id, value);
+            }
+            
+            foreach ((string id, float2 value) in storage.ReadAllFloat2())
+            {
+                UI.Float2Field(id, value);
+            }
+            
+            foreach ((string id, float3 value) in storage.ReadAllFloat3())
+            {
+                UI.Float3Field(id, value);
+            }
+            
+            foreach ((string id, float4 value) in storage.ReadAllFloat4())
+            {
+                UI.Float4Field(id, value);
+            }
+            
+            foreach ((string id, string value) in storage.ReadAllString())
+            {
+                UI.StringField(id, value);
+            }
+        }
+
         private void Clear()
         {
-            BDebug.StateStorage.Clear();
+            BDebug.ClearTrackStorage();
         }
     }
 }

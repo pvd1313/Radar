@@ -14,46 +14,36 @@ namespace Beast.Claw.Common
         private readonly StringDictionary<float4> _float4 = new(StateStorageCapacity);
         private readonly StringDictionary<string> _string = new(StateStorageCapacity);
 
-        public void Clear()
-        {
-            _int.Clear();
-            _float.Clear();
-            _float2.Clear();
-            _float3.Clear();
-            _float4.Clear();
-            _string.Clear();
-        }
+        public IEnumerable<KeyValuePair<string, float>> ReadAllFloat() => _ReadAll(_float);
 
-        public IEnumerable<KeyValuePair<string, float>> ReadAllFloat() => ReadAll(_float);
+        public IEnumerable<KeyValuePair<string, int>> ReadAllInt() => _ReadAll(_int);
 
-        public IEnumerable<KeyValuePair<string, int>> ReadAllInt() => ReadAll(_int);
+        public IEnumerable<KeyValuePair<string, float2>> ReadAllFloat2() => _ReadAll(_float2);
 
-        public IEnumerable<KeyValuePair<string, float2>> ReadAllFloat2() => ReadAll(_float2);
+        public IEnumerable<KeyValuePair<string, float3>> ReadAllFloat3() => _ReadAll(_float3);
 
-        public IEnumerable<KeyValuePair<string, float3>> ReadAllFloat3() => ReadAll(_float3);
+        public IEnumerable<KeyValuePair<string, float4>> ReadAllFloat4() => _ReadAll(_float4);
 
-        public IEnumerable<KeyValuePair<string, float4>> ReadAllFloat4() => ReadAll(_float4);
+        public IEnumerable<KeyValuePair<string, string>> ReadAllString() => _ReadAll(_string);
 
-        public IEnumerable<KeyValuePair<string, string>> ReadAllString() => ReadAll(_string);
+        public void Write(string id, float value) => _Write(_float, id, value);
 
-        public void WriteFloat(string id, float value) => Write(_float, id, value);
+        public void Write(string id, int value) => _Write(_int, id, value);
 
-        public void WriteInt(string id, int value) => Write(_int, id, value);
-
-        public void WriteFloat2(string id, float2 value) => Write(_float2, id, value);
+        public void Write(string id, float2 value) => _Write(_float2, id, value);
         
-        public void WriteFloat3(string id, float3 value) => Write(_float3, id, value);
+        public void Write(string id, float3 value) => _Write(_float3, id, value);
         
-        public void WriteFloat4(string id, float4 value) => Write(_float4, id, value);
+        public void Write(string id, float4 value) => _Write(_float4, id, value);
         
-        public void WriteString(string id, string value) => Write(_string, id, value);
+        public void Write(string id, string value) => _Write(_string, id, value);
 
-        private IEnumerable<KeyValuePair<string, T>> ReadAll<T>(StringDictionary<T> storage)
+        private IEnumerable<KeyValuePair<string, T>> _ReadAll<T>(StringDictionary<T> storage)
         {
             return storage.ReadAll();
         }
 
-        private void Write<T>(StringDictionary<T> storage, string id, T value)
+        private void _Write<T>(StringDictionary<T> storage, string id, T value)
         {
             storage.Write(id, value);
         }

@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Common
 {
-    public static class ListExtension
+    public static class CollectionExtension
     {
         public static T PopOrNull<T>(this IList<T> list) where T : class
         {
@@ -24,6 +24,21 @@ namespace Beast.Claw.Common
             {
                 list.Add(item);
             }
+        }
+
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+            where TValue : new()
+        {
+            if (dictionary.TryGetValue(key, out TValue value))
+            {
+                return value;
+            }
+
+            value = new TValue();
+
+            dictionary[key] = value;
+
+            return value;
         }
     }
 }
