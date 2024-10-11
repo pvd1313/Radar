@@ -150,41 +150,33 @@ namespace Beast.Radar.UI
         
         private void OnDpadPressed(int2 direction)
         {
-            UnityEngine.Debug.Log(direction);
             PerformVectorAction(ESelectionZone.DPad, direction);
         }
 
         private void OnRightStickMoved(int2 direction)
         {
-            UnityEngine.Debug.Log(direction);
             PerformVectorAction(ESelectionZone.RightStick, direction);
         }
 
         private void OnTriggerPressed(int value)
         {
-            if (!_selectableGrids.ContainsKey(ESelectionZone.Trigger))
+            PerformHorizontalAction(ESelectionZone.Trigger, value);
+        }
+
+        private void PerformHorizontalAction(ESelectionZone zone, int value)
+        {
+            if (!_selectableGrids.ContainsKey(zone))
             {
                 return;
             }
 
-            SelectableGridData grid = _selectableGrids[ESelectionZone.Trigger];
+            SelectableGridData grid = _selectableGrids[zone];
+            int newCol = grid.currentIndex.x;
 
-            int current = grid.currentIndex.x;
-            int newCol = current + value;
-            int cols = grid.selectables.GetLength(1);
-            
-            if (newCol >= cols)
-            {
-                newCol = grid.isLooping ? 0 : current;
-            }
-            else if (newCol < 0)
-            {
-                newCol = grid.isLooping ? cols - 1 : current;
-            }
+            UpdatePosition(ref newCol, value, grid.selectables.GetLength(1), grid.isLooping);
 
             grid.currentIndex.y = newCol;
-
-            _selectableGrids[ESelectionZone.Trigger] = grid;
+            _selectableGrids[zone] = grid;
 
             UISelectable triggerSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
             if (triggerSelectable.TryGetComponent(out Button button))
@@ -192,7 +184,7 @@ namespace Beast.Radar.UI
                 button.onClick.Invoke();
             }
         }
-        
+
         private void PerformVectorAction(ESelectionZone zone, int2 direction)
         {
             if (!_selectableGrids.ContainsKey(zone))
@@ -201,52 +193,38 @@ namespace Beast.Radar.UI
             }
 
             SelectableGridData grid = _selectableGrids[zone];
-
-            int rows = grid.selectables.GetLength(1);
-            int cols = grid.selectables.GetLength(0);
-            int currentRow = grid.currentIndex.y;
-            int currentCol = grid.currentIndex.x;
-
-            int newRow = currentRow;
-            int newCol = currentCol;
-
-            if (direction.y != 0)
-            {
-                newCol += direction.y;
-
-                if (newCol < 0)
-                {
-                    newCol = grid.isLooping ? cols - 1 : 0;
-                }
-                else if (newCol >= cols)
-                {
-                    newCol = grid.isLooping ? 0 : cols - 1;
-                }
-            }
-
-            if (direction.x != 0)
-            {
-                newRow += direction.x;
-
-                if (newRow < 0)
-                {
-                    newRow = grid.isLooping ? rows - 1 : 0;
-                }
-                else if (newRow >= rows)
-                {
-                    newRow = grid.isLooping ? 0 : rows - 1;
-                }
-            }
+            
+            int newRow =  grid.currentIndex.y;
+            int newCol = grid.currentIndex.x;
+            
+            UpdatePosition(ref newCol, direction.y, grid.selectables.GetLength(0), grid.isLooping);
+            UpdatePosition(ref newRow, direction.x, grid.selectables.GetLength(1), grid.isLooping);
 
             int2 index = new(newCol, newRow);
             UISelectable selectable = grid.selectables[index.x, index.y];
-            UnityEngine.Debug.Log($"zone = {zone} index = {index} / size {new int2(cols, rows)}");
 
             if (selectable != null)
             {
                 grid.currentIndex = index;
                 _selectableGrids[zone] = grid;
                 SwitchSelectable(selectable);
+            }
+        }
+
+        private void UpdatePosition(ref int coordinate, int delta, int limit, bool isLooping)
+        {
+            if (delta != 0)
+            {
+                coordinate += delta;
+
+                if (coordinate < 0)
+                {
+                    coordinate = isLooping ? limit - 1 : 0;
+                }
+                else if (coordinate >= limit)
+                {
+                    coordinate = isLooping ? 0 : limit - 1;
+                }
             }
         }
 
@@ -265,7 +243,7 @@ namespace Beast.Radar.UI
             _currentSelectable = selectable;
             _currentSelectable.Select();
         }
-        
+
         #endregion
 
         private void SetupCurrentSelectable()
@@ -299,6 +277,5 @@ namespace Beast.Radar.UI
                 UnsubscribeInputActions();
             }
         }
-
     }
 }
