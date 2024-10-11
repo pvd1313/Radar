@@ -36,7 +36,7 @@ namespace Beast.Radar.UI
 
         public void ListenGameCycle(IGameCycleHandle handle)
         {
-#if !BEAST_DEVELOPMENT
+#if BEAST_DEVELOPMENT
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.Dispose, Dispose);
 #endif

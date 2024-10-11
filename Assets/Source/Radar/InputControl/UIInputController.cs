@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
@@ -57,6 +58,13 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
             _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
+            
+            _input.ChangedScheme += InputOnChangedScheme;
+        }
+
+        private void InputOnChangedScheme(EInputScheme obj)
+        {
+            BDebug.LogInfo(this, $"change scheme {obj}");
         }
 
         private void UnsubscribeInputActions()

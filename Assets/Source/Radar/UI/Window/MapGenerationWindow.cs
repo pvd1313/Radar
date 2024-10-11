@@ -14,9 +14,9 @@ namespace Beast.Radar.UI
         private static readonly int[] Sizes = { 512, 1024, 2058, 4096 };
 
         private readonly IWindowManager _windowManager;
-        private readonly ISelectionZoneBuilder _selectionBuilder;
-        private readonly IUIInputController _input;
         private readonly IUIFactory _uiFactory;
+        private readonly IUIInputController _input;
+        private readonly ISelectionZoneBuilder _selectionBuilder;
 
         private SelectableController _selectableController;
         private MapGenerationView _menuView;
@@ -153,7 +153,7 @@ namespace Beast.Radar.UI
 
         private void OnClickCloseButton()
         {
-            //todo add close menu action 
+            _windowManager.Show(WindowID.MainHUD);
         }
     }
 }

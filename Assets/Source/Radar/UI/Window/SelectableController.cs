@@ -100,7 +100,6 @@ namespace Beast.Radar.UI
             _input.TriggerPressed += OnTriggerPressed;
             _input.RightStickMoved += OnRightStickMoved;
             _input.ActionButtonPressed += OnActionButtonPressed;
-
         }
 
         private void UnsubscribeInput()
@@ -214,9 +213,9 @@ namespace Beast.Radar.UI
                 }
             }
 
-            int2 index = new int2(newCol, newRow);
-            UnityEngine.Debug.Log($"index = {index} / size {new int2(cols, rows)}");
+            int2 index = new(newCol, newRow);
             UISelectable selectable = grid.selectables[index.x, index.y];
+            UnityEngine.Debug.Log($"zone = {zone} index = {index} / size {new int2(cols, rows)}");
 
             if (selectable != null)
             {
