@@ -138,6 +138,24 @@ namespace Beast.Claw.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Floor(float2 vector)
+        {
+            return math.floor(vector);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Floor(double a)
+        {
+            return math.floor(a);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Round(float a)
+        {
+            return math.round(a);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int FloorToInt(float a)
         {
             return (int)math.floor(a);
@@ -145,6 +163,12 @@ namespace Beast.Claw.Mathematics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Ceil(float x)
+        {
+            return math.ceil(x);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Ceil(double x)
         {
             return math.ceil(x);
         }

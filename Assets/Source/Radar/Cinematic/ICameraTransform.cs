@@ -13,6 +13,7 @@ namespace Beast.Radar.Cinematic
         
         float2 ScreenPointToWorld(float2 screenPoint);
         float2 ViewportToWorld(float2 viewport);
+        float2 WorldToViewport(float2 worldPoint);
         void AddPosition(float2 delta, Space space);
         void AddZoom(float zoomDelta);
     }

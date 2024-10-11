@@ -22,6 +22,7 @@ namespace Beast.Radar.Graphic.Terrain
         private Material _solverMaterial;
         private float _tileHeight;
         private int _tileCount;
+        private int2 _gridSize;
 
         public TerrainTileRender(
             ICameraTransform camera, 
@@ -70,10 +71,10 @@ namespace Beast.Radar.Graphic.Terrain
                 return;
             }
 
-            int yTileCount = BMath.CeilToInt(1f / _tileHeight);
-            int xTileCount = BMath.CeilToInt(1f / _tileHeight * _screen.Aspect * 0.5f + 1);
-            int2 gridSize = new (xTileCount, yTileCount);
-            _tileCount = _tileCountFromGridSize(gridSize);
+            int yTileCount = BMath.CeilToInt(1f / _tileHeight) + 2;
+            int xTileCount = BMath.CeilToInt(1f / _tileHeight * _screen.Aspect * 0.5f) + 3;
+            _gridSize = new int2(xTileCount, yTileCount);
+            _tileCount = _tileCountFromGridSize(_gridSize);
             if (_tileCount > _config.terrainTileCountLimit)
             {
                 return;
@@ -82,9 +83,17 @@ namespace Beast.Radar.Graphic.Terrain
             float2 viewportPoint = new (0, 1f);
             float2 worldPoint = _camera.ViewportToWorld(viewportPoint);
             
-            RenderTexture solverTexture = _runTileSolver(worldPoint, gridSize);
+            float texelSize = 1f / GlobalConfig.CellTileCount;
+            worldPoint.x -= texelSize;
+            worldPoint.y += texelSize * 2;
             
-            _renderTileGrid(viewportPoint, gridSize, solverTexture, _tileHeight);
+            // Stick to the grid.
+            worldPoint= BMath.Floor(worldPoint * GlobalConfig.CellTileCount) / GlobalConfig.CellTileCount + texelSize * 0.5f;
+            viewportPoint = _camera.WorldToViewport((float2) worldPoint);
+            
+            RenderTexture solverTexture = _runTileSolver((float2) worldPoint, _gridSize);
+            
+            _renderTileGrid(viewportPoint, _gridSize, solverTexture, _tileHeight);
 
             _debugTrack();
 
@@ -194,6 +203,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             BDebug.Track(this, nameof(_tileHeight), _tileHeight);
             BDebug.Track(this, nameof(_tileCount), _tileCount);
+            BDebug.Track(this, nameof(_gridSize), _gridSize);
         }
     }
 }

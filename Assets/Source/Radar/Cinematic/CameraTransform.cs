@@ -23,6 +23,12 @@ namespace Beast.Radar.Cinematic
         private readonly CameraTransformConfig _config;
         private readonly GameModel _game;
 
+        private float2x2 _rotation;
+        private float2x2 _scale;
+        private float2x2 _rotationInverse;
+        private float2x2 _scaleInverse;
+        private float _yScaleRollCos;
+        
         private IsometricCameraRotation _rotationRad;
         private float _viewDistance;
         private float _maxViewDistance;
@@ -46,6 +52,14 @@ namespace Beast.Radar.Cinematic
         private UniTask<OperationResult> _warmup()
         {
             _rotationRad = _config.isometricRotationDeg * BMath.Deg2Rad;
+            
+            _rotation = float2x2.Rotate(_rotationRad.roll);
+            _rotationInverse = float2x2.Rotate(_rotationRad.roll * -1);
+
+            _scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
+            _scaleInverse = _scale.Inverse();
+
+            _yScaleRollCos = BMath.Cos(_rotationRad.roll);
 
             return OperationResult.SuccessSync();
         }
@@ -97,13 +111,25 @@ namespace Beast.Radar.Cinematic
 
             return new float2(screen.x, screen.y);
         }
+        
+        public float2 WorldToViewport(float2 worldPoint)
+        {
+            float2 localPoint = _worldToLocal(worldPoint - _position);
+
+            localPoint.x /= _viewDistance * _yScaleRollCos * _screen.Aspect;
+            localPoint.y /= _viewDistance * _yScaleRollCos;
+            
+            return localPoint + 0.5f;
+        }
+
+        private float2 _worldToLocal(float2 vector)
+        {
+            return _scale.Multiply(_rotation.Multiply(vector));
+        }
 
         private float2 _localToWorld(float2 vector)
         {
-            float2x2 rotation = float2x2.Rotate(_rotationRad.roll * -1);
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
-
-            return rotation.Multiply((scale.Inverse().Multiply(vector)));
+            return _rotationInverse.Multiply(_scaleInverse.Multiply(vector));
         }
 
         private void _setZoom(float zoom)
@@ -120,6 +146,7 @@ namespace Beast.Radar.Cinematic
             BDebug.Track(this, nameof(_viewDistance), _viewDistance);
             BDebug.Track(this, nameof(_maxViewDistance), _maxViewDistance);
             BDebug.Track(this, nameof(_zoom01), _zoom01);
+            BDebug.Track(this, nameof(_yScaleRollCos), _yScaleRollCos);
             BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
             BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
         }

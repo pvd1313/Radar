@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
@@ -16,6 +17,7 @@ namespace Beast.Radar.Cinematic
         private readonly IPlayerInputProvider _inputProvider;
         private readonly ICameraTransform _transform;
         private readonly PrefabLibrary _prefabs;
+        private readonly IScreen _screen;
 
         private CameraMotionParameters _motion;
         private float _maxViewDistance;
@@ -25,13 +27,15 @@ namespace Beast.Radar.Cinematic
             ICameraInputController inputController,
             IPlayerInputProvider inputProvider,
             ICameraTransform transform,
-            PrefabLibrary prefabs)
+            PrefabLibrary prefabs,
+            IScreen screen)
         {
             _cameraConfig = cameraConfig;
             _input = inputController;
             _inputProvider = inputProvider;
             _transform = transform;
             _prefabs = prefabs;
+            _screen = screen;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -108,24 +112,25 @@ namespace Beast.Radar.Cinematic
             // https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
             // float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
             float zoomDistance = _transform.ViewDistance * BMath.Cos(_transform.RotationRad.roll);
-            float2 moveDelta = float2.zero;
             
             if (_input.MoveDelta.Equals(float2.zero))
             {
                 // TODO : This is not correct. Zoom distance will float, we need to remember positions instead. 
                 //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
-
-
                 float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
-
-
                 float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
-                moveDelta = b - a;
+                float2 moveDelta = b - a;
                 _transform.AddPosition(moveDelta, Space.World);
+
+                float2 viewport = _input.ScreenPoint / (float2)_screen.Size;
+
+                BDebug.Track(this, "viewportPoint", viewport);
+                BDebug.Track(this, "screenPoint", _input.ScreenPoint);
+                BDebug.Track(this, "worldPoint", a);
             }
             else
             {
-                moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
+                float2 moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
                 _transform.AddPosition(moveDelta, Space.Self);
             }
         }
