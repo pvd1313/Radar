@@ -39,25 +39,25 @@ namespace Beast.Radar.Cinematic
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.GameLoading, _gameLoading);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _rotationRad = _config.isometricRotationDeg * BMath.Deg2Rad;
 
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> GameLoading()
+        private UniTask<OperationResult> _gameLoading()
         {
             _position = _game.camera.position;
 
             _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
             _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
 
-            InternalSetZoom(_game.camera.zoom01);
+            _setZoom(_game.camera.zoom01);
             
             IsReady = true;
             
@@ -68,19 +68,19 @@ namespace Beast.Radar.Cinematic
         {
             if (space == Space.Self)
             {
-                _position += LocalToWorld(delta);
+                _position += _localToWorld(delta);
             }
             else
             {
                 _position += delta;
             }
             
-            DebugTrack();
+            _debugTrack();
         }
 
         public void AddZoom(float zoomDelta)
         {
-            InternalSetZoom(_zoom01 + zoomDelta);
+            _setZoom(_zoom01 + zoomDelta);
         }
         
         public float2 ScreenPointToWorld(float2 screenPoint)
@@ -92,13 +92,13 @@ namespace Beast.Radar.Cinematic
         {
             float viewDistance = _viewDistance * BMath.Cos(_rotationRad.roll);
             
-            float2 bottomLeft = _position - LocalToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
-            float2 screen = bottomLeft + LocalToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
+            float2 bottomLeft = _position - _localToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
+            float2 screen = bottomLeft + _localToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
 
             return new float2(screen.x, screen.y);
         }
 
-        private float2 LocalToWorld(float2 vector)
+        private float2 _localToWorld(float2 vector)
         {
             float2x2 rotation = float2x2.Rotate(_rotationRad.roll * -1);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_rotationRad.pitch));
@@ -106,15 +106,15 @@ namespace Beast.Radar.Cinematic
             return rotation.Multiply((scale.Inverse().Multiply(vector)));
         }
 
-        private void InternalSetZoom(float zoom)
+        private void _setZoom(float zoom)
         {
             _zoom01 = BMath.Clamp(zoom, _config.minViewDistance / _maxViewDistance, 1f);
             _viewDistance = _maxViewDistance * _zoom01;
 
-            DebugTrack();
+            _debugTrack();
         }
 
-        private void DebugTrack()
+        private void _debugTrack()
         {
             BDebug.Track(this, nameof(_position), _position);
             BDebug.Track(this, nameof(_viewDistance), _viewDistance);
