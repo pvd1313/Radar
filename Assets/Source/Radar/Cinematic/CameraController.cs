@@ -106,7 +106,7 @@ namespace Beast.Radar.Cinematic
             // TODO : What was the magic 0.2 number?
             // https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
             // float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
-            float zoomDistance = _transform.TargetViewDistance * BMath.Cos(_transform.CurrentRotationRad.roll);
+            float zoomDistance = _transform.ViewDistance * BMath.Cos(_transform.RotationRad.roll);
             float2 moveDelta = float2.zero;
             
             if (_input.MoveDelta.Equals(float2.zero))

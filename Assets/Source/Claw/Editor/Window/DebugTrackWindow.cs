@@ -35,9 +35,10 @@ namespace Beast.Claw.Editor.Window
             
             EditorGUIUtility.labelWidth = 200;
 
-            new EditorUI()
+            new EditorUI
             {
-                niceLabelsEnabled = false
+                success = true,
+                niceLabelsEnabled = true
             }
                 .Horizontal(() =>
             {
@@ -45,12 +46,12 @@ namespace Beast.Claw.Editor.Window
                 _clearOnEnterPlayerMode = UI.CheckBox(nameof(_clearOnEnterPlayerMode), _clearOnEnterPlayerMode);
             });
             
-            EditorGUIUtility.labelWidth = 400;
+            EditorGUIUtility.labelWidth = 500;
             
             EditorUI ui = new ()
             {
                 success = true,
-                niceLabelsEnabled = true
+                niceLabelsEnabled = false
             };
             
             foreach ((string id, float value) in BDebug.StateStorage.ReadAllFloat())

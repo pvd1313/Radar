@@ -14,11 +14,10 @@ namespace Beast.Radar.Cinematic
     {
         public bool IsReady { get; private set; }
         
-        public IsometricCameraRotation MaxRotationRad => _config.isometricRotationDeg * BMath.Deg2Rad;
         public float2 Position => _position;
-        public IsometricCameraRotation CurrentRotationRad => _rotationRad;
+        public IsometricCameraRotation RotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
-        public float TargetViewDistance => _viewDistance;
+        public float ViewDistance => _viewDistance;
 
         private readonly IScreen _screen;
         private readonly CameraTransformConfig _config;
@@ -30,8 +29,6 @@ namespace Beast.Radar.Cinematic
         private float _zoom01;
         private float _zoomMax;
         private float2 _position;
-        private float _pitchMax;
-        private float _rollMax;
         
         public CameraTransform(IScreen screen, CameraTransformConfig config, GameModel game)
         {
@@ -42,7 +39,29 @@ namespace Beast.Radar.Cinematic
         
         public void ListenGameCycle(IGameCycleHandle handle)
         {
+            handle.ListenOperation(this, OperationID.Warmup, Warmup);
             handle.ListenOperation(this, OperationID.GameLoading, GameLoading);
+        }
+
+        private UniTask<OperationResult> Warmup()
+        {
+            _rotationRad = _config.isometricRotationDeg * BMath.Deg2Rad;
+
+            return OperationResult.SuccessSync();
+        }
+
+        private UniTask<OperationResult> GameLoading()
+        {
+            _position = _game.camera.position;
+
+            _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
+            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
+
+            InternalSetZoom(_game.camera.zoom01);
+            
+            IsReady = true;
+            
+            return OperationResult.SuccessSync();
         }
 
         public void AddPosition(float2 delta, Space space)
@@ -55,6 +74,8 @@ namespace Beast.Radar.Cinematic
             {
                 _position += delta;
             }
+            
+            DebugTrack();
         }
 
         public void AddZoom(float zoomDelta)
@@ -85,37 +106,20 @@ namespace Beast.Radar.Cinematic
             return rotation.Multiply((scale.Inverse().Multiply(vector)));
         }
 
-        private UniTask<OperationResult> GameLoading()
-        {
-            _position = _game.camera.position;
-
-            _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
-            _pitchMax = _config.isometricRotationDeg.pitch * BMath.Deg2Rad;
-            _rollMax = _config.isometricRotationDeg.roll * BMath.Deg2Rad;
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
-
-            InternalSetZoom(_game.camera.zoom01);
-            
-            IsReady = true;
-            
-            return OperationResult.SuccessSync();
-        }
-
         private void InternalSetZoom(float zoom)
         {
             _zoom01 = BMath.Clamp01(zoom);
             _viewDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, _zoom01);
-            
-            // Convert to full isometric on half max zoom
-            float isometric01 = BMath.Clamp01((1 - _zoom01 / (_zoomMax * 0.5f)));
 
-            _rotationRad = MaxRotationRad;
+            DebugTrack();
+        }
 
-            // _rotationRad = new IsometricCameraRotation
-            // {
-            //     pitch = BMath.Lerp(0, _pitchMax, isometric01),
-            //     roll = BMath.Lerp(0, _rollMax, isometric01)
-            // };
+        private void DebugTrack()
+        {
+            BDebug.Track(this, "position", _position);
+            BDebug.Track(this, "viewDistance", _viewDistance);
+            BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
+            BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
         }
     }
 }

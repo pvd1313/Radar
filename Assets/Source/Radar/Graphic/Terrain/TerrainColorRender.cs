@@ -65,16 +65,16 @@ namespace Beast.Radar.Graphic.Terrain
                 return;
             }
             
-            float2 renderTextureSize = _terrain.RenderTexture.SizeFloat();
+            float2 renderTextureSize = _terrain.DetailTexture.Size();
             
-            float yScale = BMath.Cos(_camera.CurrentRotationRad.roll);
+            float yScale = BMath.Cos(_camera.RotationRad.roll);
 
-            float2x2 rotation = float2x2.Rotate(-_camera.CurrentRotationRad.roll);
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.CurrentRotationRad.pitch));
+            float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
-            BDebug.TrackFloat(this, "yScale", yScale);
+            BDebug.Track(this, "yScale", yScale);
             
-            _renderMaterial.SetTexture("_TerrainTexture", _terrain.RenderTexture);
+            _renderMaterial.SetTexture("_TerrainTexture", _terrain.DetailTexture);
             _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
             
             _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());

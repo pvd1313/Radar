@@ -5,7 +5,6 @@ namespace Beast.Radar.Graphic.Terrain
 {
     public interface ITerrainDetailRender : IReady
     {
-        Texture RenderTexture { get; }
-        float RenderDistance { get; }
+        Texture DetailTexture { get; }
     }
 }

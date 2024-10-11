@@ -52,15 +52,17 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void FrameEnd()
         {
-            BDebug.TrackFloat2(this, "cameraPosition", _camera.Position);
+            return;
+            
+            BDebug.Track(this, "cameraPosition", _camera.Position);
             
             // if (Time.time % 1 > 0.5f)
             // {
             //     return;
             // }
             
-            float tileHeight = 0.01f / _camera.TargetViewDistance;
-            BDebug.TrackFloat(this, "tileHeight", tileHeight);
+            float tileHeight = 0.01f / _camera.ViewDistance;
+            BDebug.Track(this, "tileHeight", tileHeight);
 
             if (tileHeight < 1f / Screen.height)
             {
@@ -74,7 +76,7 @@ namespace Beast.Radar.Graphic.Terrain
             
             int tileCount = TileCountFromGridSize(gridSize);
             
-            BDebug.TrackInt(this, "tileCount", tileCount);
+            BDebug.Track(this, "tileCount", tileCount);
             
             RenderTexture solverTexture = CreateSolverTexture(gridSize);
             
@@ -85,34 +87,34 @@ namespace Beast.Radar.Graphic.Terrain
 
         private RenderTexture CreateSolverTexture(int2 gridSize)
         {
-            float screenScale = (float)_terrainDetail.RenderTexture.height / _screen.Height;
+            float screenScale = (float)_terrainDetail.DetailTexture.height / _screen.Height;
             //float2 screenScale = _screen.Size / _terrainDetail.RenderTexture.SizeFloat();
             int tileCount = TileCountFromGridSize(gridSize);
             
-            BDebug.TrackFloat(this, "screenScale", screenScale);
+            BDebug.Track(this, "screenScale", screenScale);
 
             
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _solverMaterial.SetVector("_TileGridSize", gridSize);
-            _solverMaterial.SetTexture("_TerrainTexture", _terrainDetail.RenderTexture);
+            _solverMaterial.SetTexture("_TerrainTexture", _terrainDetail.DetailTexture);
             
-            BDebug.TrackFloat(this, "TargetViewDistance", _camera.TargetViewDistance);
+            BDebug.Track(this, "TargetViewDistance", _camera.ViewDistance);
 
-            float2 terrainOldSize = _terrainDetail.RenderTexture.SizeFloat();
-            float rSize = _camera.TargetViewDistance / terrainOldSize.y * 100;
+            float2 terrainOldSize = _terrainDetail.DetailTexture.Size();
+            float rSize = _camera.ViewDistance / terrainOldSize.y * 100;
 
             float2 terrainNewSize = terrainOldSize * rSize * screenScale;
 
-            BDebug.TrackFloat(this, "rSize", rSize);
+            BDebug.Track(this, "rSize", rSize);
             
             _solverMaterial.SetVector("_TerrainSize", terrainNewSize);
             
-            BDebug.TrackFloat(this, "sizeRel", terrainNewSize.x / terrainOldSize.x);
+            BDebug.Track(this, "sizeRel", terrainNewSize.x / terrainOldSize.x);
 
-            BDebug.TrackFloat2(this, "terrainNewSize", terrainNewSize);
-            BDebug.TrackFloat2(this, "terrainOldSize", terrainOldSize);
+            BDebug.Track(this, "terrainNewSize", terrainNewSize);
+            BDebug.Track(this, "terrainOldSize", terrainOldSize);
             
-            BDebug.TrackFloat2(this, "gridSize", gridSize);
+            BDebug.Track(this, "gridSize", gridSize);
             
             // Unknown magic here... Works only with square terrain textures.
             // 1 screen height : 1 detailed render height
@@ -126,15 +128,15 @@ namespace Beast.Radar.Graphic.Terrain
             // float xOffset = terrainNewSize.x * _library.xOffset;
             // float yOffset = terrainNewSize.y * _library.yOffset;
             
-            BDebug.TrackFloat(this, "xOffset", xOffset);
-            BDebug.TrackFloat(this, "yOffset", yOffset);
+            BDebug.Track(this, "xOffset", xOffset);
+            BDebug.Track(this, "yOffset", yOffset);
             
             _solverMaterial.SetVector("_TerrainOffset", new float2(xOffset, yOffset));
             
             
             
             _solverMaterial.SetTexture("_NoiseTexture", _library.worldNoiseTexture);
-            _solverMaterial.SetVector("_NoiseSize", _library.worldNoiseTexture.SizeFloat());
+            _solverMaterial.SetVector("_NoiseSize", _library.worldNoiseTexture.Size());
             // TODO : Not correct.
             _solverMaterial.SetVector("_NoiseOffset", _camera.Position);
             _solverMaterial.SetFloat("_OutputTextureSize", solverTextureSize);
@@ -171,7 +173,7 @@ namespace Beast.Radar.Graphic.Terrain
         
             renderParams.matProps.SetVector("_TileGridSize", gridSize);
             renderParams.matProps.SetTexture("_TileAtlas", atlas.atlasTexture);
-            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.SizeFloat());
+            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.Size());
             renderParams.matProps.SetVector("_TileAtlasTileCount", atlas.tileCount);
             renderParams.matProps.SetVector("_TileBlendCenter", atlas.tileBlendCenter);
             renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.astlasPPU);
@@ -183,13 +185,13 @@ namespace Beast.Radar.Graphic.Terrain
 
 
             float2 screenSize = _screen.Size;
-            BDebug.TrackFloat2(this, "screenSize", screenSize);
+            BDebug.Track(this, "screenSize", screenSize);
 
-            BDebug.TrackFloat(this, "screenAspect", _screen.Aspect);
-            BDebug.TrackFloat(this, "screenAspectInv", 1 / _screen.Aspect);
+            BDebug.Track(this, "screenAspect", _screen.Aspect);
+            BDebug.Track(this, "screenAspectInv", 1 / _screen.Aspect);
             
             float2 outputOffset = new float2(0, 0);
-            BDebug.TrackFloat2(this, "outputOffset", outputOffset);
+            BDebug.Track(this, "outputOffset", outputOffset);
             
             renderParams.matProps.SetVector("_OutputOffset", outputOffset);
             renderParams.matProps.SetFloat("_OutputTileHeight", tileHeight);
