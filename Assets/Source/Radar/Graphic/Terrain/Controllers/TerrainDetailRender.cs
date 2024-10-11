@@ -121,8 +121,8 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetVector("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
 #endif
             
-            _renderMaterial.SetTexture("_NoiseMap", _library.worldNoiseTexture);
-            _renderMaterial.SetVector("_NoiseMapSize", _library.worldNoiseTexture.Size());
+            _renderMaterial.SetTexture("_NoiseMap", _library.terrainDetailNoiseTexture);
+            _renderMaterial.SetVector("_NoiseMapSize", _library.terrainDetailNoiseTexture.Size());
             
             BeastCG.Blit(new BlitParameters
             {

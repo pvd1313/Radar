@@ -88,10 +88,10 @@ namespace Beast.Radar.Graphic.Terrain
             worldPoint.y += texelSize * 2;
             
             // Stick to the grid.
-            worldPoint= BMath.Floor(worldPoint * GlobalConfig.CellTileCount) / GlobalConfig.CellTileCount + texelSize * 0.5f;
-            viewportPoint = _camera.WorldToViewport((float2) worldPoint);
+            worldPoint = BMath.Floor(worldPoint * GlobalConfig.CellTileCount) / GlobalConfig.CellTileCount + texelSize * 0.5f;
+            viewportPoint = _camera.WorldToViewport(worldPoint);
             
-            RenderTexture solverTexture = _runTileSolver((float2) worldPoint, _gridSize);
+            RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);
             
             _renderTileGrid(viewportPoint, _gridSize, solverTexture, _tileHeight);
 
@@ -111,11 +111,9 @@ namespace Beast.Radar.Graphic.Terrain
             _solverMaterial.SetVector("_TerrainUVOffset", _terrain.WorldToUVOffset(worldOrigin));
             _solverMaterial.SetVector("_TerrainTexelSize", _terrain.TexelSize);
             
-            _solverMaterial.SetTexture("_NoiseTexture", _library.worldNoiseTexture);
-            
-            // TODO : Not correct.
-            _solverMaterial.SetVector("_NoiseUVOffset", _camera.Position);
-            _solverMaterial.SetVector("_NoiseTexelSize", _camera.Position);
+            _solverMaterial.SetTexture("_NoiseTexture", _library.terrainTileSolverNoiseTexture);
+            _solverMaterial.SetVector("_NoiseTextureSize", _library.terrainTileSolverNoiseTexture.Size());
+            _solverMaterial.SetVector("_NoiseWorldOffset", worldOrigin);
             
             _solverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
         

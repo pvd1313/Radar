@@ -28,7 +28,8 @@ MonoBehaviour:
       x: 0.5
       y: 0.23
     astlasPPU: 64
-  worldNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+  terrainDetailNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+  terrainTileSolverNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
     bakedTerrain: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
     terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}

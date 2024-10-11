@@ -142,6 +142,12 @@ namespace Beast.Claw.Mathematics
         {
             return math.floor(vector);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double2 Floor(double2 vector)
+        {
+            return math.floor(vector);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Floor(double a)

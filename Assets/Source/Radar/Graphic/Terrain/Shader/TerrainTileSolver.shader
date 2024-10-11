@@ -41,9 +41,8 @@
             float2 _TerrainTexelSize;
 
             sampler2D _NoiseTexture;
-            float2 _NoiseSize;
-            float2 _NoiseUVOffset;
-            float _NoiseTexelSize;
+            float2 _NoiseTextureSize;
+            float2 _NoiseWorldOffset;
             
             float _SolverTextureSize;
 
@@ -75,7 +74,7 @@
                 float terrainColor = tex2D(_TerrainTexture, _TerrainUVOffset + offset * _TerrainTexelSize).r;
                 uint tileIndex = terrain_color_to_tile_index(terrainColor);
 
-                float noiseColor = tex2D(_NoiseTexture, _NoiseUVOffset + offset * _NoiseTexelSize).r;
+                float noiseColor = tex2D(_NoiseTexture, (offset + _NoiseWorldOffset) / _NoiseTextureSize).r;
                 
                 return float4(f16tof32(tileIndex), noiseColor, 0, 0);
             }
