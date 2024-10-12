@@ -16,6 +16,7 @@ namespace Beast.Radar.Graphic.Terrain
         public bool IsReady => _isReady;
         public Texture Texture => _detailTexture;
         public float2 TexelSize => _texelSize;
+        public float ViewDistance => _viewDistance;
 
         private readonly GameModel _game;
         private readonly IScreen _screen;
@@ -30,6 +31,11 @@ namespace Beast.Radar.Graphic.Terrain
         private float _textureYScale;
         private float _chunkSize;
         private float _texelSize;
+        private float _cellPixelSize;
+        private float _viewDistance;
+        private float _renderDistance;
+        private float _gridSize;
+        private float2 _renderPosition;
         
         private bool _isReady;
 
@@ -79,8 +85,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         public float2 WorldToUVOffset(float2 worldPoint)
         {
-            float renderDistance = _camera.ViewDistance * _textureYScale;
-            float2 offset = (worldPoint - _camera.Position) / renderDistance * 2;
+            float2 offset = (worldPoint - _renderPosition) / _renderDistance * 2;
             
             return (offset + 1) * 0.5f;
         }
@@ -99,19 +104,25 @@ namespace Beast.Radar.Graphic.Terrain
                 _dispose();
                 _warmup();
             }
+            
+            _viewDistance = _camera.ViewDistance;
+            _cellPixelSize = _detailTexture.height / _viewDistance / _textureYScale;
+            _renderPosition = _camera.Position;
 
-            float renderDistance = _camera.ViewDistance * _textureYScale;
-            _chunkSize = 1f / renderDistance;
-            _texelSize = _chunkSize / WorldTransform.CellTileCount;
-
-            if (_chunkSize > WorldTransform.CellTileCount)
+            if (_cellPixelSize > WorldTransform.CellTileCount)
             {
-                renderDistance *= _texelSize;
+                _viewDistance *= _cellPixelSize / WorldTransform.CellTileCount;
+                _cellPixelSize = WorldTransform.CellTileCount;
+                _gridSize = _cellPixelSize * _textureYScale;
+                _renderPosition = BMath.Floor(_renderPosition * _gridSize) / _gridSize;
             }
+
+            _renderDistance = _viewDistance * _textureYScale;
+            _texelSize = 1f / _renderDistance / WorldTransform.CellTileCount;
             
             _renderMaterial.SetFloat("_OutputAspect", 1);
-            _renderMaterial.SetFloat("_OutputHeight", renderDistance);
-            _renderMaterial.SetVector("_OutputCenter", _camera.Position);
+            _renderMaterial.SetFloat("_OutputHeight", _renderDistance);
+            _renderMaterial.SetVector("_OutputCenter", _renderPosition);
             
             _renderMaterial.SetTexture("_TerrainTexture", _bakedTerrain.Texture);
             _renderMaterial.SetVector("_TerrainTextureSize", _game.terrain.size);
@@ -160,6 +171,11 @@ namespace Beast.Radar.Graphic.Terrain
             BDebug.Track(this, nameof(_textureYScale), _textureYScale);
             BDebug.Track(this, nameof(_chunkSize), _chunkSize);
             BDebug.Track(this, nameof(_texelSize), _texelSize);
+            BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);
+            BDebug.Track(this, nameof(_viewDistance), _viewDistance);
+            BDebug.Track(this, nameof(_renderDistance), _renderDistance);
+            BDebug.Track(this, nameof(_gridSize), _gridSize);
+            BDebug.Track(this, nameof(_renderPosition), _renderPosition);
         }
     }
 }

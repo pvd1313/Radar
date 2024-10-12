@@ -66,9 +66,7 @@ namespace Beast.Radar.Graphic.Terrain
             }
             
             float2 renderTextureSize = _terrain.Texture.Size();
-            
-            float yScale = BMath.Cos(_camera.RotationRad.roll);
-
+            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _terrain.ViewDistance);
             float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
