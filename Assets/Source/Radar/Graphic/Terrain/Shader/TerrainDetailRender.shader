@@ -20,9 +20,9 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
 
-            // #define DRAW_DEBUG_GRID_TEXTURE
+            #define DRAW_DEBUG_GRID_TEXTURE
 
             struct VertexInput
             {

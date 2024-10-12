@@ -65,7 +65,7 @@ namespace Beast.Radar.Graphic.Terrain
             //     return;
             // }
 
-            _tileHeight = 1f / _camera.ViewDistance / GlobalConfig.CellTileCount;
+            _tileHeight = 1f / _camera.ViewDistance / WorldTransform.CellTileCount;
             if (_tileHeight < _config.terrainTilePixelSizeMin / (float)_screen.Height)
             {
                 return;
@@ -82,13 +82,14 @@ namespace Beast.Radar.Graphic.Terrain
             
             float2 viewportPoint = new (0, 1f);
             float2 worldPoint = _camera.ViewportToWorld(viewportPoint);
-            
-            float texelSize = 1f / GlobalConfig.CellTileCount;
+
+            float cellTileCount = WorldTransform.CellTileCount;
+            float texelSize = 1f / cellTileCount;
             worldPoint.x -= texelSize;
             worldPoint.y += texelSize * 2;
             
             // Stick to the grid.
-            worldPoint = BMath.Floor(worldPoint * GlobalConfig.CellTileCount) / GlobalConfig.CellTileCount + texelSize * 0.5f;
+            worldPoint = BMath.Floor(worldPoint * cellTileCount) / cellTileCount + texelSize * 0.5f;
             viewportPoint = _camera.WorldToViewport(worldPoint);
             
             RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);

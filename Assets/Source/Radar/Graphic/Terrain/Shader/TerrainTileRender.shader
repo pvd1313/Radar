@@ -20,7 +20,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
             
             // #define DEBUG_DRAW_TILES_ONE_SECOND
 
@@ -123,7 +123,7 @@
                 half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
                 // TODO: 0.5 here is temp here for test purposes.
-                clip(mainColor.r + mainColor.g + mainColor.b - 0.5f);
+                clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
 
                 half3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 

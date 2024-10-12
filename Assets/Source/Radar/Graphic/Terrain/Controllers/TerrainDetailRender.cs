@@ -102,9 +102,9 @@ namespace Beast.Radar.Graphic.Terrain
 
             float renderDistance = _camera.ViewDistance * _textureYScale;
             _chunkSize = 1f / renderDistance;
-            _texelSize = _chunkSize / GlobalConfig.CellTileCount;
+            _texelSize = _chunkSize / WorldTransform.CellTileCount;
 
-            if (_chunkSize > GlobalConfig.CellTileCount)
+            if (_chunkSize > WorldTransform.CellTileCount)
             {
                 renderDistance *= _texelSize;
             }
