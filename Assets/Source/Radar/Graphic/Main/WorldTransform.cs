@@ -2,6 +2,6 @@
 {
     public static class WorldTransform
     {
-        public const float CellTileCount = 100;
+        public const int CellTileCount = 100;
     }
 }

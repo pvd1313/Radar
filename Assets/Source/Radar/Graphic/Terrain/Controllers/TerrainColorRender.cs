@@ -78,7 +78,9 @@ namespace Beast.Radar.Graphic.Terrain
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
-            _renderMaterial.SetVector("_OutputCenter", renderTextureSize * 0.5f);
+
+            float2 outputCenter = _terrain.WorldToUVOffset(_camera.Position);
+            _renderMaterial.SetVector("_OutputCenter", renderTextureSize * outputCenter);
             
             BeastCG.DrawMesh(new DrawMeshParameters
             {

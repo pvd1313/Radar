@@ -34,7 +34,7 @@ namespace Beast.Radar.Graphic.Terrain
         private float _cellPixelSize;
         private float _viewDistance;
         private float _renderDistance;
-        private float _gridSize;
+        private float _snapGridSize;
         private float2 _renderPosition;
         
         private bool _isReady;
@@ -77,6 +77,11 @@ namespace Beast.Radar.Graphic.Terrain
             float cos60 = BMath.Cos(_camera.RotationRad.roll);
             float sin45 = BMath.Sin(_camera.RotationRad.pitch);
             int textureSize = BMath.CeilToInt(BMath.Max(_screen.Width, _screen.Height) / cos60 * sin45);
+            
+            // We need extra +2 space, because of grid snapping.
+            textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount + 2) *
+                          WorldTransform.CellTileCount;
+            
             _detailTexture = _baker.Create(this, textureSize, false);
             _textureYScale = textureSize / (float)_screen.Height;
             
@@ -113,10 +118,10 @@ namespace Beast.Radar.Graphic.Terrain
             {
                 _viewDistance *= _cellPixelSize / WorldTransform.CellTileCount;
                 _cellPixelSize = WorldTransform.CellTileCount;
-                _gridSize = _cellPixelSize * _textureYScale;
-                _renderPosition = BMath.Floor(_renderPosition * _gridSize) / _gridSize;
             }
 
+            _snapGridSize = WorldTransform.CellTileCount / _cellPixelSize;
+            _renderPosition = BMath.Floor(_renderPosition / _snapGridSize) * _snapGridSize;
             _renderDistance = _viewDistance * _textureYScale;
             _texelSize = 1f / _renderDistance / WorldTransform.CellTileCount;
             
@@ -174,7 +179,7 @@ namespace Beast.Radar.Graphic.Terrain
             BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);
             BDebug.Track(this, nameof(_viewDistance), _viewDistance);
             BDebug.Track(this, nameof(_renderDistance), _renderDistance);
-            BDebug.Track(this, nameof(_gridSize), _gridSize);
+            BDebug.Track(this, nameof(_snapGridSize), _snapGridSize);
             BDebug.Track(this, nameof(_renderPosition), _renderPosition);
         }
     }
