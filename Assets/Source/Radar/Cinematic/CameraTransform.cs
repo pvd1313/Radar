@@ -14,7 +14,7 @@ namespace Beast.Radar.Cinematic
     {
         public bool IsReady { get; private set; }
         
-        public float2 Position => _position;
+        public float2 Position => (float2)_position;
         public IsometricCameraRotation RotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
         public float ViewDistance => _viewDistance;
@@ -34,7 +34,7 @@ namespace Beast.Radar.Cinematic
         private float _maxViewDistance;
         private float _zoom01;
         private float _zoomMax;
-        private float2 _position;
+        private double2 _position;
         
         public CameraTransform(IScreen screen, CameraConfig config, GameModel game)
         {
@@ -47,6 +47,7 @@ namespace Beast.Radar.Cinematic
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.GameLoading, _gameLoading);
+            handle.ListenOperation(this, OperationID.GameSaving, _gameSaving);
         }
 
         private UniTask<OperationResult> _warmup()
@@ -75,6 +76,14 @@ namespace Beast.Radar.Cinematic
             
             IsReady = true;
             
+            return OperationResult.SuccessSync();
+        }
+        
+        private UniTask<OperationResult> _gameSaving()
+        {
+            _game.camera.position = (float2)_position;
+            _game.camera.zoom01 = _zoom01;
+
             return OperationResult.SuccessSync();
         }
 
@@ -106,7 +115,7 @@ namespace Beast.Radar.Cinematic
         {
             float viewDistance = _viewDistance * BMath.Cos(_rotationRad.roll);
             
-            float2 bottomLeft = _position - _localToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
+            float2 bottomLeft = (float2)_position - _localToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
             float2 screen = bottomLeft + _localToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
 
             return new float2(screen.x, screen.y);
@@ -114,7 +123,7 @@ namespace Beast.Radar.Cinematic
         
         public float2 WorldToViewport(float2 worldPoint)
         {
-            float2 localPoint = _worldToLocal(worldPoint - _position);
+            float2 localPoint = _worldToLocal(worldPoint - (float2)_position);
 
             localPoint.x /= _viewDistance * _yScaleRollCos * _screen.Aspect;
             localPoint.y /= _viewDistance * _yScaleRollCos;
@@ -142,7 +151,7 @@ namespace Beast.Radar.Cinematic
 
         private void _debugTrack()
         {
-            BDebug.Track(this, nameof(_position), _position);
+            BDebug.Track(this, nameof(_position), (float2)_position);
             BDebug.Track(this, nameof(_viewDistance), _viewDistance);
             BDebug.Track(this, nameof(_maxViewDistance), _maxViewDistance);
             BDebug.Track(this, nameof(_zoom01), _zoom01);
