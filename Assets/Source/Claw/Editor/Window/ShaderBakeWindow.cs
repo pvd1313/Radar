@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Beast.Claw.Graphic;
-using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ namespace Beast.Claw.Editor.Window
 {
     public class ShaderBakeWindow : EditorWindow
     {
-        private static readonly int2 PreviewTextureSize = new int2(256, 256);
+        private static readonly int2 PreviewTextureSize = new (256, 256);
         
         [SerializeField] private Material _renderMaterial;
         [SerializeField] private int _shaderPass;
@@ -19,61 +18,52 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private Texture2D _bakedTexture;
         [SerializeField] private Texture2D _previewTexture;
         
-        protected override void Dispose()
-        {
-            if (_bakedTexture != null)
-            {
-                DestroyImmediate(_bakedTexture);
-                _bakedTexture = null;
-            }
-        }
-        
         protected override void Initialize()
         {
             
         }
         
-        protected override void OnInspectorGUI()
+        protected override void OnInspectorGUI(EditorUI ui)
         {
-            UI.Vertical(
-                    () =>
+            ui.Vertical(
+                    ui =>
                     {
-                        _renderMaterial = UI.AssetField(nameof(_renderMaterial), _renderMaterial);
-                        _renderMaterial.ValidateNotNull(nameof(_renderMaterial));
+                        ui.AssetField(nameof(_renderMaterial), ref _renderMaterial);
+                        BAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
                     },
-                    () =>
+                    ui =>
                     {
-                        _renderTextureFormat = UI.EnumSingleField(nameof(_renderTextureFormat), _renderTextureFormat);
-                        _shaderPass = UI.IntField(nameof(_shaderPass), _shaderPass);
+                        ui.EnumSingleField(nameof(_renderTextureFormat), ref _renderTextureFormat);
+                        ui.IntField(nameof(_shaderPass), ref _shaderPass);
                     },
-                    () =>
+                    ui =>
                     {
-                        _outputTextureFormat = UI.EnumSingleField(nameof(_outputTextureFormat), _outputTextureFormat);
-                        _outputTextureSize = UI.Int2Field(nameof(_outputTextureSize), _outputTextureSize);
+                        ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
+                        ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
                         BAssert.IsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
                     })
-                .Then(result =>
+                .Then(ui =>
                 {
-                    UI.HorizontalEnabledGroup(result.success, () =>
+                    ui.HorizontalEnabledGroup(ui.success, ui =>
                     {
-                        UI.Button("Bake", BakeMap);
+                        ui.Button("Bake", BakeMap);
 
-                        UI.EnabledGroup(_bakedTexture != null, () =>
+                        ui.EnabledGroup(_bakedTexture != null, ui =>
                         {
-                            UI.Button("Save", SaveTexture);
+                            ui.Button("Save", SaveTexture);
                         });
                     });
 
                     if (_previewTexture != null)
                     {
-                        UI.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
+                        ui.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
                     }
                 });
         }
 
-        private void SaveTexture()
+        private void SaveTexture(EditorUI ui)
         {
-            UI.SaveAssetDialog("BackedTexture.png", (path) =>
+            ui.SaveAssetDialog("BackedTexture.png", (path) =>
             {
                 byte[] bin = _bakedTexture.EncodeToPNG();
                 
@@ -81,7 +71,7 @@ namespace Beast.Claw.Editor.Window
             });
         }
         
-        private void BakeMap()
+        private void BakeMap(EditorUI ui)
         {
             RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData
@@ -147,6 +137,15 @@ namespace Beast.Claw.Editor.Window
                 BGraphic.DisposeRenderTexture(renderTextureSmall);
             }
             
+        }
+        
+        protected override void Dispose()
+        {
+            if (_bakedTexture != null)
+            {
+                DestroyImmediate(_bakedTexture);
+                _bakedTexture = null;
+            }
         }
     }
 }

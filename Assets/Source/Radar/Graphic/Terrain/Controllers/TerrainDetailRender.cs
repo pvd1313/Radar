@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.Debug;
+﻿using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -30,7 +29,6 @@ namespace Beast.Radar.Graphic.Terrain
         private RenderTexture _detailTexture;
         private int2 _renderTextureForScreenSize;
         private float _textureYScale;
-        private float _chunkSize;
         private float _texelSize;
         private float _cellPixelSize;
         private float _viewDistance;
@@ -175,7 +173,6 @@ namespace Beast.Radar.Graphic.Terrain
         {
             BDebug.Track(this, "textureSize", _detailTexture.height);
             BDebug.Track(this, nameof(_textureYScale), _textureYScale);
-            BDebug.Track(this, nameof(_chunkSize), _chunkSize);
             BDebug.Track(this, nameof(_texelSize), _texelSize);
             BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);
             BDebug.Track(this, nameof(_viewDistance), _viewDistance);

@@ -1,26 +1,22 @@
-﻿using Beast.Claw.Attributes;
+﻿using System;
+using Beast.Claw.Attributes;
+using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
 {
     [FancyAsset]
     public abstract class EditorWindow : UnityEditor.EditorWindow
     {
-        protected EditorUI UI { get; set; }
-
+        private EditorUI _ui;
+        
         protected abstract void Initialize();
 
         protected abstract void Dispose();
         
-        protected abstract void OnInspectorGUI();
+        protected abstract void OnInspectorGUI(EditorUI ui);
 
         protected EditorWindow()
         {
-            UI = new EditorUI
-            {
-                success = true,
-                niceLabelsEnabled = true
-            };
-            
             Initialize();
         }
 
@@ -31,7 +27,14 @@ namespace Beast.Claw.Editor.Window
 
         private void OnGUI()
         {
-            UI.TryCatch(OnInspectorGUI, out bool _);
+            _ui = new EditorUI
+            {
+                success = true,
+                niceLabelsEnabled = true,
+                layoutOptions = Array.Empty<GUILayoutOption>(),
+            };
+            
+            _ui.TryCatch(OnInspectorGUI, out bool _);
         }
     }
 }
