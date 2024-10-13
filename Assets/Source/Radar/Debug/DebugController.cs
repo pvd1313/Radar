@@ -19,12 +19,12 @@ namespace Beast.Radar.Debug
             
             if (_config.enableLogConsole)
             {
-                BeastScene.InstantiateGameObject(this, _config.logConsolePrefab, float3.zero, quaternion.identity);
+                BScene.InstantiateGameObject(this, _config.logConsolePrefab, float3.zero, quaternion.identity);
             }
 
             if (_config.enableFPSCounter)
             {
-                BeastScene.InstantiateGameObject(this, _config.fpsCounterPrefab, float3.zero, quaternion.identity);
+                BScene.InstantiateGameObject(this, _config.fpsCounterPrefab, float3.zero, quaternion.identity);
             }
             
 #endif

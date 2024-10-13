@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.Mathematics;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.Debug
 {
     public partial class DebugTrackStorage
     {

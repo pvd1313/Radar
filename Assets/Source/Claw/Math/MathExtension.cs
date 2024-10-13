@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.Math
 {
     public static class MathExtension
     {

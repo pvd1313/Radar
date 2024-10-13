@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Mathematics
+namespace Beast.Claw.Math
 {
     public static partial class BMath
     {

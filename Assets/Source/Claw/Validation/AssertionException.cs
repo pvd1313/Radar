@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw
 {
     public class AssertionException : Exception
     {

@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Claw.Mathematics
+namespace Beast.Claw.Math
 {
     public struct Float4x4TRS
     {
@@ -9,7 +9,6 @@ namespace Beast.Claw.Mathematics
         public float3 scale;
         
         public static implicit operator float4x4(Float4x4TRS trs)
-
         {
             return float4x4.TRS(trs.translation, trs.rotation, trs.scale);
         }

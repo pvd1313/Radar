@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
             {
                 if (i >= MaxAssetNameGenerationIterations)
                 {
-                    Debug.LogError($"Failed to create asset '{type}' at '{directory}'. All names are occupied");
+                    BDebug.StaticLogError($"Failed to create asset '{type}' at '{directory}'. All names are occupied");
                     return null;
                 }
                 
@@ -37,7 +38,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                BDebug.StaticLogException(e);
             }
 
             return null;

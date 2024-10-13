@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Mathematics
+namespace Beast.Claw.Math
 {
     [Serializable]
     public struct FloatMinMax

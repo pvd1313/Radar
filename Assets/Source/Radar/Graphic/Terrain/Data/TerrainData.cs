@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;

@@ -1,7 +1,6 @@
-﻿using Beast.Claw.Serialization;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.Serialization
 {
     public static class BinaryWriterExtension
     {

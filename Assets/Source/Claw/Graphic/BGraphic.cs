@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -13,7 +14,7 @@ using Object = UnityEngine.Object;
 namespace Beast.Claw.Graphic
 {
     [DomainInitialize]
-    public static class BeastCG
+    public static class BGraphic
     {
         private static readonly StringBuilder _textBuilder;
         private static readonly Dictionary<FormatUsage, string> _formatUsage2String;
@@ -21,7 +22,7 @@ namespace Beast.Claw.Graphic
         private static readonly HashSet<RenderTexture> _permanentTextures;
         private static readonly HashSet<RenderTexture> _temporaryTextures;
         
-        static BeastCG()
+        static BGraphic()
         {
             try
             {
@@ -41,7 +42,7 @@ namespace Beast.Claw.Graphic
             }
             catch (Exception e)
             {
-                BDebug.LogStaticException(e, "BeastCG cctor");
+                BDebug.StaticLogException(e);
             }
         }
         
@@ -97,7 +98,7 @@ namespace Beast.Claw.Graphic
                 return;
             }
             
-            BDebug.LogStaticError($"Failed to dispose render texture '{renderTexture.name}'. As it was not found in list.");
+            BDebug.StaticLogError($"Failed to dispose render texture '{renderTexture.name}'. As it was not found in list.");
         }
 
         public static RenderTexture CreateTemporaryRenderTexture<T>(T owner, NewTempRenderTextureData input)

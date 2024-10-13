@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.Graphic
 {
     public static class GraphicExtension
     {

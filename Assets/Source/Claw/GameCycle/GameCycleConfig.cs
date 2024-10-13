@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.GameCycle
 {
-    public class GameCycleConfig : Config
+    public class GameCycleConfig : ScriptableConfig
     {
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;

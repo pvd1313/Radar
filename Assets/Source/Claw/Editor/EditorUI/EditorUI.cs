@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
 
@@ -71,7 +72,7 @@ namespace Beast.Claw.Editor
                 
                 EditorGUILayout.TextArea(e.StackTrace);
 
-                BDebug.LogStaticException(e, "BeastEditorWindow unhandled exception");
+                BDebug.StaticLogException(e);
             }
         }
     }

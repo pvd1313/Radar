@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Common
 {
-    public static class BeastScene
+    public static class BScene
     {
         public static GameObject CreateGameObject<TOwner>(TOwner owner)
         {

@@ -1,7 +1,8 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
@@ -66,7 +67,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             _dispose();
             
-            _renderMaterial = BeastCG.CreateMaterial(this, new MaterialParameters
+            _renderMaterial = BGraphic.CreateMaterial(this, new MaterialParameters
             {
                 name = "Render",
                 shader = _library.terrainDetailShader,
@@ -140,7 +141,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_NoiseMap", _library.terrainDetailNoiseTexture);
             _renderMaterial.SetVector("_NoiseMapSize", _library.terrainDetailNoiseTexture.Size());
             
-            BeastCG.Blit(new BlitParameters
+            BGraphic.Blit(new BlitParameters
             {
                 material = _renderMaterial,
                 targetTexture = _detailTexture
@@ -157,13 +158,13 @@ namespace Beast.Radar.Graphic.Terrain
             
             if (_renderMaterial != null)
             {
-                BeastCG.DisposeMaterial(_renderMaterial);
+                BGraphic.DisposeMaterial(_renderMaterial);
                 _renderMaterial = null;
             }
 
             if (_detailTexture != null)
             {
-                BeastCG.DisposeRenderTexture(_detailTexture);
+                BGraphic.DisposeRenderTexture(_detailTexture);
                 _detailTexture = null;
             }
 

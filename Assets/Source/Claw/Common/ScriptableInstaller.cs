@@ -6,19 +6,13 @@ using Zenject;
 namespace Beast.Claw.Common
 {
     [FancyAsset]
-    public abstract class Installer : ScriptableObjectInstaller
+    public abstract class ScriptableInstaller : ScriptableObjectInstaller
     {
-        public List<Config> configs;
-        public List<Library> libraries;
+        public List<ScriptableConfig> configs;
         
         public override void InstallBindings()
         {
-            foreach (Library library in libraries)
-            {
-                Container.BindInterfacesAndSelfTo(library.GetType()).FromInstance(library).AsSingle();
-            }
-            
-            foreach (Config config in configs)
+            foreach (ScriptableConfig config in configs)
             {
                 Container.BindInterfacesAndSelfTo(config.GetType()).FromInstance(config).AsSingle();
             }

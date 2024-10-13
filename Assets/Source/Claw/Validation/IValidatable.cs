@@ -1,4 +1,4 @@
-﻿namespace Beast.Claw.Common
+﻿namespace Beast.Claw
 {
     public interface IValidatable
     {

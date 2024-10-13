@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Serialization
 {
-    public class GameSaveConfig : Config
+    public class GameSaveConfig : ScriptableConfig
     {
         public GameModel defaultSave;
     }

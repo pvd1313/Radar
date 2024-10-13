@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace Beast.Claw.Editor.Window
     public class DebugTrackWindow : EditorWindow
     {
         [SerializeField] private bool _clearOnEnterPlayerMode;
-        [SerializeField] private Vector2 _scrollPosition;
+        [SerializeField] private float2 _scrollPosition;
         
         private bool _isPlaying;
         private Dictionary<string, bool> _folds;
@@ -40,14 +41,14 @@ namespace Beast.Claw.Editor.Window
             UI.Horizontal(() =>
             {
                 UI.Button("Clear", BDebug.ClearTrackStorage);
-                UI.Button("Open All", () => _SetAllFolds(true));
-                UI.Button("Collapse", () => _SetAllFolds(false));
+                UI.Button("Open All", () => _setAllFolds(true));
+                UI.Button("Collapse", () => _setAllFolds(false));
                 _clearOnEnterPlayerMode = UI.CheckBox("Play Mode Clear", _clearOnEnterPlayerMode);
             });
             
             _folds ??= new Dictionary<string, bool>();
-            
-            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+
+            UI.VerticalScroll(ref _scrollPosition, () =>
             {
                 foreach ((string storageName, DebugTrackStorage storage) in BDebug.TrackStorages)
                 {
@@ -58,18 +59,17 @@ namespace Beast.Claw.Editor.Window
                     if (foldState)
                     {
                         EditorGUI.indentLevel++;
-                        _TrackStorageUI(storage);
+                        _trackStorageUI(storage);
                         EditorGUI.indentLevel--;
                         GUILayout.Space(8);
                     }
                 }
-            }
-            EditorGUILayout.EndScrollView();
+            });
             
             Repaint();
         }
 
-        private void _TrackStorageUI(DebugTrackStorage storage)
+        private void _trackStorageUI(DebugTrackStorage storage)
         {
             foreach ((string id, float value) in storage.ReadAllFloat())
             {
@@ -102,7 +102,7 @@ namespace Beast.Claw.Editor.Window
             }
         }
 
-        private void _SetAllFolds(bool isOpen)
+        private void _setAllFolds(bool isOpen)
         {
             foreach (string id in _folds.Keys.ToList())
             {

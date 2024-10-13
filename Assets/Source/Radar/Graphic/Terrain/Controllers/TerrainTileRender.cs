@@ -1,7 +1,8 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
@@ -47,8 +48,8 @@ namespace Beast.Radar.Graphic.Terrain
 
         private UniTask<OperationResult> _warmup()
         {
-            _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainTileRender);
-            _solverMaterial = BeastCG.CreateMaterial(this, _library.terrainTileSolver);
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrainTileRender);
+            _solverMaterial = BGraphic.CreateMaterial(this, _library.terrainTileSolver);
 
             return OperationResult.SuccessSync();
         }
@@ -98,7 +99,7 @@ namespace Beast.Radar.Graphic.Terrain
 
             _debugTrack();
 
-            BeastCG.DisposeRenderTexture(solverTexture);
+            BGraphic.DisposeRenderTexture(solverTexture);
         }
 
         private RenderTexture _runTileSolver(float2 worldOrigin, int2 gridSize)
@@ -118,7 +119,7 @@ namespace Beast.Radar.Graphic.Terrain
             
             _solverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
         
-            RenderTexture solverTexture = BeastCG.CreateTemporaryRenderTexture(
+            RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(
                 this, 
                 new NewTempRenderTextureData
             {
@@ -129,7 +130,7 @@ namespace Beast.Radar.Graphic.Terrain
                 filterMode = FilterMode.Point
             });
         
-            BeastCG.Blit(new BlitParameters
+            BGraphic.Blit(new BlitParameters
             {
                 material = _solverMaterial,
                 shaderPass = 0,
@@ -185,13 +186,13 @@ namespace Beast.Radar.Graphic.Terrain
         {
             if (_renderMaterial != null)
             {
-                BeastCG.DisposeMaterial(_renderMaterial);
+                BGraphic.DisposeMaterial(_renderMaterial);
                 _renderMaterial = null;
             }
 
             if (_solverMaterial != null)
             {
-                BeastCG.DisposeMaterial(_solverMaterial);
+                BGraphic.DisposeMaterial(_solverMaterial);
                 _solverMaterial = null;
             }
 

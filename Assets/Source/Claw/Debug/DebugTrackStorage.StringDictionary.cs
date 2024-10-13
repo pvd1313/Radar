@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.Debug
 {
     partial class DebugTrackStorage
     {

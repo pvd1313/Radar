@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Mathematics;
 using UnityEditor;
 
 namespace Beast.Claw.Editor
@@ -49,6 +50,17 @@ namespace Beast.Claw.Editor
             EditorUI result = ExecuteActions(actions);
 
             EditorGUILayout.EndVertical();
+
+            return result;
+        }
+
+        public EditorUI VerticalScroll(ref float2 scrollPosition, params Action[] actions)
+        {
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+
+            EditorUI result = ExecuteActions(actions);
+            
+            EditorGUILayout.EndScrollView();
 
             return result;
         }

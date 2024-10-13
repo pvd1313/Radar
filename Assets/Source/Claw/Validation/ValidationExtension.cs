@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw
 {
     public static class ValidationExtension
     {

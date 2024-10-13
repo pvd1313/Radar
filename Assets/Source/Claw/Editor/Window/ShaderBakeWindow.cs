@@ -83,7 +83,7 @@ namespace Beast.Claw.Editor.Window
         
         private void BakeMap()
         {
-            RenderTexture renderTextureBig = BeastCG.CreateTemporaryRenderTexture(this,
+            RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
@@ -91,7 +91,7 @@ namespace Beast.Claw.Editor.Window
                     antiAliasing = 1
                 });
 
-            RenderTexture renderTextureSmall = BeastCG.CreateTemporaryRenderTexture(this,
+            RenderTexture renderTextureSmall = BGraphic.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
@@ -101,14 +101,14 @@ namespace Beast.Claw.Editor.Window
 
             try
             {
-                BeastCG.Blit(new BlitParameters
+                BGraphic.Blit(new BlitParameters
                 {
                     material = _renderMaterial,
                     shaderPass = _shaderPass,
                     targetTexture = renderTextureBig
                 });
                 
-                BeastCG.Blit(new BlitParameters
+                BGraphic.Blit(new BlitParameters
                 {
                     material = _renderMaterial,
                     shaderPass = _shaderPass,
@@ -120,7 +120,7 @@ namespace Beast.Claw.Editor.Window
                     DestroyImmediate(_bakedTexture);
                 }
                 
-                _bakedTexture = BeastCG.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
+                _bakedTexture = BGraphic.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
                 {
                     format = _outputTextureFormat,
                     isLinear = true,
@@ -133,7 +133,7 @@ namespace Beast.Claw.Editor.Window
                     DestroyImmediate(_previewTexture);
                 }
 
-                _previewTexture = BeastCG.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
+                _previewTexture = BGraphic.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
                 {
                     format = TextureFormat.RGBA32,
                     isLinear = true,
@@ -143,8 +143,8 @@ namespace Beast.Claw.Editor.Window
             }
             finally
             {
-                BeastCG.DisposeRenderTexture(renderTextureBig);
-                BeastCG.DisposeRenderTexture(renderTextureSmall);
+                BGraphic.DisposeRenderTexture(renderTextureBig);
+                BGraphic.DisposeRenderTexture(renderTextureSmall);
             }
             
         }

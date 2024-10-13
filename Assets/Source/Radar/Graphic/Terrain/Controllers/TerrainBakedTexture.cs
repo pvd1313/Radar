@@ -46,7 +46,7 @@ namespace Beast.Radar.Graphic.Terrain
             
             if (Texture != null)
             {
-                BeastCG.DisposeRenderTexture(Texture);
+                BGraphic.DisposeRenderTexture(Texture);
                 Texture = null;
             }
 

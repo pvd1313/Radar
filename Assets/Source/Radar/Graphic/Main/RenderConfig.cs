@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Graphic
 {
-    public class RenderConfig : Config
+    public class RenderConfig : ScriptableConfig
     {
         public int terrainTileCountLimit;
         public int terrainTilePixelSizeMin;

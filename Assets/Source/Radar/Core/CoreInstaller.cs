@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.Cinematic;
@@ -11,11 +12,10 @@ using Beast.Radar.InputControl;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Zenject;
-using Installer = Beast.Claw.Common.Installer;
 
 namespace Beast.Radar.Core
 {
-    public class CoreInstaller : Installer
+    public class CoreInstaller : ScriptableInstaller
     {
         protected override IEnumerable<Type> BindInterfaces()
         {
