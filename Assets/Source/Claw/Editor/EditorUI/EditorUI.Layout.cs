@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEditor;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
@@ -17,8 +20,26 @@ namespace Beast.Claw.Editor
 
             return result;
         }
+        
+        public EditorUI WithOption(GUILayoutOption[] options, Action<EditorUI> actions)
+        {
+            EditorUI ui = this;
+            
+            ui.layoutOptions = options;
 
-        public EditorUI EnabledGroup(bool isEnabled, params Action[] actions)
+            return ui.ExecuteActions(actions);
+        }
+        
+        public EditorUI WithOption(GUILayoutOption[] options)
+        {
+            EditorUI ui = this;
+            
+            ui.layoutOptions = options;
+            
+            return ui;
+        }
+
+        public EditorUI EnabledGroup(bool isEnabled, params Action<EditorUI>[] actions)
         {
             EditorGUI.BeginDisabledGroup(!isEnabled);
 
@@ -29,7 +50,7 @@ namespace Beast.Claw.Editor
             return result;
         }
 
-        public EditorUI HorizontalEnabledGroup(bool isEnabled, params Action[] actions)
+        public EditorUI HorizontalEnabledGroup(bool isEnabled, params Action<EditorUI>[] actions)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginDisabledGroup(!isEnabled);
@@ -42,7 +63,7 @@ namespace Beast.Claw.Editor
             return result;
         }
 
-        public EditorUI Vertical(params Action[] actions)
+        public EditorUI Vertical(params Action<EditorUI>[] actions)
         {
             EditorGUILayout.BeginVertical();
 
@@ -53,7 +74,29 @@ namespace Beast.Claw.Editor
             return result;
         }
 
-        public EditorUI Horizontal(params Action[] actions)
+        public EditorUI IndentLevel(int levelDelta, params Action<EditorUI>[] actions)
+        {
+            EditorGUI.indentLevel += levelDelta;
+            
+            EditorUI result = ExecuteActions(actions);
+
+            EditorGUI.indentLevel -= levelDelta;
+
+            return result;
+        }
+
+        public EditorUI VerticalScroll(ref float2 scrollPosition, params Action<EditorUI>[] actions)
+        {
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+
+            EditorUI result = ExecuteActions(actions);
+            
+            EditorGUILayout.EndScrollView();
+
+            return result;
+        }
+
+        public EditorUI Horizontal(params Action<EditorUI>[] actions)
         {
             EditorGUILayout.BeginHorizontal();
 

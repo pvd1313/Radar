@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Radar
 {
-    public partial class GraphicLibrary : Library
+    public partial class GraphicLibrary : ScriptableConfig
     {
         public Mesh quadMesh;
         

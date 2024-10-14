@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Attributes;
+using Beast.Claw.Debug;
 using Beast.Claw.Editor.Fancy.Data;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                BDebug.StaticLogException(e);
             }
         }
 

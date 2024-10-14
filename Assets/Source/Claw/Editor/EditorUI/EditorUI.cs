@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Beast.Claw.Editor
     {
         public bool success;
         public bool niceLabelsEnabled;
+        public GUILayoutOption[] layoutOptions;
         
         private string NicifyLabel(string label)
         {
@@ -20,11 +22,11 @@ namespace Beast.Claw.Editor
             return ObjectNames.NicifyVariableName(label);
         }
 
-        private EditorUI ExecuteActions(params Action[] actions)
+        private EditorUI ExecuteActions(params Action<EditorUI>[] actions)
         {
             bool isSuccess = true;
             
-            foreach (Action action in actions)
+            foreach (Action<EditorUI> action in actions)
             {
                 TryCatch(action, out bool actionSuccess);
 
@@ -40,13 +42,13 @@ namespace Beast.Claw.Editor
             };
         }
         
-        public void TryCatch(Action action, out bool actionSuccess)
+        public void TryCatch(Action<EditorUI> action, out bool actionSuccess)
         {
             actionSuccess = true;
 
             try
             {
-                action();
+                action(this);
             }
 
             catch (ExitGUIException)
@@ -71,7 +73,7 @@ namespace Beast.Claw.Editor
                 
                 EditorGUILayout.TextArea(e.StackTrace);
 
-                BDebug.LogStaticException(e, "BeastEditorWindow unhandled exception");
+                BDebug.StaticLogException(e);
             }
         }
     }

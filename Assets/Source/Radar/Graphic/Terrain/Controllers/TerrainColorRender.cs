@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
@@ -42,7 +42,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             Application.targetFrameRate = 999;
 
-            _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainColorShader);
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrainColorShader);
 
             return OperationResult.SuccessSync();
         }
@@ -51,7 +51,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             if (_renderMaterial != null)
             {
-                BeastCG.DisposeMaterial(_renderMaterial);
+                BGraphic.DisposeMaterial(_renderMaterial);
                 _renderMaterial = null;
             }
 
@@ -66,9 +66,7 @@ namespace Beast.Radar.Graphic.Terrain
             }
             
             float2 renderTextureSize = _terrain.Texture.Size();
-            
-            float yScale = BMath.Cos(_camera.RotationRad.roll);
-
+            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _terrain.ViewDistance);
             float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
@@ -80,9 +78,11 @@ namespace Beast.Radar.Graphic.Terrain
             
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
-            _renderMaterial.SetVector("_OutputCenter", renderTextureSize * 0.5f);
+
+            float2 outputCenter = _terrain.WorldToUVOffset(_camera.Position);
+            _renderMaterial.SetVector("_OutputCenter", renderTextureSize * outputCenter);
             
-            BeastCG.DrawMesh(new DrawMeshParameters
+            BGraphic.DrawMesh(new DrawMeshParameters
             {
                 mesh = _library.quadMesh,
                 material = _renderMaterial,

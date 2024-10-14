@@ -16,7 +16,7 @@ MonoBehaviour:
     isometricRotationDeg:
       roll: 45
       pitch: 60
-    minViewDistance: 0.1
+    minViewDistance: 0.05
     plainModeViewDistance01: 1
     enablePlanetMode: 0
   motion:

@@ -5,7 +5,7 @@ using Beast.Radar.InputControl;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraConfig : Config
+    public class CameraConfig : ScriptableConfig
     {
         public CameraTransformConfig transform;
         public CameraMotionParameters[] motion;

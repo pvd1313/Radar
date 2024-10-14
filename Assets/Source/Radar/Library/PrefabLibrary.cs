@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar
 {
-    public class PrefabLibrary : Library, IGameCycleListener
+    public class PrefabLibrary : ScriptableConfig, IGameCycleListener
     {
         public CameraView cameraPrefab;
         public PlayerInputView playerInputPrefab;

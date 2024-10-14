@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
@@ -31,7 +32,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         private UniTask<OperationResult> Warmup()
         {
-            _material = BeastCG.CreateMaterial(this, _graphicLibrary.terrainBakeShader);
+            _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrainBakeShader);
             
             return OperationResult.SuccessSync();
         }
@@ -40,7 +41,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             if (_material != null)
             {
-                BeastCG.DisposeMaterial(_material);
+                BGraphic.DisposeMaterial(_material);
                 _material = null;
             }
 
@@ -51,7 +52,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             if (isTemporary)
             {
-                return BeastCG.CreateTemporaryRenderTexture(owner, new NewTempRenderTextureData
+                return BGraphic.CreateTemporaryRenderTexture(owner, new NewTempRenderTextureData
                 {
                     antiAliasing = 1,
                     filterMode = TextureFilterMode,
@@ -61,7 +62,7 @@ namespace Beast.Radar.Graphic.Terrain
                 });
             }
 
-            return BeastCG.CreatePermanentRenderTexture(owner, new NewPermaRenderTextureData
+            return BGraphic.CreatePermanentRenderTexture(owner, new NewPermaRenderTextureData
             {
                 mipCount = 0,
                 depth = 0,
@@ -85,7 +86,7 @@ namespace Beast.Radar.Graphic.Terrain
                 "_TextureSize", 
                 new Vector2(targetTexture.width, targetTexture.height));
             
-            BeastCG.Blit(new BlitParameters
+            BGraphic.Blit(new BlitParameters
             {
                 targetTexture = targetTexture,
                 material = _material,

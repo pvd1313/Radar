@@ -54,7 +54,7 @@ namespace Beast.Radar.GameCycle
                 return;
             }
             
-            _mono = BeastScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
+            _mono = BScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
             _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
             _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
             _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.Tick);

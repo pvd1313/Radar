@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 
 namespace Beast.Claw.Reflection
 {
@@ -19,7 +20,7 @@ namespace Beast.Claw.Reflection
             }
             catch (Exception e)
             {
-                BDebug.LogStaticException(e, "TypeNameStorage<T> cctor");
+                BDebug.StaticLogException(e);
             }
         }
 

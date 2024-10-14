@@ -1,5 +1,5 @@
 ﻿using System;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Cinematic

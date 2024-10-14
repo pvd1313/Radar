@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbb0de7657414ae8a837f9c29914de50, type: 3}
   m_Name: RenderConfig
   m_EditorClassIdentifier: 
-  terrainTileCountLimit: 200000
+  terrainTileCountLimit: 100000
   terrainTilePixelSizeMin: 4

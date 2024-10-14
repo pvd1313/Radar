@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 
 namespace Beast.Claw.Reflection
 {
@@ -15,7 +16,7 @@ namespace Beast.Claw.Reflection
             }
             catch (Exception e)
             {
-                BDebug.LogStaticException(e, "BeastEnumStorage<T> cctor");
+                BDebug.StaticLogException(e);
             }
         }
     }

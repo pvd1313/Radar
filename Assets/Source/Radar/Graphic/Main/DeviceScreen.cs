@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;

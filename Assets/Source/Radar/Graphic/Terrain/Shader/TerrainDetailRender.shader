@@ -20,7 +20,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Claw/Graphic/BeastCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
 
             // #define DRAW_DEBUG_GRID_TEXTURE
 
@@ -100,7 +100,7 @@
                 float4 color0 = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET_0, NOISE_POWER_0);
                 float4 color1 = noise_shift(input.mainUV, input.noiseUV * 1.5, NOISE_OFFSET_1, NOISE_POWER_1);
 
-                float4 color = saturate((color0 + color1) * 90);
+                float4 color = saturate((color0 + color1) * 900);
 
 #ifdef DRAW_DEBUG_GRID_TEXTURE
                 float gridColor = tex2D(_DebugGridTexture, input.gridUV).r;

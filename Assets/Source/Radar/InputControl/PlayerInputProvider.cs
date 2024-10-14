@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Beast.Radar.InputControl
             Actions = new InputActions();
             Actions.Enable();
             
-            PlayerInputView newInstance = BeastScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
+            PlayerInputView newInstance = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
             RefreshCurrentScheme(_view.playerInput);
             _view.playerInput.onControlsChanged += RefreshCurrentScheme;

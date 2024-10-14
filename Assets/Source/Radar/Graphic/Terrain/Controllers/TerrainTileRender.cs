@@ -1,7 +1,8 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
@@ -47,8 +48,8 @@ namespace Beast.Radar.Graphic.Terrain
 
         private UniTask<OperationResult> _warmup()
         {
-            _renderMaterial = BeastCG.CreateMaterial(this, _library.terrainTileRender);
-            _solverMaterial = BeastCG.CreateMaterial(this, _library.terrainTileSolver);
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrainTileRender);
+            _solverMaterial = BGraphic.CreateMaterial(this, _library.terrainTileSolver);
 
             return OperationResult.SuccessSync();
         }
@@ -65,7 +66,7 @@ namespace Beast.Radar.Graphic.Terrain
             //     return;
             // }
 
-            _tileHeight = 1f / _camera.ViewDistance / GlobalConfig.CellTileCount;
+            _tileHeight = 1f / _camera.ViewDistance / WorldTransform.CellTileCount;
             if (_tileHeight < _config.terrainTilePixelSizeMin / (float)_screen.Height)
             {
                 return;
@@ -82,13 +83,14 @@ namespace Beast.Radar.Graphic.Terrain
             
             float2 viewportPoint = new (0, 1f);
             float2 worldPoint = _camera.ViewportToWorld(viewportPoint);
-            
-            float texelSize = 1f / GlobalConfig.CellTileCount;
+
+            float cellTileCount = WorldTransform.CellTileCount;
+            float texelSize = 1f / cellTileCount;
             worldPoint.x -= texelSize;
             worldPoint.y += texelSize * 2;
             
             // Stick to the grid.
-            worldPoint = BMath.Floor(worldPoint * GlobalConfig.CellTileCount) / GlobalConfig.CellTileCount + texelSize * 0.5f;
+            worldPoint = BMath.Floor(worldPoint * cellTileCount) / cellTileCount + texelSize * 0.5f;
             viewportPoint = _camera.WorldToViewport(worldPoint);
             
             RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);
@@ -97,7 +99,7 @@ namespace Beast.Radar.Graphic.Terrain
 
             _debugTrack();
 
-            BeastCG.DisposeRenderTexture(solverTexture);
+            BGraphic.DisposeRenderTexture(solverTexture);
         }
 
         private RenderTexture _runTileSolver(float2 worldOrigin, int2 gridSize)
@@ -117,7 +119,7 @@ namespace Beast.Radar.Graphic.Terrain
             
             _solverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
         
-            RenderTexture solverTexture = BeastCG.CreateTemporaryRenderTexture(
+            RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(
                 this, 
                 new NewTempRenderTextureData
             {
@@ -128,7 +130,7 @@ namespace Beast.Radar.Graphic.Terrain
                 filterMode = FilterMode.Point
             });
         
-            BeastCG.Blit(new BlitParameters
+            BGraphic.Blit(new BlitParameters
             {
                 material = _solverMaterial,
                 shaderPass = 0,
@@ -184,13 +186,13 @@ namespace Beast.Radar.Graphic.Terrain
         {
             if (_renderMaterial != null)
             {
-                BeastCG.DisposeMaterial(_renderMaterial);
+                BGraphic.DisposeMaterial(_renderMaterial);
                 _renderMaterial = null;
             }
 
             if (_solverMaterial != null)
             {
-                BeastCG.DisposeMaterial(_solverMaterial);
+                BGraphic.DisposeMaterial(_solverMaterial);
                 _solverMaterial = null;
             }
 

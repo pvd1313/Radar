@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -31,7 +32,7 @@ namespace Beast.Claw.Editor.Fancy.Main
                 ProjectBrowserType = editorAssembly.GetType("UnityEditor.ProjectBrowser");
                 if (ProjectBrowserType is null)
                 {
-                    Debug.LogError("Failed to resolve 'UnityEditor.ProjectBrowser'");
+                    BDebug.StaticLogError("Failed to resolve 'UnityEditor.ProjectBrowser'");
                     return;
                 }
 
@@ -51,7 +52,7 @@ namespace Beast.Claw.Editor.Fancy.Main
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                BDebug.StaticLogException(e);
             }
         }
 
@@ -62,7 +63,7 @@ namespace Beast.Claw.Editor.Fancy.Main
             methodInfo = ProjectBrowserType.GetMethod(methodName, flags);
             if (methodInfo is null)
             {
-                Debug.LogError($"Failed to get method info 'ProjectBrowser.{methodName}()");
+                BDebug.StaticLogError($"Failed to get method info 'ProjectBrowser.{methodName}()");
                 return false;
             }
 
@@ -107,7 +108,7 @@ namespace Beast.Claw.Editor.Fancy.Main
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                BDebug.StaticLogException(e);
 
                 EditorApplication.update -= OnApplicationUpdate;
             }

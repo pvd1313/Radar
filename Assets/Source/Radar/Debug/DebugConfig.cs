@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Debug
 {
-    public class DebugConfig : Config
+    public class DebugConfig : ScriptableConfig
     {
 #if BEAST_DEVELOPMENT
         
