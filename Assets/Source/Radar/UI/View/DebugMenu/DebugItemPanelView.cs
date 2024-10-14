@@ -9,6 +9,7 @@ namespace Beast.Radar.UI
     {
         public GameObject body;
         public Transform itemsRoot;
+        public Transform itemTypeRoot;
         public UIButton nextItems;
         public UIButton previousItems;
         public UIButton[] itemGrantButtons;

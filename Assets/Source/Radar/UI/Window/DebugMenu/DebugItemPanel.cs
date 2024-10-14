@@ -17,7 +17,11 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _input;
 
         private SelectableController _selectableController;
-        private DebugItemPanelBuilder _builder;
+        private UIPool<DebugItemButton> _itemsPool;
+
+        private UIPool<DebugItemTypeButton> _itemTypePool;
+        private UIButtonRadioGroup<DebugItemTypeButton> _itemTypeGroup;
+
 
         private DebugItemButton _selectedButton;
 
@@ -37,9 +41,22 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            _builder = new DebugItemPanelBuilder(_uiFactory, _view.itemsRoot);
-            _view.itemButtons = _builder.BuildItemButtons(_itemsData);
+            _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
+            foreach (ItemData data in _itemsData)
+            {
+                DebugItemButton itemButton = _itemsPool.GetNext();
+                itemButton.SetItemData(data);
+            }
 
+            _itemTypePool = new UIPool<DebugItemTypeButton>(_uiFactory, PrefabID.DebugItemTypeButton, _view.itemTypeRoot);
+            foreach (var type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
+            {
+                _itemTypePool.GetNext(type);
+            }
+            _itemTypeGroup = new UIButtonRadioGroup<DebugItemTypeButton>(_itemTypePool.GetAllEnabled().ToArray());
+            _itemTypeGroup.Warmup();
+            _itemTypeGroup.Selected += ItemTypeGroupOnSelected;
+            
             ConfigureSelectables();
             SubscribeView();
             
@@ -49,8 +66,34 @@ namespace Beast.Radar.UI
         public void Dispose()
         {
             UnsubscribeView();
-            
+            _itemTypeGroup.Dispose();
+
             _selectableController.Dispose();
+        }
+
+        private void ItemTypeGroupOnSelected(DebugItemTypeButton typeButton)
+        {
+            _itemsPool.DisableAll();
+            
+            ItemData[] typedData = typeButton.ItemType == EItemType.None 
+                ? _itemsData
+                : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
+            
+            foreach (ItemData itemData in typedData)
+            {
+                DebugItemButton itemButton = _itemsPool.GetNext();
+                itemButton.SetItemData(itemData);
+            }
+            
+            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
+                zone: ESelectionZone.DPad,
+                selectables: dpadSelectables,
+                cols: 15, rows: 4,
+                isFillHorizontally: false,
+                isLooping: false);
+
+            _selectableController.Refresh(dpadGrid.Item1, dpadGrid.Item2);
         }
 
         public void Open()
@@ -70,13 +113,9 @@ namespace Beast.Radar.UI
         {
             Tuple<ESelectionZone, SelectableGridData> shoulderGrid = _zoneBuilder.Build(
                 ESelectionZone.Shoulder,
-                new[]
-                {
-                    _view.previousItems.Selectable,
-                    _view.nextItems.Selectable,
-                },
+                _itemTypePool.GetAll().Select(i => i.Selectable).ToArray(),
                 isFillHorizontally: true,
-                isLooping: false);
+                isLooping: true);
 
             Tuple<ESelectionZone, SelectableGridData> west = _zoneBuilder.Build(
                 ESelectionZone.WestButton, _view.itemGrantButtons[0].Selectable);
@@ -87,7 +126,7 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> east = _zoneBuilder.Build(
                 ESelectionZone.EastButton, _view.itemGrantButtons[2].Selectable);
 
-            UISelectable[] dpadSelectables = _view.itemButtons.Select(b => b.Selectable).ToArray();
+            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
@@ -107,7 +146,7 @@ namespace Beast.Radar.UI
 
         private void SubscribeView()
         {
-            foreach (DebugItemButton button in _view.itemButtons)
+            foreach (DebugItemButton button in _itemsPool.GetAll())
             {
                 button.Clicked += OnItemButtonClicked;
             }

@@ -14,7 +14,7 @@ namespace Beast.Radar.UI
         private UISelectable _currentSelectable;
         private bool _isSubscribedToInput;
         private bool _isUsed;
-        
+
         public SelectableController(
             IUIInputController input,
             Dictionary<ESelectionZone, SelectableGridData> selectables)
@@ -22,11 +22,11 @@ namespace Beast.Radar.UI
             _input = input;
             _selectableGrids = selectables;
         }
-        
+
         public void Warmup()
         {
             SubscribeInputState();
-            SubscribeSelectables();  
+            SubscribeSelectables();
         }
 
         public void Dispose()
@@ -46,7 +46,7 @@ namespace Beast.Radar.UI
             _isUsed = false;
             CleanupInputSubscription();
         }
-        
+
 
         #region Input state event
 
@@ -73,9 +73,9 @@ namespace Beast.Radar.UI
         }
 
         #endregion
-        
+
         #region Selectables events
-        
+
         private void SubscribeSelectables()
         {
             foreach (KeyValuePair<ESelectionZone, SelectableGridData> grids in _selectableGrids)
@@ -86,11 +86,12 @@ namespace Beast.Radar.UI
                     {
                         continue;
                     }
+
                     selectable.Selected += OnSelected;
                 }
             }
         }
-        
+
         private void UnsubscribeSelectables()
         {
             foreach (KeyValuePair<ESelectionZone, SelectableGridData> grids in _selectableGrids)
@@ -101,22 +102,23 @@ namespace Beast.Radar.UI
                     {
                         continue;
                     }
+
                     selectable.Selected -= OnSelected;
                 }
             }
         }
-        
+
         private void OnSelected(ESelectionZone zone, int2 index)
         {
-            SelectableGridData grid = _selectableGrids[zone]; 
+            SelectableGridData grid = _selectableGrids[zone];
             grid.currentIndex = index;
             _selectableGrids[zone] = grid;
         }
-        
+
         #endregion
 
         #region Input action events
-        
+
         private void SubscribeInputActions()
         {
             _input.DpadPressed += OnDpadPressed;
@@ -147,7 +149,7 @@ namespace Beast.Radar.UI
                 button.onClick.Invoke();
             }
         }
-        
+
         private void OnDpadPressed(int2 direction)
         {
             PerformVectorAction(ESelectionZone.DPad, direction);
@@ -193,10 +195,10 @@ namespace Beast.Radar.UI
             }
 
             SelectableGridData grid = _selectableGrids[zone];
-            
-            int newRow =  grid.currentIndex.y;
+
+            int newRow = grid.currentIndex.y;
             int newCol = grid.currentIndex.x;
-            
+
             UpdatePosition(ref newCol, direction.y, grid.selectables.GetLength(0), grid.isLooping);
             UpdatePosition(ref newRow, direction.x, grid.selectables.GetLength(1), grid.isLooping);
 
@@ -234,12 +236,12 @@ namespace Beast.Radar.UI
             {
                 return;
             }
-            
+
             if (_currentSelectable != null)
             {
                 _currentSelectable.OnDeselect(null);
             }
-            
+
             _currentSelectable = selectable;
             _currentSelectable.Select();
         }
@@ -276,6 +278,31 @@ namespace Beast.Radar.UI
 
                 UnsubscribeInputActions();
             }
+        }
+
+        public void Refresh(ESelectionZone zone, SelectableGridData grid)
+        {
+            foreach (UISelectable selectable in _selectableGrids[zone].selectables)
+            {
+                if (selectable == null)
+                {
+                    continue;
+                }
+
+                selectable.Selected -= OnSelected;
+            }
+
+            foreach (UISelectable selectable in grid.selectables)
+            {
+                if (selectable == null)
+                {
+                    continue;
+                }
+
+                selectable.Selected += OnSelected;
+            }
+
+            _selectableGrids[zone] = grid;
         }
     }
 }

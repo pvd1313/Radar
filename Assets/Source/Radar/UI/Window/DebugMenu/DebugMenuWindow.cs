@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
 
         private SelectableController _selectableController;
         private DebugMenuView _view;
-        private WindowPanelsController _panelsController;
+        private PanelsController _panelsController;
 
         public DebugMenuWindow(
             IWindowManager windowManager,
@@ -91,7 +91,7 @@ namespace Beast.Radar.UI
 
         private void InitializePanels()
         {
-            _panelsController = new WindowPanelsController(_view.panelButtons, new IPanel[]
+            _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //todo replace itemsData with data from the configuration file.
                 new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, new ItemData[]

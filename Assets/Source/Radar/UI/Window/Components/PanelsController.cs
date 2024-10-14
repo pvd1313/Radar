@@ -1,12 +1,12 @@
 ﻿namespace Beast.Radar.UI
 {
-    public class WindowPanelsController
+    public class PanelsController
     {
         private readonly UIButton[] _buttons;
         private readonly IPanel[] _folders;
         private int _currentIndex;
         
-        public WindowPanelsController(UIButton[] buttons, IPanel[] folders)
+        public PanelsController(UIButton[] buttons, IPanel[] folders)
         {
             _buttons = buttons;
             _folders = folders;

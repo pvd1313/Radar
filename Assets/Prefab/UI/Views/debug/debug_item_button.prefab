@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _button: {fileID: 5258268452734518016}
-  _icon: {fileID: 5306946386086805809}
+  _background: {fileID: 5306946386086805809}
   _textMeshPro: {fileID: 904184661844821890}
   _selectable: {fileID: 1883369800143888722}
 --- !u!114 &1883369800143888722
