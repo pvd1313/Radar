@@ -227,9 +227,8 @@ namespace Beast.Radar.UI
         {
             _itemsPool.DisableAll();
             int startIndex = _currentPage > 1 ?_maxItemsCount * (_currentPage - 1) : 0;
-             int limit = Math.Min(_maxItemsCount + startIndex, _currentItemsData.Length);
+            int limit = Math.Min(_maxItemsCount + startIndex, _currentItemsData.Length);
              
-             BDebug.LogInfo(this, $"page:{_currentPage}  start:{startIndex} limit:{limit}");
             for (int index = startIndex; index < limit; index++)
             {
                 ItemData itemData = _currentItemsData[index];
