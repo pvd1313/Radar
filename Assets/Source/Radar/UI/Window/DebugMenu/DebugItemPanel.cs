@@ -10,7 +10,7 @@ namespace Beast.Radar.UI
     public class DebugItemPanel : IPanel
     {
         private static readonly float[] ItemsCount = { 1, 10, 100 };
-        private static readonly int2 itemGridSize = new(15,4);
+        private static readonly int2 ItemGridSize = new(15, 4);
 
         private readonly int _maxItemsCount;
         private readonly DebugItemPanelView _view;
@@ -44,7 +44,7 @@ namespace Beast.Radar.UI
             _input = input;
             _inputProvider = inputProvider;
             _itemsData = itemsData;
-            _maxItemsCount = itemGridSize.x * itemGridSize.y;
+            _maxItemsCount = ItemGridSize.x * ItemGridSize.y;
         }
 
         public void Warmup()
@@ -140,7 +140,7 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
-                cols: itemGridSize.x, rows: itemGridSize.x,
+                cols: ItemGridSize.x, rows: ItemGridSize.y,
                 isFillHorizontally: false,
                 isLooping: false);
 
@@ -240,7 +240,7 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
-                cols: itemGridSize.x, rows: itemGridSize.y,
+                cols: ItemGridSize.x, rows: ItemGridSize.y,
                 isFillHorizontally: false,
                 isLooping: false);
             _selectablesController?.Refresh(dpadGrid.Item1, dpadGrid.Item2);
