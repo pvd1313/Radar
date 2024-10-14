@@ -148,8 +148,6 @@ namespace Beast.Radar.UI
                 return;
             }
 
-            
-            
             if (_selectableGrids[zone].selectables[0, 0].TryGetComponent(out Button button))
             {
                 button.onClick.Invoke();
@@ -314,6 +312,11 @@ namespace Beast.Radar.UI
 
         public void RefreshGrid(ESelectionZone zone, SelectableGridData grid, bool reverseColumnIndex)
         {
+            if (!_input.IsHardwareInput)
+            {
+                return;
+            }
+            
             if (reverseColumnIndex)
             {
                 SelectableGridData currentGrid = _selectableGrids[zone];
