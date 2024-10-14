@@ -15,7 +15,7 @@ namespace Beast.Radar.UI
 
         private int[] _frameRates;
 
-        private SelectableController _selectableController;
+        private SelectablesController _selectablesController;
 
         public DebugSettingsPanel(
             DebugSettingsPanelView view,
@@ -33,24 +33,24 @@ namespace Beast.Radar.UI
             ConfigureSelectables();
             SubscribeView();
             
-            _selectableController.Warmup();
+            _selectablesController.Warmup();
         }
 
         public void Dispose()
         {
-            _selectableController.Dispose();
+            _selectablesController.Dispose();
         }
 
         public void Open()
         {
-            _selectableController.Enable();
+            _selectablesController.Enable();
             _view.body.SetActive(true);
         }
 
         public void Close()
         {
             _view.body.SetActive(false);
-            _selectableController.Disable();
+            _selectablesController.Disable();
         }
 
         private void ConfigureSelectables()
@@ -69,7 +69,7 @@ namespace Beast.Radar.UI
                selectionsGrid: selectables, 
                isLooping: false);
 
-            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { dpadGrid.Item1, dpadGrid.Item2 }
             });

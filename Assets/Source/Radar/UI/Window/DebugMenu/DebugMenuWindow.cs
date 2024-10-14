@@ -16,9 +16,10 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
 
-        private SelectableController _selectableController;
         private DebugMenuView _view;
         private PanelsController _panelsController;
+        private SelectablesController _selectablesController;
+        private InputIconsController _inputIconsController;
 
         public DebugMenuWindow(
             IWindowManager windowManager,
@@ -45,7 +46,7 @@ namespace Beast.Radar.UI
         public void Open()
         {
             _panelsController.Enable();
-            _selectableController.Enable();
+            _selectablesController.Enable();
             _view.screen.SetActive(true);
         }
 
@@ -53,27 +54,23 @@ namespace Beast.Radar.UI
         {
             _view.screen.SetActive(false);
             _panelsController.Disable();
-            _selectableController.Disable();
+            _selectablesController.Disable();
         }
 
         private UniTask<OperationResult> Warmup()
         {
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _windowManager.Register(this, WindowID.Debug, _view);
-
-            foreach (InputIconDisplay icon in _view.inputIcons)
-            {
-                icon.Refresh(_inputProvider.Scheme);
-            }
             
-            InitializePanels();
+            ConfigurePanels();
             ConfigureSelectables();
+            ConfigureInputIcons();
 
             SubscribeView();
             SubscribeInput();
             
             _panelsController.Warmup();
-            _selectableController.Warmup();
+            _selectablesController.Warmup();
                         
             return OperationResult.SuccessSync();
         }
@@ -84,17 +81,18 @@ namespace Beast.Radar.UI
             UnsubscribeInput();
             
             _panelsController.Dispose();
-            _selectableController.Dispose();
+            _selectablesController.Dispose();
+            _inputIconsController.Dispose();
 
             return OperationResult.SuccessSync();
         }
 
-        private void InitializePanels()
+        private void ConfigurePanels()
         {
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //todo replace itemsData with data from the configuration file.
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, new ItemData[]
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, _inputProvider, new ItemData[]
                 {
                     new() { type = EItemType.Equipment, name = "shirt", weight = 1 },
                     new() { type = EItemType.Equipment, name = "pants", weight = 1.2f },
@@ -118,10 +116,16 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: false);
             
-            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { triggerGrid.Item1, triggerGrid.Item2 }
             });
+        }
+
+        private void ConfigureInputIcons()
+        {
+            _inputIconsController = new InputIconsController(_inputProvider, _view.inputIcons);
+            _inputIconsController.Warmup();
         }
 
         private void SubscribeView()

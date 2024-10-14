@@ -8,5 +8,7 @@
         public static readonly string DebugWindow = "debug_window";
         public static readonly string DebugItemButton = "debug_item_button";
         public static readonly string DebugItemTypeButton = "debug_item_type_button";
+        public static readonly string InputIconDisplay = "input_icon_display";
+        
     }
 }

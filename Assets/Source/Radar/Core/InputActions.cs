@@ -373,6 +373,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""Shoulder"",
+                    ""type"": ""Value"",
+                    ""id"": ""c36987c1-1fbb-4634-ad5c-11a83e510bde"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""RightStick"",
                     ""type"": ""PassThrough"",
                     ""id"": ""3e877188-a0b9-4191-a719-50dfdf2ce884"",
@@ -728,6 +737,61 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Shoulder"",
+                    ""id"": ""9c5b3c0e-f4f1-4a3c-b35a-4c0326d6962f"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoulder"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""cf4cfad0-252b-4cc4-84db-8c1f164a7c12"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Shoulder"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""be64efab-f2a6-4ab4-8cd3-d7ced725c5e0"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Shoulder"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""KeyboardKeys"",
+                    ""id"": ""5c5dbbd9-2ab4-43c8-a478-4868b49d28b8"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoulder"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""ae18ae35-3084-401c-8611-65f25d5d79f3"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoulder"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -795,6 +859,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_Trigger = m_UI.FindAction("Trigger", throwIfNotFound: true);
+        m_UI_Shoulder = m_UI.FindAction("Shoulder", throwIfNotFound: true);
         m_UI_RightStick = m_UI.FindAction("RightStick", throwIfNotFound: true);
         m_UI_NorthButton = m_UI.FindAction("NorthButton", throwIfNotFound: true);
         m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
@@ -953,6 +1018,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Click;
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_Trigger;
+    private readonly InputAction m_UI_Shoulder;
     private readonly InputAction m_UI_RightStick;
     private readonly InputAction m_UI_NorthButton;
     private readonly InputAction m_UI_EastButton;
@@ -968,6 +1034,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Click => m_Wrapper.m_UI_Click;
         public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
         public InputAction @Trigger => m_Wrapper.m_UI_Trigger;
+        public InputAction @Shoulder => m_Wrapper.m_UI_Shoulder;
         public InputAction @RightStick => m_Wrapper.m_UI_RightStick;
         public InputAction @NorthButton => m_Wrapper.m_UI_NorthButton;
         public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
@@ -1002,6 +1069,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Trigger.started += instance.OnTrigger;
             @Trigger.performed += instance.OnTrigger;
             @Trigger.canceled += instance.OnTrigger;
+            @Shoulder.started += instance.OnShoulder;
+            @Shoulder.performed += instance.OnShoulder;
+            @Shoulder.canceled += instance.OnShoulder;
             @RightStick.started += instance.OnRightStick;
             @RightStick.performed += instance.OnRightStick;
             @RightStick.canceled += instance.OnRightStick;
@@ -1039,6 +1109,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Trigger.started -= instance.OnTrigger;
             @Trigger.performed -= instance.OnTrigger;
             @Trigger.canceled -= instance.OnTrigger;
+            @Shoulder.started -= instance.OnShoulder;
+            @Shoulder.performed -= instance.OnShoulder;
+            @Shoulder.canceled -= instance.OnShoulder;
             @RightStick.started -= instance.OnRightStick;
             @RightStick.performed -= instance.OnRightStick;
             @RightStick.canceled -= instance.OnRightStick;
@@ -1113,6 +1186,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnClick(InputAction.CallbackContext context);
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnTrigger(InputAction.CallbackContext context);
+        void OnShoulder(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnNorthButton(InputAction.CallbackContext context);
         void OnEastButton(InputAction.CallbackContext context);

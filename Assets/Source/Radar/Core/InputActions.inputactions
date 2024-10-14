@@ -351,6 +351,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Shoulder",
+                    "type": "Value",
+                    "id": "c36987c1-1fbb-4634-ad5c-11a83e510bde",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "RightStick",
                     "type": "PassThrough",
                     "id": "3e877188-a0b9-4191-a719-50dfdf2ce884",
@@ -706,6 +715,61 @@
                     "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Shoulder",
+                    "id": "9c5b3c0e-f4f1-4a3c-b35a-4c0326d6962f",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoulder",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "cf4cfad0-252b-4cc4-84db-8c1f164a7c12",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Shoulder",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "be64efab-f2a6-4ab4-8cd3-d7ced725c5e0",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Shoulder",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "KeyboardKeys",
+                    "id": "5c5dbbd9-2ab4-43c8-a478-4868b49d28b8",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoulder",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "positive",
+                    "id": "ae18ae35-3084-401c-8611-65f25d5d79f3",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoulder",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

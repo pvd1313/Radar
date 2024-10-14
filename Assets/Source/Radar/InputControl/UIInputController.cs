@@ -98,6 +98,7 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.WestButton.started += OnPressWest;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
+            _input.Actions.UI.Shoulder.started += OnPerformedShoulder;
             _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
         }
 
@@ -110,6 +111,7 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.WestButton.started -= OnPressWest;
             _input.Actions.UI.Navigate.performed -= OnPerformedNavigate;
             _input.Actions.UI.Trigger.started -= OnPerformedTrigger;
+            _input.Actions.UI.Shoulder.started -= OnPerformedShoulder;
             _input.Actions.UI.RightStick.started -= OnRightStickPerformed;
         }
 
@@ -162,6 +164,12 @@ namespace Beast.Radar.InputControl
             }
             
             _lastRightStickValue = roundValue;
+        }
+
+        private void OnPerformedShoulder(InputAction.CallbackContext obj)
+        {
+            float value = obj.ReadValue<float>();
+            ShoulderPressed?.Invoke(RoundValue(value));
         }
 
         private void OnPerformedTrigger(InputAction.CallbackContext obj)

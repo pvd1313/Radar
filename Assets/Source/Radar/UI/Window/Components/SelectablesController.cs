@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Beast.Claw.Common;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class SelectableController
+    public class SelectablesController
     {
         private readonly IUIInputController _input;
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
@@ -15,7 +16,7 @@ namespace Beast.Radar.UI
         private bool _isSubscribedToInput;
         private bool _isUsed;
 
-        public SelectableController(
+        public SelectablesController(
             IUIInputController input,
             Dictionary<ESelectionZone, SelectableGridData> selectables)
         {
@@ -180,9 +181,10 @@ namespace Beast.Radar.UI
             }
 
             SelectableGridData grid = _selectableGrids[zone];
-            int newCol = grid.currentIndex.x;
+            int newCol = grid.currentIndex.y;
 
             UpdatePosition(ref newCol, value, grid.selectables.GetLength(1), grid.isLooping);
+            BDebug.LogInfo(this, $"{zone} {value} {_selectableGrids[zone].selectables.GetLength(1)}  {newCol}");
 
             grid.currentIndex.y = newCol;
             _selectableGrids[zone] = grid;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -15,5 +16,6 @@ namespace Beast.Radar.UI
         public UIButton[] itemGrantButtons;
         public TextMeshProUGUI itemName;
         public TextMeshProUGUI itemWeight;
+        public List<InputIconDisplay> inputIcons;
     }
 }

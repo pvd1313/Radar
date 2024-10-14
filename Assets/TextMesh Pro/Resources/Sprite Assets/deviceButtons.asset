@@ -165,6 +165,12 @@ MonoBehaviour:
     m_Scale: 1
     m_Name: Four
     m_HashCode: 2627086
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 14
+    m_Scale: 1
+    m_Name: Tab
+    m_HashCode: 90423
   m_SpriteGlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -390,5 +396,21 @@ MonoBehaviour:
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: 1066724965, guid: 0da58cbe2c2e73348b3066026e63069c, type: 3}
+  - m_Index: 14
+    m_Metrics:
+      m_Width: 128
+      m_Height: 128
+      m_HorizontalBearingX: -0
+      m_HorizontalBearingY: 128
+      m_HorizontalAdvance: 128
+    m_GlyphRect:
+      m_X: 256
+      m_Y: 0
+      m_Width: 128
+      m_Height: 128
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: 840849898, guid: 0da58cbe2c2e73348b3066026e63069c, type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

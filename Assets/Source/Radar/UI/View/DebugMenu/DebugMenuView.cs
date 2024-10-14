@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -8,8 +9,9 @@ namespace Beast.Radar.UI
         public UIButton openButton;
         public UIButton closeButton;
         public UIButton[] panelButtons;
+        public List<InputIconDisplay> inputIcons;
+        [Space]
         public DebugItemPanelView itemView;
         public DebugSettingsPanelView settingsView;
-        public InputIconDisplay[] inputIcons;
     }
 }

@@ -9,6 +9,12 @@ namespace Beast.Radar.UI
         [SerializeField] private EInputButton _gamePadButton;
         [SerializeField] private TextMeshProUGUI _text;
 
+
+        public void SetKey(EInputButton key)
+        {
+            _gamePadButton = key;
+        }
+
         public void Refresh(EInputScheme scheme)
         {
             switch (scheme)
@@ -30,11 +36,13 @@ namespace Beast.Radar.UI
                     {
                         case EInputButton.None:
                         case EInputButton.LeftShoulder:
-                        case EInputButton.RightShoulder:
                         case EInputButton.South:
                         default:
                             gameObject.SetActive(false);
                             return;
+                        case EInputButton.RightShoulder:
+                            SetTag(EInputButton.Tab);
+                            break;
                         case EInputButton.LeftTrigger:
                             SetTag(EInputButton.Q);
                             break;

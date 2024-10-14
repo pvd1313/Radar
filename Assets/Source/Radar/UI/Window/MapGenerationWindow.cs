@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _input;
         private readonly ISelectionZoneBuilder _selectionBuilder;
 
-        private SelectableController _selectableController;
+        private SelectablesController _selectablesController;
         private MapGenerationView _menuView;
         private GenerationMapData _data;
 
@@ -42,14 +42,14 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-            _selectableController.Enable();
+            _selectablesController.Enable();
             _menuView.gameObject.SetActive(true);
         }
 
         public void Close()
         {
             _menuView.gameObject.SetActive(false);
-            _selectableController.Disable();
+            _selectablesController.Disable();
         }
 
         private UniTask<OperationResult> Warmup()
@@ -60,7 +60,7 @@ namespace Beast.Radar.UI
             ConfigureSelectables();
             SubscribeView();
             
-            _selectableController.Warmup();
+            _selectablesController.Warmup();
             
             return OperationResult.SuccessSync();
         }
@@ -69,7 +69,7 @@ namespace Beast.Radar.UI
         {
             UnsubscribeView();
             
-            _selectableController.Dispose();
+            _selectablesController.Dispose();
             
             return OperationResult.SuccessSync();
         }
@@ -94,7 +94,7 @@ namespace Beast.Radar.UI
                 isFillHorizontally: false,
                 isLooping: true);
 
-            _selectableController = new SelectableController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
             {
                 { dpadGrid.Item1, dpadGrid.Item2 }
             });
