@@ -13,11 +13,12 @@ namespace Beast.Radar.InputControl
     public class UIInputController : IUIInputController, IGameCycleListener
     {
         public bool IsHardwareInput { get; private set; }
-        public event Action IsEnabledChanged;
+        public event Action ChangedEnable;
         public event Action PauseButtonPressed;
         public event Action<ESelectionZone> ActionButtonPressed;
         public event Action<int2> DpadPressed;
         public event Action<int2> RightStickMoved;
+        public event Action<int> ShoulderPressed;
         public event Action<int> TriggerPressed;
 
         private readonly IPlayerInputProvider _input;
@@ -78,12 +79,12 @@ namespace Beast.Radar.InputControl
                 case false when scheme is not EInputScheme.Touch:
                     IsHardwareInput = true;
                     SubscribeInputActions();
-                    IsEnabledChanged?.Invoke();
+                    ChangedEnable?.Invoke();
                     break;
                 case true when scheme is EInputScheme.Touch:
                     IsHardwareInput = false;
                     UnsubscribeInputActions();
-                    IsEnabledChanged?.Invoke();
+                    ChangedEnable?.Invoke();
                     break;
             }
         }

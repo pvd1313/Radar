@@ -52,15 +52,15 @@ namespace Beast.Radar.UI
 
         private void SubscribeInputState()
         {
-            _input.IsEnabledChanged += OnChangedControllerState;
+            _input.ChangedEnable += OnInputChangedEnable;
         }
 
         private void UnsubscribeInputState()
         {
-            _input.IsEnabledChanged -= OnChangedControllerState;
+            _input.ChangedEnable -= OnInputChangedEnable;
         }
 
-        private void OnChangedControllerState()
+        private void OnInputChangedEnable()
         {
             if (_input.IsHardwareInput)
             {
@@ -122,6 +122,7 @@ namespace Beast.Radar.UI
         private void SubscribeInputActions()
         {
             _input.DpadPressed += OnDpadPressed;
+            _input.ShoulderPressed += OnShoulderPressed;
             _input.TriggerPressed += OnTriggerPressed;
             _input.RightStickMoved += OnRightStickMoved;
             _input.ActionButtonPressed += OnActionButtonPressed;
@@ -131,6 +132,7 @@ namespace Beast.Radar.UI
         private void UnsubscribeInputActions()
         {
             _input.DpadPressed -= OnDpadPressed;
+            _input.ShoulderPressed -= OnShoulderPressed;
             _input.TriggerPressed -= OnTriggerPressed;
             _input.RightStickMoved -= OnRightStickMoved;
             _input.ActionButtonPressed -= OnActionButtonPressed;
@@ -158,6 +160,11 @@ namespace Beast.Radar.UI
         private void OnRightStickMoved(int2 direction)
         {
             PerformVectorAction(ESelectionZone.RightStick, direction);
+        }
+
+        private void OnShoulderPressed(int value)
+        {
+            PerformHorizontalAction(ESelectionZone.Shoulder, value);
         }
 
         private void OnTriggerPressed(int value)

@@ -16,14 +16,11 @@ namespace Beast.Radar.UI
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
 
-        private SelectableController _selectableController;
         private UIPool<DebugItemButton> _itemsPool;
-
+        private ButtonRadioGroup<DebugItemButton> _itemGroup;
         private UIPool<DebugItemTypeButton> _itemTypePool;
-        private UIButtonRadioGroup<DebugItemTypeButton> _itemTypeGroup;
-
-
-        private DebugItemButton _selectedButton;
+        private ButtonRadioGroup<DebugItemTypeButton> _itemTypeGroup;
+        private SelectableController _selectableController;
 
         public DebugItemPanel(
             DebugItemPanelView view,
@@ -41,59 +38,18 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
-            foreach (ItemData data in _itemsData)
-            {
-                DebugItemButton itemButton = _itemsPool.GetNext();
-                itemButton.SetItemData(data);
-            }
-
-            _itemTypePool = new UIPool<DebugItemTypeButton>(_uiFactory, PrefabID.DebugItemTypeButton, _view.itemTypeRoot);
-            foreach (var type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
-            {
-                _itemTypePool.GetNext(type);
-            }
-            _itemTypeGroup = new UIButtonRadioGroup<DebugItemTypeButton>(_itemTypePool.GetAllEnabled().ToArray());
-            _itemTypeGroup.Warmup();
-            _itemTypeGroup.Selected += ItemTypeGroupOnSelected;
-            
+            ConfigureItemTypeButtons();
+            ConfigureItemButtons();
             ConfigureSelectables();
-            SubscribeView();
-            
-            _selectableController.Warmup();
+            Subscribe();
         }
 
         public void Dispose()
         {
-            UnsubscribeView();
-            _itemTypeGroup.Dispose();
-
+            Unsubscribe();
             _selectableController.Dispose();
-        }
-
-        private void ItemTypeGroupOnSelected(DebugItemTypeButton typeButton)
-        {
-            _itemsPool.DisableAll();
-            
-            ItemData[] typedData = typeButton.ItemType == EItemType.None 
-                ? _itemsData
-                : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
-            
-            foreach (ItemData itemData in typedData)
-            {
-                DebugItemButton itemButton = _itemsPool.GetNext();
-                itemButton.SetItemData(itemData);
-            }
-            
-            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.DPad,
-                selectables: dpadSelectables,
-                cols: 15, rows: 4,
-                isFillHorizontally: false,
-                isLooping: false);
-
-            _selectableController.Refresh(dpadGrid.Item1, dpadGrid.Item2);
+            _itemTypeGroup.Dispose();
+            _itemGroup.Dispose();
         }
 
         public void Open()
@@ -106,7 +62,36 @@ namespace Beast.Radar.UI
         {
             _view.body.SetActive(false);
             _selectableController.Disable();
-            Reset();
+        }
+
+        #region Configure
+
+        private void ConfigureItemButtons()
+        {
+            _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
+            foreach (ItemData data in _itemsData)
+            {
+                DebugItemButton itemButton = _itemsPool.GetNext();
+                itemButton.SetItemData(data);
+            }
+
+            _itemGroup = new ButtonRadioGroup<DebugItemButton>(_itemsPool.GetAllEnabled().ToArray());
+            _itemGroup.Warmup();
+            
+            RefreshItemInformation(_itemGroup.SelectedButton);
+        }
+
+        private void ConfigureItemTypeButtons()
+        {
+            _itemTypePool =
+                new UIPool<DebugItemTypeButton>(_uiFactory, PrefabID.DebugItemTypeButton, _view.itemTypeRoot);
+            foreach (var type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
+            {
+                _itemTypePool.GetNext(type);
+            }
+
+            _itemTypeGroup = new ButtonRadioGroup<DebugItemTypeButton>(_itemTypePool.GetAllEnabled().ToArray());
+            _itemTypeGroup.Warmup();
         }
 
         private void ConfigureSelectables()
@@ -142,59 +127,88 @@ namespace Beast.Radar.UI
                 { west.Item1, west.Item2 },
                 { east.Item1, east.Item2 },
             });
+
+            _selectableController.Warmup();
         }
 
-        private void SubscribeView()
-        {
-            foreach (DebugItemButton button in _itemsPool.GetAll())
-            {
-                button.Clicked += OnItemButtonClicked;
-            }
+        #endregion
 
+        #region Events
+
+        private void Subscribe()
+        {
             for (int i = 0; i < _view.itemGrantButtons.Length; i++)
             {
                 int index = i;
                 _view.itemGrantButtons[i].Clicked += () => OnGrantButtonClicked(index);
             }
+
+            _itemTypeGroup.Selected += OnItemTypeSelected;
+            _itemGroup.Selected += OnItemSelected;
         }
 
-        private void UnsubscribeView()
+        private void Unsubscribe()
         {
-            foreach (DebugItemButton button in _view.itemButtons)
-            {
-                button.Clicked -= OnItemButtonClicked;
-            }
-        }
-
-        private void OnItemButtonClicked(DebugItemButton button)
-        {
-            if (_selectedButton != null)
-            {
-                _selectedButton.SetDefaultMode();
-            }
-
-            _selectedButton = button;
-            _selectedButton.SetSelectedMode();
-
-            _view.itemName.SetText(button.Item.name);
-            _view.itemWeight.SetText($"{button.Item.weight} kg");
+            _itemTypeGroup.Selected -= OnItemTypeSelected;
+            _itemGroup.Selected -= OnItemSelected;
         }
 
         private void OnGrantButtonClicked(int index)
         {
-            //todo Add an action to issue an item 
-            BDebug.LogInfo(this, $"Granted {ItemsCount[index]} {_selectedButton.Item.name}");
-        }
-
-        private void Reset()
-        {
-            if (_selectedButton != null)
+            if (_itemGroup.SelectedButton == null)
             {
-                _selectedButton.SetDefaultMode();
+                return;
             }
 
-            _view.itemName.SetText("name");
-            _view.itemWeight.SetText("weight");
+            BDebug.LogInfo(this, $"Granted {ItemsCount[index]} {_itemGroup.SelectedButton.Item.name}");
+            //todo Add an action to issue an item 
         }
+
+        private void OnItemTypeSelected(DebugItemTypeButton typeButton)
+        {
+            _itemsPool.DisableAll();
+
+            ItemData[] typedData = typeButton.ItemType == EItemType.None
+                ? _itemsData
+                : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
+
+            foreach (ItemData itemData in typedData)
+            {
+                DebugItemButton itemButton = _itemsPool.GetNext();
+                itemButton.SetItemData(itemData);
+            }
+
+            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
+                zone: ESelectionZone.DPad,
+                selectables: dpadSelectables,
+                cols: 15, rows: 4,
+                isFillHorizontally: false,
+                isLooping: false);
+            _selectableController.Refresh(dpadGrid.Item1, dpadGrid.Item2);
+
+            _itemGroup.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
+        }
+
+        private void OnItemSelected(DebugItemButton button)
+        {
+            RefreshItemInformation(button);
+        }
+
+        private void RefreshItemInformation(DebugItemButton itemButton)
+        {
+            if (itemButton != null)
+            {
+                _view.itemName.SetText(itemButton.Item.name);
+                _view.itemWeight.SetText($"{itemButton.Item.weight} kg");
+            }
+            else
+            {
+                _view.itemName.SetText("name");
+                _view.itemWeight.SetText("weight");
+            }
+        }
+
+        #endregion
     }
 }

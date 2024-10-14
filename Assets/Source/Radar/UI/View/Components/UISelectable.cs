@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -38,7 +37,6 @@ namespace Beast.Radar.UI
 
         public void OnSelect(BaseEventData eventData)
         {
-            BDebug.LogInfo(this, $"Selected {_zone} {_index}");
             Selected?.Invoke(_zone, _index);
         }
 

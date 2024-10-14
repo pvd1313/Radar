@@ -13,8 +13,6 @@ namespace Beast.Radar.UI
         public UIButton nextItems;
         public UIButton previousItems;
         public UIButton[] itemGrantButtons;
-        public DebugItemButton[] itemButtons;
-        public UIButton[] itemType;
         public TextMeshProUGUI itemName;
         public TextMeshProUGUI itemWeight;
     }

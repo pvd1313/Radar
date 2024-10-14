@@ -46,19 +46,14 @@ namespace Beast.Radar.UI
 
         public void DisableAll()
         {
-            foreach (var entity in _all)
+            foreach (T entity in _enabled)
             {
                 entity.Disable();
             }
 
             _enabled.Clear();
         }
-
-        public T GetByIndex(int tabIndex)
-        {
-            return _all[tabIndex];
-        }
-
+        
         private T GetDisabledEntity()
         {
             return _all.FirstOrDefault(entity => entity != null && !entity.gameObject.activeSelf);
@@ -71,14 +66,6 @@ namespace Beast.Radar.UI
             entity.Init(initParams);
             _all.Add(entity);
             return entity;
-        }
-
-        public void EnableAll()
-        {
-            foreach (T entity in _all.Where(entity => !_enabled.Contains(entity)))
-            {
-                entity.Enable();
-            }
         }
     }
 }

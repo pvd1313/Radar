@@ -2,23 +2,23 @@
 
 namespace Beast.Radar.UI
 {
-    public class UIButtonRadioGroup<T> where T : IUIRadioButton<T>
+    public class ButtonRadioGroup<T> where T : IUIRadioButton<T>
     {
+        public T SelectedButton { get; private set; }
         public event Action<T> Selected;
       
         private T[] _buttons;
-        private T _selectedButton;
 
-        public UIButtonRadioGroup(T[] buttons)
+        public ButtonRadioGroup(T[] buttons)
         {
             _buttons = buttons;
         }
-
+        
         public void Warmup()
         {
             SubscribeButtons();
-            _selectedButton = _buttons[0];
-            _selectedButton.SetSelectedMode();
+            SelectedButton = _buttons[0];
+            SelectedButton.SetSelectedMode();
         }
 
         public void Dispose()
@@ -52,14 +52,14 @@ namespace Beast.Radar.UI
 
         private void SetSelected(T button)
         {
-            if (_selectedButton != null)
+            if (SelectedButton != null)
             {
-                _selectedButton.SetDefaultMode();
+                SelectedButton.SetDefaultMode();
             }
 
-            _selectedButton = button;
-            _selectedButton.SetSelectedMode();
-            Selected?.Invoke(_selectedButton);
+            SelectedButton = button;
+            SelectedButton.SetSelectedMode();
+            Selected?.Invoke(SelectedButton);
         }
     }
 }
