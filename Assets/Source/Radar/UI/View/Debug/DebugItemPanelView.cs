@@ -2,10 +2,10 @@
 using TMPro;
 using UnityEngine;
 
-namespace Beast.Radar.UI.Debug
+namespace Beast.Radar.UI
 {
     [Serializable]
-    public class DebugItemFolderView
+    public class DebugItemPanelView
     {
         public GameObject body;
         public Transform itemsRoot;
@@ -13,6 +13,7 @@ namespace Beast.Radar.UI.Debug
         public UIButton previousItems;
         public UIButton[] itemGrantButtons;
         public DebugItemButton[] itemButtons;
+        public UIButton[] itemType;
         public TextMeshProUGUI itemName;
         public TextMeshProUGUI itemWeight;
     }

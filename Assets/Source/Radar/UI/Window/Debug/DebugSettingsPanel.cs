@@ -8,7 +8,7 @@ namespace Beast.Radar.UI
 {
     public class DebugSettingsPanel : IPanel
     {
-        private readonly DebugSettingsFolderView _view;
+        private readonly DebugSettingsPanelView _view;
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
         private readonly float[] _timeScales = { 1, 3, 10 };
@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
         private SelectableController _selectableController;
 
         public DebugSettingsPanel(
-            DebugSettingsFolderView view,
+            DebugSettingsPanelView view,
             ISelectionZoneBuilder zoneBuilder,
             IUIInputController input)
         {

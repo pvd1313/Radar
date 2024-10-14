@@ -1,5 +1,4 @@
-﻿using Beast.Radar.UI.Debug;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -9,8 +8,8 @@ namespace Beast.Radar.UI
         public UIButton openButton;
         public UIButton closeButton;
         public UIButton[] panelButtons;
-        public DebugItemFolderView itemView;
-        public DebugSettingsFolderView settingsView;
+        public DebugItemPanelView itemView;
+        public DebugSettingsPanelView settingsView;
         public InputIconDisplay[] inputIcons;
     }
 }

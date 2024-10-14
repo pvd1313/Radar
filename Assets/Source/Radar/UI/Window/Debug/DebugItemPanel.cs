@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
-using Beast.Radar.UI.Debug;
 
 namespace Beast.Radar.UI
 {
@@ -12,7 +11,7 @@ namespace Beast.Radar.UI
         private static readonly float[] ItemsCount = { 1, 10, 100 };
 
         private readonly ItemData[] _itemsData;
-        private readonly DebugItemFolderView _view;
+        private readonly DebugItemPanelView _view;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectionZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
@@ -23,7 +22,7 @@ namespace Beast.Radar.UI
         private DebugItemButton _selectedButton;
 
         public DebugItemPanel(
-            DebugItemFolderView view,
+            DebugItemPanelView view,
             IUIFactory uiFactory,
             ISelectionZoneBuilder zoneBuilder,
             IUIInputController input,
@@ -92,7 +91,7 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
-                cols: 15, rows: 5,
+                cols: 15, rows: 4,
                 isFillHorizontally: false,
                 isLooping: false);
 
