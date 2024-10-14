@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Radar.InputControl;
+using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class DebugItemPanel : IPanel
     {
         private static readonly float[] ItemsCount = { 1, 10, 100 };
+        private static readonly int2 itemGridSize = new(15,4);
 
+        private readonly int _maxItemsCount;
         private readonly DebugItemPanelView _view;
         private readonly ItemData[] _itemsData;
         private readonly IUIFactory _uiFactory;
@@ -24,7 +26,10 @@ namespace Beast.Radar.UI
         private ButtonRadioGroup<DebugItemTypeButton> _itemTypeGroup;
         private SelectablesController _selectablesController;
         private InputIconsController _inputIconsController;
-        
+
+        private int _currentPage = 1;
+        private ItemData[] _currentItemsData;
+
         public DebugItemPanel(
             DebugItemPanelView view,
             IUIFactory uiFactory,
@@ -39,6 +44,7 @@ namespace Beast.Radar.UI
             _input = input;
             _inputProvider = inputProvider;
             _itemsData = itemsData;
+            _maxItemsCount = itemGridSize.x * itemGridSize.y;
         }
 
         public void Warmup()
@@ -76,15 +82,13 @@ namespace Beast.Radar.UI
         private void ConfigureItemButtons()
         {
             _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
-            foreach (ItemData data in _itemsData)
-            {
-                DebugItemButton itemButton = _itemsPool.GetNext();
-                itemButton.SetItemData(data);
-            }
 
+            _currentItemsData = _itemsData;
+            _currentPage = 1;
+            RefreshItemButtons();
+            
             _itemGroup = new ButtonRadioGroup<DebugItemButton>(_itemsPool.GetAllEnabled().ToArray());
             _itemGroup.Warmup();
-            
             RefreshItemInformation(_itemGroup.SelectedButton);
         }
 
@@ -136,7 +140,7 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
-                cols: 15, rows: 4,
+                cols: itemGridSize.x, rows: itemGridSize.x,
                 isFillHorizontally: false,
                 isLooping: false);
 
@@ -172,12 +176,28 @@ namespace Beast.Radar.UI
 
             _itemTypeGroup.Selected += OnItemTypeSelected;
             _itemGroup.Selected += OnItemSelected;
+            _view.nextItems.Clicked += OnNextItemsPressed;
+            _view.previousItems.Clicked += OnPreviousItemsPressed;
         }
 
         private void Unsubscribe()
         {
             _itemTypeGroup.Selected -= OnItemTypeSelected;
             _itemGroup.Selected -= OnItemSelected;
+            _view.nextItems.Clicked -= OnNextItemsPressed;
+            _view.previousItems.Clicked -= OnPreviousItemsPressed;
+        }
+
+        private void OnNextItemsPressed()
+        {
+            _currentPage++;
+            RefreshItemButtons();
+        }
+
+        private void OnPreviousItemsPressed()
+        {
+            _currentPage--;
+            RefreshItemButtons();
         }
 
         private void OnGrantButtonClicked(int index)
@@ -195,12 +215,24 @@ namespace Beast.Radar.UI
         {
             _itemsPool.DisableAll();
 
-            ItemData[] typedData = typeButton.ItemType == EItemType.None
+            _currentItemsData = typeButton.ItemType == EItemType.None
                 ? _itemsData
                 : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
+            
+            _currentPage = 1;
+            RefreshItemButtons();
+        }
 
-            foreach (ItemData itemData in typedData)
+        private void RefreshItemButtons()
+        {
+            _itemsPool.DisableAll();
+            int startIndex = _currentPage > 1 ?_maxItemsCount * (_currentPage - 1) : 0;
+             int limit = Math.Min(_maxItemsCount + startIndex, _currentItemsData.Length);
+             
+             BDebug.LogInfo(this, $"page:{_currentPage}  start:{startIndex} limit:{limit}");
+            for (int index = startIndex; index < limit; index++)
             {
+                ItemData itemData = _currentItemsData[index];
                 DebugItemButton itemButton = _itemsPool.GetNext();
                 itemButton.SetItemData(itemData);
             }
@@ -209,12 +241,14 @@ namespace Beast.Radar.UI
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad,
                 selectables: dpadSelectables,
-                cols: 15, rows: 4,
+                cols: itemGridSize.x, rows: itemGridSize.y,
                 isFillHorizontally: false,
                 isLooping: false);
-            _selectablesController.Refresh(dpadGrid.Item1, dpadGrid.Item2);
-
-            _itemGroup.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
+            _selectablesController?.Refresh(dpadGrid.Item1, dpadGrid.Item2);
+            _itemGroup?.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
+            
+            _view.nextItems.SetInteractable(limit <  _currentItemsData.Length);
+            _view.previousItems.SetInteractable(_currentPage > 1);
         }
 
         private void OnItemSelected(DebugItemButton button)

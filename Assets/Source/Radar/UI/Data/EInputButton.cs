@@ -15,7 +15,7 @@
         E,
         One,
         Two,
-        Tree,
+        Three,
         Four,
         Tab
     }

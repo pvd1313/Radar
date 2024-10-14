@@ -56,7 +56,7 @@ namespace Beast.Radar.UI
                             SetTag(EInputButton.Two);
                             break;
                         case EInputButton.East:
-                            SetTag(EInputButton.Tree);
+                            SetTag(EInputButton.Three);
                             break;
                     }
                     if (!gameObject.activeSelf)
