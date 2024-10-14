@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Debug;
+using Beast.Claw.Math;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
 
@@ -85,8 +86,8 @@ namespace Beast.Radar.UI
 
             _currentItemsData = _itemsData;
             _currentPage = 1;
-            RefreshItemButtons();
-            
+            RefreshItemButtons(false);
+
             _itemGroup = new ButtonRadioGroup<DebugItemButton>(_itemsPool.GetAllEnabled().ToArray());
             _itemGroup.Warmup();
             RefreshItemInformation(_itemGroup.SelectedButton);
@@ -98,13 +99,12 @@ namespace Beast.Radar.UI
             leftShoulderIcon.SetKey(EInputButton.LeftShoulder);
             leftShoulderIcon.transform.SetParent(_view.itemTypeRoot);
             _view.inputIcons.Add(leftShoulderIcon);
-            
+
             _itemTypePool = new UIPool<DebugItemTypeButton>(
-                _uiFactory, 
-                PrefabID.DebugItemTypeButton, 
+                _uiFactory,
+                PrefabID.DebugItemTypeButton,
                 _view.itemTypeRoot);
-            
-            
+
             foreach (EItemType type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
             {
                 _itemTypePool.GetNext(type);
@@ -114,7 +114,7 @@ namespace Beast.Radar.UI
             rightShoulderIcon.SetKey(EInputButton.RightShoulder);
             rightShoulderIcon.transform.SetParent(_view.itemTypeRoot);
             _view.inputIcons.Add(rightShoulderIcon);
-            
+
             _itemTypeGroup = new ButtonRadioGroup<DebugItemTypeButton>(_itemTypePool.GetAllEnabled().ToArray());
             _itemTypeGroup.Warmup();
         }
@@ -144,14 +144,15 @@ namespace Beast.Radar.UI
                 isFillHorizontally: false,
                 isLooping: false);
 
-            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
-            {
-                { shoulderGrid.Item1, shoulderGrid.Item2 },
-                { dpadGrid.Item1, dpadGrid.Item2 },
-                { north.Item1, north.Item2 },
-                { west.Item1, west.Item2 },
-                { east.Item1, east.Item2 },
-            });
+            _selectablesController = new SelectablesController(_input,
+                new Dictionary<ESelectionZone, SelectableGridData>
+                {
+                    { shoulderGrid.Item1, shoulderGrid.Item2 },
+                    { dpadGrid.Item1, dpadGrid.Item2 },
+                    { north.Item1, north.Item2 },
+                    { west.Item1, west.Item2 },
+                    { east.Item1, east.Item2 },
+                });
 
             _selectablesController.Warmup();
         }
@@ -178,6 +179,7 @@ namespace Beast.Radar.UI
             _itemGroup.Selected += OnItemSelected;
             _view.nextItems.Clicked += OnNextItemsPressed;
             _view.previousItems.Clicked += OnPreviousItemsPressed;
+            _selectablesController.TryWentBeyond += OnSelectablesTryWentBeyond;
         }
 
         private void Unsubscribe()
@@ -186,18 +188,43 @@ namespace Beast.Radar.UI
             _itemGroup.Selected -= OnItemSelected;
             _view.nextItems.Clicked -= OnNextItemsPressed;
             _view.previousItems.Clicked -= OnPreviousItemsPressed;
+            _selectablesController.TryWentBeyond -= OnSelectablesTryWentBeyond;
         }
 
         private void OnNextItemsPressed()
         {
             _currentPage++;
-            RefreshItemButtons();
+            RefreshItemButtons(reverseColumnIndex: true);
         }
 
         private void OnPreviousItemsPressed()
         {
             _currentPage--;
-            RefreshItemButtons();
+            RefreshItemButtons(reverseColumnIndex: true);
+        }
+
+        private void OnSelectablesTryWentBeyond(ESelectionZone zone, int2 direction)
+        {
+            if (zone is not ESelectionZone.DPad || Math.Abs(direction.x) != 1)
+            {
+                return;
+            }
+
+            if (direction.x < 0 && _currentPage > 1)
+            {
+                _currentPage--;
+                RefreshItemButtons(reverseColumnIndex: true);
+            }
+            else if (direction.x > 0)
+            {
+                int startIndex = _currentPage > 1 ? _maxItemsCount * (_currentPage - 1) : 0;
+                int limit = Math.Min(_maxItemsCount + startIndex, _currentItemsData.Length);
+                if (limit < _currentItemsData.Length)
+                {
+                    _currentPage++;
+                    RefreshItemButtons(reverseColumnIndex: true);
+                }
+            }
         }
 
         private void OnGrantButtonClicked(int index)
@@ -218,17 +245,17 @@ namespace Beast.Radar.UI
             _currentItemsData = typeButton.ItemType == EItemType.None
                 ? _itemsData
                 : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
-            
+
             _currentPage = 1;
-            RefreshItemButtons();
+            RefreshItemButtons(reverseColumnIndex: false);
         }
 
-        private void RefreshItemButtons()
+        private void RefreshItemButtons(bool reverseColumnIndex)
         {
             _itemsPool.DisableAll();
-            int startIndex = _currentPage > 1 ?_maxItemsCount * (_currentPage - 1) : 0;
+            int startIndex = _currentPage > 1 ? _maxItemsCount * (_currentPage - 1) : 0;
             int limit = Math.Min(_maxItemsCount + startIndex, _currentItemsData.Length);
-             
+
             for (int index = startIndex; index < limit; index++)
             {
                 ItemData itemData = _currentItemsData[index];
@@ -243,10 +270,11 @@ namespace Beast.Radar.UI
                 cols: ItemGridSize.x, rows: ItemGridSize.y,
                 isFillHorizontally: false,
                 isLooping: false);
-            _selectablesController?.Refresh(dpadGrid.Item1, dpadGrid.Item2);
+          
             _itemGroup?.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
+            _selectablesController?.RefreshGrid(dpadGrid.Item1, dpadGrid.Item2, reverseColumnIndex);
             
-            _view.nextItems.SetInteractable(limit <  _currentItemsData.Length);
+            _view.nextItems.SetInteractable(limit < _currentItemsData.Length);
             _view.previousItems.SetInteractable(_currentPage > 1);
         }
 

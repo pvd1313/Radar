@@ -31,7 +31,6 @@ namespace Beast.Radar.UI
             UnsubscribeButtons();
             _buttons = otherButtons;
             SubscribeButtons();
-            SetSelected(_buttons[0]);
         }
 
         private void SubscribeButtons()
@@ -40,7 +39,7 @@ namespace Beast.Radar.UI
             {
                 radioButton.Clicked += SetSelected;
             }
-        }
+        }   
 
         private void UnsubscribeButtons()
         {

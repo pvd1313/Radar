@@ -37,7 +37,6 @@ namespace Beast.Radar.UI
 
         public void SetSelectedMode()
         {
-            _button.interactable = false;
             Color currentColor = _background.color;
             currentColor.a = _selectedAlpha;
             _background.color = currentColor;
@@ -45,7 +44,6 @@ namespace Beast.Radar.UI
 
         public void SetDefaultMode()
         {
-            _button.interactable = true;
             Color currentColor = _background.color;
             currentColor.a = _defaultAlpha;
             _background.color = currentColor;
