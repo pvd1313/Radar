@@ -33,7 +33,6 @@ namespace Beast.Radar.UI
         public void OnPointerExit(PointerEventData eventData)
         {
             _selectable.OnDeselect(null);
-            UnityEngine.Debug.Log($"{this} pointer deselect");
         }
 
         public void OnSelect(BaseEventData eventData)
@@ -44,13 +43,11 @@ namespace Beast.Radar.UI
         public void Select()
         {
             _selectable.Select();
-            UnityEngine.Debug.Log($"{this} select");
         }
 
         public void OnDeselect(BaseEventData eventData)
         {
             _selectable.OnDeselect(eventData);
-            UnityEngine.Debug.Log($"{this} deselect");
         }
 
         public override string ToString()

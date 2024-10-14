@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Beast.Claw.Debug;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
 using UnityEngine.UI;
@@ -10,11 +9,11 @@ namespace Beast.Radar.UI
 {
     public class SelectablesController
     {
-        public UISelectable CurrentSelectable { get; private set; }
         public event Action<ESelectionZone, int2> TryWentBeyond;
         private readonly IUIInputController _input;
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
 
+        private UISelectable _currentSelectable;
         private bool _isSubscribedToInput;
         private bool _isUsed;
 
@@ -149,6 +148,8 @@ namespace Beast.Radar.UI
                 return;
             }
 
+            
+            
             if (_selectableGrids[zone].selectables[0, 0].TryGetComponent(out Button button))
             {
                 button.onClick.Invoke();
@@ -162,11 +163,10 @@ namespace Beast.Radar.UI
 
         private void OnRightStickMoved(float2 direction)
         {
-            if (CurrentSelectable != null && CurrentSelectable.TryGetComponent(out UISlider slider))
+            if (_currentSelectable != null && _currentSelectable.TryGetComponent(out UISlider slider))
             {
                 slider.AddValue(direction.x);
             }
-            //PerformVectorAction(ESelectionZone.RightStick, direction);
         }
 
         private void OnShoulderPressed(int value)
@@ -222,7 +222,6 @@ namespace Beast.Radar.UI
             int2 index = new(newRow, newCol);
             UISelectable selectable = grid.selectables[index.x, index.y];
 
-            UnityEngine.Debug.Log($"{zone} dir:{direction} index:{index} bounds:{bounds} {selectable != null}");
             if (selectable != null)
             {
                 grid.currentIndex = index;
@@ -265,20 +264,18 @@ namespace Beast.Radar.UI
 
         private void SwitchSelectable(UISelectable selectable)
         {
-            if (selectable == CurrentSelectable)
+            if (selectable == _currentSelectable)
             {
-                UnityEngine.Debug.Log("selectable == CurrentSelectable return");
                 return;
             }
-
-            UnityEngine.Debug.Log($"Switch Selectable {selectable.ToString()}");
-            if (CurrentSelectable != null)
+            
+            if (_currentSelectable != null)
             {
-                CurrentSelectable.OnDeselect(null);
+                _currentSelectable.OnDeselect(null);
             }
 
-            CurrentSelectable = selectable;
-            CurrentSelectable.Select();
+            _currentSelectable = selectable;
+            _currentSelectable.Select();
         }
 
         #endregion
@@ -287,15 +284,15 @@ namespace Beast.Radar.UI
         {
             if (_isUsed && _input.IsHardwareInput && !_isSubscribedToInput)
             {
-                if (CurrentSelectable == null)
+                if (_currentSelectable == null)
                 {
                     SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
-                    CurrentSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
+                    _currentSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
                 }
 
                 if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
                 {
-                    CurrentSelectable.Select();
+                    _currentSelectable.Select();
                 }
 
                 SubscribeInputActions();
@@ -306,9 +303,9 @@ namespace Beast.Radar.UI
         {
             if (_isSubscribedToInput)
             {
-                if (CurrentSelectable != null)
+                if (_currentSelectable != null)
                 {
-                    CurrentSelectable.OnDeselect(null);
+                    _currentSelectable.OnDeselect(null);
                 }
 
                 UnsubscribeInputActions();
