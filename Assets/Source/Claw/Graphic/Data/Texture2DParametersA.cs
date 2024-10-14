@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
@@ -10,18 +9,16 @@ namespace Beast.Claw.Graphic
         public bool mipChain;
         public bool isLinear;
         public string name;
+        public FilterMode filterMode;
 
-        public bool IsValid(out string message)
+        public string Validate()
         {
-            message = null;
-
             if (sourceTexture == null)
             {
-                message = "sourceTexture is null";
-                return false;
+                return "sourceTexture is null";
             }
 
-            return true;
+            return null;
         }
     }
 }

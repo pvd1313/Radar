@@ -6,29 +6,38 @@ namespace Beast.Claw
     public static class ValidationExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Validate<T>(this T data) where T : IValidatable
+        public static void ValidateThrowException<T>(this T data) where T : IValidatable
         {
-            if (!data.IsValid(out string message))
+            string errorMessage = data.Validate();
+            if (errorMessage != null)
             {
-                throw new InvalidOperationException(message);
+                throw new ValidationException(errorMessage);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNull<T>(this T obj, string objName) where T : class
+        public static bool IsValid<T>(this T data, out string errorMessage) where T : IValidatable
+        {
+            errorMessage = data.Validate();
+
+            return errorMessage == null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNotNullThrowException<T>(this T obj, string objName) where T : class
         {
             if (obj == null)
             {
-                throw new ArgumentException($"{objName} can not be null");
+                throw new ValidationException($"{objName} can not be null");
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotEmpty(this string text, string objName)
+        public static void ValidateNotEmptyThrowException(this string text, string objName)
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentException($"{objName} can not be null or empty");
+                throw new ValidationException($"{objName} can not be null or empty");
             }
         }
     }

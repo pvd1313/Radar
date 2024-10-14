@@ -16,17 +16,14 @@ namespace Beast.Claw.Graphic
         public FilterMode filterMode;
         public TextureWrapMode wrapMode;
         
-        public bool IsValid(out string errorMessage)
+        public string Validate()
         {
-            errorMessage = null;
-            
             if (size.x <= 0 || size.y <= 0)
             {
-                errorMessage = "Invalid size " + size;
-                return false;
+                return "Invalid size " + size;
             }
 
-            return true;
+            return null;
         }
     }
 }

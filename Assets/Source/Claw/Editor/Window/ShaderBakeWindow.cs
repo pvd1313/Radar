@@ -18,47 +18,37 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private Texture2D _bakedTexture;
         [SerializeField] private Texture2D _previewTexture;
         
-        protected override void Initialize()
+        protected override void InspectorUI()
         {
+            EditorUIResult result = flow.Vertical(ui =>
+            {
+                ui.AssetField(nameof(_renderMaterial), ref _renderMaterial);
+                ui.ValidateArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
+                
+                ui.EnumSingleField(nameof(_renderTextureFormat), ref _renderTextureFormat);
+                
+                ui.IntField(nameof(_shaderPass), ref _shaderPass);
+                
+                ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
+                
+                ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
+                ui.AssertIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
+            });
             
-        }
-        
-        protected override void OnInspectorGUI(EditorUI ui)
-        {
-            ui.Vertical(
-                    ui =>
-                    {
-                        ui.AssetField(nameof(_renderMaterial), ref _renderMaterial);
-                        BAssert.ArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
-                    },
-                    ui =>
-                    {
-                        ui.EnumSingleField(nameof(_renderTextureFormat), ref _renderTextureFormat);
-                        ui.IntField(nameof(_shaderPass), ref _shaderPass);
-                    },
-                    ui =>
-                    {
-                        ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
-                        ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
-                        BAssert.IsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
-                    })
-                .Then(ui =>
+            flow.Horizontal().Enabled(!result.errorsEncountered,ui =>
+            {
+                ui.Button("Bake", BakeMap);
+
+                flow.Enabled(_bakedTexture != null).Button("Save", SaveTexture);
+            });
+
+            flow.Draw(ui =>
+            {
+                if (_previewTexture != null)
                 {
-                    ui.HorizontalEnabledGroup(ui.success, ui =>
-                    {
-                        ui.Button("Bake", BakeMap);
-
-                        ui.EnabledGroup(_bakedTexture != null, ui =>
-                        {
-                            ui.Button("Save", SaveTexture);
-                        });
-                    });
-
-                    if (_previewTexture != null)
-                    {
-                        ui.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
-                    }
-                });
+                    ui.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
+                }
+            });
         }
 
         private void SaveTexture(EditorUI ui)
@@ -71,7 +61,7 @@ namespace Beast.Claw.Editor.Window
             });
         }
         
-        private void BakeMap(EditorUI ui)
+        private void BakeMap()
         {
             RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
                 new NewTempRenderTextureData

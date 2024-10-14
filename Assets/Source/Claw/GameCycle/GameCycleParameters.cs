@@ -8,23 +8,19 @@ namespace Beast.Claw.GameCycle
         public HashSet<string> initializationEventIDs;
         public HashSet<string> updateEventIDs;
         
-        public bool IsValid(out string errorMessage)
+        public string Validate()
         {
-            errorMessage = null;
-            
             if (initializationEventIDs == null)
             {
-                errorMessage = $"{nameof(initializationEventIDs)} can not be null";
-                return false;
+                return $"{nameof(initializationEventIDs)} can not be null";
             }
 
             if (updateEventIDs == null)
             {
-                errorMessage = $"{nameof(updateEventIDs)} can not be null";
-                return false;
+                return $"{nameof(updateEventIDs)} can not be null";
             }
 
-            return true;
+            return null;
         }
     }
 }

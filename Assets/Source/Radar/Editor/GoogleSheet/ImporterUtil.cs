@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using GoogleSheetsToUnity;
 using Unity.Plastic.Newtonsoft.Json;
 
-namespace Beast.Radar.GoogleSheet
+namespace Beast.Radar.Editor.GoogleSheet
 {
     public static class ImporterUtil
     {

@@ -3,7 +3,7 @@ using System.IO;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Beast.Radar.GoogleSheet
+namespace Beast.Radar.Editor.GoogleSheet
 {
     public class ImporterConfig : ScriptableObject
     {

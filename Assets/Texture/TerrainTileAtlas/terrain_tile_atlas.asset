@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9b4c6adc59540c6908616ee24c6674a, type: 3}
+  m_Name: terrain_tile_atlas
+  m_EditorClassIdentifier: 
+  atlas:
+    mainTexture: {fileID: 0}
+    sprites:
+    - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
+      name: Water
+      averageColor: {r: 0.36478633, g: 0.5614852, b: 0.7962279, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      index: 0
+    - texture: {fileID: 2800000, guid: 056b2f0132f809d4c932f6715e6d6b6f, type: 3}
+      name: Grass
+      averageColor: {r: 0.3857269, g: 0.5959559, b: 0.22601104, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      index: 1
+    renderYCrop: 0
+    tileCount:
+      x: 2
+      y: 2
+    tileBlendCenter:
+      x: 0
+      y: 0
+    atlasPPU: 64

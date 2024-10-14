@@ -53,7 +53,7 @@ namespace Beast.Claw.GameCycle
         
         public bool TryInitializeSelf(GameCycleParameters input)
         {
-            input.Validate();
+            input.ValidateThrowException();
             
             _isSubscribingListeners = true;
 
@@ -110,8 +110,8 @@ namespace Beast.Claw.GameCycle
         public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) 
             where TOwner : class
         {
-            eventID.ValidateNotEmpty(nameof(eventID));
-            owner.ValidateNotNull(nameof(owner));
+            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            owner.ValidateNotNullThrowException(nameof(owner));
             
             if (_isSubscribingListeners)
             {
@@ -159,8 +159,8 @@ namespace Beast.Claw.GameCycle
 
         public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
         {
-            eventID.ValidateNotEmpty(nameof(eventID));
-            owner.ValidateNotNull(nameof(owner));
+            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            owner.ValidateNotNullThrowException(nameof(owner));
             
             if (_allUpdateIsBroken)
             {
@@ -209,9 +209,9 @@ namespace Beast.Claw.GameCycle
             string eventID, 
             Func<UniTask<OperationResult>> action) where TOwner : class, IGameCycleListener
         {
-            eventID.ValidateNotEmpty(nameof(eventID));
-            owner.ValidateNotNull(nameof(owner));
-            action.ValidateNotNull(nameof(action));
+            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            owner.ValidateNotNullThrowException(nameof(owner));
+            action.ValidateNotNullThrowException(nameof(action));
             
             
             
@@ -242,9 +242,9 @@ namespace Beast.Claw.GameCycle
             string eventID, 
             Action action) where TOwner : class, IGameCycleListener
         {
-            owner.ValidateNotNull(nameof(owner));
-            eventID.ValidateNotEmpty(nameof(eventID));
-            action.ValidateNotNull(nameof(action));
+            owner.ValidateNotNullThrowException(nameof(owner));
+            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            action.ValidateNotNullThrowException(nameof(action));
             
             if (!_updateEventIDs.Contains(eventID))
             {

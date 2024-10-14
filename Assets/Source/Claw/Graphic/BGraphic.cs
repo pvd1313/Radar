@@ -63,7 +63,7 @@ namespace Beast.Claw.Graphic
 
         public static RenderTexture CreatePermanentRenderTexture<T>(T owner, NewPermaRenderTextureData input)
         {
-            input.Validate();
+            input.ValidateThrowException();
             
             RenderTexture texture = new (
                 input.size.x,
@@ -84,7 +84,7 @@ namespace Beast.Claw.Graphic
 
         public static void DisposeRenderTexture(RenderTexture renderTexture)
         {
-            renderTexture.ValidateNotNull(nameof(renderTexture));
+            renderTexture.ValidateNotNullThrowException(nameof(renderTexture));
             
             if (_permanentTextures.Remove(renderTexture))
             {
@@ -101,9 +101,16 @@ namespace Beast.Claw.Graphic
             BDebug.StaticLogError($"Failed to dispose render texture '{renderTexture.name}'. As it was not found in list.");
         }
 
+        public static void DisposeTexture(Texture texture)
+        {
+            texture.ValidateNotNullThrowException(nameof(texture));
+            
+            Object.Destroy(texture);
+        }
+
         public static RenderTexture CreateTemporaryRenderTexture<T>(T owner, NewTempRenderTextureData input)
         {
-            input.Validate();
+            input.ValidateThrowException();
             
             RenderTexture texture = RenderTexture.GetTemporary(
                 input.size.x,
@@ -125,8 +132,8 @@ namespace Beast.Claw.Graphic
 
         public static Material CreateMaterial<TOwner>(TOwner owner, MaterialParameters input) where TOwner : class
         {
-            owner.ValidateNotNull(nameof(owner));
-            input.Validate();
+            owner.ValidateNotNullThrowException(nameof(owner));
+            input.ValidateThrowException();
             
             return new Material(input.shader)
             {
@@ -136,8 +143,8 @@ namespace Beast.Claw.Graphic
 
         public static Material CreateMaterial<TOwner>(TOwner owner, Shader shader) where TOwner : class
         {
-            owner.ValidateNotNull(nameof(owner));
-            shader.ValidateNotNull(nameof(shader));
+            owner.ValidateNotNullThrowException(nameof(owner));
+            shader.ValidateNotNullThrowException(nameof(shader));
 
             return new Material(shader)
             {
@@ -147,14 +154,14 @@ namespace Beast.Claw.Graphic
 
         public static void DisposeMaterial(Material material)
         {
-            material.ValidateNotNull(nameof(material));
+            material.ValidateNotNullThrowException(nameof(material));
             
             Object.Destroy(material);
         }
 
         public static Texture2D CreateTexture2DFromRenderTexture<T>(T owner, Texture2DParametersA input)
         {
-            input.Validate();
+            input.ValidateThrowException();
 
             Texture2D texture = new (
                 input.sourceTexture.width,
@@ -164,7 +171,8 @@ namespace Beast.Claw.Graphic
                 input.isLinear,
                 true)
             {
-                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name)
+                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
+                filterMode = input.filterMode
             };
             
             RenderTexture renderTextureBak = RenderTexture.active;
@@ -184,6 +192,31 @@ namespace Beast.Claw.Graphic
             }
 
             return texture;
+        }
+
+        public static void DrawTexture2DToRenderTexture(Texture2DToRenderTexture input)
+        {
+            input.ValidateThrowException();
+
+            RenderTexture bakTexture = RenderTexture.active;
+
+            RenderTexture.active = input.targetTexture;
+            
+            GL.PushMatrix();
+            
+            GL.LoadPixelMatrix(0, input.targetTexture.width, input.targetTexture.height, 0);
+
+            Rect rect = new (
+                input.targetTexturePixelOffset.x, 
+                input.sourceTexture.height - input.targetTexturePixelOffset.y,
+                input.sourceTexture.width, 
+                input.sourceTexture.height);
+            
+            Graphics.DrawTexture(rect, input.sourceTexture);
+            
+            GL.PopMatrix();
+
+            RenderTexture.active = bakTexture;
         }
 
         public static void Blit(BlitParameters input)

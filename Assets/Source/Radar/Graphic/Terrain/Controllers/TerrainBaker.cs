@@ -75,8 +75,8 @@ namespace Beast.Radar.Graphic.Terrain
 
         public void Bake(TerrainData terrain, RenderTexture targetTexture)
         {
-            terrain.Validate();
-            targetTexture.ValidateNotNull(nameof(targetTexture));
+            terrain.ValidateThrowException();
+            targetTexture.ValidateNotNullThrowException(nameof(targetTexture));
             
             _material.SetFloat("_Flood01", terrain.waterFlood01);
             _material.SetFloat("_Seed01", terrain.seed01);

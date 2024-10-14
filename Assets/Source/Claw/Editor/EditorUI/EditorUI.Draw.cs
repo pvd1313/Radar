@@ -10,9 +10,39 @@ namespace Beast.Claw.Editor
 {
     partial struct EditorUI
     {
+        public bool Foldout(string label, bool isFold)
+        {
+            return EditorGUILayout.Foldout(isFold, label);
+        }
+
+        public void Foldout(string label, ref bool isFold)
+        {
+            isFold = EditorGUILayout.Foldout(isFold, label);
+        }
+
+        public void Space(float pixelSize)
+        {
+            GUILayout.Space(pixelSize);
+        }
+
+        public void WarningBox(string message)
+        {
+            EditorGUILayout.HelpBox(message, MessageType.Warning);
+        }
+        
+        public void Button(string label, Action action)
+        {
+            action.ValidateNotNullThrowException($"{NicifyLabel(label)} : action");
+
+            if (GUILayout.Button(NicifyLabel(label), layoutOptions))
+            {
+                action.Invoke();
+            }
+        }
+        
         public void Button(string label, Action<EditorUI> action)
         {
-            action.ValidateNotNull($"{NicifyLabel(label)} : action");
+            action.ValidateNotNullThrowException($"{NicifyLabel(label)} : action");
 
             if (GUILayout.Button(NicifyLabel(label), layoutOptions))
             {
@@ -76,6 +106,21 @@ namespace Beast.Claw.Editor
             return EditorGUILayout.FloatField(NicifyLabel(label), value, layoutOptions);
         }
 
+        public Color ColorField(string label, Color value)
+        {
+            return EditorGUILayout.ColorField(NicifyLabel(label), value);
+        }
+        
+        public void ColorField(string label, ref Color value)
+        {
+            value = EditorGUILayout.ColorField(NicifyLabel(label), value);
+        }
+        
+        public void FloatField(string label, ref float value)
+        {
+            value = EditorGUILayout.FloatField(NicifyLabel(label), value, layoutOptions);
+        }
+
         public float2 Float2Field(string label, float2 value)
         {
             return EditorGUILayout.Vector2Field(NicifyLabel(label), value, layoutOptions);
@@ -104,6 +149,11 @@ namespace Beast.Claw.Editor
         public string StringField(string label, string value)
         {
             return EditorGUILayout.TextField(label, value, layoutOptions);
+        }
+        
+        public void StringField(string label, ref string value)
+        {
+            value = EditorGUILayout.TextField(label, value, layoutOptions);
         }
 
         public T AssetField<T>(string label, T obj) where T : Object

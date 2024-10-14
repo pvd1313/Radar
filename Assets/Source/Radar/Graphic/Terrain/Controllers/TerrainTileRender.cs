@@ -159,11 +159,11 @@ namespace Beast.Radar.Graphic.Terrain
             TerrainTileAtlas atlas = _library.terrainTileAtlas;
         
             renderParams.matProps.SetVector("_TileGridSize", gridSize);
-            renderParams.matProps.SetTexture("_TileAtlas", atlas.atlasTexture);
-            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.Size());
+            renderParams.matProps.SetTexture("_TileAtlas", atlas.mainTexture);
+            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.mainTexture.Size());
             renderParams.matProps.SetVector("_TileAtlasTileCount", atlas.tileCount);
             renderParams.matProps.SetVector("_TileBlendCenter", atlas.tileBlendCenter);
-            renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.astlasPPU);
+            renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.atlasPPU);
             renderParams.matProps.SetFloat("_RenderYCrop", atlas.renderYCrop);
             renderParams.matProps.SetTexture("_SolverTexture", solverTexture);
             renderParams.matProps.SetFloat("_SolverSize", solverTexture.width);
