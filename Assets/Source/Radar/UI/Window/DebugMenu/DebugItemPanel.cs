@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Radar.InputControl;
 
 namespace Beast.Radar.UI
