@@ -8,8 +8,9 @@ namespace Beast.Radar.UI
     public class UISlider : UIView, IPointerUpHandler
     {
         public UISelectable Selectable => _selectable;
-
         public event Action<float> EndedChange;
+
+        private const float ChangeSpeed = 1.5f; 
         
         [SerializeField] private Slider _slider;
         [SerializeField] private UISelectable _selectable;
@@ -29,6 +30,11 @@ namespace Beast.Radar.UI
         public void OnPointerUp(PointerEventData eventData)
         {
             EndedChange?.Invoke(_slider.value);
+        }
+
+        public void AddValue(float value)
+        {
+            _slider.value += value * ChangeSpeed;
         }
     }
 }

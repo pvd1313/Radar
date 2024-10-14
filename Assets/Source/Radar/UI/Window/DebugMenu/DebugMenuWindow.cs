@@ -21,6 +21,8 @@ namespace Beast.Radar.UI
         private SelectablesController _selectablesController;
         private InputIconsController _inputIconsController;
 
+        private bool _isOpened;
+        
         public DebugMenuWindow(
             IWindowManager windowManager,
             IUIFactory uiFactory,
@@ -206,11 +208,13 @@ namespace Beast.Radar.UI
         private void SubscribeInput()
         {
             _inputProvider.ChangedScheme += OnInputSchemeChanged;
+            _input.SelectButtonPressed += OnOpenButtonClicked;
         }
 
         private void UnsubscribeInput()
         {
             _inputProvider.ChangedScheme -= OnInputSchemeChanged;
+            _input.SelectButtonPressed -= OnOpenButtonClicked;
         }
         
         private void OnInputSchemeChanged(EInputScheme scheme)
@@ -223,14 +227,14 @@ namespace Beast.Radar.UI
 
         private void OnCloseButtonClicked()
         {
-            UnityEngine.Debug.Log("click close");
+            _isOpened = false;
             _windowManager.Show(WindowID.MainHUD);
         }
 
         private void OnOpenButtonClicked()
         {
-            _windowManager.Show(WindowID.Debug);
+            _windowManager.Show(_isOpened ? WindowID.MainHUD : WindowID.Debug);
+            _isOpened = !_isOpened;
         }
-        
     }
 }

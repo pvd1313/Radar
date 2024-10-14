@@ -10,7 +10,6 @@ namespace Beast.Radar.UI
         public UIButton closeButton;
         public UIButton[] panelButtons;
         public List<InputIconDisplay> inputIcons;
-        [Space]
         public DebugItemPanelView itemView;
         public DebugSettingsPanelView settingsView;
     }

@@ -416,6 +416,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""02fe9eae-f037-4a28-81e2-90164d7b820f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -792,6 +801,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Shoulder"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""92c13d98-c2ab-4846-9104-088d34f9e8c8"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -864,6 +884,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_NorthButton = m_UI.FindAction("NorthButton", throwIfNotFound: true);
         m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
         m_UI_WestButton = m_UI.FindAction("WestButton", throwIfNotFound: true);
+        m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1023,6 +1044,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_NorthButton;
     private readonly InputAction m_UI_EastButton;
     private readonly InputAction m_UI_WestButton;
+    private readonly InputAction m_UI_Select;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
@@ -1039,6 +1061,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @NorthButton => m_Wrapper.m_UI_NorthButton;
         public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
         public InputAction @WestButton => m_Wrapper.m_UI_WestButton;
+        public InputAction @Select => m_Wrapper.m_UI_Select;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1084,6 +1107,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started += instance.OnWestButton;
             @WestButton.performed += instance.OnWestButton;
             @WestButton.canceled += instance.OnWestButton;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1124,6 +1150,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started -= instance.OnWestButton;
             @WestButton.performed -= instance.OnWestButton;
             @WestButton.canceled -= instance.OnWestButton;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1191,5 +1220,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnNorthButton(InputAction.CallbackContext context);
         void OnEastButton(InputAction.CallbackContext context);
         void OnWestButton(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
     }
 }

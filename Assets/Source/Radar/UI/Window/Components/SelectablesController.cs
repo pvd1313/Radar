@@ -160,9 +160,13 @@ namespace Beast.Radar.UI
             PerformVectorAction(ESelectionZone.DPad, direction);
         }
 
-        private void OnRightStickMoved(int2 direction)
+        private void OnRightStickMoved(float2 direction)
         {
-            PerformVectorAction(ESelectionZone.RightStick, direction);
+            if (CurrentSelectable != null && CurrentSelectable.TryGetComponent(out UISlider slider))
+            {
+                slider.AddValue(direction.x);
+            }
+            //PerformVectorAction(ESelectionZone.RightStick, direction);
         }
 
         private void OnShoulderPressed(int value)

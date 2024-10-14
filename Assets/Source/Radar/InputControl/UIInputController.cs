@@ -15,16 +15,17 @@ namespace Beast.Radar.InputControl
         public bool IsHardwareInput { get; private set; }
         public event Action ChangedEnable;
         public event Action PauseButtonPressed;
+        public event Action SelectButtonPressed;
         public event Action<ESelectionZone> ActionButtonPressed;
         public event Action<int2> DpadPressed;
-        public event Action<int2> RightStickMoved;
+        public event Action<float2> RightStickMoved;
         public event Action<int> ShoulderPressed;
         public event Action<int> TriggerPressed;
 
         private readonly IPlayerInputProvider _input;
 
         private int2 _lastRightStickValue;
-        
+
         public UIInputController(IPlayerInputProvider inputProvider)
         {
             _input = inputProvider;
@@ -34,19 +35,20 @@ namespace Beast.Radar.InputControl
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
         private UniTask<OperationResult> _warmup()
         {
             SubscribeToInputSchemeChange();
-            
+
             IsHardwareInput = _input.Scheme is not EInputScheme.Touch;
-            
+
             if (IsHardwareInput)
             {
                 SubscribeInputActions();
             }
-            
+
             return OperationResult.SuccessSync();
         }
 
@@ -61,17 +63,31 @@ namespace Beast.Radar.InputControl
 
             return OperationResult.SuccessSync();
         }
-        
+
+        private void _tick()
+        {
+            if (_input.Scheme is EInputScheme.Touch or EInputScheme.None)
+            {
+                return;
+            }
+
+            float2 rightStick = _input.Actions.UI.RightStick.ReadValue<Vector2>();
+            if (!rightStick.Equals(float2.zero))
+            {
+                RightStickMoved?.Invoke(rightStick  * Time.deltaTime);
+            }
+        }
+
         private void SubscribeToInputSchemeChange()
         {
             _input.ChangedScheme += InputOnChangedScheme;
         }
-        
+
         private void UnsubscribeToInputSchemeChange()
         {
             _input.ChangedScheme -= InputOnChangedScheme;
         }
-        
+
         private void InputOnChangedScheme(EInputScheme scheme)
         {
             switch (IsHardwareInput)
@@ -93,26 +109,26 @@ namespace Beast.Radar.InputControl
         {
             _input.Actions.UI.Enable();
             _input.Actions.UI.Cancel.started += OnPressPause;
+            _input.Actions.UI.Select.started += OnPressSelect;
             _input.Actions.UI.NorthButton.started += OnPressNorth;
             _input.Actions.UI.EastButton.started += OnPressEast;
             _input.Actions.UI.WestButton.started += OnPressWest;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
             _input.Actions.UI.Shoulder.started += OnPerformedShoulder;
-            _input.Actions.UI.RightStick.performed += OnRightStickPerformed;
         }
 
         private void UnsubscribeInputActions()
         {
             _input.Actions.UI.Disable();
             _input.Actions.UI.Cancel.started -= OnPressPause;
+            _input.Actions.UI.Select.started -= OnPressSelect;
             _input.Actions.UI.NorthButton.started -= OnPressNorth;
             _input.Actions.UI.EastButton.started -= OnPressEast;
             _input.Actions.UI.WestButton.started -= OnPressWest;
             _input.Actions.UI.Navigate.performed -= OnPerformedNavigate;
             _input.Actions.UI.Trigger.started -= OnPerformedTrigger;
             _input.Actions.UI.Shoulder.started -= OnPerformedShoulder;
-            _input.Actions.UI.RightStick.started -= OnRightStickPerformed;
         }
 
         private void OnPressWest(InputAction.CallbackContext obj)
@@ -130,6 +146,11 @@ namespace Beast.Radar.InputControl
             ActionButtonPressed?.Invoke(ESelectionZone.NorthButton);
         }
 
+        private void OnPressSelect(InputAction.CallbackContext obj)
+        {
+            SelectButtonPressed?.Invoke();    
+        }
+
         private void OnPressPause(InputAction.CallbackContext obj)
         {
             PauseButtonPressed?.Invoke();
@@ -139,31 +160,13 @@ namespace Beast.Radar.InputControl
         {
             float2 value = obj.ReadValue<Vector2>();
             int2 roundValue = RoundValue(value);
-            
+
             if (roundValue.Equals(int2.zero))
             {
                 return;
             }
-            
+
             DpadPressed?.Invoke(roundValue);
-        }
-
-        private void OnRightStickPerformed(InputAction.CallbackContext obj)
-        {
-            float2 value = obj.ReadValue<Vector2>();
-            int2 roundValue = RoundValue(value);
-            
-            if (roundValue.Equals(_lastRightStickValue))
-            {
-                return;
-            }
-
-            if (!roundValue.Equals(int2.zero))
-            {
-                RightStickMoved?.Invoke(roundValue);
-            }
-            
-            _lastRightStickValue = roundValue;
         }
 
         private void OnPerformedShoulder(InputAction.CallbackContext obj)

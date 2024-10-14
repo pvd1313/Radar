@@ -102,7 +102,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 4294967295
 --- !u!114 &5995632739960289764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: 324303d0f20c82b498588620a3b88279, type: 3}
   m_PointAction: {fileID: 8164971616688853086, guid: 324303d0f20c82b498588620a3b88279, type: 3}
-  m_MoveAction: {fileID: 1288717038786894051, guid: 324303d0f20c82b498588620a3b88279, type: 3}
+  m_MoveAction: {fileID: 0}
   m_SubmitAction: {fileID: 3104494263228859906, guid: 324303d0f20c82b498588620a3b88279, type: 3}
   m_CancelAction: {fileID: 4777569101343875407, guid: 324303d0f20c82b498588620a3b88279, type: 3}
   m_LeftClickAction: {fileID: -7323630428320882495, guid: 324303d0f20c82b498588620a3b88279, type: 3}
