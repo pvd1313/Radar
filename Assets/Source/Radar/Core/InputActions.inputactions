@@ -648,17 +648,6 @@
                 },
                 {
                     "name": "",
-                    "id": "28eac6df-23f1-42f3-8b90-64ca8a1d4e8b",
-                    "path": "<Keyboard>/4",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "MouseAndKeyboard",
-                    "action": "EastButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "b41d4f8d-6fea-49ad-b403-d6b0bd6df0b5",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",

@@ -20,8 +20,6 @@ namespace Beast.Radar.UI
         private PanelsController _panelsController;
         private SelectablesController _selectablesController;
         private InputIconsController _inputIconsController;
-
-        private bool _isOpened;
         
         public DebugMenuWindow(
             IWindowManager windowManager,
@@ -155,16 +153,19 @@ namespace Beast.Radar.UI
 
         private void _onCloseButtonClicked()
         {
-            _isOpened = false;
             _windowManager.Show(WindowID.MainHUD);
         }
 
         private void _onOpenButtonClicked()
         {
-            _windowManager.Show(_isOpened ? WindowID.MainHUD : WindowID.Debug);
-            _isOpened = !_isOpened;
+            _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
         }
 
+        private bool _isOpened()
+        {
+            return  _view.screen.activeSelf;
+        }
+        
         private static ItemData[] _getTestItems()
         {
             return new ItemData[]

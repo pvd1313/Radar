@@ -17,7 +17,7 @@ namespace Beast.Radar.UI
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
-        private IWindow _currentOpenedWindowController;
+        private IWindow _currentOpenedWindow;
 
         public WindowManager(IUIFactory uiFactory, IUIInputController input)
         {
@@ -35,14 +35,14 @@ namespace Beast.Radar.UI
         {
             _canvas = _uiFactory.CreateCanvas(this);
                 
-            _subscribeUI();
+            _subscribe();
             
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> _dispose()
         {
-            _unsubscribeUI();
+            _unsubscribe();
 
             return OperationResult.SuccessSync();
         }
@@ -65,25 +65,27 @@ namespace Beast.Radar.UI
                 throw new InvalidOperationException($"Window with ID '{windowID}' is not registered or does not exist.");
             }
 
-            _currentOpenedWindowController?.Close();
-            _currentOpenedWindowController = _allWindows[windowID];
-            _currentOpenedWindowController.Open();
+            _currentOpenedWindow?.Close();
+            _currentOpenedWindow = _allWindows[windowID];
+            _currentOpenedWindow.Open();
             
             bool isHasOpenedWindow = windowID != WindowID.MainHUD;
             
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
 
-        private void _subscribeUI()
+        private void _subscribe()
         {
             _canvas.MouseOverUI += _onMouseOverUI;
             _uiInputController.PauseButtonPressed += _onPauseButtonPressed;
+            _uiInputController.ActionButtonPressed += _onActionButtonPressed;
         }
 
-        private void _unsubscribeUI()
+        private void _unsubscribe()
         {
             _canvas.MouseOverUI -= _onMouseOverUI;
             _uiInputController.PauseButtonPressed -= _onPauseButtonPressed;
+            _uiInputController.ActionButtonPressed -= _onActionButtonPressed;
         }
 
         private void _onMouseOverUI(bool isOver)
@@ -93,7 +95,18 @@ namespace Beast.Radar.UI
 
         private void _onPauseButtonPressed()
         {
-            Show(_currentOpenedWindowController is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+            Show(_currentOpenedWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+        }
+
+        private void _onActionButtonPressed(ESelectionZone zone)
+        {
+            if (zone == ESelectionZone.EastButton)
+            {
+                if (_currentOpenedWindow is not HUDWindow)
+                {
+                    Show(WindowID.MainHUD);
+                }
+            }
         }
     }
 }
