@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Radar.InputControl;
 using UnityEngine;
@@ -10,8 +9,8 @@ namespace Beast.Radar.UI
     public class DebugSettingsPanel : IPanel
     {
         private readonly DebugSettingsPanelView _view;
-        private readonly ISelectionZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _input;
+        private readonly ISelectableZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _uiInputController;
         private readonly float[] _timeScales = { 1, 3, 10 };
 
         private SelectablesController _selectablesController;
@@ -19,11 +18,11 @@ namespace Beast.Radar.UI
         
         public DebugSettingsPanel(
             DebugSettingsPanelView view,
-            ISelectionZoneBuilder zoneBuilder,
-            IUIInputController input)
+            ISelectableZoneBuilder zoneBuilder,
+            IUIInputController uiInputController)
         {
             _zoneBuilder = zoneBuilder;
-            _input = input;
+            _uiInputController = uiInputController;
             _view = view;
         }
 
@@ -66,13 +65,15 @@ namespace Beast.Radar.UI
 
            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                zone: ESelectionZone.DPad,
-               selectablesGrid: selectables, 
+               selectableGrid: selectables, 
                isLooping: false);
 
-            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
-            {
-                { dpadGrid.Item1, dpadGrid.Item2 }
-            });
+           Dictionary<ESelectionZone, SelectableGridData> grids = new()
+           {
+               { dpadGrid.Item1, dpadGrid.Item2 }
+           };
+           
+           _selectablesController = new SelectablesController(_uiInputController, grids);
         }
 
         private void _initializeFrameRates()

@@ -15,5 +15,6 @@ namespace Beast.Radar.InputControl
         public event Action<float2> RightStickMoved;
         public event Action<int> ShoulderPressed;
         public event Action<int> TriggerPressed;
+        EInputScheme GetScheme();
     }
 }

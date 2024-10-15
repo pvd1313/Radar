@@ -10,6 +10,7 @@
         Shoulder,
         NorthButton,
         EastButton,
-        WestButton
+        WestButton,
+        SouthButton
     }
 }

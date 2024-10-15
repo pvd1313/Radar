@@ -7,12 +7,13 @@ namespace Beast.Radar.UI
 {
     public class DebugItemTypeButton : UIView, IUIPoolEntity, IUIRadioButton<DebugItemTypeButton>
     {
+        public bool IsSelected { get; private set; }
         public EItemType ItemType { get; private set; }
         public UISelectable Selectable => _selectable;
         public event Action<DebugItemTypeButton> Clicked;
         
-        private const float DefaultAlpha = 0.7f;
-        private const float SelectedAlpha = 0.4f;
+        private const float DefaultAlpha = 1f;
+        private const float SelectedAlpha = 0.7f;
 
         [SerializeField] private UISelectable _selectable;
         [SerializeField] private TextMeshProUGUI _typeText;
@@ -30,7 +31,7 @@ namespace Beast.Radar.UI
             {
                 case EItemType.None:
                 default:
-                    _background.color = Color.gray;
+                    _background.color = new Color(0.5f, 0.5f, 0.5f, DefaultAlpha);
                     break;
                 case EItemType.Eat:
                     _background.color = new Color(0.8f, 0.2f, 0.2f, DefaultAlpha);
@@ -46,7 +47,7 @@ namespace Beast.Radar.UI
                     break;
             }
             _typeText.SetText(ItemType == EItemType.None ? "all" : ItemType.ToString().ToLower());
-            _button.onClick.AddListener(() => Clicked?.Invoke(this));
+            _button.onClick.AddListener(Select);
         }
 
         public void Enable()
@@ -58,10 +59,16 @@ namespace Beast.Radar.UI
         {
             gameObject.SetActive(false);
         }
-        
+
+        public void Select()
+        {
+            Clicked?.Invoke(this);
+        }
+
         public void SetSelectedMode()
         {
-            _button.interactable = false;
+            IsSelected = true;
+            _selectable.SetInteractable(false);
             Color currentColor = _background.color;
             currentColor.a = SelectedAlpha;
             _background.color = currentColor;
@@ -69,7 +76,8 @@ namespace Beast.Radar.UI
 
         public void SetDefaultMode()
         {
-            _button.interactable = true;
+            IsSelected = false;
+            _selectable.SetInteractable(true);
             Color currentColor = _background.color;
             currentColor.a = DefaultAlpha;
             _background.color = currentColor;

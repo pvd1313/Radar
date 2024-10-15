@@ -2,10 +2,8 @@ using System;
 
 namespace Beast.Radar.UI
 {
-    public interface IUIRadioButton<T>
+    public interface IUIRadioButton<T> : IRadioSelected
     {
-        event Action<T> Clicked; 
-        void SetSelectedMode();
-        void SetDefaultMode();
+        event Action<T> Clicked;
     }
 }

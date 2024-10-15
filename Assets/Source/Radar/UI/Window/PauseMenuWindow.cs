@@ -13,7 +13,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
         private readonly IGameSaveManager _gameSave;
-        private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
 
         private PauseMenuView _menuView;
@@ -23,7 +23,7 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             IWindowManager windowManager,
             IGameSaveManager gameSave,
-            ISelectionZoneBuilder zoneBuilder,
+            ISelectableZoneBuilder zoneBuilder,
             IUIInputController input)
         {
             _uiFactory = uiFactory;

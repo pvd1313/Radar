@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
         private readonly DebugItemPanelView _view;
         private readonly ItemData[] _itemsData;
         private readonly IUIFactory _uiFactory;
-        private readonly ISelectionZoneBuilder _zoneBuilder;
+        private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
         private readonly IPlayerInputProvider _inputProvider;
 
@@ -33,7 +33,7 @@ namespace Beast.Radar.UI
         public DebugItemPanel(
             DebugItemPanelView view,
             IUIFactory uiFactory,
-            ISelectionZoneBuilder zoneBuilder,
+            ISelectableZoneBuilder zoneBuilder,
             IUIInputController input,
             IPlayerInputProvider inputProvider,
             ItemData[] itemsData)
@@ -126,14 +126,14 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: true);
 
+            Tuple<ESelectionZone, SelectableGridData> south = _zoneBuilder.Build(
+                ESelectionZone.SouthButton, _view.itemGrantButtons[0].Selectable);
+
             Tuple<ESelectionZone, SelectableGridData> west = _zoneBuilder.Build(
-                ESelectionZone.WestButton, _view.itemGrantButtons[0].Selectable);
+                ESelectionZone.WestButton, _view.itemGrantButtons[1].Selectable);
 
             Tuple<ESelectionZone, SelectableGridData> north = _zoneBuilder.Build(
-                ESelectionZone.NorthButton, _view.itemGrantButtons[1].Selectable);
-
-            Tuple<ESelectionZone, SelectableGridData> east = _zoneBuilder.Build(
-                ESelectionZone.EastButton, _view.itemGrantButtons[2].Selectable);
+                ESelectionZone.NorthButton, _view.itemGrantButtons[2].Selectable);
 
             UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
@@ -146,11 +146,11 @@ namespace Beast.Radar.UI
             _selectablesController = new SelectablesController(_input,
                 new Dictionary<ESelectionZone, SelectableGridData>
                 {
-                    { shoulderGrid.Item1, shoulderGrid.Item2 },
                     { dpadGrid.Item1, dpadGrid.Item2 },
+                    { shoulderGrid.Item1, shoulderGrid.Item2 },
                     { north.Item1, north.Item2 },
                     { west.Item1, west.Item2 },
-                    { east.Item1, east.Item2 },
+                    { south.Item1, south.Item2 },
                 });
 
             _selectablesController.Warmup();

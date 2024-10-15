@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class SelectionZoneBuilder : ISelectionZoneBuilder
+    public class SelectableZoneBuilder : ISelectableZoneBuilder
     {
         public Tuple<ESelectionZone,SelectableGridData> Build(
             ESelectionZone zone, 
@@ -13,7 +13,7 @@ namespace Beast.Radar.UI
             bool isFillHorizontally, 
             bool isLooping)
         {
-            UISelectable[,] selectionsGrid = new UISelectable[rows, cols];
+            UISelectable[,] selectableGrid = new UISelectable[rows, cols];
             
             int index = 0;
             for (int y = 0; y < (isFillHorizontally ? rows : cols); y++)
@@ -24,18 +24,18 @@ namespace Beast.Radar.UI
                     UISelectable selectable = selectables[index]; 
                     selectable.SetIndex(new int2(x, y));
                     selectable.SetZone(zone);
-                    selectionsGrid[x, y] = selectable;
+                    selectableGrid[x, y] = selectable;
                     index++;
                 }
                 else
                 {
-                    selectionsGrid[x, y] = null;
+                    selectableGrid[x, y] = null;
                 }
             }
             
             return new Tuple<ESelectionZone, SelectableGridData>(zone, new SelectableGridData()
             {
-                selectables = selectionsGrid,
+                selectables = selectableGrid,
                 currentIndex = int2.zero,
                 isLooping = isLooping
             });
@@ -44,48 +44,48 @@ namespace Beast.Radar.UI
         public Tuple<ESelectionZone,SelectableGridData> Build(
             ESelectionZone zone,  UISelectable[] selectables, bool isFillHorizontally, bool isLooping)
         {
-            UISelectable[,] selectionsGrid;
+            UISelectable[,] selectableGrid;
 
             if (isFillHorizontally)
             {
-                selectionsGrid = new UISelectable[1, selectables.Length];
+                selectableGrid = new UISelectable[1, selectables.Length];
                 for (int col = 0; col < selectables.Length; col++)
                 {
                     UISelectable selectable = selectables[col];
                     selectable.SetIndex(new int2(0, col));
                     selectable.SetZone(zone);
-                    selectionsGrid[0, col] = selectable;
+                    selectableGrid[0, col] = selectable;
                 }
             }
             else
             {
-                selectionsGrid = new UISelectable[selectables.Length, 1];
+                selectableGrid = new UISelectable[selectables.Length, 1];
                 for (int row = 0; row < selectables.Length; row++)
                 {
                     UISelectable selectable = selectables[row];
                     selectable.SetIndex(new int2(row, 0));
                     selectable.SetZone(zone);
-                    selectionsGrid[row, 0] = selectable;
+                    selectableGrid[row, 0] = selectable;
                 }
             }
 
             return new Tuple<ESelectionZone, SelectableGridData>(zone, new SelectableGridData()
             {
-                selectables = selectionsGrid,
+                selectables = selectableGrid,
                 currentIndex = int2.zero,
                 isLooping = isLooping
             });
         }
         
         public Tuple<ESelectionZone,SelectableGridData> Build(
-            ESelectionZone zone, UISelectable[,] selectablesGrid, bool isLooping)
+            ESelectionZone zone, UISelectable[,] selectableGrid, bool isLooping)
         {
-            int cols = selectablesGrid.GetLength(0);
-            int rows = selectablesGrid.GetLength(1);
+            int cols = selectableGrid.GetLength(0);
+            int rows = selectableGrid.GetLength(1);
             for (int x = 0; x < rows; x++)
             for (int y = 0; y < cols; y++)
             {
-                UISelectable uiSelectable = selectablesGrid[y,x];
+                UISelectable uiSelectable = selectableGrid[y,x];
                 if (uiSelectable == null)
                 {
                     continue;
@@ -95,7 +95,7 @@ namespace Beast.Radar.UI
             }
             return new Tuple<ESelectionZone, SelectableGridData>(zone, new SelectableGridData()
             {
-                selectables = selectablesGrid,
+                selectables = selectableGrid,
                 currentIndex = int2.zero,
                 isLooping = isLooping
             });
@@ -113,6 +113,5 @@ namespace Beast.Radar.UI
                 isLooping = false
             });
         }
-        
     }
 }

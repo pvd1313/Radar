@@ -10,8 +10,8 @@ namespace Beast.Radar.UI
     public class SelectablesController
     {
         public event Action<ESelectionZone, int2> TryWentBeyond;
-        
-        private readonly IUIInputController _input;
+
+        private readonly IUIInputController _inputController;
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
 
         private UISelectable _currentSelectable;
@@ -19,10 +19,10 @@ namespace Beast.Radar.UI
         private bool _isUsed;
 
         public SelectablesController(
-            IUIInputController input,
+            IUIInputController inputController,
             Dictionary<ESelectionZone, SelectableGridData> selectables)
         {
-            _input = input;
+            _inputController = inputController;
             _selectableGrids = selectables;
         }
 
@@ -58,7 +58,7 @@ namespace Beast.Radar.UI
 
         public void RefreshGrid(ESelectionZone zone, SelectableGridData grid, bool reverseColumnIndex)
         {
-            if (!_input.IsHardwareInput)
+            if (!_inputController.IsHardwareInput)
             {
                 return;
             }
@@ -87,7 +87,7 @@ namespace Beast.Radar.UI
         
         private void _setupCurrentSelectable()
         {
-            if (_isUsed && _input.IsHardwareInput && !_isSubscribedToInput)
+            if (_isUsed && _inputController.IsHardwareInput && !_isSubscribedToInput)
             {
                 if (_currentSelectable == null)
                 {
@@ -125,17 +125,17 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputState()
         {
-            _input.ChangedEnable += _onInputChangedEnable;
+            _inputController.ChangedEnable += _onInputControllerChangedEnable;
         }
 
         private void _unsubscribeInputState()
         {
-            _input.ChangedEnable -= _onInputChangedEnable;
+            _inputController.ChangedEnable -= _onInputControllerChangedEnable;
         }
 
-        private void _onInputChangedEnable()
+        private void _onInputControllerChangedEnable()
         {
-            if (_input.IsHardwareInput)
+            if (_inputController.IsHardwareInput)
             {
                 _setupCurrentSelectable();
             }
@@ -189,21 +189,21 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputActions()
         {
-            _input.DpadPressed += _onDpadPressed;
-            _input.ShoulderPressed += _onShoulderPressed;
-            _input.TriggerPressed += _onTriggerPressed;
-            _input.RightStickMoved += _onRightStickMoved;
-            _input.ActionButtonPressed += _onActionButtonPressed;
+            _inputController.DpadPressed += _onDpadPressed;
+            _inputController.ShoulderPressed += _onShoulderPressed;
+            _inputController.TriggerPressed += _onTriggerPressed;
+            _inputController.RightStickMoved += _onRightStickMoved;
+            _inputController.ActionButtonPressed += _onActionButtonPressed;
             _isSubscribedToInput = true;
         }
 
         private void _unsubscribeInputActions()
         {
-            _input.DpadPressed -= _onDpadPressed;
-            _input.ShoulderPressed -= _onShoulderPressed;
-            _input.TriggerPressed -= _onTriggerPressed;
-            _input.RightStickMoved -= _onRightStickMoved;
-            _input.ActionButtonPressed -= _onActionButtonPressed;
+            _inputController.DpadPressed -= _onDpadPressed;
+            _inputController.ShoulderPressed -= _onShoulderPressed;
+            _inputController.TriggerPressed -= _onTriggerPressed;
+            _inputController.RightStickMoved -= _onRightStickMoved;
+            _inputController.ActionButtonPressed -= _onActionButtonPressed;
             _isSubscribedToInput = false;
         }
 
@@ -212,6 +212,21 @@ namespace Beast.Radar.UI
             if (!_selectableGrids.ContainsKey(zone))
             {
                 return;
+            }
+
+            bool isTrySelect = _inputController.GetScheme() == EInputScheme.Gamepad
+                               && zone == ESelectionZone.SouthButton
+                               && _selectableGrids.ContainsKey(ESelectionZone.DPad); 
+            
+            if (isTrySelect)
+            {
+                SelectableGridData dpadGrid = _selectableGrids[ESelectionZone.DPad];
+                UISelectable dpadSelectable = dpadGrid.selectables[dpadGrid.currentIndex.x, dpadGrid.currentIndex.y];
+                if (dpadSelectable.TryGetComponent(out IRadioSelected selected) && !selected.IsSelected)
+                {
+                    selected.Select();
+                    return;
+                }
             }
 
             if (_selectableGrids[zone].selectables[0, 0].TryGetComponent(out Button button))
@@ -341,6 +356,5 @@ namespace Beast.Radar.UI
         }
 
         #endregion
-
     }
 }

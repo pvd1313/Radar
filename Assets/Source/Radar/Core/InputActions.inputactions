@@ -403,6 +403,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SouthButton",
+                    "type": "Button",
+                    "id": "5029f657-c906-4596-be8e-d9edebd67ba3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -618,7 +627,7 @@
                 {
                     "name": "",
                     "id": "d8feeeb8-9f92-4640-a78a-554445019209",
-                    "path": "<Keyboard>/2",
+                    "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
@@ -640,7 +649,7 @@
                 {
                     "name": "",
                     "id": "28eac6df-23f1-42f3-8b90-64ca8a1d4e8b",
-                    "path": "<Keyboard>/3",
+                    "path": "<Keyboard>/4",
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
@@ -662,7 +671,7 @@
                 {
                     "name": "",
                     "id": "75a5e4f0-8f6a-44cf-b930-28e0b5215de5",
-                    "path": "<Keyboard>/1",
+                    "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
@@ -832,6 +841,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "804cd311-fa4e-4d71-ba43-316e65cee1e2",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SouthButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7dd9f3e7-05f9-4caa-940a-1beb1d0f57b6",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "SouthButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

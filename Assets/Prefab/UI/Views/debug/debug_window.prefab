@@ -526,7 +526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 799669403975626700}
   m_Layer: 5
-  m_Name: folder_tabs
+  m_Name: panels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -938,7 +938,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: _gamePadButton
-      value: 8
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2425227190441731284, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: m_Name
@@ -1329,6 +1329,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1469,6 +1477,14 @@ PrefabInstance:
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_enableAutoSizing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1645,7 +1661,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: _gamePadButton
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2425227190441731284, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: m_Name
@@ -1895,6 +1911,18 @@ PrefabInstance:
     - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_Colors.m_DisabledColor.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.b
+      value: 0.745283
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.g
+      value: 0.6846409
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.r
+      value: 0.66442686
       objectReference: {fileID: 0}
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_text
@@ -2569,6 +2597,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2854,6 +2890,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3137,6 +3181,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3277,6 +3329,14 @@ PrefabInstance:
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_enableAutoSizing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4123,6 +4183,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4267,6 +4335,18 @@ PrefabInstance:
     - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_Colors.m_DisabledColor.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.b
+      value: 0.745283
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.g
+      value: 0.6846409
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653559384598683064, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.r
+      value: 0.66442686
       objectReference: {fileID: 0}
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_text
@@ -4433,6 +4513,14 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5455075639174129265, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4464,7 +4552,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: _gamePadButton
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2425227190441731284, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
       propertyPath: m_Name

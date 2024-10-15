@@ -64,6 +64,11 @@ namespace Beast.Radar.UI
         {
             _selectable.interactable = isInteractable;
         }
+
+        public bool IsInteractable()
+        {
+            return _selectable.interactable;
+        }
         
         public bool IsSelected()
         {

@@ -78,6 +78,11 @@ namespace Beast.Radar.InputControl
             }
         }
 
+        public EInputScheme GetScheme()
+        {
+            return _input.Scheme;
+        }
+
         private void SubscribeToInputSchemeChange()
         {
             _input.ChangedScheme += InputOnChangedScheme;
@@ -113,6 +118,7 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.NorthButton.started += OnPressNorth;
             _input.Actions.UI.EastButton.started += OnPressEast;
             _input.Actions.UI.WestButton.started += OnPressWest;
+            _input.Actions.UI.SouthButton.started += OnPressSouth;
             _input.Actions.UI.Navigate.performed += OnPerformedNavigate;
             _input.Actions.UI.Trigger.started += OnPerformedTrigger;
             _input.Actions.UI.Shoulder.started += OnPerformedShoulder;
@@ -126,9 +132,15 @@ namespace Beast.Radar.InputControl
             _input.Actions.UI.NorthButton.started -= OnPressNorth;
             _input.Actions.UI.EastButton.started -= OnPressEast;
             _input.Actions.UI.WestButton.started -= OnPressWest;
+            _input.Actions.UI.SouthButton.started -= OnPressSouth;
             _input.Actions.UI.Navigate.performed -= OnPerformedNavigate;
             _input.Actions.UI.Trigger.started -= OnPerformedTrigger;
             _input.Actions.UI.Shoulder.started -= OnPerformedShoulder;
+        }
+
+        private void OnPressSouth(InputAction.CallbackContext obj)
+        {
+            ActionButtonPressed?.Invoke(ESelectionZone.SouthButton);
         }
 
         private void OnPressWest(InputAction.CallbackContext obj)

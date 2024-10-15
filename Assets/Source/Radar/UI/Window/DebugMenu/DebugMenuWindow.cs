@@ -12,9 +12,9 @@ namespace Beast.Radar.UI
     {
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
-        private readonly ISelectionZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _input;
-        private readonly IPlayerInputProvider _inputProvider;
+        private readonly ISelectableZoneBuilder _zoneBuilder;
+        private readonly IUIInputController _uiInput;
+        private readonly IPlayerInputProvider _playerInput;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
@@ -26,15 +26,15 @@ namespace Beast.Radar.UI
         public DebugMenuWindow(
             IWindowManager windowManager,
             IUIFactory uiFactory,
-            ISelectionZoneBuilder zoneBuilder,
-            IUIInputController input,
-            IPlayerInputProvider inputProvider)
+            ISelectableZoneBuilder zoneBuilder,
+            IUIInputController uiInput,
+            IPlayerInputProvider playerInput)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
-            _input = input;
-            _inputProvider = inputProvider;
+            _uiInput = uiInput;
+            _playerInput = playerInput;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -94,8 +94,8 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //todo replace itemsData with data from the configuration file.
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _input, _inputProvider, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _input),
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput),
             });
         }
 
@@ -107,15 +107,17 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: false);
             
-            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            Dictionary<ESelectionZone, SelectableGridData> grids =  new() 
             {
                 { triggerGrid.Item1, triggerGrid.Item2 }
-            });
+            };
+            
+            _selectablesController = new SelectablesController(_uiInput, grids);
         }
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_inputProvider, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_playerInput, _view.inputIcons);
             _inputIconsController.Warmup();
         }
 
@@ -133,14 +135,14 @@ namespace Beast.Radar.UI
 
         private void _subscribeInput()
         {
-            _inputProvider.ChangedScheme += _onInputSchemeChanged;
-            _input.SelectButtonPressed += _onOpenButtonClicked;
+            _playerInput.ChangedScheme += _onInputSchemeChanged;
+            _uiInput.SelectButtonPressed += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
-            _inputProvider.ChangedScheme -= _onInputSchemeChanged;
-            _input.SelectButtonPressed -= _onOpenButtonClicked;
+            _playerInput.ChangedScheme -= _onInputSchemeChanged;
+            _uiInput.SelectButtonPressed -= _onOpenButtonClicked;
         }
 
         private void _onInputSchemeChanged(EInputScheme scheme)

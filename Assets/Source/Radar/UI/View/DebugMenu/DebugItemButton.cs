@@ -7,6 +7,7 @@ namespace Beast.Radar.UI
 {
     public class DebugItemButton : UIView, IUIPoolEntity, IUIRadioButton<DebugItemButton>
     {
+        public bool IsSelected { get; private set; }
         public ItemData Item { get; private set; }
         public UISelectable Selectable => _selectable;
         public event Action<DebugItemButton> Clicked;
@@ -21,7 +22,7 @@ namespace Beast.Radar.UI
         
         public void Init(params object[] parameters)
         {
-            _button.onClick.AddListener(() => Clicked?.Invoke(this));
+            _button.onClick.AddListener(Select);
         }
 
         public void Enable()
@@ -34,8 +35,14 @@ namespace Beast.Radar.UI
             gameObject.SetActive(false);
         }
 
+        public void Select()
+        {
+            Clicked?.Invoke(this);
+        }
+
         public void SetSelectedMode()
         {
+            IsSelected = true;
             Color currentColor = _background.color;
             currentColor.a = SelectedAlpha;
             _background.color = currentColor;
@@ -43,6 +50,7 @@ namespace Beast.Radar.UI
 
         public void SetDefaultMode()
         {
+            IsSelected = false;
             Color currentColor = _background.color;
             currentColor.a = DefaultAlpha;
             _background.color = currentColor;

@@ -104,7 +104,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.7075472, g: 0.7069822, b: 0.69419724, a: 1}
     m_PressedColor: {r: 0.5330188, g: 0.5330188, b: 0.5330188, a: 1}
-    m_SelectedColor: {r: 0.42730954, g: 0.5174161, b: 0.7877358, a: 1}
+    m_SelectedColor: {r: 0.6627451, g: 0.6862745, b: 0.74509805, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 10, y: -10}
+  m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 0
 --- !u!114 &4321187727783974689
 MonoBehaviour:

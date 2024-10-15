@@ -29,7 +29,10 @@ namespace Beast.Radar.UI
 
         public void OnSelect(BaseEventData eventData)
         {
-            _outline.enabled = true;
+            if (_selectable.IsInteractable())
+            {
+                _outline.enabled = true;
+            }
         }
     }
 }

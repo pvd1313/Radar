@@ -15,8 +15,9 @@ namespace Beast.Radar.UI
 
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
-        private readonly IUIInputController _input;
-        private readonly ISelectionZoneBuilder _selectionBuilder;
+        private readonly IUIInputController _uiInput;
+        private readonly IPlayerInputProvider _playerInput;
+        private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private SelectablesController _selectablesController;
         private MapGenerationView _menuView;
@@ -25,13 +26,15 @@ namespace Beast.Radar.UI
         public MapGenerationWindow(
             IUIFactory uiFactory, 
             IWindowManager windowManager, 
-            ISelectionZoneBuilder selectionBuilder,
-            IUIInputController input)
+            ISelectableZoneBuilder selectableBuilder,
+            IUIInputController uiInput,
+            IPlayerInputProvider playerInput)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
-            _selectionBuilder = selectionBuilder;
-            _input = input;
+            _selectableBuilder = selectableBuilder;
+            _uiInput = uiInput;
+            _playerInput = playerInput;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -86,15 +89,17 @@ namespace Beast.Radar.UI
                 {_menuView.createMapButton.Selectable, null, null, null}
             };
 
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectionBuilder.Build(
+            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectableBuilder.Build(
                 zone: ESelectionZone.DPad,
-                selectablesGrid: selectablesGrid,
+                selectableGrid: selectablesGrid,
                 isLooping: true);
 
-            _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
+            Dictionary<ESelectionZone, SelectableGridData> grids = new()
             {
                 { dpadGrid.Item1, dpadGrid.Item2 }
-            });
+            };
+            
+            _selectablesController = new SelectablesController(_uiInput, grids);
         }
 
         private void _subscribeView()

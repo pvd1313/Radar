@@ -425,6 +425,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SouthButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""5029f657-c906-4596-be8e-d9edebd67ba3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -640,7 +649,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d8feeeb8-9f92-4640-a78a-554445019209"",
-                    ""path"": ""<Keyboard>/2"",
+                    ""path"": ""<Keyboard>/3"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""MouseAndKeyboard"",
@@ -662,7 +671,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""28eac6df-23f1-42f3-8b90-64ca8a1d4e8b"",
-                    ""path"": ""<Keyboard>/3"",
+                    ""path"": ""<Keyboard>/4"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""MouseAndKeyboard"",
@@ -684,7 +693,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""75a5e4f0-8f6a-44cf-b930-28e0b5215de5"",
-                    ""path"": ""<Keyboard>/1"",
+                    ""path"": ""<Keyboard>/2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""MouseAndKeyboard"",
@@ -856,6 +865,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""804cd311-fa4e-4d71-ba43-316e65cee1e2"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""SouthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7dd9f3e7-05f9-4caa-940a-1beb1d0f57b6"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""SouthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -929,6 +960,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_NorthButton = m_UI.FindAction("NorthButton", throwIfNotFound: true);
         m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
         m_UI_WestButton = m_UI.FindAction("WestButton", throwIfNotFound: true);
+        m_UI_SouthButton = m_UI.FindAction("SouthButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1089,6 +1121,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_NorthButton;
     private readonly InputAction m_UI_EastButton;
     private readonly InputAction m_UI_WestButton;
+    private readonly InputAction m_UI_SouthButton;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
@@ -1106,6 +1139,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @NorthButton => m_Wrapper.m_UI_NorthButton;
         public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
         public InputAction @WestButton => m_Wrapper.m_UI_WestButton;
+        public InputAction @SouthButton => m_Wrapper.m_UI_SouthButton;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1154,6 +1188,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started += instance.OnWestButton;
             @WestButton.performed += instance.OnWestButton;
             @WestButton.canceled += instance.OnWestButton;
+            @SouthButton.started += instance.OnSouthButton;
+            @SouthButton.performed += instance.OnSouthButton;
+            @SouthButton.canceled += instance.OnSouthButton;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1197,6 +1234,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started -= instance.OnWestButton;
             @WestButton.performed -= instance.OnWestButton;
             @WestButton.canceled -= instance.OnWestButton;
+            @SouthButton.started -= instance.OnSouthButton;
+            @SouthButton.performed -= instance.OnSouthButton;
+            @SouthButton.canceled -= instance.OnSouthButton;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1265,5 +1305,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnNorthButton(InputAction.CallbackContext context);
         void OnEastButton(InputAction.CallbackContext context);
         void OnWestButton(InputAction.CallbackContext context);
+        void OnSouthButton(InputAction.CallbackContext context);
     }
 }

@@ -35,7 +35,7 @@ namespace Beast.Radar.UI
                     {
                         case EInputButton.None:
                         case EInputButton.LeftShoulder:
-                        case EInputButton.South:
+                        case EInputButton.East:
                         default:
                             gameObject.SetActive(false);
                             return;
@@ -48,13 +48,13 @@ namespace Beast.Radar.UI
                         case EInputButton.RightTrigger:
                             _setTag(EInputButton.E);
                             break;
-                        case EInputButton.West:
+                        case EInputButton.South:
                             _setTag(EInputButton.One);
                             break;
-                        case EInputButton.North:
+                        case EInputButton.West:
                             _setTag(EInputButton.Two);
                             break;
-                        case EInputButton.East:
+                        case EInputButton.North:
                             _setTag(EInputButton.Three);
                             break;
                     }
