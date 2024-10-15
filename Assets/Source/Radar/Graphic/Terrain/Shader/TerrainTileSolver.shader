@@ -72,7 +72,7 @@
                 // Currently we are just passing same tile index.
                 // In future we will have to process adjusted tile variations.
                 uint tileIndex = f32tof16(terrainColor);
-                float tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
+                float2 tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
                 float2 configTexelSize = 1.0f / _TileAtlasTileCount;
                 float2 configRG = tex2D(_TileAtlasConfig, tileXY * configTexelSize + configTexelSize * 0.5f);
                 

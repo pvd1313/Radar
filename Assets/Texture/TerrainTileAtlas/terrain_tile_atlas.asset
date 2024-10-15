@@ -20,13 +20,13 @@ MonoBehaviour:
     - texture: {fileID: 2800000, guid: 056b2f0132f809d4c932f6715e6d6b6f, type: 3}
       name: Grass
       averageColor: {r: 0.3854665, g: 0.5952704, b: 0.22526042, a: 1}
-      yCropHeight: 0.49
+      yCropHeight: 0.515625
       yBlendCenter: 0.2421875
       index: 0
     - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
       name: Water
       averageColor: {r: 0.36478633, g: 0.5614852, b: 0.7962279, a: 1}
-      yCropHeight: 0.49
+      yCropHeight: 0.515625
       yBlendCenter: 0.2421875
       index: 1
     tileCount:
