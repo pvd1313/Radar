@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Debug;
-using Beast.Claw.Math;
 using Beast.Radar.InputControl;
 using Unity.Mathematics;
 
@@ -28,8 +27,8 @@ namespace Beast.Radar.UI
         private SelectablesController _selectablesController;
         private InputIconsController _inputIconsController;
 
-        private int _currentPage = 1;
         private ItemData[] _currentItemsData;
+        private int _currentPage = 1;
 
         public DebugItemPanel(
             DebugItemPanelView view,
@@ -50,16 +49,16 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            ConfigureItemTypeButtons();
-            ConfigureItemButtons();
-            ConfigureSelectables();
-            ConfigureInputIcons();
-            Subscribe();
+            _configureItemTypeButtons();
+            _configureItemButtons();
+            _configureSelectables();
+            _configureInputIcons();
+            _subscribe();
         }
 
         public void Dispose()
         {
-            Unsubscribe();
+            _unsubscribe();
             _selectablesController.Dispose();
             _inputIconsController.Dispose();
             _itemTypeGroup.Dispose();
@@ -80,20 +79,20 @@ namespace Beast.Radar.UI
 
         #region Configure
 
-        private void ConfigureItemButtons()
+        private void _configureItemButtons()
         {
             _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
 
             _currentItemsData = _itemsData;
             _currentPage = 1;
-            RefreshItemButtons(false);
+            _refreshItemButtons(false);
 
             _itemGroup = new ButtonRadioGroup<DebugItemButton>(_itemsPool.GetAllEnabled().ToArray());
             _itemGroup.Warmup();
-            RefreshItemInformation(_itemGroup.SelectedButton);
+            _refreshItemInformation(_itemGroup.SelectedButton);
         }
 
-        private void ConfigureItemTypeButtons()
+        private void _configureItemTypeButtons()
         {
             _uiFactory.Create(this, PrefabID.InputIconDisplay, out InputIconDisplay leftShoulderIcon);
             leftShoulderIcon.SetKey(EInputButton.LeftShoulder);
@@ -119,7 +118,7 @@ namespace Beast.Radar.UI
             _itemTypeGroup.Warmup();
         }
 
-        private void ConfigureSelectables()
+        private void _configureSelectables()
         {
             Tuple<ESelectionZone, SelectableGridData> shoulderGrid = _zoneBuilder.Build(
                 ESelectionZone.Shoulder,
@@ -157,7 +156,7 @@ namespace Beast.Radar.UI
             _selectablesController.Warmup();
         }
 
-        private void ConfigureInputIcons()
+        private void _configureInputIcons()
         {
             _inputIconsController = new InputIconsController(_inputProvider, _view.inputIcons);
             _inputIconsController.Warmup();
@@ -167,43 +166,43 @@ namespace Beast.Radar.UI
 
         #region Events
 
-        private void Subscribe()
+        private void _subscribe()
         {
             for (int i = 0; i < _view.itemGrantButtons.Length; i++)
             {
                 int index = i;
-                _view.itemGrantButtons[i].Clicked += () => OnGrantButtonClicked(index);
+                _view.itemGrantButtons[i].Clicked += () => _onGrantButtonClicked(index);
             }
 
-            _itemTypeGroup.Selected += OnItemTypeSelected;
-            _itemGroup.Selected += OnItemSelected;
-            _view.nextItems.Clicked += OnNextItemsPressed;
-            _view.previousItems.Clicked += OnPreviousItemsPressed;
-            _selectablesController.TryWentBeyond += OnSelectablesTryWentBeyond;
+            _itemTypeGroup.Selected += _onItemTypeSelected;
+            _itemGroup.Selected += _onItemSelected;
+            _view.nextItems.Clicked += _onNextItemsPressed;
+            _view.previousItems.Clicked += _onPreviousItemsPressed;
+            _selectablesController.TryWentBeyond += _onSelectablesTryWentBeyond;
         }
 
-        private void Unsubscribe()
+        private void _unsubscribe()
         {
-            _itemTypeGroup.Selected -= OnItemTypeSelected;
-            _itemGroup.Selected -= OnItemSelected;
-            _view.nextItems.Clicked -= OnNextItemsPressed;
-            _view.previousItems.Clicked -= OnPreviousItemsPressed;
-            _selectablesController.TryWentBeyond -= OnSelectablesTryWentBeyond;
+            _itemTypeGroup.Selected -= _onItemTypeSelected;
+            _itemGroup.Selected -= _onItemSelected;
+            _view.nextItems.Clicked -= _onNextItemsPressed;
+            _view.previousItems.Clicked -= _onPreviousItemsPressed;
+            _selectablesController.TryWentBeyond -= _onSelectablesTryWentBeyond;
         }
 
-        private void OnNextItemsPressed()
+        private void _onNextItemsPressed()
         {
             _currentPage++;
-            RefreshItemButtons(reverseColumnIndex: true);
+            _refreshItemButtons(reverseColumnIndex: true);
         }
 
-        private void OnPreviousItemsPressed()
+        private void _onPreviousItemsPressed()
         {
             _currentPage--;
-            RefreshItemButtons(reverseColumnIndex: true);
+            _refreshItemButtons(reverseColumnIndex: true);
         }
 
-        private void OnSelectablesTryWentBeyond(ESelectionZone zone, int2 direction)
+        private void _onSelectablesTryWentBeyond(ESelectionZone zone, int2 direction)
         {
             if (zone is not ESelectionZone.DPad || Math.Abs(direction.x) != 1)
             {
@@ -213,7 +212,7 @@ namespace Beast.Radar.UI
             if (direction.x < 0 && _currentPage > 1)
             {
                 _currentPage--;
-                RefreshItemButtons(reverseColumnIndex: true);
+                _refreshItemButtons(reverseColumnIndex: true);
             }
             else if (direction.x > 0)
             {
@@ -222,12 +221,12 @@ namespace Beast.Radar.UI
                 if (limit < _currentItemsData.Length)
                 {
                     _currentPage++;
-                    RefreshItemButtons(reverseColumnIndex: true);
+                    _refreshItemButtons(reverseColumnIndex: true);
                 }
             }
         }
 
-        private void OnGrantButtonClicked(int index)
+        private void _onGrantButtonClicked(int index)
         {
             if (_itemGroup.SelectedButton == null)
             {
@@ -238,7 +237,7 @@ namespace Beast.Radar.UI
             //todo Add an action to issue an item 
         }
 
-        private void OnItemTypeSelected(DebugItemTypeButton typeButton)
+        private void _onItemTypeSelected(DebugItemTypeButton typeButton)
         {
             _itemsPool.DisableAll();
 
@@ -247,10 +246,10 @@ namespace Beast.Radar.UI
                 : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
 
             _currentPage = 1;
-            RefreshItemButtons(reverseColumnIndex: false);
+            _refreshItemButtons(reverseColumnIndex: false);
         }
 
-        private void RefreshItemButtons(bool reverseColumnIndex)
+        private void _refreshItemButtons(bool reverseColumnIndex)
         {
             _itemsPool.DisableAll();
             int startIndex = _currentPage > 1 ? _maxItemsCount * (_currentPage - 1) : 0;
@@ -278,12 +277,12 @@ namespace Beast.Radar.UI
             _view.previousItems.SetInteractable(_currentPage > 1);
         }
 
-        private void OnItemSelected(DebugItemButton button)
+        private void _onItemSelected(DebugItemButton button)
         {
-            RefreshItemInformation(button);
+            _refreshItemInformation(button);
         }
 
-        private void RefreshItemInformation(DebugItemButton itemButton)
+        private void _refreshItemInformation(DebugItemButton itemButton)
         {
             if (itemButton != null)
             {

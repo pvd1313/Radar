@@ -9,7 +9,6 @@ namespace Beast.Radar.UI
         [SerializeField] private EInputButton _gamePadButton;
         [SerializeField] private TextMeshProUGUI _text;
 
-
         public void SetKey(EInputButton key)
         {
             _gamePadButton = key;
@@ -25,7 +24,7 @@ namespace Beast.Radar.UI
                     gameObject.SetActive(false);
                     break;
                 case EInputScheme.Gamepad:
-                    SetTag(_gamePadButton);
+                    _setTag(_gamePadButton);
                     if (!gameObject.activeSelf)
                     {
                         gameObject.SetActive(true);
@@ -41,22 +40,22 @@ namespace Beast.Radar.UI
                             gameObject.SetActive(false);
                             return;
                         case EInputButton.RightShoulder:
-                            SetTag(EInputButton.Tab);
+                            _setTag(EInputButton.Tab);
                             break;
                         case EInputButton.LeftTrigger:
-                            SetTag(EInputButton.Q);
+                            _setTag(EInputButton.Q);
                             break;
                         case EInputButton.RightTrigger:
-                            SetTag(EInputButton.E);
+                            _setTag(EInputButton.E);
                             break;
                         case EInputButton.West:
-                            SetTag(EInputButton.One);
+                            _setTag(EInputButton.One);
                             break;
                         case EInputButton.North:
-                            SetTag(EInputButton.Two);
+                            _setTag(EInputButton.Two);
                             break;
                         case EInputButton.East:
-                            SetTag(EInputButton.Three);
+                            _setTag(EInputButton.Three);
                             break;
                     }
                     if (!gameObject.activeSelf)
@@ -67,7 +66,7 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void SetTag(EInputButton button)
+        private void _setTag(EInputButton button)
         {
             _text.SetText($"<sprite name={button.ToString()}>");
         }

@@ -14,19 +14,7 @@ namespace Beast.Radar.UI
         
         [SerializeField] private Slider _slider;
         [SerializeField] private UISelectable _selectable;
-        
-        public void SetValue(float value, bool withNotify)
-        {
-            if (withNotify)
-            {
-                _slider.value = value;
-            }
-            else
-            {
-                _slider.SetValueWithoutNotify(value);
-            }
-        }
-        
+
         public void OnPointerUp(PointerEventData eventData)
         {
             EndedChange?.Invoke(_slider.value);

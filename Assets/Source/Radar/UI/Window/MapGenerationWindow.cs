@@ -36,8 +36,8 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
 
         public void Open()
@@ -52,46 +52,43 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
             
-            ConfigureSelectables();
-            SubscribeView();
+            _configureSelectables();
+            _subscribeView();
             
             _selectablesController.Warmup();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
-            UnsubscribeView();
+            _unsubscribeView();
             
             _selectablesController.Dispose();
             
             return OperationResult.SuccessSync();
         }
 
-        private void ConfigureSelectables()
+        private void _configureSelectables()
         {
-            UISelectable[] selections =
+            UISelectable[,] selectablesGrid =
             {
-                _menuView.seedButton.Selectable,
-                _menuView.sizeButtons[0].Selectable,
-                _menuView.sizeButtons[1].Selectable,
-                _menuView.sizeButtons[2].Selectable,
-                _menuView.sizeButtons[3].Selectable,
-                _menuView.forestSlider.Selectable,
-                _menuView.waterSlider.Selectable,
-                _menuView.createMapButton.Selectable
+                {_menuView.seedButton.Selectable, null, null, null},
+                {_menuView.sizeButtons[0].Selectable, _menuView.sizeButtons[1].Selectable, 
+                _menuView.sizeButtons[2].Selectable, _menuView.sizeButtons[3].Selectable },
+                {_menuView.forestSlider.Selectable, null, null, null},
+                {_menuView.waterSlider.Selectable, null, null, null},
+                {_menuView.createMapButton.Selectable, null, null, null}
             };
 
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectionBuilder.Build(
                 zone: ESelectionZone.DPad,
-                selectables: selections,
-                isFillHorizontally: false,
+                selectablesGrid: selectablesGrid,
                 isLooping: true);
 
             _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
@@ -100,58 +97,58 @@ namespace Beast.Radar.UI
             });
         }
 
-        private void SubscribeView()
+        private void _subscribeView()
         {
             for (int i = 0; i < _menuView.sizeButtons.Length; i++)
             {
                 int index = i;
-                _menuView.sizeButtons[index].Clicked += () => OnClickSizeButton(index);
+                _menuView.sizeButtons[index].Clicked += () => _onClickSizeButton(index);
             }
             
-            _menuView.closeButton.Clicked += OnClickCloseButton;
-            _menuView.createMapButton.Clicked += OnCreateMapButton;
-            _menuView.seedButton.Clicked += OnClickSeedButton;
-            _menuView.forestSlider.EndedChange += OnEndedChangeForest;
-            _menuView.waterSlider.EndedChange += OnEndedChangeWater;
+            _menuView.closeButton.Clicked += _onClickCloseButton;
+            _menuView.createMapButton.Clicked += _onCreateMapButton;
+            _menuView.seedButton.Clicked += _onClickSeedButton;
+            _menuView.forestSlider.EndedChange += _onEndedChangeForest;
+            _menuView.waterSlider.EndedChange += _onEndedChangeWater;
         }
 
-        private void UnsubscribeView()
+        private void _unsubscribeView()
         {
-            _menuView.closeButton.Clicked -= OnClickCloseButton;
-            _menuView.createMapButton.Clicked -= OnCreateMapButton;
-            _menuView.seedButton.Clicked -= OnClickSeedButton;
-            _menuView.forestSlider.EndedChange -= OnEndedChangeForest;
-            _menuView.waterSlider.EndedChange -= OnEndedChangeWater;
+            _menuView.closeButton.Clicked -= _onClickCloseButton;
+            _menuView.createMapButton.Clicked -= _onCreateMapButton;
+            _menuView.seedButton.Clicked -= _onClickSeedButton;
+            _menuView.forestSlider.EndedChange -= _onEndedChangeForest;
+            _menuView.waterSlider.EndedChange -= _onEndedChangeWater;
         }
 
-        private void OnEndedChangeWater(float value)
+        private void _onEndedChangeWater(float value)
         {
             _data.water = value;
         }
 
-        private void OnEndedChangeForest(float value)
+        private void _onEndedChangeForest(float value)
         {
             _data.forest = value;
         }
 
-        private void OnClickSeedButton()
+        private void _onClickSeedButton()
         {
             string seedName = Seeds[Random.Range(0, Seeds.Length)];
             _menuView.seedResult.SetText(seedName);
             _data.seed = seedName.GetHashCode();
         }
 
-        private void OnClickSizeButton(int index)
+        private void _onClickSizeButton(int index)
         {
             _data.size = Sizes[index];
         }
 
-        private void OnCreateMapButton()
+        private void _onCreateMapButton()
         {
             //todo add create map action 
         }
 
-        private void OnClickCloseButton()
+        private void _onClickCloseButton()
         {
             _windowManager.Show(WindowID.MainHUD);
         }

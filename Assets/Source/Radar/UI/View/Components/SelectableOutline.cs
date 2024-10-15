@@ -1,18 +1,14 @@
-﻿using System.Collections;
-using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class SelectableOutline : UIView,ISelectHandler ,IDeselectHandler
+    public class SelectableOutline : UIView, ISelectHandler, IDeselectHandler
     {
         [SerializeField] private UISelectable _selectable;
         [SerializeField] private Outline _outline;
-       
-        private Coroutine _coroutine;
-
+        
         private void OnEnable()
         {
             if (_selectable.IsSelected())

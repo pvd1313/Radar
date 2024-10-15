@@ -11,8 +11,8 @@ namespace Beast.Radar.UI
         public UISelectable Selectable => _selectable;
         public event Action<DebugItemButton> Clicked;
         
-        private const float _defaultAlpha = 0.7f;
-        private const float _selectedAlpha = 0.4f;
+        private const float DefaultAlpha = 0.7f;
+        private const float SelectedAlpha = 0.4f;
         
         [SerializeField] private Button _button;
         [SerializeField] private Image _background;
@@ -34,18 +34,17 @@ namespace Beast.Radar.UI
             gameObject.SetActive(false);
         }
 
-
         public void SetSelectedMode()
         {
             Color currentColor = _background.color;
-            currentColor.a = _selectedAlpha;
+            currentColor.a = SelectedAlpha;
             _background.color = currentColor;
         }
 
         public void SetDefaultMode()
         {
             Color currentColor = _background.color;
-            currentColor.a = _defaultAlpha;
+            currentColor.a = DefaultAlpha;
             _background.color = currentColor;
         }
 
@@ -59,16 +58,16 @@ namespace Beast.Radar.UI
                     _background.color = Color.black;
                     break;
                 case EItemType.Eat:
-                    _background.color = new Color(0.8f, 0.2f, 0.2f, _defaultAlpha);
+                    _background.color = new Color(0.8f, 0.2f, 0.2f, DefaultAlpha);
                     break;
                 case EItemType.Weapons:
-                    _background.color = new Color(0.8f, 0.5f, 0.2f, _defaultAlpha);
+                    _background.color = new Color(0.8f, 0.5f, 0.2f, DefaultAlpha);
                     break;
                 case EItemType.Tools:
-                    _background.color = new Color(0.3f, 0.5f, 0.2f, _defaultAlpha);
+                    _background.color = new Color(0.3f, 0.5f, 0.2f, DefaultAlpha);
                     break;
                 case EItemType.Equipment:
-                    _background.color = new Color(0.3f, 0.5f, 0.7f, _defaultAlpha);
+                    _background.color = new Color(0.3f, 0.5f, 0.7f, DefaultAlpha);
                     break;
             }
             _textMeshPro.SetText(item.name);

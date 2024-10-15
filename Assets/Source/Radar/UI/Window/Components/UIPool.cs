@@ -21,27 +21,15 @@ namespace Beast.Radar.UI
 
         public T GetNext(params object[] initParams)
         {
-            T entity = GetDisabledEntity() ?? AddNewEntity(initParams);
+            T entity = _getDisabledEntity() ?? _addNewEntity(initParams);
             _enabled.Add(entity);
             entity.Enable();
             return entity;
         }
 
-        public IEnumerable<T> GetAll()
-        {
-            return _all;
-        }
-
         public IEnumerable<T> GetAllEnabled()
         {
             return _enabled;
-        }
-
-        public void Disable(T entity)
-        {
-            if (entity == null || !entity.gameObject.activeSelf) return;
-            entity.Disable();
-            _enabled.Remove(entity);
         }
 
         public void DisableAll()
@@ -50,16 +38,15 @@ namespace Beast.Radar.UI
             {
                 entity.Disable();
             }
-
             _enabled.Clear();
         }
         
-        private T GetDisabledEntity()
+        private T _getDisabledEntity()
         {
             return _all.FirstOrDefault(entity => entity != null && !entity.gameObject.activeSelf);
         }
 
-        private T AddNewEntity(params object[] initParams)
+        private T _addNewEntity(params object[] initParams)
         {
             _uiFactory.Create(this, _prefabID, out T entity);
             entity.transform.SetParent(_root, false);

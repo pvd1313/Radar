@@ -21,56 +21,55 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
 
         public void Open()
         {
-           SetActive(true);
+           _setActive(true);
         }
 
         public void Close()
         {
-            SetActive(false);
-            
+            _setActive(false);
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.HudWindow, out _view);
                 
             _windowManager.Register(this, WindowID.MainHUD, _view);
                 
-            SubscribeView();
+            _subscribeView();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
-            UnsubscribeView();
+            _unsubscribeView();
 
             return OperationResult.SuccessSync();
         }
 
-        private void SetActive(bool isActive)
+        private void _setActive(bool isActive)
         {
             _view.pauseButton.SetInteractable(isActive);
             BDebug.LogInfo(this,$"set active {isActive}");
         }
         
-        private void SubscribeView()
+        private void _subscribeView()
         {
-            _view.pauseButton.Clicked += OnClickedPauseButton;
+            _view.pauseButton.Clicked += _onClickedPauseButton;
         }
 
-        private void UnsubscribeView()
+        private void _unsubscribeView()
         {
-            _view.pauseButton.Clicked -= OnClickedPauseButton;
+            _view.pauseButton.Clicked -= _onClickedPauseButton;
         }
         
-        private void OnClickedPauseButton()
+        private void _onClickedPauseButton()
         {
             _windowManager.Show(WindowID.Pause);
         }

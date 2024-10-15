@@ -27,22 +27,22 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
         
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _canvas = _uiFactory.CreateCanvas(this);
                 
-            SubscribeUI();
+            _subscribeUI();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
-            UnsubscribeUI();
+            _unsubscribeUI();
 
             return OperationResult.SuccessSync();
         }
@@ -74,24 +74,24 @@ namespace Beast.Radar.UI
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
 
-        private void SubscribeUI()
+        private void _subscribeUI()
         {
-            _canvas.MouseOverUI += OnMouseOverUI;
-            _uiInputController.PauseButtonPressed += OnPauseButtonPressed;
+            _canvas.MouseOverUI += _onMouseOverUI;
+            _uiInputController.PauseButtonPressed += _onPauseButtonPressed;
         }
 
-        private void UnsubscribeUI()
+        private void _unsubscribeUI()
         {
-            _canvas.MouseOverUI -= OnMouseOverUI;
-            _uiInputController.PauseButtonPressed -= OnPauseButtonPressed;
+            _canvas.MouseOverUI -= _onMouseOverUI;
+            _uiInputController.PauseButtonPressed -= _onPauseButtonPressed;
         }
 
-        private void OnMouseOverUI(bool isOver)
+        private void _onMouseOverUI(bool isOver)
         {
             MouseOverUI?.Invoke(isOver);       
         }
 
-        private void OnPauseButtonPressed()
+        private void _onPauseButtonPressed()
         {
             Show(_currentOpenedWindowController is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
         }

@@ -11,7 +11,7 @@ namespace Beast.Radar.UI
             ESelectionZone zone, UISelectable[] selectables, 
             bool isFillHorizontally, bool isLooping);
         Tuple<ESelectionZone,SelectableGridData> Build(
-            ESelectionZone zone, UISelectable[,] selectionsGrid, bool isLooping);
+            ESelectionZone zone, UISelectable[,] selectablesGrid, bool isLooping);
         Tuple<ESelectionZone,SelectableGridData> Build(ESelectionZone zone, UISelectable selectable);
     }
 }

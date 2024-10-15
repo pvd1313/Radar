@@ -34,10 +34,9 @@ namespace Beast.Radar.UI
         }
 
         public void Register(IGameCycleHandle handle)
-
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
 
         public void Open()
@@ -52,29 +51,29 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
             _windowManager.Register(this, WindowID.Pause, _menuView);
             
-            ConfigureSelectables();
-            SubscribeView();
+            _configureSelectables();
+            _subscribeView();
             
             _selectablesController.Warmup();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
-            UnsubscribeView();
+            _unsubscribeView();
             
             _selectablesController.Dispose();
             
             return OperationResult.SuccessSync();
         }
 
-        private void ConfigureSelectables()
+        private void _configureSelectables()
         {
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                 zone: ESelectionZone.DPad, 
@@ -93,46 +92,46 @@ namespace Beast.Radar.UI
             });
         }
 
-        private void SubscribeView()
+        private void _subscribeView()
         {
-            _menuView.loadButton.Clicked += OnClickedLoadButton;
-            _menuView.saveButton.Clicked += OnClickedSaveButton;
-            _menuView.newGameButton.Clicked += OnClickedNewGameButton;
+            _menuView.loadButton.Clicked += _onClickedLoadButton;
+            _menuView.saveButton.Clicked += _onClickedSaveButton;
+            _menuView.newGameButton.Clicked += _onClickedNewGameButton;
 
             foreach (UIButton closeButton in _menuView.closePanelButtons)
             {
-                closeButton.Clicked += OnClickedClosePanelButton;
+                closeButton.Clicked += _onClickedClosePanelButton;
             }
         }
 
-        private void UnsubscribeView()
+        private void _unsubscribeView()
         {
-            _menuView.loadButton.Clicked -= OnClickedLoadButton;
-            _menuView.saveButton.Clicked -= OnClickedSaveButton;
-            _menuView.newGameButton.Clicked -= OnClickedNewGameButton;
+            _menuView.loadButton.Clicked -= _onClickedLoadButton;
+            _menuView.saveButton.Clicked -= _onClickedSaveButton;
+            _menuView.newGameButton.Clicked -= _onClickedNewGameButton;
 
             foreach (UIButton closeButton in _menuView.closePanelButtons)
             {
-                closeButton.Clicked -= OnClickedClosePanelButton;
+                closeButton.Clicked -= _onClickedClosePanelButton;
             }
         }
 
-        private void OnClickedClosePanelButton()
+        private void _onClickedClosePanelButton()
         {
             _windowManager.Show(WindowID.MainHUD);
         }
 
-        private void OnClickedNewGameButton()
+        private void _onClickedNewGameButton()
         {
             _windowManager.Show(WindowID.MapGeneration);
         }
 
-        private void OnClickedSaveButton()
+        private void _onClickedSaveButton()
         {
             _gameSave.Save("default", "default");
         }
 
-        private void OnClickedLoadButton()
+        private void _onClickedLoadButton()
         {
             _gameSave.Load("default", "default");
         }

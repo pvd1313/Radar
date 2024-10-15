@@ -14,17 +14,17 @@ namespace Beast.Radar.UI
         
         public void Start()
         {
-            _button.onClick.AddListener(Click);
-        }
-        
-        private void Click()
-        {
-            Clicked?.Invoke();
+            _button.onClick.AddListener(_click);
         }
 
         public void SetInteractable(bool interactable)
         {
             _selectable.SetInteractable(interactable);
+        }
+
+        private void _click()
+        {
+            Clicked?.Invoke();
         }
     }
 }

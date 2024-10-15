@@ -16,40 +16,40 @@ namespace Beast.Radar.UI
         
         public void Warmup()
         {
-            SubscribeButtons();
+            _subscribeButtons();
             SelectedButton = _buttons[0];
             SelectedButton.SetSelectedMode();
         }
 
         public void Dispose()
         {
-            UnsubscribeButtons();
+            _unsubscribeButtons();
         }
 
         public void SetOtherGroup(T[] otherButtons)
         {
-            UnsubscribeButtons();
+            _unsubscribeButtons();
             _buttons = otherButtons;
-            SubscribeButtons();
+            _subscribeButtons();
         }
 
-        private void SubscribeButtons()
+        private void _subscribeButtons()
         {
             foreach (T radioButton in _buttons)
             {
-                radioButton.Clicked += SetSelected;
+                radioButton.Clicked += _setSelected;
             }
         }   
 
-        private void UnsubscribeButtons()
+        private void _unsubscribeButtons()
         {
             foreach (T radioButton in _buttons)
             {
-                radioButton.Clicked -= SetSelected;
+                radioButton.Clicked -= _setSelected;
             }
         }
 
-        private void SetSelected(T button)
+        private void _setSelected(T button)
         {
             if (SelectedButton != null)
             {

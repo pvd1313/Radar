@@ -78,14 +78,14 @@ namespace Beast.Radar.UI
         }
         
         public Tuple<ESelectionZone,SelectableGridData> Build(
-            ESelectionZone zone, UISelectable[,] selectionsGrid, bool isLooping)
+            ESelectionZone zone, UISelectable[,] selectablesGrid, bool isLooping)
         {
-            int cols = selectionsGrid.GetLength(0);
-            int rows = selectionsGrid.GetLength(1);
+            int cols = selectablesGrid.GetLength(0);
+            int rows = selectablesGrid.GetLength(1);
             for (int x = 0; x < rows; x++)
             for (int y = 0; y < cols; y++)
             {
-                UISelectable uiSelectable = selectionsGrid[y,x];
+                UISelectable uiSelectable = selectablesGrid[y,x];
                 if (uiSelectable == null)
                 {
                     continue;
@@ -95,7 +95,7 @@ namespace Beast.Radar.UI
             }
             return new Tuple<ESelectionZone, SelectableGridData>(zone, new SelectableGridData()
             {
-                selectables = selectionsGrid,
+                selectables = selectablesGrid,
                 currentIndex = int2.zero,
                 isLooping = isLooping
             });

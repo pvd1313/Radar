@@ -14,10 +14,9 @@ namespace Beast.Radar.UI
         private readonly IUIInputController _input;
         private readonly float[] _timeScales = { 1, 3, 10 };
 
-        private int[] _frameRates;
-
         private SelectablesController _selectablesController;
-
+        private int[] _frameRates;
+        
         public DebugSettingsPanel(
             DebugSettingsPanelView view,
             ISelectionZoneBuilder zoneBuilder,
@@ -30,9 +29,9 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            InitializeFrameRates();
-            ConfigureSelectables();
-            SubscribeView();
+            _initializeFrameRates();
+            _configureSelectables();
+            _subscribeView();
             
             _selectablesController.Warmup();
         }
@@ -54,7 +53,7 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private void ConfigureSelectables()
+        private void _configureSelectables()
         {
             UISelectable[,] selectables =
             {
@@ -67,7 +66,7 @@ namespace Beast.Radar.UI
 
            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
                zone: ESelectionZone.DPad,
-               selectionsGrid: selectables, 
+               selectablesGrid: selectables, 
                isLooping: false);
 
             _selectablesController = new SelectablesController(_input, new Dictionary<ESelectionZone, SelectableGridData>
@@ -76,7 +75,7 @@ namespace Beast.Radar.UI
             });
         }
 
-        private void InitializeFrameRates()
+        private void _initializeFrameRates()
         {
             RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
             float screenRate = (float)refreshRate.numerator / refreshRate.denominator;
@@ -86,28 +85,28 @@ namespace Beast.Radar.UI
             };
         }
 
-        private void SubscribeView()
+        private void _subscribeView()
         {
             for (int i = 0; i < _view.timeScaleButtons.Length; i++)
             {
                 int index = i;
-                _view.timeScaleButtons[i].Clicked += () => OnTimeScaleButtonClicked(index);
+                _view.timeScaleButtons[i].Clicked += () => _onTimeScaleButtonClicked(index);
             }
 
             for (int i = 0; i < _view.frameRateButtons.Length; i++)
             {
                 int index = i;
-                _view.frameRateButtons[i].Clicked += () => OnFrameRateButtonClicked(index);
+                _view.frameRateButtons[i].Clicked += () => _onFrameRateButtonClicked(index);
             }
         }
 
-        private void OnTimeScaleButtonClicked(int index)
+        private void _onTimeScaleButtonClicked(int index)
         {
             Time.timeScale = _timeScales[index];
             BDebug.LogInfo(this, $"Time scale = {_timeScales[index]}");
         }
 
-        private void OnFrameRateButtonClicked(int index)
+        private void _onFrameRateButtonClicked(int index)
         {
             Application.targetFrameRate = _frameRates[index];
             BDebug.LogInfo(this, $"Target frame rate = {_frameRates[index]}");

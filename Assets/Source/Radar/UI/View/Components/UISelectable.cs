@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,26 +8,14 @@ namespace Beast.Radar.UI
 {
     public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-   
         public event Action<ESelectionZone, int2> Selected;
-        public event Action<ESelectionZone, int2> Deselected;
 
         [SerializeField] private Selectable _selectable;
 
         private ESelectionZone _zone;
         private int2 _index;
         private bool _isHighlighted;
-
-        /*
-        private void OnEnable()
-        {
-            if (IsSelected())
-            {
-                Select();
-            }
-        }
-        */
-
+        
         private void OnDisable()
         {
             Deselect();
@@ -52,20 +39,17 @@ namespace Beast.Radar.UI
         public void OnPointerEnter(PointerEventData eventData)
         {
             Select();
-            BDebug.LogInfo(this, $"{name} enter");
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             Deselect();
-            BDebug.LogInfo(this, $"{name} exit");
         }
 
         public void Select()
         {
             _selectable.Select();
             Selected?.Invoke(_zone, _index);
-            BDebug.LogInfo(this, $"{name} select");
         }
 
         public void Deselect()
@@ -74,9 +58,6 @@ namespace Beast.Radar.UI
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
-
-            BDebug.LogInfo(this, $"{name} deselect");
-            Deselected?.Invoke(_zone, _index);
         }
 
         public void SetInteractable(bool isInteractable)

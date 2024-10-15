@@ -17,7 +17,7 @@
             for (int i = 0; i < _buttons.Length; i++)
             {
                 int index = i;
-                _buttons[i].Clicked += () => SwitchFolder(index);
+                _buttons[i].Clicked += () => _switchFolder(index);
             }    
             foreach (IPanel folder in _folders)
             {
@@ -44,7 +44,7 @@
             _folders[_currentIndex].Close();
         }
         
-        private void SwitchFolder(int index)
+        private void _switchFolder(int index)
         {
             _buttons[_currentIndex].SetInteractable(true);
             _folders[_currentIndex].Close();
