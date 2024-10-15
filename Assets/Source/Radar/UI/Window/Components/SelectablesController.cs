@@ -115,6 +115,8 @@ namespace Beast.Radar.UI
             SelectableGridData grid = _selectableGrids[zone];
             grid.currentIndex = index;
             _selectableGrids[zone] = grid;
+            _currentSelectable = grid.selectables[grid.currentIndex.x,grid.currentIndex.y];
+            //_currentSelectable.Select();
         }
 
         #endregion
@@ -269,7 +271,7 @@ namespace Beast.Radar.UI
             
             if (_currentSelectable != null)
             {
-                _currentSelectable.OnDeselect(null);
+                _currentSelectable.Deselect();
             }
 
             _currentSelectable = selectable;
@@ -303,7 +305,7 @@ namespace Beast.Radar.UI
             {
                 if (_currentSelectable != null)
                 {
-                    _currentSelectable.OnDeselect(null);
+                    _currentSelectable.Deselect();
                 }
 
                 UnsubscribeInputActions();

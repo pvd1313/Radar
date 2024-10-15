@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Debug;
+using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace Beast.Radar.UI
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
+        private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
         
@@ -16,7 +18,6 @@ namespace Beast.Radar.UI
             _uiFactory = uiFactory;
             _windowManager = windowManager;
         }
-
         
         public void Register(IGameCycleHandle handle)
         {
@@ -32,6 +33,7 @@ namespace Beast.Radar.UI
         public void Close()
         {
             SetActive(false);
+            
         }
 
         private UniTask<OperationResult> Warmup()
@@ -55,6 +57,7 @@ namespace Beast.Radar.UI
         private void SetActive(bool isActive)
         {
             _view.pauseButton.SetInteractable(isActive);
+            BDebug.LogInfo(this,$"set active {isActive}");
         }
         
         private void SubscribeView()

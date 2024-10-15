@@ -6,14 +6,22 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler
+    public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        public bool IsSelected { get; private set; }
         public event Action<ESelectionZone, int2> Selected;
-        
+        public event Action<ESelectionZone, int2> Deselected;
+
         [SerializeField] private Selectable _selectable;
-        
+
         private ESelectionZone _zone;
         private int2 _index;
+        private bool _isHighlighted;
+
+        private void OnDisable()
+        {
+            Deselect();
+        }
 
         public void SetIndex(int2 index)
         {
@@ -25,34 +33,43 @@ namespace Beast.Radar.UI
             _zone = zone;
         }
 
+        public override string ToString()
+        {
+            return $"{_zone} {_index}";
+        }
+
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _selectable.Select();
+            Select();
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            _selectable.OnDeselect(null);
-        }
-
-        public void OnSelect(BaseEventData eventData)
-        {
-            Selected?.Invoke(_zone, _index);
+            Deselect();
         }
 
         public void Select()
         {
             _selectable.Select();
+            Selected?.Invoke(_zone, _index);
+            IsSelected = true;
         }
 
-        public void OnDeselect(BaseEventData eventData)
+        public void Deselect()
         {
-            _selectable.OnDeselect(eventData);
+            IsSelected = false;
+
+            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == _selectable.gameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+
+            Deselected?.Invoke(_zone, _index);
         }
 
-        public override string ToString()
+        public void SetInteractable(bool isInteractable)
         {
-            return $"{_zone} {_index}";
+            _selectable.interactable = isInteractable;
         }
     }
 }

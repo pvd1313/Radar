@@ -24,7 +24,7 @@ namespace Beast.Radar.UI
 
         public void SetInteractable(bool interactable)
         {
-            _button.interactable = interactable;
+            _selectable.SetInteractable(interactable);
         }
     }
 }
