@@ -1,21 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Beast.Claw.Collection
 {
     public static class CollectionExtension
     {
-        public static T PopOrNull<T>(this IList<T> list) where T : class
+        public static TValue PopOrNull<TValue>(this IList<TValue> list) where TValue : class
         {
             if (list.Count == 0)
             {
                 return null;
             }
 
-            T item = list[^1];
+            TValue item = list[^1];
             
             list.RemoveAt(list.Count - 1);
 
             return item;
+        }
+
+        public static TValue Pop<TValue>(this IList<TValue> list)
+        {
+            if (list.Count == 0)
+            {
+                throw new InvalidOperationException("No items to pop in list");
+            }
+            
+            TValue item = list[^1];
+            
+            list.RemoveAt(list.Count - 1);
+
+            return item;
+        }
+
+        public static bool TryRemoveAt<TValue>(this IList<TValue> list, int index)
+        {
+            if (list.Count == 0)
+            {
+                return false;
+            }
+
+            if (index < 0 || index >= list.Count)
+            {
+                return false;
+            }
+            
+            list.RemoveAt(index);
+
+            return true;
         }
 
         public static bool TrySwap<TValue>(this IList<TValue> list, int indexA, int indexB)
@@ -41,9 +73,9 @@ namespace Beast.Claw.Collection
             return true;
         }
 
-        public static void AddRange<T>(this IList<T> list, IList<T> range)
+        public static void AddRange<TValue>(this IList<TValue> list, IEnumerable<TValue> range)
         {
-            foreach (T item in range)
+            foreach (TValue item in range)
             {
                 list.Add(item);
             }

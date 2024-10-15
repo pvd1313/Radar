@@ -1,4 +1,4 @@
-namespace Beast.Radar.GoogleSheet
+namespace Beast.Radar.Editor.GoogleSheet
 {
     public class FileMeta
     {

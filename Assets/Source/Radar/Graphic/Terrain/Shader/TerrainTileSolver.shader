@@ -35,6 +35,9 @@
             };
             
             float2 _TileGridSize;
+
+            sampler2D _TileAtlasConfig;
+            float2 _TileAtlasTileCount;
             
             sampler2D _TerrainTexture;
             float2 _TerrainUVOffset;
@@ -55,28 +58,27 @@
                 return output;
             }
 
-            // There will be more complex or index map texture in future.
-            uint terrain_color_to_tile_index(float terrainColor)
-            {
-                // 0 .. 1 just for now. 0 - grass. 1 - water.
-                return saturate(1 - terrainColor);
-            }
-
             float4 fragment(FragmentInput input) : SV_Target
             {
-                uint x = floor(input.uv.x * _SolverTextureSize);
-                uint y = floor(input.uv.y * _SolverTextureSize);
-                uint instanceID = y * (uint)_SolverTextureSize + x;
+                uint solverX = floor(input.uv.x * _SolverTextureSize);
+                uint solverY = floor(input.uv.y * _SolverTextureSize);
+                uint instanceID = solverY * (uint)_SolverTextureSize + solverX;
 
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
                 float2 offset = beast_isometric_world_offset(tile, _TileGridSize.x);
 
                 float terrainColor = tex2D(_TerrainTexture, _TerrainUVOffset + offset * _TerrainTexelSize).r;
-                uint tileIndex = terrain_color_to_tile_index(terrainColor);
 
+                // Currently we are just passing same tile index.
+                // In future we will have to process adjusted tile variations.
+                uint tileIndex = f32tof16(terrainColor);
+                float tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
+                float2 configTexelSize = 1.0f / _TileAtlasTileCount;
+                float2 configRG = tex2D(_TileAtlasConfig, tileXY * configTexelSize + configTexelSize * 0.5f);
+                
                 float noiseColor = tex2D(_NoiseTexture, (offset + _NoiseWorldOffset) / _NoiseTextureSize).r;
                 
-                return float4(f16tof32(tileIndex), noiseColor, 0, 0);
+                return float4(f16tof32(tileIndex), noiseColor, configRG.r, configRG.g);
             }
             ENDCG
         }

@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
@@ -8,18 +7,14 @@ namespace Beast.Claw.Graphic
         public Shader shader;
         public string name;
         
-        public bool IsValid(out string errorMessage)
+        public string Validate()
         {
-            errorMessage = null;
-            
             if (shader == null)
             {
-                errorMessage = "shader is null";
-
-                return false;
+                return "shader is null";
             }
 
-            return true;
+            return null;
         }
     }
 }

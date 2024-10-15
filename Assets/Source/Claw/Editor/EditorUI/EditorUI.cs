@@ -1,80 +1,67 @@
-﻿using System;
-using Beast.Claw.Common;
-using Beast.Claw.Debug;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public partial struct EditorUI
     {
-        public bool success;
+        public const string CharUpArrow = "↑";
+        public const string CharDownArrow = "↓";
+        public const string CharPlus = "+";
+        public const string CharCross = "x";
+        public const string CharA = "A"; 
+        public const int OneCharButtonSize = 20;
+        public const int MinorSpace = 8;
+
+        public EditorFlow flow;
         public bool niceLabelsEnabled;
         public GUILayoutOption[] layoutOptions;
-        
+
         private string NicifyLabel(string label)
         {
             if (!niceLabelsEnabled)
             {
                 return label;
             }
-            
+
             return ObjectNames.NicifyVariableName(label);
         }
 
-        private EditorUI ExecuteActions(params Action<EditorUI>[] actions)
+        public bool ValidateArgumentNotNull<T>(T obj, string objName) where T : class
         {
-            bool isSuccess = true;
-            
-            foreach (Action<EditorUI> action in actions)
+            if (obj == null)
             {
-                TryCatch(action, out bool actionSuccess);
-
-                if (!actionSuccess)
-                {
-                    isSuccess = false;
-                }
+                flow.uiErrorsEncountered = true;
+                WarningBox($"'{NicifyLabel(objName)}' can not be null");
+                return false;
             }
 
-            return new EditorUI
-            {
-                success = isSuccess
-            };
+            return true;
         }
-        
-        public void TryCatch(Action<EditorUI> action, out bool actionSuccess)
+
+        public bool Validate<T>(T obj, string objName) where T : IValidatable
         {
-            actionSuccess = true;
-
-            try
-            {
-                action(this);
-            }
-
-            catch (ExitGUIException)
-            {
-                
-            }
+            string errorMessage = obj.Validate();
             
-            catch (AssertionException e)
+            if (errorMessage != null)
             {
-                actionSuccess = false;
-                
-                EditorGUILayout.HelpBox(e.Message, MessageType.Warning);
+                WarningBox($"'{NicifyLabel(objName)}': {errorMessage}");
+                return false;
             }
-            
-            catch (Exception e)
+
+            return true;
+        }
+
+        public bool AssertIsTrue(bool value, string message)
+        {
+            if (!value)
             {
-                actionSuccess = false;
-                
-                EditorGUILayout.HelpBox($"Unhandled exception:", MessageType.Error);
-
-                EditorGUILayout.LabelField(e.Message);
-                
-                EditorGUILayout.TextArea(e.StackTrace);
-
-                BDebug.StaticLogException(e);
+                flow.uiErrorsEncountered = true;
+                EditorGUILayout.HelpBox(message, MessageType.Warning);
+                return false;
             }
+
+            return true;
         }
     }
 }

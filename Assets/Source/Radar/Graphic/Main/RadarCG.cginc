@@ -70,6 +70,14 @@ inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSi
     return output;
 }
 
+inline float2 beast_tile_xy_from_index(uint tileIndex, float2 tileCount)
+{
+    float x = tileIndex % (uint) tileCount.x;
+    float y = tileIndex / (uint) tileCount.x;
+
+    return float2(x, y);
+}
+
 inline float2 beast_unpack_normal_2d(float2 color)
 {
     return (color - 0.5) * 2;

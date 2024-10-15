@@ -2,6 +2,6 @@
 {
     public interface IValidatable
     {
-        public bool IsValid(out string errorMessage);
+        public string Validate();
     }
 }

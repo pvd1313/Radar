@@ -29,7 +29,7 @@
                 float4 positionCS : SV_POSITION;
                 half2 mainUV : TEXCOORD0;
                 half2 centerUV : TEXCOORD1;
-                fixed t : TEXCOORD2;
+                fixed blendPower : TEXCOORD2;
             };
 
             float2 _TileGridSize;
@@ -37,11 +37,8 @@
             sampler2D _TileAtlas;
             float2 _TileAtlasWidthHeight;
             float2 _TileAtlasTileCount;
-            float2 _TileBlendCenter;
             float _TileAtlasPPU;
             
-            float _RenderYCrop;
-
             sampler2D _SolverTexture;
             float _SolverSize;
             
@@ -60,14 +57,38 @@
                     return output;
                 }
 #endif
-                
-                float aspect = _OutputSize.x / _OutputSize.y;
 
-                // Y crop, reduce rasterizer overload. Will be obtained from the config texture in future.
-                input.vertex.y = input.vertex.y * (1 - _RenderYCrop) - _RenderYCrop * 0.5;
-                input.texcoord.y *= 1 - _RenderYCrop;
+                // Get tile data from solver.
+                float solverX = instanceID % (uint) _SolverSize;
+                float solverY = instanceID / (uint) _SolverSize;
+                float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
+                float2 solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
+                float4 solverRGBA = tex2Dlod(_SolverTexture, float4(solverUV.x, solverUV.y, 0, 0));
+
+                // Y crop, reduce rasterizer overload.
+                float renderYCrop = solverRGBA.b;
+                input.vertex.y = input.vertex.y * (1 - renderYCrop) - renderYCrop * 0.5;
+                input.texcoord.y *= 1 - renderYCrop;
+
+                // Main UV.
+                float2 vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
+                uint tileIndex = f32tof16(solverRGBA.r);
+                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
+                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
+                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
+                float2 tileUV = vertexUV + tileUVShift;
+                output.mainUV = tileUV;
+
+                // Second UV to reduce glitches when tiles are small.
+                float noisePower = solverRGBA.g;
+                float blendCenterY = solverRGBA.a;
+                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
+                float2 centerUV = tileUVShift + float2(0.5f, blendCenterY) / _TileAtlasTileCount;
+                output.centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+                output.blendPower = t;
 
                 // Scale vertex to desired size.
+                float aspect = _OutputSize.x / _OutputSize.y;
                 input.vertex *= _OutputTileHeight * 4.0f;
                 input.vertex.x /= aspect;
 
@@ -89,29 +110,6 @@
 
                 // Projection flip
                 input.vertex.y *= _ProjectionParams.x;
-
-                // Get tile data from solver.
-                float2 vertexUV = input.texcoord.xy * (1.0f / _TileAtlasTileCount);
-                float solverX = instanceID % (uint) _SolverSize;
-                float solverY = instanceID / (uint) _SolverSize;
-                float solverTexelSize = 1.0f / float2(_SolverSize, _SolverSize);
-                float2 solverUV = float2(solverX, solverY) * solverTexelSize + solverTexelSize * 0.5f;
-                float2 solverRG = tex2Dlod(_SolverTexture, float4(solverUV.x, solverUV.y, 0, 0));
-                uint tileIndex = f32tof16(solverRG.r);
-                float tileX = tileIndex % (uint) _TileAtlasTileCount.x;
-                float tileY = tileIndex / (uint) _TileAtlasTileCount.x;
-                float2 tileUVShift = float2(tileX, tileY) * (1.0f / _TileAtlasTileCount);
-                float2 tileUV = vertexUV + tileUVShift;
-                output.mainUV = tileUV;
-
-                // Second UV to reduce glitches when tiles are small.
-                // Blend center will be obtained from tile config in future.
-                float noisePower = solverRG.g;
-                float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
-                float2 centerUV = tileUVShift + _TileBlendCenter / _TileAtlasTileCount;
-                output.centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
-
-                output.t = t;
                 
                 output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 
@@ -122,12 +120,11 @@
             {
                 half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
-                // TODO: 0.5 here is temp here for test purposes.
                 clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
 
                 half3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 
-                mainColor = lerp(mainColor, centerColor, input.t);
+                mainColor = lerp(mainColor, centerColor, input.blendPower);
                 
                 return half4(mainColor.r, mainColor.g, mainColor.b, 1);
             }

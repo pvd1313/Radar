@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Beast.Claw.Common;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -9,15 +8,10 @@ namespace Beast.Claw.Editor
 {
     partial struct EditorUI
     {
-        public void SaveAssetDialog(string fileName, Object obj)
+        public void SaveFileDialog(string fileName, Action<string> action)
         {
-            SaveAssetDialog(fileName, (path) => { AssetDatabase.CreateAsset(obj, path); });
-        }
-
-        public void SaveAssetDialog(string fileName, Action<string> action)
-        {
-            fileName.ValidateNotEmpty(nameof(fileName));
-            action.ValidateNotNull("SaveAssetDialog : action");
+            fileName.ValidateNotEmptyOrNullThrowException(nameof(fileName));
+            action.ValidateNotNullThrowException("SaveAssetDialog : action");
 
             string path = EditorUtility.SaveFilePanel(
                 "Save asset",
@@ -26,6 +20,18 @@ namespace Beast.Claw.Editor
                 Path.GetExtension(fileName).Replace(".", ""));
 
             action.Invoke(path);
+        }
+        
+        public string SaveFileDialog(string fileName, string defaultPath)
+        {
+            fileName.ValidateNotEmptyOrNullThrowException(nameof(fileName));
+            defaultPath.ValidateNotEmptyOrNullThrowException(nameof(defaultPath));
+
+            return EditorUtility.SaveFilePanel(
+                "Save asset",
+                defaultPath,
+                Path.GetFileNameWithoutExtension(fileName),
+                Path.GetExtension(fileName).Replace(".", ""));
         }
     }
 }

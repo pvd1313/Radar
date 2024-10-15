@@ -1,6 +1,5 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.Common;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
@@ -30,35 +29,29 @@ namespace Beast.Radar.Graphic.Terrain
             waterFlood01 = stream.ReadFloat();
         }
         
-        public bool IsValid(out string errorMessage)
+        public string Validate()
         {
-            errorMessage = null;
-            
             if (seed01 < 0 || seed01 > 1)
             {
-                errorMessage = $"Invalid seed ({seed01})";
-                return false;
+                return $"Invalid seed ({seed01})";
             }
 
             if (size.x < 0 || size.x > 4096)
             {
-                errorMessage = $"Invalid size ({size})";
-                return false;
+                return $"Invalid size ({size})";
             }
 
             if (biomeScale99 <= 0)
             {
-                errorMessage = $"Invalid biome scale ({biomeScale99}";
-                return false;
+                return $"Invalid biome scale ({biomeScale99}";
             }
 
             if (waterFlood01 < 0 || waterFlood01 > 1)
             {
-                errorMessage = $"Invalid water flood ({waterFlood01})";
-                return false;
+                return $"Invalid water flood ({waterFlood01})";
             }
 
-            return true;
+            return null;
         }
     }
 }

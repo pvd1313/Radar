@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Beast.Radar.GoogleSheet
+namespace Beast.Radar.Editor.GoogleSheet
 {
     public class JsonObject
     {

@@ -1,7 +1,14 @@
 {
     "name": "Radar.Editor",
     "rootNamespace": "Beast.Radar.Editor",
-    "references": ["GUID:7fa11e63903d1b44493986f75a774321"],
+    "references": [
+        "GUID:7fa11e63903d1b44493986f75a774321",
+        "GUID:e09cf799e5bb1b644a63dbf3dac33b70",
+        "GUID:3ca8674318e44f34db196a44ad18d7f8",
+        "GUID:9191dbb2e27df304f93697312d879fb1",
+        "GUID:4df08a2d40dbbef42987c1824b293eaf",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
     "includePlatforms": [
         "Editor"
     ],

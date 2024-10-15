@@ -16,7 +16,7 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
-        private readonly ITerrainDetailRender _terrain;
+        private readonly ITerrainIndexRender _terrain;
         private readonly RenderConfig _config;
 
         private Material _renderMaterial;
@@ -29,7 +29,7 @@ namespace Beast.Radar.Graphic.Terrain
             ICameraTransform camera, 
             GraphicLibrary library, 
             IScreen screen,
-            ITerrainDetailRender terrain,
+            ITerrainIndexRender terrain,
             RenderConfig config)
         {
             _camera = camera;
@@ -108,6 +108,11 @@ namespace Beast.Radar.Graphic.Terrain
             
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _solverMaterial.SetVector("_TileGridSize", gridSize);
+
+            TerrainTileAtlas atlas = _library.terrainTileAtlas.atlas;
+            
+            _solverMaterial.SetTexture("_TileAtlasConfig", atlas.configTexture);
+            _solverMaterial.SetVector("_TileAtlasTileCount", atlas.tileCount);
             
             _solverMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
             _solverMaterial.SetVector("_TerrainUVOffset", _terrain.WorldToUVOffset(worldOrigin));
@@ -126,7 +131,7 @@ namespace Beast.Radar.Graphic.Terrain
                 size = solverTextureSize,
                 antiAliasing = 1,
                 readWrite = RenderTextureReadWrite.Linear, 
-                format = RenderTextureFormat.RGHalf,
+                format = RenderTextureFormat.ARGBHalf,
                 filterMode = FilterMode.Point
             });
         
@@ -156,15 +161,13 @@ namespace Beast.Radar.Graphic.Terrain
                 matProps = new MaterialPropertyBlock()
             };
 
-            TerrainTileAtlas atlas = _library.terrainTileAtlas;
+            TerrainTileAtlas atlas = _library.terrainTileAtlas.atlas;
         
             renderParams.matProps.SetVector("_TileGridSize", gridSize);
-            renderParams.matProps.SetTexture("_TileAtlas", atlas.atlasTexture);
-            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.atlasTexture.Size());
+            renderParams.matProps.SetTexture("_TileAtlas", atlas.mainTexture);
+            renderParams.matProps.SetVector("_TileAtlasWidthHeight", atlas.mainTexture.Size());
             renderParams.matProps.SetVector("_TileAtlasTileCount", atlas.tileCount);
-            renderParams.matProps.SetVector("_TileBlendCenter", atlas.tileBlendCenter);
-            renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.astlasPPU);
-            renderParams.matProps.SetFloat("_RenderYCrop", atlas.renderYCrop);
+            renderParams.matProps.SetFloat("_TileAtlasPPU", atlas.pixelsPerTile);
             renderParams.matProps.SetTexture("_SolverTexture", solverTexture);
             renderParams.matProps.SetFloat("_SolverSize", solverTexture.width);
             renderParams.matProps.SetVector("_OutputSize", _screen.Size);

@@ -3,7 +3,6 @@ using System.Linq;
 using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
@@ -12,22 +11,14 @@ namespace Beast.Claw.Editor.Window
     {
         [SerializeField] private bool _clearOnEnterPlayerMode;
         [SerializeField] private float2 _scrollPosition;
-        [SerializeField] private UnitySerializableDictionary<string, bool> _folds;
-        [SerializeField] private GUILayoutOption[] _orderButtonWidth;
-        [SerializeField] private GUILayoutOption[] _controlButtonWidth;
-        [SerializeField] private List<string> _drawOrder;
+        [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
+        [SerializeField] private GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.OneCharButtonSize);
+        [SerializeField] private GUILayoutOption _controlButtonWidth = GUILayout.Width(60);
+        [SerializeField] private List<string> _drawOrder = new();
         
         private bool _isPlaying;
-        
-        protected override void Initialize()
-        {
-            _folds = new UnitySerializableDictionary<string, bool>();
-            _orderButtonWidth = new[] { GUILayout.Width(20) };
-            _controlButtonWidth = new[] { GUILayout.Width(60) };
-            _drawOrder = new List<string>();
-        }
 
-        protected override void OnInspectorGUI(EditorUI ui)
+        protected override void InspectorUI()
         {
             if (_isPlaying != Application.isPlaying)
             {
@@ -39,11 +30,11 @@ namespace Beast.Claw.Editor.Window
                 }
             }
 
-            ui.WithOption(_controlButtonWidth).Horizontal(ui =>
+            flow.Option(_controlButtonWidth).Horizontal(ui =>
             {
-                ui.Button("Clear", ui => BDebug.ClearTrackStorage());
-                ui.Button("Open", ui => _setAllFolds(true));
-                ui.Button("Close", ui => _setAllFolds(false));
+                ui.Button("Clear", BDebug.ClearTrackStorage);
+                ui.Button("Open", () => _setAllFolds(true));
+                ui.Button("Close", () => _setAllFolds(false));
                 ui.Button("Reset", _reset);
                 ui.CheckBox("Play Mode Clear", ref _clearOnEnterPlayerMode);
             });
@@ -56,9 +47,9 @@ namespace Beast.Claw.Editor.Window
                 }
             }
 
-            List<string> newDrawOrder = _drawOrder;
-            
-            ui.VerticalScroll(ref _scrollPosition, ui =>
+            (int a, int b) swapIndex = default;
+
+            flow.Vertical().Scroll(ref _scrollPosition, ui =>
             {
                 for (int i = 0; i < _drawOrder.Count; i++)
                 {
@@ -66,40 +57,32 @@ namespace Beast.Claw.Editor.Window
 
                     _folds.TryGetValue(storageName, out bool foldState);
 
-                    ui.Horizontal(ui =>
+                    flow.Horizontal(ui =>
                     {
-                        foldState = EditorGUILayout.Foldout(foldState, storageName);
+                        ui.Foldout(storageName, ref foldState);
 
-                        ui.WithOption(_orderButtonWidth, ui =>
+                        flow.Option(_orderButtonWidth, ui =>
                         {
-                            ui.Button("↑", ui =>
-                            {
-                                newDrawOrder = new List<string>(_drawOrder);
-                                newDrawOrder.TrySwap(i, i - 1);
-                            });
-                            ui.Button("↓", ui =>
-                            {
-                                newDrawOrder = new List<string>(_drawOrder);
-                                newDrawOrder.TrySwap(i, i + 1);
-                            });
+                            ui.Button(EditorUI.CharUpArrow, () => swapIndex = (i, i - 1));
+                            ui.Button(EditorUI.CharDownArrow, () => swapIndex = (i, i + 1));
                         });
                     });
 
                     _folds[storageName] = foldState;
-                    
+
                     if (foldState)
                     {
-                        ui.IndentLevel(1, ui =>
+                        flow.Indent(ui =>
                         {
                             BDebug.TrackStorages.TryGetValue(storageName, out DebugTrackStorage trackStorage);
                             _trackStorageUI(ui, trackStorage);
-                            GUILayout.Space(8);
+                            ui.Space(8);
                         });
                     }
                 }
             });
 
-            _drawOrder = newDrawOrder;
+            _drawOrder.TrySwap(swapIndex.a, swapIndex.b);
             
             Repaint();
         }
@@ -143,7 +126,7 @@ namespace Beast.Claw.Editor.Window
             }
         }
 
-        private void _reset(EditorUI ui)
+        private void _reset()
         {
             _drawOrder.Clear();
             _folds.Clear();

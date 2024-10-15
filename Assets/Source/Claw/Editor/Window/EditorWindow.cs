@@ -1,5 +1,4 @@
-﻿using System;
-using Beast.Claw.Attributes;
+﻿using Beast.Claw.Attributes;
 using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
@@ -7,34 +6,33 @@ namespace Beast.Claw.Editor.Window
     [FancyAsset]
     public abstract class EditorWindow : UnityEditor.EditorWindow
     {
-        private EditorUI _ui;
-        
-        protected abstract void Initialize();
+        public IEditorFlow flow => _flow.Begin();
 
+        private EditorFlow _flow;
+
+        protected abstract void InspectorUI();
+        
         protected abstract void Dispose();
         
-        protected abstract void OnInspectorGUI(EditorUI ui);
-
-        protected EditorWindow()
+        private void OnGUI()
         {
-            Initialize();
+            _flow ??= new EditorFlow();
+
+            try
+            {
+                InspectorUI();
+                
+                _flow.CheckFlowIsFinished();
+            }
+            catch (ExitGUIException)
+            {
+                _flow.TerminateFlow();
+            }
         }
 
         private void OnDestroy()
         {
             Dispose();
-        }
-
-        private void OnGUI()
-        {
-            _ui = new EditorUI
-            {
-                success = true,
-                niceLabelsEnabled = true,
-                layoutOptions = Array.Empty<GUILayoutOption>(),
-            };
-            
-            _ui.TryCatch(OnInspectorGUI, out bool _);
         }
     }
 }
