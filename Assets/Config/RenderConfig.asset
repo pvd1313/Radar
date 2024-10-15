@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainTileCountLimit: 100000
   terrainTilePixelSizeMin: 4
+  terrainTileDenoiseScale: 6

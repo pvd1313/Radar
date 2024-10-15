@@ -1,5 +1,5 @@
-﻿#ifndef BEAST_CG_INCLUDE
-#define BEAST_CG_INCLUDE
+﻿#ifndef RADAR_CG_INCLUDE
+#define RADAR_CG_INCLUDE
 
 struct BeastIsometricTile
 {

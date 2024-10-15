@@ -18,10 +18,11 @@ namespace Beast.Radar.Graphic.Terrain
         public float2 TexelSize => _texelSize;
         public float ViewDistance => _viewDistance;
 
+        public float RenderDistance => _renderDistance;
+
         private readonly GameModel _game;
         private readonly IScreen _screen;
         private readonly ITerrainBakedTexture _bakedTerrain;
-        private readonly ITerrainBaker _baker;
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
 
@@ -41,15 +42,13 @@ namespace Beast.Radar.Graphic.Terrain
         public TerrainIndexRender(
             GameModel game,
             IScreen screen,
-            ITerrainBakedTexture bakedTerrain, 
-            ITerrainBaker baker,
+            ITerrainBakedTexture bakedTerrain,
             GraphicLibrary library,
             ICameraTransform camera)
         {
             _game = game;
             _screen = screen;
             _bakedTerrain = bakedTerrain;
-            _baker = baker;
             _library = library;
             _camera = camera;
         }
@@ -65,11 +64,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             _dispose();
             
-            _renderMaterial = BGraphic.CreateMaterial(this, new MaterialParameters
-            {
-                name = "Render",
-                shader = _library.terrainIndexShader,
-            });
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrainIndexShader);
 
             _renderTextureForScreenSize = _screen.Size;
 

@@ -47,8 +47,7 @@
             float _OutputAspect;
             float _OutputHeight;
             float2 _OutputCenter;
-
-            #define MAP_RENDER_PPU 100;
+            
             #define NOISE_OFFSET_0 float2(8, 8)
             #define NOISE_POWER_0 float2(0.3, 0.2)
             #define NOISE_OFFSET_1 float2(16, 16)

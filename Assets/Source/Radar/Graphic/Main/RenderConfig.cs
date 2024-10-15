@@ -6,5 +6,6 @@ namespace Beast.Radar.Graphic
     {
         public int terrainTileCountLimit;
         public int terrainTilePixelSizeMin;
+        public float terrainTileDenoiseScale;
     }
 }

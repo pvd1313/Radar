@@ -16,7 +16,7 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
-        private readonly ITerrainIndexRender _terrain;
+        private readonly ITerrainIndexRender _terrainIndex;
         private readonly RenderConfig _config;
 
         private Material _renderMaterial;
@@ -29,13 +29,13 @@ namespace Beast.Radar.Graphic.Terrain
             ICameraTransform camera, 
             GraphicLibrary library, 
             IScreen screen,
-            ITerrainIndexRender terrain,
+            ITerrainIndexRender terrainIndex,
             RenderConfig config)
         {
             _camera = camera;
             _library = library;
             _screen = screen;
-            _terrain = terrain;
+            _terrainIndex = terrainIndex;
             _config = config;
         }
         
@@ -56,7 +56,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void _render()
         {
-            if (!_terrain.IsReady)
+            if (!_terrainIndex.IsReady)
             {
                 return;
             }
@@ -102,7 +102,7 @@ namespace Beast.Radar.Graphic.Terrain
             BGraphic.DisposeRenderTexture(solverTexture);
         }
 
-        private RenderTexture _runTileSolver(float2 worldOrigin, int2 gridSize)
+        private RenderTexture _runTileSolver(float2 worldPoint, int2 gridSize)
         {
             int tileCount = _tileCountFromGridSize(gridSize);
             
@@ -114,13 +114,16 @@ namespace Beast.Radar.Graphic.Terrain
             _solverMaterial.SetTexture("_TileAtlasConfig", atlas.configTexture);
             _solverMaterial.SetVector("_TileAtlasTileCount", atlas.tileCount);
             
-            _solverMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
-            _solverMaterial.SetVector("_TerrainUVOffset", _terrain.WorldToUVOffset(worldOrigin));
-            _solverMaterial.SetVector("_TerrainTexelSize", _terrain.TexelSize);
+            _solverMaterial.SetTexture("_TerrainTexture", _terrainIndex.Texture);
+            _solverMaterial.SetVector("_TerrainUVOffset", _terrainIndex.WorldToUVOffset(worldPoint));
+            _solverMaterial.SetVector("_TerrainTexelSize", _terrainIndex.TexelSize);
+            
+            float2 noiseTexelSize = _terrainIndex.TexelSize * _config.terrainTileDenoiseScale;
+            float2 noiseUVOffset = worldPoint / _terrainIndex.RenderDistance * _config.terrainTileDenoiseScale;
             
             _solverMaterial.SetTexture("_NoiseTexture", _library.terrainTileSolverNoiseTexture);
-            _solverMaterial.SetVector("_NoiseTextureSize", _library.terrainTileSolverNoiseTexture.Size());
-            _solverMaterial.SetVector("_NoiseWorldOffset", worldOrigin);
+            _solverMaterial.SetVector("_NoiseTexelSize",  noiseTexelSize);
+            _solverMaterial.SetVector("_NoiseUVOffset", noiseUVOffset);
             
             _solverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
         
