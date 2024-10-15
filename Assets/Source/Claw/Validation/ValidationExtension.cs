@@ -24,7 +24,7 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNullThrowException<T>(this T obj, string objName) where T : class
+        public static void ValidateNotNullThrowException<T>(this T obj, string objName)
         {
             if (obj == null)
             {
@@ -33,7 +33,7 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotEmptyThrowException(this string text, string objName)
+        public static void ValidateNotEmptyOrNullThrowException(this string text, string objName)
         {
             if (string.IsNullOrEmpty(text))
             {

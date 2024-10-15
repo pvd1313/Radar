@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public partial class EditorFlow
+    public partial class EditorFlow : IEditorFlow
     {
         private enum ECommandType
         {
@@ -25,6 +25,7 @@ namespace Beast.Claw.Editor
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<ECommandType> _commands = new();
         private readonly List<GUILayoutOption> _options = new();
+        private readonly Empty _emptyFlow = new ();
 
         private void _push(ECommandType command)
         {

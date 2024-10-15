@@ -159,39 +159,45 @@ namespace Beast.Claw.Graphic
             Object.Destroy(material);
         }
 
-        public static Texture2D CreateTexture2DFromRenderTexture<T>(T owner, Texture2DParametersA input)
+        public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input)
         {
+            owner.ValidateNotNullThrowException(nameof(owner));
             input.ValidateThrowException();
 
-            Texture2D texture = new (
-                input.sourceTexture.width,
-                input.sourceTexture.height,
+            return new Texture2D(
+                input.size.x,
+                input.size.y,
                 input.format,
                 input.mipChain,
                 input.isLinear,
-                true)
+                input.createInitialized)
             {
-                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
-                filterMode = input.filterMode
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+                filterMode = input.filterMode,
+                wrapMode = input.wrapMode
             };
+        }
+
+        public static void BlitRenderTextureTo2D(RenderTexture sourceTexture, Texture2D targetTexture)
+        {
+            sourceTexture.ValidateNotNullThrowException(nameof(sourceTexture));
+            targetTexture.ValidateNotNullThrowException(nameof(targetTexture));
             
             RenderTexture renderTextureBak = RenderTexture.active;
             
             try
             {
-                RenderTexture.active = input.sourceTexture;
+                RenderTexture.active = sourceTexture;
                 
-                Rect rect = new (0, 0, input.sourceTexture.width, input.sourceTexture.height);
-                texture.ReadPixels(rect, 0, 0, input.mipChain);
+                Rect rect = new (0, 0, targetTexture.width, targetTexture.height);
+                targetTexture.ReadPixels(rect, 0, 0, targetTexture.mipmapCount > 0);
                 
-                texture.Apply();
+                targetTexture.Apply();
             }
             finally
             {
                 RenderTexture.active = renderTextureBak;
             }
-
-            return texture;
         }
 
         public static void DrawTexture2DToRenderTexture(Texture2DToRenderTexture input)

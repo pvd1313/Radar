@@ -35,7 +35,7 @@ namespace Beast.Claw.Editor.Window
                 ui.AssertIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
             });
             
-            flow.Horizontal().Enabled(!result.errorsEncountered,ui =>
+            flow.Horizontal().Enabled(!result.hasErrors,ui =>
             {
                 ui.Button("Bake", BakeMap);
 
@@ -53,7 +53,7 @@ namespace Beast.Claw.Editor.Window
 
         private void SaveTexture(EditorUI ui)
         {
-            ui.SaveAssetDialog("BackedTexture.png", (path) =>
+            ui.SaveFileDialog("BackedTexture.png", (path) =>
             {
                 byte[] bin = _bakedTexture.EncodeToPNG();
                 
@@ -99,27 +99,37 @@ namespace Beast.Claw.Editor.Window
                 {
                     DestroyImmediate(_bakedTexture);
                 }
-                
-                _bakedTexture = BGraphic.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
+
+                _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
                 {
                     format = _outputTextureFormat,
                     isLinear = true,
                     mipChain = false,
-                    sourceTexture = renderTextureBig,
+                    createInitialized = true,
+                    size = renderTextureBig.Size(),
+                    filterMode = renderTextureBig.filterMode,
+                    wrapMode = renderTextureBig.wrapMode,
                 });
+
+                BGraphic.BlitRenderTextureTo2D(renderTextureBig, _bakedTexture);
 
                 if (_previewTexture != null)
                 {
                     DestroyImmediate(_previewTexture);
                 }
 
-                _previewTexture = BGraphic.CreateTexture2DFromRenderTexture(this, new Texture2DParametersA
+                _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
                 {
                     format = TextureFormat.RGBA32,
                     isLinear = true,
                     mipChain = false,
-                    sourceTexture = renderTextureSmall,
+                    createInitialized = true,
+                    filterMode = FilterMode.Point,
+                    size = renderTextureSmall.Size(),
+                    wrapMode = renderTextureSmall.wrapMode
                 });
+
+                BGraphic.BlitRenderTextureTo2D(renderTextureSmall, _previewTexture);
             }
             finally
             {

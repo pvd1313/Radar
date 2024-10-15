@@ -110,7 +110,7 @@ namespace Beast.Claw.GameCycle
         public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) 
             where TOwner : class
         {
-            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
             
             if (_isSubscribingListeners)
@@ -159,7 +159,7 @@ namespace Beast.Claw.GameCycle
 
         public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
         {
-            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
             
             if (_allUpdateIsBroken)
@@ -209,7 +209,7 @@ namespace Beast.Claw.GameCycle
             string eventID, 
             Func<UniTask<OperationResult>> action) where TOwner : class, IGameCycleListener
         {
-            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
             action.ValidateNotNullThrowException(nameof(action));
             
@@ -243,7 +243,7 @@ namespace Beast.Claw.GameCycle
             Action action) where TOwner : class, IGameCycleListener
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            eventID.ValidateNotEmptyThrowException(nameof(eventID));
+            eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             action.ValidateNotNullThrowException(nameof(action));
             
             if (!_updateEventIDs.Contains(eventID))

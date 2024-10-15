@@ -10,7 +10,8 @@ namespace Beast.Claw.Editor
         public const string CharPlus = "+";
         public const string CharCross = "x";
         public const string CharA = "A"; 
-        public const int SingleCharButtonSize = 20;
+        public const int OneCharButtonSize = 20;
+        public const int MinorSpace = 8;
 
         public EditorFlow flow;
         public bool niceLabelsEnabled;

@@ -12,7 +12,7 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private bool _clearOnEnterPlayerMode;
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
-        [SerializeField] private GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.SingleCharButtonSize);
+        [SerializeField] private GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.OneCharButtonSize);
         [SerializeField] private GUILayoutOption _controlButtonWidth = GUILayout.Width(60);
         [SerializeField] private List<string> _drawOrder = new();
         

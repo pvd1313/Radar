@@ -26,7 +26,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        public EditorFlow Begin()
+        public IEditorFlow Begin()
         {
             _commandStackSize.Push(0);
 
@@ -38,7 +38,7 @@ namespace Beast.Claw.Editor
             EditorUIResult result = new ()
             {
                 changesDetected = false,
-                errorsEncountered = false,
+                hasErrors = false,
             };
 
             try
@@ -55,14 +55,14 @@ namespace Beast.Claw.Editor
             {
                 EditorGUILayout.HelpBox(e.Message, MessageType.Warning);
 
-                result.errorsEncountered = true;
+                result.hasErrors = true;
             }
 
             catch (ValidationException e)
             {
                 EditorGUILayout.HelpBox(e.Message, MessageType.Warning);
 
-                result.errorsEncountered = true;
+                result.hasErrors = true;
             }
 
             catch (ExitGUIException)
@@ -80,20 +80,20 @@ namespace Beast.Claw.Editor
 
                 BDebug.StaticLogException(e);
 
-                result.errorsEncountered = true;
+                result.hasErrors = true;
 
             }
 
             _undoLastCommands(ref result);
 
-            result.errorsEncountered |= uiErrorsEncountered;
+            result.hasErrors |= uiErrorsEncountered;
             
             uiErrorsEncountered = false;
 
             return result;
         }
 
-        public EditorFlow Enabled(bool isEnabled)
+        public IEditorFlow Enabled(bool isEnabled)
         {
             _push(ECommandType.DisabledGroup);
             
@@ -102,7 +102,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Vertical()
+        public IEditorFlow Vertical()
         {
             _push(ECommandType.BeginVertical);
             
@@ -111,7 +111,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Horizontal()
+        public IEditorFlow Horizontal()
         {
             _push(ECommandType.BeginHorizontal);
             
@@ -120,7 +120,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Indent()
+        public IEditorFlow Indent()
         {
             _push(ECommandType.AddIndent);
             
@@ -129,7 +129,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Option(GUILayoutOption option)
+        public IEditorFlow Option(GUILayoutOption option)
         {
             _push(ECommandType.LayoutOption);
 
@@ -138,7 +138,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Scroll(ref float2 scrollPosition)
+        public IEditorFlow Scroll(ref float2 scrollPosition)
         {
             _push(ECommandType.ScrollView);
 
@@ -147,11 +147,25 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public EditorFlow Spy()
+        public IEditorFlow Spy()
         {
             _push(ECommandType.ChangeCheck);
             
             EditorGUI.BeginChangeCheck();
+
+            return this;
+        }
+
+        public IEditorFlow If(bool condition)
+        {
+            if (!condition)
+            {
+                EditorUIResult uiResult = default;
+                
+                _undoLastCommands(ref uiResult);
+
+                return _emptyFlow;
+            }
 
             return this;
         }

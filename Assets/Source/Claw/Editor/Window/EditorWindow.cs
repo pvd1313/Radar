@@ -6,7 +6,7 @@ namespace Beast.Claw.Editor.Window
     [FancyAsset]
     public abstract class EditorWindow : UnityEditor.EditorWindow
     {
-        public EditorFlow flow => _flow.Begin();
+        public IEditorFlow flow => _flow.Begin();
 
         private EditorFlow _flow;
 

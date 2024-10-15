@@ -8,14 +8,9 @@ namespace Beast.Claw.Editor
 {
     partial struct EditorUI
     {
-        public void SaveAssetDialog(string fileName, Object obj)
+        public void SaveFileDialog(string fileName, Action<string> action)
         {
-            SaveAssetDialog(fileName, (path) => { AssetDatabase.CreateAsset(obj, path); });
-        }
-
-        public void SaveAssetDialog(string fileName, Action<string> action)
-        {
-            fileName.ValidateNotEmptyThrowException(nameof(fileName));
+            fileName.ValidateNotEmptyOrNullThrowException(nameof(fileName));
             action.ValidateNotNullThrowException("SaveAssetDialog : action");
 
             string path = EditorUtility.SaveFilePanel(
@@ -26,19 +21,17 @@ namespace Beast.Claw.Editor
 
             action.Invoke(path);
         }
-
-        public void SaveAssetDialogWithDefaultPath(string fileName, string defaultPath, Action<string> action)
+        
+        public string SaveFileDialog(string fileName, string defaultPath)
         {
-            fileName.ValidateNotEmptyThrowException(nameof(fileName));
-            defaultPath.ValidateNotEmptyThrowException(nameof(defaultPath));
+            fileName.ValidateNotEmptyOrNullThrowException(nameof(fileName));
+            defaultPath.ValidateNotEmptyOrNullThrowException(nameof(defaultPath));
 
-            string path = EditorUtility.SaveFilePanel(
+            return EditorUtility.SaveFilePanel(
                 "Save asset",
                 defaultPath,
                 Path.GetFileNameWithoutExtension(fileName),
                 Path.GetExtension(fileName).Replace(".", ""));
-
-            action.Invoke(path);
         }
     }
 }

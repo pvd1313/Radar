@@ -12,8 +12,10 @@ namespace Beast.Radar.Graphic.Terrain
         private static HashSet<int> _indexHash;
         
         public Texture2D mainTexture;
+        public Texture2D colorTexture;
+        public Texture2D configTexture;
 
-#if BEAST_DEVELOPMENT
+#if UNITY_EDITOR
         public List<TerrainTileSprite> sprites;
 #endif
         
