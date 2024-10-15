@@ -27,6 +27,7 @@ namespace Beast.Radar.GameCycle
             if (Application.isEditor)
             {
                 _gameSave.LoadDefaultSave();
+                _windows.Show(WindowID.MainHUD);
             }
             else
             {

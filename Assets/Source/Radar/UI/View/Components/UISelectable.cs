@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,7 +9,7 @@ namespace Beast.Radar.UI
 {
     public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        public bool IsSelected { get; private set; }
+   
         public event Action<ESelectionZone, int2> Selected;
         public event Action<ESelectionZone, int2> Deselected;
 
@@ -17,6 +18,16 @@ namespace Beast.Radar.UI
         private ESelectionZone _zone;
         private int2 _index;
         private bool _isHighlighted;
+
+        /*
+        private void OnEnable()
+        {
+            if (IsSelected())
+            {
+                Select();
+            }
+        }
+        */
 
         private void OnDisable()
         {
@@ -41,35 +52,41 @@ namespace Beast.Radar.UI
         public void OnPointerEnter(PointerEventData eventData)
         {
             Select();
+            BDebug.LogInfo(this, $"{name} enter");
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             Deselect();
+            BDebug.LogInfo(this, $"{name} exit");
         }
 
         public void Select()
         {
             _selectable.Select();
             Selected?.Invoke(_zone, _index);
-            IsSelected = true;
+            BDebug.LogInfo(this, $"{name} select");
         }
 
         public void Deselect()
         {
-            IsSelected = false;
-
-            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == _selectable.gameObject)
+            if (IsSelected())
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
 
+            BDebug.LogInfo(this, $"{name} deselect");
             Deselected?.Invoke(_zone, _index);
         }
 
         public void SetInteractable(bool isInteractable)
         {
             _selectable.interactable = isInteractable;
+        }
+        
+        public bool IsSelected()
+        {
+            return EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject;
         }
     }
 }

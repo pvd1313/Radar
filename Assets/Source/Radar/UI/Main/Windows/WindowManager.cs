@@ -55,7 +55,7 @@ namespace Beast.Radar.UI
             }
             
             view.transform.SetParent(_canvas.transform, false);
-            _allWindows.Add(windowID, window);
+            _allWindows.Add(windowID, window);  
         }
 
         public void Show(string windowID)

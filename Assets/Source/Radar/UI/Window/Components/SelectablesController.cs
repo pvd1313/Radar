@@ -288,13 +288,17 @@ namespace Beast.Radar.UI
                 {
                     SelectableGridData grid = _selectableGrids.FirstOrDefault().Value;
                     _currentSelectable = grid.selectables[grid.currentIndex.x, grid.currentIndex.y];
+                   
+                    if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
+                    {
+                        _currentSelectable.Select();
+                    }
                 }
-
-                if (!(_selectableGrids.Count == 1 && _selectableGrids.ContainsKey(ESelectionZone.Trigger)))
+                else
                 {
-                    _currentSelectable.Select();
+                    _currentSelectable.Select();   
                 }
-
+                
                 SubscribeInputActions();
             }
         }
