@@ -19,10 +19,8 @@ namespace Beast.Radar.Graphic.Terrain
         public List<TerrainTileSprite> sprites;
 #endif
         
-        public float renderYCrop;
         public int2 tileCount;
-        public float2 tileBlendCenter;
-        public int atlasPPU;
+        public int pixelsPerTile;
 
         public string Validate()
         {
@@ -31,9 +29,9 @@ namespace Beast.Radar.Graphic.Terrain
                 return $"Invalid tile count {tileCount}";
             }
 
-            if (atlasPPU <= 0)
+            if (pixelsPerTile <= 0)
             {
-                return $"Invalid atlas PPU {atlasPPU}";
+                return $"Invalid atlas PPU {pixelsPerTile}";
             }
 
 #if BEAST_DEVELOPMENT
@@ -49,7 +47,7 @@ namespace Beast.Radar.Graphic.Terrain
                         return $"Sprite '{sprite.name}' has issues: {errorMessage}";
                     }
 
-                    if (sprite.texture.width != atlasPPU || sprite.texture.height != atlasPPU)
+                    if (sprite.texture.width != pixelsPerTile || sprite.texture.height != pixelsPerTile)
                     {
                         return $"Sprite '{sprite.name}' has size that does not equal to atlas PPU";
                     }

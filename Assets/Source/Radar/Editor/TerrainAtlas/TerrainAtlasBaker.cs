@@ -11,7 +11,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
     {
         public Texture2D BakeMainTexture(TerrainTileAtlas atlas)
         {
-            int2 textureSize = atlas.tileCount * atlas.atlasPPU;
+            int2 textureSize = atlas.tileCount * atlas.pixelsPerTile;
             
             RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new NewTempRenderTextureData
             {
@@ -24,8 +24,8 @@ namespace Beast.Radar.Editor.TerrainAtlas
 
             foreach (TerrainTileSprite tile in atlas.sprites)
             {
-                int xOffset = tile.index % atlas.tileCount.y * atlas.atlasPPU;
-                int yOffset = tile.index / atlas.tileCount.y * atlas.atlasPPU;
+                int xOffset = tile.index % atlas.tileCount.x * atlas.pixelsPerTile;
+                int yOffset = tile.index / atlas.tileCount.x * atlas.pixelsPerTile;
                 
                 BGraphic.DrawTexture2DToRenderTexture(new Texture2DToRenderTexture
                 {
@@ -69,8 +69,8 @@ namespace Beast.Radar.Editor.TerrainAtlas
 
             foreach (TerrainTileSprite sprite in tileAtlas.sprites)
             {
-                int x = sprite.index % resultTexture.height;
-                int y = sprite.index / resultTexture.height;
+                int x = sprite.index % resultTexture.width;
+                int y = sprite.index / resultTexture.width;
 
                 resultTexture.SetPixel(x, y, sprite.averageColor);
             }
@@ -96,8 +96,8 @@ namespace Beast.Radar.Editor.TerrainAtlas
             
             foreach (TerrainTileSprite sprite in tileAtlas.sprites)
             {
-                int x = sprite.index % resultTexture.height;
-                int y = sprite.index / resultTexture.height;
+                int x = sprite.index % resultTexture.width;
+                int y = sprite.index / resultTexture.width;
 
                 Color color = new (sprite.yCropHeight, sprite.yBlendCenter, 0, 0);
 

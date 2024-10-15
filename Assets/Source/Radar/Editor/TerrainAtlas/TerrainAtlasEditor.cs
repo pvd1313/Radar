@@ -96,7 +96,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                     });
                     
                     ui.Int2Field(nameof(atlas.tileCount), ref atlas.tileCount);
-                    ui.IntField(nameof(atlas.atlasPPU), ref atlas.atlasPPU);
+                    ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
                 });
 
                 ui.Space(EditorUI.MinorSpace);
