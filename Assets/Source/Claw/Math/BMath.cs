@@ -46,6 +46,14 @@ namespace Beast.Claw.Math
         {
             return Mathf.Approximately(a, b);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPowerOf2(float x)
+        {
+            float log = Log2(x);
+
+            return Approximately(log, Floor(log));
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float2 a, float2 b)

@@ -214,7 +214,7 @@ namespace Beast.Claw.Graphic
 
             Rect rect = new (
                 input.targetTexturePixelOffset.x, 
-                input.sourceTexture.height - input.targetTexturePixelOffset.y,
+                input.targetTexture.height - input.targetTexturePixelOffset.y - input.sourceTexture.height,
                 input.sourceTexture.width, 
                 input.sourceTexture.height);
             

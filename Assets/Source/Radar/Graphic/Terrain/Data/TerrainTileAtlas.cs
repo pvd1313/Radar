@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw;
+using Beast.Claw.Math;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -32,6 +33,18 @@ namespace Beast.Radar.Graphic.Terrain
             if (pixelsPerTile <= 0)
             {
                 return $"Invalid atlas PPU {pixelsPerTile}";
+            }
+
+            float atlasWidth = tileCount.x * pixelsPerTile;
+            if (!BMath.IsPowerOf2(atlasWidth))
+            {
+                return $"Atlas width ({atlasWidth}) is NPOT";
+            }
+
+            float atlasHeight = tileCount.y * pixelsPerTile;
+            if (!BMath.IsPowerOf2(atlasHeight))
+            {
+                return $"Atlas height ({atlasHeight}) is NPOT";
             }
 
 #if BEAST_DEVELOPMENT
