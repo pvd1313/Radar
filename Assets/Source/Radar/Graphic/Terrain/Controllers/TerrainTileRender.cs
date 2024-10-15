@@ -156,7 +156,7 @@ namespace Beast.Radar.Graphic.Terrain
                 matProps = new MaterialPropertyBlock()
             };
 
-            TerrainTileAtlas atlas = _library.terrainTileAtlas;
+            TerrainTileAtlas atlas = _library.terrainTileAtlas.atlas;
         
             renderParams.matProps.SetVector("_TileGridSize", gridSize);
             renderParams.matProps.SetTexture("_TileAtlas", atlas.mainTexture);

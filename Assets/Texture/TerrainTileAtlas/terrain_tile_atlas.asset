@@ -17,23 +17,23 @@ MonoBehaviour:
     colorTexture: {fileID: 2800000, guid: c4cee56f6f2fa464687c87c572475b84, type: 3}
     configTexture: {fileID: 2800000, guid: 59903cf665a13bc44a9263fbe3e9587d, type: 3}
     sprites:
-    - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
-      name: Water
-      averageColor: {r: 0.36478633, g: 0.5614852, b: 0.7962279, a: 1}
-      yCropHeight: 0.515625
-      yBlendCenter: 0.2421875
-      index: 0
     - texture: {fileID: 2800000, guid: 056b2f0132f809d4c932f6715e6d6b6f, type: 3}
       name: Grass
       averageColor: {r: 0.3857269, g: 0.5959559, b: 0.22601104, a: 1}
       yCropHeight: 0.515625
       yBlendCenter: 0.2421875
+      index: 0
+    - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
+      name: Water
+      averageColor: {r: 0.36478633, g: 0.5614852, b: 0.7962279, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
       index: 1
-    renderYCrop: 0
+    renderYCrop: 0.5
     tileCount:
       x: 2
       y: 2
     tileBlendCenter:
-      x: 0
-      y: 0
+      x: 0.5
+      y: 0.23
     atlasPPU: 64

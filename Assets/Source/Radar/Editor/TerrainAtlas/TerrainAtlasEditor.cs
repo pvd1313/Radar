@@ -38,11 +38,12 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 {
                     flow.Enabled(_atlasAsset != null).Button("Imports Fix", _fixImports);
 
-                    bool hasAllTextures = _atlasAsset.atlas.mainTexture != null &&
+                    bool hasAllTextures = _atlasAsset != null && 
+                                          _atlasAsset.atlas.mainTexture != null &&
                                           _atlasAsset.atlas.colorTexture != null &&
                                           _atlasAsset.atlas.configTexture != null;
 
-                    flow.Spy().Enabled(hasAllTextures).Button("Bake Textures", (ui) =>
+                    flow.Spy().Enabled(hasAllTextures).Button("Bake Textures", ui =>
                     {
                         _bakeMainTexture(ui);
                         _bakeColorTexture(ui);

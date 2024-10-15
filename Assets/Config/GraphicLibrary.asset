@@ -18,16 +18,7 @@ MonoBehaviour:
   terrainColorShader: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
   terrainTileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
   terrainTileRender: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
-  terrainTileAtlas:
-    atlasTexture: {fileID: 2800000, guid: bbe489f11d3aa5f4e9348a5a83584fea, type: 3}
-    renderYCrop: 0
-    tileCount:
-      x: 2
-      y: 2
-    tileBlendCenter:
-      x: 0.5
-      y: 0.23
-    astlasPPU: 64
+  terrainTileAtlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
   terrainDetailNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   terrainTileSolverNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
