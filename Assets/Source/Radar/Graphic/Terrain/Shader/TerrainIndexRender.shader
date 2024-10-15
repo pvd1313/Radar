@@ -1,4 +1,4 @@
-﻿Shader "Beast/Radar/TerrainDetailRender"
+﻿Shader "Beast/Radar/TerrainIndexRender"
 {
     Properties
     {
@@ -22,8 +22,6 @@
             #include "UnityCG.cginc"
             #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
 
-            // #define DRAW_DEBUG_GRID_TEXTURE
-
             struct VertexInput
             {
                 float4 positionOS : POSITION;
@@ -34,11 +32,6 @@
             {
                 float2 mainUV : TEXCOORD0;
                 float2 noiseUV : TEXCOORD1;
-
-#ifdef DRAW_DEBUG_GRID_TEXTURE
-                float2 gridUV : TEXCOORD2;
-#endif
-                
                 float4 positionCS : SV_POSITION;
             };
 
@@ -78,10 +71,11 @@
                 
                 output.noiseUV = screen_to_world_uv(uv, _NoiseMapSize);
 
-#ifdef DRAW_DEBUG_GRID_TEXTURE
-                output.gridUV = screen_to_world_uv(uv, _DebugGridTextureSize);
-                output.gridUV *= MAP_RENDER_PPU;
-#endif
+                // Will not work with index mapping. We have to implement new solution for grid.
+// #ifdef DRAW_DEBUG_GRID_TEXTURE
+//                 output.gridUV = screen_to_world_uv(uv, _DebugGridTextureSize);
+//                 output.gridUV *= MAP_RENDER_PPU;
+// #endif
 
                 return output;
             }
@@ -95,6 +89,13 @@
                 return tex2D(_TerrainTexture, mainUV).r;
             }
 
+            // There will be more complex or index map texture in future.
+            uint terrain_color_to_tile_index(float terrainColor)
+            {
+                // 0 .. 1 just for now. 0 - grass. 1 - water.
+                return saturate(1.0f - terrainColor);
+            }
+
             float4 fragment(FragmentInput input) : SV_Target
             {
                 float4 color0 = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET_0, NOISE_POWER_0);
@@ -102,13 +103,16 @@
 
                 float4 color = saturate((color0 + color1) * 900);
 
-#ifdef DRAW_DEBUG_GRID_TEXTURE
-                float gridColor = tex2D(_DebugGridTexture, input.gridUV).r;
-                float gridTexelSize = _OutputHeight / _DebugGridTextureSize.y;
-                color = lerp(color, gridColor, 0.25 * saturate(1 - gridTexelSize));
-#endif
-                
-                return color;
+                uint tileIndex = terrain_color_to_tile_index(color.r);
+
+                return float4(f16tof32(tileIndex), 0, 0, 0);
+
+                // Will not work with index mapping. We have to implement new solution for grid.
+// #ifdef DRAW_DEBUG_GRID_TEXTURE
+//                 float gridColor = tex2D(_DebugGridTexture, input.gridUV).r;
+//                 float gridTexelSize = _OutputHeight / _DebugGridTextureSize.y;
+//                 color = lerp(color, gridColor, 0.25 * saturate(1 - gridTexelSize));
+// #endif
             }
             
             ENDCG

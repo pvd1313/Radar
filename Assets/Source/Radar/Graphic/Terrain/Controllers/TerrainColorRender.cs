@@ -14,7 +14,7 @@ namespace Beast.Radar.Graphic.Terrain
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
-        private readonly ITerrainDetailRender _terrain;
+        private readonly ITerrainIndexRender _indexRender;
         private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
@@ -22,12 +22,12 @@ namespace Beast.Radar.Graphic.Terrain
         public TerrainColorRender(
             IScreen screen,
             GraphicLibrary library, 
-            ITerrainDetailRender terrain,
+            ITerrainIndexRender indexRender,
             ICameraTransform camera)
         {
             _screen = screen;
             _library = library;
-            _terrain = terrain;
+            _indexRender = indexRender;
             _camera = camera;
         }
         
@@ -60,18 +60,22 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void _render()
         {
-            if (!_terrain.IsReady)
+            if (!_indexRender.IsReady)
             {
                 return;
             }
             
-            float2 renderTextureSize = _terrain.Texture.Size();
-            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _terrain.ViewDistance);
+            float2 renderTextureSize = _indexRender.Texture.Size();
+            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _indexRender.ViewDistance);
             float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
-            _renderMaterial.SetTexture("_TerrainTexture", _terrain.Texture);
-            _renderMaterial.SetVector("_TerrainTextureSize", renderTextureSize);
+            _renderMaterial.SetTexture("_TerrainIndexTexture", _indexRender.Texture);
+            _renderMaterial.SetVector("_TerrainIndexTextureSize", renderTextureSize);
+
+            TerrainTileAtlas atlas = _library.terrainTileAtlas.atlas;
+            _renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
+            _renderMaterial.SetVector("_TileAtlasTileCount", atlas.tileCount);
             
             _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
             _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
@@ -79,7 +83,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
             _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
 
-            float2 outputCenter = _terrain.WorldToUVOffset(_camera.Position);
+            float2 outputCenter = _indexRender.WorldToUVOffset(_camera.Position);
             _renderMaterial.SetVector("_OutputCenter", renderTextureSize * outputCenter);
             
             BGraphic.DrawMesh(new DrawMeshParameters

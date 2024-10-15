@@ -20,6 +20,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
 
             struct VertexInput
             {
@@ -33,12 +34,14 @@
                 float4 positionCS : SV_POSITION;
             };
 
-            sampler2D _TerrainTexture;
-            float2 _TerrainTextureSize;
+            sampler2D _TerrainIndexTexture;
+            float2 _TerrainIndexTextureSize;
+
+            sampler2D _TileAtlasColorTexture;
+            float2 _TileAtlasTileCount;
 
             float4 _UVMatrix0;
             float4 _UVMatrix1;
-            float4x4 _ComplexMatrix;
             
             float _OutputAspect;
             float _OutputHeight;
@@ -60,16 +63,19 @@
                 uv = mul(float2x2(_UVMatrix0), uv);
                 uv = mul(float2x2(_UVMatrix1), uv);
                 
-                output.uv = screen_to_world_uv(uv, _TerrainTextureSize);
+                output.uv = screen_to_world_uv(uv, _TerrainIndexTextureSize);
                 
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float color = tex2D(_TerrainTexture, input.uv).r;
+                uint tileIndex = f32tof16(tex2D(_TerrainIndexTexture, input.uv).r);
+                float2 tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
+                float2 atlasTexelSize = 1.0f / _TileAtlasTileCount;
+                float4 tileColor = tex2D(_TileAtlasColorTexture, tileXY * atlasTexelSize + atlasTexelSize * 0.5f);
                 
-                return color;
+                return tileColor;
             }
             
             ENDCG

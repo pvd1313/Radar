@@ -16,7 +16,7 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
-        private readonly ITerrainDetailRender _terrain;
+        private readonly ITerrainIndexRender _terrain;
         private readonly RenderConfig _config;
 
         private Material _renderMaterial;
@@ -29,7 +29,7 @@ namespace Beast.Radar.Graphic.Terrain
             ICameraTransform camera, 
             GraphicLibrary library, 
             IScreen screen,
-            ITerrainDetailRender terrain,
+            ITerrainIndexRender terrain,
             RenderConfig config)
         {
             _camera = camera;

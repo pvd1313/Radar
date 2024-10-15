@@ -11,10 +11,10 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic.Terrain
 {
-    public class TerrainDetailRender : ITerrainDetailRender, IGameCycleListener
+    public class TerrainIndexRender : ITerrainIndexRender, IGameCycleListener
     {
         public bool IsReady => _isReady;
-        public Texture Texture => _detailTexture;
+        public Texture Texture => _indexTexture;
         public float2 TexelSize => _texelSize;
         public float ViewDistance => _viewDistance;
 
@@ -26,7 +26,7 @@ namespace Beast.Radar.Graphic.Terrain
         private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
-        private RenderTexture _detailTexture;
+        private RenderTexture _indexTexture;
         private int2 _renderTextureForScreenSize;
         private float _textureYScale;
         private float _texelSize;
@@ -38,7 +38,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         private bool _isReady;
 
-        public TerrainDetailRender(
+        public TerrainIndexRender(
             GameModel game,
             IScreen screen,
             ITerrainBakedTexture bakedTerrain, 
@@ -68,7 +68,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial = BGraphic.CreateMaterial(this, new MaterialParameters
             {
                 name = "Render",
-                shader = _library.terrainDetailShader,
+                shader = _library.terrainIndexShader,
             });
 
             _renderTextureForScreenSize = _screen.Size;
@@ -80,8 +80,17 @@ namespace Beast.Radar.Graphic.Terrain
             // We need extra +2 space, because of grid snapping.
             textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount + 2) *
                           WorldTransform.CellTileCount;
+
+            _indexTexture = BGraphic.CreatePermanentRenderTexture(this, new NewPermaRenderTextureData()
+            {
+                mipCount = 0,
+                depth = 0,
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
+                size = textureSize, 
+                format = RenderTextureFormat.RHalf
+            });
             
-            _detailTexture = _baker.Create(this, textureSize, false);
             _textureYScale = textureSize / (float)_screen.Height;
             
             return OperationResult.SuccessSync();
@@ -110,7 +119,7 @@ namespace Beast.Radar.Graphic.Terrain
             }
             
             _viewDistance = _camera.ViewDistance;
-            _cellPixelSize = _detailTexture.height / _viewDistance / _textureYScale;
+            _cellPixelSize = _indexTexture.height / _viewDistance / _textureYScale;
             _renderPosition = _camera.Position;
 
             if (_cellPixelSize > WorldTransform.CellTileCount)
@@ -136,13 +145,13 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetVector("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
 #endif
             
-            _renderMaterial.SetTexture("_NoiseMap", _library.terrainDetailNoiseTexture);
-            _renderMaterial.SetVector("_NoiseMapSize", _library.terrainDetailNoiseTexture.Size());
+            _renderMaterial.SetTexture("_NoiseMap", _library.terrainIndexNoiseTexture);
+            _renderMaterial.SetVector("_NoiseMapSize", _library.terrainIndexNoiseTexture.Size());
             
             BGraphic.Blit(new BlitParameters
             {
                 material = _renderMaterial,
-                targetTexture = _detailTexture
+                targetTexture = _indexTexture
             });
 
             _isReady = true;
@@ -160,10 +169,10 @@ namespace Beast.Radar.Graphic.Terrain
                 _renderMaterial = null;
             }
 
-            if (_detailTexture != null)
+            if (_indexTexture != null)
             {
-                BGraphic.DisposeRenderTexture(_detailTexture);
-                _detailTexture = null;
+                BGraphic.DisposeRenderTexture(_indexTexture);
+                _indexTexture = null;
             }
 
             return OperationResult.SuccessSync();
@@ -171,7 +180,7 @@ namespace Beast.Radar.Graphic.Terrain
         
         private void _debugTrack()
         {
-            BDebug.Track(this, "textureSize", _detailTexture.height);
+            BDebug.Track(this, "textureSize", _indexTexture.height);
             BDebug.Track(this, nameof(_textureYScale), _textureYScale);
             BDebug.Track(this, nameof(_texelSize), _texelSize);
             BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);
