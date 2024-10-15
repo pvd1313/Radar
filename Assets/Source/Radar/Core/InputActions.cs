@@ -310,10 +310,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""id"": ""f184bcfe-dfc6-4d84-a910-e1c564ddc72d"",
             ""actions"": [
                 {
-                    ""name"": ""Navigate"",
+                    ""name"": ""Click"",
                     ""type"": ""PassThrough"",
-                    ""id"": ""7ded50ff-01ed-4988-be6e-04f8fcd0c9a6"",
+                    ""id"": ""2716dedb-ceff-44bc-801e-0e3562cf5d95"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Point"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""4e1e5aef-98ae-4637-a086-712bdafb745a"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""c8179eb4-c16f-4eac-9646-8731f06657dd"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -328,31 +346,31 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Cancel"",
+                    ""name"": ""Select"",
                     ""type"": ""Button"",
-                    ""id"": ""c8179eb4-c16f-4eac-9646-8731f06657dd"",
+                    ""id"": ""02fe9eae-f037-4a28-81e2-90164d7b820f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Point"",
+                    ""name"": ""Navigate"",
                     ""type"": ""PassThrough"",
-                    ""id"": ""4e1e5aef-98ae-4637-a086-712bdafb745a"",
+                    ""id"": ""7ded50ff-01ed-4988-be6e-04f8fcd0c9a6"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": true
+                    ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Click"",
+                    ""name"": ""RightStick"",
                     ""type"": ""PassThrough"",
-                    ""id"": ""2716dedb-ceff-44bc-801e-0e3562cf5d95"",
-                    ""expectedControlType"": ""Button"",
+                    ""id"": ""3e877188-a0b9-4191-a719-50dfdf2ce884"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": true
+                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""ScrollWheel"",
@@ -382,15 +400,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RightStick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""3e877188-a0b9-4191-a719-50dfdf2ce884"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""NorthButton"",
                     ""type"": ""Button"",
                     ""id"": ""51696313-4048-4d59-8677-0576af36a136"",
@@ -412,15 +421,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""name"": ""WestButton"",
                     ""type"": ""Button"",
                     ""id"": ""5e0a0c09-c79f-41b5-8436-17fdcb25d102"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Select"",
-                    ""type"": ""Button"",
-                    ""id"": ""02fe9eae-f037-4a28-81e2-90164d7b820f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -551,83 +551,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fff98be5-961d-4849-b59a-97ce49de6156"",
-                    ""path"": ""<Keyboard>/enter"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;Joystick;XR;MouseAndKeyboard"",
-                    ""action"": ""Submit"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a6455791-27fc-47cc-8c24-5148256c86aa"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;Joystick;XR;MouseAndKeyboard"",
-                    ""action"": ""Cancel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b096f497-785d-427d-8e83-57fa71bb7aee"",
-                    ""path"": ""<Gamepad>/start"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Cancel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5239d8b5-c124-43f6-a1ae-7f20085f3896"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;MouseAndKeyboard"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a12daa76-6b3a-445e-8128-12cfb5949b7b"",
-                    ""path"": ""<Touchscreen>/touch*/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Touch"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a79e6d72-51d8-4934-b141-eec564fa59eb"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;MouseAndKeyboard"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b026216d-2b5e-4982-b999-ddb5afcaab4c"",
-                    ""path"": ""<Touchscreen>/touch*/press"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Touch"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""99e64253-03ec-42fe-9ef7-bd7d59f2222e"",
                     ""path"": ""<Mouse>/scroll"",
                     ""interactions"": """",
@@ -705,22 +628,22 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""e7317f96-f02d-4575-9e41-77efd075a2cc"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""RightStick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""d54b1d46-3f29-4941-848b-dc285be54155"",
                     ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
+                    ""action"": ""NorthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8feeeb8-9f92-4640-a78a-554445019209"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
                     ""action"": ""NorthButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -738,6 +661,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""28eac6df-23f1-42f3-8b90-64ca8a1d4e8b"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""EastButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""b41d4f8d-6fea-49ad-b403-d6b0bd6df0b5"",
                     ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
@@ -749,12 +683,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d7b97e07-021d-49d2-af83-7b72d20fc205"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""id"": ""75a5e4f0-8f6a-44cf-b930-28e0b5215de5"",
+                    ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Submit"",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""WestButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -815,12 +749,111 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""e7317f96-f02d-4575-9e41-77efd075a2cc"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""RightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5239d8b5-c124-43f6-a1ae-7f20085f3896"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a12daa76-6b3a-445e-8128-12cfb5949b7b"",
+                    ""path"": ""<Touchscreen>/touch*/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touch"",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a79e6d72-51d8-4934-b141-eec564fa59eb"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b026216d-2b5e-4982-b999-ddb5afcaab4c"",
+                    ""path"": ""<Touchscreen>/touch*/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touch"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""92c13d98-c2ab-4846-9104-088d34f9e8c8"",
                     ""path"": ""<Gamepad>/select"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fff98be5-961d-4849-b59a-97ce49de6156"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7b97e07-021d-49d2-af83-7b72d20fc205"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a6455791-27fc-47cc-8c24-5148256c86aa"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b096f497-785d-427d-8e83-57fa71bb7aee"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -883,19 +916,19 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
-        m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
-        m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
-        m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
+        m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
+        m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
+        m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
+        m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
+        m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_RightStick = m_UI.FindAction("RightStick", throwIfNotFound: true);
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_Trigger = m_UI.FindAction("Trigger", throwIfNotFound: true);
         m_UI_Shoulder = m_UI.FindAction("Shoulder", throwIfNotFound: true);
-        m_UI_RightStick = m_UI.FindAction("RightStick", throwIfNotFound: true);
         m_UI_NorthButton = m_UI.FindAction("NorthButton", throwIfNotFound: true);
         m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
         m_UI_WestButton = m_UI.FindAction("WestButton", throwIfNotFound: true);
-        m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1043,36 +1076,36 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Navigate;
-    private readonly InputAction m_UI_Submit;
-    private readonly InputAction m_UI_Cancel;
-    private readonly InputAction m_UI_Point;
     private readonly InputAction m_UI_Click;
+    private readonly InputAction m_UI_Point;
+    private readonly InputAction m_UI_Cancel;
+    private readonly InputAction m_UI_Submit;
+    private readonly InputAction m_UI_Select;
+    private readonly InputAction m_UI_Navigate;
+    private readonly InputAction m_UI_RightStick;
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_Trigger;
     private readonly InputAction m_UI_Shoulder;
-    private readonly InputAction m_UI_RightStick;
     private readonly InputAction m_UI_NorthButton;
     private readonly InputAction m_UI_EastButton;
     private readonly InputAction m_UI_WestButton;
-    private readonly InputAction m_UI_Select;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
         public UIActions(@InputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
-        public InputAction @Submit => m_Wrapper.m_UI_Submit;
-        public InputAction @Cancel => m_Wrapper.m_UI_Cancel;
-        public InputAction @Point => m_Wrapper.m_UI_Point;
         public InputAction @Click => m_Wrapper.m_UI_Click;
+        public InputAction @Point => m_Wrapper.m_UI_Point;
+        public InputAction @Cancel => m_Wrapper.m_UI_Cancel;
+        public InputAction @Submit => m_Wrapper.m_UI_Submit;
+        public InputAction @Select => m_Wrapper.m_UI_Select;
+        public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
+        public InputAction @RightStick => m_Wrapper.m_UI_RightStick;
         public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
         public InputAction @Trigger => m_Wrapper.m_UI_Trigger;
         public InputAction @Shoulder => m_Wrapper.m_UI_Shoulder;
-        public InputAction @RightStick => m_Wrapper.m_UI_RightStick;
         public InputAction @NorthButton => m_Wrapper.m_UI_NorthButton;
         public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
         public InputAction @WestButton => m_Wrapper.m_UI_WestButton;
-        public InputAction @Select => m_Wrapper.m_UI_Select;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1082,21 +1115,27 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
-            @Navigate.started += instance.OnNavigate;
-            @Navigate.performed += instance.OnNavigate;
-            @Navigate.canceled += instance.OnNavigate;
-            @Submit.started += instance.OnSubmit;
-            @Submit.performed += instance.OnSubmit;
-            @Submit.canceled += instance.OnSubmit;
-            @Cancel.started += instance.OnCancel;
-            @Cancel.performed += instance.OnCancel;
-            @Cancel.canceled += instance.OnCancel;
-            @Point.started += instance.OnPoint;
-            @Point.performed += instance.OnPoint;
-            @Point.canceled += instance.OnPoint;
             @Click.started += instance.OnClick;
             @Click.performed += instance.OnClick;
             @Click.canceled += instance.OnClick;
+            @Point.started += instance.OnPoint;
+            @Point.performed += instance.OnPoint;
+            @Point.canceled += instance.OnPoint;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @RightStick.started += instance.OnRightStick;
+            @RightStick.performed += instance.OnRightStick;
+            @RightStick.canceled += instance.OnRightStick;
             @ScrollWheel.started += instance.OnScrollWheel;
             @ScrollWheel.performed += instance.OnScrollWheel;
             @ScrollWheel.canceled += instance.OnScrollWheel;
@@ -1106,9 +1145,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Shoulder.started += instance.OnShoulder;
             @Shoulder.performed += instance.OnShoulder;
             @Shoulder.canceled += instance.OnShoulder;
-            @RightStick.started += instance.OnRightStick;
-            @RightStick.performed += instance.OnRightStick;
-            @RightStick.canceled += instance.OnRightStick;
             @NorthButton.started += instance.OnNorthButton;
             @NorthButton.performed += instance.OnNorthButton;
             @NorthButton.canceled += instance.OnNorthButton;
@@ -1118,28 +1154,31 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started += instance.OnWestButton;
             @WestButton.performed += instance.OnWestButton;
             @WestButton.canceled += instance.OnWestButton;
-            @Select.started += instance.OnSelect;
-            @Select.performed += instance.OnSelect;
-            @Select.canceled += instance.OnSelect;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
         {
-            @Navigate.started -= instance.OnNavigate;
-            @Navigate.performed -= instance.OnNavigate;
-            @Navigate.canceled -= instance.OnNavigate;
-            @Submit.started -= instance.OnSubmit;
-            @Submit.performed -= instance.OnSubmit;
-            @Submit.canceled -= instance.OnSubmit;
-            @Cancel.started -= instance.OnCancel;
-            @Cancel.performed -= instance.OnCancel;
-            @Cancel.canceled -= instance.OnCancel;
-            @Point.started -= instance.OnPoint;
-            @Point.performed -= instance.OnPoint;
-            @Point.canceled -= instance.OnPoint;
             @Click.started -= instance.OnClick;
             @Click.performed -= instance.OnClick;
             @Click.canceled -= instance.OnClick;
+            @Point.started -= instance.OnPoint;
+            @Point.performed -= instance.OnPoint;
+            @Point.canceled -= instance.OnPoint;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @RightStick.started -= instance.OnRightStick;
+            @RightStick.performed -= instance.OnRightStick;
+            @RightStick.canceled -= instance.OnRightStick;
             @ScrollWheel.started -= instance.OnScrollWheel;
             @ScrollWheel.performed -= instance.OnScrollWheel;
             @ScrollWheel.canceled -= instance.OnScrollWheel;
@@ -1149,9 +1188,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Shoulder.started -= instance.OnShoulder;
             @Shoulder.performed -= instance.OnShoulder;
             @Shoulder.canceled -= instance.OnShoulder;
-            @RightStick.started -= instance.OnRightStick;
-            @RightStick.performed -= instance.OnRightStick;
-            @RightStick.canceled -= instance.OnRightStick;
             @NorthButton.started -= instance.OnNorthButton;
             @NorthButton.performed -= instance.OnNorthButton;
             @NorthButton.canceled -= instance.OnNorthButton;
@@ -1161,9 +1197,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @WestButton.started -= instance.OnWestButton;
             @WestButton.performed -= instance.OnWestButton;
             @WestButton.canceled -= instance.OnWestButton;
-            @Select.started -= instance.OnSelect;
-            @Select.performed -= instance.OnSelect;
-            @Select.canceled -= instance.OnSelect;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1219,18 +1252,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     }
     public interface IUIActions
     {
-        void OnNavigate(InputAction.CallbackContext context);
-        void OnSubmit(InputAction.CallbackContext context);
-        void OnCancel(InputAction.CallbackContext context);
-        void OnPoint(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
+        void OnPoint(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnNavigate(InputAction.CallbackContext context);
+        void OnRightStick(InputAction.CallbackContext context);
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnTrigger(InputAction.CallbackContext context);
         void OnShoulder(InputAction.CallbackContext context);
-        void OnRightStick(InputAction.CallbackContext context);
         void OnNorthButton(InputAction.CallbackContext context);
         void OnEastButton(InputAction.CallbackContext context);
         void OnWestButton(InputAction.CallbackContext context);
-        void OnSelect(InputAction.CallbackContext context);
     }
 }
