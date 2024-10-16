@@ -1,5 +1,4 @@
 ﻿using Beast.Claw;
-using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
@@ -26,25 +25,14 @@ namespace Beast.Radar.Graphic.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
         
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
-            _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrainBakeShader);
+            _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.baker);
             
-            return OperationResult.SuccessSync();
-        }
-        
-        private UniTask<OperationResult> Dispose()
-        {
-            if (_material != null)
-            {
-                BGraphic.DisposeMaterial(_material);
-                _material = null;
-            }
-
             return OperationResult.SuccessSync();
         }
 
@@ -92,6 +80,13 @@ namespace Beast.Radar.Graphic.Terrain
                 material = _material,
                 shaderPass = 0
             });
+        }
+        
+        private UniTask<OperationResult> _dispose()
+        {
+            BGraphic.TryDispose(ref _material);
+
+            return OperationResult.SuccessSync();
         }
     }
 }

@@ -1,20 +1,17 @@
-﻿Shader "Beast/TerrainTileRender"
+﻿Shader "Beast/Radar/Terrain/TileRender"
 {
-    Properties
-    {
-        
-    }
     SubShader
     {
+        // Rendered to buffer.
         cull off
-        zwrite on
-        ztest on
+        zwrite off
+        ztest off
 
         Pass
         {
             CGPROGRAM
 
-            #pragma target 1.0
+            #pragma target 2.0
             
             #pragma vertex vertex
             #pragma fragment fragment
@@ -22,6 +19,7 @@
             #include "UnityCG.cginc"
             #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
             
+            // #define DEBUG_DRAW_NOISE_ONLY
             // #define DEBUG_DRAW_TILES_ONE_SECOND
 
             struct FragmentInput
@@ -30,6 +28,11 @@
                 half2 mainUV : TEXCOORD0;
                 half2 centerUV : TEXCOORD1;
                 fixed blendPower : TEXCOORD2;
+
+#ifdef DEBUG_DRAW_NOISE_ONLY
+                float noiseColor : TEXCOORD3;
+#endif
+                
             };
 
             float2 _TileGridSize;
@@ -51,7 +54,8 @@
                 FragmentInput output;
 
 #ifdef DEBUG_DRAW_TILES_ONE_SECOND
-                if (instanceID > ((_GridSize.x * _GridSize.y) + (_GridSize.x - 1) * (_GridSize.y - 1)) * frac(_Time.y))
+                float2 gSize = _TileGridSize;
+                if (instanceID > (gSize.x * gSize.y + (gSize.x - 1) * (gSize.y - 1)) * frac(_Time.y))
                 {
                     output.positionCS = 0;
                     return output;
@@ -113,11 +117,20 @@
                 
                 output.positionCS = float4(input.vertex.x, input.vertex.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 
+#ifdef DEBUG_DRAW_NOISE_ONLY
+                output.noiseColor = noisePower;
+#endif
+                
+
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
+#ifdef DEBUG_DRAW_NOISE_ONLY
+                return input.noiseColor;
+#endif
+                
                 half3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
                 clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);

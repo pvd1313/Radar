@@ -1,13 +1,10 @@
-﻿Shader "Beast/Radar/TerrainColorRender"
+﻿Shader "Beast/Radar/Terrain/ColorRender"
 {
-    Properties
-    {
-        
-    }
     SubShader
     {
+        // Rendered to camera.
         cull off
-        zwrite off
+        zwrite on
         ztest on
 
         Pass
@@ -25,17 +22,17 @@
             struct VertexInput
             {
                 float4 positionOS : POSITION;
-                float2 screenUV : TEXCOORD0;
+                float2 quadUV : TEXCOORD0;
             };
 
             struct FragmentInput
             {
-                float2 uv : TEXCOORD0;
                 float4 positionCS : SV_POSITION;
+                float2 worldUV : TEXCOORD0;
             };
 
-            sampler2D _TerrainIndexTexture;
-            float2 _TerrainIndexTextureSize;
+            sampler2D _TerrainBiomeTexture;
+            float2 _TerrainBiomeTextureSize;
 
             sampler2D _TileAtlasColorTexture;
             float2 _TileAtlasTileCount;
@@ -43,13 +40,12 @@
             float4 _UVMatrix0;
             float4 _UVMatrix1;
             
-            float _OutputAspect;
-            float _OutputHeight;
+            float2 _OutputSize;
             float2 _OutputCenter;
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
-                return uv * (_OutputHeight / mapSize) + _OutputCenter / mapSize;
+                return uv * (_OutputSize.y / mapSize) + _OutputCenter / mapSize;
             }
 
             FragmentInput vertex(VertexInput input)
@@ -58,19 +54,20 @@
                 
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
-                float2 uv = (input.screenUV - 0.5) * float2(_OutputAspect, 1);
+                float2 clipUV = beast_quad_to_clip_uv(input.quadUV, _OutputSize);
 
-                uv = mul(float2x2(_UVMatrix0), uv);
-                uv = mul(float2x2(_UVMatrix1), uv);
+                clipUV = mul(float2x2(_UVMatrix0), clipUV);
+                clipUV = mul(float2x2(_UVMatrix1), clipUV);
                 
-                output.uv = screen_to_world_uv(uv, _TerrainIndexTextureSize);
+                output.worldUV = screen_to_world_uv(clipUV, _TerrainBiomeTextureSize);
                 
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                uint tileIndex = f32tof16(tex2D(_TerrainIndexTexture, input.uv).r);
+                float terrainR = tex2D(_TerrainBiomeTexture, input.worldUV).r;
+                uint tileIndex = f32tof16(terrainR);
                 float2 tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
                 float2 atlasTexelSize = 1.0f / _TileAtlasTileCount;
                 float4 tileColor = tex2D(_TileAtlasColorTexture, tileXY * atlasTexelSize + atlasTexelSize * 0.5f);

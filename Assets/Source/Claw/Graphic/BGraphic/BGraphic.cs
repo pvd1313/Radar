@@ -14,11 +14,8 @@ using Object = UnityEngine.Object;
 namespace Beast.Claw.Graphic
 {
     [DomainInitialize]
-    public static class BGraphic
+    public static partial class BGraphic
     {
-        private static readonly StringBuilder _textBuilder;
-        private static readonly Dictionary<FormatUsage, string> _formatUsage2String;
-        private static readonly Dictionary<GraphicsFormat, string> _graphicsFormat2String;
         private static readonly HashSet<RenderTexture> _permanentTextures;
         private static readonly HashSet<RenderTexture> _temporaryTextures;
         
@@ -45,21 +42,6 @@ namespace Beast.Claw.Graphic
                 BDebug.StaticLogException(e);
             }
         }
-        
-        public static CommandBuffer GetTempBufferFor<T>()
-        {
-            return CommandBufferPool.Get(TypeStorage<T>.FullName);
-        }
-
-        public static void DisposeBuffer(CommandBuffer buffer)
-        {
-            CommandBufferPool.Release(buffer);
-        }
-
-        public static void ExecuteBufferAsync(CommandBuffer buffer, ComputeQueueType queueType)
-        {
-            Graphics.ExecuteCommandBufferAsync(buffer, queueType);
-        }
 
         public static RenderTexture CreatePermanentRenderTexture<T>(T owner, NewPermaRenderTextureData input)
         {
@@ -80,32 +62,6 @@ namespace Beast.Claw.Graphic
             _permanentTextures.Add(texture);
 
             return texture;
-        }
-
-        public static void DisposeRenderTexture(RenderTexture renderTexture)
-        {
-            renderTexture.ValidateNotNullThrowException(nameof(renderTexture));
-            
-            if (_permanentTextures.Remove(renderTexture))
-            {
-                renderTexture.Release();
-                return;
-            }
-
-            if (_temporaryTextures.Remove(renderTexture))
-            {
-                RenderTexture.ReleaseTemporary(renderTexture);
-                return;
-            }
-            
-            BDebug.StaticLogError($"Failed to dispose render texture '{renderTexture.name}'. As it was not found in list.");
-        }
-
-        public static void DisposeTexture(Texture texture)
-        {
-            texture.ValidateNotNullThrowException(nameof(texture));
-            
-            Object.Destroy(texture);
         }
 
         public static RenderTexture CreateTemporaryRenderTexture<T>(T owner, NewTempRenderTextureData input)
@@ -150,13 +106,6 @@ namespace Beast.Claw.Graphic
             {
                 name = TypeStorage<TOwner>.FullName
             };
-        }
-
-        public static void DisposeMaterial(Material material)
-        {
-            material.ValidateNotNullThrowException(nameof(material));
-            
-            Object.Destroy(material);
         }
 
         public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input)
@@ -214,7 +163,7 @@ namespace Beast.Claw.Graphic
 
             Rect rect = new (
                 input.targetTexturePixelOffset.x, 
-                input.sourceTexture.height - input.targetTexturePixelOffset.y,
+                input.targetTexture.height - input.targetTexturePixelOffset.y - input.sourceTexture.height,
                 input.sourceTexture.width, 
                 input.sourceTexture.height);
             
@@ -244,31 +193,6 @@ namespace Beast.Claw.Graphic
                 input.targetCamera,
                 input.layer,
                 input.materialProperties);
-        }
-
-        public static string GetSupportedGraphicsFormats()
-        {
-            _textBuilder.Clear();
-
-            _textBuilder.AppendLine("Supported Graphics Formats: ");
-
-            foreach (FormatUsage formatUsage in EnumStorage<FormatUsage>.Values)
-            {
-                _textBuilder.Append("- ");
-                _textBuilder.Append(_formatUsage2String[formatUsage]);
-                _textBuilder.Append(": ");
-
-                foreach (GraphicsFormat graphicsFormat in EnumStorage<GraphicsFormat>.Values)
-                {
-                    _textBuilder.Append(_graphicsFormat2String[graphicsFormat]);
-                    _textBuilder.Append(", ");
-                }
-
-                _textBuilder.AppendLine();
-                _textBuilder.AppendLine();
-            }
-
-            return _textBuilder.ToString();
         }
     }
 }

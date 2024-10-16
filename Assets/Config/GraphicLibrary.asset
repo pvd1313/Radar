@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccefdf7fc78443bfb1e9b78b79d4cc6a, type: 3}
   m_Name: GraphicLibrary
   m_EditorClassIdentifier: 
-  quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  terrainBakeShader: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
-  terrainIndexShader: {fileID: 4800000, guid: 568914bca48ac924486ebb6fe636d42d, type: 3}
-  terrainColorShader: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
-  terrainTileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
-  terrainTileRender: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
-  terrainTileAtlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
-  terrainIndexNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
-  terrainTileSolverNoiseTexture: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+  quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  terrain:
+    baker: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
+    biomeRender: {fileID: 4800000, guid: 5bc1fdcf1eeb510438a969209cecbb60, type: 3}
+    colorRender: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
+    tileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
+    tileRender: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
+    tileBlit: {fileID: 4800000, guid: 67855c2abf36497495818c93ce69c6e3, type: 3}
+    tileAtlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
+    biomeRenderNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+    tileSolverNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
     bakedTerrain: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
     terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}

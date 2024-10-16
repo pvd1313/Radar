@@ -11,17 +11,18 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic.Terrain
 {
-    public class TerrainIndexRender : ITerrainIndexRender, IGameCycleListener
+    public class TerrainBiomeRender : ITerrainBiomeRender, IGameCycleListener
     {
         public bool IsReady => _isReady;
         public Texture Texture => _indexTexture;
         public float2 TexelSize => _texelSize;
         public float ViewDistance => _viewDistance;
 
+        public float RenderDistance => _renderDistance;
+
         private readonly GameModel _game;
         private readonly IScreen _screen;
         private readonly ITerrainBakedTexture _bakedTerrain;
-        private readonly ITerrainBaker _baker;
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
 
@@ -38,18 +39,16 @@ namespace Beast.Radar.Graphic.Terrain
         
         private bool _isReady;
 
-        public TerrainIndexRender(
+        public TerrainBiomeRender(
             GameModel game,
             IScreen screen,
-            ITerrainBakedTexture bakedTerrain, 
-            ITerrainBaker baker,
+            ITerrainBakedTexture bakedTerrain,
             GraphicLibrary library,
             ICameraTransform camera)
         {
             _game = game;
             _screen = screen;
             _bakedTerrain = bakedTerrain;
-            _baker = baker;
             _library = library;
             _camera = camera;
         }
@@ -65,11 +64,7 @@ namespace Beast.Radar.Graphic.Terrain
         {
             _dispose();
             
-            _renderMaterial = BGraphic.CreateMaterial(this, new MaterialParameters
-            {
-                name = "Render",
-                shader = _library.terrainIndexShader,
-            });
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.biomeRender);
 
             _renderTextureForScreenSize = _screen.Size;
 
@@ -133,20 +128,19 @@ namespace Beast.Radar.Graphic.Terrain
             _renderDistance = _viewDistance * _textureYScale;
             _texelSize = 1f / _renderDistance / WorldTransform.CellTileCount;
             
-            _renderMaterial.SetFloat("_OutputAspect", 1);
-            _renderMaterial.SetFloat("_OutputHeight", _renderDistance);
-            _renderMaterial.SetVector("_OutputCenter", _renderPosition);
+            _renderMaterial.SetFloat2("_OutputSize", _renderDistance);
+            _renderMaterial.SetFloat2("_OutputCenter", _renderPosition);
             
             _renderMaterial.SetTexture("_TerrainTexture", _bakedTerrain.Texture);
-            _renderMaterial.SetVector("_TerrainTextureSize", _game.terrain.size);
+            _renderMaterial.SetFloat2("_TerrainTextureSize", _game.terrain.size);
             
 #if BEAST_DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);
-            _renderMaterial.SetVector("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
+            _renderMaterial.SetFloat2("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
 #endif
             
-            _renderMaterial.SetTexture("_NoiseMap", _library.terrainIndexNoiseTexture);
-            _renderMaterial.SetVector("_NoiseMapSize", _library.terrainIndexNoiseTexture.Size());
+            _renderMaterial.SetTexture("_NoiseMap", _library.terrain.biomeRenderNoise);
+            _renderMaterial.SetFloat2("_NoiseMapSize", _library.terrain.biomeRenderNoise.Size());
             
             BGraphic.Blit(new BlitParameters
             {
@@ -162,25 +156,16 @@ namespace Beast.Radar.Graphic.Terrain
         private UniTask<OperationResult> _dispose()
         {
             _isReady = false;
-            
-            if (_renderMaterial != null)
-            {
-                BGraphic.DisposeMaterial(_renderMaterial);
-                _renderMaterial = null;
-            }
 
-            if (_indexTexture != null)
-            {
-                BGraphic.DisposeRenderTexture(_indexTexture);
-                _indexTexture = null;
-            }
+            BGraphic.TryDispose(ref _renderMaterial);
+            BGraphic.TryDispose(ref _indexTexture);
 
             return OperationResult.SuccessSync();
         }
         
         private void _debugTrack()
         {
-            BDebug.Track(this, "textureSize", _indexTexture.height);
+            BDebug.Track(this, "textureSize", _indexTexture.Size());
             BDebug.Track(this, nameof(_textureYScale), _textureYScale);
             BDebug.Track(this, nameof(_texelSize), _texelSize);
             BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);

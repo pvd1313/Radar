@@ -1,10 +1,10 @@
 ﻿using Beast.Claw.Common;
+using Beast.Radar.Graphic.Terrain;
 
 namespace Beast.Radar.Graphic
 {
     public class RenderConfig : ScriptableConfig
     {
-        public int terrainTileCountLimit;
-        public int terrainTilePixelSizeMin;
+        public TerrainRenderConfig terrain;
     }
 }

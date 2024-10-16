@@ -1,8 +1,6 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Beast.Claw.Serialization;
 using Beast.Radar.Cinematic;
-using Beast.Radar.Graphic;
 using Beast.Radar.Graphic.Terrain;
 
 namespace Beast.Radar.Serialization

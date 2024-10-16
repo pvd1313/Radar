@@ -4,6 +4,11 @@ namespace Beast.Claw.Math
 {
     public static class MathExtension
     {
+        public static float2 Multiply(this int2 vector, float scale)
+        {
+            return new float2(vector.x * scale, vector.y * scale);
+        }
+        
         public static float2 Multiply(this float2x2 matrix, float2 vector)
         {
             float x = matrix.c0.x * vector.x + matrix.c1.x * vector.y;

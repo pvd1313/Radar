@@ -46,6 +46,14 @@ namespace Beast.Claw.Math
         {
             return Mathf.Approximately(a, b);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsPowerOf2(float x)
+        {
+            float log = Log2(x);
+
+            return Approximately(log, Floor(log));
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float2 a, float2 b)
@@ -129,6 +137,24 @@ namespace Beast.Claw.Math
         public static float Lerp(float min, float max, float t)
         {
             return math.lerp(min, max, t);
+        }
+
+        /// <summary>
+        /// Inverse lerp / unlerp.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ILerp(FloatMinMax range, float value)
+        {
+            return math.unlerp(range.min, range.max, value);
+        }
+        
+        /// <summary>
+        /// Inverse lerp / unlerp.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ILerp(float min, float max, float value)
+        {
+            return math.unlerp(min, max, value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

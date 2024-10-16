@@ -133,8 +133,8 @@ namespace Beast.Claw.Editor.Window
             }
             finally
             {
-                BGraphic.DisposeRenderTexture(renderTextureBig);
-                BGraphic.DisposeRenderTexture(renderTextureSmall);
+                BGraphic.Dispose(renderTextureBig);
+                BGraphic.Dispose(renderTextureSmall);
             }
             
         }
