@@ -3,6 +3,7 @@ using System.Linq;
 using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor.Window
@@ -13,7 +14,6 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
         [SerializeField] private GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.OneCharButtonSize);
-        [SerializeField] private GUILayoutOption _controlButtonWidth = GUILayout.Width(60);
         [SerializeField] private List<string> _drawOrder = new();
         
         private bool _isPlaying;
@@ -29,15 +29,29 @@ namespace Beast.Claw.Editor.Window
                     BDebug.ClearTrackStorage();
                 }
             }
-
-            flow.Option(_controlButtonWidth).Horizontal(ui =>
+            
+            flow.Horizontal(ui =>
             {
+                ui.FlexibleSpace();
+                
+                float labelWidthBak = EditorGUIUtility.labelWidth;
+
+                EditorGUIUtility.labelWidth = 150;
+                
+                ui.CheckBox("Enter PlayMode Clear", ref _clearOnEnterPlayerMode);
+
+                EditorGUIUtility.labelWidth = labelWidthBak;
+            });
+
+            flow.Horizontal(ui =>
+            {
+                ui.Button("Reset", _reset);
                 ui.Button("Clear", BDebug.ClearTrackStorage);
                 ui.Button("Open", () => _setAllFolds(true));
                 ui.Button("Close", () => _setAllFolds(false));
-                ui.Button("Reset", _reset);
-                ui.CheckBox("Play Mode Clear", ref _clearOnEnterPlayerMode);
             });
+            
+            flow.Draw(ui => ui.Space(EditorUI.MinorSpace));
 
             foreach (string storageName in BDebug.TrackStorages.Keys)
             {
@@ -70,15 +84,12 @@ namespace Beast.Claw.Editor.Window
 
                     _folds[storageName] = foldState;
 
-                    if (foldState)
+                    flow.If(foldState).Indent(ui =>
                     {
-                        flow.Indent(ui =>
-                        {
-                            BDebug.TrackStorages.TryGetValue(storageName, out DebugTrackStorage trackStorage);
-                            _trackStorageUI(ui, trackStorage);
-                            ui.Space(8);
-                        });
-                    }
+                        BDebug.TrackStorages.TryGetValue(storageName, out DebugTrackStorage trackStorage);
+                        _trackStorageUI(ui, trackStorage);
+                        ui.Space(EditorUI.MinorSpace);
+                    });
                 }
             });
 

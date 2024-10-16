@@ -65,5 +65,10 @@ namespace Beast.Claw.Serialization
         {
             _stream.Write(x);
         }
+
+        public void WriteBool(bool x)
+        {
+            _stream.Write(x);
+        }
     }
 }

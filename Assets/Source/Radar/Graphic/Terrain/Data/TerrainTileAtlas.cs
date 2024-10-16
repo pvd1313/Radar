@@ -47,7 +47,7 @@ namespace Beast.Radar.Graphic.Terrain
                 return $"Atlas height ({atlasHeight}) is NPOT";
             }
 
-#if BEAST_DEVELOPMENT
+#if DEVELOPMENT
             if (sprites != null)
             {
                 _indexHash ??= new HashSet<int>();

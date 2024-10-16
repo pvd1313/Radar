@@ -22,11 +22,5 @@ namespace Beast.Radar.Serialization
             stream.Read(ref terrain);
             stream.Read(ref camera);
         }
-
-        public void CopyFrom(GameModel source)
-        {
-            terrain = source.terrain;
-            camera = source.camera;
-        }
     }
 }

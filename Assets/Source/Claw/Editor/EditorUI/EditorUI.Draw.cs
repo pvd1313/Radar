@@ -29,6 +29,11 @@ namespace Beast.Claw.Editor
         {
             EditorGUILayout.HelpBox(message, MessageType.Warning);
         }
+
+        public void InfoBox(string message)
+        {
+            EditorGUILayout.HelpBox(message, MessageType.Info);
+        }
         
         public void Button(string label, Action action)
         {
@@ -134,6 +139,11 @@ namespace Beast.Claw.Editor
         public void CheckBox(string label, ref bool value)
         {
             value = EditorGUILayout.Toggle(NicifyLabel(label), value, layoutOptions);
+        }
+
+        public void FlexibleSpace()
+        {
+            GUILayout.FlexibleSpace();
         }
         
         public float3 Float3Field(string label, float3 value)

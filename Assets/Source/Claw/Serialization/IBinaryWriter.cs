@@ -2,6 +2,7 @@
 {
     public interface IBinaryWriter
     {
+        void WriteBool(bool x);
         void WriteFloat(float x);
         void WriteChar(char x);
         void WriteString(string x);

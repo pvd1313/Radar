@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.Debug;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.GameCycle
 {
-    public class GameBoot : IGameCycleListener
+    public class GameBoot : IGameBoot
     {
         private readonly IWindowManager _windows;
         private readonly IGameSaveManager _gameSave;
@@ -17,12 +18,7 @@ namespace Beast.Radar.GameCycle
             _gameSave = gameSave;
         }
         
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(this, OperationID.Boot, Boot);
-        }
-
-        private UniTask<OperationResult> Boot()
+        public UniTask<OperationResult> Boot()
         {
             if (Application.isEditor)
             {
