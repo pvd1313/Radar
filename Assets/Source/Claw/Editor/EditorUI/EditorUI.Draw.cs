@@ -128,7 +128,40 @@ namespace Beast.Claw.Editor
 
         public float2 Float2Field(string label, float2 value)
         {
-            return EditorGUILayout.Vector2Field(flow.NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.Vector2Field(label, value);
+        }
+
+        public float2 Float2FieldOneLine(string label, float2 value)
+        {
+            Rect rect = EditorGUILayout.GetControlRect(false);
+
+            GUIContent temp = EditorGUIUtility.TrTempContent(label);
+            rect = EditorGUI.PrefixLabel(rect, GUIUtility.GetControlID(FocusType.Passive), temp);
+
+            const float labelWidth = 15;
+            float fieldWidth = (rect.width - labelWidth * 2) / 2;
+
+            (Rect w0, Rect w1, Rect w2, Rect w3) = RectSlicer.Horizontal(
+                rect, labelWidth, fieldWidth, labelWidth, fieldWidth);
+            
+            int indentLevelBak = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            
+            EditorGUI.BeginDisabledGroup(true);
+            temp = EditorGUIUtility.TrTempContent(" x");
+            EditorGUI.PrefixLabel(w0, GUIUtility.GetControlID(FocusType.Passive), temp);
+            
+            temp = EditorGUIUtility.TrTempContent(" y");
+            EditorGUI.PrefixLabel(w2, GUIUtility.GetControlID(FocusType.Passive), temp);
+            EditorGUI.EndDisabledGroup();
+            
+            float x = EditorGUI.FloatField(w1, value.x);
+            float y = EditorGUI.FloatField(w3, value.y);
+            
+
+            EditorGUI.indentLevel = indentLevelBak;
+
+            return new float2(x, y);
         }
 
         public bool CheckBoxRight(string label, bool value)

@@ -151,7 +151,7 @@ namespace Beast.Claw.Editor.Window
             
             foreach ((string id, float2 value) in storage.ReadAllFloat2())
             {
-                ui.Float2Field(id, value);
+                ui.Float2FieldOneLine(id, value);
             }
             
             foreach ((string id, float3 value) in storage.ReadAllFloat3())
