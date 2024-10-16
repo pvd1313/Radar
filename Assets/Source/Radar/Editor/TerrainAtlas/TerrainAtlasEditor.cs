@@ -34,7 +34,12 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 ui.AssetField(nameof(_atlasAsset), ref _atlasAsset);
 
-                flow.Horizontal(ui =>
+                flow.If(_atlasAsset == null, ui =>
+                {
+                    ui.InfoBox("Open or create atlas.");
+                });
+
+                flow.If(_atlasAsset != null).Horizontal(ui =>
                 {
                     flow.Enabled(_atlasAsset != null).Button("Imports Fix", _fixImports);
 
@@ -54,17 +59,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 });
             });
 
-            EditorUIResult result = flow.Draw(ui =>
-            {
-                ui.ValidateArgumentNotNull(_atlasAsset, nameof(_atlasAsset));
-            });
-
-            if (result.hasErrors)
-            {
-                return;
-            }
-
-            flow.Vertical(ui =>
+            flow.If(_atlasAsset != null).Vertical(ui =>
             {
                 TerrainTileAtlas atlas = _atlasAsset.atlas;
 
@@ -140,53 +135,81 @@ namespace Beast.Radar.Editor.TerrainAtlas
 
         private void _bakeMainTexture(EditorUI ui)
         {
-            Texture2D bakedTexture = _baker.BakeMainTexture(_atlasAsset.atlas);
+            Texture2D bakedTexture = null;
             
             try
             {
-                string texturePath = _getTexturePathOrNew(ui, _atlasAsset.atlas.mainTexture, MainPostfix);
+                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.atlas.mainTexture, MainPostfix);
+                if (texturePath == null)
+                {
+                    return;
+                }
+
+                bakedTexture = _baker.BakeMainTexture(_atlasAsset.atlas);
                 
                 _atlasAsset.atlas.mainTexture = BAsset.SaveTexture(bakedTexture, texturePath, _importer.MainTexture);
             }
             finally
             {
-                DestroyImmediate(bakedTexture);
+                if (bakedTexture != null)
+                {
+                    DestroyImmediate(bakedTexture);
+                }
             }
         }
         
         private void _bakeColorTexture(EditorUI ui)
         {
-            Texture2D bakedTexture = _baker.BakeColorTexture(_atlasAsset.atlas);
-
+            Texture2D bakedTexture = null;
+            
             try
             {
-                string texturePath = _getTexturePathOrNew(ui, _atlasAsset.atlas.colorTexture, ColorPostfix);
+                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.atlas.colorTexture, ColorPostfix);
+                if (texturePath == null)
+                {
+                    return;
+                }
+                
+                bakedTexture = _baker.BakeColorTexture(_atlasAsset.atlas);
 
                 _atlasAsset.atlas.colorTexture = BAsset.SaveTexture(bakedTexture, texturePath, _importer.ColorTexture);
             }
             finally
             {
-                DestroyImmediate(bakedTexture);
+                if (bakedTexture != null)
+                {
+                    DestroyImmediate(bakedTexture);
+                }
             }
         }
         
         private void _bakeConfigTexture(EditorUI ui)
         {
-            Texture2D bakedTexture = _baker.BakeConfigTexture(_atlasAsset.atlas);
+            Texture2D bakedTexture = null;
 
             try
             {
-                string texturePath = _getTexturePathOrNew(ui, _atlasAsset.atlas.configTexture, ConfigPostfix);
+                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.atlas.configTexture, ConfigPostfix);
+                if (texturePath == null)
+                {
+                    return;
+                }
+                
+                bakedTexture = _baker.BakeConfigTexture(_atlasAsset.atlas);
 
                 _atlasAsset.atlas.configTexture = BAsset.SaveTexture(bakedTexture, texturePath, _importer.ConfigTexture);
             }
             finally
             {
-                DestroyImmediate(bakedTexture);
+                if (bakedTexture != null)
+                {
+                    DestroyImmediate(bakedTexture);
+                }
+                
             }
         }
 
-        private string _getTexturePathOrNew(EditorUI ui, Texture2D texture, string texturePostfix)
+        private string _tryGetTexturePathOrNew(EditorUI ui, Texture2D texture, string texturePostfix)
         {
             if (texture == null)
             {
@@ -195,6 +218,11 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 string fileName = Path.GetFileNameWithoutExtension(texturePath);
 
                 texturePath = ui.SaveFileDialog(fileName + texturePostfix, directory);
+
+                if (string.IsNullOrEmpty(texturePath))
+                {
+                    return null;
+                }
                 
                 return BAsset.AbsoluteToProjectPath(texturePath);
             }

@@ -51,20 +51,6 @@ namespace Beast.Claw.Editor
                 });
             }
 
-            catch (AssertionException e)
-            {
-                EditorGUILayout.HelpBox(e.Message, MessageType.Warning);
-
-                result.hasErrors = true;
-            }
-
-            catch (ValidationException e)
-            {
-                EditorGUILayout.HelpBox(e.Message, MessageType.Warning);
-
-                result.hasErrors = true;
-            }
-
             catch (ExitGUIException)
             {
                 throw;
@@ -83,13 +69,15 @@ namespace Beast.Claw.Editor
                 result.hasErrors = true;
 
             }
-
-            _undoLastCommands(ref result);
-
-            result.hasErrors |= uiErrorsEncountered;
+            finally
+            {
+                _undoLastCommands(ref result);
+                
+                result.hasErrors |= uiErrorsEncountered;
             
-            uiErrorsEncountered = false;
-
+                uiErrorsEncountered = false;
+            }
+            
             return result;
         }
 

@@ -29,6 +29,11 @@ namespace Beast.Claw.Editor
         {
             EditorGUILayout.HelpBox(message, MessageType.Warning);
         }
+
+        public void InfoBox(string message)
+        {
+            EditorGUILayout.HelpBox(message, MessageType.Info);
+        }
         
         public void Button(string label, Action action)
         {
