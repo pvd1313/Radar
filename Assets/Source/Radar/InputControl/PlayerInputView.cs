@@ -1,5 +1,4 @@
 ﻿using UnityEngine.InputSystem;
-using Beast.Claw.Common;
 
 namespace Beast.Radar.InputControl
 {

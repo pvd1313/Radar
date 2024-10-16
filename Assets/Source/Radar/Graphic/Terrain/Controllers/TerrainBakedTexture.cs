@@ -9,11 +9,12 @@ namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainBakedTexture : ITerrainBakedTexture, IGameCycleListener
     {
-        public RenderTexture Texture { get; private set; }
+        public RenderTexture Texture => _texture;
         public bool IsReady { get; private set; }
 
         private readonly GameModel _game;
         private readonly ITerrainBaker _baker;
+        private RenderTexture _texture;
         
         public TerrainBakedTexture(GameModel game, ITerrainBaker baker)
         {
@@ -31,9 +32,9 @@ namespace Beast.Radar.Graphic.Terrain
         {
             await Dispose();
 
-            Texture = _baker.Create(this, _game.terrain.size, false);
+            _texture = _baker.Create(this, _game.terrain.size, false);
 
-            _baker.Bake(_game.terrain, Texture);
+            _baker.Bake(_game.terrain, _texture);
 
             IsReady = true;
 
@@ -43,12 +44,8 @@ namespace Beast.Radar.Graphic.Terrain
         private UniTask<OperationResult> Dispose()
         {
             IsReady = false;
-            
-            if (Texture != null)
-            {
-                BGraphic.DisposeRenderTexture(Texture);
-                Texture = null;
-            }
+
+            BGraphic.TryDispose(ref _texture);
 
             return OperationResult.SuccessSync();
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Graphic;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
@@ -44,7 +43,7 @@ namespace Beast.Radar.Core
             
             // Render
             yield return typeof(TerrainBaker);
-            yield return typeof(TerrainIndexRender);
+            yield return typeof(TerrainBiomeRender);
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);

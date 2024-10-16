@@ -24,6 +24,13 @@ inline BeastIsometricTile beast_isometric_tile(uint instanceID, uint gridSizeX)
     return output;
 }
 
+inline float2 beast_quad_to_clip_uv(float2 quadUV, float2 screenSize)
+{
+    float aspect = screenSize.x / screenSize.y;
+
+    return (quadUV - 0.5f) * float2(aspect, 1);
+}
+
 inline float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     tile.innerX -= gridSizeX * tile.isInner01;
@@ -49,6 +56,22 @@ inline float2 beast_isometric_world_offset(BeastIsometricTile tile, uint gridSiz
 
     return output;
 }
+
+inline float beast_dither_cs(float2 positionCS, float alpha)
+{
+    const float BAYER_MATRIX[16] =
+    {
+        1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+        13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+        4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+        16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+    };
+
+    int index = int(positionCS.x) % 4 * 4 + int(positionCS.y) % 4;
+    
+    return alpha - BAYER_MATRIX[index];
+}
+
 
 inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {

@@ -1,11 +1,8 @@
-﻿Shader "Beast/IsometricSolver"
+﻿Shader "Beast/Radar/Terrain/TileSolver"
 {
-    Properties
-    {
-        
-    }
     SubShader
     {
+        // Rendered to buffer.
         cull off
         zwrite off
         ztest off
@@ -14,7 +11,7 @@
         {
             CGPROGRAM
 
-            #pragma target 1.0
+            #pragma target 2.0
             
             #pragma vertex vertex
             #pragma fragment fragment
@@ -24,14 +21,14 @@
 
             struct VertexInput
             {
-                float4 vertex : POSITION;
+                float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
             struct FragmentInput
             {
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
+                float4 positionCS : SV_POSITION;
             };
             
             float2 _TileGridSize;
@@ -52,7 +49,7 @@
             FragmentInput vertex(VertexInput input)
             {
                 FragmentInput output;
-                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.positionCS = UnityObjectToClipPos(input.positionOS);
                 output.uv = input.uv;
                 
                 return output;
@@ -67,19 +64,20 @@
                 BeastIsometricTile tile = beast_isometric_tile(instanceID, _TileGridSize.x);
                 float2 offset = beast_isometric_world_offset(tile, _TileGridSize.x);
 
-                float terrainColor = tex2D(_TerrainTexture, _TerrainUVOffset + offset * _TerrainTexelSize).r;
+                float terrainR = tex2D(_TerrainTexture, _TerrainUVOffset + offset * _TerrainTexelSize).r;
 
-                // Currently we are just passing same tile index.
+                // Currently we are just passing the same tile index.
                 // In future we will have to process adjusted tile variations.
-                uint tileIndex = f32tof16(terrainColor);
+                uint tileIndex = f32tof16(terrainR);
                 float2 tileXY = beast_tile_xy_from_index(tileIndex, _TileAtlasTileCount);
                 float2 configTexelSize = 1.0f / _TileAtlasTileCount;
                 float2 configRG = tex2D(_TileAtlasConfig, tileXY * configTexelSize + configTexelSize * 0.5f);
                 
-                float noiseColor = tex2D(_NoiseTexture, _NoiseUVOffset + offset * _NoiseTexelSize).r;
+                float noiseR = tex2D(_NoiseTexture, _NoiseUVOffset + offset * _NoiseTexelSize).r;
                 
-                return float4(f16tof32(tileIndex), noiseColor, configRG.r, configRG.g);
+                return float4(f16tof32(tileIndex), noiseR, configRG.r, configRG.g);
             }
+            
             ENDCG
         }
     }

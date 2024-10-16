@@ -7,5 +7,11 @@ namespace Beast.Claw.Math
     {
         public float min;
         public float max;
+
+        public FloatMinMax(float min, float max)
+        {
+            this.min = min;
+            this.max = max;
+        }
     }
 }

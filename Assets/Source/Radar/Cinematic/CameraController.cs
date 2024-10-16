@@ -51,7 +51,7 @@ namespace Beast.Radar.Cinematic
             (
                 this,
                 _prefabs.cameraPrefab,
-                float3.zero,
+                new float3(0, 0, -1),
                 quaternion.identity
             );
 

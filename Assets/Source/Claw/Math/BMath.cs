@@ -139,6 +139,24 @@ namespace Beast.Claw.Math
             return math.lerp(min, max, t);
         }
 
+        /// <summary>
+        /// Inverse lerp / unlerp.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ILerp(FloatMinMax range, float value)
+        {
+            return math.unlerp(range.min, range.max, value);
+        }
+        
+        /// <summary>
+        /// Inverse lerp / unlerp.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ILerp(float min, float max, float value)
+        {
+            return math.unlerp(min, max, value);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Floor(float a)
         {

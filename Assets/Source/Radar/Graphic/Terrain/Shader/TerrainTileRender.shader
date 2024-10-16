@@ -1,14 +1,11 @@
-﻿Shader "Beast/TerrainTileRender"
+﻿Shader "Beast/Radar/Terrain/TileRender"
 {
-    Properties
-    {
-        
-    }
     SubShader
     {
+        // Rendered to buffer.
         cull off
-        zwrite on
-        ztest on
+        zwrite off
+        ztest off
 
         Pass
         {

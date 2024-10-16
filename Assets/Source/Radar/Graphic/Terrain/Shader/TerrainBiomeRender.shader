@@ -1,11 +1,8 @@
-﻿Shader "Beast/Radar/TerrainIndexRender"
+﻿Shader "Beast/Radar/Terrain/BiomeRender"
 {
-    Properties
-    {
-        
-    }
     SubShader
     {
+        // Rendered to buffer.
         cull off
         zwrite off
         ztest off
@@ -25,14 +22,14 @@
             struct VertexInput
             {
                 float4 positionOS : POSITION;
-                float2 screenUV : TEXCOORD0;
+                float2 quadUV : TEXCOORD0;
             };
 
             struct FragmentInput
             {
+                float4 positionCS : SV_POSITION;
                 float2 mainUV : TEXCOORD0;
                 float2 noiseUV : TEXCOORD1;
-                float4 positionCS : SV_POSITION;
             };
 
             sampler2D _TerrainTexture;
@@ -44,8 +41,7 @@
             sampler2D _DebugGridTexture;
             float2 _DebugGridTextureSize;
             
-            float _OutputAspect;
-            float _OutputHeight;
+            float2 _OutputSize;
             float2 _OutputCenter;
             
             #define NOISE_OFFSET_0 float2(8, 8)
@@ -55,7 +51,7 @@
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
-                return uv * (_OutputHeight / mapSize) + _OutputCenter / mapSize;
+                return uv * (_OutputSize.y / mapSize) + _OutputCenter / mapSize;
             }
 
             FragmentInput vertex(VertexInput input)
@@ -64,11 +60,10 @@
                 
                 output.positionCS = UnityObjectToClipPos(input.positionOS);
 
-                float2 uv = (input.screenUV - 0.5) * float2(_OutputAspect, 1);
+                float2 clipUV = beast_quad_to_clip_uv(input.quadUV, _OutputSize);
 
-                output.mainUV = screen_to_world_uv(uv, _TerrainTextureSize);
-                
-                output.noiseUV = screen_to_world_uv(uv, _NoiseMapSize);
+                output.mainUV = screen_to_world_uv(clipUV, _TerrainTextureSize);
+                output.noiseUV = screen_to_world_uv(clipUV, _NoiseMapSize);
 
                 // Will not work with index mapping. We have to implement new solution for grid.
 // #ifdef DRAW_DEBUG_GRID_TEXTURE

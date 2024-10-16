@@ -6,18 +6,9 @@ namespace Beast.Radar
 {
     public partial class GraphicLibrary : ScriptableConfig
     {
-        public Mesh quadMesh;
-        
-        public Shader terrainBakeShader;
-        public Shader terrainIndexShader;
-        public Shader terrainColorShader;
+        public Mesh quad;
 
-        public Shader terrainTileSolver;
-        public Shader terrainTileRender;
-        public TerrainTileAtlasAsset terrainTileAtlas;
-
-        public Texture2D terrainIndexNoiseTexture;
-        public Texture2D terrainTileSolverNoiseTexture;
+        public TerrainGraphicLibrary terrain;
 
         public Debug debug;
     }

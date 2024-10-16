@@ -1,0 +1,34 @@
+﻿using System.Runtime.CompilerServices;
+using Unity.Mathematics;
+using UnityEngine;
+
+namespace Beast.Claw.Graphic
+{
+    public static class MaterialExtension
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetFloat2x2(this Material material, string name, float2x2 matrix)
+        {
+            Vector4 vector = new (matrix.c0.x, matrix.c0.y, matrix.c1.x, matrix.c1.y);
+            material.SetVector(name, vector);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetFloat2(this Material material, string name, float2 vector)
+        {
+            material.SetVector(name, new Vector4(vector.x, vector.y, 0, 0));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetFloat3(this Material material, string name, float3 vector)
+        {
+            material.SetVector(name, new Vector4(vector.x, vector.y, vector.z, 0));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetFloat4(this Material material, string name, float4 vector)
+        {
+            material.SetVector(name, new Vector4(vector.x, vector.y, vector.z, vector.w));
+        }
+    }
+}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic.Terrain
 {
-    public interface ITerrainIndexRender : IReady
+    public interface ITerrainBiomeRender : IReady
     {
         Texture Texture { get; }
         

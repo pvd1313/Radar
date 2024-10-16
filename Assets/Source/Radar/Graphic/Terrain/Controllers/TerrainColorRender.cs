@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
@@ -14,7 +13,7 @@ namespace Beast.Radar.Graphic.Terrain
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
-        private readonly ITerrainIndexRender _indexRender;
+        private readonly ITerrainBiomeRender _biomeRender;
         private readonly ICameraTransform _camera;
 
         private Material _renderMaterial;
@@ -22,12 +21,12 @@ namespace Beast.Radar.Graphic.Terrain
         public TerrainColorRender(
             IScreen screen,
             GraphicLibrary library, 
-            ITerrainIndexRender indexRender,
+            ITerrainBiomeRender biomeRender,
             ICameraTransform camera)
         {
             _screen = screen;
             _library = library;
-            _indexRender = indexRender;
+            _biomeRender = biomeRender;
             _camera = camera;
         }
         
@@ -42,61 +41,56 @@ namespace Beast.Radar.Graphic.Terrain
         {
             Application.targetFrameRate = 999;
 
-            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrainColorShader);
-
-            return OperationResult.SuccessSync();
-        }
-
-        private UniTask<OperationResult> _dispose()
-        {
-            if (_renderMaterial != null)
-            {
-                BGraphic.DisposeMaterial(_renderMaterial);
-                _renderMaterial = null;
-            }
+            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
 
             return OperationResult.SuccessSync();
         }
         
         private void _render()
         {
-            if (!_indexRender.IsReady)
+            if (!_biomeRender.IsReady)
             {
                 return;
             }
             
-            float2 renderTextureSize = _indexRender.Texture.Size();
-            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _indexRender.ViewDistance);
+            float2 renderTextureSize = _biomeRender.Texture.Size();
+            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _biomeRender.ViewDistance);
             float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
             float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
             
-            _renderMaterial.SetTexture("_TerrainIndexTexture", _indexRender.Texture);
-            _renderMaterial.SetVector("_TerrainIndexTextureSize", renderTextureSize);
+            _renderMaterial.SetTexture("_TerrainBiomeTexture", _biomeRender.Texture);
+            _renderMaterial.SetFloat2("_TerrainBiomeTextureSize", renderTextureSize);
 
-            TerrainTileAtlas atlas = _library.terrainTileAtlas.atlas;
+            TerrainTileAtlas atlas = _library.terrain.tileAtlas.atlas;
             _renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
-            _renderMaterial.SetVector("_TileAtlasTileCount", atlas.tileCount);
+            _renderMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
             
-            _renderMaterial.SetMatrix("_UVMatrix0", scale.Inverse());
-            _renderMaterial.SetMatrix("_UVMatrix1", rotation.Inverse());
-            
-            _renderMaterial.SetFloat("_OutputAspect", _screen.Aspect);
-            _renderMaterial.SetFloat("_OutputHeight", _screen.Height * yScale);
+            _renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
+            _renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
 
-            float2 outputCenter = _indexRender.WorldToUVOffset(_camera.Position);
-            _renderMaterial.SetVector("_OutputCenter", renderTextureSize * outputCenter);
+            _renderMaterial.SetFloat2("_OutputSize", _screen.Size.Multiply(yScale));
+
+            float2 outputCenter = _biomeRender.WorldToUVOffset(_camera.Position);
+            _renderMaterial.SetFloat2("_OutputCenter", renderTextureSize * outputCenter);
             
             BGraphic.DrawMesh(new DrawMeshParameters
             {
-                mesh = _library.quadMesh,
+                mesh = _library.quad,
                 material = _renderMaterial,
                 matrix = new Float4x4TRS
                 {
-                    translation = new float3(0, 0, 1),
-                    rotation = new QuaternionEulerDeg(0, 0, 0),
+                    translation = new float3(0, 0, RenderOrderZ.TerrainColorRender),
+                    rotation = quaternion.identity,
                     scale = new float3(_screen.Aspect, 1, 1)
                 }
             });
+        }
+        
+        private UniTask<OperationResult> _dispose()
+        {
+            BGraphic.TryDispose(ref _renderMaterial);
+
+            return OperationResult.SuccessSync();
         }
     }
 }

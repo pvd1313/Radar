@@ -48,7 +48,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
 
             BGraphic.BlitRenderTextureTo2D(renderTexture, resultTexture);
             
-            BGraphic.DisposeRenderTexture(renderTexture);
+            BGraphic.Dispose(renderTexture);
 
             return resultTexture;
         }
