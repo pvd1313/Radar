@@ -81,7 +81,7 @@ namespace Beast.Radar.UI
         {
             UISelectable[,] selectablesGrid =
             {
-                {_menuView.seedButton.Selectable, null, null, null},
+                {_menuView.nextSeedButton.Selectable, null, null, null},
                 {_menuView.sizeButtons[0].Selectable, _menuView.sizeButtons[1].Selectable, 
                 _menuView.sizeButtons[2].Selectable, _menuView.sizeButtons[3].Selectable },
                 {_menuView.forestSlider.Selectable, null, null, null},
@@ -112,7 +112,7 @@ namespace Beast.Radar.UI
             
             _menuView.closeButton.Clicked += _onClickCloseButton;
             _menuView.createMapButton.Clicked += _onCreateMapButton;
-            _menuView.seedButton.Clicked += _onClickSeedButton;
+            _menuView.nextSeedButton.Clicked += OnClickNextSeedButton;
             _menuView.forestSlider.EndedChange += _onEndedChangeForest;
             _menuView.waterSlider.EndedChange += _onEndedChangeWater;
         }
@@ -121,7 +121,7 @@ namespace Beast.Radar.UI
         {
             _menuView.closeButton.Clicked -= _onClickCloseButton;
             _menuView.createMapButton.Clicked -= _onCreateMapButton;
-            _menuView.seedButton.Clicked -= _onClickSeedButton;
+            _menuView.nextSeedButton.Clicked -= OnClickNextSeedButton;
             _menuView.forestSlider.EndedChange -= _onEndedChangeForest;
             _menuView.waterSlider.EndedChange -= _onEndedChangeWater;
         }
@@ -136,7 +136,7 @@ namespace Beast.Radar.UI
             _data.forest = value;
         }
 
-        private void _onClickSeedButton()
+        private void OnClickNextSeedButton()
         {
             string seedName = Seeds[Random.Range(0, Seeds.Length)];
             _menuView.seedResult.SetText(seedName);

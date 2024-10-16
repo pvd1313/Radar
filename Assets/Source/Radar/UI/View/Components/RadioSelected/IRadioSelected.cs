@@ -4,7 +4,6 @@
     {
         bool IsSelected { get; }
         void Select();
-        void SetSelectedMode();
-        void SetDefaultMode();
+        void Deselect();
     }
 }

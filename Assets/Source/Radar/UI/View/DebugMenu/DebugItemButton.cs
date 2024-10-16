@@ -12,13 +12,10 @@ namespace Beast.Radar.UI
         public UISelectable Selectable => _selectable;
         public event Action<DebugItemButton> Clicked;
         
-        private const float DefaultAlpha = 0.7f;
-        private const float SelectedAlpha = 0.4f;
-        
         [SerializeField] private Button _button;
-        [SerializeField] private Image _background;
         [SerializeField] private TextMeshProUGUI _textMeshPro;
         [SerializeField] private UISelectable _selectable;
+        [SerializeField] private SelectableColor _selectableColor;
         
         public void Init(params object[] parameters)
         {
@@ -37,25 +34,17 @@ namespace Beast.Radar.UI
 
         public void Select()
         {
-            Clicked?.Invoke(this);
-        }
-
-        public void SetSelectedMode()
-        {
             IsSelected = true;
-            Color currentColor = _background.color;
-            currentColor.a = SelectedAlpha;
-            _background.color = currentColor;
+            Clicked?.Invoke(this);
+            _selectableColor.SetSelectedMode();
         }
 
-        public void SetDefaultMode()
+        public void Deselect()
         {
             IsSelected = false;
-            Color currentColor = _background.color;
-            currentColor.a = DefaultAlpha;
-            _background.color = currentColor;
+            _selectableColor.SetDefaultMode();
         }
-
+        
         public void SetItemData(ItemData item)
         {
             Item = item;
@@ -63,22 +52,27 @@ namespace Beast.Radar.UI
             {
                 case EItemType.None:
                 default:
-                    _background.color = Color.black;
+                    _selectableColor.SetDefaultColor(Color.black);
                     break;
                 case EItemType.Eat:
-                    _background.color = new Color(0.8f, 0.2f, 0.2f, DefaultAlpha);
+                    _selectableColor.SetDefaultColor(new Color(0.8f, 0.2f, 0.2f));
                     break;
                 case EItemType.Weapons:
-                    _background.color = new Color(0.8f, 0.5f, 0.2f, DefaultAlpha);
+                    _selectableColor.SetDefaultColor(new Color(0.8f, 0.5f, 0.2f));
                     break;
                 case EItemType.Tools:
-                    _background.color = new Color(0.3f, 0.5f, 0.2f, DefaultAlpha);
+                    _selectableColor.SetDefaultColor(new Color(0.3f, 0.5f, 0.2f));
                     break;
                 case EItemType.Equipment:
-                    _background.color = new Color(0.3f, 0.5f, 0.7f, DefaultAlpha);
+                    _selectableColor.SetDefaultColor(new Color(0.3f, 0.5f, 0.7f));
                     break;
             }
             _textMeshPro.SetText(item.name);
+        }
+
+        public override string ToString()
+        {
+            return $"{Item.type} {Item.name}";
         }
     }
 }

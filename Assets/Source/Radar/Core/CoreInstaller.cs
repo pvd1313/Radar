@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
-using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
 using Beast.Radar.Graphic.Terrain;
@@ -33,8 +32,8 @@ namespace Beast.Radar.Core
             // UI Windows
             yield return typeof(HUDWindow);
             yield return typeof(DebugMenuWindow);
-            yield return typeof(PauseMenuWindow);
-            yield return typeof(MapGenerationWindow);
+            /*yield return typeof(PauseMenuWindow);
+            yield return typeof(MapGenerationWindow);*/
             
             // Input & Camera
             yield return typeof(CameraTransform);

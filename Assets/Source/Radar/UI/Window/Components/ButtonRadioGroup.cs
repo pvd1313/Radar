@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Debug;
 
 namespace Beast.Radar.UI
 {
@@ -18,7 +19,7 @@ namespace Beast.Radar.UI
         {
             _subscribeButtons();
             SelectedButton = _buttons[0];
-            SelectedButton.SetSelectedMode();
+            SelectedButton.Select();
         }
 
         public void Dispose()
@@ -53,11 +54,12 @@ namespace Beast.Radar.UI
         {
             if (SelectedButton != null)
             {
-                SelectedButton.SetDefaultMode();
+                BDebug.LogInfo(this, "deselect radio");
+                SelectedButton.Deselect();
             }
 
             SelectedButton = button;
-            SelectedButton.SetSelectedMode();
+          
             Selected?.Invoke(SelectedButton);
         }
     }

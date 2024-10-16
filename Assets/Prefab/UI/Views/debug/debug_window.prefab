@@ -4109,6 +4109,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1224012908796281541, guid: 10157098eee6aea47bf9ffa7ed9c65bc, type: 3}
+      propertyPath: _selectableVisual
+      value: 
+      objectReference: {fileID: 1950829183600950741}
     - target: {fileID: 4218936144529301670, guid: 10157098eee6aea47bf9ffa7ed9c65bc, type: 3}
       propertyPath: m_Name
       value: log_toggle
@@ -4122,6 +4126,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10157098eee6aea47bf9ffa7ed9c65bc, type: 3}
+--- !u!114 &1950829183600950741 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5187809225834981459, guid: 10157098eee6aea47bf9ffa7ed9c65bc, type: 3}
+  m_PrefabInstance: {fileID: 6695851881167361414}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f9475528be457d917da13151c0282b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2057565347444812770 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4639130960263478884, guid: 10157098eee6aea47bf9ffa7ed9c65bc, type: 3}

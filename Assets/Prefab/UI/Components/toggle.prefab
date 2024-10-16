@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectable: {fileID: 2887289030143763920}
+  _selectableVisual: {fileID: 5187809225834981459}
 --- !u!114 &5187809225834981459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f9475528be457d917da13151c0282b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _selectable: {fileID: 1224012908796281541}
   _outline: {fileID: 5233783651848485431}
 --- !u!114 &4639130960263478884
 MonoBehaviour:

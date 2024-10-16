@@ -177,6 +177,10 @@ namespace Beast.Radar.UI
 
         private void _onSelected(ESelectionZone zone, int2 index)
         {
+            if (zone is ESelectionZone.Shoulder or ESelectionZone.Trigger)
+            {
+                return;
+            }
             SelectableGridData grid = _selectableGrids[zone];
             grid.currentIndex = index;
             _selectableGrids[zone] = grid;

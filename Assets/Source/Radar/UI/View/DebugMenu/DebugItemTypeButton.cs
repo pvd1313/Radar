@@ -11,14 +11,11 @@ namespace Beast.Radar.UI
         public EItemType ItemType { get; private set; }
         public UISelectable Selectable => _selectable;
         public event Action<DebugItemTypeButton> Clicked;
-        
-        private const float DefaultAlpha = 1f;
-        private const float SelectedAlpha = 0.7f;
 
-        [SerializeField] private UISelectable _selectable;
-        [SerializeField] private TextMeshProUGUI _typeText;
         [SerializeField] private Button _button;
-        [SerializeField] private Image _background;
+        [SerializeField] private TextMeshProUGUI _typeText;
+        [SerializeField] private UISelectable _selectable;
+        [SerializeField] private SelectableColor _visualEffect;
         
         public void Init(params object[] parameters)
         {
@@ -31,19 +28,19 @@ namespace Beast.Radar.UI
             {
                 case EItemType.None:
                 default:
-                    _background.color = new Color(0.5f, 0.5f, 0.5f, DefaultAlpha);
+                    _visualEffect.SetDefaultColor(new Color(0.5f, 0.5f, 0.5f));
                     break;
                 case EItemType.Eat:
-                    _background.color = new Color(0.8f, 0.2f, 0.2f, DefaultAlpha);
+                    _visualEffect.SetDefaultColor(new Color(0.8f, 0.2f, 0.2f));
                     break;
                 case EItemType.Weapons:
-                    _background.color = new Color(0.8f, 0.5f, 0.2f, DefaultAlpha);
+                    _visualEffect.SetDefaultColor(new Color(0.8f, 0.5f, 0.2f));
                     break;
                 case EItemType.Tools:
-                    _background.color = new Color(0.3f, 0.5f, 0.2f, DefaultAlpha);
+                    _visualEffect.SetDefaultColor(new Color(0.3f, 0.5f, 0.2f));
                     break;
                 case EItemType.Equipment:
-                    _background.color = new Color(0.3f, 0.5f, 0.7f, DefaultAlpha);
+                    _visualEffect.SetDefaultColor(new Color(0.3f, 0.5f, 0.7f));
                     break;
             }
             _typeText.SetText(ItemType == EItemType.None ? "all" : ItemType.ToString().ToLower());
@@ -63,24 +60,16 @@ namespace Beast.Radar.UI
         public void Select()
         {
             Clicked?.Invoke(this);
-        }
-
-        public void SetSelectedMode()
-        {
             IsSelected = true;
             _selectable.SetInteractable(false);
-            Color currentColor = _background.color;
-            currentColor.a = SelectedAlpha;
-            _background.color = currentColor;
+            _visualEffect.SetSelectedMode();
         }
 
-        public void SetDefaultMode()
+        public void Deselect()
         {
             IsSelected = false;
             _selectable.SetInteractable(true);
-            Color currentColor = _background.color;
-            currentColor.a = DefaultAlpha;
-            _background.color = currentColor;
+            _visualEffect.SetDefaultMode();
         }
     }
 }
