@@ -46,8 +46,8 @@ namespace Beast.Radar.Cinematic
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
-            handle.ListenOperation(this, OperationID.GameLoading, _gameLoading);
-            handle.ListenOperation(this, OperationID.GameSaving, _gameSaving);
+            handle.ListenOperation(this, OperationID.GameLoad, _gameLoad);
+            handle.ListenOperation(this, OperationID.GameSave, _gameSave);
         }
 
         private UniTask<OperationResult> _warmup()
@@ -65,7 +65,7 @@ namespace Beast.Radar.Cinematic
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _gameLoading()
+        private UniTask<OperationResult> _gameLoad()
         {
             _position = _game.camera.position;
 
@@ -79,7 +79,7 @@ namespace Beast.Radar.Cinematic
             return OperationResult.SuccessSync();
         }
         
-        private UniTask<OperationResult> _gameSaving()
+        private UniTask<OperationResult> _gameSave()
         {
             _game.camera.position = (float2)_position;
             _game.camera.zoom01 = _zoom01;

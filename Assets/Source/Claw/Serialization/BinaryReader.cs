@@ -60,6 +60,11 @@ namespace Beast.Claw.Serialization
         {
             return _stream.ReadByte();
         }
+
+        public bool ReadBool()
+        {
+            return _stream.ReadBoolean();
+        }
         
         public int ReadInt32()
         {

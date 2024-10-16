@@ -134,7 +134,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_TerrainTexture", _bakedTerrain.Texture);
             _renderMaterial.SetFloat2("_TerrainTextureSize", _game.terrain.size);
             
-#if BEAST_DEVELOPMENT
+#if DEVELOPMENT
             _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);
             _renderMaterial.SetFloat2("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
 #endif

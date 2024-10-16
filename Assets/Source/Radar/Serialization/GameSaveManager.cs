@@ -5,7 +5,6 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 using BinaryReader = Beast.Claw.Serialization.BinaryReader;
 using BinaryWriter = Beast.Claw.Serialization.BinaryWriter;
@@ -17,24 +16,36 @@ namespace Beast.Radar.Serialization
         private readonly GameModel _gameModel;
         private readonly IGameCycle _gameCycle;
         private readonly GameSaveConfig _config;
+        private readonly IFileManager _fileManager;
 
         public GameSaveManager(
             GameModel gameModel, 
             IGameCycle gameCycle,
-            GameSaveConfig config)
+            GameSaveConfig config,
+            IFileManager fileManager)
         {
             _gameModel = gameModel;
             _gameCycle = gameCycle;
             _config = config;
+            _fileManager = fileManager;
         }
 
         public async UniTask<OperationResult> LoadDefaultSave()
         {
             try
             {
-                _gameModel.CopyFrom(_config.defaultSave);
+                MemoryStream memory = new ();
+                
+                BinaryWriter writer = new (memory);
+                _config.defaultSave.Serialize(writer);
 
-                return await _gameCycle.Execute(this, OperationID.GameLoading);
+                memory.Position = 0;
+                BinaryReader reader = new (memory);
+                _gameModel.Deserialize(reader);
+
+                await memory.DisposeAsync();
+                
+                return await _gameCycle.Execute(this, OperationID.GameLoad);
             }
             catch (Exception e)
             {
@@ -48,18 +59,17 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
+                StreamData streamData = await _fileManager.OpenToRead(folderName, fileName);
                 
-                using FileStream fileStream = new (filePath, FileMode.Open);
-                BinaryReader binaryReader = new (fileStream);
+                BinaryReader binaryReader = new (streamData.stream);
 
                 binaryReader.Read(_gameModel);
+
+                await _fileManager.Close(streamData);
                 
-                fileStream.Close();
+                OperationResult result = await _gameCycle.Execute(this, OperationID.GameLoad);
                 
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GameLoading);
-                
-                BDebug.LogInfo(this, $"Loaded game state from '{filePath}'");
+                BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
                 return result;
             }
@@ -75,24 +85,20 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GameSaving);
-
+                OperationResult result = await _gameCycle.Execute(this, OperationID.GameSave);
                 if (result.status != EOperationStatus.Success)
                 {
                     return result;
                 }
-                
-                string filePath = InternalGetOrCreateFilePath(folderName, fileName);
-                
-                using FileStream fileStream = new (filePath, FileMode.Create);
-                BinaryWriter binaryWriter = new BinaryWriter(fileStream);
 
-                binaryWriter.Write(_gameModel);
+                StreamData stream = await _fileManager.OpenToWrite(folderName, fileName);
+                BinaryWriter writer = new (stream.stream);
 
-                fileStream.Flush();
-                fileStream.Close();
+                writer.Write(_gameModel);
+
+                await _fileManager.Close(stream);
                 
-                BDebug.LogInfo(this, $"Saved game state to '{filePath}'");
+                BDebug.LogInfo(this, $"Saved game state to '{stream.path}'");
 
                 return result;
             }
@@ -102,18 +108,6 @@ namespace Beast.Radar.Serialization
                 
                 return OperationResult.Failed();
             }
-        }
-
-        private string InternalGetOrCreateFilePath(string folderName, string fileName)
-        {
-            string folderPath = Path.Combine(Application.persistentDataPath, folderName);
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            return Path.Combine(folderPath, fileName) + ".bin";
         }
     }
 }

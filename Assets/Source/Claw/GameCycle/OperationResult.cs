@@ -5,6 +5,7 @@ namespace Beast.Claw.GameCycle
     public struct OperationResult
     {
         public EOperationStatus status;
+        public string errorMessage;
 
         public bool IsSuccess()
         {

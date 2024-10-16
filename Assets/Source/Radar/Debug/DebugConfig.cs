@@ -5,7 +5,7 @@ namespace Beast.Radar.Debug
 {
     public class DebugConfig : ScriptableConfig
     {
-#if BEAST_DEVELOPMENT
+#if DEVELOPMENT
         
         public GameObject logConsolePrefab;
         public GameObject fpsCounterPrefab;

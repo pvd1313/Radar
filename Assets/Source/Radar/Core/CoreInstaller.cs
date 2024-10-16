@@ -23,6 +23,7 @@ namespace Beast.Radar.Core
             yield return typeof(GameBoot);
             yield return typeof(GameSaveManager);
             yield return typeof(DeviceScreen);
+            yield return typeof(FileManager);
             
             // UI Main
             yield return typeof(UIFactory);
@@ -47,9 +48,6 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);
-            
-            // Debug
-            yield return typeof(DebugController);
         }
 
         protected override void BindCustom(DiContainer diContainer)

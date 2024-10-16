@@ -13,5 +13,6 @@
         sbyte ReadSByte();
         byte ReadByte();
         int ReadInt32();
+        bool ReadBool();
     }
 }

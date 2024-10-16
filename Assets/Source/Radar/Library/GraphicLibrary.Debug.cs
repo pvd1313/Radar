@@ -8,7 +8,7 @@ namespace Beast.Radar
         [Serializable]
         public class Debug
         {
-#if BEAST_DEVELOPMENT
+#if DEVELOPMENT
             public Texture2D bakedTerrain;
             public Texture2D terrainGrid;
 
