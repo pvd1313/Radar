@@ -8,6 +8,21 @@ namespace Beast.Claw.Editor
 {
     partial class EditorFlow
     {
+        public void NotifyValidationFailed()
+        {
+            _validationFailed = true;
+        }
+        
+        public string NicifyLabel(string label)
+        {
+            if (!_niceLabelsEnabled)
+            {
+                return label;
+            }
+
+            return ObjectNames.NicifyVariableName(label);
+        }
+        
         public void CheckFlowIsFinished()
         {
             if (_options.Count > 0 || _commands.Count > 0 || _commandStackSize.Count > 0)
@@ -33,49 +48,41 @@ namespace Beast.Claw.Editor
             return this;
         }
 
+        public void StagedBeginDraw(out EditorUI ui, out EditorUIResult result)
+        {
+            result = default;
+            ui = _createEditorUI();
+        }
+        
+        public void StagedHandleException(ref EditorUI ui, ref EditorUIResult result, Exception exception)
+        {
+            _handleException(ref result, exception);
+        }
+
+        public void StagedEndDraw(ref EditorUI ui, ref EditorUIResult result)
+        {
+            result.validationFailed |= _validationFailed;
+
+            _validationFailed = false;
+            
+            _undoLastCommands(ref result);
+        }
+
         public EditorUIResult Draw(Action<EditorUI> action)
         {
-            EditorUIResult result = new ()
-            {
-                changesDetected = false,
-                hasErrors = false,
-            };
+            StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
 
             try
             {
-                action.Invoke(new EditorUI
-                {
-                    flow = this,
-                    layoutOptions = _options.ToArray(),
-                    niceLabelsEnabled = true
-                });
+                action.Invoke(ui);
             }
-
-            catch (ExitGUIException)
-            {
-                throw;
-            }
-
             catch (Exception e)
             {
-                EditorGUILayout.HelpBox($"Unhandled exception:", MessageType.Error);
-
-                EditorGUILayout.LabelField(e.Message);
-
-                EditorGUILayout.TextArea(e.StackTrace);
-
-                BDebug.StaticLogException(e);
-
-                result.hasErrors = true;
-
+                StagedHandleException(ref ui, ref result, e);
             }
             finally
             {
-                _undoLastCommands(ref result);
-                
-                result.hasErrors |= uiErrorsEncountered;
-            
-                uiErrorsEncountered = false;
+                StagedEndDraw(ref ui, ref result);
             }
             
             return result;

@@ -37,9 +37,9 @@ namespace Beast.Claw.Editor
         
         public void Button(string label, Action action)
         {
-            action.ValidateNotNullThrowException($"{NicifyLabel(label)} : action");
+            action.ValidateNotNullThrowException($"{flow.NicifyLabel(label)} : action");
 
-            if (GUILayout.Button(NicifyLabel(label), layoutOptions))
+            if (GUILayout.Button(flow.NicifyLabel(label), layoutOptions))
             {
                 action.Invoke();
             }
@@ -47,9 +47,9 @@ namespace Beast.Claw.Editor
         
         public void Button(string label, Action<EditorUI> action)
         {
-            action.ValidateNotNullThrowException($"{NicifyLabel(label)} : action");
+            action.ValidateNotNullThrowException($"{flow.NicifyLabel(label)} : action");
 
-            if (GUILayout.Button(NicifyLabel(label), layoutOptions))
+            if (GUILayout.Button(flow.NicifyLabel(label), layoutOptions))
             {
                 action.Invoke(this);
             }
@@ -62,29 +62,29 @@ namespace Beast.Claw.Editor
 
         public T EnumSingleField<T>(string label, T value) where T : Enum
         {
-            return (T)EditorGUILayout.EnumPopup(NicifyLabel(label), value, layoutOptions);
+            return (T)EditorGUILayout.EnumPopup(flow.NicifyLabel(label), value, layoutOptions);
         }
         
         public void EnumSingleField<T>(string label, ref T value) where T : Enum
         {
-            value = (T)EditorGUILayout.EnumPopup(NicifyLabel(label), value, layoutOptions);
+            value = (T)EditorGUILayout.EnumPopup(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public T EnumFlagsField<T>(string label, T value) where T : Enum
         {
-            return (T)EditorGUILayout.EnumFlagsField(NicifyLabel(label), value, layoutOptions);
+            return (T)EditorGUILayout.EnumFlagsField(flow.NicifyLabel(label), value, layoutOptions);
         }
         
         public void EnumFlagsField<T>(string label, ref T value) where T : Enum
         {
-            value = (T)EditorGUILayout.EnumFlagsField(NicifyLabel(label), value, layoutOptions);
+            value = (T)EditorGUILayout.EnumFlagsField(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public void TexturePreview(string label, Texture texture, float height)
         {
             if (!string.IsNullOrEmpty(label))
             {
-                EditorGUILayout.LabelField(NicifyLabel(label));
+                EditorGUILayout.LabelField(flow.NicifyLabel(label));
             }
 
             Rect rect = EditorGUILayout.GetControlRect(false, height);
@@ -93,12 +93,12 @@ namespace Beast.Claw.Editor
 
         public int IntField(string label, int value)
         {
-            return EditorGUILayout.IntField(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.IntField(flow.NicifyLabel(label), value, layoutOptions);
         }
         
         public void IntField(string label, ref int value)
         {
-            value = EditorGUILayout.IntField(NicifyLabel(label), value, layoutOptions);
+            value = EditorGUILayout.IntField(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public void Label(string label)
@@ -108,37 +108,37 @@ namespace Beast.Claw.Editor
 
         public float FloatField(string label, float value)
         {
-            return EditorGUILayout.FloatField(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.FloatField(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public Color ColorField(string label, Color value)
         {
-            return EditorGUILayout.ColorField(NicifyLabel(label), value);
+            return EditorGUILayout.ColorField(flow.NicifyLabel(label), value);
         }
         
         public void ColorField(string label, ref Color value)
         {
-            value = EditorGUILayout.ColorField(NicifyLabel(label), value);
+            value = EditorGUILayout.ColorField(flow.NicifyLabel(label), value);
         }
         
         public void FloatField(string label, ref float value)
         {
-            value = EditorGUILayout.FloatField(NicifyLabel(label), value, layoutOptions);
+            value = EditorGUILayout.FloatField(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public float2 Float2Field(string label, float2 value)
         {
-            return EditorGUILayout.Vector2Field(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.Vector2Field(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public bool CheckBox(string label, bool value)
         {
-            return EditorGUILayout.Toggle(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.Toggle(flow.NicifyLabel(label), value, layoutOptions);
         }
         
         public void CheckBox(string label, ref bool value)
         {
-            value = EditorGUILayout.Toggle(NicifyLabel(label), value, layoutOptions);
+            value = EditorGUILayout.Toggle(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public void FlexibleSpace()
@@ -148,12 +148,12 @@ namespace Beast.Claw.Editor
         
         public float3 Float3Field(string label, float3 value)
         {
-            return EditorGUILayout.Vector3Field(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.Vector3Field(flow.NicifyLabel(label), value, layoutOptions);
         }
         
         public float4 Float4Field(string label, float4 value)
         {
-            return EditorGUILayout.Vector4Field(NicifyLabel(label), value, layoutOptions);
+            return EditorGUILayout.Vector4Field(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public string StringField(string label, string value)
@@ -168,19 +168,19 @@ namespace Beast.Claw.Editor
 
         public T AssetField<T>(string label, T obj) where T : Object
         {
-            return (T)EditorGUILayout.ObjectField(NicifyLabel(label), obj, typeof(T), false, layoutOptions);
+            return (T)EditorGUILayout.ObjectField(flow.NicifyLabel(label), obj, typeof(T), false, layoutOptions);
         }
         
         public void AssetField<T>(string label, ref T obj) where T : Object
         {
-            obj = (T)EditorGUILayout.ObjectField(NicifyLabel(label), obj, typeof(T), false, layoutOptions);
+            obj = (T)EditorGUILayout.ObjectField(flow.NicifyLabel(label), obj, typeof(T), false, layoutOptions);
         }
 
         public int2 Int2Field(string label, int2 value)
         {
             Vector2 vector = new(value.x, value.y);
 
-            vector = EditorGUILayout.Vector2Field(NicifyLabel(label), vector, layoutOptions);
+            vector = EditorGUILayout.Vector2Field(flow.NicifyLabel(label), vector, layoutOptions);
 
             return new int2(BMath.FloorToInt(vector.x), BMath.FloorToInt(vector.y));
         }
@@ -189,7 +189,7 @@ namespace Beast.Claw.Editor
         {
             Vector2 vector = new(value.x, value.y);
 
-            vector = EditorGUILayout.Vector2Field(NicifyLabel(label), vector, layoutOptions);
+            vector = EditorGUILayout.Vector2Field(flow.NicifyLabel(label), vector, layoutOptions);
 
             value = new int2(BMath.FloorToInt(vector.x), BMath.FloorToInt(vector.y));
         }

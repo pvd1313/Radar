@@ -31,41 +31,36 @@ namespace Beast.Radar.Editor.TerrainAtlas
         
         protected override void InspectorUI()
         {
-            bool atlasIsValid = false;
-            string atlasErrorMessage = null;
+            flow.AssetField(nameof(_atlasAsset), ref _atlasAsset);
 
-            if (_atlasAsset.atlas != null)
+            if (_atlasAsset == null)
             {
-                _atlasAsset.atlas.TryValidate(out atlasIsValid, out atlasErrorMessage);
+                flow.InfoBox("Open or create atlas");
+                return;
             }
             
-            flow.Draw(ui =>
+            _atlasAsset.atlas.TryValidate(out bool atlasIsValid, out string atlasErrorMessage);
+
+            flow.Horizontal(ui =>
             {
-                ui.AssetField(nameof(_atlasAsset), ref _atlasAsset);
+                flow.Enabled(_atlasAsset != null).Button("Fix Imports", _fixImports);
 
-                flow.If(_atlasAsset == null).InfoBox("Open or create atlas.");
+                bool hasAllTextures = _atlasAsset != null &&
+                                      _atlasAsset.atlas.mainTexture != null &&
+                                      _atlasAsset.atlas.colorTexture != null &&
+                                      _atlasAsset.atlas.configTexture != null;
 
-                flow.If(_atlasAsset != null).Horizontal(ui =>
+                flow.Spy().Enabled(hasAllTextures && atlasIsValid).Button("Bake Textures", ui =>
                 {
-                    flow.Enabled(_atlasAsset != null).Button("Fix Imports", _fixImports);
-
-                    bool hasAllTextures = _atlasAsset != null && 
-                                          _atlasAsset.atlas.mainTexture != null &&
-                                          _atlasAsset.atlas.colorTexture != null &&
-                                          _atlasAsset.atlas.configTexture != null;
-
-                    flow.Spy().Enabled(hasAllTextures && atlasIsValid).Button("Bake Textures", ui =>
-                    {
-                        _bakeMainTexture(ui);
-                        _bakeColorTexture(ui);
-                        _bakeConfigTexture(ui);
-                    });
-                    
-                    flow.Enabled(_isDirty && _atlasAsset != null).Button("Save Asset", _saveAtlasAsset);
+                    _bakeMainTexture(ui);
+                    _bakeColorTexture(ui);
+                    _bakeConfigTexture(ui);
                 });
+
+                flow.Enabled(_isDirty && _atlasAsset != null).Button("Save Asset", _saveAtlasAsset);
             });
 
-            flow.If(_atlasAsset != null).Vertical(ui =>
+            flow.Vertical(ui =>
             {
                 TerrainTileAtlas atlas = _atlasAsset.atlas;
 
@@ -211,7 +206,6 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 {
                     DestroyImmediate(bakedTexture);
                 }
-                
             }
         }
 

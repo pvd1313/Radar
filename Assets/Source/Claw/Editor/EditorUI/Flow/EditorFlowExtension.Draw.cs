@@ -1,32 +1,159 @@
 ﻿using System;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
     partial class EditorFlowExtension
     {
-        public static EditorUIResult Button(this IEditorFlow flow, string label, Action action)
+        public static EditorUIResult Button(this IEditorFlow anyFlow, string label, Action action)
         {
-            return flow.Draw(ui => ui.Button(label, action));
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.Button(label, action);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
 
-        public static EditorUIResult Button(this IEditorFlow flow, string label, Action<EditorUI> action)
+        public static EditorUIResult Button(this IEditorFlow anyFlow, string label, Action<EditorUI> action)
         {
-            return flow.Draw(ui => ui.Button(label, action));
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.Button(label, action);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
 
-        public static EditorUIResult Label(this IEditorFlow flow, string label)
+        public static EditorUIResult Label(this IEditorFlow anyFlow, string label)
         {
-            return flow.Draw(ui => ui.Label(label));
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.Label(label);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
 
-        public static EditorUIResult WarningBox(this IEditorFlow flow, string message)
+        public static EditorUIResult WarningBox(this IEditorFlow anyFlow, string message)
         {
-            return flow.Draw(ui => ui.WarningBox(message));
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.WarningBox(message);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
         
-        public static EditorUIResult InfoBox(this IEditorFlow flow, string message)
+        public static EditorUIResult InfoBox(this IEditorFlow anyFlow, string message)
         {
-            return flow.Draw(ui => ui.InfoBox(message));
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.InfoBox(message);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
+        }
+
+        public static EditorUIResult AssetField<TAsset>(this IEditorFlow anyFlow, string label, ref TAsset asset)
+            where TAsset : Object
+        {
+            if (anyFlow is EditorFlow flow)
+            {
+                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+
+                try
+                {
+                    ui.AssetField(label, ref asset);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
     }
 }
