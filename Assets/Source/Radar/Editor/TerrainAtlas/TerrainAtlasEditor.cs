@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Beast.Claw;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
 using Beast.Radar.Graphic.Terrain;
@@ -30,6 +31,14 @@ namespace Beast.Radar.Editor.TerrainAtlas
         
         protected override void InspectorUI()
         {
+            bool atlasIsValid = false;
+            string atlasErrorMessage = null;
+
+            if (_atlasAsset.atlas != null)
+            {
+                _atlasAsset.atlas.TryValidate(out atlasIsValid, out atlasErrorMessage);
+            }
+            
             flow.Draw(ui =>
             {
                 ui.AssetField(nameof(_atlasAsset), ref _atlasAsset);
@@ -48,7 +57,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                                           _atlasAsset.atlas.colorTexture != null &&
                                           _atlasAsset.atlas.configTexture != null;
 
-                    flow.Spy().Enabled(hasAllTextures).Button("Bake Textures", ui =>
+                    flow.Spy().Enabled(hasAllTextures && atlasIsValid).Button("Bake Textures", ui =>
                     {
                         _bakeMainTexture(ui);
                         _bakeColorTexture(ui);
@@ -63,8 +72,8 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 TerrainTileAtlas atlas = _atlasAsset.atlas;
 
-                bool atlasIsValid = ui.Validate(atlas, nameof(atlas));
-
+                flow.If(!atlasIsValid).Draw(ui => ui.WarningBox(atlasErrorMessage));
+                
                 EditorUIResult spyResult = flow.Spy(ui =>
                 {
                     ui.Foldout("Textures", ref _texturesFold);
