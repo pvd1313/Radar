@@ -1,31 +1,75 @@
-﻿using Beast.Claw.Common;
+﻿using System;
+using System.Collections.Generic;
+using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
+using Beast.Radar.GameCycle;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
-using Zenject;
+using UnityEngine;
 
 namespace Beast.Radar.Debug
 {
-    public class DebugController : IInitializable
+    public class DebugController : IDebugController, IGameCycleListener
     {
         private readonly DebugConfig _config;
+        private readonly DebugPreferences _preferences;
+        private readonly Dictionary<string, GameObject> _debugElements = new();
 
-        public DebugController(DebugConfig config)
+        public DebugController(DebugConfig config, DebugPreferences preferences)
         {
             _config = config;
+            _preferences = preferences;
+        }
+    
+        public void Register(IGameCycleHandle handle)
+        {
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+        }
+
+        private UniTask<OperationResult> _warmup()
+        {
+            SetElementState(DebugElementsID.LogConsoleID, _preferences.isShowLog);
+            SetElementState(DebugElementsID.FpsCounterID, _preferences.isShowFps);
+            return OperationResult.SuccessSync();
+        }
+
+        public void SetElementState(string elementID, bool isActive)
+        {
+            switch (elementID)
+            {
+                case DebugElementsID.FpsCounterID:
+                    _setElementsState(elementID, isActive, _config.fpsCounterPrefab);
+                    _preferences.isShowFps = isActive;
+                    break;
+                case DebugElementsID.LogConsoleID:
+                    _setElementsState(elementID, isActive, _config.logConsolePrefab);
+                    _preferences.isShowLog = isActive;
+                    break;
+            }
         }
         
-        public void Initialize()
+        public bool GetElementState(string elementID)
         {
-#if DEVELOPMENT
-            if (_config.enableLogConsole)
-            {
-                BScene.InstantiateGameObject(this, _config.logConsolePrefab, float3.zero, quaternion.identity);
-            }
-
-            if (_config.enableFPSCounter)
-            {
-                BScene.InstantiateGameObject(this, _config.fpsCounterPrefab, float3.zero, quaternion.identity);
-            }
-#endif
+            return _debugElements.ContainsKey(elementID) && _debugElements[elementID].activeSelf;
         }
+
+        private void _setElementsState(string elementID, bool isActive, GameObject prefab)
+        {
+            if (_debugElements.ContainsKey(elementID))
+            {
+                _debugElements[elementID].SetActive(isActive);
+            }
+            else if(isActive)
+            {
+                _debugElements.Add(elementID, 
+                    BScene.InstantiateGameObject(this, prefab, float3.zero, quaternion.identity));
+            }
+            else
+            {
+                return;
+            }
+            _preferences.isShowLog = isActive;
+        }
+
     }
 }

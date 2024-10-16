@@ -16,5 +16,17 @@ namespace Beast.Radar.UI
         {
             _toggle.onValueChanged.AddListener(on => Changed?.Invoke(on));
         }
+
+        public void SetValue(bool value, bool withNotify)
+        {
+            if (withNotify)
+            {
+                _toggle.isOn = value;
+            }
+            else
+            {
+                _toggle.SetIsOnWithoutNotify(value);
+            }
+        }
     }
 }

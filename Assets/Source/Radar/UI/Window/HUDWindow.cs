@@ -56,7 +56,6 @@ namespace Beast.Radar.UI
         private void _setActive(bool isActive)
         {
             _view.pauseButton.SetInteractable(isActive);
-            BDebug.LogInfo(this,$"set active {isActive}");
         }
         
         private void _subscribeView()

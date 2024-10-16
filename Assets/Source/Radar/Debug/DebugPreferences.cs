@@ -1,23 +1,22 @@
-﻿using Beast.Claw.Debug;
-using Beast.Claw.Serialization;
+﻿using Beast.Claw.Serialization;
 
 namespace Beast.Radar.Debug
 {
     public class DebugPreferences : ISerializable
     {
-        public float
-            playerPlayTimeThanShouldBeDefinitelyStoredNotHereAndBeWithAMuchShorterNameAsShortNamesAreMuchEasierToReadAndRemember;
+        public bool isShowLog;
+        public bool isShowFps;
         
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteFloat(
-                playerPlayTimeThanShouldBeDefinitelyStoredNotHereAndBeWithAMuchShorterNameAsShortNamesAreMuchEasierToReadAndRemember);
+            stream.WriteBool(isShowLog);
+            stream.WriteBool(isShowFps);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            playerPlayTimeThanShouldBeDefinitelyStoredNotHereAndBeWithAMuchShorterNameAsShortNamesAreMuchEasierToReadAndRemember =
-                stream.ReadFloat();
+            isShowLog = stream.ReadBool();
+            isShowFps = stream.ReadBool();
         }
     }
 }

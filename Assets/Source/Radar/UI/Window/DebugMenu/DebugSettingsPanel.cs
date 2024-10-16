@@ -12,10 +12,9 @@ namespace Beast.Radar.UI
         private readonly DebugSettingsPanelView _view;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInputController;
-        private readonly DebugConfig _debugConfig;
+        private readonly IDebugController _debugController;
         private readonly float[] _timeScales = { 1, 3, 10 };
-
-        private List<ToggleLazyObjectController> _toggleableObjects;
+        
         private SelectablesController _selectablesController;
         private int[] _frameRates;
         
@@ -23,33 +22,37 @@ namespace Beast.Radar.UI
             DebugSettingsPanelView view,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInputController, 
-            DebugConfig debugConfig)
+            IDebugController debugController)
         {
             _zoneBuilder = zoneBuilder;
             _uiInputController = uiInputController;
-            _debugConfig = debugConfig;
+            _debugController = debugController;
             _view = view;
         }
 
         public void Warmup()
         {
             _initializeFrameRates();
-            _configureToggles();
             _configureSelectables();
             _subscribeView();
         }
 
         public void Dispose()
         {
-            foreach (ToggleLazyObjectController toggleableObject in _toggleableObjects)
-            {
-                toggleableObject.Dispose();
-            }
+            _unsubscribeView();
             _selectablesController.Dispose();
         }
 
         public void Open()
         {
+            _view.fpsToggle.SetValue(
+                value: _debugController.GetElementState(DebugElementsID.FpsCounterID), 
+                withNotify: false);
+            
+            _view.logToggle.SetValue(
+                value: _debugController.GetElementState(DebugElementsID.LogConsoleID), 
+                withNotify: false);
+            
             _selectablesController.Enable();
             _view.body.SetActive(true);
         }
@@ -59,6 +62,7 @@ namespace Beast.Radar.UI
             _view.body.SetActive(false);
             _selectablesController.Disable();
         }
+        
 
         private void _initializeFrameRates()
         {
@@ -68,19 +72,6 @@ namespace Beast.Radar.UI
             {
                 10, 30, 60, (int)screenRate, 999
             };
-        }
-
-        private void _configureToggles()
-        {
-            _toggleableObjects = new List<ToggleLazyObjectController>()
-            {
-                new ToggleLazyObjectController(_view.logToggle, _debugConfig.logConsolePrefab),
-                new ToggleLazyObjectController(_view.fpsToggle, _debugConfig.fpsCounterPrefab),
-            };
-            foreach (ToggleLazyObjectController toggleableObject in _toggleableObjects)
-            {
-                toggleableObject.Warmup();
-            }
         }
 
         private void _configureSelectables()
@@ -108,6 +99,8 @@ namespace Beast.Radar.UI
            _selectablesController.Warmup();
         }
 
+        #region View events
+
         private void _subscribeView()
         {
             for (int i = 0; i < _view.timeScaleButtons.Length; i++)
@@ -121,6 +114,25 @@ namespace Beast.Radar.UI
                 int index = i;
                 _view.frameRateButtons[i].Clicked += () => _onFrameRateButtonClicked(index);
             }
+
+            _view.fpsToggle.Changed += _onFpsToggleChanged;
+            _view.logToggle.Changed += _onLogToggleChanged;
+        }
+
+        private void _unsubscribeView()
+        {
+            _view.fpsToggle.Changed -= _onFpsToggleChanged;
+            _view.logToggle.Changed -= _onLogToggleChanged;
+        }
+
+        private void _onLogToggleChanged(bool on)
+        {
+            _debugController.SetElementState(DebugElementsID.LogConsoleID, on);
+        }
+
+        private void _onFpsToggleChanged(bool on)
+        {
+            _debugController.SetElementState(DebugElementsID.FpsCounterID, on);
         }
 
         private void _onTimeScaleButtonClicked(int index)
@@ -134,5 +146,8 @@ namespace Beast.Radar.UI
             Application.targetFrameRate = _frameRates[index];
             BDebug.LogInfo(this, $"Target frame rate = {_frameRates[index]}");
         }
+
+        #endregion
+
     }
 }

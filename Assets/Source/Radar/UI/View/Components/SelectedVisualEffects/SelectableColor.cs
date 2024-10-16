@@ -17,8 +17,6 @@ namespace Beast.Radar.UI
 
         public override void SetDefaultMode()
         {
-            if(gameObject.TryGetComponent(out DebugItemButton debugItemButton))
-            BDebug.LogInfo(this, $"{debugItemButton.ToString()} set default");
             _image.color = _defaultColor;
             _isSelect = false;
         }

@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInput;
         private readonly IPlayerInputProvider _playerInput;
-        private readonly DebugConfig _debugConfig;
+        private readonly IDebugController _debugController;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
@@ -29,24 +29,24 @@ namespace Beast.Radar.UI
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInput,
             IPlayerInputProvider playerInput,
-            DebugConfig debugConfig)
+            IDebugController debugController)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _uiInput = uiInput;
             _playerInput = playerInput;
-            _debugConfig = debugConfig;
+            _debugController = debugController;
         }
 
         public void Register(IGameCycleHandle handle)
         {
-#if BEAST_DEVELOPMENT
+#if DEVELOPMENT
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
 #endif
         }
-
+        
         public void Open()
         {
             _panelsController.Enable();
@@ -94,7 +94,7 @@ namespace Beast.Radar.UI
             {
                 //todo replace itemsData with data from the configuration file.
                 new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugConfig),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
             });
             _panelsController.Warmup();
         }

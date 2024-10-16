@@ -54,7 +54,6 @@ namespace Beast.Radar.UI
         {
             if (SelectedButton != null)
             {
-                BDebug.LogInfo(this, "deselect radio");
                 SelectedButton.Deselect();
             }
 
