@@ -131,14 +131,24 @@ namespace Beast.Claw.Editor
             return EditorGUILayout.Vector2Field(flow.NicifyLabel(label), value, layoutOptions);
         }
 
-        public bool CheckBox(string label, bool value)
+        public bool CheckBoxRight(string label, bool value)
         {
             return EditorGUILayout.Toggle(flow.NicifyLabel(label), value, layoutOptions);
         }
         
-        public void CheckBox(string label, ref bool value)
+        public void CheckBoxRight(string label, ref bool value)
         {
             value = EditorGUILayout.Toggle(flow.NicifyLabel(label), value, layoutOptions);
+        }
+        
+        public bool CheckBoxLeft(string label, bool value)
+        {
+            return EditorGUILayout.Toggle(flow.NicifyLabel(label), value, layoutOptions);
+        }
+        
+        public void CheckBoxLeft(string label, ref bool value)
+        {
+            value = EditorGUILayout.ToggleLeft(flow.NicifyLabel(label), value, layoutOptions);
         }
 
         public void FlexibleSpace()

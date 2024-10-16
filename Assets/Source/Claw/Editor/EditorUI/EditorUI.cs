@@ -11,6 +11,7 @@ namespace Beast.Claw.Editor
         public const string CharCross = "x";
         public const string CharA = "A"; 
         public const int OneCharButtonSize = 20;
+        public const int TwoCharButtonSize = 25;
         public const int MinorSpace = 8;
 
         public EditorFlow flow;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Collection;
 using Beast.Claw.Debug;
@@ -10,13 +11,38 @@ namespace Beast.Claw.Editor.Window
 {
     public class DebugTrackWindow : EditorWindow
     {
+        private readonly GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.OneCharButtonSize);
+        private readonly GUILayoutOption _tickrateButtonWidth = GUILayout.Width(EditorUI.TwoCharButtonSize);
+        
         [SerializeField] private bool _clearOnEnterPlayerMode;
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
-        [SerializeField] private GUILayoutOption _orderButtonWidth = GUILayout.Width(EditorUI.OneCharButtonSize);
         [SerializeField] private List<string> _drawOrder = new();
+        [SerializeField] private int _updateTickRate = 3;
         
         private bool _isPlaying;
+        private DateTime _lastUpdateTime;
+
+        public DebugTrackWindow()
+        {
+            EditorApplication.update += _onEditorApplicationUpdate;
+            _lastUpdateTime = DateTime.Now;
+        }
+
+        private void _onEditorApplicationUpdate()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                return;
+            }
+            
+            DateTime now = DateTime.Now;
+            if ((now - _lastUpdateTime).TotalSeconds >= 1f / _updateTickRate)
+            {
+                _lastUpdateTime = now;
+                Repaint();
+            }
+        }
 
         protected override void InspectorUI()
         {
@@ -35,12 +61,21 @@ namespace Beast.Claw.Editor.Window
                 ui.FlexibleSpace();
                 
                 float labelWidthBak = EditorGUIUtility.labelWidth;
-
-                EditorGUIUtility.labelWidth = 150;
                 
-                ui.CheckBox("Enter PlayMode Clear", ref _clearOnEnterPlayerMode);
+                EditorGUIUtility.labelWidth = 100;
 
+                ui.IntField("Fetch TickRate", ref _updateTickRate);
+                
                 EditorGUIUtility.labelWidth = labelWidthBak;
+
+                flow.Option(_tickrateButtonWidth).Draw(ui =>
+                {
+                    ui.Button("3", () => _updateTickRate = 3);
+                    ui.Button("10", () => _updateTickRate = 10);
+                    ui.Button("60", () => _updateTickRate = 60);
+                });
+                
+                ui.CheckBoxLeft("PlayMode Clear", ref _clearOnEnterPlayerMode);
             });
 
             flow.Horizontal(ui =>
@@ -94,8 +129,6 @@ namespace Beast.Claw.Editor.Window
             });
 
             _drawOrder.TrySwap(swapIndex.a, swapIndex.b);
-            
-            Repaint();
         }
 
         private void _trackStorageUI(EditorUI ui, DebugTrackStorage storage)
@@ -153,7 +186,7 @@ namespace Beast.Claw.Editor.Window
         
         protected override void Dispose()
         {
-            
+            EditorApplication.update -= _onEditorApplicationUpdate;
         }
     }
 }
