@@ -64,6 +64,12 @@ namespace Beast.Claw.Editor
             result.validationFailed |= _validationFailed;
 
             _validationFailed = false;
+
+            if (ui.layoutOptions.Length > 0)
+            {
+                _layoutOptionPool.Dispose(ui.layoutOptions);
+                ui.layoutOptions = null;
+            }
             
             _undoLastCommands(ref result);
         }
