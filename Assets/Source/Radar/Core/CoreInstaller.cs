@@ -50,9 +50,6 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);
-            
-            // Debug
-            yield return typeof(DebugController);
         }
 
         protected override void BindCustom(DiContainer diContainer)

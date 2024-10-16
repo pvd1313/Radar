@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.GameCycle;
+using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Beast.Radar.UI
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInput;
         private readonly IPlayerInputProvider _playerInput;
+        private readonly DebugConfig _debugConfig;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
@@ -26,13 +28,15 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInput,
-            IPlayerInputProvider playerInput)
+            IPlayerInputProvider playerInput,
+            DebugConfig debugConfig)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _uiInput = uiInput;
             _playerInput = playerInput;
+            _debugConfig = debugConfig;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -69,9 +73,6 @@ namespace Beast.Radar.UI
             _subscribeView();
             _subscribeInput();
             
-            _panelsController.Warmup();
-            _selectablesController.Warmup();
-                        
             return OperationResult.SuccessSync();
         }
 
@@ -93,8 +94,9 @@ namespace Beast.Radar.UI
             {
                 //todo replace itemsData with data from the configuration file.
                 new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugConfig),
             });
+            _panelsController.Warmup();
         }
 
         private void _configureSelectables()
@@ -111,6 +113,7 @@ namespace Beast.Radar.UI
             };
             
             _selectablesController = new SelectablesController(_uiInput, grids);
+            _selectablesController.Warmup();
         }
 
         private void _configureInputIcons()

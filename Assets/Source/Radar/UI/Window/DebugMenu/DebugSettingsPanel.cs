@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Debug;
+using Beast.Radar.Debug;
 using Beast.Radar.InputControl;
 using UnityEngine;
 
@@ -11,32 +12,39 @@ namespace Beast.Radar.UI
         private readonly DebugSettingsPanelView _view;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInputController;
+        private readonly DebugConfig _debugConfig;
         private readonly float[] _timeScales = { 1, 3, 10 };
 
+        private List<ToggleLazyObjectController> _toggleableObjects;
         private SelectablesController _selectablesController;
         private int[] _frameRates;
         
         public DebugSettingsPanel(
             DebugSettingsPanelView view,
             ISelectableZoneBuilder zoneBuilder,
-            IUIInputController uiInputController)
+            IUIInputController uiInputController, 
+            DebugConfig debugConfig)
         {
             _zoneBuilder = zoneBuilder;
             _uiInputController = uiInputController;
+            _debugConfig = debugConfig;
             _view = view;
         }
 
         public void Warmup()
         {
             _initializeFrameRates();
+            _configureToggles();
             _configureSelectables();
             _subscribeView();
-            
-            _selectablesController.Warmup();
         }
 
         public void Dispose()
         {
+            foreach (ToggleLazyObjectController toggleableObject in _toggleableObjects)
+            {
+                toggleableObject.Dispose();
+            }
             _selectablesController.Dispose();
         }
 
@@ -52,15 +60,38 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
+        private void _initializeFrameRates()
+        {
+            RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
+            float screenRate = (float)refreshRate.numerator / refreshRate.denominator;
+            _frameRates = new[]
+            {
+                10, 30, 60, (int)screenRate, 999
+            };
+        }
+
+        private void _configureToggles()
+        {
+            _toggleableObjects = new List<ToggleLazyObjectController>()
+            {
+                new ToggleLazyObjectController(_view.logToggle, _debugConfig.logConsolePrefab),
+                new ToggleLazyObjectController(_view.fpsToggle, _debugConfig.fpsCounterPrefab),
+            };
+            foreach (ToggleLazyObjectController toggleableObject in _toggleableObjects)
+            {
+                toggleableObject.Warmup();
+            }
+        }
+
         private void _configureSelectables()
         {
             UISelectable[,] selectables =
             {
-                { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, },
-                { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, },
-                { _view.timeScaleButtons[2].Selectable, _view.frameRateButtons[2].Selectable, },
-                { null, _view.frameRateButtons[3].Selectable, },
-                { null, _view.frameRateButtons[4].Selectable, },
+                { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, _view.logToggle.Selectable},
+                { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, _view.fpsToggle.Selectable},
+                { _view.timeScaleButtons[2].Selectable, _view.frameRateButtons[2].Selectable, null},
+                { null,                                 _view.frameRateButtons[3].Selectable, null},
+                { null,                                 _view.frameRateButtons[4].Selectable, null},
             };
 
            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
@@ -74,16 +105,7 @@ namespace Beast.Radar.UI
            };
            
            _selectablesController = new SelectablesController(_uiInputController, grids);
-        }
-
-        private void _initializeFrameRates()
-        {
-            RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
-            float screenRate = (float)refreshRate.numerator / refreshRate.denominator;
-            _frameRates = new[]
-            {
-                10, 30, 60, (int)screenRate, 999
-            };
+           _selectablesController.Warmup();
         }
 
         private void _subscribeView()
