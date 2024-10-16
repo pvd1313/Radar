@@ -135,6 +135,11 @@ namespace Beast.Claw.Editor
         {
             value = EditorGUILayout.Toggle(NicifyLabel(label), value, layoutOptions);
         }
+
+        public void FlexibleSpace()
+        {
+            GUILayout.FlexibleSpace();
+        }
         
         public float3 Float3Field(string label, float3 value)
         {
