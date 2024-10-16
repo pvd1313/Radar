@@ -10,9 +10,9 @@ namespace Beast.Radar.Graphic.Terrain
 {
     public class TerrainBaker : ITerrainBaker, IGameCycleListener
     {
-        private const RenderTextureFormat TextureFormat = RenderTextureFormat.RFloat;
+        private const RenderTextureFormat TextureFormat = RenderTextureFormat.RHalf;
         private const TextureWrapMode TextureWrapMode = UnityEngine.TextureWrapMode.Clamp;
-        private const FilterMode TextureFilterMode = FilterMode.Point;
+        private const FilterMode TextureFilterMode = FilterMode.Bilinear;
         
         private readonly GraphicLibrary _graphicLibrary;
 

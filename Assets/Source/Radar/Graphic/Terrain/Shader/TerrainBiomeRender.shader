@@ -83,11 +83,28 @@
                 return tex2D(_TerrainTexture, mainUV).r;
             }
 
-            // There will be more complex or index map texture in future.
-            uint terrain_color_to_tile_index(float terrainColor)
+            uint terrain_color_to_tile_index(float waterAmount)
             {
-                // 0 .. 1 just for now. 0 - grass. 1 - water.
-                return saturate(1.0f - terrainColor);
+                if (waterAmount > 0.9f)
+                {
+                    // tile_water_deep
+                    return 3;
+                }
+
+                if (waterAmount > 0.1f)
+                {
+                    // tile_water_shallow
+                    return 2;
+                }
+
+                if (waterAmount > 0.05f)
+                {
+                    // tile_water_coast
+                    return 1;
+                }
+
+                // tile_grass
+                return 0;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
@@ -95,9 +112,9 @@
                 float4 color0 = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET_0, NOISE_POWER_0);
                 float4 color1 = noise_shift(input.mainUV, input.noiseUV * 1.5, NOISE_OFFSET_1, NOISE_POWER_1);
 
-                float4 color = saturate((color0 + color1) * 900);
+                float4 terrainColorRGBA = saturate(color0 * color1);
 
-                uint tileIndex = terrain_color_to_tile_index(color.r);
+                uint tileIndex = terrain_color_to_tile_index(terrainColorRGBA.r);
 
                 return float4(f16tof32(tileIndex), 0, 0, 0);
 

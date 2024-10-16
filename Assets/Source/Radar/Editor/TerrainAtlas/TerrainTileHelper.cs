@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 namespace Beast.Radar.Editor.TerrainAtlas
 {
     [Serializable]
-    public class TerrainSpriteHelper
+    public class TerrainTileHelper
     {
         public float GetSpriteHeight(Texture texture)
         {

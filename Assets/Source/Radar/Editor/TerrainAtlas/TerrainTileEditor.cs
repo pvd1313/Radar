@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Beast.Radar.Editor.TerrainAtlas
 {
     [Serializable]
-    public class TerrainSpriteEditor
+    public class TerrainTileEditor
     {
         private IEditorFlow flow => _window.flow;
         
@@ -18,9 +18,9 @@ namespace Beast.Radar.Editor.TerrainAtlas
         [SerializeField] private GUILayoutOption _smallButtonSize = GUILayout.Width(EditorUI.OneCharButtonSize);
         [SerializeField] private bool _mainFold;
         [SerializeField] private UnitySerializableDictionary<int, bool> _spriteFolds = new();
-        [SerializeField] private TerrainSpriteHelper _helper = new ();
+        [SerializeField] private TerrainTileHelper _helper = new ();
 
-        public TerrainSpriteEditor(TerrainAtlasEditor window)
+        public TerrainTileEditor(TerrainAtlasEditor window)
         {
             _window = window;
         }
@@ -93,14 +93,32 @@ namespace Beast.Radar.Editor.TerrainAtlas
             
             EditorUIResult spyResult = flow.If(spriteFold).Indent().Spy(ui =>
             {
-                ui.AssetField(nameof(sprite.texture), ref sprite.texture);
-                ui.StringField(nameof(sprite.name), ref sprite.name);
+                ui.Label("Texture");
+
+                bool spriteHasTexture = sprite.texture != null;
+                
+                flow.Indent().Horizontal().Draw(ui =>
+                {
+                    flow.Enabled(false).Label(spriteHasTexture ? sprite.texture.name : "N/A");
+                    
+                    ui.AssetField(string.Empty, ref sprite.texture);
+                });
+
+                flow.Horizontal(ui =>
+                {
+                    ui.StringField(nameof(sprite.name), ref sprite.name);
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    {
+                        sprite.name = sprite.texture.name;
+                    });
+                });
+                
                 ui.IntField(nameof(sprite.index), ref sprite.index);
 
                 flow.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(sprite.yCropHeight), ref sprite.yCropHeight);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.yCropHeight = 1 - _helper.GetSpriteHeight(sprite.texture);
                     });
@@ -109,7 +127,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(sprite.yBlendCenter), ref sprite.yBlendCenter);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.yBlendCenter = _helper.GetSpriteHeight(sprite.texture) * 0.5f;
                     });
@@ -118,7 +136,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Horizontal(ui =>
                 {
                     ui.ColorField(nameof(sprite.averageColor), ref sprite.averageColor);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.averageColor = _helper.GetAverageColor(sprite.texture);
                     });

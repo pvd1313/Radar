@@ -17,7 +17,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
         private const string NameOverride = "Override";
         
         [SerializeField] private TerrainTileAtlasAsset _atlasAsset;
-        [SerializeField] private TerrainSpriteEditor _spriteEditor;
+        [SerializeField] private TerrainTileEditor _tileEditor;
         [SerializeField] private bool _isDirty;
         [SerializeField] private GUILayoutOption _bakeButtonSize = GUILayout.Width(100);
         [SerializeField] private TerrainAtlasBaker _baker = new();
@@ -26,7 +26,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
 
         public TerrainAtlasEditor()
         {
-            _spriteEditor = new TerrainSpriteEditor(this);
+            _tileEditor = new TerrainTileEditor(this);
         }
         
         protected override void InspectorUI()
@@ -43,14 +43,11 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 ui.AssetField(nameof(_atlasAsset), ref _atlasAsset);
 
-                flow.If(_atlasAsset == null, ui =>
-                {
-                    ui.InfoBox("Open or create atlas.");
-                });
+                flow.If(_atlasAsset == null).InfoBox("Open or create atlas.");
 
                 flow.If(_atlasAsset != null).Horizontal(ui =>
                 {
-                    flow.Enabled(_atlasAsset != null).Button("Imports Fix", _fixImports);
+                    flow.Enabled(_atlasAsset != null).Button("Fix Imports", _fixImports);
 
                     bool hasAllTextures = _atlasAsset != null && 
                                           _atlasAsset.atlas.mainTexture != null &&
@@ -72,7 +69,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 TerrainTileAtlas atlas = _atlasAsset.atlas;
 
-                flow.If(!atlasIsValid).Draw(ui => ui.WarningBox(atlasErrorMessage));
+                flow.If(!atlasIsValid).WarningBox(atlasErrorMessage);
                 
                 EditorUIResult spyResult = flow.Spy(ui =>
                 {
@@ -106,7 +103,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 ui.Space(EditorUI.MinorSpace);
 
                 _isDirty |= spyResult.changesDetected;
-                _isDirty |= _spriteEditor.DrawUI(atlas.sprites);
+                _isDirty |= _tileEditor.DrawUI(atlas.sprites);
             });
         }
 
