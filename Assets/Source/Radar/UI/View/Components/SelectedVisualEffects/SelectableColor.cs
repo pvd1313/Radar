@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using System;
+using Beast.Claw.Debug;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,11 @@ namespace Beast.Radar.UI
 
         private Color _defaultColor;
         private bool _isSelect;
-
+        
+        private void Awake()
+        {
+           // _defaultColor = _image.color;
+        }
 
         public override void SetDefaultMode()
         {
@@ -23,6 +28,10 @@ namespace Beast.Radar.UI
 
         public override void SetSelectedMode()
         {
+            if (_isSelect)
+            {
+                return;
+            }
             _defaultColor = _image.color;
             _image.color = Color.Lerp(_defaultColor, _selectShade, Blend);
             _isSelect = true;

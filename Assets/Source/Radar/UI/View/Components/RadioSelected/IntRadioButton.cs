@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Debug;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,15 +24,17 @@ namespace Beast.Radar.UI
 
         public void Select()
         {
-            Clicked?.Invoke(this);
             IsSelected = true;
             _selectableVisual.SetSelectedMode();
+            BDebug.LogInfo(this, $"{_value} select");
+            Clicked?.Invoke(this);
         }
 
         public void Deselect()
         {
             IsSelected = false;
             _selectableVisual.SetDefaultMode();
+            BDebug.LogInfo(this, $"{_value} deselect");
         }
     }
 }

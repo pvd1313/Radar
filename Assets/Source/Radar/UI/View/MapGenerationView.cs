@@ -5,12 +5,12 @@ namespace Beast.Radar.UI
     public class MapGenerationView : UIView
     {
         public TextMeshProUGUI seedResult;
-        public UIButton nextSeedButton;
-        public UIButton previousSeedButton;
+        public UIStepButtons seedButtons;
         public UISlider forestSlider;
         public UISlider waterSlider;
+        public UISlider biomeSlider;
         public UIButton createMapButton;
         public UIButton closeButton;
-        public UIButton[] sizeButtons;
+        public IntRadioButton[] sizeButtons;
     }
 }

@@ -24,5 +24,17 @@ namespace Beast.Radar.UI
         {
             _slider.value += value * ChangeSpeed;
         }
+        
+        public void SetValue(float value, bool withNotify)
+        {
+            if (withNotify)
+            {
+                _slider.value = value;
+            }
+            else
+            {
+                _slider.SetValueWithoutNotify(value);
+            }
+        }
     }
 }

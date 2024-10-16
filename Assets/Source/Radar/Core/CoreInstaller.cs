@@ -33,7 +33,7 @@ namespace Beast.Radar.Core
             // UI Windows
             yield return typeof(HUDWindow);
             yield return typeof(PauseMenuWindow);
-            //yield return typeof(MapGenerationWindow);
+            yield return typeof(MapGenerationWindow);
             
             // Input & Camera
             yield return typeof(CameraTransform);

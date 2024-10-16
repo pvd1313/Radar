@@ -71,5 +71,6 @@ namespace Beast.Radar.UI
             _selectable.SetInteractable(true);
             _visualEffect.SetDefaultMode();
         }
+        
     }
 }

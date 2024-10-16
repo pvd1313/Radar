@@ -7,17 +7,18 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler , ISelectHandler, IDeselectHandler
+    public class UISelectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler,
+        IDeselectHandler
     {
         public event Action<ESelectionZone, int2> Selected;
 
         [SerializeField] private Selectable _selectable;
         [SerializeField, CanBeNull] private SelectableVisual _selectableVisual;
-        
+
         private ESelectionZone _zone;
         private int2 _index;
         private bool _isHighlighted;
-        
+
         public void SetIndex(int2 index)
         {
             _index = index;
@@ -61,9 +62,9 @@ namespace Beast.Radar.UI
         {
             return $"{_zone} {_index}";
         }
-        
+
         #region Unity events
-        
+
         private void OnEnable()
         {
             if (IsSelected() && _selectableVisual != null)
@@ -71,10 +72,15 @@ namespace Beast.Radar.UI
                 _selectableVisual.SetSelectedMode();
             }
         }
-        
+
         private void OnDisable()
         {
             Deselect();
+            
+            if (_selectableVisual != null)
+            {
+                _selectableVisual.SetDefaultMode();
+            }
         }
 
         public void OnSelect(BaseEventData eventData)

@@ -19,13 +19,15 @@ namespace Beast.Radar.UI
         private readonly IPlayerInputProvider _playerInput;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
-        private SelectablesController _selectablesController;
         private MapGenerationView _menuView;
+        private SelectablesController _selectablesController;
+        private ButtonRadioGroup<IntRadioButton> _sizeButtonsGroup;
         private GenerationMapData _data;
+        private int _seedIndex;
 
         public MapGenerationWindow(
-            IUIFactory uiFactory, 
-            IWindowManager windowManager, 
+            IUIFactory uiFactory,
+            IWindowManager windowManager,
             ISelectableZoneBuilder selectableBuilder,
             IUIInputController uiInput,
             IPlayerInputProvider playerInput)
@@ -36,7 +38,7 @@ namespace Beast.Radar.UI
             _uiInput = uiInput;
             _playerInput = playerInput;
         }
-        
+
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, _warmup);
@@ -59,11 +61,13 @@ namespace Beast.Radar.UI
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
-            
+
+            _sizeButtonsGroup = new ButtonRadioGroup<IntRadioButton>(_menuView.sizeButtons);
+            _sizeButtonsGroup.Warmup(startIndex: _menuView.sizeButtons.Length - 1);
+
+            _configureView();
             _configureSelectables();
             _subscribeView();
-            
-            _selectablesController.Warmup();
             
             return OperationResult.SuccessSync();
         }
@@ -71,22 +75,35 @@ namespace Beast.Radar.UI
         private UniTask<OperationResult> _dispose()
         {
             _unsubscribeView();
-            
+
             _selectablesController.Dispose();
-            
+            _sizeButtonsGroup.Dispose();
+
             return OperationResult.SuccessSync();
+        }
+
+        private void _configureView()
+        {
+            _menuView.waterSlider.SetValue(value: 0.5f, withNotify: false);
+            _menuView.forestSlider.SetValue(value: 0.5f, withNotify: false);
+            _menuView.biomeSlider.SetValue(value: 0.5f, withNotify: false);
+            _seedIndex = Random.Range(0, Seeds.Length);
+            _refreshSeed();
         }
 
         private void _configureSelectables()
         {
             UISelectable[,] selectablesGrid =
             {
-                {_menuView.nextSeedButton.Selectable, null, null, null},
-                {_menuView.sizeButtons[0].Selectable, _menuView.sizeButtons[1].Selectable, 
-                _menuView.sizeButtons[2].Selectable, _menuView.sizeButtons[3].Selectable },
-                {_menuView.forestSlider.Selectable, null, null, null},
-                {_menuView.waterSlider.Selectable, null, null, null},
-                {_menuView.createMapButton.Selectable, null, null, null}
+                { _menuView.seedButtons.Decrement.Selectable, _menuView.seedButtons.Increment.Selectable, null, null },
+                {
+                    _menuView.sizeButtons[0].Selectable, _menuView.sizeButtons[1].Selectable,
+                    _menuView.sizeButtons[2].Selectable, _menuView.sizeButtons[3].Selectable
+                },
+                { _menuView.forestSlider.Selectable, null, null, null },
+                { _menuView.waterSlider.Selectable, null, null, null },
+                { _menuView.biomeSlider.Selectable, null, null, null },
+                { _menuView.createMapButton.Selectable, null, null, null }
             };
 
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectableBuilder.Build(
@@ -98,62 +115,83 @@ namespace Beast.Radar.UI
             {
                 { dpadGrid.Item1, dpadGrid.Item2 }
             };
-            
+
             _selectablesController = new SelectablesController(_uiInput, grids);
+            _selectablesController.Warmup();
         }
 
         private void _subscribeView()
         {
-            for (int i = 0; i < _menuView.sizeButtons.Length; i++)
-            {
-                int index = i;
-                _menuView.sizeButtons[index].Clicked += () => _onClickSizeButton(index);
-            }
-            
-            _menuView.closeButton.Clicked += _onClickCloseButton;
-            _menuView.createMapButton.Clicked += _onCreateMapButton;
-            _menuView.nextSeedButton.Clicked += OnClickNextSeedButton;
-            _menuView.forestSlider.EndedChange += _onEndedChangeForest;
-            _menuView.waterSlider.EndedChange += _onEndedChangeWater;
+            _sizeButtonsGroup.Selected += _onSizeSelected;
+            _menuView.seedButtons.Clicked += _onSeedButtonsClicked;
+            _menuView.closeButton.Clicked += _onCloseButtonClicked;
+            _menuView.createMapButton.Clicked += _onCreateMapButtonClicked;
+            _menuView.forestSlider.EndedChange += _onForestEndedChange;
+            _menuView.waterSlider.EndedChange += _onWaterEndedChange;
+            _menuView.biomeSlider.EndedChange += _onBiomeSizeEndedChange;
         }
+
 
         private void _unsubscribeView()
         {
-            _menuView.closeButton.Clicked -= _onClickCloseButton;
-            _menuView.createMapButton.Clicked -= _onCreateMapButton;
-            _menuView.nextSeedButton.Clicked -= OnClickNextSeedButton;
-            _menuView.forestSlider.EndedChange -= _onEndedChangeForest;
-            _menuView.waterSlider.EndedChange -= _onEndedChangeWater;
+            _sizeButtonsGroup.Selected -= _onSizeSelected;
+            _menuView.seedButtons.Clicked -= _onSeedButtonsClicked;
+            _menuView.closeButton.Clicked -= _onCloseButtonClicked;
+            _menuView.createMapButton.Clicked -= _onCreateMapButtonClicked;
+            _menuView.forestSlider.EndedChange -= _onForestEndedChange;
+            _menuView.waterSlider.EndedChange -= _onWaterEndedChange;
+            _menuView.biomeSlider.EndedChange -= _onBiomeSizeEndedChange;
         }
 
-        private void _onEndedChangeWater(float value)
+        private void _onBiomeSizeEndedChange(float value)
+        {
+            _data.biomeSize = value;
+        }
+
+        private void _onSizeSelected(IntRadioButton button)
+        {
+            _data.size = button.Value;
+        }
+
+        private void _onWaterEndedChange(float value)
         {
             _data.water = value;
         }
 
-        private void _onEndedChangeForest(float value)
+        private void _onForestEndedChange(float value)
         {
             _data.forest = value;
         }
 
-        private void OnClickNextSeedButton()
+        private void _onSeedButtonsClicked(int step)
         {
-            string seedName = Seeds[Random.Range(0, Seeds.Length)];
+            _seedIndex += step;
+            if (_seedIndex < 0)
+            {
+                _seedIndex = Seeds.Length - 1;
+            }
+            else if(_seedIndex == Seeds.Length)
+            {
+                _seedIndex = 0;
+            }
+            
+            _refreshSeed();
+        }
+
+        private void _refreshSeed()
+        {
+            string seedName = Seeds[_seedIndex];
             _menuView.seedResult.SetText(seedName);
             _data.seed = seedName.GetHashCode();
         }
 
-        private void _onClickSizeButton(int index)
-        {
-            _data.size = Sizes[index];
-        }
 
-        private void _onCreateMapButton()
+        private void _onCreateMapButtonClicked()
         {
             //todo add create map action 
         }
 
-        private void _onClickCloseButton()
+        private void _onCloseButtonClicked()
         {
             _windowManager.Show(WindowID.MainHUD);
         }

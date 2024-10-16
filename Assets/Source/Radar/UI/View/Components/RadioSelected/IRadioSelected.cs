@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.UI
 {
-    public interface IRadioSelected
+    public interface IRadioSelected 
     {
         bool IsSelected { get; }
         void Select();
