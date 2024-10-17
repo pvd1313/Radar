@@ -253,7 +253,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""id"": ""1bf26d47-565f-4791-864c-a75f38bf633c"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": ""NormalizeVector2,InvertVector2"",
+                    ""processors"": ""InvertVector2"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
