@@ -137,7 +137,7 @@ namespace Beast.Radar.UI
 
             UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.DPad,
+                zone: ESelectionZone.Navigate,
                 selectables: dpadSelectables,
                 cols: ItemGridSize.x, rows: ItemGridSize.y,
                 isFillHorizontally: false,
@@ -204,7 +204,7 @@ namespace Beast.Radar.UI
 
         private void _onSelectablesTryWentBeyond(ESelectionZone zone, int2 direction)
         {
-            if (zone is not ESelectionZone.DPad || Math.Abs(direction.x) != 1)
+            if (zone is not ESelectionZone.Navigate || Math.Abs(direction.x) != 1)
             {
                 return;
             }
@@ -264,7 +264,7 @@ namespace Beast.Radar.UI
 
             UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.DPad,
+                zone: ESelectionZone.Navigate,
                 selectables: dpadSelectables,
                 cols: ItemGridSize.x, rows: ItemGridSize.y,
                 isFillHorizontally: false,

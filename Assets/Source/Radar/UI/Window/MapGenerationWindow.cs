@@ -97,7 +97,7 @@ namespace Beast.Radar.UI
             };
 
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectableBuilder.Build(
-                zone: ESelectionZone.DPad,
+                zone: ESelectionZone.Navigate,
                 selectableGrid: selectablesGrid,
                 isLooping: true);
 

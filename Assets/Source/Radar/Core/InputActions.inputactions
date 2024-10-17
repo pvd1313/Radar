@@ -412,6 +412,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "LeftStick",
+                    "type": "PassThrough",
+                    "id": "007b2e66-cd9c-4c12-8011-1932495308dd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -520,17 +529,6 @@
                     "path": "<Gamepad>/dpad",
                     "interactions": "",
                     "processors": "InvertVector2(invertX=false)",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "90b305af-bf62-4276-ac10-7f31794e2310",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
                     "groups": "",
                     "action": "Navigate",
                     "isComposite": false,
@@ -852,6 +850,17 @@
                     "processors": "",
                     "groups": "MouseAndKeyboard",
                     "action": "SouthButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "90b305af-bf62-4276-ac10-7f31794e2310",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false),NormalizeVector2",
+                    "groups": "Gamepad",
+                    "action": "Navigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
