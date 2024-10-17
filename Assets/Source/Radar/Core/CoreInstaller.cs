@@ -42,12 +42,13 @@ namespace Beast.Radar.Core
             yield return typeof(CameraInputController);
             yield return typeof(CameraController);
             
-            // Render
+            // Terrain
             yield return typeof(TerrainBaker);
             yield return typeof(TerrainBiomeRender);
             yield return typeof(TerrainBakedTexture);
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);
+            // yield return typeof(TerrainPreviewRender);
         }
 
         protected override void BindCustom(DiContainer diContainer)

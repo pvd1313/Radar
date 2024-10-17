@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
-using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Graphic
 {
     [DomainInitialize]
     public static partial class BGraphic
     {
-        private static readonly HashSet<RenderTexture> _permanentTextures;
-        private static readonly HashSet<RenderTexture> _temporaryTextures;
+        private static readonly HashSet<RenderTexture> PERMANENT_TEXTURES;
+        private static readonly HashSet<RenderTexture> TEMPORARY_TEXTURES;
         
         static BGraphic()
         {
@@ -33,9 +30,8 @@ namespace Beast.Claw.Graphic
                     .Distinct()
                     .ToDictionary(x => x, x => x.ToString());
 
-                _permanentTextures = new HashSet<RenderTexture>();
-
-                _temporaryTextures = new HashSet<RenderTexture>();
+                PERMANENT_TEXTURES = new HashSet<RenderTexture>();
+                TEMPORARY_TEXTURES = new HashSet<RenderTexture>();
             }
             catch (Exception e)
             {
@@ -43,45 +39,45 @@ namespace Beast.Claw.Graphic
             }
         }
 
-        public static RenderTexture CreatePermanentRenderTexture<T>(T owner, NewPermaRenderTextureData input)
+        public static RenderTexture CreatePermanentRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
-            input.ValidateThrowException();
+            input.ValidateNotNullThrowException(nameof(input));
             
             RenderTexture texture = new (
-                input.size.x,
-                input.size.y,
+                input.texture.size.x,
+                input.texture.size.y,
                 input.depth,
                 input.format,
                 input.mipCount)
             {
-                name = TypeStorage<T>.FullNameWithPostfixOrFullName(input.name),
-                filterMode = input.filterMode,
-                wrapMode = input.wrapMode
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.texture.name),
+                filterMode = input.texture.filterMode,
+                wrapMode = input.texture.wrapMode
             };
 
-            _permanentTextures.Add(texture);
+            PERMANENT_TEXTURES.Add(texture);
 
             return texture;
         }
 
-        public static RenderTexture CreateTemporaryRenderTexture<T>(T owner, NewTempRenderTextureData input)
+        public static RenderTexture CreateTemporaryRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
             input.ValidateThrowException();
             
             RenderTexture texture = RenderTexture.GetTemporary(
-                input.size.x,
-                input.size.y,
+                input.texture.size.x,
+                input.texture.size.y,
                 input.depth,
                 input.format,
-                input.readWrite,
-                input.antiAliasing,
-                input.memoryless,
-                input.vrUsage);
+                input.temp.readWrite,
+                input.temp.antiAliasing,
+                input.temp.memoryless,
+                input.temp.vrUsage);
 
-            texture.filterMode = input.filterMode;
-            texture.wrapMode = input.wrapMode;
+            texture.filterMode = input.texture.filterMode;
+            texture.wrapMode = input.texture.wrapMode;
 
-            _temporaryTextures.Add(texture);
+            TEMPORARY_TEXTURES.Add(texture);
 
             return texture;
         }
@@ -114,16 +110,16 @@ namespace Beast.Claw.Graphic
             input.ValidateThrowException();
 
             return new Texture2D(
-                input.size.x,
-                input.size.y,
+                input.texture.size.x,
+                input.texture.size.y,
                 input.format,
                 input.mipChain,
                 input.isLinear,
                 input.createInitialized)
             {
-                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
-                filterMode = input.filterMode,
-                wrapMode = input.wrapMode
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.texture.name),
+                filterMode = input.texture.filterMode,
+                wrapMode = input.texture.wrapMode
             };
         }
 

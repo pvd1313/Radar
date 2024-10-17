@@ -3,18 +3,12 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 using UnityEngine;
-using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.Terrain
 {
     public class TerrainBaker : ITerrainBaker, IGameCycleListener
     {
-        private const RenderTextureFormat TextureFormat = RenderTextureFormat.RHalf;
-        private const TextureWrapMode TextureWrapMode = UnityEngine.TextureWrapMode.Clamp;
-        private const FilterMode TextureFilterMode = FilterMode.Bilinear;
-        
         private readonly GraphicLibrary _graphicLibrary;
 
         private Material _material;
@@ -35,31 +29,6 @@ namespace Beast.Radar.Terrain
             _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.baker);
             
             return OperationResult.SuccessSync();
-        }
-
-        public RenderTexture Create<TOwner>(TOwner owner, int2 size, bool isTemporary)
-        {
-            if (isTemporary)
-            {
-                return BGraphic.CreateTemporaryRenderTexture(owner, new NewTempRenderTextureData
-                {
-                    antiAliasing = 1,
-                    filterMode = TextureFilterMode,
-                    format = TextureFormat,
-                    size = size,
-                    wrapMode = TextureWrapMode
-                });
-            }
-
-            return BGraphic.CreatePermanentRenderTexture(owner, new NewPermaRenderTextureData
-            {
-                mipCount = 0,
-                depth = 0,
-                size = size,
-                wrapMode = TextureWrapMode,
-                filterMode = TextureFilterMode,
-                format = TextureFormat
-            });
         }
 
         public void Bake(TerrainData terrain, RenderTexture targetTexture)

@@ -68,79 +68,79 @@ namespace Beast.Claw.Editor.Window
         
         private void BakeMap()
         {
-            RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
-                new NewTempRenderTextureData
-                {
-                    format = _renderTextureFormat,
-                    size = _outputTextureSize,
-                    antiAliasing = 1
-                });
-
-            RenderTexture renderTextureSmall = BGraphic.CreateTemporaryRenderTexture(this,
-                new NewTempRenderTextureData
-                {
-                    format = _renderTextureFormat,
-                    size = PREVIEW_TEXTURE_SIZE,
-                    antiAliasing = 1
-                });
-
-            try
-            {
-                BGraphic.Blit(new BlitParameters
-                {
-                    material = _renderMaterial,
-                    shaderPass = _shaderPass,
-                    targetTexture = renderTextureBig
-                });
-                
-                BGraphic.Blit(new BlitParameters
-                {
-                    material = _renderMaterial,
-                    shaderPass = _shaderPass,
-                    targetTexture = renderTextureSmall
-                });
-
-                if (_bakedTexture != null)
-                {
-                    DestroyImmediate(_bakedTexture);
-                }
-
-                _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
-                {
-                    format = _outputTextureFormat,
-                    isLinear = true,
-                    mipChain = false,
-                    createInitialized = true,
-                    size = renderTextureBig.Size(),
-                    filterMode = renderTextureBig.filterMode,
-                    wrapMode = renderTextureBig.wrapMode,
-                });
-
-                BGraphic.BlitRenderTextureTo2D(renderTextureBig, _bakedTexture);
-
-                if (_previewTexture != null)
-                {
-                    DestroyImmediate(_previewTexture);
-                }
-
-                _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
-                {
-                    format = TextureFormat.RGBA32,
-                    isLinear = true,
-                    mipChain = false,
-                    createInitialized = true,
-                    filterMode = FilterMode.Point,
-                    size = renderTextureSmall.Size(),
-                    wrapMode = renderTextureSmall.wrapMode
-                });
-
-                BGraphic.BlitRenderTextureTo2D(renderTextureSmall, _previewTexture);
-            }
-            finally
-            {
-                BGraphic.Dispose(renderTextureBig);
-                BGraphic.Dispose(renderTextureSmall);
-            }
+            // RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
+            //     new TempRenderTextureData
+            //     {
+            //         format = _renderTextureFormat,
+            //         size = _outputTextureSize,
+            //         antiAliasing = 1
+            //     });
+            //
+            // RenderTexture renderTextureSmall = BGraphic.CreateTemporaryRenderTexture(this,
+            //     new TempRenderTextureData
+            //     {
+            //         format = _renderTextureFormat,
+            //         size = PREVIEW_TEXTURE_SIZE,
+            //         antiAliasing = 1
+            //     });
+            //
+            // try
+            // {
+            //     BGraphic.Blit(new BlitParameters
+            //     {
+            //         material = _renderMaterial,
+            //         shaderPass = _shaderPass,
+            //         targetTexture = renderTextureBig
+            //     });
+            //     
+            //     BGraphic.Blit(new BlitParameters
+            //     {
+            //         material = _renderMaterial,
+            //         shaderPass = _shaderPass,
+            //         targetTexture = renderTextureSmall
+            //     });
+            //
+            //     if (_bakedTexture != null)
+            //     {
+            //         DestroyImmediate(_bakedTexture);
+            //     }
+            //
+            //     _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
+            //     {
+            //         format = _outputTextureFormat,
+            //         isLinear = true,
+            //         mipChain = false,
+            //         createInitialized = true,
+            //         size = renderTextureBig.Size(),
+            //         filterMode = renderTextureBig.filterMode,
+            //         wrapMode = renderTextureBig.wrapMode,
+            //     });
+            //
+            //     BGraphic.BlitRenderTextureTo2D(renderTextureBig, _bakedTexture);
+            //
+            //     if (_previewTexture != null)
+            //     {
+            //         DestroyImmediate(_previewTexture);
+            //     }
+            //
+            //     _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
+            //     {
+            //         format = TextureFormat.RGBA32,
+            //         isLinear = true,
+            //         mipChain = false,
+            //         createInitialized = true,
+            //         filterMode = FilterMode.Point,
+            //         size = renderTextureSmall.Size(),
+            //         wrapMode = renderTextureSmall.wrapMode
+            //     });
+            //
+            //     BGraphic.BlitRenderTextureTo2D(renderTextureSmall, _previewTexture);
+            // }
+            // finally
+            // {
+            //     BGraphic.Dispose(renderTextureBig);
+            //     BGraphic.Dispose(renderTextureSmall);
+            // }
         }
         
         protected override void Dispose()

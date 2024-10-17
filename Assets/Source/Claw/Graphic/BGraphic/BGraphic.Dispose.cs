@@ -10,13 +10,13 @@ namespace Beast.Claw.Graphic
         {
             renderTexture.ValidateNotNullThrowException(nameof(renderTexture));
 
-            if (_permanentTextures.Remove(renderTexture))
+            if (PERMANENT_TEXTURES.Remove(renderTexture))
             {
                 renderTexture.Release();
                 return;
             }
 
-            if (_temporaryTextures.Remove(renderTexture))
+            if (TEMPORARY_TEXTURES.Remove(renderTexture))
             {
                 RenderTexture.ReleaseTemporary(renderTexture);
                 return;
@@ -44,14 +44,14 @@ namespace Beast.Claw.Graphic
                 return false;
             }
 
-            if (_permanentTextures.Remove(renderTexture))
+            if (PERMANENT_TEXTURES.Remove(renderTexture))
             {
                 renderTexture.Release();
                 renderTexture = null;
                 return true;
             }
 
-            if (_temporaryTextures.Remove(renderTexture))
+            if (TEMPORARY_TEXTURES.Remove(renderTexture))
             {
                 RenderTexture.ReleaseTemporary(renderTexture);
                 renderTexture = null;

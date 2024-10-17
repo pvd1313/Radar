@@ -17,7 +17,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Radar/Graphic/Main/RadarCG.cginc"
+            #include "Assets/Source/Radar/Graphic/RadarCG.cginc"
 
             struct VertexInput
             {

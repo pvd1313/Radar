@@ -56,15 +56,9 @@ namespace Beast.Radar.Terrain
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
             _tileBlitMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileBlit);
-            _tileToScreenBuffer = BGraphic.CreatePermanentRenderTexture(this, new NewPermaRenderTextureData
-            {
-                filterMode = FilterMode.Point,
-                depth = 0,
-                format = RenderTextureFormat.ARGB32,
-                wrapMode = TextureWrapMode.Clamp,
-                size = _screen.Size,
-                mipCount = 0,
-            });
+
+            RenderTextureData textureData = _config.terrain.tileRenderTexture.WithSize(_screen.Size);
+            _tileToScreenBuffer = BGraphic.CreatePermanentRenderTexture(this, textureData);
 
             return OperationResult.SuccessSync();
         }
@@ -156,17 +150,9 @@ namespace Beast.Radar.Terrain
             _tileSolverMaterial.SetFloat2("_NoiseUVOffset", noiseUVOffset);
             
             _tileSolverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
-        
-            RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(
-                this, 
-                new NewTempRenderTextureData
-            {
-                size = solverTextureSize,
-                antiAliasing = 1,
-                readWrite = RenderTextureReadWrite.Linear, 
-                format = RenderTextureFormat.ARGBHalf,
-                filterMode = FilterMode.Point
-            });
+
+            RenderTextureData textureData = _config.terrain.tileSolverTexture.WithSize(solverTextureSize);
+            RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(this, textureData);
         
             BGraphic.Blit(new BlitParameters
             {
@@ -233,6 +219,15 @@ namespace Beast.Radar.Terrain
         {
             return gridSize.x * gridSize.y + (gridSize.x - 1) * (gridSize.y - 1);
         }
+        
+        private void _debugTrack()
+        {
+            BDebug.Track(this, nameof(_tileHeight), _tileHeight);
+            BDebug.Track(this, nameof(_tileCount), _tileCount);
+            BDebug.Track(this, nameof(_gridSize), _gridSize);
+            BDebug.Track(this, nameof(_blitTextureAlpha01), _blitTextureAlpha01);
+            BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
+        }
 
         private UniTask<OperationResult> _dispose()
         {
@@ -242,15 +237,6 @@ namespace Beast.Radar.Terrain
             BGraphic.TryDispose(ref _tileToScreenBuffer);
 
             return OperationResult.SuccessSync();
-        }
-
-        private void _debugTrack()
-        {
-            BDebug.Track(this, nameof(_tileHeight), _tileHeight);
-            BDebug.Track(this, nameof(_tileCount), _tileCount);
-            BDebug.Track(this, nameof(_gridSize), _gridSize);
-            BDebug.Track(this, nameof(_blitTextureAlpha01), _blitTextureAlpha01);
-            BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
     }
 }

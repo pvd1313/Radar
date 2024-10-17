@@ -15,10 +15,10 @@ namespace Beast.Radar.Terrain
     public class TerrainBiomeRender : ITerrainBiomeRender, IGameCycleListener
     {
         public bool IsReady => _isReady;
-        public Texture Texture => _indexTexture;
+        
+        public Texture Texture => _biomeTexture;
         public float2 TexelSize => _texelSize;
         public float ViewDistance => _viewDistance;
-
         public float RenderDistance => _renderDistance;
 
         private readonly GameModel _game;
@@ -26,9 +26,10 @@ namespace Beast.Radar.Terrain
         private readonly ITerrainBakedTexture _bakedTerrain;
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
+        private readonly RenderConfig _config;
 
         private Material _renderMaterial;
-        private RenderTexture _indexTexture;
+        private RenderTexture _biomeTexture;
         private int2 _renderTextureForScreenSize;
         private float _textureYScale;
         private float _texelSize;
@@ -45,13 +46,15 @@ namespace Beast.Radar.Terrain
             IScreen screen,
             ITerrainBakedTexture bakedTerrain,
             GraphicLibrary library,
-            ICameraTransform camera)
+            ICameraTransform camera,
+            RenderConfig config)
         {
             _game = game;
             _screen = screen;
             _bakedTerrain = bakedTerrain;
             _library = library;
             _camera = camera;
+            _config = config;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -77,17 +80,8 @@ namespace Beast.Radar.Terrain
             textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount + 2) *
                           WorldTransform.CellTileCount;
 
-            _indexTexture = BGraphic.CreatePermanentRenderTexture(this, new NewPermaRenderTextureData()
-            {
-                mipCount = 0,
-                depth = 0,
-                filterMode = FilterMode.Point,
-                wrapMode = TextureWrapMode.Clamp,
-                size = textureSize, 
-                format = RenderTextureFormat.RHalf
-            });
-            
-            _textureYScale = textureSize / (float)_screen.Height;
+            RenderTextureData textureData = _config.terrain.biomeTexture.WithSize(textureSize);
+            _biomeTexture = BGraphic.CreatePermanentRenderTexture(this, textureData);
             
             return OperationResult.SuccessSync();
         }
@@ -114,16 +108,32 @@ namespace Beast.Radar.Terrain
                 _warmup();
             }
             
-            _viewDistance = _camera.ViewDistance;
-            _cellPixelSize = _indexTexture.height / _viewDistance / _textureYScale;
-            _renderPosition = _camera.Position;
+            _renderBiome(_biomeTexture, new TerrainBiomeRenderInput
+            {
+                bakedTerrain = _bakedTerrain.Texture,
+                renderPosition = _camera.Position,
+                screenSize = _screen.Size,
+                viewDistance = _camera.ViewDistance
+            });
 
+            _isReady = true;
+            
+            _debugTrack();
+        }
+
+        private void _renderBiome(RenderTexture biomeTexture, TerrainBiomeRenderInput input)
+        {
+            _renderPosition = input.renderPosition;
+            _textureYScale = biomeTexture.height / (float)input.screenSize.y;
+            _viewDistance = input.viewDistance;
+            _cellPixelSize = biomeTexture.height / _viewDistance / _textureYScale;
+            
             if (_cellPixelSize > WorldTransform.CellTileCount)
             {
                 _viewDistance *= _cellPixelSize / WorldTransform.CellTileCount;
                 _cellPixelSize = WorldTransform.CellTileCount;
             }
-
+            
             _snapGridSize = WorldTransform.CellTileCount / _cellPixelSize;
             _renderPosition = BMath.Floor(_renderPosition / _snapGridSize) * _snapGridSize;
             _renderDistance = _viewDistance * _textureYScale;
@@ -132,26 +142,17 @@ namespace Beast.Radar.Terrain
             _renderMaterial.SetFloat2("_OutputSize", _renderDistance);
             _renderMaterial.SetFloat2("_OutputCenter", _renderPosition);
             
-            _renderMaterial.SetTexture("_TerrainTexture", _bakedTerrain.Texture);
-            _renderMaterial.SetFloat2("_TerrainTextureSize", _game.terrain.size);
-            
-#if DEVELOPMENT
-            _renderMaterial.SetTexture("_DebugGridTexture", _library.debug.terrainGrid);
-            _renderMaterial.SetFloat2("_DebugGridTextureSize", _library.debug.terrainGrid.Size());
-#endif
-            
+            _renderMaterial.SetTexture("_TerrainTexture", input.bakedTerrain);
+            _renderMaterial.SetFloat2("_TerrainTextureSize", input.bakedTerrain.Size());
+
             _renderMaterial.SetTexture("_NoiseMap", _library.terrain.biomeRenderNoise);
             _renderMaterial.SetFloat2("_NoiseMapSize", _library.terrain.biomeRenderNoise.Size());
             
             BGraphic.Blit(new BlitParameters
             {
                 material = _renderMaterial,
-                targetTexture = _indexTexture
+                targetTexture = biomeTexture
             });
-
-            _isReady = true;
-            
-            _debugTrack();
         }
         
         private UniTask<OperationResult> _dispose()
@@ -159,14 +160,14 @@ namespace Beast.Radar.Terrain
             _isReady = false;
 
             BGraphic.TryDispose(ref _renderMaterial);
-            BGraphic.TryDispose(ref _indexTexture);
+            BGraphic.TryDispose(ref _biomeTexture);
 
             return OperationResult.SuccessSync();
         }
         
         private void _debugTrack()
         {
-            BDebug.Track(this, "textureSize", _indexTexture.Size());
+            BDebug.Track(this, "textureSize", _biomeTexture.Size());
             BDebug.Track(this, nameof(_textureYScale), _textureYScale);
             BDebug.Track(this, nameof(_texelSize), _texelSize);
             BDebug.Track(this, nameof(_cellPixelSize), _cellPixelSize);

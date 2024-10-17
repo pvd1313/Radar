@@ -40,8 +40,6 @@ namespace Beast.Radar.Terrain
 
         private UniTask<OperationResult> _warmup()
         {
-            Application.targetFrameRate = 999;
-
             _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
 
             return OperationResult.SuccessSync();
