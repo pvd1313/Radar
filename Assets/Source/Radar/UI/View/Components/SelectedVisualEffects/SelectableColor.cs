@@ -7,8 +7,7 @@ namespace Beast.Radar.UI
     {
         [SerializeField] private Image _image;
         [SerializeField] private Color _selectShade;
-
-        private const float BLEND = 0.5f;
+        [SerializeField, Range(0,1)] private  float _blend = 0.5f;
 
         private Color _defaultColor;
         private bool _isSelect;
@@ -26,14 +25,14 @@ namespace Beast.Radar.UI
                 return;
             }
             _defaultColor = _image.color;
-            _image.color = Color.Lerp(_defaultColor, _selectShade, BLEND);
+            _image.color = Color.Lerp(_defaultColor, _selectShade, _blend);
             _isSelect = true;
         }
 
         public void SetDefaultColor(Color color)
         {
             _defaultColor = color;
-            _image.color = _isSelect ? Color.Lerp(_defaultColor, _selectShade, BLEND) : _defaultColor;
+            _image.color = _isSelect ? Color.Lerp(_defaultColor, _selectShade, _blend) : _defaultColor;
         }
     }
 }
