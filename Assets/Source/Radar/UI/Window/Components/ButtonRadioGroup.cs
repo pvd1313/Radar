@@ -3,14 +3,14 @@ using Beast.Claw.Debug;
 
 namespace Beast.Radar.UI
 {
-    public class ButtonRadioGroup<T> where T :  UIView, IUIRadioButton<T> 
+    public class ButtonRadioGroup<TButton> where TButton : UIView, IUIRadioButton<TButton> 
     {
-        public T SelectedButton { get; private set; }
-        public event Action<T> Selected;
-      
-        private T[] _buttons;
+        public event Action<TButton> Selected;
+        public TButton SelectedButton { get; private set; }
 
-        public ButtonRadioGroup(T[] buttons)
+        private TButton[] _buttons;
+
+        public ButtonRadioGroup(TButton[] buttons)
         {
             _buttons = buttons;
         }
@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
             _unsubscribeButtons();
         }
 
-        public void SetOtherGroup(T[] otherButtons)
+        public void SetOtherGroup(TButton[] otherButtons)
         {
             _unsubscribeButtons();
             _buttons = otherButtons;
@@ -36,7 +36,7 @@ namespace Beast.Radar.UI
 
         private void _subscribeButtons()
         {
-            foreach (T radioButton in _buttons)
+            foreach (TButton radioButton in _buttons)
             {
                 radioButton.Clicked += _setSelected;
             }
@@ -44,22 +44,20 @@ namespace Beast.Radar.UI
 
         private void _unsubscribeButtons()
         {
-            foreach (T radioButton in _buttons)
+            foreach (TButton radioButton in _buttons)
             {
                 radioButton.Clicked -= _setSelected;
             }
         }
 
-        private void _setSelected(T button)
+        private void _setSelected(TButton button)
         {
-            BDebug.LogInfo(this, $"select {button.name}");
             if (SelectedButton != null)
             {
                 if (SelectedButton.Equals(button))
                 {
                     return;
                 }
-                BDebug.LogInfo(this, $"deselect {SelectedButton.name}");
                 SelectedButton.Deselect();
             }
 

@@ -7,8 +7,8 @@ namespace Beast.Radar.UI
 {
     public class UISlider : UIView, IPointerUpHandler
     {
-        public UISelectable Selectable => _selectable;
         public event Action<float> EndedChange;
+        public UISelectable Selectable => _selectable;
 
         private const float ChangeSpeed = 1.5f; 
         

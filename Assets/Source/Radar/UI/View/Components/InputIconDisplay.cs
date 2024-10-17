@@ -23,6 +23,7 @@ namespace Beast.Radar.UI
                 default:
                     gameObject.SetActive(false);
                     break;
+                
                 case EInputScheme.Gamepad:
                     _setTag(_gamePadButton);
                     if (!gameObject.activeSelf)
@@ -30,6 +31,7 @@ namespace Beast.Radar.UI
                         gameObject.SetActive(true);
                     }
                     break;
+                
                 case EInputScheme.MouseAndKeyboard:
                     switch (_gamePadButton)
                     {
@@ -39,21 +41,27 @@ namespace Beast.Radar.UI
                         default:
                             gameObject.SetActive(false);
                             return;
+                        
                         case EInputButton.RightShoulder:
                             _setTag(EInputButton.Tab);
                             break;
+                        
                         case EInputButton.LeftTrigger:
                             _setTag(EInputButton.Q);
                             break;
+                        
                         case EInputButton.RightTrigger:
                             _setTag(EInputButton.E);
                             break;
+                        
                         case EInputButton.South:
                             _setTag(EInputButton.One);
                             break;
+                        
                         case EInputButton.West:
                             _setTag(EInputButton.Two);
                             break;
+                        
                         case EInputButton.North:
                             _setTag(EInputButton.Three);
                             break;

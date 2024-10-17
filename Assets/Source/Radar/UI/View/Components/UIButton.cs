@@ -6,8 +6,8 @@ namespace Beast.Radar.UI
 {
     public class UIButton : UIView
     {
-        public UISelectable Selectable => _selectable;
         public event Action Clicked;
+        public UISelectable Selectable => _selectable;
 
         [SerializeField] private UISelectable _selectable;
         [SerializeField] private Button _button;

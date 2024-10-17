@@ -16,7 +16,8 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            _playerInput.ChangedScheme += _playerInputOnChangedScheme;    
+            _playerInput.ChangedScheme += _onPlayerInputChangedScheme;    
+            
             foreach (InputIconDisplay icon in _icons)
             {
                 icon.Refresh(_playerInput.Scheme);
@@ -25,10 +26,10 @@ namespace Beast.Radar.UI
 
         public void Dispose()
         {
-            _playerInput.ChangedScheme -= _playerInputOnChangedScheme;
+            _playerInput.ChangedScheme -= _onPlayerInputChangedScheme;
         }
 
-        private void _playerInputOnChangedScheme(EInputScheme scheme)
+        private void _onPlayerInputChangedScheme(EInputScheme scheme)
         {
             foreach (InputIconDisplay icon in _icons)
             {

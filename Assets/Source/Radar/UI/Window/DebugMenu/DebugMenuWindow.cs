@@ -76,23 +76,11 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _dispose()
-        {
-            _unsubscribeView();
-            _unsubscribeInput();
-            
-            _panelsController.Dispose();
-            _selectablesController.Dispose();
-            _inputIconsController.Dispose();
-
-            return OperationResult.SuccessSync();
-        }
-
         private void _configurePanels()
         {
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
-                //todo replace itemsData with data from the configuration file.
+                //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
                 new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
             });
@@ -168,7 +156,19 @@ namespace Beast.Radar.UI
         {
             return  _view.screen.activeSelf;
         }
-        
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribeView();
+            _unsubscribeInput();
+            
+            _panelsController.Dispose();
+            _selectablesController.Dispose();
+            _inputIconsController.Dispose();
+
+            return OperationResult.SuccessSync();
+        }
+
         private static ItemData[] _getTestItems()
         {
             return new ItemData[]

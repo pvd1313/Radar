@@ -1,6 +1,4 @@
-﻿using System;
-using Beast.Claw.Debug;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Beast.Radar.UI
@@ -10,16 +8,11 @@ namespace Beast.Radar.UI
         [SerializeField] private Image _image;
         [SerializeField] private Color _selectShade;
 
-        private const float Blend = 0.5f;
+        private const float BLEND = 0.5f;
 
         private Color _defaultColor;
         private bool _isSelect;
         
-        private void Awake()
-        {
-           // _defaultColor = _image.color;
-        }
-
         public override void SetDefaultMode()
         {
             _image.color = _defaultColor;
@@ -33,14 +26,14 @@ namespace Beast.Radar.UI
                 return;
             }
             _defaultColor = _image.color;
-            _image.color = Color.Lerp(_defaultColor, _selectShade, Blend);
+            _image.color = Color.Lerp(_defaultColor, _selectShade, BLEND);
             _isSelect = true;
         }
 
         public void SetDefaultColor(Color color)
         {
             _defaultColor = color;
-            _image.color = _isSelect ? Color.Lerp(_defaultColor, _selectShade, Blend) : _defaultColor;
+            _image.color = _isSelect ? Color.Lerp(_defaultColor, _selectShade, BLEND) : _defaultColor;
         }
     }
 }

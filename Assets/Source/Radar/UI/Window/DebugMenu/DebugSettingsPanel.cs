@@ -46,11 +46,11 @@ namespace Beast.Radar.UI
         public void Open()
         {
             _view.fpsToggle.SetValue(
-                value: _debugController.GetElementState(DebugElementsID.FpsCounterID), 
+                value: _debugController.GetElementState(DebugElementID.FpsCounterID), 
                 withNotify: false);
             
             _view.logToggle.SetValue(
-                value: _debugController.GetElementState(DebugElementsID.LogConsoleID), 
+                value: _debugController.GetElementState(DebugElementID.LogConsoleID), 
                 withNotify: false);
             
             _selectablesController.Enable();
@@ -127,12 +127,12 @@ namespace Beast.Radar.UI
 
         private void _onLogToggleChanged(bool on)
         {
-            _debugController.SetElementState(DebugElementsID.LogConsoleID, on);
+            _debugController.SetElementState(DebugElementID.LogConsoleID, on);
         }
 
         private void _onFpsToggleChanged(bool on)
         {
-            _debugController.SetElementState(DebugElementsID.FpsCounterID, on);
+            _debugController.SetElementState(DebugElementID.FpsCounterID, on);
         }
 
         private void _onTimeScaleButtonClicked(int index)

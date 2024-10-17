@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
@@ -28,8 +27,9 @@ namespace Beast.Radar.Debug
 
         private UniTask<OperationResult> _warmup()
         {
-            SetElementState(DebugElementsID.LogConsoleID, _preferences.isShowLog);
-            SetElementState(DebugElementsID.FpsCounterID, _preferences.isShowFps);
+            SetElementState(DebugElementID.LogConsoleID, _preferences.isShowLog);
+            SetElementState(DebugElementID.FpsCounterID, _preferences.isShowFps);
+            
             return OperationResult.SuccessSync();
         }
 
@@ -37,11 +37,12 @@ namespace Beast.Radar.Debug
         {
             switch (elementID)
             {
-                case DebugElementsID.FpsCounterID:
+                case DebugElementID.FpsCounterID:
                     _setElementsState(elementID, isActive, _config.fpsCounterPrefab);
                     _preferences.isShowFps = isActive;
                     break;
-                case DebugElementsID.LogConsoleID:
+                
+                case DebugElementID.LogConsoleID:
                     _setElementsState(elementID, isActive, _config.logConsolePrefab);
                     _preferences.isShowLog = isActive;
                     break;
@@ -55,9 +56,9 @@ namespace Beast.Radar.Debug
 
         private void _setElementsState(string elementID, bool isActive, GameObject prefab)
         {
-            if (_debugElements.ContainsKey(elementID))
+            if (_debugElements.TryGetValue(elementID, out GameObject element))
             {
-                _debugElements[elementID].SetActive(isActive);
+                element.SetActive(isActive);
             }
             else if(isActive)
             {
