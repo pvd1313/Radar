@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Radar.UI;
 using Zenject;
 
 namespace Beast.Radar.Debug
@@ -12,10 +13,8 @@ namespace Beast.Radar.Debug
 #if DEVELOPMENT
             yield return typeof(DebugController);
             yield return typeof(DebugPreferencesController);
-            yield return typeof(DebugPlayerPreferencesExamplePlayerTimeRecorderThatShouldBeEliminatedAsSoonAsPossible);
+            yield return typeof(DebugMenuWindow);
 #endif
-
-            yield break;
         }
 
         protected override void BindCustom(DiContainer diContainer)

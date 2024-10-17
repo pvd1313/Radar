@@ -10,9 +10,10 @@ namespace Beast.Radar.InputControl
         private readonly IWindowManager _windowManager;
         private readonly ICameraInputController _cameraInput;
 
-        private int _blockCount;
-        private bool _isBlock;
-
+        private bool _isBlockInput;
+        private bool _isOverUI;
+        private bool _isOpenWindow;
+        
         public InputBlocker(IWindowManager windowManager, ICameraInputController cameraInputController)
         {
             _windowManager = windowManager;
@@ -21,75 +22,60 @@ namespace Beast.Radar.InputControl
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
         
-        private UniTask<OperationResult> Warmup()
+        private UniTask<OperationResult> _warmup()
         {
-            SubscribeWindowManager();
+            _subscribeWindowManager();
 
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
-            UnsubscribeWindowManager();
+            _unsubscribeWindowManager();
             
             return OperationResult.SuccessSync();
         }
 
-        private void SubscribeWindowManager()
+        private void _subscribeWindowManager()
         {
-            _windowManager.MouseOverUI += OnMouseOverUI;
-            _windowManager.WindowChanged += OnWindowChanged;
+            _windowManager.MouseOverUI += _onMouseOverUI;
+            _windowManager.WindowChanged += _onWindowChanged;
         }
 
-        private void UnsubscribeWindowManager()
+        private void _unsubscribeWindowManager()
         {
-            _windowManager.MouseOverUI -= OnMouseOverUI;
-            _windowManager.WindowChanged -= OnWindowChanged;
+            _windowManager.MouseOverUI -= _onMouseOverUI;
+            _windowManager.WindowChanged -= _onWindowChanged;
         }
 
-        private void OnWindowChanged(bool isHasOpenedWindow)
+        private void _onWindowChanged(bool isHasOpenedWindow)
         {
-            if (isHasOpenedWindow)
-            {
-                _blockCount++;
-            }
-            else
-            {
-                _blockCount--;
-            }
-
-            RefreshBlockState();
+            _isOpenWindow = isHasOpenedWindow;
+            _refreshBlockState();
         }
 
-        private void OnMouseOverUI(bool over)
+        private void _onMouseOverUI(bool over)
         {
-            if (over)
-            {
-                _blockCount++;
-            }
-            else
-            {
-                _blockCount--;
-            }
-            
-            RefreshBlockState();
+            _isOverUI = over;
+            _refreshBlockState();
         }
 
-        private void RefreshBlockState()
+        private void _refreshBlockState()
         {
-            if (_blockCount != 0 && !_isBlock)
+            bool isBlock = _isOpenWindow || _isOverUI;
+            if (isBlock && !_isBlockInput)
             {
-                _isBlock = true;
-                _cameraInput.ChangeBlock(_isBlock);
+                _isBlockInput = true;
+                _cameraInput.ChangeBlock(_isBlockInput);
             }
-            else if (_blockCount == 0 && _isBlock)
+            else if (!isBlock && _isBlockInput)
             {
-                _isBlock = false;
-                _cameraInput.ChangeBlock(_isBlock);
+                _isBlockInput = false;
+                _cameraInput.ChangeBlock(_isBlockInput);
             }
         }
     }

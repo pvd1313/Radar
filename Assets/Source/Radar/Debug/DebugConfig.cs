@@ -9,9 +9,6 @@ namespace Beast.Radar.Debug
         
         public GameObject logConsolePrefab;
         public GameObject fpsCounterPrefab;
-
-        public bool enableLogConsole;
-        public bool enableFPSCounter;
         
 #endif
     }

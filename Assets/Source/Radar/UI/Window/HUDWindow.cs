@@ -8,9 +8,10 @@ namespace Beast.Radar.UI
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
-        
-        private HUDView _view;
+        private readonly SelectablesController _selectablesController;
 
+        private HUDView _view;
+        
         public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager)
         {
             _uiFactory = uiFactory;
@@ -19,56 +20,56 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, Warmup);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
-        
-        private UniTask<OperationResult> Warmup()
+
+        public void Open()
+        {
+           _setActive(true);
+        }
+
+        public void Close()
+        {
+            _setActive(false);
+        }
+
+        private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.HudWindow, out _view);
                 
             _windowManager.Register(this, WindowID.MainHUD, _view);
                 
-            SubscribeView();
+            _subscribeView();
             
             return OperationResult.SuccessSync();
         }
 
-        public UniTask<OperationResult> Dispose()
-        {
-            UnsubscribeView();
-
-            return OperationResult.SuccessSync();
-        }
-
-        public void Open()
-        {
-           SetActive(true);
-        }
-
-        public void Close()
-        {
-            SetActive(false);
-        }
-
-        private void SetActive(bool isActive)
+        private void _setActive(bool isActive)
         {
             _view.pauseButton.SetInteractable(isActive);
         }
-        
-        private void SubscribeView()
+
+        private void _subscribeView()
         {
-            _view.pauseButton.Clicked += OnClickedPauseButton;
+            _view.pauseButton.Clicked += _onClickedPauseButton;
         }
 
-        private void UnsubscribeView()
+        private void _unsubscribeView()
         {
-            _view.pauseButton.Clicked -= OnClickedPauseButton;
+            _view.pauseButton.Clicked -= _onClickedPauseButton;
         }
-        
-        private void OnClickedPauseButton()
+
+        private void _onClickedPauseButton()
         {
             _windowManager.Show(WindowID.Pause);
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribeView();
+
+            return OperationResult.SuccessSync();
         }
     }
 }

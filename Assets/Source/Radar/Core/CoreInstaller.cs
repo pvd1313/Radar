@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
-using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
 using Beast.Radar.InputControl;
@@ -29,7 +28,8 @@ namespace Beast.Radar.Core
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
             yield return typeof(InputBlocker);
-            
+            yield return typeof(SelectableZoneBuilder);
+
             // UI Windows
             yield return typeof(HUDWindow);
             yield return typeof(PauseMenuWindow);

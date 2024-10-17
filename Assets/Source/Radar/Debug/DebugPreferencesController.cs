@@ -10,8 +10,8 @@ namespace Beast.Radar.Debug
 {
     public class DebugPreferencesController : IGameCycleListener
     {
-        private const string FolderName = "preferences";
-        private const string FileName = "debug";
+        private const string FOLDER_NAME = "preferences";
+        private const string FILE_NAME = "debug";
         
         private readonly IFileManager _fileManager;
         private readonly DebugPreferences _preferences;
@@ -30,13 +30,13 @@ namespace Beast.Radar.Debug
 
         private async UniTask<OperationResult> PreferencesLoad()
         {
-            bool fileExists = await _fileManager.Exists(FolderName, FileName);
+            bool fileExists = await _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
             {
                 return OperationResult.Success();
             }
 
-            StreamData stream = await _fileManager.OpenToRead(FolderName, FileName);
+            StreamData stream = await _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
 
             try
             {
@@ -61,7 +61,7 @@ namespace Beast.Radar.Debug
         
         private async UniTask<OperationResult> PreferencesSave()
         {
-            StreamData stream = await _fileManager.OpenToWrite(FolderName, FileName);
+            StreamData stream = await _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 
             try
             {
