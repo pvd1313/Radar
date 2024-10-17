@@ -57,36 +57,36 @@ namespace Beast.Radar.Cinematic
 
             _motion = _cameraConfig.GetMotionParameters(_inputProvider.Scheme);
             
-            SubscribeInput();
+            _subscribeInput();
             
             return OperationResult.SuccessSync();
         }
 
         private UniTask<OperationResult> Dispose()
         {
-            UnsubscribeInput();
+            _unsubscribeInput();
 
             return OperationResult.SuccessSync();
         }
 
-        private void SubscribeInput()
+        private void _subscribeInput()
         {
-            _input.ChangedEarlyValues += ProcessCamera;
-            _inputProvider.ChangedScheme += OnChangedInputScheme;
+            _input.ChangedEarlyValues += _processCamera;
+            _inputProvider.ChangedScheme += _onChangedInputScheme;
         }
 
-        private void UnsubscribeInput()
+        private void _unsubscribeInput()
         {
-            _input.ChangedEarlyValues -= ProcessCamera;
-            _inputProvider.ChangedScheme -= OnChangedInputScheme;
+            _input.ChangedEarlyValues -= _processCamera;
+            _inputProvider.ChangedScheme -= _onChangedInputScheme;
         }
 
-        private void OnChangedInputScheme(EInputScheme scheme)
+        private void _onChangedInputScheme(EInputScheme scheme)
         {
             _motion = _cameraConfig.GetMotionParameters(scheme);
         }
 
-        private void ProcessCamera()
+        private void _processCamera()
         {
             if (_input.LastTouchCount != _input.CurrentTouchCount)
             {
@@ -98,26 +98,22 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            Move();
-            Zoom();
+            _move();
+            _zoom();
         }
 
-        private void Move()
+
+        private void _move()
         {
             if (!_input.IsPressMove)
             {
                 return;
             }
-
-            // TODO : What was the magic 0.2 number?
-            // https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
-            // float zoomDistance = BMath.Lerp(_config.minViewDistance, _maxViewDistance, state.zoom01 * 0.2f);
+            
             float zoomDistance = _transform.ViewDistance * BMath.Cos(_transform.RotationRad.roll);
             
             if (_input.MoveDelta.Equals(float2.zero))
             {
-                // TODO : This is not correct. Zoom distance will float, we need to remember positions instead. 
-                //      : https://risenbeast.youtrack.cloud/issue/R-36/Floating-Zoom-Distance
                 float2 a = _transform.ScreenPointToWorld(_input.ScreenPoint);
                 float2 b = _transform.ScreenPointToWorld(_input.LastScreenPoint);
                 float2 moveDelta = b - a;
@@ -136,7 +132,7 @@ namespace Beast.Radar.Cinematic
             }
         }
 
-        private void Zoom()
+        private void _zoom()
         {
             if (_input.ScrollDelta == 0)
             {
@@ -145,19 +141,15 @@ namespace Beast.Radar.Cinematic
 
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = _transform.ScreenPointToWorld(screenPoint);
-            
-            float zoomDelta = _transform.Zoom01 * Time.deltaTime * _motion.zoomSpeed;
-            zoomDelta *= _input.ScrollDelta;
-            _transform.AddZoom(zoomDelta * -1);
 
-            if (_inputProvider.Scheme is EInputScheme.Gamepad)
-            {
-                return;
-            }
+            float zoomDelta = _input.ScrollDelta * _motion.zoomSpeed * Time.deltaTime;
 
-            // float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
-            // float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            // _transform.AddAbsPosition(pointDelta);
+            _transform.AddZoom(-zoomDelta);
+
+            float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
+            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
+
+            _transform.AddPosition(pointDelta, Space.World);
         }
     }
 }
