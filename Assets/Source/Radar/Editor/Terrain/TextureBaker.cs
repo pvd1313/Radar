@@ -4,10 +4,10 @@ using Beast.Radar.Graphic.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.TerrainAtlas
+namespace Beast.Radar.Editor.Terrain
 {
     [Serializable]
-    public class TerrainAtlasBaker
+    public class TextureBaker
     {
         public Texture2D BakeMainTexture(TerrainTileAtlas atlas)
         {

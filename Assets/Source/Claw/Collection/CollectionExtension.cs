@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Beast.Claw.Collection
@@ -31,6 +32,22 @@ namespace Beast.Claw.Collection
             list.RemoveAt(list.Count - 1);
 
             return item;
+        }
+
+        public static bool TryPop<TValue>(this IList<TValue> list, out TValue item)
+        {
+            if (list.Count == 0)
+            {
+                item = default;
+                
+                return false;
+            }
+
+            item = list[^1];
+
+            list.RemoveAt(list.Count - 1);
+
+            return true;
         }
 
         public static bool TryRemoveAt<TValue>(this IList<TValue> list, int index)

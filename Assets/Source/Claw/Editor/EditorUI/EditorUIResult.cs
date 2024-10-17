@@ -3,6 +3,6 @@
     public struct EditorUIResult
     {
         public bool changesDetected;
-        public bool hasErrors;
+        public bool validationFailed;
     }
 }

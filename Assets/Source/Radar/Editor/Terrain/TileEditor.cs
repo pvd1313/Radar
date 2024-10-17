@@ -6,28 +6,28 @@ using Beast.Radar.Graphic.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.TerrainAtlas
+namespace Beast.Radar.Editor.Terrain
 {
     [Serializable]
-    public class TerrainSpriteEditor
+    public class TileEditor
     {
         private IEditorFlow flow => _window.flow;
         
-        [SerializeField] TerrainAtlasEditor _window;
+        [SerializeField] AtlasEditor _window;
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private GUILayoutOption _smallButtonSize = GUILayout.Width(EditorUI.OneCharButtonSize);
         [SerializeField] private bool _mainFold;
         [SerializeField] private UnitySerializableDictionary<int, bool> _spriteFolds = new();
-        [SerializeField] private TerrainSpriteHelper _helper = new ();
+        [SerializeField] private TextureHelper _helper = new ();
 
-        public TerrainSpriteEditor(TerrainAtlasEditor window)
+        public TileEditor(AtlasEditor window)
         {
             _window = window;
         }
 
-        public bool DrawUI(List<TerrainTileSprite> sprites)
+        public void DrawUI(List<TerrainTileSprite> sprites, out bool changesDetected)
         {
-            bool isDirty = false;
+            bool changesDetectedLocal = false;
 
             flow.Horizontal(ui =>
             {
@@ -36,7 +36,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Option(_smallButtonSize).Button(EditorUI.CharPlus, () =>
                 {
                     sprites.Add(new TerrainTileSprite());
-                    isDirty = true;
+                    changesDetectedLocal = true;
                 });
             });
 
@@ -47,21 +47,21 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 for (int i = 0; i < sprites.Count; i++)
                 {
-                    isDirty |= _spriteUI(sprites, i, ref swapIndex, ref deleteIndex);
+                    changesDetectedLocal |= _spriteUI(sprites, i, ref swapIndex, ref deleteIndex);
                 }
             });
 
             if (sprites.TrySwap(swapIndex.a, swapIndex.b))
             {
-                isDirty = true;
+                changesDetectedLocal = true;
             }
 
             if (sprites.TryRemoveAt(deleteIndex))
             {
-                isDirty = true;
+                changesDetectedLocal = true;
             }
 
-            return isDirty;
+            changesDetected = changesDetectedLocal;
         }
 
         private bool _spriteUI(
@@ -93,14 +93,32 @@ namespace Beast.Radar.Editor.TerrainAtlas
             
             EditorUIResult spyResult = flow.If(spriteFold).Indent().Spy(ui =>
             {
-                ui.AssetField(nameof(sprite.texture), ref sprite.texture);
-                ui.StringField(nameof(sprite.name), ref sprite.name);
+                ui.Label("Texture");
+
+                bool spriteHasTexture = sprite.texture != null;
+                
+                flow.Indent().Horizontal().Draw(ui =>
+                {
+                    flow.Enabled(false).Label(spriteHasTexture ? sprite.texture.name : "N/A");
+                    
+                    ui.AssetField(string.Empty, ref sprite.texture);
+                });
+
+                flow.Horizontal(ui =>
+                {
+                    ui.StringField(nameof(sprite.name), ref sprite.name);
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    {
+                        sprite.name = sprite.texture.name;
+                    });
+                });
+                
                 ui.IntField(nameof(sprite.index), ref sprite.index);
 
                 flow.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(sprite.yCropHeight), ref sprite.yCropHeight);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.yCropHeight = 1 - _helper.GetSpriteHeight(sprite.texture);
                     });
@@ -109,7 +127,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(sprite.yBlendCenter), ref sprite.yBlendCenter);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.yBlendCenter = _helper.GetSpriteHeight(sprite.texture) * 0.5f;
                     });
@@ -118,7 +136,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Horizontal(ui =>
                 {
                     ui.ColorField(nameof(sprite.averageColor), ref sprite.averageColor);
-                    flow.Enabled(sprite.texture != null).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
+                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(EditorUI.CharA, () =>
                     {
                         sprite.averageColor = _helper.GetAverageColor(sprite.texture);
                     });

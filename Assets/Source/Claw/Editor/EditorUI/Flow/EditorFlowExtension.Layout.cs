@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public static class EditorFlowExtension
+    public static partial class EditorFlowExtension
     {
         public static EditorUIResult Vertical(this IEditorFlow flow, Action<EditorUI> action)
         {
@@ -39,16 +39,6 @@ namespace Beast.Claw.Editor
         public static EditorUIResult Spy(this IEditorFlow flow, Action<EditorUI> action)
         {
             return flow.Spy().Draw(action);
-        }
-
-        public static EditorUIResult Button(this IEditorFlow flow, string label, Action action)
-        {
-            return flow.Draw(ui => ui.Button(label, action));
-        }
-        
-        public static EditorUIResult Button(this IEditorFlow flow, string label, Action<EditorUI> action)
-        {
-            return flow.Draw(ui => ui.Button(label, action));
         }
 
         public static EditorUIResult If(this IEditorFlow flow, bool condition, Action<EditorUI> action)

@@ -7,7 +7,7 @@ namespace Beast.Claw.Editor.Window
 {
     public class ShaderBakeWindow : EditorWindow
     {
-        private static readonly int2 PreviewTextureSize = new (256, 256);
+        private static readonly int2 PREVIEW_TEXTURE_SIZE = new (256, 256);
         
         [SerializeField] private Material _renderMaterial;
         [SerializeField] private int _shaderPass;
@@ -17,7 +17,12 @@ namespace Beast.Claw.Editor.Window
 
         [SerializeField] private Texture2D _bakedTexture;
         [SerializeField] private Texture2D _previewTexture;
-        
+
+        protected override void Warmup()
+        {
+            
+        }
+
         protected override void InspectorUI()
         {
             EditorUIResult result = flow.Vertical(ui =>
@@ -32,10 +37,10 @@ namespace Beast.Claw.Editor.Window
                 ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
                 
                 ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
-                ui.AssertIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
+                ui.ValidateIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
             });
             
-            flow.Horizontal().Enabled(!result.hasErrors,ui =>
+            flow.Enabled(!result.validationFailed).Horizontal(ui =>
             {
                 ui.Button("Bake", BakeMap);
 
@@ -46,7 +51,7 @@ namespace Beast.Claw.Editor.Window
             {
                 if (_previewTexture != null)
                 {
-                    ui.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
+                    ui.TexturePreview("Preview", _previewTexture, PREVIEW_TEXTURE_SIZE.y);
                 }
             });
         }
@@ -75,7 +80,7 @@ namespace Beast.Claw.Editor.Window
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
-                    size = PreviewTextureSize,
+                    size = PREVIEW_TEXTURE_SIZE,
                     antiAliasing = 1
                 });
 
@@ -136,7 +141,6 @@ namespace Beast.Claw.Editor.Window
                 BGraphic.Dispose(renderTextureBig);
                 BGraphic.Dispose(renderTextureSmall);
             }
-            
         }
         
         protected override void Dispose()

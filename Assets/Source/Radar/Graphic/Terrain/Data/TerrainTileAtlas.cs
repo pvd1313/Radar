@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw;
+using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Unity.Mathematics;
 using UnityEngine;
@@ -62,12 +63,12 @@ namespace Beast.Radar.Graphic.Terrain
 
                     if (sprite.texture.width != pixelsPerTile || sprite.texture.height != pixelsPerTile)
                     {
-                        return $"Sprite '{sprite.name}' has size that does not equal to atlas PPU";
+                        return $"Sprite '{sprite.name}' has size '{sprite.texture.Size()}' that does not equal to atlas PPT";
                     }
 
                     if (sprite.index >= tileCount.x * tileCount.y)
                     {
-                        return $"Sprite '{sprite.name}' has invalid index {sprite.index}";
+                        return $"Sprite '{sprite.name}' index ({sprite.index}) out of range {tileCount}";
                     }
 
                     if (!_indexHash.Add(sprite.index))

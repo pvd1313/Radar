@@ -13,7 +13,6 @@ namespace Beast.Claw.Editor
                 return new EditorUIResult
                 {
                     changesDetected = false,
-                    hasErrors = false
                 };
             }
             

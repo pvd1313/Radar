@@ -6,7 +6,7 @@ namespace Beast.Claw
     public static class ValidationExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateThrowException<T>(this T data) where T : IValidatable
+        public static void ValidateThrowException<TData>(this TData data) where TData : IValidatable
         {
             string errorMessage = data.Validate();
             if (errorMessage != null)
@@ -16,7 +16,7 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValid<T>(this T data, out string errorMessage) where T : IValidatable
+        public static bool IsValid<TData>(this TData data, out string errorMessage) where TData : IValidatable
         {
             errorMessage = data.Validate();
 
@@ -24,7 +24,22 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNullThrowException<T>(this T obj, string objName)
+        public static void TryValidate<TData>(this TData data, out bool isValid, out string errorMessage) 
+            where TData : class, IValidatable
+        {
+            if (data == null)
+            {
+                errorMessage = "Argument is null";
+                isValid = false;
+                return;
+            }
+
+            errorMessage = data.Validate();
+            isValid = errorMessage == null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNotNullThrowException<TArgument>(this TArgument obj, string objName)
         {
             if (obj == null)
             {
