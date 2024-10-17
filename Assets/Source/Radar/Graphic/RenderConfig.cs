@@ -7,10 +7,12 @@ namespace Beast.Radar.Graphic
     public class RenderConfig : ScriptableConfig
     {
         public TerrainRenderConfig terrain;
+        public TileRenderConfig tile;
         
         public override IEnumerable<IConfig> Bind()
         {
             yield return terrain;
+            yield return tile;
         }
     }
 }
