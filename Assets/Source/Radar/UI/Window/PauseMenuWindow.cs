@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
         private void _configureSelectables()
         {
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.DPad, 
+                zone: ESelectionZone.Navigate, 
                 selectables: new[]
                 {
                     _menuView.newGameButton.Selectable,

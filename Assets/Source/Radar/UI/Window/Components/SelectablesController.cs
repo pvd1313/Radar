@@ -193,7 +193,7 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputActions()
         {
-            _inputController.DpadPressed += _onDpadPressed;
+            _inputController.NavigatePressed += _onDpadPressed;
             _inputController.ShoulderPressed += _onShoulderPressed;
             _inputController.TriggerPressed += _onTriggerPressed;
             _inputController.RightStickMoved += _onRightStickMoved;
@@ -203,7 +203,7 @@ namespace Beast.Radar.UI
 
         private void _unsubscribeInputActions()
         {
-            _inputController.DpadPressed -= _onDpadPressed;
+            _inputController.NavigatePressed -= _onDpadPressed;
             _inputController.ShoulderPressed -= _onShoulderPressed;
             _inputController.TriggerPressed -= _onTriggerPressed;
             _inputController.RightStickMoved -= _onRightStickMoved;
@@ -220,11 +220,11 @@ namespace Beast.Radar.UI
 
             bool isTrySelect = _inputController.GetScheme() == EInputScheme.Gamepad
                                && zone == ESelectionZone.SouthButton
-                               && _selectableGrids.ContainsKey(ESelectionZone.DPad); 
+                               && _selectableGrids.ContainsKey(ESelectionZone.Navigate); 
             
             if (isTrySelect)
             {
-                SelectableGridData dpadGrid = _selectableGrids[ESelectionZone.DPad];
+                SelectableGridData dpadGrid = _selectableGrids[ESelectionZone.Navigate];
                 UISelectable dpadSelectable = dpadGrid.selectables[dpadGrid.currentIndex.x, dpadGrid.currentIndex.y];
                 if (dpadSelectable.TryGetComponent(out IRadioSelected selected) && !selected.IsSelected)
                 {
@@ -241,7 +241,7 @@ namespace Beast.Radar.UI
 
         private void _onDpadPressed(int2 direction)
         {
-            _performVectorAction(ESelectionZone.DPad, direction);
+            _performVectorAction(ESelectionZone.Navigate, direction);
         }
 
         private void _onRightStickMoved(float2 direction)

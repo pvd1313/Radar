@@ -6,7 +6,7 @@
         Trigger,
         LeftStick,
         RightStick,
-        DPad,
+        Navigate,
         Shoulder,
         NorthButton,
         EastButton,

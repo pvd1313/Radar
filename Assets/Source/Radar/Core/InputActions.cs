@@ -434,6 +434,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeftStick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""007b2e66-cd9c-4c12-8011-1932495308dd"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -542,17 +551,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad"",
                     ""interactions"": """",
                     ""processors"": ""InvertVector2(invertX=false)"",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""90b305af-bf62-4276-ac10-7f31794e2310"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Navigate"",
                     ""isComposite"": false,
@@ -876,6 +874,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""SouthButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""90b305af-bf62-4276-ac10-7f31794e2310"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": ""InvertVector2(invertX=false),NormalizeVector2"",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -950,6 +959,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_UI_EastButton = m_UI.FindAction("EastButton", throwIfNotFound: true);
         m_UI_WestButton = m_UI.FindAction("WestButton", throwIfNotFound: true);
         m_UI_SouthButton = m_UI.FindAction("SouthButton", throwIfNotFound: true);
+        m_UI_LeftStick = m_UI.FindAction("LeftStick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1111,6 +1121,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_EastButton;
     private readonly InputAction m_UI_WestButton;
     private readonly InputAction m_UI_SouthButton;
+    private readonly InputAction m_UI_LeftStick;
     public struct UIActions
     {
         private @InputActions m_Wrapper;
@@ -1129,6 +1140,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @EastButton => m_Wrapper.m_UI_EastButton;
         public InputAction @WestButton => m_Wrapper.m_UI_WestButton;
         public InputAction @SouthButton => m_Wrapper.m_UI_SouthButton;
+        public InputAction @LeftStick => m_Wrapper.m_UI_LeftStick;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1180,6 +1192,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @SouthButton.started += instance.OnSouthButton;
             @SouthButton.performed += instance.OnSouthButton;
             @SouthButton.canceled += instance.OnSouthButton;
+            @LeftStick.started += instance.OnLeftStick;
+            @LeftStick.performed += instance.OnLeftStick;
+            @LeftStick.canceled += instance.OnLeftStick;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1226,6 +1241,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @SouthButton.started -= instance.OnSouthButton;
             @SouthButton.performed -= instance.OnSouthButton;
             @SouthButton.canceled -= instance.OnSouthButton;
+            @LeftStick.started -= instance.OnLeftStick;
+            @LeftStick.performed -= instance.OnLeftStick;
+            @LeftStick.canceled -= instance.OnLeftStick;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1295,5 +1313,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnEastButton(InputAction.CallbackContext context);
         void OnWestButton(InputAction.CallbackContext context);
         void OnSouthButton(InputAction.CallbackContext context);
+        void OnLeftStick(InputAction.CallbackContext context);
     }
 }
