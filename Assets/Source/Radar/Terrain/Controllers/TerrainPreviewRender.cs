@@ -1,40 +1,49 @@
 ﻿using System;
+using Beast.Claw;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using JetBrains.Annotations;
+using Beast.Radar.Graphic;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainPreviewRender : ITerrainPreviewRender
+    public class TerrainPreviewRender : ITerrainPreviewRender, IGameCycleListener
     {
-        // private readonly ITerrainBaker _terrainBaker;
-        // private readonly ITerrainBiomeRender _biomeRender;
-        //
-        // public TerrainPreviewRender(ITerrainBaker terrainBaker, ITerrainBiomeRender biomeRender)
-        // {
-        //     _terrainBaker = terrainBaker;
-        //     _biomeRender = biomeRender;
-        // }
-        //
-        // public RenderTexture CreateTexture<TOwner>([NotNull]TOwner owner, int2 pixelSize)
-        // {
-        //     if (pixelSize.x <= 0 || pixelSize.y <= 0)
-        //     {
-        //         throw new ArgumentException(nameof(pixelSize));
-        //     }
-        //     
-        //     return BGraphic.CreatePermanentRenderTexture(owner, new PermRenderTextureData
-        //     {
-        //         size = pixelSize,
-        //         format = RenderTextureFormat.ARGB32
-        //     });
-        // }
-        //
+        private readonly ITerrainBaker _terrainBaker;
+        private readonly ITerrainBiomeRender _biomeRender;
+        private readonly RenderConfig _config;
+
+        public TerrainPreviewRender(
+            ITerrainBaker terrainBaker, 
+            ITerrainBiomeRender biomeRender, 
+            RenderConfig config)
+        {
+            _terrainBaker = terrainBaker;
+            _biomeRender = biomeRender;
+            _config = config;
+        }
+        
+        public void Register(IGameCycleHandle handle)
+        {
+            
+        }
+        
+        public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize)
+        {
+            owner.ValidateNotNullThrowException(nameof(owner));
+            if (pixelSize.x <= 0 || pixelSize.y <= 0)
+            {
+                throw new ArgumentException(nameof(pixelSize));
+            }
+
+            RenderTextureData textureData = _config.terrain.colorTexture.WithSize(pixelSize);
+            
+            return BGraphic.CreatePermanentRenderTexture(owner, textureData);
+        }
+        
         // public void Render(RenderTexture texture, TerrainData terrain)
         // {
-        //     RenderTexture renderTexture = _terrainBaker.Create(this, texture.Size(), true);
-        //
         //     try
         //     {
         //         _terrainBaker.Bake(terrain, renderTexture);

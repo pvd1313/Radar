@@ -64,6 +64,11 @@ namespace Beast.Radar.Terrain
             handle.ListenUpdate(this, UpdateID.Render, _render);
         }
 
+        public void Render(RenderTexture biomeTexture, TerrainBiomeRenderInput input)
+        {
+            _renderBiome(biomeTexture, input);
+        }
+
         private UniTask<OperationResult> _warmup()
         {
             _dispose();

@@ -18,7 +18,8 @@ namespace Beast.Radar.Terrain
         private readonly GraphicLibrary _library;
         private readonly IScreen _screen;
         private readonly ITerrainBiomeRender _terrainBiome;
-        private readonly RenderConfig _config;
+        private readonly TileRenderConfig _config;
+        private readonly TerrainAtlas _atlas;
 
         private RenderTexture _tileToScreenBuffer;
         private Material _tileRenderMaterial;
@@ -41,7 +42,9 @@ namespace Beast.Radar.Terrain
             _library = library;
             _screen = screen;
             _terrainBiome = terrainBiome;
-            _config = config;
+            
+            _config = config.terrain.tile;
+            _atlas = _library.terrain.atlas.data;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -57,7 +60,7 @@ namespace Beast.Radar.Terrain
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
             _tileBlitMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileBlit);
 
-            RenderTextureData textureData = _config.terrain.tileRenderTexture.WithSize(_screen.Size);
+            RenderTextureData textureData = _config.renderTexture.WithSize(_screen.Size);
             _tileToScreenBuffer = BGraphic.CreatePermanentRenderTexture(this, textureData);
 
             return OperationResult.SuccessSync();
@@ -83,7 +86,7 @@ namespace Beast.Radar.Terrain
 
             _tileHeight = 1f / _camera.ViewDistance / WorldTransform.CellTileCount;
             _tilePixelSize = _tileHeight * _screen.Height;
-            if (_tilePixelSize < _config.terrain.tileMinPixelSize)
+            if (_tilePixelSize < _config.minPixelSize)
             {
                 return;
             }
@@ -92,7 +95,7 @@ namespace Beast.Radar.Terrain
             int xTileCount = BMath.CeilToInt(1f / _tileHeight * _screen.Aspect * 0.5f) + 3;
             _gridSize = new int2(xTileCount, yTileCount);
             _tileCount = _tileCountFromGridSize(_gridSize);
-            if (_tileCount > _config.terrain.tileMaxCount)
+            if (_tileCount > _config.maxCount)
             {
                 return;
             }
@@ -110,9 +113,8 @@ namespace Beast.Radar.Terrain
             viewportPoint = _camera.WorldToViewport(worldPoint);
             
             // Fade
-            TerrainRenderConfig terrain = _config.terrain;
-            float tileCountFade = BMath.ILerp(terrain.tileFadeInCount, terrain.tileMaxCount, _tileCount);
-            float pixelSizeFade = BMath.ILerp(terrain.tileFadeInPixelSize, terrain.tileMinPixelSize, _tilePixelSize);
+            float tileCountFade = BMath.ILerp(_config.fadeInCount, _config.maxCount, _tileCount);
+            float pixelSizeFade = BMath.ILerp(_config.fadeInPixelSize, _config.minPixelSize, _tilePixelSize);
             _blitTextureAlpha01 = 1.0f - BMath.Clamp01(BMath.Max(tileCountFade, pixelSizeFade));
             
             RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);
@@ -133,17 +135,15 @@ namespace Beast.Radar.Terrain
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _tileSolverMaterial.SetFloat2("_TileGridSize", gridSize);
 
-            TerrainAtlas atlas = _library.terrain.atlas.data;
-            
-            _tileSolverMaterial.SetTexture("_TileAtlasConfig", atlas.configTexture);
-            _tileSolverMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
+            _tileSolverMaterial.SetTexture("_TileAtlasConfig", _atlas.configTexture);
+            _tileSolverMaterial.SetFloat2("_TileAtlasTileCount", _atlas.tileCount);
             
             _tileSolverMaterial.SetTexture("_TerrainTexture", _terrainBiome.Texture);
             _tileSolverMaterial.SetFloat2("_TerrainUVOffset", _terrainBiome.WorldToUVOffset(worldPoint));
             _tileSolverMaterial.SetFloat2("_TerrainTexelSize", _terrainBiome.TexelSize);
             
-            float2 noiseTexelSize = _terrainBiome.TexelSize * _config.terrain.tileDenoiseScale;
-            float2 noiseUVOffset = worldPoint / _terrainBiome.RenderDistance * _config.terrain.tileDenoiseScale;
+            float2 noiseTexelSize = _terrainBiome.TexelSize * _config.denoiseScale;
+            float2 noiseUVOffset = worldPoint / _terrainBiome.RenderDistance * _config.denoiseScale;
             
             _tileSolverMaterial.SetTexture("_NoiseTexture", _library.terrain.tileSolverNoise);
             _tileSolverMaterial.SetFloat2("_NoiseTexelSize",  noiseTexelSize);
@@ -151,7 +151,7 @@ namespace Beast.Radar.Terrain
             
             _tileSolverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
 
-            RenderTextureData textureData = _config.terrain.tileSolverTexture.WithSize(solverTextureSize);
+            RenderTextureData textureData = _config.solverTexture.WithSize(solverTextureSize);
             RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(this, textureData);
         
             BGraphic.Blit(new BlitParameters

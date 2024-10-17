@@ -15,5 +15,6 @@ namespace Beast.Radar.Terrain
         float RenderDistance { get; }
 
         public float2 WorldToUVOffset(float2 worldPoint);
+        void Render(RenderTexture biomeTexture, TerrainBiomeRenderInput input);
     }
 }
