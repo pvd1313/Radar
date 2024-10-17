@@ -20,7 +20,7 @@ MonoBehaviour:
     tileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
     tileRender: {fileID: 4800000, guid: 2f4f0a70a59d410380184140b53755aa, type: 3}
     tileBlit: {fileID: 4800000, guid: 67855c2abf36497495818c93ce69c6e3, type: 3}
-    tileAtlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
+    atlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
     biomeRenderNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
     tileSolverNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
   debug:
