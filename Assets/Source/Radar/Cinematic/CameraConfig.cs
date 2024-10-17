@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Radar.InputControl;
@@ -9,6 +10,11 @@ namespace Beast.Radar.Cinematic
     {
         public CameraTransformConfig transform;
         public CameraMotionParameters[] motion;
+        
+        public override IEnumerable<IConfig> Bind()
+        {
+            yield break;
+        }
         
         public CameraMotionParameters GetMotionParameters(EInputScheme scheme)
         {

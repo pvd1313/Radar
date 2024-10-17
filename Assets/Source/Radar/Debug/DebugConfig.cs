@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using UnityEngine;
 
 namespace Beast.Radar.Debug
@@ -11,5 +12,9 @@ namespace Beast.Radar.Debug
         public GameObject fpsCounterPrefab;
         
 #endif
+        public override IEnumerable<IConfig> Bind()
+        {
+            yield break;
+        }
     }
 }

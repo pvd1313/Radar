@@ -12,12 +12,12 @@ namespace Beast.Radar.Terrain
     {
         private readonly ITerrainBaker _terrainBaker;
         private readonly ITerrainBiomeRender _biomeRender;
-        private readonly RenderConfig _config;
+        private readonly TerrainRenderConfig _config;
 
         public TerrainPreviewRender(
             ITerrainBaker terrainBaker, 
             ITerrainBiomeRender biomeRender, 
-            RenderConfig config)
+            TerrainRenderConfig config)
         {
             _terrainBaker = terrainBaker;
             _biomeRender = biomeRender;
@@ -37,7 +37,7 @@ namespace Beast.Radar.Terrain
                 throw new ArgumentException(nameof(pixelSize));
             }
 
-            RenderTextureData textureData = _config.terrain.colorTexture.WithSize(pixelSize);
+            RenderTextureData textureData = _config.colorTexture.WithSize(pixelSize);
             
             return BGraphic.CreatePermanentRenderTexture(owner, textureData);
         }

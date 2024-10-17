@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using Beast.Claw.Common;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
     [Serializable]
-    public class TerrainGraphicLibrary
+    public class TerrainGraphicLibrary : IConfig
     {
         public Shader baker;
         public Shader biomeRender;
@@ -17,5 +19,10 @@ namespace Beast.Radar.Terrain
 
         public Texture2D biomeRenderNoise;
         public Texture2D tileSolverNoise;
+        
+        public IEnumerable<IConfig> Bind()
+        {
+            yield break;
+        }
     }
 }

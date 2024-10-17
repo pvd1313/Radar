@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Radar.Terrain;
 using UnityEngine;
 
@@ -10,6 +11,13 @@ namespace Beast.Radar
 
         public TerrainGraphicLibrary terrain;
 
-        public Debug debug;
+        public DebugGraphicLibrary debug;
+
+
+        public override IEnumerable<IConfig> Bind()
+        {
+            yield return terrain;
+            yield return debug;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 
 namespace Beast.Claw.GameCycle
 {
@@ -7,5 +8,10 @@ namespace Beast.Claw.GameCycle
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;
         public bool preventDuplicatingSubscription;
+        
+        public override IEnumerable<IConfig> Bind()
+        {
+            yield break;
+        }
     }
 }

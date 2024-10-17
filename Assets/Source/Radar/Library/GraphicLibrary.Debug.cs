@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Beast.Claw.Common;
 using UnityEngine;
 
 namespace Beast.Radar
@@ -6,7 +8,7 @@ namespace Beast.Radar
     public partial class GraphicLibrary
     {
         [Serializable]
-        public class Debug
+        public class DebugGraphicLibrary : IConfig
         {
 #if DEVELOPMENT
             public Texture2D bakedTerrain;
@@ -19,6 +21,11 @@ namespace Beast.Radar
             public float magic1;
             public float magic2;
 #endif
+            
+            public IEnumerable<IConfig> Bind()
+            {
+                yield break;
+            }
         }
     }
 }

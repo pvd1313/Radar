@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
@@ -13,6 +14,11 @@ namespace Beast.Radar
         public PlayerInputView playerInputPrefab;
         public UIPrefabLibrary ui;
         
+        public override IEnumerable<IConfig> Bind()
+        {
+            yield return ui;
+        }
+        
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(this, OperationID.Warmup, Warmup);
@@ -20,7 +26,7 @@ namespace Beast.Radar
 
         private async UniTask<OperationResult> Warmup()
         {
-            OperationResult result = await ui.Initialize();
+            OperationResult result = await ui._warmup();
             
             if (result.status != EOperationStatus.Success)
             {
@@ -29,7 +35,5 @@ namespace Beast.Radar
             
             return OperationResult.Success();
         }
-
-        
     }
 }
