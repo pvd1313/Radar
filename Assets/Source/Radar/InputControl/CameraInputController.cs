@@ -20,7 +20,7 @@ namespace Beast.Radar.InputControl
         public float ScrollDelta { get; private set; }
 
         private readonly IPlayerInputProvider _input;
-       
+
         private float _lastZoomDistance;
         private bool _isBlock;
 
@@ -34,6 +34,17 @@ namespace Beast.Radar.InputControl
             handle.ListenUpdate(this, UpdateID.Tick, _tick);
         }
 
+        public void ChangeBlock(bool isBlock)
+        {
+            _isBlock = isBlock;
+            
+            if (_isBlock)
+            {
+                LastTouchCount = 0;
+                IsPressMove = false;
+            }
+        }
+
         private void _tick()
         {
             if (_isBlock)
@@ -41,11 +52,12 @@ namespace Beast.Radar.InputControl
                 return;
             }
             
-            EarlyInput();   
-            LateInput();
+            _earlyInput();   
+            _lateInput();
+            UnityEngine.Debug.Log(ScreenPoint);
         }
 
-        private void EarlyInput()
+        private void _earlyInput()
         {
             switch (_input.Scheme)
             {
@@ -59,7 +71,7 @@ namespace Beast.Radar.InputControl
                 case EInputScheme.Gamepad:
                     ScrollDelta = _input.Actions.Player.Scroll.ReadValue<float>();
                     MoveDelta = _input.Actions.Player.Move.ReadValue<Vector2>();
-                    ScreenPoint = float2.zero;
+                    ScreenPoint = _getScreenCenter();
                     CurrentTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
                     break;
                 
@@ -102,7 +114,7 @@ namespace Beast.Radar.InputControl
             ChangedEarlyValues?.Invoke();
         }
 
-        private void LateInput()
+        private void _lateInput()
         {
             switch (_input.Scheme)
             {
@@ -114,6 +126,7 @@ namespace Beast.Radar.InputControl
                 
                 case EInputScheme.Gamepad:
                     _lastZoomDistance = 0f;
+                    LastScreenPoint = _getScreenCenter();
                     LastTouchCount = MoveDelta.Equals(float2.zero) ? 0 : 1;
                     break;
                 
@@ -143,15 +156,9 @@ namespace Beast.Radar.InputControl
             }
         }
 
-        public void ChangeBlock(bool isBlock)
+        private float2 _getScreenCenter()
         {
-            _isBlock = isBlock;
-            
-            if (_isBlock)
-            {
-                LastTouchCount = 0;
-                IsPressMove = false;
-            }
+            return new float2((float)Screen.width / 2, (float)Screen.height / 2);
         }
     }
 }
