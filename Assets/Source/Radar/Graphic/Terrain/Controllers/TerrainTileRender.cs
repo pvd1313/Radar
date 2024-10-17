@@ -138,7 +138,7 @@ namespace Beast.Radar.Graphic.Terrain
             int solverTextureSize = BMath.CeilToInt(BMath.Sqrt(tileCount));
             _tileSolverMaterial.SetFloat2("_TileGridSize", gridSize);
 
-            TerrainTileAtlas atlas = _library.terrain.tileAtlas.atlas;
+            TerrainAtlas atlas = _library.terrain.atlas.data;
             
             _tileSolverMaterial.SetTexture("_TileAtlasConfig", atlas.configTexture);
             _tileSolverMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
@@ -186,7 +186,7 @@ namespace Beast.Radar.Graphic.Terrain
             // Isometric render (0, 0) is at top-left.
             viewportOrigin.y = 1 - viewportOrigin.y;
 
-            TerrainTileAtlas atlas = _library.terrain.tileAtlas.atlas;
+            TerrainAtlas atlas = _library.terrain.atlas.data;
             
             _tileRenderMaterial.SetFloat2("_TileGridSize", gridSize);
             _tileRenderMaterial.SetTexture("_TileAtlas", atlas.mainTexture);

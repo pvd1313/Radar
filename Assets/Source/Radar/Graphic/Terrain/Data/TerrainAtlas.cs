@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Beast.Radar.Graphic.Terrain
 {
     [Serializable]
-    public class TerrainTileAtlas : IValidatable
+    public class TerrainAtlas : IValidatable
     {
         private static HashSet<int> _indexHash;
         

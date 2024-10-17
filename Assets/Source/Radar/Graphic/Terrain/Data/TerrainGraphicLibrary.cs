@@ -13,7 +13,7 @@ namespace Beast.Radar.Graphic.Terrain
         public Shader tileSolver;
         public Shader tileRender;
         public Shader tileBlit;
-        public TerrainTileAtlasAsset tileAtlas;
+        public TerrainAtlasAsset atlas;
 
         public Texture2D biomeRenderNoise;
         public Texture2D tileSolverNoise;

@@ -9,7 +9,7 @@ namespace Beast.Radar.Editor.Terrain
     [Serializable]
     public class TextureBaker
     {
-        public Texture2D BakeMainTexture(TerrainTileAtlas atlas)
+        public Texture2D BakeMainTexture(TerrainAtlas atlas)
         {
             int2 textureSize = atlas.tileCount * atlas.pixelsPerTile;
             
@@ -53,21 +53,21 @@ namespace Beast.Radar.Editor.Terrain
             return resultTexture;
         }
 
-        public Texture2D BakeColorTexture(TerrainTileAtlas tileAtlas)
+        public Texture2D BakeColorTexture(TerrainAtlas atlas)
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
                 format = TextureFormat.RGB24,
                 filterMode = FilterMode.Point,
                 wrapMode = TextureWrapMode.Clamp,
-                size = tileAtlas.tileCount,
+                size = atlas.tileCount,
                 isLinear = true,
                 mipChain = false,
             });
 
             _fillWithColor(resultTexture, Color.black);
 
-            foreach (TerrainTileSprite sprite in tileAtlas.sprites)
+            foreach (TerrainTileSprite sprite in atlas.sprites)
             {
                 int x = sprite.index % resultTexture.width;
                 int y = sprite.index / resultTexture.width;
@@ -80,7 +80,7 @@ namespace Beast.Radar.Editor.Terrain
             return resultTexture;
         }
 
-        public Texture2D BakeConfigTexture(TerrainTileAtlas tileAtlas)
+        public Texture2D BakeConfigTexture(TerrainAtlas atlas)
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
@@ -89,12 +89,12 @@ namespace Beast.Radar.Editor.Terrain
                 createInitialized = false,
                 filterMode = FilterMode.Point,
                 mipChain = false,
-                size = tileAtlas.tileCount,
+                size = atlas.tileCount,
             });
             
             _fillWithColor(resultTexture, Color.black);
             
-            foreach (TerrainTileSprite sprite in tileAtlas.sprites)
+            foreach (TerrainTileSprite sprite in atlas.sprites)
             {
                 int x = sprite.index % resultTexture.width;
                 int y = sprite.index / resultTexture.width;

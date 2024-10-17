@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b4c6adc59540c6908616ee24c6674a, type: 3}
   m_Name: terrain_tile_atlas
   m_EditorClassIdentifier: 
-  atlas:
+  data:
     mainTexture: {fileID: 2800000, guid: a0d8bf3a23d7bef4390a54474e9d2eb9, type: 3}
     colorTexture: {fileID: 2800000, guid: c4cee56f6f2fa464687c87c572475b84, type: 3}
     configTexture: {fileID: 2800000, guid: 59903cf665a13bc44a9263fbe3e9587d, type: 3}

@@ -61,7 +61,7 @@ namespace Beast.Radar.Graphic.Terrain
             _renderMaterial.SetTexture("_TerrainBiomeTexture", _biomeRender.Texture);
             _renderMaterial.SetFloat2("_TerrainBiomeTextureSize", renderTextureSize);
 
-            TerrainTileAtlas atlas = _library.terrain.tileAtlas.atlas;
+            TerrainAtlas atlas = _library.terrain.atlas.data;
             _renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
             _renderMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
             
