@@ -102,6 +102,7 @@ namespace Beast.Radar.Cinematic
             Zoom();
         }
 
+
         private void Move()
         {
             if (!_input.IsPressMove)
@@ -145,19 +146,20 @@ namespace Beast.Radar.Cinematic
 
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = _transform.ScreenPointToWorld(screenPoint);
-            
-            float zoomDelta = _transform.Zoom01 * Time.deltaTime * _motion.zoomSpeed;
-            zoomDelta *= _input.ScrollDelta;
-            _transform.AddZoom(zoomDelta * -1);
+
+            float zoomDelta = _input.ScrollDelta * _motion.zoomSpeed * Time.deltaTime;
+
+            _transform.AddZoom(-zoomDelta);
 
             if (_inputProvider.Scheme is EInputScheme.Gamepad)
             {
                 return;
             }
 
-            // float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
-            // float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            // _transform.AddAbsPosition(pointDelta);
+            float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
+            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
+
+            _transform.AddPosition(pointDelta, Space.World);
         }
     }
 }
