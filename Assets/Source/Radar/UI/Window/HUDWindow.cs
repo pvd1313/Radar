@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameCycle;
 using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 
@@ -46,18 +45,11 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _dispose()
-        {
-            _unsubscribeView();
-
-            return OperationResult.SuccessSync();
-        }
-
         private void _setActive(bool isActive)
         {
             _view.pauseButton.SetInteractable(isActive);
         }
-        
+
         private void _subscribeView()
         {
             _view.pauseButton.Clicked += _onClickedPauseButton;
@@ -67,10 +59,17 @@ namespace Beast.Radar.UI
         {
             _view.pauseButton.Clicked -= _onClickedPauseButton;
         }
-        
+
         private void _onClickedPauseButton()
         {
             _windowManager.Show(WindowID.Pause);
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribeView();
+
+            return OperationResult.SuccessSync();
         }
     }
 }

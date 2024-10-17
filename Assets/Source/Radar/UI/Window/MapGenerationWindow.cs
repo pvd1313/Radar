@@ -72,16 +72,6 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _dispose()
-        {
-            _unsubscribeView();
-
-            _selectablesController.Dispose();
-            _sizeButtonsGroup.Dispose();
-
-            return OperationResult.SuccessSync();
-        }
-
         private void _configureView()
         {
             _menuView.waterSlider.SetValue(value: 0.5f, withNotify: false);
@@ -185,15 +175,24 @@ namespace Beast.Radar.UI
             _data.seed = seedName.GetHashCode();
         }
 
-
         private void _onCreateMapButtonClicked()
         {
-            //todo add create map action 
+            //TODO: https://risenbeast.youtrack.cloud/issue/R-51/Implement-map-creation-action
         }
 
         private void _onCloseButtonClicked()
         {
             _windowManager.Show(WindowID.MainHUD);
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribeView();
+
+            _selectablesController.Dispose();
+            _sizeButtonsGroup.Dispose();
+
+            return OperationResult.SuccessSync();
         }
     }
 }
