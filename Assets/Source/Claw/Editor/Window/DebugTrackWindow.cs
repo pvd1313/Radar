@@ -23,9 +23,10 @@ namespace Beast.Claw.Editor.Window
         private bool _isPlaying;
         private DateTime _lastUpdateTime;
 
-        public DebugTrackWindow()
+        protected override void Warmup()
         {
             EditorApplication.update += _onEditorApplicationUpdate;
+            
             _lastUpdateTime = DateTime.Now;
         }
 

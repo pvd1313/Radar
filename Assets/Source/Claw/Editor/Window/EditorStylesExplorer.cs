@@ -1,0 +1,59 @@
+﻿using System.Collections.Generic;
+using System.Reflection;
+using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
+
+namespace Beast.Claw.Editor.Window
+{
+    public class EditorStylesExplorer : EditorWindow
+    {
+        private struct StyleData
+        {
+            public string name;
+            public GUIStyle style;
+        }
+        
+        [SerializeField] private float2 _scrollPosition;
+        
+        private List<StyleData> _styles;
+
+        protected override void Warmup()
+        {
+            PropertyInfo[] properties = typeof(EditorStyles).GetProperties(BindingFlags.Public | BindingFlags.Static);
+
+            _styles = new List<StyleData>(properties.Length);
+
+            foreach (PropertyInfo prop in properties)
+            {
+                object value = prop.GetValue(null);
+
+                if (value is GUIStyle style)
+                {
+                    _styles.Add(new StyleData
+                    {
+                        name = prop.Name,
+                        style = style
+                    });
+                }
+            }
+        }
+
+        protected override void InspectorUI()
+        {
+            flow.Vertical().Scroll(ref _scrollPosition).Draw(ui =>
+            {
+                foreach (StyleData data in _styles)
+                {
+                    // Out UI not supports styles yet :(
+                    EditorGUILayout.LabelField(data.name, data.style);
+                }
+            });
+        }
+
+        protected override void Dispose()
+        {
+            
+        }
+    }
+}

@@ -6,28 +6,28 @@ using Beast.Radar.Graphic.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.TerrainAtlas
+namespace Beast.Radar.Editor.Terrain
 {
     [Serializable]
-    public class TerrainTileEditor
+    public class TileEditor
     {
         private IEditorFlow flow => _window.flow;
         
-        [SerializeField] TerrainAtlasEditor _window;
+        [SerializeField] AtlasEditor _window;
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private GUILayoutOption _smallButtonSize = GUILayout.Width(EditorUI.OneCharButtonSize);
         [SerializeField] private bool _mainFold;
         [SerializeField] private UnitySerializableDictionary<int, bool> _spriteFolds = new();
-        [SerializeField] private TerrainTileHelper _helper = new ();
+        [SerializeField] private TextureHelper _helper = new ();
 
-        public TerrainTileEditor(TerrainAtlasEditor window)
+        public TileEditor(AtlasEditor window)
         {
             _window = window;
         }
 
-        public bool DrawUI(List<TerrainTileSprite> sprites)
+        public void DrawUI(List<TerrainTileSprite> sprites, out bool changesDetected)
         {
-            bool isDirty = false;
+            bool changesDetectedLocal = false;
 
             flow.Horizontal(ui =>
             {
@@ -36,7 +36,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
                 flow.Option(_smallButtonSize).Button(EditorUI.CharPlus, () =>
                 {
                     sprites.Add(new TerrainTileSprite());
-                    isDirty = true;
+                    changesDetectedLocal = true;
                 });
             });
 
@@ -47,21 +47,21 @@ namespace Beast.Radar.Editor.TerrainAtlas
             {
                 for (int i = 0; i < sprites.Count; i++)
                 {
-                    isDirty |= _spriteUI(sprites, i, ref swapIndex, ref deleteIndex);
+                    changesDetectedLocal |= _spriteUI(sprites, i, ref swapIndex, ref deleteIndex);
                 }
             });
 
             if (sprites.TrySwap(swapIndex.a, swapIndex.b))
             {
-                isDirty = true;
+                changesDetectedLocal = true;
             }
 
             if (sprites.TryRemoveAt(deleteIndex))
             {
-                isDirty = true;
+                changesDetectedLocal = true;
             }
 
-            return isDirty;
+            changesDetected = changesDetectedLocal;
         }
 
         private bool _spriteUI(

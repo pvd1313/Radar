@@ -7,7 +7,7 @@ namespace Beast.Claw.Editor.Window
 {
     public class ShaderBakeWindow : EditorWindow
     {
-        private static readonly int2 PreviewTextureSize = new (256, 256);
+        private static readonly int2 PREVIEW_TEXTURE_SIZE = new (256, 256);
         
         [SerializeField] private Material _renderMaterial;
         [SerializeField] private int _shaderPass;
@@ -17,7 +17,12 @@ namespace Beast.Claw.Editor.Window
 
         [SerializeField] private Texture2D _bakedTexture;
         [SerializeField] private Texture2D _previewTexture;
-        
+
+        protected override void Warmup()
+        {
+            
+        }
+
         protected override void InspectorUI()
         {
             EditorUIResult result = flow.Vertical(ui =>
@@ -46,7 +51,7 @@ namespace Beast.Claw.Editor.Window
             {
                 if (_previewTexture != null)
                 {
-                    ui.TexturePreview("Preview", _previewTexture, PreviewTextureSize.y);
+                    ui.TexturePreview("Preview", _previewTexture, PREVIEW_TEXTURE_SIZE.y);
                 }
             });
         }
@@ -75,7 +80,7 @@ namespace Beast.Claw.Editor.Window
                 new NewTempRenderTextureData
                 {
                     format = _renderTextureFormat,
-                    size = PreviewTextureSize,
+                    size = PREVIEW_TEXTURE_SIZE,
                     antiAliasing = 1
                 });
 

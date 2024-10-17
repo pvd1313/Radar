@@ -1,12 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.TerrainAtlas
+namespace Beast.Radar.Editor.Terrain
 {
     [SerializeField]
-    public class TerrainAtlasImporter
+    public class TextureImporter
     {
-        public void MainTexture(TextureImporter importer)
+        public void MainTexture(UnityEditor.TextureImporter importer)
         {
             importer.textureCompression = TextureImporterCompression.CompressedHQ;
             importer.filterMode = FilterMode.Point;
@@ -15,7 +15,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
             importer.alphaSource = TextureImporterAlphaSource.None;
         }
 
-        public void ColorTexture(TextureImporter importer)
+        public void ColorTexture(UnityEditor.TextureImporter importer)
         {
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.filterMode = FilterMode.Point;
@@ -25,7 +25,7 @@ namespace Beast.Radar.Editor.TerrainAtlas
             importer.mipmapEnabled = false;
         }
 
-        public void ConfigTexture(TextureImporter importer)
+        public void ConfigTexture(UnityEditor.TextureImporter importer)
         {
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.filterMode = FilterMode.Point;
