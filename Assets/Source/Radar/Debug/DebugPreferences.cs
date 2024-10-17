@@ -4,8 +4,8 @@ namespace Beast.Radar.Debug
 {
     public class DebugPreferences : ISerializable
     {
-        public bool isShowLog;
-        public bool isShowFps;
+        public bool isShowLog = true;
+        public bool isShowFps = true;
         
         public void Serialize(IBinaryWriter stream)
         {
