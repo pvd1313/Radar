@@ -6,7 +6,7 @@ using Beast.Claw.Math;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     [Serializable]
     public class TerrainAtlas : IValidatable

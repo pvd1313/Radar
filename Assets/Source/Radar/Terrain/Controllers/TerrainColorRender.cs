@@ -3,11 +3,12 @@ using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
+using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     public class TerrainColorRender : IGameCycleListener
     {

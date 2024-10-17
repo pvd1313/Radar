@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Radar.Graphic.Terrain;
+using Beast.Radar.Terrain;
 using UnityEngine;
 
 namespace Beast.Radar

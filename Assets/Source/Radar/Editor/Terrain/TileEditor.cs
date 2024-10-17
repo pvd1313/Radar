@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Collection;
 using Beast.Claw.Editor;
-using Beast.Radar.Graphic.Terrain;
+using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 

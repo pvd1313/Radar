@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     public interface ITerrainBakedTexture : IReady
     {

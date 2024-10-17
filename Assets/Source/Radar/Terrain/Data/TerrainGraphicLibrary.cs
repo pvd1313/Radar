@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     [Serializable]
     public class TerrainGraphicLibrary

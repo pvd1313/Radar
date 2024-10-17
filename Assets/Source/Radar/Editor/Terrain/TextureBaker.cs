@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw.Graphic;
-using Beast.Radar.Graphic.Terrain;
+using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 

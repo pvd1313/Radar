@@ -5,8 +5,9 @@ using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using TerrainData = Beast.Radar.Terrain.TerrainData;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     public class TerrainBaker : ITerrainBaker, IGameCycleListener
     {

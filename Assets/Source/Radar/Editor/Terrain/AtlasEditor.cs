@@ -2,7 +2,7 @@
 using Beast.Claw;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
-using Beast.Radar.Graphic.Terrain;
+using Beast.Radar.Terrain;
 using UnityEditor;
 using UnityEngine;
 

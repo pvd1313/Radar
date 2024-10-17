@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     [Serializable]
     public class TerrainRenderConfig

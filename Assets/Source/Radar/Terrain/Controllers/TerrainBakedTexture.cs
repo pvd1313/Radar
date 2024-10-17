@@ -5,7 +5,7 @@ using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Beast.Radar.Graphic.Terrain
+namespace Beast.Radar.Terrain
 {
     public class TerrainBakedTexture : ITerrainBakedTexture, IGameCycleListener
     {
