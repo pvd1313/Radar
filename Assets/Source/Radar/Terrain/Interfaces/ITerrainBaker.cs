@@ -1,12 +1,9 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
     public interface ITerrainBaker
     {
         void Bake(TerrainData terrain, RenderTexture targetTexture);
-        
-        RenderTexture Create<TOwner>(TOwner owner, int2 size, bool isTemporary);
     }
 }

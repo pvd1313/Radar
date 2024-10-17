@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Graphic;
 
 namespace Beast.Radar.Terrain
 {
@@ -10,5 +11,11 @@ namespace Beast.Radar.Terrain
         public int tileMaxCount;
         public int tileFadeInCount;
         public float tileDenoiseScale;
+
+        public RenderTextureData bakedTexture;
+        public RenderTextureData colorTexture;
+        public RenderTextureData biomeTexture;
+        public RenderTextureData tileRenderTexture;
+        public RenderTextureData tileSolverTexture;
     }
 }

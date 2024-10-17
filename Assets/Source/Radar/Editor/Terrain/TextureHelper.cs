@@ -95,12 +95,19 @@ namespace Beast.Radar.Editor.Terrain
         {
             Material material = BGraphic.CreateMaterial(this, Shader.Find("Unlit/Texture"));
 
-            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, 
-                new NewTempRenderTextureData
+            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new RenderTextureData
                 {
-                    antiAliasing = 1,
-                    filterMode = FilterMode.Point,
-                    size = texture.Size(),
+                    texture = new PlanarTextureData
+                    {
+                        size = texture.Size(),
+                        filterMode = FilterMode.Point,
+                        wrapMode = TextureWrapMode.Clamp
+                    },
+                    temp = new TempRenderTextureData
+                    {
+                        antiAliasing = 1,
+                        readWrite = RenderTextureReadWrite.Linear
+                    },
                     format = RenderTextureFormat.ARGB32,
                 });
             
@@ -116,13 +123,17 @@ namespace Beast.Radar.Editor.Terrain
 
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
+                texture = new PlanarTextureData
+                {
+                    size = texture.Size(),
+                    filterMode = FilterMode.Point,
+                    wrapMode = TextureWrapMode.Clamp,
+                    name = "TempToGetHeight",
+                },
                 format = TextureFormat.RGBA32,
                 isLinear = true,
                 mipChain = false,
-                size = texture.Size(),
                 createInitialized = true,
-                filterMode = FilterMode.Point,
-                name = "TempToGetHeight"
             });
             
             BGraphic.BlitRenderTextureTo2D(renderTexture, resultTexture);

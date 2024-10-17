@@ -13,13 +13,20 @@ namespace Beast.Radar.Editor.Terrain
         {
             int2 textureSize = atlas.tileCount * atlas.pixelsPerTile;
             
-            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new NewTempRenderTextureData
+            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new RenderTextureData
             {
-                size = textureSize,
-                antiAliasing = 1,
+                texture = new PlanarTextureData
+                {
+                    size = textureSize,
+                    filterMode = FilterMode.Point,
+                    wrapMode = TextureWrapMode.Clamp
+                },
+                temp = new TempRenderTextureData
+                {
+                    antiAliasing = 1,
+                    readWrite = RenderTextureReadWrite.Linear
+                },
                 format = RenderTextureFormat.ARGB32,
-                filterMode = FilterMode.Point,
-                readWrite = RenderTextureReadWrite.Linear
             });
 
             foreach (TerrainTileSprite tile in atlas.sprites)
@@ -37,13 +44,16 @@ namespace Beast.Radar.Editor.Terrain
 
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
+                texture = new PlanarTextureData
+                {
+                    filterMode = FilterMode.Point,
+                    size = textureSize,
+                    wrapMode = TextureWrapMode.Clamp
+                },
                 isLinear = true,
                 mipChain = true,
                 createInitialized = false,
-                filterMode = FilterMode.Point,
                 format = TextureFormat.RGB24,
-                size = textureSize,
-                wrapMode = TextureWrapMode.Clamp
             });
 
             BGraphic.BlitRenderTextureTo2D(renderTexture, resultTexture);
@@ -57,10 +67,13 @@ namespace Beast.Radar.Editor.Terrain
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
+                texture = new PlanarTextureData
+                {
+                    filterMode = FilterMode.Point,
+                    wrapMode = TextureWrapMode.Clamp,
+                    size = atlas.tileCount
+                },
                 format = TextureFormat.RGB24,
-                filterMode = FilterMode.Point,
-                wrapMode = TextureWrapMode.Clamp,
-                size = atlas.tileCount,
                 isLinear = true,
                 mipChain = false,
             });
@@ -84,12 +97,16 @@ namespace Beast.Radar.Editor.Terrain
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
+                texture = new PlanarTextureData
+                {
+                    filterMode  = FilterMode.Point,
+                    size = atlas.tileCount,
+                    wrapMode = TextureWrapMode.Clamp
+                },
                 isLinear = true,
                 format = TextureFormat.RG16,
                 createInitialized = false,
-                filterMode = FilterMode.Point,
                 mipChain = false,
-                size = atlas.tileCount,
             });
             
             _fillWithColor(resultTexture, Color.black);

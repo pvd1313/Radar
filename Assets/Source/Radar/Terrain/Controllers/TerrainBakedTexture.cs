@@ -1,6 +1,7 @@
 ﻿using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.GameCycle;
+using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -14,25 +15,31 @@ namespace Beast.Radar.Terrain
 
         private readonly GameModel _game;
         private readonly ITerrainBaker _baker;
+        private readonly RenderConfig _config;
         private RenderTexture _texture;
         
-        public TerrainBakedTexture(GameModel game, ITerrainBaker baker)
+        public TerrainBakedTexture(
+            GameModel game, 
+            ITerrainBaker baker, 
+            RenderConfig config)
         {
             _game = game;
             _baker = baker;
+            _config = config;
         }
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.GameLoad, GameLoading);
-            handle.ListenOperation(this, OperationID.Dispose, Dispose);
+            handle.ListenOperation(this, OperationID.GameLoad, _gameLoading);
+            handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
         
-        private async UniTask<OperationResult> GameLoading()
+        private async UniTask<OperationResult> _gameLoading()
         {
-            await Dispose();
-
-            _texture = _baker.Create(this, _game.terrain.size, false);
+            await _dispose();
+            
+            RenderTextureData textureData = _config.terrain.bakedTexture.WithSize(_game.terrain.size);
+            _texture = BGraphic.CreatePermanentRenderTexture(this, textureData);
 
             _baker.Bake(_game.terrain, _texture);
 
@@ -41,7 +48,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.Success();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private UniTask<OperationResult> _dispose()
         {
             IsReady = false;
 

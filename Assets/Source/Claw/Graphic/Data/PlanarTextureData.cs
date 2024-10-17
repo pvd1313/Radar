@@ -1,18 +1,16 @@
-﻿using Beast.Claw.Common;
+﻿using System;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
-    public struct NewPermaRenderTextureData : IValidatable
+    [Serializable]
+    public struct PlanarTextureData : IValidatable
     {
-        public int2 size;
-        public int depth;
-        public RenderTextureFormat format;
-        public int mipCount;
         public string name;
-        public FilterMode filterMode;
+        public int2 size;
         public TextureWrapMode wrapMode;
+        public FilterMode filterMode;
         
         public string Validate()
         {

@@ -18,27 +18,83 @@ MonoBehaviour:
     tileMaxCount: 100000
     tileFadeInCount: 50000
     tileDenoiseScale: 6
-    tileFadeCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
+    bakedTexture:
+      texture:
+        name: terrain_baked_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 1
+      format: 15
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+    colorTexture:
+      texture:
+        name: 
+        size:
+          x: 0
+          y: 0
+        wrapMode: 0
+        filterMode: 0
+      format: 0
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 0
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+    biomeTexture:
+      texture:
+        name: terrain_biome_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 15
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+    tileRenderTexture:
+      texture:
+        name: tile_render_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 0
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+    tileSolverTexture:
+      texture:
+        name: tile_solver_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 2
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
