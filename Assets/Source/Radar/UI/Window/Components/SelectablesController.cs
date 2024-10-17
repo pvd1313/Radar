@@ -193,7 +193,7 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputActions()
         {
-            _inputController.NavitePressed += _onDpadPressed;
+            _inputController.NavigatePressed += _onDpadPressed;
             _inputController.ShoulderPressed += _onShoulderPressed;
             _inputController.TriggerPressed += _onTriggerPressed;
             _inputController.RightStickMoved += _onRightStickMoved;
@@ -203,7 +203,7 @@ namespace Beast.Radar.UI
 
         private void _unsubscribeInputActions()
         {
-            _inputController.NavitePressed -= _onDpadPressed;
+            _inputController.NavigatePressed -= _onDpadPressed;
             _inputController.ShoulderPressed -= _onShoulderPressed;
             _inputController.TriggerPressed -= _onTriggerPressed;
             _inputController.RightStickMoved -= _onRightStickMoved;

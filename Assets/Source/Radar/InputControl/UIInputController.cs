@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Math;
 using Beast.Radar.GameCycle;
@@ -16,7 +17,7 @@ namespace Beast.Radar.InputControl
         public event Action PauseButtonPressed;
         public event Action SelectButtonPressed;
         public event Action<ESelectionZone> ActionButtonPressed;
-        public event Action<int2> NavitePressed;
+        public event Action<int2> NavigatePressed;
         public event Action<float2> RightStickMoved;
         public event Action<int> ShoulderPressed;
         public event Action<int> TriggerPressed;
@@ -86,7 +87,7 @@ namespace Beast.Radar.InputControl
             {
                 if (_currentNavigationCooldown == 0)
                 {
-                    NavitePressed?.Invoke(_roundValue(value));
+                    NavigatePressed?.Invoke(_roundValue(value));
                 }
 
                 _currentNavigationCooldown += Time.deltaTime;
@@ -194,7 +195,7 @@ namespace Beast.Radar.InputControl
         private void _onPerformedTrigger(InputAction.CallbackContext obj)
         {
             float value = obj.ReadValue<float>();
-            TriggerPressed?.Invoke(_roundValue(value));
+            TriggerPressed?.Invoke(_roundValue(value, 0.2f));
         }
 
         private int2 _roundValue(float2 vector)
@@ -202,12 +203,12 @@ namespace Beast.Radar.InputControl
             return new int2(_roundValue(vector.x), _roundValue(vector.y));
         }
 
-        private int _roundValue(float value)
+        private int _roundValue(float value, float threshold = 0.8f)
         {
             return value switch
             {
-                > 0.8f => BMath.CeilToInt(value),
-                < -0.8f => BMath.FloorToInt(value),
+                _ when value > threshold => BMath.CeilToInt(value),
+                _ when value <-threshold => BMath.FloorToInt(value),
                 _ => 0
             };
         }
