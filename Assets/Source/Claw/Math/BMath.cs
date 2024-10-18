@@ -8,7 +8,9 @@ namespace Beast.Claw.Math
     {
         public const float Deg2Rad = 0.017453292f;
         public const float Rad2Deg = 57.29578f;
-        
+        public const float TwoPI = (2 * math.PI);
+        public const float PI = math.PI;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sin(float angleRag)
         {
@@ -239,6 +241,29 @@ namespace Beast.Claw.Math
         public static float Sqrt(float x)
         {
             return math.sqrt(x);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Rotate(float x, float y, float sin, float cos)
+        {
+            return new float2
+            {
+                x = x * cos - y * sin,
+                y = x * sin + y * cos
+            };
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Rotate(float2 vector, float sin, float cos)
+        {
+            return Rotate(vector.x, vector.y, sin, cos);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SinCos(float angleRad, out float sin, out float cos)
+        {
+            sin = math.sin(angleRad);
+            cos = math.cos(angleRad);
         }
     }
 }

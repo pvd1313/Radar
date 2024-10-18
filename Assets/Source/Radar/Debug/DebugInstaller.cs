@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Gizmos;
 using Beast.Radar.UI;
 using Zenject;
 
@@ -11,6 +12,10 @@ namespace Beast.Radar.Debug
         protected override IEnumerable<Type> BindInterfaces()
         {
 #if DEVELOPMENT
+            yield return typeof(GizmosStateStorage);
+            yield return typeof(GizmosManager);
+            yield return typeof(GizmosDrawerManager);
+            
             yield return typeof(DebugController);
             yield return typeof(DebugPreferencesController);
             yield return typeof(DebugMenuWindow);
