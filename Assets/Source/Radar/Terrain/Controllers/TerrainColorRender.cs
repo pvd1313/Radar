@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameCycle;
+﻿using System;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
@@ -47,18 +48,31 @@ namespace Beast.Radar.Terrain
         
         private void _render()
         {
-            if (!_biomeRender.IsReady)
+            if (!_biomeRender.IsReady || !_camera.IsReady)
             {
                 return;
             }
             
-            float2 renderTextureSize = _biomeRender.Texture.Size();
-            float yScale = BMath.Cos(_camera.RotationRad.roll) * (_camera.ViewDistance / _biomeRender.ViewDistance);
-            float2x2 rotation = float2x2.Rotate(-_camera.RotationRad.roll);
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(_camera.RotationRad.pitch));
+            _renderColorTexture(new TerrainColorRenderInput
+            {
+                biomeTexture = _biomeRender.Texture,
+                biomeViewDistance = _biomeRender.ViewDistance,
+                biomeTextureUVOffset = _biomeRender.WorldToUVOffset(_camera.Position),
+                cameraViewDistance = _camera.ViewDistance,
+                cameraRotationRad = _camera.RotationRad,
+                outputToCamera = true,
+                screenSize = _screen.Size
+            });
+        }
+
+        private void _renderColorTexture(TerrainColorRenderInput input)
+        {
+            float yScale = BMath.Cos(input.cameraRotationRad.roll) * (input.cameraViewDistance / input.biomeViewDistance);
+            float2x2 rotation = float2x2.Rotate(-input.cameraRotationRad.roll);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(input.cameraRotationRad.pitch));
             
-            _renderMaterial.SetTexture("_TerrainBiomeTexture", _biomeRender.Texture);
-            _renderMaterial.SetFloat2("_TerrainBiomeTextureSize", renderTextureSize);
+            _renderMaterial.SetTexture("_TerrainBiomeTexture", input.biomeTexture);
+            _renderMaterial.SetFloat2("_TerrainBiomeTextureSize", input.biomeTexture.Size());
 
             TerrainAtlas atlas = _library.terrain.atlas.data;
             _renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
@@ -67,22 +81,31 @@ namespace Beast.Radar.Terrain
             _renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
             _renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
 
-            _renderMaterial.SetFloat2("_OutputSize", _screen.Size.Multiply(yScale));
+            _renderMaterial.SetFloat2("_OutputSize", input.screenSize.Multiply(yScale));
 
-            float2 outputCenter = _biomeRender.WorldToUVOffset(_camera.Position);
-            _renderMaterial.SetFloat2("_OutputCenter", renderTextureSize * outputCenter);
-            
-            BGraphic.DrawMesh(new DrawMeshParameters
+            float2 outputCenter = input.biomeTextureUVOffset;
+            _renderMaterial.SetFloat2("_OutputCenter", input.biomeTexture.Size() * outputCenter);
+
+            float screenAspect = input.screenSize.x / (float)input.screenSize.y;
+
+            if (input.outputToCamera)
             {
-                mesh = _library.quad,
-                material = _renderMaterial,
-                matrix = new Float4x4TRS
+                BGraphic.DrawMesh(new DrawMeshParameters
                 {
-                    translation = new float3(0, 0, RenderOrderZ.TerrainColorRender),
-                    rotation = quaternion.identity,
-                    scale = new float3(_screen.Aspect, 1, 1)
-                }
-            });
+                    mesh = _library.quad,
+                    material = _renderMaterial,
+                    matrix = new Float4x4TRS
+                    {
+                        translation = new float3(0, 0, RenderOrderZ.TerrainColorRender),
+                        rotation = quaternion.identity,
+                        scale = new float3(screenAspect, 1, 1)
+                    }
+                });
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
         
         private UniTask<OperationResult> _dispose()
