@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model:
     terrain:
-      seed01: 0.33
-      size:
+      seed: 1
+      terrainSize:
         x: 4096
         y: 4096
-      biomeScale01: 0.5
+      biomeSize01: 0.5
       water01: 0.3
     camera:
       zoom01: 0.5

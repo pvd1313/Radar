@@ -6,6 +6,7 @@ namespace Beast.Radar.Terrain
     public struct TerrainBakeTask : IValidatable
     {
         public TerrainData terrain;
+        public float quality01;
         public RenderTexture outputTexture;
         
         public string Validate()

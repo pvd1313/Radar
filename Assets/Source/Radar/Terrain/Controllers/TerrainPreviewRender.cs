@@ -45,7 +45,7 @@ namespace Beast.Radar.Terrain
             
             try
             {
-                RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(task.terrain.size);
+                RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(task.terrain.terrainSize);
                 bakedTexture = BGraphic.CreateTempRenderTexture(this, bakerData);
                 _baker.Render(new TerrainBakeTask
                 {
@@ -57,10 +57,10 @@ namespace Beast.Radar.Terrain
                 biomeTexture = BGraphic.CreateTempRenderTexture(this, biomeData);
                 _biomeRender.Render(new TerrainBiomeRenderTask
                 {
-                    viewDistance = task.terrain.size.y,
+                    viewDistance = task.terrain.terrainSize.y,
                     bakedTerrain = bakedTexture,
                     outputBiomeTexture = biomeTexture,
-                    renderPosition = task.terrain.size.Multiply(0.5f),
+                    renderPosition = task.terrain.terrainSize.Multiply(0.5f),
                     screenSize = task.outputTexture.Size()
                 });
                 
@@ -68,8 +68,8 @@ namespace Beast.Radar.Terrain
                 {
                     biomeTexture = biomeTexture,
                     biomeTextureUVOffset = 0.5f,
-                    biomeViewDistance = task.terrain.size.y,
-                    cameraViewDistance = task.terrain.size.y,
+                    biomeViewDistance = task.terrain.terrainSize.y,
+                    cameraViewDistance = task.terrain.terrainSize.y,
                     screenSize = task.outputTexture.Size(),
                     outputToTexture = task.outputTexture, 
                 });

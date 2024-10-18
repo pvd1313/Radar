@@ -24,7 +24,7 @@ namespace Beast.Radar.Core
                 terrain = terrain,
                 camera = new CameraState
                 {
-                    position = terrain.size.Multiply(0.5f),
+                    position = terrain.terrainSize.Multiply(0.5f),
                     zoom01 = 1
                 }
             };

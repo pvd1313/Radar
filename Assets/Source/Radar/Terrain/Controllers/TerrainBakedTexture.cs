@@ -38,13 +38,14 @@ namespace Beast.Radar.Terrain
         {
             await _dispose();
             
-            RenderTextureData textureData = _config.terrain.bakedTexture.WithSize(_game.terrain.size);
+            RenderTextureData textureData = _config.terrain.bakedTexture.WithSize(_game.terrain.terrainSize);
             _texture = BGraphic.CreatePermRenderTexture(this, textureData);
 
             _baker.Render(new TerrainBakeTask
             {
                 terrain = _game.terrain,
-                outputTexture = _texture
+                outputTexture = _texture,
+                quality01 = 1
             });
 
             IsReady = true;

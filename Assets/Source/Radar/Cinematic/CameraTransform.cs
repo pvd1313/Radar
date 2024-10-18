@@ -70,7 +70,7 @@ namespace Beast.Radar.Cinematic
             _position = _game.camera.position;
 
             _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
-            _maxViewDistance = BMath.Max(_game.terrain.size.x, _game.terrain.size.y) * _zoomMax;
+            _maxViewDistance = BMath.Max(_game.terrain.terrainSize.x, _game.terrain.terrainSize.y) * _zoomMax;
 
             _setZoom(_game.camera.zoom01);
             
