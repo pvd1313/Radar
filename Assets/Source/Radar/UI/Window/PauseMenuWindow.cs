@@ -12,7 +12,7 @@ namespace Beast.Radar.UI
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
-        private readonly IGameSaveManager _gameSave;
+        private readonly ISaveManager _saveManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
 
@@ -22,13 +22,13 @@ namespace Beast.Radar.UI
         public PauseMenuWindow(
             IUIFactory uiFactory,
             IWindowManager windowManager,
-            IGameSaveManager gameSave,
+            ISaveManager saveManager,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController input)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
-            _gameSave = gameSave;
+            _saveManager = saveManager;
             _zoneBuilder = zoneBuilder;
             _input = input;
         }
@@ -39,10 +39,14 @@ namespace Beast.Radar.UI
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
         }
 
-        public void Open()
+        public async void Open()
         {
             _selectablesController.Enable();
             _menuView.gameObject.SetActive(true);
+            _menuView.loadButton.SetInteractable(false);
+
+            bool saveExists = await _saveManager.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            _menuView.loadButton.SetInteractable(saveExists);
         }
 
         public void Close()
@@ -126,14 +130,19 @@ namespace Beast.Radar.UI
             _windowManager.Show(WindowID.MapGeneration);
         }
 
-        private void _onClickedSaveButton()
+        private async void _onClickedSaveButton()
         {
-            _gameSave.Save("default", "default");
+            // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
+            // Also should block UI during save
+            await _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            
+            _menuView.loadButton.SetInteractable(true);
         }
 
         private void _onClickedLoadButton()
         {
-            _gameSave.Load("default", "default");
+            // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
+            _saveManager.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Math;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
@@ -36,12 +37,17 @@ namespace Beast.Radar.Terrain
                 return "Invalid seed: " + seed01;
             }
 
-            if (size.x <= 0 || size.x > 4096)
+            if (size.x <= 0 || size.y <= 0 || size.y > 4096 || size.x > 4096)
             {
                 return "Invalid size: " + size;
             }
 
-            if (biomeScale01 <= 0)
+            if (!BMath.IsPowerOf2(size.x) || !BMath.IsPowerOf2(size.y))
+            {
+                return "NPOT size: " + size;
+            }
+
+            if (biomeScale01 < 0 || biomeScale01 > 1)
             {
                 return "Invalid biome scale: " + biomeScale01;
             }

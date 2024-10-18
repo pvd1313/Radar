@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Beast.Claw;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
@@ -11,33 +12,43 @@ using BinaryWriter = Beast.Claw.Serialization.BinaryWriter;
 
 namespace Beast.Radar.Serialization
 {
-    public class GameSaveManager : IGameSaveManager
+    public class SaveManager : ISaveManager
     {
+        public const string DEFAULT_FILE = "default";
+        public const string DEFAULT_FOLDER = "default";
+        
         private readonly GameModel _gameModel;
         private readonly IGameCycle _gameCycle;
-        private readonly GameSaveConfig _config;
+        private readonly IntegratedSave _library;
         private readonly IFileManager _fileManager;
 
-        public GameSaveManager(
+        public SaveManager(
             GameModel gameModel, 
             IGameCycle gameCycle,
-            GameSaveConfig config,
+            IntegratedSave library,
             IFileManager fileManager)
         {
             _gameModel = gameModel;
             _gameCycle = gameCycle;
-            _config = config;
+            _library = library;
             _fileManager = fileManager;
         }
-
-        public async UniTask<OperationResult> LoadDefaultSave()
+        
+        public async UniTask<bool> Exists(string folderName, string fileName)
         {
+            return await _fileManager.Exists(folderName, fileName);
+        }
+
+        public async UniTask<OperationResult> Load(GameModel model)
+        {
+            model.ValidateNotNullThrowException(nameof(model));
+            
             try
             {
                 MemoryStream memory = new ();
                 
                 BinaryWriter writer = new (memory);
-                _config.defaultSave.Serialize(writer);
+                model.Serialize(writer);
 
                 memory.Position = 0;
                 BinaryReader reader = new (memory);
