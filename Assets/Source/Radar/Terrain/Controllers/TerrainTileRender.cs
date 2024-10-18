@@ -36,14 +36,13 @@ namespace Beast.Radar.Terrain
             GraphicLibrary library, 
             IScreen screen,
             ITerrainBiomeRender terrainBiome,
-            RenderConfig config)
+            TileRenderConfig config)
         {
             _camera = camera;
             _library = library;
             _screen = screen;
             _terrainBiome = terrainBiome;
-            
-            _config = config.terrain.tile;
+            _config = config;
             _atlas = _library.terrain.atlas.data;
         }
         

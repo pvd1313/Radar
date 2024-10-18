@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 
 namespace Beast.Claw
 {
@@ -48,11 +49,20 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotEmptyOrNullThrowException(this string text, string objName)
+        public static void ValidateNotEmptyOrNullThrowException(this string text, string argName)
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ValidationException($"{objName} can not be null or empty");
+                throw new ValidationException($"{argName} can not be null or empty");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateTextureSize(this int2 size, string argName)
+        {
+            if (size.x <= 0 || size.y <= 0)
+            {
+                throw new ValidationException($"Invalid texture size: {argName}: {size}");
             }
         }
     }

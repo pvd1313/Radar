@@ -32,10 +32,7 @@ namespace Beast.Radar.Terrain
         public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            if (pixelSize.x <= 0 || pixelSize.y <= 0)
-            {
-                throw new ArgumentException(nameof(pixelSize));
-            }
+            pixelSize.ValidateTextureSize(nameof(pixelSize));
 
             RenderTextureData textureData = _config.colorTexture.WithSize(pixelSize);
             

@@ -13,44 +13,6 @@ MonoBehaviour:
   m_Name: RenderConfig
   m_EditorClassIdentifier: 
   terrain:
-    tile:
-      fadeInPixelSize: 8
-      minPixelSize: 4
-      maxCount: 100000
-      fadeInCount: 50000
-      denoiseScale: 6
-      renderTexture:
-        texture:
-          name: tile_render_texture
-          size:
-            x: 0
-            y: 0
-          wrapMode: 1
-          filterMode: 0
-        format: 0
-        depth: 0
-        mipCount: 0
-        temp:
-          antiAliasing: 1
-          readWrite: 1
-          memoryless: 0
-          vrUsage: 0
-      solverTexture:
-        texture:
-          name: tile_solver_texture
-          size:
-            x: 0
-            y: 0
-          wrapMode: 1
-          filterMode: 0
-        format: 2
-        depth: 0
-        mipCount: 0
-        temp:
-          antiAliasing: 1
-          readWrite: 1
-          memoryless: 0
-          vrUsage: 0
     bakedTexture:
       texture:
         name: terrain_baked_texture
@@ -96,6 +58,44 @@ MonoBehaviour:
       mipCount: 0
       temp:
         antiAliasing: 0
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+  tile:
+    fadeInPixelSize: 8
+    minPixelSize: 4
+    maxCount: 100000
+    fadeInCount: 50000
+    denoiseScale: 6
+    renderTexture:
+      texture:
+        name: tile_render_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 0
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
+        readWrite: 1
+        memoryless: 0
+        vrUsage: 0
+    solverTexture:
+      texture:
+        name: tile_solver_texture
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 2
+      depth: 0
+      mipCount: 0
+      temp:
+        antiAliasing: 1
         readWrite: 1
         memoryless: 0
         vrUsage: 0
