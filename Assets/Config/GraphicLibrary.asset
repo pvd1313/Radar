@@ -31,3 +31,6 @@ MonoBehaviour:
     magic0: 0
     magic1: 0
     magic2: 0
+    toggle0: 0
+    toggle1: 0
+    toggle2: 0

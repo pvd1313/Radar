@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: BeastGameSaveConfig
   m_EditorClassIdentifier: 
   defaultSave:
-    seed: 1
     terrain:
+      seed01: 0.5
       size:
         x: 4096
         y: 4096
-      biomeScale99: 2
-      waterFlood01: 0.5
+      biomeScale01: 0.5
+      water01: 0.5
     camera:
       zoom01: 0.5
       position:

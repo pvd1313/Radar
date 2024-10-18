@@ -20,6 +20,10 @@ namespace Beast.Radar
             public float magic0;
             public float magic1;
             public float magic2;
+
+            public bool toggle0;
+            public bool toggle1;
+            public bool toggle2;
 #endif
             
             public IEnumerable<IConfig> Bind()

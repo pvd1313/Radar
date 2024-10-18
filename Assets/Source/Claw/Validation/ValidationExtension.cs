@@ -56,13 +56,13 @@ namespace Beast.Claw
                 throw new ValidationException($"{argName} can not be null or empty");
             }
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateTextureSize(this int2 size, string argName)
+        public static void ValidateComponentsBiggerZeroThrowException(this int2 size, string argName)
         {
             if (size.x <= 0 || size.y <= 0)
             {
-                throw new ValidationException($"Invalid texture size: {argName}: {size}");
+                throw new ValidationException($"Invalid size: {argName}: {size}");
             }
         }
     }

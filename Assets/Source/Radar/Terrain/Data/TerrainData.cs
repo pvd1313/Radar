@@ -10,45 +10,45 @@ namespace Beast.Radar.Terrain
     {
         public float seed01;
         public int2 size;
-        public float biomeScale99;
-        public float waterFlood01;
+        public float biomeScale01;
+        public float water01;
         
         public void Serialize(IBinaryWriter stream)
         {
             stream.WriteFloat(seed01);
             stream.WriteInt2(size);
-            stream.WriteFloat(biomeScale99);
-            stream.WriteFloat(waterFlood01);
+            stream.WriteFloat(biomeScale01);
+            stream.WriteFloat(water01);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
             seed01 = seed01 = stream.ReadFloat();
             size = stream.ReadInt2();
-            biomeScale99 = stream.ReadFloat();
-            waterFlood01 = stream.ReadFloat();
+            biomeScale01 = stream.ReadFloat();
+            water01 = stream.ReadFloat();
         }
         
         public string Validate()
         {
             if (seed01 < 0 || seed01 > 1)
             {
-                return $"Invalid seed ({seed01})";
+                return "Invalid seed: " + seed01;
             }
 
-            if (size.x < 0 || size.x > 4096)
+            if (size.x <= 0 || size.x > 4096)
             {
-                return $"Invalid size ({size})";
+                return "Invalid size: " + size;
             }
 
-            if (biomeScale99 <= 0)
+            if (biomeScale01 <= 0)
             {
-                return $"Invalid biome scale ({biomeScale99}";
+                return "Invalid biome scale: " + biomeScale01;
             }
 
-            if (waterFlood01 < 0 || waterFlood01 > 1)
+            if (water01 < 0 || water01 > 1)
             {
-                return $"Invalid water flood ({waterFlood01})";
+                return "Invalid water: " + water01;
             }
 
             return null;

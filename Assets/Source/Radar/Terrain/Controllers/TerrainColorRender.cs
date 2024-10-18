@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Beast.Claw;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -8,17 +10,19 @@ using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainColorRender : IGameCycleListener
+    public class TerrainColorRender : IGameCycleListener, ITerrainColorRender
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
         private readonly ITerrainBiomeRender _biomeRender;
         private readonly ICameraTransform _camera;
 
-        private Material _renderMaterial;
+        private Material _materialForCamera;
 
         public TerrainColorRender(
             IScreen screen,
@@ -38,11 +42,32 @@ namespace Beast.Radar.Terrain
             handle.ListenOperation(this, OperationID.Dispose, _dispose);
             handle.ListenUpdate(this, UpdateID.Render, _render);
         }
+        
+        public void Render(TerrainColorRenderTask task)
+        {
+            task.ValidateThrowException();
+
+            if (task.outputToCamera)
+            {
+                string message =
+                    "Rendering to camera is not supported. Because it will modify material that used in main render." +
+                    "We need somehow to allocate and release materials after everything is rendered to implement this";
+
+                throw new NotSupportedException(message);
+            }
+            
+            // TODO: https://risenbeast.youtrack.cloud/issue/R-60/Render-material-pool
+            Material material = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
+
+            _renderColorTexture(material, task);
+            
+            BGraphic.Dispose(material);
+        }
 
         private UniTask<OperationResult> _warmup()
         {
-            _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
-
+            _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
+            
             return OperationResult.SuccessSync();
         }
         
@@ -53,7 +78,7 @@ namespace Beast.Radar.Terrain
                 return;
             }
             
-            _renderColorTexture(new TerrainColorRenderInput
+            _renderColorTexture(_materialForCamera, new TerrainColorRenderTask
             {
                 biomeTexture = _biomeRender.Texture,
                 biomeViewDistance = _biomeRender.ViewDistance,
@@ -65,35 +90,37 @@ namespace Beast.Radar.Terrain
             });
         }
 
-        private void _renderColorTexture(TerrainColorRenderInput input)
+        private void _renderColorTexture(Material renderMaterial, TerrainColorRenderTask task)
         {
-            float yScale = BMath.Cos(input.cameraRotationRad.roll) * (input.cameraViewDistance / input.biomeViewDistance);
-            float2x2 rotation = float2x2.Rotate(-input.cameraRotationRad.roll);
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(input.cameraRotationRad.pitch));
+            task.ValidateThrowException();
             
-            _renderMaterial.SetTexture("_TerrainBiomeTexture", input.biomeTexture);
-            _renderMaterial.SetFloat2("_TerrainBiomeTextureSize", input.biomeTexture.Size());
+            float yScale = BMath.Cos(task.cameraRotationRad.roll) * (task.cameraViewDistance / task.biomeViewDistance);
+            float2x2 rotation = float2x2.Rotate(task.cameraRotationRad.roll * -1.0f);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(task.cameraRotationRad.pitch));
+            
+            renderMaterial.SetTexture("_TerrainBiomeTexture", task.biomeTexture);
+            renderMaterial.SetFloat2("_TerrainBiomeTextureSize", task.biomeTexture.Size());
 
             TerrainAtlas atlas = _library.terrain.atlas.data;
-            _renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
-            _renderMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
+            renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
+            renderMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
             
-            _renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
-            _renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
+            renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
+            renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
 
-            _renderMaterial.SetFloat2("_OutputSize", input.screenSize.Multiply(yScale));
+            renderMaterial.SetFloat2("_OutputSize", task.screenSize.Multiply(yScale));
 
-            float2 outputCenter = input.biomeTextureUVOffset;
-            _renderMaterial.SetFloat2("_OutputCenter", input.biomeTexture.Size() * outputCenter);
+            float2 outputCenter = task.biomeTextureUVOffset;
+            renderMaterial.SetFloat2("_OutputCenter", task.biomeTexture.Size() * outputCenter);
 
-            float screenAspect = input.screenSize.x / (float)input.screenSize.y;
+            float screenAspect = task.screenSize.x / (float)task.screenSize.y;
 
-            if (input.outputToCamera)
+            if (task.outputToCamera)
             {
-                BGraphic.DrawMesh(new DrawMeshParameters
+                BGraphic.DrawMeshDelayed(new DrawMeshTask
                 {
                     mesh = _library.quad,
-                    material = _renderMaterial,
+                    material = renderMaterial,
                     matrix = new Float4x4TRS
                     {
                         translation = new float3(0, 0, RenderOrderZ.TerrainColorRender),
@@ -104,13 +131,30 @@ namespace Beast.Radar.Terrain
             }
             else
             {
-                throw new NotImplementedException();
+                CommandBuffer commandBuffer = BGraphic.GetTempBuffer(this);
+                float aspect = task.outputToTexture.width / (float)task.outputToTexture.height;
+                float4x4 ortho = float4x4.Ortho(aspect, 1, 0, 1);
+                commandBuffer.SetViewProjectionMatrices(float4x4.identity, ortho);
+                commandBuffer.SetRenderTarget(task.outputToTexture);
+                commandBuffer.DrawMesh(
+                    _library.quad,
+                    new Float4x4TRS
+                    {
+                        translation = float3.zero,
+                        rotation = quaternion.identity,
+                        scale = new float3(screenAspect, 1, 1)
+                    },
+                    renderMaterial,
+                    0,
+                    0);
+                BGraphic.ExecuteBuffer(commandBuffer);
+                BGraphic.DisposeTempBuffer(commandBuffer);
             }
         }
         
         private UniTask<OperationResult> _dispose()
         {
-            BGraphic.TryDispose(ref _renderMaterial);
+            BGraphic.TryDispose(ref _materialForCamera);
 
             return OperationResult.SuccessSync();
         }

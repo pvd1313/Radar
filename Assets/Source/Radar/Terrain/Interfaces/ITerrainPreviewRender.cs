@@ -1,10 +1,11 @@
 ﻿using Beast.Claw.Graphic;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class ITerrainPreviewRender
+    public interface ITerrainPreviewRender : IRender<TerrainPreviewRenderTask>
     {
-        public RenderTextureData renderTexture;
-        public RenderTextureData solverTexture;
+        RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize);
     }
 }

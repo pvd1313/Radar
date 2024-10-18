@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Graphic;
 
 namespace Beast.Radar.Terrain
 {
-    public interface ITerrainBaker
+    public interface ITerrainBaker : IRender<TerrainBakeTask>
     {
-        void Bake(TerrainData terrain, RenderTexture targetTexture);
+        
     }
 }

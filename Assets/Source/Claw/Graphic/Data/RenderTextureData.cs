@@ -41,5 +41,16 @@ namespace Beast.Claw.Graphic
 
             return data;
         }
+
+        public RenderTextureData WithSize(Texture getSizeFromTexture)
+        {
+            getSizeFromTexture.ValidateNotNullThrowException(nameof(getSizeFromTexture));
+
+            RenderTextureData data = this;
+
+            data.texture.size = getSizeFromTexture.Size();
+
+            return data;
+        }
     }
 }

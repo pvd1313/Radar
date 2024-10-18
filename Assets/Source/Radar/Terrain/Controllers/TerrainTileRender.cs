@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using System;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -60,7 +61,7 @@ namespace Beast.Radar.Terrain
             _tileBlitMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileBlit);
 
             RenderTextureData textureData = _config.renderTexture.WithSize(_screen.Size);
-            _tileToScreenBuffer = BGraphic.CreatePermanentRenderTexture(this, textureData);
+            _tileToScreenBuffer = BGraphic.CreatePermRenderTexture(this, textureData);
 
             return OperationResult.SuccessSync();
         }
@@ -151,7 +152,7 @@ namespace Beast.Radar.Terrain
             _tileSolverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
 
             RenderTextureData textureData = _config.solverTexture.WithSize(solverTextureSize);
-            RenderTexture solverTexture = BGraphic.CreateTemporaryRenderTexture(this, textureData);
+            RenderTexture solverTexture = BGraphic.CreateTempRenderTexture(this, textureData);
         
             BGraphic.Blit(new BlitParameters
             {
@@ -191,7 +192,7 @@ namespace Beast.Radar.Terrain
             CommandBuffer commandBuffer = BGraphic.GetTempBuffer(this);
             commandBuffer.SetRenderTarget(_tileToScreenBuffer);
             commandBuffer.DrawMeshInstancedProcedural(_library.quad, 0, _tileRenderMaterial, 0, tileCount);
-            Graphics.ExecuteCommandBuffer(commandBuffer);
+            BGraphic.ExecuteBuffer(commandBuffer);
             BGraphic.DisposeTempBuffer(commandBuffer);
         }
 
@@ -201,7 +202,7 @@ namespace Beast.Radar.Terrain
             _tileBlitMaterial.SetFloat2("_OutputSize", _screen.Size);
             _tileBlitMaterial.SetTexture("_MainTexture", _tileToScreenBuffer);
             
-            BGraphic.DrawMesh(new DrawMeshParameters
+            BGraphic.DrawMeshDelayed(new DrawMeshTask
             {
                 mesh = _library.quad,
                 material = _tileBlitMaterial, 
