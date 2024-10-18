@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
-    public struct DrawMeshParameters
+    public struct DrawMeshTask
     {
         public Mesh mesh;
         public Camera targetCamera;

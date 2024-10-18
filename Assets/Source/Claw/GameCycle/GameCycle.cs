@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Cysharp.Threading.Tasks;
 
@@ -27,7 +26,6 @@ namespace Beast.Claw.GameCycle
         private HashSet<object> _brokenUpdates;
         private Dictionary<object, int> _updateErrorCount;
         private bool _allUpdateIsBroken;
-        // private string _currentInitializationEvent;
 
         private Dictionary<string, List<InitializationListener>> _initialization;
         private Dictionary<string, List<UpdateListener>> _update;
@@ -117,19 +115,11 @@ namespace Beast.Claw.GameCycle
             {
                 throw new InvalidOperationException("Tried to invoke initialization during subscription");
             }
-            
-            // if (_currentInitializationEvent != null)
-            // {
-            //     throw new InvalidOperationException($"Initialization ({_currentInitializationEvent}) " +
-            //                                         $"is already in progress. Can not invoke new ({eventID}) ");
-            // }
 
             if (!_initializationEventIDs.Contains(eventID))
             {
                 throw new InvalidOperationException($"Tried to invoke invalid initialization event '{eventID}'");
             }
-            
-            // _currentInitializationEvent = eventID;
             
             OperationResult result = OperationResult.Success();
             
@@ -151,8 +141,6 @@ namespace Beast.Claw.GameCycle
                     break;
                 }
             }
-            
-            // _currentInitializationEvent = null;
             
             return result;
         }

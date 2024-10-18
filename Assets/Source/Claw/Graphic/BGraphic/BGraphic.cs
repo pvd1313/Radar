@@ -39,7 +39,7 @@ namespace Beast.Claw.Graphic
             }
         }
 
-        public static RenderTexture CreatePermanentRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
+        public static RenderTexture CreatePermRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
             input.ValidateNotNullThrowException(nameof(input));
             
@@ -60,7 +60,7 @@ namespace Beast.Claw.Graphic
             return texture;
         }
 
-        public static RenderTexture CreateTemporaryRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
+        public static RenderTexture CreateTempRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
             input.ValidateThrowException();
             
@@ -179,7 +179,7 @@ namespace Beast.Claw.Graphic
                 input.shaderPass);
         }
 
-        public static void DrawMesh(DrawMeshParameters input)
+        public static void DrawMeshDelayed(DrawMeshTask input)
         {
             Graphics.DrawMesh(
                 input.mesh,

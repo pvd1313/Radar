@@ -95,7 +95,7 @@ namespace Beast.Radar.Editor.Terrain
         {
             Material material = BGraphic.CreateMaterial(this, Shader.Find("Unlit/Texture"));
 
-            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new RenderTextureData
+            RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, new RenderTextureData
                 {
                     texture = new PlanarTextureData
                     {

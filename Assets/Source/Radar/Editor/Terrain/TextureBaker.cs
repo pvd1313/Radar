@@ -13,7 +13,7 @@ namespace Beast.Radar.Editor.Terrain
         {
             int2 textureSize = atlas.tileCount * atlas.pixelsPerTile;
             
-            RenderTexture renderTexture = BGraphic.CreateTemporaryRenderTexture(this, new RenderTextureData
+            RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, new RenderTextureData
             {
                 texture = new PlanarTextureData
                 {

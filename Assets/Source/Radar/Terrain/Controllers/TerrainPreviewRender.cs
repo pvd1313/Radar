@@ -1,56 +1,84 @@
-﻿using System;
-using Beast.Claw;
-using Beast.Claw.GameCycle;
+﻿using Beast.Claw;
 using Beast.Claw.Graphic;
+using Beast.Claw.Math;
 using Beast.Radar.Graphic;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainPreviewRender : ITerrainPreviewRender, IGameCycleListener
+    public class TerrainPreviewRender : ITerrainPreviewRender
     {
-        private readonly ITerrainBaker _terrainBaker;
-        private readonly ITerrainBiomeRender _biomeRender;
-        private readonly TerrainRenderConfig _config;
+        private readonly IRender<TerrainBakeTask> _baker;
+        private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
+        private readonly IRender<TerrainColorRenderTask> _colorRender;
+        private readonly RenderConfig _config;
 
         public TerrainPreviewRender(
-            ITerrainBaker terrainBaker, 
-            ITerrainBiomeRender biomeRender, 
-            TerrainRenderConfig config)
+            IRender<TerrainBakeTask> baker, 
+            IRender<TerrainBiomeRenderTask> biomeRender,
+            IRender<TerrainColorRenderTask> colorRender,
+            RenderConfig config)
         {
-            _terrainBaker = terrainBaker;
+            _baker = baker;
             _biomeRender = biomeRender;
+            _colorRender = colorRender;
             _config = config;
-        }
-        
-        public void Register(IGameCycleHandle handle)
-        {
-            
         }
         
         public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            pixelSize.ValidateTextureSize(nameof(pixelSize));
+            pixelSize.ValidateComponentsBiggerZeroThrowException(nameof(pixelSize));
 
-            RenderTextureData textureData = _config.colorTexture.WithSize(pixelSize);
+            RenderTextureData textureData = _config.terrain.colorTexture.WithSize(pixelSize);
             
-            return BGraphic.CreatePermanentRenderTexture(owner, textureData);
+            return BGraphic.CreatePermRenderTexture(owner, textureData);
         }
         
-        // public void Render(RenderTexture texture, TerrainData terrain)
-        // {
-        //     try
-        //     {
-        //         _terrainBaker.Bake(terrain, renderTexture);
-        //         
-        //         _biomeRender.
-        //     }
-        //     finally
-        //     {
-        //         BGraphic.Dispose(renderTexture);
-        //     }
-        // }
+        public void Render(TerrainPreviewRenderTask task)
+        {
+            task.ValidateThrowException();
+            
+            RenderTexture bakedTexture = null;
+            RenderTexture biomeTexture = null;
+            
+            try
+            {
+                RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(task.terrain.size);
+                bakedTexture = BGraphic.CreateTempRenderTexture(this, bakerData);
+                _baker.Render(new TerrainBakeTask
+                {
+                    terrain = task.terrain,
+                    outputTexture = bakedTexture
+                });
+
+                RenderTextureData biomeData = _config.terrain.biomeTexture.WithSize(task.outputTexture);
+                biomeTexture = BGraphic.CreateTempRenderTexture(this, biomeData);
+                _biomeRender.Render(new TerrainBiomeRenderTask
+                {
+                    viewDistance = task.terrain.size.y,
+                    bakedTerrain = bakedTexture,
+                    outputBiomeTexture = biomeTexture,
+                    renderPosition = task.terrain.size.Multiply(0.5f),
+                    screenSize = task.outputTexture.Size()
+                });
+                
+                _colorRender.Render(new TerrainColorRenderTask
+                {
+                    biomeTexture = biomeTexture,
+                    biomeTextureUVOffset = 0.5f,
+                    biomeViewDistance = task.terrain.size.y,
+                    cameraViewDistance = task.terrain.size.y,
+                    screenSize = task.outputTexture.Size(),
+                    outputToTexture = task.outputTexture, 
+                });
+            }
+            finally
+            {
+                BGraphic.TryDispose(ref bakedTexture);
+                BGraphic.TryDispose(ref biomeTexture);
+            }
+        }
     }
 }

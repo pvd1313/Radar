@@ -31,22 +31,18 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSync();
         }
 
-        public void Bake(TerrainData terrain, RenderTexture targetTexture)
+        public void Render(TerrainBakeTask task)
         {
-            terrain.ValidateThrowException();
-            targetTexture.ValidateNotNullThrowException(nameof(targetTexture));
+            task.ValidateThrowException();
             
-            _material.SetFloat("_Flood01", terrain.waterFlood01);
-            _material.SetFloat("_Seed01", terrain.seed01);
-            _material.SetFloat("_Scale99", terrain.biomeScale99);
-            
-            _material.SetVector(
-                "_TextureSize", 
-                new Vector2(targetTexture.width, targetTexture.height));
+            _material.SetFloat("_Flood01", task.terrain.water01);
+            _material.SetFloat("_Seed01", task.terrain.seed01);
+            _material.SetFloat("_Scale99", task.terrain.biomeScale01);
+            _material.SetFloat2("_TextureSize", task.outputTexture.Size());
             
             BGraphic.Blit(new BlitParameters
             {
-                targetTexture = targetTexture,
+                targetTexture = task.outputTexture,
                 material = _material,
                 shaderPass = 0
             });
