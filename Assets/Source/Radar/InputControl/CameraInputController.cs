@@ -54,7 +54,6 @@ namespace Beast.Radar.InputControl
             
             _earlyInput();   
             _lateInput();
-            UnityEngine.Debug.Log(ScreenPoint);
         }
 
         private void _earlyInput()
