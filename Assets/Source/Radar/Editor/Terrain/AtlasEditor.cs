@@ -73,32 +73,32 @@ namespace Beast.Radar.Editor.Terrain
                 {
                     ui.Foldout("Textures", ref _texturesFold);
 
-                    flow.If(_texturesFold).Indent().Horizontal(ui =>
+                    flow.If(_texturesFold).Tab().Horizontal(ui =>
                     {
                         ui.AssetField(nameof(atlas.mainTexture), ref atlas.mainTexture);
                         string buttonName = atlas.mainTexture == null ? NAME_SAVE : NAME_OVERRIDE;
                         flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeMainTexture);
                     });
 
-                    flow.If(_texturesFold).Indent().Horizontal(ui =>
+                    flow.If(_texturesFold).Tab().Horizontal(ui =>
                     {
                         ui.AssetField(nameof(atlas.colorTexture), ref atlas.colorTexture);
                         string buttonName = atlas.colorTexture == null ? NAME_SAVE : NAME_OVERRIDE;
                         flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeColorTexture);
                     });
 
-                    flow.If(_texturesFold).Indent().Horizontal(ui =>
+                    flow.If(_texturesFold).Tab().Horizontal(ui =>
                     {
                         ui.AssetField(nameof(atlas.configTexture), ref atlas.configTexture);
                         string buttonName = atlas.configTexture == null ? NAME_SAVE : NAME_OVERRIDE;
                         flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
                     });
                     
-                    ui.Int2Field(nameof(atlas.tileCount), ref atlas.tileCount);
+                    ui.Int2FieldTwoLine(nameof(atlas.tileCount), ref atlas.tileCount);
                     ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
                 });
 
-                ui.Space(EditorUI.MinorSpace);
+                ui.Space(Claw.Editor.UIStyle.SIZE_MINOR_SPACE);
 
                 if (spyResult.changesDetected)
                 {

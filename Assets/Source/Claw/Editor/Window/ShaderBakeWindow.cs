@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Beast.Claw.Graphic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -36,7 +35,7 @@ namespace Beast.Claw.Editor.Window
                 
                 ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
                 
-                ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
+                ui.Int2FieldTwoLine(nameof(_outputTextureSize), ref _outputTextureSize);
                 ui.ValidateIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
             });
             
@@ -47,12 +46,10 @@ namespace Beast.Claw.Editor.Window
                 flow.Enabled(_bakedTexture != null).Button("Save", SaveTexture);
             });
 
-            flow.Draw(ui =>
+            flow.If(_previewTexture != null).Draw(ui =>
             {
-                if (_previewTexture != null)
-                {
-                    ui.TexturePreview("Preview", _previewTexture, PREVIEW_TEXTURE_SIZE.y);
-                }
+                ui.PassiveLabel("Preview: ");
+                ui.TexturePreview(_previewTexture, PREVIEW_TEXTURE_SIZE.y);
             });
         }
 

@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Debug
 {
     public partial class DebugTrackStorage
     {
+        public Type Owner { get; }
+        
         private const int StateStorageCapacity = 0;
         
         private readonly StringDictionary<int> _int = new(StateStorageCapacity);
@@ -13,6 +16,11 @@ namespace Beast.Claw.Debug
         private readonly StringDictionary<float3> _float3 = new(StateStorageCapacity);
         private readonly StringDictionary<float4> _float4 = new(StateStorageCapacity);
         private readonly StringDictionary<string> _string = new(StateStorageCapacity);
+
+        public DebugTrackStorage(Type owner)
+        {
+            Owner = owner;
+        }
 
         public IEnumerable<KeyValuePair<string, float>> ReadAllFloat() => _ReadAll(_float);
 

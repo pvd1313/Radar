@@ -57,7 +57,7 @@ MonoBehaviour:
       depth: 0
       mipCount: 0
       temp:
-        antiAliasing: 0
+        antiAliasing: 1
         readWrite: 1
         memoryless: 0
         vrUsage: 0

@@ -5,7 +5,7 @@ namespace Beast.Claw.Editor
 {
     partial class EditorFlowExtension
     {
-        public static EditorUIResult Button(this IEditorFlow anyFlow, string label, Action action)
+        public static EditorUIResult PassiveLabel(this IEditorFlow anyFlow, string label)
         {
             if (anyFlow is EditorFlow flow)
             {
@@ -13,7 +13,7 @@ namespace Beast.Claw.Editor
 
                 try
                 {
-                    ui.Button(label, action);
+                    ui.PassiveLabel(label);
                 }
                 catch (Exception e)
                 {
@@ -29,57 +29,7 @@ namespace Beast.Claw.Editor
 
             return default;
         }
-
-        public static EditorUIResult Button(this IEditorFlow anyFlow, string label, Action<EditorUI> action)
-        {
-            if (anyFlow is EditorFlow flow)
-            {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
-
-                try
-                {
-                    ui.Button(label, action);
-                }
-                catch (Exception e)
-                {
-                    flow.StagedHandleException(ref ui, ref result, e);
-                }
-                finally
-                {
-                    flow.StagedEndDraw(ref ui, ref result);
-                }
-
-                return result;
-            }
-
-            return default;
-        }
-
-        public static EditorUIResult Label(this IEditorFlow anyFlow, string label)
-        {
-            if (anyFlow is EditorFlow flow)
-            {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
-
-                try
-                {
-                    ui.Label(label);
-                }
-                catch (Exception e)
-                {
-                    flow.StagedHandleException(ref ui, ref result, e);
-                }
-                finally
-                {
-                    flow.StagedEndDraw(ref ui, ref result);
-                }
-
-                return result;
-            }
-
-            return default;
-        }
-
+        
         public static EditorUIResult WarningBox(this IEditorFlow anyFlow, string message)
         {
             if (anyFlow is EditorFlow flow)

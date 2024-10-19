@@ -9,16 +9,13 @@ namespace Beast.Claw.Editor
             if (obj == null)
             {
                 flow.NotifyValidationFailed();
-                WarningBox($"'{flow.NicifyLabel(objName)}' can not be null");
+                WarningBox($"'{objName}' can not be null");
                 return false;
             }
 
             return true;
         }
-    }
-
-    public partial struct EditorUI
-    {
+        
         public bool Validate<T>(T obj, string objName) where T : IValidatable
         {
             string errorMessage = obj.Validate();
@@ -26,7 +23,7 @@ namespace Beast.Claw.Editor
             if (errorMessage != null)
             {
                 flow.NotifyValidationFailed();
-                WarningBox($"'{flow.NicifyLabel(objName)}': {errorMessage}");
+                WarningBox($"'{objName}': {errorMessage}");
                 return false;
             }
 

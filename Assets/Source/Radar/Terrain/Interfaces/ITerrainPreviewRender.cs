@@ -6,6 +6,6 @@ namespace Beast.Radar.Terrain
 {
     public interface ITerrainPreviewRender : IRender<TerrainPreviewRenderTask>
     {
-        RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize);
+        RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize) where TOwner: class;
     }
 }

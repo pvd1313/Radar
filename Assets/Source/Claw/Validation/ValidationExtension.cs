@@ -40,7 +40,8 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNullThrowException<TArgument>(this TArgument obj, string objName)
+        public static void ValidateNotNullThrowException<TArgument>(this TArgument obj, string objName) 
+            where TArgument : class
         {
             if (obj == null)
             {

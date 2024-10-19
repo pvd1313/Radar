@@ -26,7 +26,8 @@ namespace Beast.Radar.Terrain
             _config = config;
         }
         
-        public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize)
+        public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize) 
+            where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             pixelSize.ValidateComponentsBiggerZeroThrowException(nameof(pixelSize));

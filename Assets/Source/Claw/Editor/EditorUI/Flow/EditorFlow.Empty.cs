@@ -8,6 +8,8 @@ namespace Beast.Claw.Editor
     {
         public class Empty : IEditorFlow
         {
+            public GUIStyle CurrentStyle => null;
+
             public EditorUIResult Draw(Action<EditorUI> action)
             {
                 return new EditorUIResult
@@ -19,10 +21,14 @@ namespace Beast.Claw.Editor
             public IEditorFlow Enabled(bool isEnabled) => this;
             public IEditorFlow Vertical() => this;
             public IEditorFlow Horizontal() => this;
+            public IEditorFlow Indent(int indent) => this;
+            public IEditorFlow LabelWidth(float labelWidth) => this;
             public IEditorFlow Indent() => this;
             public IEditorFlow Option(GUILayoutOption option) => this;
             public IEditorFlow Scroll(ref float2 scrollPosition) => this;
             public IEditorFlow Spy() => this;
+            public IEditorFlow FieldWidth(float fieldWidth) => this;
+            public IEditorFlow Style(GUIStyle style) => this;
             public IEditorFlow If(bool condition) => this;
         }
     }
