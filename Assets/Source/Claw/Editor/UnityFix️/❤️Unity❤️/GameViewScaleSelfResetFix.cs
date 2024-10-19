@@ -21,17 +21,17 @@ namespace Beast.Claw.Editor
         
         static GameViewScaleSelfResetFix()
         {
-            try
-            {
-                CASH = new GameViewReflection();
-                
-                AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
-                AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
-            }
-            catch (Exception e)
-            {
-                BDebug.StaticLogException(e);
-            }
+            // try
+            // {
+            //     CASH = new GameViewReflection();
+            //     
+            //     AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+            //     AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
+            // }
+            // catch (Exception e)
+            // {
+            //     BDebug.StaticLogException(e);
+            // }
         }
 
         private static void _afterAssemblyReload()
