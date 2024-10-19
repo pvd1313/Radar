@@ -33,11 +33,31 @@ namespace Beast.Claw.Graphic
             return texture.Validate();
         }
 
+        public static RenderTextureData Default()
+        {
+            return new RenderTextureData
+            {
+                temp = new TempRenderTextureData
+                {
+                    antiAliasing = 1
+                }
+            };
+        }
+
         public RenderTextureData WithSize(int2 size)
         {
             RenderTextureData data = this;
             
             data.texture.size = size;
+
+            return data;
+        }
+
+        public RenderTextureData WithFormat(RenderTextureFormat format)
+        {
+            RenderTextureData data = this;
+
+            data.format = format;
 
             return data;
         }

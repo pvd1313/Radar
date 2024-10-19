@@ -3,9 +3,11 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Serialization
 {
-    public interface IGameSaveManager
+    public interface ISaveManager
     {
-        UniTask<OperationResult> LoadDefaultSave();
+        UniTask<OperationResult> Load(GameModel model);
+
+        UniTask<bool> Exists(string folderName, string fileName);
 
         UniTask<OperationResult> Load(string folderName, string fileName);
         

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Beast.Claw.Collection
 {
-    public static class CollectionExtension
+    public static class ListExtension
     {
         public static TValue PopOrNull<TValue>(this IList<TValue> list) where TValue : class
         {
@@ -96,21 +95,6 @@ namespace Beast.Claw.Collection
             {
                 list.Add(item);
             }
-        }
-
-        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
-            where TValue : new()
-        {
-            if (dictionary.TryGetValue(key, out TValue value))
-            {
-                return value;
-            }
-
-            value = new TValue();
-
-            dictionary[key] = value;
-
-            return value;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -45,6 +46,37 @@ namespace Beast.Claw.Editor
             }
 
             return resultTexture;
+        }
+        
+        public static MonoScript TryFindScript(Type type)
+        {
+            TryFindScript(type, out MonoScript script);
+
+            return script;
+        }
+
+        public static bool TryFindScript(Type type, out MonoScript script)
+        {
+            string[] guids = AssetDatabase.FindAssets("t:MonoScript " + type.Name);
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+
+                if (script != null && script.GetClass() == type)
+                {
+                    return true;
+                }
+            }
+
+            script = null;
+            return false;
+        }
+
+        public static void TryOpenAsset<TObject>(TObject obj) where TObject : Object
+        {
+            AssetDatabase.OpenAsset(obj);
         }
     }
 }

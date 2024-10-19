@@ -15,25 +15,36 @@ namespace Beast.Claw.Editor.Window
         private bool _initialized;
         private bool _gotException;
 
+        /// <summary>
+        /// Called once before first draw call after each domain reload.
+        /// </summary>
         protected abstract void Warmup();
 
         protected abstract void InspectorUI();
         
+        /// <summary>
+        /// Called when window closing. Called before assembly reload.
+        /// </summary>
         protected abstract void Dispose();
 
         protected EditorWindow()
         {
+            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
             AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
         }
 
-        private void _afterAssemblyReload()
+        private void _beforeAssemblyReload()
         {
-            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
-
             _initialized = false;
             _gotException = false;
             
             Dispose();
+        }
+
+        private void _afterAssemblyReload()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
         }
 
         private void OnGUI()

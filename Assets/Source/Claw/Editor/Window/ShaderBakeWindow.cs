@@ -36,7 +36,7 @@ namespace Beast.Claw.Editor.Window
                 
                 ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
                 
-                ui.Int2Field(nameof(_outputTextureSize), ref _outputTextureSize);
+                ui.Int2FieldTwoLine(nameof(_outputTextureSize), ref _outputTextureSize);
                 ui.ValidateIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
             });
             
@@ -47,12 +47,10 @@ namespace Beast.Claw.Editor.Window
                 flow.Enabled(_bakedTexture != null).Button("Save", SaveTexture);
             });
 
-            flow.Draw(ui =>
+            flow.If(_previewTexture != null).Draw(ui =>
             {
-                if (_previewTexture != null)
-                {
-                    ui.TexturePreview("Preview", _previewTexture, PREVIEW_TEXTURE_SIZE.y);
-                }
+                ui.PassiveLabel("Preview: ");
+                ui.TexturePreview(_previewTexture, PREVIEW_TEXTURE_SIZE.y);
             });
         }
 
@@ -68,79 +66,81 @@ namespace Beast.Claw.Editor.Window
         
         private void BakeMap()
         {
-            // RenderTexture renderTextureBig = BGraphic.CreateTemporaryRenderTexture(this,
-            //     new TempRenderTextureData
-            //     {
-            //         format = _renderTextureFormat,
-            //         size = _outputTextureSize,
-            //         antiAliasing = 1
-            //     });
-            //
-            // RenderTexture renderTextureSmall = BGraphic.CreateTemporaryRenderTexture(this,
-            //     new TempRenderTextureData
-            //     {
-            //         format = _renderTextureFormat,
-            //         size = PREVIEW_TEXTURE_SIZE,
-            //         antiAliasing = 1
-            //     });
-            //
-            // try
-            // {
-            //     BGraphic.Blit(new BlitParameters
-            //     {
-            //         material = _renderMaterial,
-            //         shaderPass = _shaderPass,
-            //         targetTexture = renderTextureBig
-            //     });
-            //     
-            //     BGraphic.Blit(new BlitParameters
-            //     {
-            //         material = _renderMaterial,
-            //         shaderPass = _shaderPass,
-            //         targetTexture = renderTextureSmall
-            //     });
-            //
-            //     if (_bakedTexture != null)
-            //     {
-            //         DestroyImmediate(_bakedTexture);
-            //     }
-            //
-            //     _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
-            //     {
-            //         format = _outputTextureFormat,
-            //         isLinear = true,
-            //         mipChain = false,
-            //         createInitialized = true,
-            //         size = renderTextureBig.Size(),
-            //         filterMode = renderTextureBig.filterMode,
-            //         wrapMode = renderTextureBig.wrapMode,
-            //     });
-            //
-            //     BGraphic.BlitRenderTextureTo2D(renderTextureBig, _bakedTexture);
-            //
-            //     if (_previewTexture != null)
-            //     {
-            //         DestroyImmediate(_previewTexture);
-            //     }
-            //
-            //     _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
-            //     {
-            //         format = TextureFormat.RGBA32,
-            //         isLinear = true,
-            //         mipChain = false,
-            //         createInitialized = true,
-            //         filterMode = FilterMode.Point,
-            //         size = renderTextureSmall.Size(),
-            //         wrapMode = renderTextureSmall.wrapMode
-            //     });
-            //
-            //     BGraphic.BlitRenderTextureTo2D(renderTextureSmall, _previewTexture);
-            // }
-            // finally
-            // {
-            //     BGraphic.Dispose(renderTextureBig);
-            //     BGraphic.Dispose(renderTextureSmall);
-            // }
+            RenderTextureData bigTexture = RenderTextureData.Default()
+                .WithSize(_outputTextureSize)
+                .WithFormat(_renderTextureFormat);
+            
+            RenderTexture renderTextureBig = BGraphic.CreateTempRenderTexture(this, bigTexture);
+
+            RenderTextureData smallTexture = RenderTextureData.Default()
+                .WithSize(_outputTextureSize)
+                .WithFormat(_renderTextureFormat);
+
+            RenderTexture renderTextureSmall = BGraphic.CreateTempRenderTexture(this, smallTexture);
+            
+            try
+            {
+                BGraphic.Blit(new BlitParameters
+                {
+                    material = _renderMaterial,
+                    shaderPass = _shaderPass,
+                    targetTexture = renderTextureBig
+                });
+                
+                BGraphic.Blit(new BlitParameters
+                {
+                    material = _renderMaterial,
+                    shaderPass = _shaderPass,
+                    targetTexture = renderTextureSmall
+                });
+            
+                if (_bakedTexture != null)
+                {
+                    DestroyImmediate(_bakedTexture);
+                }
+            
+                _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
+                {
+                    texture = new PlanarTextureData
+                    {
+                        size = renderTextureBig.Size(),
+                        filterMode = renderTextureBig.filterMode,
+                        wrapMode = renderTextureBig.wrapMode
+                    },
+                    format = _outputTextureFormat,
+                    isLinear = true,
+                    mipChain = false,
+                    createInitialized = true,
+                });
+            
+                BGraphic.BlitRenderTextureTo2D(renderTextureBig, _bakedTexture);
+            
+                if (_previewTexture != null)
+                {
+                    DestroyImmediate(_previewTexture);
+                }
+            
+                _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
+                {
+                    texture = new PlanarTextureData
+                    {
+                        size = renderTextureSmall.Size(),
+                        filterMode = FilterMode.Point,
+                        wrapMode = renderTextureSmall.wrapMode
+                    },
+                    format = TextureFormat.RGBA32,
+                    isLinear = true,
+                    mipChain = false,
+                    createInitialized = true,
+                });
+            
+                BGraphic.BlitRenderTextureTo2D(renderTextureSmall, _previewTexture);
+            }
+            finally
+            {
+                BGraphic.Dispose(renderTextureBig);
+                BGraphic.Dispose(renderTextureSmall);
+            }
         }
         
         protected override void Dispose()

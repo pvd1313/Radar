@@ -10,11 +10,14 @@ namespace Beast.Claw.Editor
         IEditorFlow Enabled(bool isEnabled);
         IEditorFlow Vertical();
         IEditorFlow Horizontal();
-        IEditorFlow Indent();
+        IEditorFlow Indent(int indent);
+        IEditorFlow LabelWidth(float labelWidth);
         IEditorFlow Option(GUILayoutOption option);
         IEditorFlow Scroll(ref float2 scrollPosition);
         IEditorFlow Spy();
-
+        IEditorFlow Style(GUIStyle style);
         IEditorFlow If(bool condition);
+        GUIStyle CurrentStyle { get; }
+        IEditorFlow FieldWidth(float fieldWidth);
     }
 }

@@ -20,9 +20,10 @@ namespace Beast.Radar.Core
             // Main
             yield return typeof(GameCycle.GameCycle);
             yield return typeof(GameBoot);
-            yield return typeof(GameSaveManager);
+            yield return typeof(SaveManager);
             yield return typeof(DeviceScreen);
             yield return typeof(FileManager);
+            yield return typeof(NewGameSetup);
             
             // UI Main
             yield return typeof(UIFactory);

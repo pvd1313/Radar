@@ -35,10 +35,11 @@ namespace Beast.Radar.Terrain
         {
             task.ValidateThrowException();
             
-            _material.SetFloat("_Flood01", task.terrain.water01);
-            _material.SetFloat("_Seed01", task.terrain.seed01);
-            _material.SetFloat("_Scale99", task.terrain.biomeScale01);
+            _material.SetFloat("_Water01", task.terrain.water01);
+            _material.SetFloat("_Seed", task.terrain.seed);
+            _material.SetFloat("_BiomeSize01", task.terrain.biomeSize01);
             _material.SetFloat2("_TextureSize", task.outputTexture.Size());
+            _material.SetFloat("_Quality01", task.quality01);
             
             BGraphic.Blit(new BlitParameters
             {

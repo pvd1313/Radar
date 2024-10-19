@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
@@ -9,26 +8,16 @@ namespace Beast.Claw.Editor
 {
     public partial class EditorFlow : IEditorFlow
     {
-        private enum ECommandType
-        {
-            None,
-            BeginVertical,
-            BeginHorizontal,
-            AddIndent,
-            ScrollView,
-            LayoutOption,
-            DisabledGroup,
-            ChangeCheck,
-        }
-
+        public GUIStyle CurrentStyle => _customStyle;
+        
         private readonly Stack<int> _commandStackSize = new();
-        private readonly Stack<ECommandType> _commands = new();
+        private readonly Stack<CommandUndo> _commands = new();
         private readonly List<GUILayoutOption> _options = new();
         private readonly Empty _emptyFlow = new ();
         private readonly GUILayoutOptionArrayPool _layoutOptionPool = new();
 
         private bool _validationFailed;
-        private bool _niceLabelsEnabled = false;
+        private GUIStyle _customStyle;
 
         private EditorUI _createEditorUI()
         {
@@ -65,11 +54,19 @@ namespace Beast.Claw.Editor
             BDebug.StaticLogException(exception);
         }
 
-        private void _push(ECommandType command)
+        private void _pushUndoWithType(ECommandType type)
+        {
+            CommandUndo commandUndo = default;
+            commandUndo.type = type;
+            
+           _pushUndo(commandUndo);
+        }
+
+        private void _pushUndo(CommandUndo commandUndo)
         {
             int stackSize = _commandStackSize.Pop();
             _commandStackSize.Push(stackSize + 1);
-            _commands.Push(command);
+            _commands.Push(commandUndo);
         }
 
         private void _undoLastCommands(ref EditorUIResult result)
@@ -78,43 +75,6 @@ namespace Beast.Claw.Editor
             for (int i = 0; i < stackSize; i++)
             {
                 _undo(_commands.Pop(), ref result);
-            }
-        }
-
-        private void _undo(ECommandType command, ref EditorUIResult result)
-        {
-            switch (command)
-            {
-                case ECommandType.BeginVertical:
-                    EditorGUILayout.EndVertical();
-                    break;
-                
-                case ECommandType.BeginHorizontal:
-                    EditorGUILayout.EndHorizontal();
-                    break;
-                
-                case ECommandType.AddIndent:
-                    EditorGUI.indentLevel--;
-                    break;
-                
-                case ECommandType.LayoutOption:
-                    _options.Pop();
-                    break;
-                
-                case ECommandType.ScrollView:
-                    EditorGUILayout.EndScrollView();
-                    break;
-                
-                case ECommandType.DisabledGroup:
-                    EditorGUI.EndDisabledGroup();
-                    break;
-                
-                case ECommandType.ChangeCheck:
-                    result.changesDetected |= EditorGUI.EndChangeCheck();
-                    break;
-                
-                default:
-                    throw new InvalidOperationException("Unknown command encountered: " + command);
             }
         }
     }

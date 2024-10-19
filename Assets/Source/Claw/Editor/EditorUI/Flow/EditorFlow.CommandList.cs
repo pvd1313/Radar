@@ -8,21 +8,6 @@ namespace Beast.Claw.Editor
 {
     partial class EditorFlow
     {
-        public void NotifyValidationFailed()
-        {
-            _validationFailed = true;
-        }
-        
-        public string NicifyLabel(string label)
-        {
-            if (!_niceLabelsEnabled)
-            {
-                return label;
-            }
-
-            return ObjectNames.NicifyVariableName(label);
-        }
-        
         public void CheckFlowIsFinished()
         {
             if (_options.Count > 0 || _commands.Count > 0 || _commandStackSize.Count > 0)
@@ -96,7 +81,7 @@ namespace Beast.Claw.Editor
 
         public IEditorFlow Enabled(bool isEnabled)
         {
-            _push(ECommandType.DisabledGroup);
+            _pushUndoWithType(ECommandType.DisabledGroup);
             
             EditorGUI.BeginDisabledGroup(!isEnabled);
 
@@ -105,7 +90,7 @@ namespace Beast.Claw.Editor
 
         public IEditorFlow Vertical()
         {
-            _push(ECommandType.BeginVertical);
+            _pushUndoWithType(ECommandType.BeginVertical);
             
             EditorGUILayout.BeginVertical();
 
@@ -114,25 +99,16 @@ namespace Beast.Claw.Editor
 
         public IEditorFlow Horizontal()
         {
-            _push(ECommandType.BeginHorizontal);
+            _pushUndoWithType(ECommandType.BeginHorizontal);
             
             EditorGUILayout.BeginHorizontal();
 
             return this;
         }
 
-        public IEditorFlow Indent()
-        {
-            _push(ECommandType.AddIndent);
-            
-            EditorGUI.indentLevel++;
-
-            return this;
-        }
-
         public IEditorFlow Option(GUILayoutOption option)
         {
-            _push(ECommandType.LayoutOption);
+            _pushUndoWithType(ECommandType.LayoutOption);
 
             _options.Add(option);
 
@@ -141,7 +117,7 @@ namespace Beast.Claw.Editor
 
         public IEditorFlow Scroll(ref float2 scrollPosition)
         {
-            _push(ECommandType.ScrollView);
+            _pushUndoWithType(ECommandType.ScrollView);
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
@@ -150,9 +126,87 @@ namespace Beast.Claw.Editor
 
         public IEditorFlow Spy()
         {
-            _push(ECommandType.ChangeCheck);
+            _pushUndoWithType(ECommandType.ChangeCheck);
             
             EditorGUI.BeginChangeCheck();
+
+            return this;
+        }
+        
+        public IEditorFlow Indent(int indent)
+        {
+            if (indent < 0)
+            {
+                throw new ArgumentException("Indent can not be less than zero");
+            }
+
+            _pushUndo(new CommandUndo
+            {
+                type = ECommandType.SetIndent,
+                value = new StructValue
+                {
+                    asInt = EditorGUI.indentLevel
+                }
+            });
+
+            EditorGUI.indentLevel = indent;
+
+            return this;
+        }
+
+        public IEditorFlow Style(GUIStyle style)
+        {
+            style.ValidateNotNullThrowException(nameof(style));
+            
+            _pushUndo(new CommandUndo
+            {
+                type = ECommandType.GUIStyle,
+                reference = _customStyle
+            });
+
+            _customStyle = style;
+
+            return this;
+        }
+
+        public IEditorFlow LabelWidth(float labelWidth)
+        {
+            if (labelWidth < 0)
+            {
+                throw new ArgumentException("Label width can no be less than zero");
+            }
+            
+            _pushUndo(new CommandUndo
+            {
+                type = ECommandType.LabelWidth,
+                value = new StructValue
+                {
+                    asFloat = EditorGUIUtility.labelWidth
+                }
+            });
+
+            EditorGUIUtility.labelWidth = labelWidth;
+
+            return this;
+        }
+
+        public IEditorFlow FieldWidth(float fieldWidth)
+        {
+            if (fieldWidth < 0)
+            {
+                throw new ArgumentException("Field width can no be less than zero");
+            }
+            
+            _pushUndo(new CommandUndo
+            {
+                type = ECommandType.FieldWidth,
+                value = new StructValue
+                {
+                    asFloat = EditorGUIUtility.fieldWidth
+                }
+            });
+
+            EditorGUIUtility.fieldWidth = fieldWidth;
 
             return this;
         }

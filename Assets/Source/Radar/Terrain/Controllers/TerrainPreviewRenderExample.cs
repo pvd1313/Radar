@@ -67,9 +67,9 @@ namespace Beast.Radar.Terrain
             {
                 terrain = new TerrainData
                 {
-                    biomeScale01 = 0.5f,
-                    seed01 = 0.31f,
-                    size = 256,
+                    biomeSize01 = 0.5f,
+                    seed = 1,
+                    terrainSize = 256,
                     water01 = 0.2f,
                 },
                 outputTexture = _screenTexture

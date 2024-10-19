@@ -160,6 +160,14 @@ float beast_fbm(float2 uv,
     return color;
 }
 
+void shadergraph_epsilon_step_float(in float X, out float Y)
+{
+    float epsilon = 1e-6;
+    float almostEpsilon = step(epsilon, abs(X));
+
+    Y = X + (1 - almostEpsilon) * epsilon + (1 - almostEpsilon) * sign(X);
+}
+
 void shadergraph_rect_float(in float2 UV,
                      in float4 RGBA,
                      in float4 RectColor,

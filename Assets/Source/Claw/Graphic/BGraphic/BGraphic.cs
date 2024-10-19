@@ -41,7 +41,7 @@ namespace Beast.Claw.Graphic
 
         public static RenderTexture CreatePermRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
-            input.ValidateNotNullThrowException(nameof(input));
+            input.ValidateThrowException();
             
             RenderTexture texture = new (
                 input.texture.size.x,
@@ -104,7 +104,8 @@ namespace Beast.Claw.Graphic
             };
         }
 
-        public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input)
+        public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input) 
+            where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             input.ValidateThrowException();

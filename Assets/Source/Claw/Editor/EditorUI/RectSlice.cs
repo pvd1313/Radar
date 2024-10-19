@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Editor
 {
-    public static class RectSlicer
+    public static class RectSlice
     {
         public static (Rect, Rect, Rect, Rect) Horizontal
             (Rect rect, float width0, float width1, float width2, float width3)

@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Math;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
@@ -8,42 +9,42 @@ namespace Beast.Radar.Terrain
     [Serializable]
     public struct TerrainData : ISerializable, IValidatable
     {
-        public float seed01;
-        public int2 size;
-        public float biomeScale01;
+        public int seed;
+        public int2 terrainSize;
+        public float biomeSize01;
         public float water01;
         
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteFloat(seed01);
-            stream.WriteInt2(size);
-            stream.WriteFloat(biomeScale01);
+            stream.WriteInt32(seed);
+            stream.WriteInt2(terrainSize);
+            stream.WriteFloat(biomeSize01);
             stream.WriteFloat(water01);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            seed01 = seed01 = stream.ReadFloat();
-            size = stream.ReadInt2();
-            biomeScale01 = stream.ReadFloat();
+            seed = stream.ReadInt32();
+            terrainSize = stream.ReadInt2();
+            biomeSize01 = stream.ReadFloat();
             water01 = stream.ReadFloat();
         }
         
         public string Validate()
         {
-            if (seed01 < 0 || seed01 > 1)
+            if (terrainSize.x <= 0 || terrainSize.y <= 0 || terrainSize.y > 4096 || terrainSize.x > 4096)
             {
-                return "Invalid seed: " + seed01;
+                return "Invalid size: " + terrainSize;
             }
 
-            if (size.x <= 0 || size.x > 4096)
+            if (!BMath.IsPowerOf2(terrainSize.x) || !BMath.IsPowerOf2(terrainSize.y))
             {
-                return "Invalid size: " + size;
+                return "NPOT size: " + terrainSize;
             }
 
-            if (biomeScale01 <= 0)
+            if (biomeSize01 < 0 || biomeSize01 > 1)
             {
-                return "Invalid biome scale: " + biomeScale01;
+                return "Invalid biome size: " + biomeSize01;
             }
 
             if (water01 < 0 || water01 > 1)
