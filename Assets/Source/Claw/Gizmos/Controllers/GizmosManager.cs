@@ -11,7 +11,6 @@ namespace Beast.Claw.Gizmos
         private const int BufferSize = 256;
         
         private readonly GizmosConfig _config;
-        private readonly IGizmosStateStorage _storage;
 
         private Material _material;
         private ShapeStorage<Line> _wireLines;
@@ -20,10 +19,9 @@ namespace Beast.Claw.Gizmos
         private ShapeStorage<Square> _wireSquares;
         private ShapeStorage<Square> _screenSquares;
 
-        public GizmosManager(GizmosConfig config, IGizmosStateStorage storage)
+        public GizmosManager(GizmosConfig config)
         {
             _config = config;
-            _storage = storage;
         }
         
         //TODO: https://risenbeast.youtrack.cloud/issue/R-59/Tech-Feature-High
@@ -49,16 +47,16 @@ namespace Beast.Claw.Gizmos
 
         public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
         {
-            ushort id = _storage.GetOrCreateHandleId(owner.GetType().FullName + "(" + name + ")", defaultColor);
+            ushort id = GizmosStateStorage.GetOrCreateHandleId(owner.GetType().FullName + "(" + name + ")", defaultColor);
             
-            return new GizmosHandle(id, this, _storage);
+            return new GizmosHandle(id, this);
         }
 
         public GizmosHandle GetHandle(object owner, Color defaultColor)
         {
-            ushort id = _storage.GetOrCreateHandleId(owner.GetType().FullName, defaultColor);
+            ushort id = GizmosStateStorage.GetOrCreateHandleId(owner.GetType().FullName, defaultColor);
             
-            return new GizmosHandle(id, this, _storage);
+            return new GizmosHandle(id, this);
         }
 
         private void _onRender(Camera camera)

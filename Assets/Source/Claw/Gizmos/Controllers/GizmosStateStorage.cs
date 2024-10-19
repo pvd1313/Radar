@@ -1,44 +1,24 @@
 using System;
 using System.Collections.Generic;
-using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
 using Beast.Claw.JobUtilities;
-using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 
 namespace Beast.Claw.Gizmos
 {
-    public class GizmosStateStorage : IGizmosStateStorage, IGameCycleListener
+    public static class GizmosStateStorage 
     {
-        public int Version { get; private set; }
-        public int HandleCount => _lastHandleId;
+        public static int Version { get; private set; }
+        public static int HandleCount => _lastHandleId;
 
-        private Dictionary<string, ushort> _handleToId;
-        private ushort _lastHandleId;
-        private NativeArray<int> _activityChunks;
-        private NativeArray<Color> _colors;
-        private List<string> _names;
+        private static Dictionary<string, ushort> _handleToId = new Dictionary<string, ushort>();
+        private static ushort _lastHandleId;
+        private static NativeArray<int> _activityChunks = NativeMemory.CreatePermArray<int>(0);
+        private static NativeArray<Color> _colors = NativeMemory.CreatePermArray<Color>(0);
+        private static readonly List<string> _names = new();
 
-
-        //TODO: https://risenbeast.youtrack.cloud/issue/R-59/Tech-Feature-High
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(this, "warmup", _warmup);
-            handle.ListenOperation(this, "dispose", _dispose);
-        }
-
-        private UniTask<OperationResult> _warmup()
-        {
-            _handleToId = new Dictionary<string, ushort>();
-            _lastHandleId = 0;
-            _activityChunks = NativeMemory.CreatePermArray<int>(0);
-            _colors = NativeMemory.CreatePermArray<Color>(0);
-            _names = new List<string>();
-            return OperationResult.SuccessSync();
-        }
-
-        public ushort GetOrCreateHandleId(string name, Color defaultColor)
+        
+        public static ushort GetOrCreateHandleId(string name, Color defaultColor)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -75,7 +55,7 @@ namespace Beast.Claw.Gizmos
             return handleId;
         }
 
-        public bool GetHandleEnabled(ushort handleId)
+        public static  bool GetHandleEnabled(ushort handleId)
         {
             if (handleId >= _lastHandleId)
             {
@@ -85,7 +65,7 @@ namespace Beast.Claw.Gizmos
             return _getChunkActivityBit(handleId);
         }
 
-        public void SetHandleEnabled(ushort handleId, bool enabled)
+        public static void SetHandleEnabled(ushort handleId, bool enabled)
         {
             if (handleId >= _lastHandleId)
             {
@@ -102,7 +82,7 @@ namespace Beast.Claw.Gizmos
             Version++;
         }
 
-        public Color GetHandleColor(ushort handleId)
+        public static Color GetHandleColor(ushort handleId)
         {
             if (handleId >= _lastHandleId)
             {
@@ -112,7 +92,7 @@ namespace Beast.Claw.Gizmos
             return _colors[handleId];
         }
 
-        public void SetHandleColor(ushort handleId, Color color)
+        public static  void SetHandleColor(ushort handleId, Color color)
         {
             if (handleId >= _lastHandleId)
             {
@@ -128,7 +108,7 @@ namespace Beast.Claw.Gizmos
             Version++;
         }
 
-        public string GetHandleName(ushort handleId)
+        public static  string GetHandleName(ushort handleId)
         {
             if (handleId >= _lastHandleId)
             {
@@ -138,7 +118,7 @@ namespace Beast.Claw.Gizmos
             return _names[handleId];
         }
 
-        private void _setChunkActivityBit(ushort handleId, bool active)
+        private static  void _setChunkActivityBit(ushort handleId, bool active)
         {
             if (active)
             {
@@ -150,18 +130,9 @@ namespace Beast.Claw.Gizmos
             }
         }
 
-        private bool _getChunkActivityBit(ushort handleId)
+        private  static  bool _getChunkActivityBit(ushort handleId)
         {
             return (_activityChunks[handleId / 32] & (1 << handleId % 32)) > 0;
-        }
-
-        private UniTask<OperationResult> _dispose()
-        {
-            _activityChunks.Dispose();
-            _colors.Dispose();
-
-            BDebug.LogInfo(this, "dispose");
-            return OperationResult.SuccessSync();
         }
     }
 }

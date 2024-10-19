@@ -9,17 +9,15 @@ namespace Beast.Claw.Gizmos
     {
         private readonly ushort _id;
         private readonly GizmosManager _gizmos;
-        private readonly IGizmosStateStorage _storage;
 
         private int _cashVersion;
         private bool _enabled;
         private Color _color;
         
-        internal GizmosHandle(ushort id, GizmosManager gizmos, IGizmosStateStorage storage)
+        internal GizmosHandle(ushort id, GizmosManager gizmos)
         {
             _id = id;
             _gizmos = gizmos;
-            _storage = storage;
             _cashVersion = -1;
             _enabled = false;
             _color = Color.clear;
@@ -160,8 +158,8 @@ namespace Beast.Claw.Gizmos
             }
 
             _cashVersion = managerVersion;
-            _enabled = _storage.GetHandleEnabled(_id);
-            _color = _storage.GetHandleColor(_id);
+            _enabled = GizmosStateStorage.GetHandleEnabled(_id);
+            _color = GizmosStateStorage.GetHandleColor(_id);
         }
     }
 }

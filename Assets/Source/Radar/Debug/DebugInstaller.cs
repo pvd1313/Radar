@@ -12,7 +12,6 @@ namespace Beast.Radar.Debug
         protected override IEnumerable<Type> BindInterfaces()
         {
 #if DEVELOPMENT
-            yield return typeof(GizmosStateStorage);
             yield return typeof(GizmosManager);
             yield return typeof(GizmosDrawerManager);
             
