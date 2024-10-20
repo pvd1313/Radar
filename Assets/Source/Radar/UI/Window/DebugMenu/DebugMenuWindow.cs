@@ -95,7 +95,7 @@ namespace Beast.Radar.UI
                 isFillHorizontally: true,
                 isLooping: false);
             
-            Dictionary<ESelectionZone, SelectableGridData> grids =  new() 
+            Dictionary<ESelectionZone, SelectableGridData> grids = new() 
             {
                 { triggerGrid.Item1, triggerGrid.Item2 }
             };
@@ -154,7 +154,7 @@ namespace Beast.Radar.UI
 
         private bool _isOpened()
         {
-            return  _view.screen.activeSelf;
+            return _view.screen.activeSelf;
         }
 
         private UniTask<OperationResult> _dispose()

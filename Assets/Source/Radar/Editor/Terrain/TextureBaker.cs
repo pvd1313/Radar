@@ -99,7 +99,7 @@ namespace Beast.Radar.Editor.Terrain
             {
                 texture = new PlanarTextureData
                 {
-                    filterMode  = FilterMode.Point,
+                    filterMode = FilterMode.Point,
                     size = atlas.tileCount,
                     wrapMode = TextureWrapMode.Clamp
                 },

@@ -55,7 +55,7 @@ namespace Beast.Claw.Gizmos
             return handleId;
         }
 
-        public static  bool GetHandleEnabled(ushort handleId)
+        public static bool GetHandleEnabled(ushort handleId)
         {
             if (handleId >= _lastHandleId)
             {
@@ -92,7 +92,7 @@ namespace Beast.Claw.Gizmos
             return _colors[handleId];
         }
 
-        public static  void SetHandleColor(ushort handleId, Color color)
+        public static void SetHandleColor(ushort handleId, Color color)
         {
             if (handleId >= _lastHandleId)
             {
@@ -108,7 +108,7 @@ namespace Beast.Claw.Gizmos
             Version++;
         }
 
-        public static  string GetHandleName(ushort handleId)
+        public static string GetHandleName(ushort handleId)
         {
             if (handleId >= _lastHandleId)
             {
@@ -118,7 +118,7 @@ namespace Beast.Claw.Gizmos
             return _names[handleId];
         }
 
-        private static  void _setChunkActivityBit(ushort handleId, bool active)
+        private static void _setChunkActivityBit(ushort handleId, bool active)
         {
             if (active)
             {
@@ -130,7 +130,7 @@ namespace Beast.Claw.Gizmos
             }
         }
 
-        private  static  bool _getChunkActivityBit(ushort handleId)
+        private static bool _getChunkActivityBit(ushort handleId)
         {
             return (_activityChunks[handleId / 32] & (1 << handleId % 32)) > 0;
         }

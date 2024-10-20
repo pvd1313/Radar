@@ -53,7 +53,7 @@ namespace Beast.Radar.InputControl
         
         private void RefreshCurrentScheme(PlayerInput input)
         {
-            Enum.TryParse(_view.playerInput.currentControlScheme, out  _inputScheme);
+            Enum.TryParse(_view.playerInput.currentControlScheme, out _inputScheme);
             
             if (_inputScheme == EInputScheme.MouseAndKeyboard && Mouse.current == null)
             {

@@ -7,7 +7,7 @@ namespace Beast.Radar.UI
     {
         [SerializeField] private Image _image;
         [SerializeField] private Color _selectShade;
-        [SerializeField, Range(0,1)] private  float _blend = 0.5f;
+        [SerializeField, Range(0,1)] private float _blend = 0.5f;
 
         private Color _defaultColor;
         private bool _isSelect;

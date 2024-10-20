@@ -38,18 +38,19 @@ namespace Beast.Claw.Editor.Window
 
                     if (!_gizmos.TryGetValue(handleName, out Data data))
                     {
-                        data= new Data()
+                        data = new Data
                         {
                             isEnable = GizmosStateStorage.GetHandleEnabled(i),
                             color = GizmosStateStorage.GetHandleColor(i)
                         };
+                        
                         _gizmos[handleName] = data;
                     }
 
                     bool tempIsEnabled = data.isEnable;
                     Color tempColor = data.color;
 
-                    ui.Label(handleName);
+                    ui.PassiveLabel(handleName);
                     ui.CheckBoxRight("enabled", ref tempIsEnabled);
                     ui.ColorField("color", ref tempColor);
 
@@ -72,6 +73,7 @@ namespace Beast.Claw.Editor.Window
 
         protected override void Dispose()
         {
+            
         }
     }
 }
