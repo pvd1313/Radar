@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Beast.Claw.Collection;
 using Beast.Claw.Editor;
+using Beast.Radar.Editor.Terrain;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Tile
 {
     [Serializable]
     public class TileEditor

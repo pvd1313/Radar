@@ -8,7 +8,7 @@ namespace Beast.Claw.Graphic
     {
         public static CommandBuffer GetTempBuffer<TOwner>(TOwner owner)
         {
-            return CommandBufferPool.Get(TypeStorage<TOwner>.FullName);
+            return CommandBufferPool.Get(TypeStorage<TOwner>.FULL_NAME);
         }
 
         public static void ExecuteBuffer(CommandBuffer buffer)

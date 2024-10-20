@@ -8,7 +8,7 @@ namespace Beast.Claw.Common
     {
         public static GameObject CreateGameObject<TOwner>(TOwner owner)
         {
-            GameObject gameObject = new (TypeStorage<TOwner>.FullName);
+            GameObject gameObject = new (TypeStorage<TOwner>.FULL_NAME);
 
             return gameObject;
         }

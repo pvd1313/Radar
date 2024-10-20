@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -28,6 +29,7 @@ namespace Beast.Claw.Editor
             public IFlow Scroll(ref float2 scrollPosition) => this;
             public IFlow Spy() => this;
             public IFlow FieldWidth(float fieldWidth) => this;
+            public IFlow Record(Object obj, string recordName) => this;
             public IFlow Style(GUIStyle style) => this;
             public IFlow If(bool condition) => this;
         }

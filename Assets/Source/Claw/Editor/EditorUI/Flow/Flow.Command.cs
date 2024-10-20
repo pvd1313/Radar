@@ -3,6 +3,7 @@ using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -104,6 +105,16 @@ namespace Beast.Claw.Editor
             
             EditorGUILayout.BeginVertical();
 
+            return this;
+        }
+
+        public IFlow Record(Object obj, string recordName)
+        {
+            obj.ValidateNotNullThrowException(nameof(obj));
+            recordName.ValidateNotEmptyOrNullThrowException(nameof(recordName));
+            
+            new FlowUI(this).Record(obj, recordName);
+            
             return this;
         }
 

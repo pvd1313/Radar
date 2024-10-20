@@ -9,8 +9,6 @@ namespace Beast.Claw.Editor
     {
         public void Label(Rect rect, [LabelMustBeSet] Label label, Style style)
         {
-            label.ValidateHasLabelThrowException();
-
             if (style.hasStyle)
             {
                 GUI.Label(rect, label.content, style.style);

@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Debug;
-using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
@@ -16,7 +15,7 @@ namespace Beast.Claw.Editor
             if (guiStyle == null)
             {
                 string message = "Implicitly converted SmartStyle -> GUIStyle. " +
-                                 "But style was null. This will result in default style " +
+                                 "But style was null. This will result in using default style " +
                                  "Use SmartStyle.NoStyle instead";
                 
                 BDebug.StaticLogWarning(message);

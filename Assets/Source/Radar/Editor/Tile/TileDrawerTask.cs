@@ -1,7 +1,7 @@
 ﻿using Beast.Claw;
 using Beast.Radar.Terrain;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Tile
 {
     public class TileDrawerTask : IValidatable
     {

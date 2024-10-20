@@ -72,10 +72,10 @@ namespace Beast.Claw.Editor.Window
         
         protected override void Reset()
         {
-            _drawOrder.Clear();
-            _folds.Clear();
-            _typeInfo.Clear();
-            _fullNameToType.Clear();
+            _drawOrder?.Clear();
+            _folds?.Clear();
+            _typeInfo?.Clear();
+            _fullNameToType?.Clear();
         }
 
         private void _onEditorApplicationUpdate()

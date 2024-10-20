@@ -2,7 +2,6 @@
 using Beast.Claw.Attributes.Annotation;
 using Unity.Mathematics;
 using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine;
 
 namespace Beast.Claw.Editor

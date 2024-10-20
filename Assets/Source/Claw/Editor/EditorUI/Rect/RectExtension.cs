@@ -63,5 +63,18 @@ namespace Beast.Claw.Editor
                 rect3 = new Rect(screen.x, screen.y + height0 + height1 + height2, screen.width, height3)
             };
         }
+
+        public static Rect Padding(this Rect rect, Padding padding)
+        {
+            Vector2 position = rect.position;
+            position.x += padding.left;
+            position.y += padding.top;
+
+            Vector2 size = rect.size;
+            size.x -= padding.right + padding.left;
+            size.y -= padding.bottom + padding.top;
+
+            return new Rect(position, size);
+        }
     }
 }

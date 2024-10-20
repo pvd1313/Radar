@@ -3,6 +3,7 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
+using Beast.Radar.Editor.Tile;
 using Beast.Radar.Terrain;
 using UnityEditor;
 using UnityEngine;

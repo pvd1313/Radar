@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -54,6 +55,45 @@ namespace Beast.Claw.Editor
             }
 
             return flow.LabelWidth(labelWidth);
+        }
+
+        public static FlowUIResult LabelWidthAndButton(this IFlow flow, Label label, Action<FlowUI> action)
+        {
+            return flow.LabelWidth(label).Button(label, action);
+        }
+
+        public static FlowUIResult LabelWidthAndButton(this IFlow flow, Label label, Action action)
+        {
+            return flow.LabelWidth(label).Button(label, action);
+        }
+
+        public static FlowUIResult Record(this IFlow anyFlow, Object obj, string recordName, Action<FlowUI> action)
+        {
+            obj.ValidateNotNullThrowException(nameof(obj));
+            recordName.ValidateNotNullThrowException(nameof(recordName));
+            action.ValidateNotNullThrowException(nameof(action));
+            
+            if (anyFlow is Flow flow)
+            {
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
+
+                try
+                {
+                    ui.Record(obj, recordName);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+                finally
+                {
+                    flow.StagedEndDraw(ref ui, ref result);
+                }
+
+                return result;
+            }
+
+            return default;
         }
         
         public static FlowUIResult LabelWidth(this IFlow flow, Label label, Action<FlowUI> action)

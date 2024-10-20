@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -19,5 +20,6 @@ namespace Beast.Claw.Editor
         IFlow If(bool condition);
         GUIStyle CurrentStyle { get; }
         IFlow FieldWidth(float fieldWidth);
+        IFlow Record(Object obj, string recordName);
     }
 }

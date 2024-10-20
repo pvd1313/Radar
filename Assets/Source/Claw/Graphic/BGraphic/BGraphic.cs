@@ -100,7 +100,7 @@ namespace Beast.Claw.Graphic
 
             return new Material(shader)
             {
-                name = TypeStorage<TOwner>.FullName
+                name = TypeStorage<TOwner>.FULL_NAME
             };
         }
 

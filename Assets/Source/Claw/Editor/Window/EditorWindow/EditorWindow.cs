@@ -17,13 +17,12 @@ namespace Beast.Claw.Editor.Window
         
         protected EditorWindow()
         {
-            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+            _subscribeUnityEvents();
         }
 
         /// <summary>
         /// Used to reset window state for debug purposes. Invoked manually by user.
-        /// Useful during window logic implementation.
+        /// Useful during window logic implementation. Dispose() -> Reset() -> Warmup()
         /// </summary>
         protected abstract void Reset();
 
@@ -34,6 +33,9 @@ namespace Beast.Claw.Editor.Window
         /// </summary>
         protected abstract void Warmup();
 
+        /// <summary>
+        /// Use flow { get; } to begin drawing. flow { get; } returns _flow.Begin()
+        /// </summary>
         protected abstract void InspectorUI();
         
         /// <summary>
@@ -41,10 +43,13 @@ namespace Beast.Claw.Editor.Window
         /// </summary>
         protected abstract void Dispose();
 
-        // Reset leads to: Dispose() -> Reset() -> Warmup()
+        /// <summary>
+        /// Leads to: Dispose() -> Reset() -> ExitGUIException() -> Warmup()
+        /// </summary>
+        /// <exception cref="ExitGUIException"></exception>
         protected void DrawResetButton()
         {
-            _flow.Begin().LabelWidth(UIStyle.SIZE_ONE_CHAR).Button("~", () =>
+            _flow.Begin().LabelWidthAndButton("~", () =>
             {
                 _safeDispose();
                 
@@ -64,8 +69,7 @@ namespace Beast.Claw.Editor.Window
 
         private void _afterAssemblyReload()
         {
-            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+            _subscribeUnityEvents();
         }
 
         private void OnGUI()
@@ -97,6 +101,34 @@ namespace Beast.Claw.Editor.Window
 
                 throw;
             }
+        }
+        
+        private void _subscribeUnityEvents()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+            Undo.postprocessModifications += _postProcessModifications;
+            Undo.undoRedoEvent += _undoRedoEvent;
+        }
+
+        private void _unsubscribeUnityEvents()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload -= _beforeAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload -= _afterAssemblyReload;
+            Undo.postprocessModifications -= _postProcessModifications;
+            Undo.undoRedoEvent -= _undoRedoEvent;
+        }
+
+        private void _undoRedoEvent(in UndoRedoInfo undo)
+        {
+            Repaint();
+        }
+
+        private UndoPropertyModification[] _postProcessModifications(UndoPropertyModification[] modifications)
+        {
+            Repaint();
+
+            return modifications;
         }
 
         private void _safeReset()
@@ -147,6 +179,8 @@ namespace Beast.Claw.Editor.Window
         private void OnDestroy()
         {
             _safeDispose();
+
+            _unsubscribeUnityEvents();
         }
     }
 }

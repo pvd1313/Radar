@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Attributes;
-using Beast.Claw.Attributes.Annotation;
-using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor

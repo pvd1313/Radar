@@ -84,6 +84,11 @@ namespace Beast.Claw.Editor
             return asset == null || EditorUtility.IsDirty(asset);
         }
 
+        public static bool IsDirty(Object asset)
+        {
+            return EditorUtility.IsDirty(asset);
+        }
+
         public static void SetDirty(Object asset)
         {
             asset.ValidateNotNullThrowException(nameof(asset));
@@ -96,6 +101,47 @@ namespace Beast.Claw.Editor
             asset.ValidateNotNullThrowException(nameof(asset));
             
             AssetDatabase.SaveAssetIfDirty(asset);
+        }
+
+        public static int DuplicateArrayElement<TAsset>(TAsset asset, string arrayPath, int sourceElementIndex)
+            where TAsset : Object
+        {
+            SerializedObject serializedObject = new (asset);
+            
+            SerializedProperty array = serializedObject.FindProperty(arrayPath);
+            if (array == null)
+            {
+                throw new Exception($"Failed to find '{arrayPath}' in {typeof(TAsset).FullName}");
+            }
+
+            if (!array.isArray)
+            {
+                throw new Exception($"'{arrayPath}' is not an array ({typeof(TAsset).FullName})");
+            }
+            
+            SerializedProperty source = array.GetArrayElementAtIndex(sourceElementIndex);
+            if (source == null)
+            {
+                string message =
+                    $"Failed to get element ({sourceElementIndex}) in array '{arrayPath}' ({typeof(TAsset).FullName})";
+
+                throw new InvalidOperationException(message);
+            }
+
+            bool success = source.DuplicateCommand();
+
+            if (!success)
+            {
+                string message =
+                    $"Failed to copy array element ({sourceElementIndex}) in array '{arrayPath}' ({typeof(TAsset).FullName}" 
+                    + "SerializedProperty.DuplicateCommand() returned false.";
+
+                throw new Exception(message);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+
+            return sourceElementIndex + 1;
         }
     }
 }
