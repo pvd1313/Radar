@@ -2,11 +2,10 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
-    partial struct EditorUI
+    readonly partial struct EditorUI
     {
         public void SaveFileDialog(string fileName, Action<string> action)
         {

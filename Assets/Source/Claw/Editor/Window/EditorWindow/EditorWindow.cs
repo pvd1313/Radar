@@ -16,7 +16,8 @@ namespace Beast.Claw.Editor.Window
         private bool _gotException;
 
         /// <summary>
-        /// Called once before first draw call after each domain reload.
+        /// Called once before first draw call.
+        /// And once before first draw call after each domain reload.
         /// </summary>
         protected abstract void Warmup();
 
@@ -66,9 +67,10 @@ namespace Beast.Claw.Editor.Window
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, $"{GetType()}.Initialize()." +
-                                                 " Window drawing will be disabled. " +
-                                                 " Fix error and reload domain.");
+                    string message = $"{GetType()}.Initialize(). Drawing is disabled. Fix errors and reload domain";
+                    
+                    BDebug.LogException(this, e, message);
+                    
                     _gotException = true;
                 }
             }
@@ -77,11 +79,13 @@ namespace Beast.Claw.Editor.Window
             {
                 InspectorUI();
                 
-                _flow.CheckFlowIsFinished();
+                _flow.Close();
             }
             catch (ExitGUIException)
             {
-                _flow.TerminateFlow();
+                _flow.ExitGUIException();
+
+                throw;
             }
         }
 

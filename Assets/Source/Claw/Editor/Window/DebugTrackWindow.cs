@@ -20,12 +20,13 @@ namespace Beast.Claw.Editor.Window
             public bool hasScript;
         }
         
-        [SerializeField] private bool _clearOnEnterPlayerMode;
+        [SerializeField] private bool _playModeClear;
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
         [SerializeField] private List<string> _drawOrder = new();
         [SerializeField] private int _updateTickRate = 3;
         [SerializeField] private bool _isSharpMode;
+        [SerializeField] private bool _editorFetch;
 
         private Dictionary<Type, TypeInfo> _typeInfo;
         private bool _isPlaying;
@@ -71,7 +72,7 @@ namespace Beast.Claw.Editor.Window
 
         private void _onEditorApplicationUpdate()
         {
-            if (!EditorApplication.isPlaying)
+            if (!EditorApplication.isPlaying && !_editorFetch)
             {
                 return;
             }
@@ -90,11 +91,22 @@ namespace Beast.Claw.Editor.Window
             {
                 _isPlaying = Application.isPlaying;
 
-                if (_isPlaying && _clearOnEnterPlayerMode)
+                if (_isPlaying && _playModeClear)
                 {
                     BDebug.ClearTrackStorage();
                 }
             }
+
+            flow.Horizontal(ui =>
+            {
+                const string FETCH_EDITOR = "EditorFetch";
+                const string PLAY_MODE_CLEAR = "PlayModeClear";
+
+                flow.LabelWidth(FETCH_EDITOR).Draw(ui => ui.CheckBoxLeft(FETCH_EDITOR, ref _editorFetch));
+                flow.LabelWidth(PLAY_MODE_CLEAR).Draw(ui => ui.CheckBoxLeft(PLAY_MODE_CLEAR, ref _playModeClear));
+                
+                ui.FlexibleSpace();
+            });
             
             flow.Horizontal(ui =>
             {
@@ -120,8 +132,6 @@ namespace Beast.Claw.Editor.Window
                     ui.Button("10", () => _updateTickRate = 10);
                     ui.Button("60", () => _updateTickRate = 60);
                 });
-                
-                ui.CheckBoxLeft("PlayModeClear", ref _clearOnEnterPlayerMode);
                 
                 ui.FlexibleSpace();
             });

@@ -1,10 +1,20 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public partial struct EditorUI
+    public readonly partial struct EditorUI
     {
-        public EditorFlow flow;
-        public GUILayoutOption[] layoutOptions;
+        private readonly EditorFlow _flow;
+
+        public EditorUI(EditorFlow flow)
+        {
+            _flow = flow;
+        }
+
+        public Rect AllocateRect(float2 size)
+        {
+            return GUILayoutUtility.GetRect(size.x, size.y);
+        }
     }
 }

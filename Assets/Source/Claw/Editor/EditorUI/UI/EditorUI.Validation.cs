@@ -2,13 +2,13 @@
 
 namespace Beast.Claw.Editor
 {
-    public partial struct EditorUI
+    public readonly partial struct EditorUI
     {
         public bool ValidateArgumentNotNull<T>(T obj, string objName) where T : class
         {
             if (obj == null)
             {
-                flow.NotifyValidationFailed();
+                _flow.NotifyValidationFailed();
                 WarningBox($"'{objName}' can not be null");
                 return false;
             }
@@ -22,7 +22,7 @@ namespace Beast.Claw.Editor
 
             if (errorMessage != null)
             {
-                flow.NotifyValidationFailed();
+                _flow.NotifyValidationFailed();
                 WarningBox($"'{objName}': {errorMessage}");
                 return false;
             }
@@ -34,7 +34,7 @@ namespace Beast.Claw.Editor
         {
             if (!value)
             {
-                flow.NotifyValidationFailed();
+                _flow.NotifyValidationFailed();
                 EditorGUILayout.HelpBox(message, MessageType.Warning);
                 return false;
             }

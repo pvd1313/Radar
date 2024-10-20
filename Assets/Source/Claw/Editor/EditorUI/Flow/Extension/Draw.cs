@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Attributes;
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
@@ -80,7 +81,8 @@ namespace Beast.Claw.Editor
             return default;
         }
 
-        public static EditorUIResult AssetField<TAsset>(this IEditorFlow anyFlow, string label, ref TAsset asset)
+        [NoCustomStyle]
+        public static EditorUIResult AssetField<TAsset>(this IEditorFlow anyFlow, [CanBeEmpty] SmartLabel label, ref TAsset asset)
             where TAsset : Object
         {
             if (anyFlow is EditorFlow flow)

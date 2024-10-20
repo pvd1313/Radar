@@ -45,8 +45,7 @@ namespace Beast.Claw.Editor.Window
             {
                 foreach (StyleData data in _styles)
                 {
-                    // Out UI not supports styles yet :(
-                    EditorGUILayout.LabelField(data.name, data.style);
+                    flow.Style(data.style).PassiveLabel(data.name);
                 }
             });
         }

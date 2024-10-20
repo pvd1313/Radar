@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    partial struct EditorUI
+    readonly partial struct EditorUI
     {
         [NoCustomStyle]
         public Color ColorField([CanBeEmpty] SmartLabel label, Color value)
@@ -20,13 +20,15 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void ColorField([CanBeEmpty] SmartLabel label, ref Color value)
         {
+            _flow.NotifyDrawCall();
+            
             if (label.hasLabel)
             {
-                value = EditorGUILayout.ColorField(label.content, value, layoutOptions);
+                value = EditorGUILayout.ColorField(label.content, value, _flow.CurrentLayout);
             }
             else
             {
-                value = EditorGUILayout.ColorField(value, layoutOptions);
+                value = EditorGUILayout.ColorField(value, _flow.CurrentLayout);
             }
         }
 
@@ -41,26 +43,28 @@ namespace Beast.Claw.Editor
         [CustomStyleSupported]
         public void FloatField([CanBeEmpty] SmartLabel label, ref float value)
         {
+            _flow.NotifyDrawCall();
+            
             if (label.hasLabel)
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.FloatField(label.content, value, style, layoutOptions);
+                    value = EditorGUILayout.FloatField(label.content, value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.FloatField(label.content, value, layoutOptions);
+                    value = EditorGUILayout.FloatField(label.content, value, _flow.CurrentLayout);
                 }
             }
             else
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.FloatField(value, style, layoutOptions);
+                    value = EditorGUILayout.FloatField(value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.FloatField(value, layoutOptions);
+                    value = EditorGUILayout.FloatField(value, _flow.CurrentLayout);
                 }
             }
         }
@@ -76,9 +80,11 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void Float2FieldTwoLine([MustHaveLabel] SmartLabel label, ref float2 value)
         {
+            _flow.NotifyDrawCall();
+            
             label.ValidateHasLabelThrowException();
 
-            value = EditorGUILayout.Vector2Field(label.content, value, layoutOptions);
+            value = EditorGUILayout.Vector2Field(label.content, value, _flow.CurrentLayout);
         }
 
         [NoCustomStyle]
@@ -92,6 +98,8 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void Float2FieldOneLine([CanBeEmpty] SmartLabel label, ref float2 value)
         {
+            _flow.NotifyDrawCall();
+            
             Rect rect = EditorGUILayout.GetControlRect(false);
 
             if (label.hasLabel)
@@ -133,9 +141,11 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void Float3FieldTwoLine([MustHaveLabel] SmartLabel label, ref float3 value)
         {
+            _flow.NotifyDrawCall();
+            
             label.ValidateHasLabelThrowException();
 
-            value = EditorGUILayout.Vector3Field(label.content, value, layoutOptions);
+            value = EditorGUILayout.Vector3Field(label.content, value, _flow.CurrentLayout);
         }
         
         [NoCustomStyle]
@@ -149,9 +159,11 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void Float4FieldTwoLine([MustHaveLabel] SmartLabel label, ref float4 value)
         {
+            _flow.NotifyDrawCall();
+            
             label.ValidateHasLabelThrowException();
             
-            value = EditorGUILayout.Vector4Field(label.content, value, layoutOptions);
+            value = EditorGUILayout.Vector4Field(label.content, value, _flow.CurrentLayout);
         }
 
         [CustomStyleSupported]
@@ -165,26 +177,28 @@ namespace Beast.Claw.Editor
         [CustomStyleSupported]
         public void StringField([CanBeEmpty] SmartLabel label, ref string value)
         {
+            _flow.NotifyDrawCall();
+            
             if (label.hasLabel)
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.TextField(label.content, value, style, layoutOptions);
+                    value = EditorGUILayout.TextField(label.content, value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.TextField(label.content, value, layoutOptions);
+                    value = EditorGUILayout.TextField(label.content, value, _flow.CurrentLayout);
                 }
             }
             else
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.TextField(value, style, layoutOptions);
+                    value = EditorGUILayout.TextField(value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.TextField(value, layoutOptions);
+                    value = EditorGUILayout.TextField(value, _flow.CurrentLayout);
                 }
             }
         }
@@ -192,6 +206,8 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public TObject AssetField<TObject>([CanBeEmpty] SmartLabel label, TObject obj) where TObject : Object
         {
+            _flow.NotifyDrawCall();
+            
             AssetField(label, ref obj);
 
             return obj;
@@ -200,13 +216,15 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void AssetField<TObject>([CanBeEmpty] SmartLabel label, ref TObject obj) where TObject : Object
         {
+            _flow.NotifyDrawCall();
+            
             if (label.hasLabel)
             {
-                obj = (TObject)EditorGUILayout.ObjectField(label.content, obj, typeof(TObject), false, layoutOptions);
+                obj = (TObject)EditorGUILayout.ObjectField(label.content, obj, typeof(TObject), false, _flow.CurrentLayout);
             }
             else
             {
-                obj = (TObject)EditorGUILayout.ObjectField(obj, typeof(TObject), false, layoutOptions);
+                obj = (TObject)EditorGUILayout.ObjectField(obj, typeof(TObject), false, _flow.CurrentLayout);
             }
         }
 
@@ -221,26 +239,28 @@ namespace Beast.Claw.Editor
         [CustomStyleSupported]
         public void IntField([CanBeEmpty] SmartLabel label, ref int value)
         {
+            _flow.NotifyDrawCall();
+            
             if (label.hasLabel)
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.IntField(label.content, value, style, layoutOptions);
+                    value = EditorGUILayout.IntField(label.content, value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.IntField(label.content, value, layoutOptions);
+                    value = EditorGUILayout.IntField(label.content, value, _flow.CurrentLayout);
                 }
             }
             else
             {
-                if (flow.TryGetCustomStyle(out GUIStyle style))
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
                 {
-                    value = EditorGUILayout.IntField(value, style, layoutOptions);
+                    value = EditorGUILayout.IntField(value, style, _flow.CurrentLayout);
                 }
                 else
                 {
-                    value = EditorGUILayout.IntField(value, layoutOptions);
+                    value = EditorGUILayout.IntField(value, _flow.CurrentLayout);
                 }
             }
         }
@@ -248,6 +268,8 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public int2 Int2FieldTwoLine([MustHaveLabel] SmartLabel label, int2 value)
         {
+            _flow.NotifyDrawCall();
+            
             Int2FieldTwoLine(label, ref value);
 
             return value;
@@ -256,6 +278,8 @@ namespace Beast.Claw.Editor
         [NoCustomStyle]
         public void Int2FieldTwoLine([MustHaveLabel] SmartLabel label, ref int2 value)
         {
+            _flow.NotifyDrawCall();
+            
             label.ValidateHasLabelThrowException();
 
             Vector2 vector = new (value.x, value.y);

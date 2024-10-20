@@ -8,34 +8,37 @@ namespace Beast.Claw.Editor
 {
     public partial class EditorFlow : IEditorFlow
     {
-        public GUIStyle CurrentStyle => _customStyle;
+        const string FATAL_MESSAGE = ": Flow was terminated and not being able to process " +
+                                     "commands until domain reload.";
+        private const int FATAL_LAYOUT_OPTION_COUNT = 8;
+        private const int FATAL_DRAW_CALL_COUNT = 1024;
+        private const int FATAL_COMMAND_CALL_COUNT = 1024;
+
+        public GUIStyle CurrentStyle => _currentStyle;
+        public GUILayoutOption[] CurrentLayout => _layoutOptions[_layoutOptionCount];
         
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<CommandUndo> _commands = new();
-        private readonly List<GUILayoutOption> _options = new();
         private readonly Empty _emptyFlow = new ();
-        private readonly GUILayoutOptionArrayPool _layoutOptionPool = new();
+        private readonly GUILayoutOption[][] _layoutOptions;
 
+        private int _flowDepth;
         private bool _validationFailed;
-        private GUIStyle _customStyle;
+        private GUIStyle _currentStyle;
+        private int _layoutOptionCount;
+        private int _drawCallCount;
+        private int _commandCallCount;
+        private bool _isFatal;
+        private string _fatalMessage;
 
-        private EditorUI _createEditorUI()
+        public EditorFlow()
         {
-            GUILayoutOption[] layoutOptions = Array.Empty<GUILayoutOption>();
+            _layoutOptions = new GUILayoutOption[FATAL_LAYOUT_OPTION_COUNT + 1][];
             
-            if (_options.Count > 0)
+            for (int i = 0; i < FATAL_LAYOUT_OPTION_COUNT + 1; i++)
             {
-                layoutOptions = _layoutOptionPool.GetOrCreate(_options.Count);
-                _options.CopyTo(layoutOptions);
+                _layoutOptions[i] = new GUILayoutOption[i];
             }
-            
-            return new EditorUI
-            {
-                flow = this,
-                // TODO: https://risenbeast.youtrack.cloud/issue/R-48/Editor-flow-garbage-at-layout-options
-                //     : Not optimal, will produce garbage.
-                layoutOptions = layoutOptions
-            };
         }
 
         private void _handleException(ref EditorUIResult uiResult, Exception exception)
@@ -54,19 +57,25 @@ namespace Beast.Claw.Editor
             BDebug.StaticLogException(exception);
         }
 
-        private void _pushUndoWithType(ECommandType type)
+        private void _recordUndoWithType(EUndoCommandType type)
         {
             CommandUndo commandUndo = default;
             commandUndo.type = type;
             
-           _pushUndo(commandUndo);
+           _recordUndo(commandUndo);
         }
 
-        private void _pushUndo(CommandUndo commandUndo)
+        private void _recordUndo(CommandUndo commandUndo)
         {
+            if (_commandCallCount >= FATAL_COMMAND_CALL_COUNT)
+            {
+                _fatal("Max command call count reached");
+            }
+            
             int stackSize = _commandStackSize.Pop();
             _commandStackSize.Push(stackSize + 1);
             _commands.Push(commandUndo);
+            _commandCallCount++;
         }
 
         private void _undoLastCommands(ref EditorUIResult result)
@@ -76,6 +85,31 @@ namespace Beast.Claw.Editor
             {
                 _undo(_commands.Pop(), ref result);
             }
+        }
+
+        private void _fatal(string reason)
+        {
+            EditorUIResult result = default;
+
+            _undoLastCommands(ref result);
+            
+            _drawCallCount = 0;
+            _commandCallCount = 0;
+            
+            _isFatal = true;
+            _fatalMessage = reason + FATAL_MESSAGE;
+            
+            throw new Exception(_fatalMessage);
+        }
+
+        private void _reset()
+        {
+            _drawCallCount = 0;
+            _commandCallCount = 0;
+            _currentStyle = null;
+            _commands.Clear();
+            _commandStackSize.Clear();
+            _layoutOptionCount = 0;
         }
     }
 }

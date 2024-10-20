@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
@@ -9,11 +10,21 @@ namespace Beast.Claw.Editor
             _validationFailed = true;
         }
 
+        public void NotifyDrawCall()
+        {
+            if (_drawCallCount >= FATAL_DRAW_CALL_COUNT)
+            {
+                _fatal("Too many draw calls");
+            }
+
+            _drawCallCount++;
+        }
+
         public bool TryGetCustomStyle(out GUIStyle style)
         {
-            if (_customStyle != null)
+            if (_currentStyle != null)
             {
-                style = _customStyle;
+                style = _currentStyle;
                 return true;
             }
 

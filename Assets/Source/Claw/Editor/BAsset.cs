@@ -78,5 +78,24 @@ namespace Beast.Claw.Editor
         {
             AssetDatabase.OpenAsset(obj);
         }
+        
+        public static bool IsNullOrDirty(Object asset)
+        {
+            return asset == null || EditorUtility.IsDirty(asset);
+        }
+
+        public static void SetDirty(Object asset)
+        {
+            asset.ValidateNotNullThrowException(nameof(asset));
+            
+            EditorUtility.SetDirty(asset);
+        }
+
+        public static void SaveIfDirty(Object asset)
+        {
+            asset.ValidateNotNullThrowException(nameof(asset));
+            
+            AssetDatabase.SaveAssetIfDirty(asset);
+        }
     }
 }

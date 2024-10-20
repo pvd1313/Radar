@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
 using Beast.Radar.Terrain;
@@ -10,17 +11,19 @@ namespace Beast.Radar.Editor.Terrain
 {
     public class AtlasEditor : Beast.Claw.Editor.Window.EditorWindow
     {
+        public const string WELCOME_MESSAGE = "Open or create atlas.";
+        
         private const string MAIN_POSTFIX = "_main.png";
         private const string COLOR_POSTFIX = "_color.png";
         private const string CONFIG_POSTFIX = "_config.png";
         private const string NAME_SAVE = "Save";
         private const string NAME_OVERRIDE = "Override";
         
-        [SerializeField] private TerrainAtlasAsset _atlasAsset;
+        [SerializeField] private ScriptableContainer<TerrainAtlas> _atlasAsset;
         [SerializeField] private TileEditor _tileEditor;
         
         private GUILayoutOption _bakeButtonSize;
-        TextureImporter _textureImporter;
+        private TextureImporter _textureImporter;
         private bool _texturesFold;
         private TextureBaker _textureBaker;
         
@@ -38,7 +41,7 @@ namespace Beast.Radar.Editor.Terrain
 
             if (_atlasAsset == null)
             {
-                flow.InfoBox("Open or create atlas");
+                flow.InfoBox(WELCOME_MESSAGE);
                 return;
             }
             
@@ -60,7 +63,7 @@ namespace Beast.Radar.Editor.Terrain
                     _bakeConfigTexture(ui);
                 });
                 
-                flow.Enabled(IsNullOrDirty(_atlasAsset)).Button("Save Asset", _saveAtlasAsset);
+                flow.Enabled(BAsset.IsNullOrDirty(_atlasAsset)).Button("Save Asset", _saveAtlasAsset);
             });
 
             flow.Vertical(ui =>
@@ -98,18 +101,18 @@ namespace Beast.Radar.Editor.Terrain
                     ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
                 });
 
-                ui.Space(Claw.Editor.UIStyle.SIZE_MINOR_SPACE);
+                ui.Space(UIStyle.SIZE_MINOR_SPACE);
 
                 if (spyResult.changesDetected)
                 {
-                    SetDirty(_atlasAsset);
+                    BAsset.SetDirty(_atlasAsset);
                 }
 
                 _tileEditor.DrawUI(atlas.sprites, out bool changesDetected);
                 
                 if (changesDetected)
                 {
-                    SetDirty(_atlasAsset);
+                    BAsset.SetDirty(_atlasAsset);
                 }
             });
         }
@@ -140,7 +143,7 @@ namespace Beast.Radar.Editor.Terrain
 
         private void _saveAtlasAsset()
         {
-            SaveIfDirty(_atlasAsset);
+            BAsset.SaveIfDirty(_atlasAsset);
         }
 
         private void _bakeMainTexture(EditorUI ui)
