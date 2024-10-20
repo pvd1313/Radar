@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+using Beast.Claw.JobUtilities;
+using Unity.Collections;
+using UnityEngine;
+
+namespace Beast.Claw.Gizmos
+{
+    public static class GizmosStateStorage 
+    {
+        public static int Version { get; private set; }
+        public static int HandleCount => _lastHandleId;
+
+        private static Dictionary<string, ushort> _handleToId = new Dictionary<string, ushort>();
+        private static ushort _lastHandleId;
+        private static NativeArray<int> _activityChunks = NativeMemory.CreatePermArray<int>(0);
+        private static NativeArray<Color> _colors = NativeMemory.CreatePermArray<Color>(0);
+        private static readonly List<string> _names = new();
+
+        
+        public static ushort GetOrCreateHandleId(string name, Color defaultColor)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"{nameof(name)} is null or empty");
+            }
+
+            _handleToId ??= new Dictionary<string, ushort>();
+            if (_handleToId.TryGetValue(name, out ushort handleId))
+            {
+                return handleId;
+            }
+            
+            if (_lastHandleId >= ushort.MaxValue)
+            {
+                throw new OutOfMemoryException("Too many handles");
+            }
+                
+            handleId = _lastHandleId++;
+            _handleToId[name] = handleId;
+            ArrayMaintenanceData rule = new ArrayMaintenanceData
+            {
+                copyOnResize = true,
+                itemPerAllocation = 32,
+                requiredCapacity = _lastHandleId
+            };
+            NativeMemory.MaintainPersistentArrayLength(ref _activityChunks, rule);
+            NativeMemory.MaintainPersistentArrayLength(ref _colors, rule);
+            bool enabled = PlayerPrefs.GetInt(name, 1) > 0;
+            _setChunkActivityBit(handleId, enabled);
+            _names.Add(name);
+            _colors[handleId] = defaultColor;
+            Version++;
+
+            return handleId;
+        }
+
+        public static  bool GetHandleEnabled(ushort handleId)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            return _getChunkActivityBit(handleId);
+        }
+
+        public static void SetHandleEnabled(ushort handleId, bool enabled)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            if (_getChunkActivityBit(handleId) == enabled)
+            {
+                return;
+            }
+
+            PlayerPrefs.SetInt(_names[handleId], enabled ? 1 : 0);
+            _setChunkActivityBit(handleId, enabled);
+            Version++;
+        }
+
+        public static Color GetHandleColor(ushort handleId)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            return _colors[handleId];
+        }
+
+        public static  void SetHandleColor(ushort handleId, Color color)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            if (_colors[handleId] == color)
+            {
+                return;
+            }
+
+            _colors[handleId] = color;
+            Version++;
+        }
+
+        public static  string GetHandleName(ushort handleId)
+        {
+            if (handleId >= _lastHandleId)
+            {
+                throw new ArgumentException($"{nameof(handleId)} is not created");
+            }
+
+            return _names[handleId];
+        }
+
+        private static  void _setChunkActivityBit(ushort handleId, bool active)
+        {
+            if (active)
+            {
+                _activityChunks[handleId / 32] |= 1 << (handleId % 32);
+            }
+            else
+            {
+                _activityChunks[handleId / 32] &= ~(1 << handleId % 32);
+            }
+        }
+
+        private  static  bool _getChunkActivityBit(ushort handleId)
+        {
+            return (_activityChunks[handleId / 32] & (1 << handleId % 32)) > 0;
+        }
+    }
+}

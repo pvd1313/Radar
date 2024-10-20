@@ -1,0 +1,52 @@
+using Unity.Collections;
+using Unity.Mathematics;
+using UnityEngine;
+
+namespace Beast.Claw.Gizmos
+{
+    internal static class GizmosScreenDrawer
+    {
+        private static Camera Camera;
+        
+        public static void BeginDraw(Camera camera)
+        {
+            Camera = camera;
+            
+            GL.PushMatrix();
+            GL.LoadPixelMatrix();
+            GL.Begin(GL.TRIANGLES);
+        }
+        
+        public static void EndDraw()
+        {
+            GL.End();
+            GL.PopMatrix();
+        }
+
+        public static void DrawSquares(ShapeStorage<Square> squareStorage)
+        {
+            NativeArray<Square> squares = squareStorage.GetShapes(out int squareCount);
+            for (int i = 0; i < squareCount; i++)
+            {
+                Square square = squares[i];
+                GL.Color(square.color);
+                Vector3 screenCenter = Camera.WorldToScreenPoint(new Vector3(square.center.x, square.center.y, 0));
+                float2 center = new float2(screenCenter.x, screenCenter.y);
+                float halfSize = square.size / 2f;
+                float2 p0 = center + new float2(-halfSize, -halfSize);
+                float2 p1 = center + new float2(-halfSize, +halfSize);
+                float2 p2 = center + new float2(+halfSize, +halfSize);
+                float2 p3 = center + new float2(+halfSize, -halfSize);
+                GL_Triangle(p0, p1, p2);
+                GL_Triangle(p2, p3, p0);
+            }
+        }
+
+        private static void GL_Triangle(float2 p0, float2 p1, float2 p2)
+        {
+            GL.Vertex3(p0.x, p0.y, 0);
+            GL.Vertex3(p1.x, p1.y, 0);
+            GL.Vertex3(p2.x, p2.y, 0);
+        }
+    }
+}
