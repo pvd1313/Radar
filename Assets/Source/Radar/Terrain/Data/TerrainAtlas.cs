@@ -18,7 +18,7 @@ namespace Beast.Radar.Terrain
         public Texture2D configTexture;
 
 #if UNITY_EDITOR
-        public List<TerrainTileSprite> sprites;
+        public List<TerrainTileData> tiles;
 #endif
         
         public int2 tileCount;
@@ -49,12 +49,12 @@ namespace Beast.Radar.Terrain
             }
 
 #if UNITY_EDITOR
-            if (sprites != null)
+            if (tiles != null)
             {
                 _indexHash ??= new HashSet<int>();
                 _indexHash.Clear();
                 
-                foreach (TerrainTileSprite sprite in sprites)
+                foreach (TerrainTileData sprite in tiles)
                 {
                     if (!sprite.IsValid(out string errorMessage))
                     {

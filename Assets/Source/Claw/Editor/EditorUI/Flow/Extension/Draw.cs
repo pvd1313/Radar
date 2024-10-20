@@ -6,11 +6,11 @@ namespace Beast.Claw.Editor
 {
     partial class EditorFlowExtension
     {
-        public static EditorUIResult PassiveLabel(this IEditorFlow anyFlow, string label)
+        public static FlowUIResult PassiveLabel(this IFlow anyFlow, string label)
         {
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {
@@ -31,11 +31,11 @@ namespace Beast.Claw.Editor
             return default;
         }
         
-        public static EditorUIResult WarningBox(this IEditorFlow anyFlow, string message)
+        public static FlowUIResult WarningBox(this IFlow anyFlow, string message)
         {
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {
@@ -56,11 +56,11 @@ namespace Beast.Claw.Editor
             return default;
         }
         
-        public static EditorUIResult InfoBox(this IEditorFlow anyFlow, string message)
+        public static FlowUIResult InfoBox(this IFlow anyFlow, string message)
         {
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {
@@ -82,12 +82,12 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public static EditorUIResult AssetField<TAsset>(this IEditorFlow anyFlow, [CanBeEmpty] SmartLabel label, ref TAsset asset)
+        public static FlowUIResult AssetField<TAsset>(this IFlow anyFlow, [LabelCanBeEmpty] Label label, ref TAsset asset)
             where TAsset : Object
         {
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {

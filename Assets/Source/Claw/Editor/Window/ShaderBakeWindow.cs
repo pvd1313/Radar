@@ -22,10 +22,15 @@ namespace Beast.Claw.Editor.Window
         {
             
         }
+        
+        protected override void Reset()
+        {
+            
+        }
 
         protected override void InspectorUI()
         {
-            EditorUIResult result = flow.Vertical(ui =>
+            FlowUIResult result = flow.Vertical(ui =>
             {
                 ui.AssetField(nameof(_renderMaterial), ref _renderMaterial);
                 ui.ValidateArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
@@ -54,7 +59,7 @@ namespace Beast.Claw.Editor.Window
             });
         }
 
-        private void SaveTexture(EditorUI ui)
+        private void SaveTexture(FlowUI ui)
         {
             ui.SaveFileDialog("BackedTexture.png", (path) =>
             {

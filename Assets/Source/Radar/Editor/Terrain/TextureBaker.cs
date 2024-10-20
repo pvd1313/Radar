@@ -29,7 +29,7 @@ namespace Beast.Radar.Editor.Terrain
                 format = RenderTextureFormat.ARGB32,
             });
 
-            foreach (TerrainTileSprite tile in atlas.sprites)
+            foreach (TerrainTileData tile in atlas.tiles)
             {
                 int xOffset = tile.index % atlas.tileCount.x * atlas.pixelsPerTile;
                 int yOffset = tile.index / atlas.tileCount.x * atlas.pixelsPerTile;
@@ -80,7 +80,7 @@ namespace Beast.Radar.Editor.Terrain
 
             _fillWithColor(resultTexture, Color.black);
 
-            foreach (TerrainTileSprite sprite in atlas.sprites)
+            foreach (TerrainTileData sprite in atlas.tiles)
             {
                 int x = sprite.index % resultTexture.width;
                 int y = sprite.index / resultTexture.width;
@@ -111,7 +111,7 @@ namespace Beast.Radar.Editor.Terrain
             
             _fillWithColor(resultTexture, Color.black);
             
-            foreach (TerrainTileSprite sprite in atlas.sprites)
+            foreach (TerrainTileData sprite in atlas.tiles)
             {
                 int x = sprite.index % resultTexture.width;
                 int y = sprite.index / resultTexture.width;

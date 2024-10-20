@@ -35,12 +35,14 @@ namespace Beast.Claw.Editor
             
             _columnCount = BMath.Max(1, _columnCount);
 
+            // _columnCount = BMath.Min(_columnCount, input.elementCount);
+            
             if (_columnCount * _cellSize + (_columnCount - 1) * _spacing.x > windowWidth)
             {
                 _columnCount = BMath.Max(1, _columnCount - 1);
             }
             
-            if (_columnCount > 1)
+            if (_columnCount > 1 && input.elementCount >= _columnCount)
             {
                 _spacing.x = (windowWidth - _cellSize * _columnCount) / (_columnCount - 1);
             }

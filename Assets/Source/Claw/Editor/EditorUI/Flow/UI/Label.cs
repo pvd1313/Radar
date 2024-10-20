@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public struct SmartLabel
+    public struct Label
     {
-        public static SmartLabel NoLabel { get; } = default;
+        public static Label NoLabel { get; } = default;
         
         public bool hasLabel;
         public GUIContent content;
         
-        public static implicit operator SmartLabel(GUIContent guiContent)
+        public static implicit operator Label(GUIContent guiContent)
         {
             if (guiContent == null)
             {
@@ -24,14 +24,14 @@ namespace Beast.Claw.Editor
                 return NoLabel;
             }
 
-            return new SmartLabel
+            return new Label
             {
                 hasLabel = true,
                 content = guiContent
             };
         }
 
-        public static implicit operator SmartLabel(string text)
+        public static implicit operator Label(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -44,7 +44,7 @@ namespace Beast.Claw.Editor
                 return NoLabel;
             }
 
-            return new SmartLabel
+            return new Label
             {
                 hasLabel = true,
                 content = EditorGUIUtility.TrTempContent(text)

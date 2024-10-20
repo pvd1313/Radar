@@ -1,4 +1,7 @@
-﻿namespace Beast.Claw.Editor
+﻿using UnityEditor;
+using UnityEngine;
+
+namespace Beast.Claw.Editor
 {
     public static class UIStyle
     {
@@ -14,5 +17,18 @@
         
         public const string ICON_CSHARP_SCRIPT = "d_cs Script Icon";
         public const string ICON_CONSOLE_INFO = "console.infoicon";
+        
+        public static Color EditorSkinBackgroundColor
+        {
+            get
+            {
+                if (EditorGUIUtility.isProSkin)
+                {
+                    return new Color(0.2196079f, 0.2196079f, 0.2196079f);
+                }
+
+                return new Color(0.7843138f, 0.7843138f, 0.7843138f);
+            }
+        }
     }
 }

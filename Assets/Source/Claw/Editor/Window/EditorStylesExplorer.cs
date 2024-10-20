@@ -15,6 +15,7 @@ namespace Beast.Claw.Editor.Window
         }
         
         [SerializeField] private float2 _scrollPosition;
+        [SerializeField] private Color _colorPicker;
         
         private List<StyleData> _styles;
 
@@ -38,9 +39,21 @@ namespace Beast.Claw.Editor.Window
                 }
             }
         }
+        
+        protected override void Reset()
+        {
+            
+        }
 
         protected override void InspectorUI()
         {
+            flow.Horizontal().Draw(ui =>
+            {
+                flow.FieldWidth(0).Draw(ui => ui.ColorField(Label.NoLabel, ref _colorPicker));
+                string label = "UnityEditor.EditorStyles:";
+                flow.LabelWidth(label).PassiveLabel(label);
+            });
+
             flow.Vertical().Scroll(ref _scrollPosition).Draw(ui =>
             {
                 foreach (StyleData data in _styles)

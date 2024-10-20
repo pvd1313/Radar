@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    readonly partial struct EditorUI
+    readonly partial struct FlowUI
     {
         [NoCustomStyle]
-        public Color ColorField([CanBeEmpty] SmartLabel label, Color value)
+        public Color ColorField([LabelCanBeEmpty] Label label, Color value)
         {
             ColorField(label, ref value);
 
@@ -18,7 +18,7 @@ namespace Beast.Claw.Editor
         }
         
         [NoCustomStyle]
-        public void ColorField([CanBeEmpty] SmartLabel label, ref Color value)
+        public void ColorField([LabelCanBeEmpty] Label label, ref Color value)
         {
             _flow.NotifyDrawCall();
             
@@ -33,7 +33,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public float FloatField([CanBeEmpty] SmartLabel label, float value)
+        public float FloatField([LabelCanBeEmpty] Label label, float value)
         {
             FloatField(label, ref value);
             
@@ -41,7 +41,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public void FloatField([CanBeEmpty] SmartLabel label, ref float value)
+        public void FloatField([LabelCanBeEmpty] Label label, ref float value)
         {
             _flow.NotifyDrawCall();
             
@@ -70,7 +70,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public float2 Float2FieldTwoLine([MustHaveLabel] SmartLabel label, float2 value)
+        public float2 Float2FieldTwoLine([LabelMustBeSet] Label label, float2 value)
         {
             Float2FieldTwoLine(label, ref value);
 
@@ -78,7 +78,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void Float2FieldTwoLine([MustHaveLabel] SmartLabel label, ref float2 value)
+        public void Float2FieldTwoLine([LabelMustBeSet] Label label, ref float2 value)
         {
             _flow.NotifyDrawCall();
             
@@ -88,7 +88,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public float2 Float2FieldOneLine([CanBeEmpty] SmartLabel label, float2 value)
+        public float2 Float2FieldOneLine([LabelCanBeEmpty] Label label, float2 value)
         {
             Float2FieldOneLine(label, ref value);
 
@@ -96,7 +96,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void Float2FieldOneLine([CanBeEmpty] SmartLabel label, ref float2 value)
+        public void Float2FieldOneLine([LabelCanBeEmpty] Label label, ref float2 value)
         {
             _flow.NotifyDrawCall();
             
@@ -110,28 +110,27 @@ namespace Beast.Claw.Editor
             const float LABEL_WIDTH = 15;
             float fieldWidth = (rect.width - LABEL_WIDTH * 2) / 2;
 
-            (Rect w0, Rect w1, Rect w2, Rect w3) = RectSlice.Horizontal(
-                rect, LABEL_WIDTH, fieldWidth, LABEL_WIDTH, fieldWidth);
+            Rect4 columns = rect.SliceToColumns4(LABEL_WIDTH, fieldWidth, LABEL_WIDTH, fieldWidth);
             
             int indentLevelBak = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
             
             EditorGUI.BeginDisabledGroup(true);
             GUIContent tempX = EditorGUIUtility.TrTempContent(" x");
-            EditorGUI.PrefixLabel(w0, GUIUtility.GetControlID(FocusType.Passive), tempX);
+            EditorGUI.PrefixLabel(columns.rect0, GUIUtility.GetControlID(FocusType.Passive), tempX);
             
             GUIContent tempY = EditorGUIUtility.TrTempContent(" y");
-            EditorGUI.PrefixLabel(w2, GUIUtility.GetControlID(FocusType.Passive), tempY);
+            EditorGUI.PrefixLabel(columns.rect2, GUIUtility.GetControlID(FocusType.Passive), tempY);
             EditorGUI.EndDisabledGroup();
             
-            value.x = EditorGUI.FloatField(w1, value.x);
-            value.y = EditorGUI.FloatField(w3, value.y);
+            value.x = EditorGUI.FloatField(columns.rect1, value.x);
+            value.y = EditorGUI.FloatField(columns.rect3, value.y);
 
             EditorGUI.indentLevel = indentLevelBak;
         }
         
         [NoCustomStyle]
-        public float3 Float3FieldTwoLine([MustHaveLabel] SmartLabel label, float3 value)
+        public float3 Float3FieldTwoLine([LabelMustBeSet] Label label, float3 value)
         {
             Float3FieldTwoLine(label, ref value);
 
@@ -139,7 +138,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void Float3FieldTwoLine([MustHaveLabel] SmartLabel label, ref float3 value)
+        public void Float3FieldTwoLine([LabelMustBeSet] Label label, ref float3 value)
         {
             _flow.NotifyDrawCall();
             
@@ -149,7 +148,7 @@ namespace Beast.Claw.Editor
         }
         
         [NoCustomStyle]
-        public float4 Float4FieldTwoLine([MustHaveLabel] SmartLabel label, float4 value)
+        public float4 Float4FieldTwoLine([LabelMustBeSet] Label label, float4 value)
         {
             Float4FieldTwoLine(label, ref value);
 
@@ -157,7 +156,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void Float4FieldTwoLine([MustHaveLabel] SmartLabel label, ref float4 value)
+        public void Float4FieldTwoLine([LabelMustBeSet] Label label, ref float4 value)
         {
             _flow.NotifyDrawCall();
             
@@ -167,7 +166,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public string StringField([CanBeEmpty] SmartLabel label, string value)
+        public string StringField([LabelCanBeEmpty] Label label, string value)
         {
             StringField(label, ref value);
 
@@ -175,7 +174,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public void StringField([CanBeEmpty] SmartLabel label, ref string value)
+        public void StringField([LabelCanBeEmpty] Label label, ref string value)
         {
             _flow.NotifyDrawCall();
             
@@ -204,7 +203,7 @@ namespace Beast.Claw.Editor
         }
         
         [NoCustomStyle]
-        public TObject AssetField<TObject>([CanBeEmpty] SmartLabel label, TObject obj) where TObject : Object
+        public TObject AssetField<TObject>([LabelCanBeEmpty] Label label, TObject obj) where TObject : Object
         {
             _flow.NotifyDrawCall();
             
@@ -214,7 +213,7 @@ namespace Beast.Claw.Editor
         }
         
         [NoCustomStyle]
-        public void AssetField<TObject>([CanBeEmpty] SmartLabel label, ref TObject obj) where TObject : Object
+        public void AssetField<TObject>([LabelCanBeEmpty] Label label, ref TObject obj) where TObject : Object
         {
             _flow.NotifyDrawCall();
             
@@ -229,7 +228,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public int IntField([CanBeEmpty] SmartLabel label, int value)
+        public int IntField([LabelCanBeEmpty] Label label, int value)
         {
             IntField(label, ref value);
             
@@ -237,7 +236,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public void IntField([CanBeEmpty] SmartLabel label, ref int value)
+        public void IntField([LabelCanBeEmpty] Label label, ref int value)
         {
             _flow.NotifyDrawCall();
             
@@ -266,7 +265,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public int2 Int2FieldTwoLine([MustHaveLabel] SmartLabel label, int2 value)
+        public int2 Int2FieldTwoLine([LabelMustBeSet] Label label, int2 value)
         {
             _flow.NotifyDrawCall();
             
@@ -276,7 +275,7 @@ namespace Beast.Claw.Editor
         }
         
         [NoCustomStyle]
-        public void Int2FieldTwoLine([MustHaveLabel] SmartLabel label, ref int2 value)
+        public void Int2FieldTwoLine([LabelMustBeSet] Label label, ref int2 value)
         {
             _flow.NotifyDrawCall();
             

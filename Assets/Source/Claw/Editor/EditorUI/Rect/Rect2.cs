@@ -1,0 +1,16 @@
+﻿using UnityEngine;
+
+namespace Beast.Claw.Editor
+{
+    public struct Rect2
+    {
+        public Rect rect0;
+        public Rect rect1;
+
+        public void Deconstruct(out Rect r0, out Rect r1)
+        {
+            r0 = rect0;
+            r1 = rect1;
+        }
+    }
+}

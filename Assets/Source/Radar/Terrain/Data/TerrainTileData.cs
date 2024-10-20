@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Beast.Radar.Terrain
 {
     [Serializable]
-    public class TerrainTileSprite : IValidatable
+    public class TerrainTileData : IValidatable
     {
         public Texture2D texture;
         public string name;

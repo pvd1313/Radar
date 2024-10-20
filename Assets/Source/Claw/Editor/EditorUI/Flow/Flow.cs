@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public partial class EditorFlow : IEditorFlow
+    public partial class Flow : IFlow
     {
         const string FATAL_MESSAGE = ": Flow was terminated and not being able to process " +
                                      "commands until domain reload.";
@@ -31,7 +31,7 @@ namespace Beast.Claw.Editor
         private bool _isFatal;
         private string _fatalMessage;
 
-        public EditorFlow()
+        public Flow()
         {
             _layoutOptions = new GUILayoutOption[FATAL_LAYOUT_OPTION_COUNT + 1][];
             
@@ -41,7 +41,7 @@ namespace Beast.Claw.Editor
             }
         }
 
-        private void _handleException(ref EditorUIResult uiResult, Exception exception)
+        private void _handleException(ref FlowUIResult uiResult, Exception exception)
         {
             if (exception is ExitGUIException)
             {
@@ -78,7 +78,7 @@ namespace Beast.Claw.Editor
             _commandCallCount++;
         }
 
-        private void _undoLastCommands(ref EditorUIResult result)
+        private void _undoLastCommands(ref FlowUIResult result)
         {
             int stackSize = _commandStackSize.Pop();
             for (int i = 0; i < stackSize; i++)
@@ -89,7 +89,7 @@ namespace Beast.Claw.Editor
 
         private void _fatal(string reason)
         {
-            EditorUIResult result = default;
+            FlowUIResult result = default;
 
             _undoLastCommands(ref result);
             

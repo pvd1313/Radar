@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public partial class EditorFlow
+    public partial class Flow
     {
         private enum EUndoCommandType
         {
@@ -46,7 +46,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        private void _undo(CommandUndo command, ref EditorUIResult result)
+        private void _undo(CommandUndo command, ref FlowUIResult result)
         {
             switch (command.type)
             {

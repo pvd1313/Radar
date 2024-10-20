@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    partial class EditorFlow
+    partial class Flow
     {
         public void Close()
         {
@@ -35,11 +35,11 @@ namespace Beast.Claw.Editor
             _reset();
         }
         
-        public IEditorFlow Begin()
+        public IFlow Begin()
         {
             if (_isFatal)
             {
-                new EditorUI(this).ErrorBox(_fatalMessage);
+                new FlowUI(this).ErrorBox(_fatalMessage);
                 
                 return _emptyFlow;
             }
@@ -49,18 +49,18 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public void StagedBeginDraw(out EditorUI ui, out EditorUIResult result)
+        public void StagedBeginDraw(out FlowUI ui, out FlowUIResult result)
         {
             result = default;
-            ui = new EditorUI(this);
+            ui = new FlowUI(this);
         }
         
-        public void StagedHandleException(ref EditorUI ui, ref EditorUIResult result, Exception exception)
+        public void StagedHandleException(ref FlowUI ui, ref FlowUIResult result, Exception exception)
         {
             _handleException(ref result, exception);
         }
 
-        public void StagedEndDraw(ref EditorUI ui, ref EditorUIResult result)
+        public void StagedEndDraw(ref FlowUI ui, ref FlowUIResult result)
         {
             result.validationFailed |= _validationFailed;
 
@@ -69,9 +69,9 @@ namespace Beast.Claw.Editor
             _undoLastCommands(ref result);
         }
 
-        public EditorUIResult Draw(Action<EditorUI> action)
+        public FlowUIResult Draw(Action<FlowUI> action)
         {
-            StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+            StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
             try
             {
@@ -89,7 +89,7 @@ namespace Beast.Claw.Editor
             return result;
         }
 
-        public IEditorFlow Enabled(bool isEnabled)
+        public IFlow Enabled(bool isEnabled)
         {
             _recordUndoWithType(EUndoCommandType.DisabledGroup);
             
@@ -98,7 +98,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Vertical()
+        public IFlow Vertical()
         {
             _recordUndoWithType(EUndoCommandType.BeginVertical);
             
@@ -107,7 +107,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Horizontal()
+        public IFlow Horizontal()
         {
             _recordUndoWithType(EUndoCommandType.BeginHorizontal);
             
@@ -116,7 +116,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Option(GUILayoutOption option)
+        public IFlow Option(GUILayoutOption option)
         {
             option.ValidateNotNullThrowException(nameof(option));
             
@@ -137,7 +137,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Scroll(ref float2 scrollPosition)
+        public IFlow Scroll(ref float2 scrollPosition)
         {
             _recordUndoWithType(EUndoCommandType.ScrollView);
 
@@ -146,7 +146,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Spy()
+        public IFlow Spy()
         {
             _recordUndoWithType(EUndoCommandType.ChangeCheck);
             
@@ -155,7 +155,7 @@ namespace Beast.Claw.Editor
             return this;
         }
         
-        public IEditorFlow Indent(int indent)
+        public IFlow Indent(int indent)
         {
             if (indent < 0)
             {
@@ -176,7 +176,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow Style(GUIStyle style)
+        public IFlow Style(GUIStyle style)
         {
             style.ValidateNotNullThrowException(nameof(style));
             
@@ -191,7 +191,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow LabelWidth(float labelWidth)
+        public IFlow LabelWidth(float labelWidth)
         {
             if (labelWidth < 0)
             {
@@ -212,7 +212,7 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow FieldWidth(float fieldWidth)
+        public IFlow FieldWidth(float fieldWidth)
         {
             if (fieldWidth < 0)
             {
@@ -239,11 +239,11 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IEditorFlow If(bool condition)
+        public IFlow If(bool condition)
         {
             if (!condition)
             {
-                EditorUIResult uiResult = default;
+                FlowUIResult uiResult = default;
                 
                 _undoLastCommands(ref uiResult);
 

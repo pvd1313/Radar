@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    public readonly partial struct EditorUI
+    public readonly partial struct FlowUI
     {
-        private readonly EditorFlow _flow;
+        private readonly Flow _flow;
 
-        public EditorUI(EditorFlow flow)
+        public FlowUI(Flow flow)
         {
             _flow = flow;
         }

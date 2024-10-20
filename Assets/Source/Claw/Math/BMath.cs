@@ -100,6 +100,13 @@ namespace Beast.Claw.Math
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Min(int x, int y)
+        {
+            return math.min(x, y);
+        }
+
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Normalize(float2 x)
         {
             return math.normalize(x);

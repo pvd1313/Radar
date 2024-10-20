@@ -18,6 +18,12 @@ namespace Beast.Claw.Editor.Window
 
         protected override void Warmup()
         {
+            
+        }
+        
+        protected override void Reset()
+        {
+            
         }
         
         protected override void InspectorUI()

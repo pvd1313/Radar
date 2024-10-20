@@ -69,6 +69,14 @@ namespace Beast.Claw.Editor.Window
                 alignment = TextAnchor.MiddleLeft,
             };
         }
+        
+        protected override void Reset()
+        {
+            _drawOrder.Clear();
+            _folds.Clear();
+            _typeInfo.Clear();
+            _fullNameToType.Clear();
+        }
 
         private void _onEditorApplicationUpdate()
         {
@@ -138,7 +146,7 @@ namespace Beast.Claw.Editor.Window
 
             flow.Horizontal(ui =>
             {
-                ui.Button("Reset", _reset);
+                // ui.Button("Reset", _reset);
                 ui.Button("Clear", BDebug.ClearTrackStorage);
                 ui.Button("Open", () => _setAllFolds(true));
                 ui.Button("Close", () => _setAllFolds(false));
@@ -222,7 +230,7 @@ namespace Beast.Claw.Editor.Window
             _drawOrder.TrySwap(swapIndex.a, swapIndex.b);
         }
 
-        private void _trackStorageUI(EditorUI ui, DebugTrackStorage storage)
+        private void _trackStorageUI(FlowUI ui, DebugTrackStorage storage)
         {
             if (storage == null)
             {
@@ -259,18 +267,6 @@ namespace Beast.Claw.Editor.Window
             {
                 ui.StringField(id, value);
             }
-        }
-
-        private void _reset()
-        {
-            Dispose();
-            
-            _drawOrder.Clear();
-            _folds.Clear();
-            _typeInfo.Clear();
-            _fullNameToType.Clear();
-            
-            Warmup();
         }
 
         private void _setAllFolds(bool isOpen)

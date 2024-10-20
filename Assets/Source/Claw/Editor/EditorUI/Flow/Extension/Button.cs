@@ -4,13 +4,13 @@ namespace Beast.Claw.Editor
 {
     partial class EditorFlowExtension
     {
-        public static EditorUIResult Button(this IEditorFlow anyFlow, SmartLabel label, Action action)
+        public static FlowUIResult Button(this IFlow anyFlow, Label label, Action action)
         {
             label.ValidateHasLabelThrowException();
             
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {
@@ -31,13 +31,13 @@ namespace Beast.Claw.Editor
             return default;
         }
 
-        public static EditorUIResult Button(this IEditorFlow anyFlow, SmartLabel label, Action<EditorUI> action)
+        public static FlowUIResult Button(this IFlow anyFlow, Label label, Action<FlowUI> action)
         {
             label.ValidateHasLabelThrowException();
             
-            if (anyFlow is EditorFlow flow)
+            if (anyFlow is Flow flow)
             {
-                flow.StagedBeginDraw(out EditorUI ui, out EditorUIResult result);
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
 
                 try
                 {

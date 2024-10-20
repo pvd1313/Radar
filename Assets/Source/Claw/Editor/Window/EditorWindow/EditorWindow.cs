@@ -7,16 +7,29 @@ using UnityEngine;
 namespace Beast.Claw.Editor.Window
 {
     [FancyAsset]
-    public abstract partial class EditorWindow : UnityEditor.EditorWindow
+    public abstract class EditorWindow : UnityEditor.EditorWindow
     {
-        public IEditorFlow flow => _flow.Begin();
+        public IFlow flow => _flow.Begin();
 
-        private EditorFlow _flow;
+        private Flow _flow;
         private bool _initialized;
-        private bool _gotException;
+        private bool _criticalFault;
+        
+        protected EditorWindow()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
+            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+        }
 
         /// <summary>
-        /// Called once before first draw call.
+        /// Used to reset window state for debug purposes. Invoked manually by user.
+        /// Useful during window logic implementation.
+        /// </summary>
+        protected abstract void Reset();
+
+        /// <summary>
+        /// Called once before first draw call. Should be used for non-serializable structures creation.
+        /// Should be used for GUI style / layout classes creation.
         /// And once before first draw call after each domain reload.
         /// </summary>
         protected abstract void Warmup();
@@ -28,16 +41,23 @@ namespace Beast.Claw.Editor.Window
         /// </summary>
         protected abstract void Dispose();
 
-        protected EditorWindow()
+        // Reset leads to: Dispose() -> Reset() -> Warmup()
+        protected void DrawResetButton()
         {
-            AssemblyReloadEvents.beforeAssemblyReload += _beforeAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += _afterAssemblyReload;
+            _flow.Begin().LabelWidth(UIStyle.SIZE_ONE_CHAR).Button("~", () =>
+            {
+                _safeDispose();
+                
+                _safeReset();
+
+                throw new ExitGUIException();
+            });
         }
 
         private void _beforeAssemblyReload()
         {
             _initialized = false;
-            _gotException = false;
+            _criticalFault = false;
             
             Dispose();
         }
@@ -50,28 +70,18 @@ namespace Beast.Claw.Editor.Window
 
         private void OnGUI()
         {
-            if (_gotException)
+            if (_criticalFault)
             {
                 return;
             }
 
             if (!_initialized)
             {
-                try
+                _safeWarmup();
+
+                if (!_initialized)
                 {
-                    Warmup();
-                    
-                    _flow = new EditorFlow();
-                    
-                    _initialized = true;
-                }
-                catch (Exception e)
-                {
-                    string message = $"{GetType()}.Initialize(). Drawing is disabled. Fix errors and reload domain";
-                    
-                    BDebug.LogException(this, e, message);
-                    
-                    _gotException = true;
+                    return;
                 }
             }
 
@@ -89,9 +99,54 @@ namespace Beast.Claw.Editor.Window
             }
         }
 
+        private void _safeReset()
+        {
+            try
+            {
+                Reset();
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(this, e, GetType().FullName + ".SerializationReset()");
+            }
+        }
+
+        private void _safeWarmup()
+        {
+            try
+            {
+                Warmup();
+
+                _flow = new Flow();
+
+                _initialized = true;
+            }
+            catch (Exception e)
+            {
+                _criticalFault = true;
+                
+                BDebug.LogException(this, e, GetType().FullName + ".Warmup(). Drawing is disabled. " +
+                                             "Reload domain to continue.");
+            }
+        }
+
+        private void _safeDispose()
+        {
+            try
+            {
+                Dispose();
+
+                _initialized = false;
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(this, e, GetType().FullName + ".Dispose()");
+            }
+        }
+
         private void OnDestroy()
         {
-            Dispose();
+            _safeDispose();
         }
     }
 }

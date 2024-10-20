@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.Editor
 {
-    public struct EditorUIResult
+    public struct FlowUIResult
     {
         public bool changesDetected;
         public bool validationFailed;

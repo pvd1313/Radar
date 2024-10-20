@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    readonly partial struct EditorUI
+    readonly partial struct FlowUI
     {
         public void SaveFileDialog(string fileName, Action<string> action)
         {

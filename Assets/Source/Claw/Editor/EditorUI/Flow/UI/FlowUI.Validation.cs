@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Editor
 {
-    public readonly partial struct EditorUI
+    public readonly partial struct FlowUI
     {
         public bool ValidateArgumentNotNull<T>(T obj, string objName) where T : class
         {

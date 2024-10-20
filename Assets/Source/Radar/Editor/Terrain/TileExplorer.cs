@@ -5,7 +5,6 @@ using Beast.Claw.Editor;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using EditorWindow = Beast.Claw.Editor.Window.EditorWindow;
 
@@ -22,11 +21,25 @@ namespace Beast.Radar.Editor.Terrain
         
         private GUILayoutOption _sliderWidth;
         private string _assetNameDefault;
-        
+        private int _selectedIndex;
+
+        private RectUI _rectUI;
+
         protected override void Warmup()
         {
             _sliderWidth = GUILayout.Width(100);
             _assetNameDefault = "ScriptableContainer<TerrainAtlas>";
+            
+            _rectUI = new RectUI();
+            _rectUI.Bind<TileDrawer, TileDrawerTask>();
+        }
+        
+        protected override void Reset()
+        {
+            _selectedIndex = -1;
+            
+            _rectUI = new RectUI();
+            _rectUI.Bind<TileDrawer, TileDrawerTask>();
         }
 
         protected override void InspectorUI()
@@ -39,14 +52,16 @@ namespace Beast.Radar.Editor.Terrain
                 }
                 else
                 {
-                    flow.FieldWidth(_atlasAsset.name).AssetField(SmartLabel.NoLabel, ref _atlasAsset);
+                    flow.FieldWidth(_atlasAsset.name).AssetField(Label.NoLabel, ref _atlasAsset);
                     
                     ui.FlexibleSpace();
+                    
+                    DrawResetButton();
                 
                     FloatMinMax minMax = new (MIN_CELL_SIZE, MAX_CELL_SIZE);
                     flow.Option(_sliderWidth).
                         FieldWidth(0).
-                        Draw(ui => ui.FloatSlider(SmartLabel.NoLabel, minMax, ref _cellSize));
+                        Draw(ui => ui.FloatSlider(Label.NoLabel, minMax, ref _cellSize));
                 }
             });
 
@@ -58,35 +73,32 @@ namespace Beast.Radar.Editor.Terrain
 
             flow.Vertical().Scroll(ref _scrollPosition, ui =>
             {
-                List<TerrainTileSprite> sprites = _atlasAsset.data.sprites;
+                List<TerrainTileData> tiles = _atlasAsset.data.tiles;
 
-                int spriteCount = 24;
-
-                RectCellGrid rectCellGrid = new (new RectCellGrid.Input
+                RectCellGrid cellGrid = new (new RectCellGrid.Input
                 {
                     spacing = 5,
                     windowSize = new float2(position.width, position.height),
                     cellSize = _cellSize,
-                    elementCount = spriteCount,
+                    elementCount = tiles.Count,
                     padding = 10
                 });
 
-                ui.AllocateRect(rectCellGrid.TotalSize);
+                ui.AllocateRect(cellGrid.TotalSize);
 
-                for (int i = 0; i < spriteCount; i++)
+                for (int i = 0; i < tiles.Count; i++)
                 {
-                    Rect rect = rectCellGrid.GetElement(i);
-
-                    DrawItem(rect);
+                    _rectUI.Temp(out TileDrawerTask task);
+                    {
+                        task.tile = tiles[i];
+                        task.selectedIndex = _selectedIndex;
+                        task.tileIndex = i;
+                    }
+                    _rectUI.Draw(cellGrid.GetElement(i), task);
                 }
             });
 
             BDebug.Track(this, nameof(_cellSize), _cellSize);
-        }
-
-        private void DrawItem(Rect rect)
-        {
-            EditorGUI.DrawRect(rect, Color.black);
         }
 
         protected override void Dispose()

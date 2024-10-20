@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    readonly partial struct EditorUI
+    readonly partial struct FlowUI
     {
         [CustomStyleSupported]
-        public void Foldout([MustHaveLabel] SmartLabel label, ref bool isFold)
+        public void Foldout([LabelMustBeSet] Label label, ref bool isFold)
         {
             _flow.NotifyDrawCall();
             
@@ -57,7 +57,7 @@ namespace Beast.Claw.Editor
         }
         
         [CustomStyleSupported]
-        public void Button([MustHaveLabel] SmartLabel label, Action<EditorUI> action)
+        public void Button([LabelMustBeSet] Label label, Action<FlowUI> action)
         {
             _flow.NotifyDrawCall();
             
@@ -81,7 +81,7 @@ namespace Beast.Claw.Editor
         }
         
         [CustomStyleSupported]
-        public void Button([MustHaveLabel] SmartLabel label, Action action)
+        public void Button([LabelMustBeSet] Label label, Action action)
         {
             _flow.NotifyDrawCall();
             
@@ -105,7 +105,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public float FloatSlider([CanBeEmpty] SmartLabel label, FloatMinMax minMax, float value)
+        public float FloatSlider([LabelCanBeEmpty] Label label, FloatMinMax minMax, float value)
         {
             FloatSlider(label, minMax, ref value);
 
@@ -113,7 +113,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void FloatSlider([CanBeEmpty] SmartLabel label, FloatMinMax minMax, ref float value)
+        public void FloatSlider([LabelCanBeEmpty] Label label, FloatMinMax minMax, ref float value)
         {
             _flow.NotifyDrawCall();
             
@@ -128,7 +128,7 @@ namespace Beast.Claw.Editor
         }
         
         [CustomStyleSupported]
-        public void EnumSingleField<T>([CanBeEmpty] SmartLabel label, ref T value) where T : Enum
+        public void EnumSingleField<T>([LabelCanBeEmpty] Label label, ref T value) where T : Enum
         {
             _flow.NotifyDrawCall();
             
@@ -157,7 +157,7 @@ namespace Beast.Claw.Editor
         }
         
         [CustomStyleSupported]
-        public void EnumFlagsField<T>([CanBeEmpty] SmartLabel label, ref T value) where T : Enum
+        public void EnumFlagsField<T>([LabelCanBeEmpty] Label label, ref T value) where T : Enum
         {
             _flow.NotifyDrawCall();
             
@@ -197,7 +197,7 @@ namespace Beast.Claw.Editor
         }
 
         [CustomStyleSupported]
-        public void PassiveLabel([MustHaveLabel] SmartLabel label)
+        public void PassiveLabel([LabelMustBeSet] Label label)
         {
             _flow.NotifyDrawCall();
             
@@ -214,7 +214,7 @@ namespace Beast.Claw.Editor
         }
         
         [CustomStyleSupported]
-        public void CheckBoxRight([CanBeEmpty] SmartLabel label, ref bool value)
+        public void CheckBoxRight([LabelCanBeEmpty] Label label, ref bool value)
         {
             _flow.NotifyDrawCall();
             
@@ -244,7 +244,7 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public void CheckBoxLeft([MustHaveLabel] SmartLabel label, ref bool value)
+        public void CheckBoxLeft([LabelMustBeSet] Label label, ref bool value)
         {
             _flow.NotifyDrawCall();
             

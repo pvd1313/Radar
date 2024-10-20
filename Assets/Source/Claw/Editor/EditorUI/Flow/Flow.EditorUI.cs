@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
-    partial class EditorFlow
+    partial class Flow
     {
         public void NotifyValidationFailed()
         {

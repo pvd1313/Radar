@@ -26,13 +26,18 @@ namespace Beast.Radar.Editor.Terrain
         private TextureImporter _textureImporter;
         private bool _texturesFold;
         private TextureBaker _textureBaker;
-        
+
         protected override void Warmup()
         {
             _bakeButtonSize = GUILayout.Width(100);
             _textureImporter = new TextureImporter();
             _textureBaker = new TextureBaker();
             _tileEditor = new TileEditor(this);
+        }
+        
+        protected override void Reset()
+        {
+            
         }
 
         protected override void InspectorUI()
@@ -72,7 +77,7 @@ namespace Beast.Radar.Editor.Terrain
 
                 flow.If(!atlasIsValid).WarningBox(atlasErrorMessage);
                 
-                EditorUIResult spyResult = flow.Spy(ui =>
+                FlowUIResult spyResult = flow.Spy(ui =>
                 {
                     ui.Foldout("Textures", ref _texturesFold);
 
@@ -108,7 +113,7 @@ namespace Beast.Radar.Editor.Terrain
                     BAsset.SetDirty(_atlasAsset);
                 }
 
-                _tileEditor.DrawUI(atlas.sprites, out bool changesDetected);
+                _tileEditor.DrawUI(atlas.tiles, out bool changesDetected);
                 
                 if (changesDetected)
                 {
@@ -119,9 +124,9 @@ namespace Beast.Radar.Editor.Terrain
 
         private void _fixImports()
         {
-            if (_atlasAsset.data.sprites != null)
+            if (_atlasAsset.data.tiles != null)
             {
-                foreach (TerrainTileSprite sprite in _atlasAsset.data.sprites)
+                foreach (TerrainTileData sprite in _atlasAsset.data.tiles)
                 {
                     if (sprite.texture == null)
                     {
@@ -146,7 +151,7 @@ namespace Beast.Radar.Editor.Terrain
             BAsset.SaveIfDirty(_atlasAsset);
         }
 
-        private void _bakeMainTexture(EditorUI ui)
+        private void _bakeMainTexture(FlowUI ui)
         {
             Texture2D bakedTexture = null;
             
@@ -171,7 +176,7 @@ namespace Beast.Radar.Editor.Terrain
             }
         }
         
-        private void _bakeColorTexture(EditorUI ui)
+        private void _bakeColorTexture(FlowUI ui)
         {
             Texture2D bakedTexture = null;
             
@@ -196,7 +201,7 @@ namespace Beast.Radar.Editor.Terrain
             }
         }
         
-        private void _bakeConfigTexture(EditorUI ui)
+        private void _bakeConfigTexture(FlowUI ui)
         {
             Texture2D bakedTexture = null;
 
@@ -221,7 +226,7 @@ namespace Beast.Radar.Editor.Terrain
             }
         }
 
-        private string _tryGetTexturePathOrNew(EditorUI ui, Texture2D texture, string texturePostfix)
+        private string _tryGetTexturePathOrNew(FlowUI ui, Texture2D texture, string texturePostfix)
         {
             if (texture == null)
             {

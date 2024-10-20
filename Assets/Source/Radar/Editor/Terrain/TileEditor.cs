@@ -11,7 +11,7 @@ namespace Beast.Radar.Editor.Terrain
     [Serializable]
     public class TileEditor
     {
-        private IEditorFlow flow => _window.flow;
+        private IFlow flow => _window.flow;
         
         [SerializeField] AtlasEditor _window;
         [SerializeField] private float2 _scrollPosition;
@@ -25,7 +25,7 @@ namespace Beast.Radar.Editor.Terrain
             _window = window;
         }
 
-        public void DrawUI(List<TerrainTileSprite> sprites, out bool changesDetected)
+        public void DrawUI(List<TerrainTileData> sprites, out bool changesDetected)
         {
             bool changesDetectedLocal = false;
 
@@ -35,7 +35,7 @@ namespace Beast.Radar.Editor.Terrain
 
                 flow.Option(_smallButtonSize).Button(UIStyle.CHAR_PLUS, () =>
                 {
-                    sprites.Add(new TerrainTileSprite());
+                    sprites.Add(new TerrainTileData());
                     changesDetectedLocal = true;
                 });
             });
@@ -65,12 +65,12 @@ namespace Beast.Radar.Editor.Terrain
         }
 
         private bool _spriteUI(
-            IList<TerrainTileSprite> spriteList,
+            IList<TerrainTileData> spriteList,
             int spriteIndex, 
             ref (int a, int b) swapIndex,
             ref int deleteIndex)
         {
-            TerrainTileSprite sprite = spriteList[spriteIndex];
+            TerrainTileData sprite = spriteList[spriteIndex];
 
             (int a, int b) swapIndexLocal = swapIndex;
             int deleteIndexLocal = deleteIndex;
@@ -91,7 +91,7 @@ namespace Beast.Radar.Editor.Terrain
                 _spriteFolds[spriteIndex] = spriteFold;
             });
             
-            EditorUIResult spyResult = flow.If(spriteFold).Tab().Spy(ui =>
+            FlowUIResult spyResult = flow.If(spriteFold).Tab().Spy(ui =>
             {
                 ui.PassiveLabel("Texture");
 
@@ -101,7 +101,7 @@ namespace Beast.Radar.Editor.Terrain
                 {
                     flow.Enabled(false).PassiveLabel(spriteHasTexture ? sprite.texture.name : "N/A");
                     
-                    ui.AssetField(SmartLabel.NoLabel, ref sprite.texture);
+                    ui.AssetField(Label.NoLabel, ref sprite.texture);
                 });
 
                 flow.Horizontal(ui =>
