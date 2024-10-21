@@ -21,11 +21,11 @@ MonoBehaviour:
     enablePlanetMode: 0
   motion:
   - schemes: 01000000
-    zoomSpeed: 35
-    motionSpeed: 0.001
+    zoomSpeed: 3
+    motionSpeed: 0.01
   - schemes: 03000000
     zoomSpeed: 0.01
     motionSpeed: 1
   - schemes: 02000000
-    zoomSpeed: 1
-    motionSpeed: 0.001
+    zoomSpeed: 0.25
+    motionSpeed: 0.0025
