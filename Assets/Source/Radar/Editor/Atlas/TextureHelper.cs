@@ -4,7 +4,7 @@ using Beast.Claw.Math;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Atlas
 {
     [Serializable]
     public class TextureHelper

@@ -93,7 +93,7 @@ namespace Beast.Claw.Editor.Window
             }
         }
 
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
             if (_isPlaying != Application.isPlaying)
             {
@@ -234,7 +234,7 @@ namespace Beast.Claw.Editor.Window
         {
             if (storage == null)
             {
-                ui.PassiveLabel("-- NO DATA --");
+                ui.Label("-- NO DATA --");
                 return;
             }
             

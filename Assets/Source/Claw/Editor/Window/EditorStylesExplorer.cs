@@ -45,7 +45,7 @@ namespace Beast.Claw.Editor.Window
             
         }
 
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
             flow.Horizontal().Draw(ui =>
             {

@@ -76,7 +76,7 @@ namespace Beast.Claw.Editor
             if (anyFlow is Flow flow)
             {
                 flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
-
+                
                 try
                 {
                     ui.Record(obj, recordName);
@@ -94,6 +94,28 @@ namespace Beast.Claw.Editor
             }
 
             return default;
+        }
+        
+        public static IFlow Record(this IFlow anyFlow, Object obj, string recordName)
+        {
+            obj.ValidateNotNullThrowException(nameof(obj));
+            recordName.ValidateNotNullThrowException(nameof(recordName));
+            
+            if (anyFlow is Flow flow)
+            {
+                flow.StagedBeginDraw(out FlowUI ui, out FlowUIResult result);
+
+                try
+                {
+                    ui.Record(obj, recordName);
+                }
+                catch (Exception e)
+                {
+                    flow.StagedHandleException(ref ui, ref result, e);
+                }
+            }
+
+            return anyFlow;
         }
         
         public static FlowUIResult LabelWidth(this IFlow flow, Label label, Action<FlowUI> action)

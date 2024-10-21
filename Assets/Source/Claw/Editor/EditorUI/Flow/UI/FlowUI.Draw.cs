@@ -9,7 +9,7 @@ namespace Beast.Claw.Editor
 {
     readonly partial struct FlowUI
     {
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void Foldout([LabelMustBeSet] Label label, ref bool isFold)
         {
             _flow.NotifyDrawCall();
@@ -56,7 +56,7 @@ namespace Beast.Claw.Editor
             EditorGUILayout.HelpBox(message, MessageType.Error);
         }
         
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void Button([LabelMustBeSet] Label label, Action<FlowUI> action)
         {
             _flow.NotifyDrawCall();
@@ -80,7 +80,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void Button([LabelMustBeSet] Label label, Action action)
         {
             _flow.NotifyDrawCall();
@@ -127,7 +127,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void EnumSingleField<T>([LabelCanBeEmpty] Label label, ref T value) where T : Enum
         {
             _flow.NotifyDrawCall();
@@ -156,7 +156,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void EnumFlagsField<T>([LabelCanBeEmpty] Label label, ref T value) where T : Enum
         {
             _flow.NotifyDrawCall();
@@ -196,8 +196,8 @@ namespace Beast.Claw.Editor
             EditorGUI.DrawPreviewTexture(rect, texture, null, ScaleMode.ScaleToFit);
         }
 
-        [CustomStyleSupported]
-        public void PassiveLabel([LabelMustBeSet] Label label)
+        [SupportsCustomStyle]
+        public void Label([LabelMustBeSet] Label label)
         {
             _flow.NotifyDrawCall();
             
@@ -213,7 +213,7 @@ namespace Beast.Claw.Editor
             }
         }
         
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void CheckBoxRight([LabelCanBeEmpty] Label label, ref bool value)
         {
             _flow.NotifyDrawCall();

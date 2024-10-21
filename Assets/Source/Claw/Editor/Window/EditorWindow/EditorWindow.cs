@@ -34,13 +34,7 @@ namespace Beast.Claw.Editor.Window
                 
             }, null);
         }
-
-        /// <summary>
-        /// Used to reset window state for debug purposes. Invoked manually by user.
-        /// Useful during window logic implementation. Dispose() -> Reset() -> Warmup()
-        /// </summary>
-        protected abstract void Reset();
-
+        
         /// <summary>
         /// Called once before first draw call. Should be used for non-serializable structures creation.
         /// Should be used for GUI style / layout classes creation.
@@ -49,9 +43,15 @@ namespace Beast.Claw.Editor.Window
         protected abstract void Warmup();
 
         /// <summary>
+        /// Used to reset window state for debug purposes. Invoked manually by user.
+        /// Useful during window logic implementation. Dispose() -> Reset() -> Warmup()
+        /// </summary>
+        protected abstract void Reset();
+
+        /// <summary>
         /// Use flow { get; } to begin drawing. flow { get; } returns _flow.Begin()
         /// </summary>
-        protected abstract void InspectorUI();
+        protected abstract void DrawUI();
         
         /// <summary>
         /// Called when window closing. Called before assembly reload.
@@ -90,7 +90,7 @@ namespace Beast.Claw.Editor.Window
 
             try
             {
-                InspectorUI();
+                DrawUI();
                 
                 _flow.Close();
             }

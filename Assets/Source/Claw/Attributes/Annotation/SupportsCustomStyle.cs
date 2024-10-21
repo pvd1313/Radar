@@ -3,7 +3,7 @@
 namespace Beast.Claw.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class CustomStyleSupported : Attribute
+    public sealed class SupportsCustomStyle : Attribute
     {
         
     }

@@ -60,6 +60,27 @@ namespace Beast.Claw.Collection
             return true;
         }
 
+        public static int IndexOfReference<TListValue, TReference>(this IList<TListValue> list, TReference reference) 
+            where TReference : class
+            where TListValue : class
+        {
+            int itemCount = list.Count;
+            if (itemCount == 0)
+            {
+                return -1;
+            }
+            
+            for (int i = 0; i < itemCount; i++)
+            {
+                if (ReferenceEquals(reference, list[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         public static bool TryRemoveAt<TValue>(this IList<TValue> list, int index)
         {
             if (list.Count == 0)

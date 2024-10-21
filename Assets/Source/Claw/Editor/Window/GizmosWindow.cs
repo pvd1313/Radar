@@ -26,7 +26,7 @@ namespace Beast.Claw.Editor.Window
             
         }
         
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
             if (GizmosStateStorage.HandleCount == 0)
             {
@@ -56,7 +56,7 @@ namespace Beast.Claw.Editor.Window
                     bool tempIsEnabled = data.isEnable;
                     Color tempColor = data.color;
 
-                    ui.PassiveLabel(handleName);
+                    ui.Label(handleName);
                     ui.CheckBoxRight("enabled", ref tempIsEnabled);
                     ui.ColorField("color", ref tempColor);
 

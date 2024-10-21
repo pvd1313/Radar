@@ -4,7 +4,7 @@ using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Atlas
 {
     [Serializable]
     public class TextureBaker

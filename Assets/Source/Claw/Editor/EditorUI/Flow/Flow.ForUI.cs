@@ -1,9 +1,18 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Collection;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     partial class Flow
     {
+        public TempArray<string> TempStringArray { get; } = new(TEMP_ARRAY_CAPACITY);
+        public TempArray<GUIContent> TempContentArray { get; } = new(TEMP_ARRAY_CAPACITY);
+
+        public GUIContent TextNone { get; } = new GUIContent("None");
+        
+        public GUIStyle CurrentStyle => _currentStyle;
+        public GUILayoutOption[] CurrentLayout => _layoutTempArray[_layoutOptionCount];
+        
         public void NotifyValidationFailed()
         {
             _validationFailed = true;
@@ -11,7 +20,7 @@ namespace Beast.Claw.Editor
 
         public void NotifyDrawCall()
         {
-            if (_drawCallCount >= FATAL_DRAW_CALL_COUNT)
+            if (_drawCallCount >= MAX_DRAW_CALL_COUNT)
             {
                 _fatal("Too many draw calls");
             }

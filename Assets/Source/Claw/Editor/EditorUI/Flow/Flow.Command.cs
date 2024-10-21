@@ -1,41 +1,12 @@
 ﻿using System;
-using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
     partial class Flow
     {
-        public void Close()
-        {
-            if (_isFatal)
-            {
-                return;
-            }
-            
-            if (_layoutOptionCount > 0 || 
-                _commands.Count > 0 || 
-                _commandStackSize.Count > 0)
-            {
-                BDebug.LogError(this, "Flow is not clear");
-            }
-
-            _reset();
-        }
-
-        public void ExitGUIException()
-        {
-            if (_isFatal)
-            {
-                return;
-            }
-            
-            _reset();
-        }
-        
         public IFlow Begin()
         {
             if (_isFatal)
@@ -48,26 +19,6 @@ namespace Beast.Claw.Editor
             _commandStackSize.Push(0);
 
             return this;
-        }
-
-        public void StagedBeginDraw(out FlowUI ui, out FlowUIResult result)
-        {
-            result = default;
-            ui = new FlowUI(this);
-        }
-        
-        public void StagedHandleException(ref FlowUI ui, ref FlowUIResult result, Exception exception)
-        {
-            _handleException(ref result, exception);
-        }
-
-        public void StagedEndDraw(ref FlowUI ui, ref FlowUIResult result)
-        {
-            result.validationFailed |= _validationFailed;
-
-            _validationFailed = false;
-            
-            _undoLastCommands(ref result);
         }
 
         public FlowUIResult Draw(Action<FlowUI> action)
@@ -108,16 +59,6 @@ namespace Beast.Claw.Editor
             return this;
         }
 
-        public IFlow Record(Object obj, string recordName)
-        {
-            obj.ValidateNotNullThrowException(nameof(obj));
-            recordName.ValidateNotEmptyOrNullThrowException(nameof(recordName));
-            
-            new FlowUI(this).Record(obj, recordName);
-            
-            return this;
-        }
-
         public IFlow Horizontal()
         {
             _recordUndoWithType(EUndoCommandType.BeginHorizontal);
@@ -131,15 +72,15 @@ namespace Beast.Claw.Editor
         {
             option.ValidateNotNullThrowException(nameof(option));
             
-            if (_layoutOptionCount >= FATAL_LAYOUT_OPTION_COUNT)
+            if (_layoutOptionCount >= TEMP_ARRAY_CAPACITY)
             {
                 throw new InvalidOperationException("Too many layout options.");
             }
             
             _recordUndoWithType(EUndoCommandType.LayoutOption);
 
-            GUILayoutOption[] currentLayout = _layoutOptions[_layoutOptionCount];
-            GUILayoutOption[] newLayout = _layoutOptions[_layoutOptionCount + 1];
+            GUILayoutOption[] currentLayout = _layoutTempArray[_layoutOptionCount];
+            GUILayoutOption[] newLayout = _layoutTempArray[_layoutOptionCount + 1];
             Array.Copy(currentLayout, newLayout, _layoutOptionCount);
             newLayout[^1] = option;
 

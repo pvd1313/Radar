@@ -28,7 +28,7 @@ namespace Beast.Claw.Editor.Window
             
         }
 
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
             FlowUIResult result = flow.Vertical(ui =>
             {
@@ -54,7 +54,7 @@ namespace Beast.Claw.Editor.Window
 
             flow.If(_previewTexture != null).Draw(ui =>
             {
-                ui.PassiveLabel("Preview: ");
+                ui.Label("Preview: ");
                 ui.TexturePreview(_previewTexture, PREVIEW_TEXTURE_SIZE.y);
             });
         }

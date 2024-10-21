@@ -1,8 +1,10 @@
 ﻿using Beast.Claw.Attributes;
 using Beast.Claw.Attributes.Annotation;
+using Beast.Claw.Collection;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
@@ -31,7 +33,7 @@ namespace Beast.Claw.Editor
             }
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public float FloatField([LabelCanBeEmpty] Label label, float value)
         {
             FloatField(label, ref value);
@@ -39,7 +41,7 @@ namespace Beast.Claw.Editor
             return value;
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void FloatField([LabelCanBeEmpty] Label label, ref float value)
         {
             _flow.NotifyDrawCall();
@@ -164,7 +166,7 @@ namespace Beast.Claw.Editor
             value = EditorGUILayout.Vector4Field(label.content, value, _flow.CurrentLayout);
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public string StringField([LabelCanBeEmpty] Label label, string value)
         {
             StringField(label, ref value);
@@ -172,7 +174,7 @@ namespace Beast.Claw.Editor
             return value;
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void StringField([LabelCanBeEmpty] Label label, ref string value)
         {
             _flow.NotifyDrawCall();
@@ -226,7 +228,76 @@ namespace Beast.Claw.Editor
             }
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
+        public void WindowField<TWindow>([LabelCanBeEmpty] Label label, ref TWindow window) 
+            where TWindow : class
+        {
+            _flow.NotifyDrawCall();
+
+            EditorWindow[] editorWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+
+            StackIndexMap<TWindow> windowMap = new (stackalloc short[_flow.TempStringArray.Capacity]);
+            
+            int selectedIndex = windowMap.FindAllWithTypeAndCurrent(editorWindows, window);
+            if (selectedIndex == -1)
+            {
+                selectedIndex = 0;
+            }
+
+            GUIContent[] windowNames = _flow.TempContentArray[windowMap.Count + 1];
+            windowNames[0] = _flow.TextNone;
+            for (int i = 0; i < windowMap.Count; i++)
+            {
+                windowNames[i + 1] = (windowMap[i] as EditorWindow)?.titleContent;
+            }
+
+            int selectedIndexNew;
+            
+            if (label.hasLabel)
+            {
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
+                {
+                    selectedIndexNew = EditorGUILayout.Popup(
+                        label.content, 
+                        selectedIndex, 
+                        windowNames, 
+                        style, 
+                        _flow.CurrentLayout);
+                }
+                else
+                {
+                    selectedIndexNew = EditorGUILayout.Popup(label.content,
+                        selectedIndex,
+                        windowNames,
+                        _flow.CurrentLayout);
+                }
+            }
+            else
+            {
+                if (_flow.TryGetCustomStyle(out GUIStyle style))
+                {
+                    selectedIndexNew = EditorGUILayout.Popup(
+                        selectedIndex, 
+                        windowNames, 
+                        _flow.CurrentLayout);
+                }
+                else
+                {
+                    selectedIndexNew = EditorGUILayout.Popup(
+                        selectedIndex, 
+                        windowNames, 
+                        style,
+                        _flow.CurrentLayout);
+                }
+            }
+
+            if (selectedIndexNew != selectedIndex)
+            {
+                window = selectedIndexNew > 0 ? windowMap[selectedIndexNew - 1] : null;
+            }
+        }
+
+        [SupportsCustomStyle]
         public int IntField([LabelCanBeEmpty] Label label, int value)
         {
             IntField(label, ref value);
@@ -234,7 +305,7 @@ namespace Beast.Claw.Editor
             return value;
         }
 
-        [CustomStyleSupported]
+        [SupportsCustomStyle]
         public void IntField([LabelCanBeEmpty] Label label, ref int value)
         {
             _flow.NotifyDrawCall();

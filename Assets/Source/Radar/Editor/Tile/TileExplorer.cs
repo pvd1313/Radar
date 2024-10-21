@@ -3,7 +3,6 @@ using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
 using Beast.Claw.Math;
-using Beast.Radar.Editor.Terrain;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,19 +12,34 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Radar.Editor.Tile
 {
-    public class TileExplorer : EditorWindow
+    public class TileExplorer : EditorWindow, ITileExplorer
     {
-        private const float MIN_CELL_SIZE = 48;
-        private const float MAX_CELL_SIZE = 128;
+        private static readonly FloatMinMax CELL_SIZE = new (48, 128);
+        
+        public Object SelectedAsset => _atlas;
+
+        public TerrainTileData SelectedTile
+        {
+            get
+            {
+                if (_atlas == null || 
+                    _atlas.data.tiles == null || 
+                    !_atlas.data.tiles.IsIndexInRange(_selectedIndex))
+                {
+                    return null;
+                }
+
+                return _atlas.data.tiles[_selectedIndex];
+            }
+        }
         
         [SerializeField] private ScriptableContainer<TerrainAtlas> _atlas;
         [SerializeField] private float2 _scrollPosition;
-        [SerializeField] private float _cellSize;
+        [SerializeField] private float _cellSize = BMath.Lerp(CELL_SIZE, 0.5f);
         [SerializeField] private int _selectedIndex;
         [SerializeField] private bool _assetFieldShown = true;
         
         private GUILayoutOption _sliderWidth;
-        private string _assetNameDefault;
         private Object[] _thisAndAtlas;
 
         private RectUI _rectUI;
@@ -33,7 +47,6 @@ namespace Beast.Radar.Editor.Tile
         protected override void Warmup()
         {
             _sliderWidth = GUILayout.Width(60);
-            _assetNameDefault = "ScriptableContainer<TerrainAtlas>";
             
             _rectUI = new RectUI();
             _rectUI.Bind<TileDrawer, TileDrawerTask>();
@@ -45,7 +58,7 @@ namespace Beast.Radar.Editor.Tile
             
         }
 
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
             if (_atlas == null || 
                 _atlas.data.tiles == null || 
@@ -56,46 +69,46 @@ namespace Beast.Radar.Editor.Tile
 
             _thisAndAtlas[0] = this;
             _thisAndAtlas[1] = _atlas;
-            
+
             flow.Horizontal(ui =>
             {
+                flow.If(_assetFieldShown || _atlas == null)
+                    .Record(this, "Change tile atlas")
+                    .FieldWidth(100)
+                    .AssetField(Label.NoLabel, ref _atlas);
+
                 if (_atlas == null)
                 {
-                    flow.FieldWidth(100).LabelWidth(_assetNameDefault).AssetField(_assetNameDefault, ref _atlas);
+                    return;
                 }
-                else
+
+                flow.If(_assetFieldShown).Enabled(BAsset.IsDirty(_atlas)).LabelWidthAndButton("Save", () =>
                 {
-                    flow.If(_assetFieldShown).FieldWidth(_atlas.name).AssetField(Label.NoLabel, ref _atlas);
-                    flow.If(_assetFieldShown).Enabled(BAsset.IsDirty(_atlas)).LabelWidthAndButton("Save", () =>
-                    {
-                        BAsset.SaveIfDirty(_atlas);
-                    });
+                    BAsset.SaveIfDirty(_atlas);
+                });
 
-                    flow.LabelWidthAndButton(":", () => _assetFieldShown = !_assetFieldShown);
-                    
-                    ui.FlexibleSpace();
+                flow.LabelWidthAndButton(":", () => _assetFieldShown = !_assetFieldShown);
 
-                    bool hasTiles = _atlas.data.tiles.NotNullAndHasItems();
-                    int tileCount = hasTiles ? _atlas.data.tiles.Count : 0;
+                ui.FlexibleSpace();
 
-                    flow.Enabled(_selectedIndex > 0).LabelWidthAndButton("<<", _moveTileLeftMax);
-                    flow.Enabled(_selectedIndex > 0).LabelWidthAndButton("<", _moveTileLeft);
-                    flow.Enabled(hasTiles && _selectedIndex < tileCount - 1).LabelWidthAndButton(">", _moveTileRight);
-                    flow.Enabled(hasTiles && _selectedIndex < tileCount - 1).LabelWidthAndButton(">>", _moveTileRightMax);
-                    flow.LabelWidthAndButton("NEW", _createNewItem);
-                    flow.Enabled(_selectedIndex >= 0).LabelWidthAndButton("DUP", _duplicateSelectedItem);
-                    flow.Enabled(_selectedIndex >= 0).LabelWidthAndButton("DEL", _deleteSelectedItem);
-                
-                    FloatMinMax minMax = new (MIN_CELL_SIZE, MAX_CELL_SIZE);
-                    flow.Option(_sliderWidth).
-                        FieldWidth(0).
-                        Draw(ui => ui.FloatSlider(Label.NoLabel, minMax, ref _cellSize));
-                }
+                bool hasTiles = _atlas.data.tiles.NotNullAndHasItems();
+                int tileCount = hasTiles ? _atlas.data.tiles.Count : 0;
+
+                flow.Enabled(_selectedIndex > 0).LabelWidthAndButton("<<", _moveTileLeftMax);
+                flow.Enabled(_selectedIndex > 0).LabelWidthAndButton("<", _moveTileLeft);
+                flow.Enabled(hasTiles && _selectedIndex < tileCount - 1).LabelWidthAndButton(">", _moveTileRight);
+                flow.Enabled(hasTiles && _selectedIndex < tileCount - 1).LabelWidthAndButton(">>", _moveTileRightMax);
+                flow.LabelWidthAndButton("NEW", _createNewItem);
+                flow.Enabled(_selectedIndex >= 0).LabelWidthAndButton("DUP", _duplicateSelectedItem);
+                flow.Enabled(_selectedIndex >= 0).LabelWidthAndButton("DEL", _deleteSelectedItem);
+
+                flow.Option(_sliderWidth).FieldWidth(0)
+                    .Draw(ui => ui.FloatSlider(Label.NoLabel, CELL_SIZE, ref _cellSize));
             });
 
             if (_atlas == null)
             {
-                flow.InfoBox(AtlasEditor.WELCOME_MESSAGE);
+                flow.InfoBox("Open or create atlas");
                 return;
             }
 

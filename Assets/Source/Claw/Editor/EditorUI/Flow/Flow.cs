@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
@@ -8,19 +9,15 @@ namespace Beast.Claw.Editor
 {
     public partial class Flow : IFlow
     {
-        const string FATAL_MESSAGE = ": Flow was terminated and not being able to process " +
-                                     "commands until domain reload.";
-        private const int FATAL_LAYOUT_OPTION_COUNT = 8;
-        private const int FATAL_DRAW_CALL_COUNT = 1024;
-        private const int FATAL_COMMAND_CALL_COUNT = 1024;
-
-        public GUIStyle CurrentStyle => _currentStyle;
-        public GUILayoutOption[] CurrentLayout => _layoutOptions[_layoutOptionCount];
+        private const int TEMP_ARRAY_CAPACITY = 8;
+        private const string FATAL_MESSAGE = ": Flow terminated and not able to process commands until domain reload.";
+        private const int MAX_DRAW_CALL_COUNT = 1024;
+        private const int MAX_COMMAND_CALL_COUNT = 1024;
         
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<CommandUndo> _commands = new();
         private readonly Empty _emptyFlow = new ();
-        private readonly GUILayoutOption[][] _layoutOptions;
+        private readonly TempArray<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
 
         private int _flowDepth;
         private bool _validationFailed;
@@ -30,16 +27,6 @@ namespace Beast.Claw.Editor
         private int _commandCallCount;
         private bool _isFatal;
         private string _fatalMessage;
-
-        public Flow()
-        {
-            _layoutOptions = new GUILayoutOption[FATAL_LAYOUT_OPTION_COUNT + 1][];
-            
-            for (int i = 0; i < FATAL_LAYOUT_OPTION_COUNT + 1; i++)
-            {
-                _layoutOptions[i] = new GUILayoutOption[i];
-            }
-        }
 
         private void _handleException(ref FlowUIResult uiResult, Exception exception)
         {
@@ -67,7 +54,7 @@ namespace Beast.Claw.Editor
 
         private void _recordUndo(CommandUndo commandUndo)
         {
-            if (_commandCallCount >= FATAL_COMMAND_CALL_COUNT)
+            if (_commandCallCount >= MAX_COMMAND_CALL_COUNT)
             {
                 _fatal("Max command call count reached");
             }

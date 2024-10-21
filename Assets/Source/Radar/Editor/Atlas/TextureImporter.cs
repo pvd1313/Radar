@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Atlas
 {
     [SerializeField]
     public class TextureImporter

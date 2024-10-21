@@ -3,25 +3,21 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
-using Beast.Radar.Editor.Tile;
 using Beast.Radar.Terrain;
 using UnityEditor;
 using UnityEngine;
 
-namespace Beast.Radar.Editor.Terrain
+namespace Beast.Radar.Editor.Atlas
 {
-    public class AtlasEditor : Beast.Claw.Editor.Window.EditorWindow
+    public class AtlasInspector : Beast.Claw.Editor.Window.EditorWindow
     {
-        public const string WELCOME_MESSAGE = "Open or create atlas.";
-        
         private const string MAIN_POSTFIX = "_main.png";
         private const string COLOR_POSTFIX = "_color.png";
         private const string CONFIG_POSTFIX = "_config.png";
         private const string NAME_SAVE = "Save";
         private const string NAME_OVERRIDE = "Override";
         
-        [SerializeField] private ScriptableContainer<TerrainAtlas> _atlasAsset;
-        [SerializeField] private TileEditor _tileEditor;
+        [SerializeField] private ScriptableContainer<TerrainAtlas> _asset;
         
         private GUILayoutOption _bakeButtonSize;
         private TextureImporter _textureImporter;
@@ -33,7 +29,6 @@ namespace Beast.Radar.Editor.Terrain
             _bakeButtonSize = GUILayout.Width(100);
             _textureImporter = new TextureImporter();
             _textureBaker = new TextureBaker();
-            _tileEditor = new TileEditor(this);
         }
         
         protected override void Reset()
@@ -41,93 +36,76 @@ namespace Beast.Radar.Editor.Terrain
             
         }
 
-        protected override void InspectorUI()
+        protected override void DrawUI()
         {
-            flow.AssetField(nameof(_atlasAsset), ref _atlasAsset);
+            flow.AssetField(Label.NoLabel, ref _asset);
 
-            if (_atlasAsset == null)
+            if (_asset == null)
             {
-                flow.InfoBox(WELCOME_MESSAGE);
+                flow.InfoBox("Open or create atlas");
                 return;
             }
             
-            _atlasAsset.data.TryValidate(out bool atlasIsValid, out string atlasErrorMessage);
+            _asset.data.TryValidate(out bool atlasIsValid, out string atlasErrorMessage);
 
             flow.Horizontal(ui =>
             {
-                flow.Enabled(_atlasAsset != null).Button("Fix Imports", _fixImports);
+                flow.Enabled(_asset != null).Button("FixImports", _fixImports);
 
-                bool hasAllTextures = _atlasAsset != null &&
-                                      _atlasAsset.data.mainTexture != null &&
-                                      _atlasAsset.data.colorTexture != null &&
-                                      _atlasAsset.data.configTexture != null;
+                bool hasAllTextures = _asset != null &&
+                                      _asset.data.mainTexture != null &&
+                                      _asset.data.colorTexture != null &&
+                                      _asset.data.configTexture != null;
 
-                flow.Spy().Enabled(hasAllTextures && atlasIsValid).Button("Bake Textures", ui =>
+                flow.Enabled(hasAllTextures && atlasIsValid).Button("BakeTextures", ui =>
                 {
                     _bakeMainTexture(ui);
                     _bakeColorTexture(ui);
                     _bakeConfigTexture(ui);
                 });
                 
-                flow.Enabled(BAsset.IsNullOrDirty(_atlasAsset)).Button("Save Asset", _saveAtlasAsset);
+                flow.Enabled(BAsset.IsNullOrDirty(_asset)).Button("SaveAsset", _saveAtlasAsset);
             });
 
-            flow.Vertical(ui =>
+            flow.Record(_asset, "Change atlas data").Vertical(ui =>
             {
-                TerrainAtlas atlas = _atlasAsset.data;
+                TerrainAtlas atlas = _asset.data;
 
                 flow.If(!atlasIsValid).WarningBox(atlasErrorMessage);
                 
-                FlowUIResult spyResult = flow.Spy(ui =>
+                ui.Foldout("Textures", ref _texturesFold);
+
+                flow.If(_texturesFold).Tab().Horizontal(ui =>
                 {
-                    ui.Foldout("Textures", ref _texturesFold);
-
-                    flow.If(_texturesFold).Tab().Horizontal(ui =>
-                    {
-                        ui.AssetField(nameof(atlas.mainTexture), ref atlas.mainTexture);
-                        string buttonName = atlas.mainTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                        flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeMainTexture);
-                    });
-
-                    flow.If(_texturesFold).Tab().Horizontal(ui =>
-                    {
-                        ui.AssetField(nameof(atlas.colorTexture), ref atlas.colorTexture);
-                        string buttonName = atlas.colorTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                        flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeColorTexture);
-                    });
-
-                    flow.If(_texturesFold).Tab().Horizontal(ui =>
-                    {
-                        ui.AssetField(nameof(atlas.configTexture), ref atlas.configTexture);
-                        string buttonName = atlas.configTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                        flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
-                    });
-                    
-                    ui.Int2FieldTwoLine(nameof(atlas.tileCount), ref atlas.tileCount);
-                    ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
+                    ui.AssetField(nameof(atlas.mainTexture), ref atlas.mainTexture);
+                    string buttonName = atlas.mainTexture == null ? NAME_SAVE : NAME_OVERRIDE;
+                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeMainTexture);
                 });
 
-                ui.Space(UIStyle.SIZE_MINOR_SPACE);
-
-                if (spyResult.changesDetected)
+                flow.If(_texturesFold).Tab().Horizontal(ui =>
                 {
-                    BAsset.SetDirty(_atlasAsset);
-                }
+                    ui.AssetField(nameof(atlas.colorTexture), ref atlas.colorTexture);
+                    string buttonName = atlas.colorTexture == null ? NAME_SAVE : NAME_OVERRIDE;
+                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeColorTexture);
+                });
 
-                _tileEditor.DrawUI(atlas.tiles, out bool changesDetected);
-                
-                if (changesDetected)
+                flow.If(_texturesFold).Tab().Horizontal(ui =>
                 {
-                    BAsset.SetDirty(_atlasAsset);
-                }
+                    ui.AssetField(nameof(atlas.configTexture), ref atlas.configTexture);
+                    string buttonName = atlas.configTexture == null ? NAME_SAVE : NAME_OVERRIDE;
+                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
+                });
+                    
+                ui.Int2FieldTwoLine(nameof(atlas.tileCount), ref atlas.tileCount);
+                ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
             });
         }
 
         private void _fixImports()
         {
-            if (_atlasAsset.data.tiles != null)
+            if (_asset.data.tiles != null)
             {
-                foreach (TerrainTileData sprite in _atlasAsset.data.tiles)
+                foreach (TerrainTileData sprite in _asset.data.tiles)
                 {
                     if (sprite.texture == null)
                     {
@@ -149,7 +127,7 @@ namespace Beast.Radar.Editor.Terrain
 
         private void _saveAtlasAsset()
         {
-            BAsset.SaveIfDirty(_atlasAsset);
+            BAsset.SaveIfDirty(_asset);
         }
 
         private void _bakeMainTexture(FlowUI ui)
@@ -158,15 +136,15 @@ namespace Beast.Radar.Editor.Terrain
             
             try
             {
-                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.data.mainTexture, MAIN_POSTFIX);
+                string texturePath = _tryGetTexturePathOrNew(ui, _asset.data.mainTexture, MAIN_POSTFIX);
                 if (texturePath == null)
                 {
                     return;
                 }
 
-                bakedTexture = _textureBaker.BakeMainTexture(_atlasAsset.data);
+                bakedTexture = _textureBaker.BakeMainTexture(_asset.data);
                 
-                _atlasAsset.data.mainTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.MainTexture);
+                _asset.data.mainTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.MainTexture);
             }
             finally
             {
@@ -183,15 +161,15 @@ namespace Beast.Radar.Editor.Terrain
             
             try
             {
-                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.data.colorTexture, COLOR_POSTFIX);
+                string texturePath = _tryGetTexturePathOrNew(ui, _asset.data.colorTexture, COLOR_POSTFIX);
                 if (texturePath == null)
                 {
                     return;
                 }
                 
-                bakedTexture = _textureBaker.BakeColorTexture(_atlasAsset.data);
+                bakedTexture = _textureBaker.BakeColorTexture(_asset.data);
 
-                _atlasAsset.data.colorTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.ColorTexture);
+                _asset.data.colorTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.ColorTexture);
             }
             finally
             {
@@ -208,15 +186,15 @@ namespace Beast.Radar.Editor.Terrain
 
             try
             {
-                string texturePath = _tryGetTexturePathOrNew(ui, _atlasAsset.data.configTexture, CONFIG_POSTFIX);
+                string texturePath = _tryGetTexturePathOrNew(ui, _asset.data.configTexture, CONFIG_POSTFIX);
                 if (texturePath == null)
                 {
                     return;
                 }
                 
-                bakedTexture = _textureBaker.BakeConfigTexture(_atlasAsset.data);
+                bakedTexture = _textureBaker.BakeConfigTexture(_asset.data);
 
-                _atlasAsset.data.configTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.ConfigTexture);
+                _asset.data.configTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.ConfigTexture);
             }
             finally
             {
@@ -231,7 +209,7 @@ namespace Beast.Radar.Editor.Terrain
         {
             if (texture == null)
             {
-                string texturePath = AssetDatabase.GetAssetPath(_atlasAsset);
+                string texturePath = AssetDatabase.GetAssetPath(_asset);
                 string directory = Path.GetDirectoryName(texturePath);
                 string fileName = Path.GetFileNameWithoutExtension(texturePath);
 

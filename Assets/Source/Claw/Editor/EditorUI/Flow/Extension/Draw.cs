@@ -14,7 +14,7 @@ namespace Beast.Claw.Editor
 
                 try
                 {
-                    ui.PassiveLabel(label);
+                    ui.Label(label);
                 }
                 catch (Exception e)
                 {
