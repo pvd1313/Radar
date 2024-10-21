@@ -1,12 +1,12 @@
-﻿using Beast.Claw.Debug;
+﻿using System;
+using Beast.Claw.Debug;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public struct Style
     {
-        public static Style NoStyle { get; } = default;
-        
         public bool hasStyle;
         public GUIStyle style;
         
@@ -20,7 +20,7 @@ namespace Beast.Claw.Editor
                 
                 BDebug.StaticLogWarning(message);
                 
-                return NoStyle;
+                return default;
             }
 
             return new Style
@@ -28,6 +28,21 @@ namespace Beast.Claw.Editor
                 hasStyle = true,
                 style = guiStyle
             };
+        }
+
+        public float2 CalcSize(Label label)
+        {
+            if (!hasStyle)
+            {
+                throw new InvalidOperationException("No style defined");
+            }
+
+            if (!label.hasLabel)
+            {
+                throw new ArgumentException("Label does not have GUIContent");
+            }
+
+            return style.CalcSize(label.content);
         }
 
         public void ValidateHasStyleThrowException()

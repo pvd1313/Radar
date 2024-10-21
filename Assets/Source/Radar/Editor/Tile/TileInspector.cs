@@ -109,6 +109,9 @@ namespace Beast.Radar.Editor.Tile
                         tile.averageColor = _helper.GetAverageColor(tile.texture);
                     });
                 });
+
+                ui.ExperimentalGenericField(nameof(tile.spawnWaterRange), ref tile.spawnWaterRange);
+                ui.ExperimentalGenericField(nameof(tile.spawnForestRange), ref tile.spawnForestRange);
             });
         }
 

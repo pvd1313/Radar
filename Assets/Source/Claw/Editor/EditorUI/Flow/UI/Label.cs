@@ -1,4 +1,6 @@
-﻿using Beast.Claw.Debug;
+﻿using System;
+using Beast.Claw.Debug;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -49,6 +51,21 @@ namespace Beast.Claw.Editor
                 hasLabel = true,
                 content = EditorGUIUtility.TrTempContent(text)
             };
+        }
+
+        public float2 CalcSizeOrDefault(Style style)
+        {
+            if (!hasLabel)
+            {
+                return 0;
+            }
+
+            if (!style.hasStyle)
+            {
+                throw new ArgumentException("Style not set");
+            }
+
+            return style.CalcSize(content);
         }
 
         public void ValidateHasLabelThrowException()

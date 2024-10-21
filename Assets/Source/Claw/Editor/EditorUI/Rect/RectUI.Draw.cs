@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Attributes;
-using Beast.Claw.Attributes.Annotation;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,20 +6,33 @@ namespace Beast.Claw.Editor
 {
     public partial class RectUI
     {
-        public void Label(Rect rect, [LabelMustBeSet] Label label, Style style)
+        public void Label(Rect screen, Label label, Style style)
         {
-            if (style.hasStyle)
-            {
-                GUI.Label(rect, label.content, style.style);
-            }
-            else
-            {
-                GUI.Label(rect, label.content);
-            }
+            label.ValidateHasLabelThrowException();
+            style.ValidateHasStyleThrowException();
+            
+            GUI.Label(screen, label.content, style.style);
+        }
+
+        public Rect PrefixLabel(Rect screen, Label label, Style style)
+        {
+            label.ValidateHasLabelThrowException();
+            style.ValidateHasStyleThrowException();
+            
+            return EditorGUI.PrefixLabel(screen, label.content, style.style);
+        }
+
+        public float FloatField(Rect screen, float value, Style style)
+        {
+            style.ValidateHasStyleThrowException();
+
+            return EditorGUI.FloatField(screen, value, style.style);
         }
 
         public void Texture(Rect rect, Texture texture)
         {
+            texture.ValidateNotNullThrowException(nameof(texture));
+            
             EditorGUI.DrawPreviewTexture(rect, texture);
         }
 
@@ -31,28 +43,14 @@ namespace Beast.Claw.Editor
         
         public bool Button(Rect rect, [LabelCanBeEmpty] Label label, Style style)
         {
+            style.ValidateHasStyleThrowException();   
+            
             if (label.hasLabel)
             {
-                if (style.hasStyle)
-                {
-                    return GUI.Button(rect, label.content, style.style);
-                }
-                else
-                {
-                    return GUI.Button(rect, label.content);
-                }
+                return GUI.Button(rect, label.content, style.style);
             }
-            else
-            {
-                if (style.hasStyle)
-                {
-                    return GUI.Button(rect, string.Empty, style.style);
-                }
-                else
-                {
-                    return GUI.Button(rect, string.Empty);
-                }
-            }
+
+            return GUI.Button(rect, string.Empty, style.style);
         }
     }
 }

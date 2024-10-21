@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Math;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain
@@ -12,6 +13,8 @@ namespace Beast.Radar.Terrain
         public Color averageColor;
         public float yCropHeight;
         public float yBlendCenter;
+        public FloatMinMax spawnWaterRange;
+        public FloatMinMax spawnForestRange;
         public int index;
         
         public string Validate()
@@ -44,6 +47,16 @@ namespace Beast.Radar.Terrain
             if (index < 0)
             {
                 return $"Invalid index " + index;
+            }
+
+            if (!spawnWaterRange.IsValidRange() || !spawnWaterRange.IsNormalized())
+            {
+                return $"Invalid spawn water range: {spawnWaterRange}";
+            }
+
+            if (!spawnForestRange.IsValidRange() || !spawnForestRange.IsNormalized())
+            {
+                return $"Invalid spawn forest range: {spawnForestRange}";
             }
 
             return null;

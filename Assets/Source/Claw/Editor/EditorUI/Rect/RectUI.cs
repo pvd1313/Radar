@@ -1,48 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public partial class RectUI
     {
-        private readonly Dictionary<Type, Type> _taskToDrawerType = new();
-        private readonly Dictionary<Type, object> _taskToObject = new();
-        private readonly Dictionary<Type, Action> _taskToDrawAction = new();
+        public UIStyleSet DefaultStyleSet { get; } = new();
+        
+        private readonly Dictionary<Type, Type> _rectTaskToDrawer = new();
+        private readonly Dictionary<Type, object> _rectTaskToObject = new();
+        private readonly Dictionary<Type, Action> _rectTaskToAction = new();
 
-        private object _currentTask;
-        private Rect _currentRect;
+        private readonly Dictionary<Type, Type> _fieldValueToDrawer = new();
+        private readonly Dictionary<Type, object> _fieldValueToContainer = new();
+        private readonly Dictionary<Type, Action> _fieldValueToAction = new();
 
-        public void Bind<TDrawer, TDrawTask>()
+        private object _currentDrawTask;
+        private Rect _currentScreen;
+        private Label _currentLabel;
+        private object _currentValueContainer;
+
+        public void BindRect<TDrawer, TDrawTask>()
             where TDrawer : class, IRectDrawer<TDrawTask>, new()
             where TDrawTask : class, IValidatable, new()
         {
             Type drawerType = typeof(TDrawer);
             Type taskType = typeof(TDrawTask);
 
-            if (_taskToDrawerType.TryGetValue(taskType, out Type existingDrawer))
+            if (_rectTaskToDrawer.TryGetValue(taskType, out Type existingDrawer))
             {
-                string message = $"Task '{taskType.FullName}' already binded to '{existingDrawer.FullName}'";
+                string message = $"Task '{taskType.FullName}' is already binded to '{existingDrawer.FullName}'";
                 throw new InvalidOperationException(message);
             }
 
-            _taskToDrawerType[taskType] = drawerType;
-            _taskToObject[taskType] = new TDrawTask();
+            _rectTaskToDrawer[taskType] = drawerType;
+            _rectTaskToObject[taskType] = new TDrawTask();
             
             TDrawer drawer = new();
             drawer.Initialize(this);
 
-            _taskToDrawAction[taskType] = () =>
+            _rectTaskToAction[taskType] = () =>
             {
-                drawer.Draw(_currentRect, (TDrawTask)_currentTask);
+                drawer.Draw(_currentScreen, (TDrawTask)_currentDrawTask);
             };
         }
 
-        public void Temp<TDrawTask>(out TDrawTask task) where TDrawTask : class
+        public void BindField<TDrawer, TValue>()
+            where TDrawer : class, IFieldDrawer<TValue>, new()
+        {
+            Type drawerType = typeof(TDrawer);
+            Type valueType = typeof(TValue);
+
+            if (_fieldValueToDrawer.TryGetValue(valueType, out Type existingDrawer))
+            {
+                string message = $"Value '{valueType.FullName}' is already binded to '{existingDrawer.FullName}'";
+                throw new InvalidOperationException(message);
+            }
+
+            _fieldValueToDrawer[valueType] = drawerType;
+            _fieldValueToContainer[valueType] = new ValueContainer<TValue>();
+
+            TDrawer drawer = new();
+            drawer.Initialize(this);
+
+            _fieldValueToAction[valueType] = () =>
+            {
+                FieldTask<TValue> task;
+                task.data = (ValueContainer<TValue>)_currentValueContainer;
+                task.label = _currentLabel;
+                task.screen = _currentScreen;
+
+                drawer.Draw(task);
+            };
+        }
+
+        public void TempTask<TDrawTask>(out TDrawTask task) where TDrawTask : class
         {
             Type taskType = typeof(TDrawTask);
 
-            if (!_taskToObject.TryGetValue(taskType, out object taskObject))
+            if (!_rectTaskToObject.TryGetValue(taskType, out object taskObject))
             {
                 string message = $"No drawers binded for task '{taskType.FullName}'";
                 throw new InvalidOperationException(message);
@@ -51,20 +89,57 @@ namespace Beast.Claw.Editor
             task = (TDrawTask)taskObject;
         }
 
-        public void Draw<TDrawTask>(Rect rect, TDrawTask task) where TDrawTask : class, IValidatable
+        public Label TempLabel(string text)
+        {
+            // TODO : #R2 This is broken;
+            return EditorGUIUtility.TrTempContent(text);
+        }
+
+        public TValue DrawField<TValue>(Rect rect, Label label, TValue value)
+        {
+            Type valueType = typeof(TValue);
+
+            if (!_fieldValueToAction.TryGetValue(valueType, out Action drawAction))
+            {
+                string message = $"No field drawers binded for task '{valueType.FullName}'";
+                throw new InvalidOperationException(message);
+            }
+
+            _currentScreen = rect;
+            _currentLabel = label;
+            _currentValueContainer = _fieldValueToContainer[valueType];
+
+            try
+            {
+                ValueContainer<TValue> valueContainer = _currentValueContainer as ValueContainer<TValue>;
+
+                valueContainer.value = value;
+                
+                drawAction.Invoke();
+
+                return valueContainer.value;
+            }
+            finally
+            {
+                _currentLabel = default;
+                _currentValueContainer = default;
+            }
+        }
+
+        public void DrawRect<TDrawTask>(Rect rect, TDrawTask task) where TDrawTask : class, IValidatable
         {
             Type taskType = typeof(TDrawTask);
 
-            if (!_taskToDrawAction.TryGetValue(taskType, out Action drawAction))
+            if (!_rectTaskToAction.TryGetValue(taskType, out Action drawAction))
             {
-                string message = $"No drawers binded for task '{taskType.FullName}'";
+                string message = $"No rect drawers binded for task '{taskType.FullName}'";
                 throw new InvalidOperationException(message);
             }
             
             task.ValidateThrowException();
 
-            _currentRect = rect;
-            _currentTask = task;
+            _currentScreen = rect;
+            _currentDrawTask = task;
             
             try
             {
@@ -72,8 +147,8 @@ namespace Beast.Claw.Editor
             }
             finally
             {
-                _currentTask = default;
-                _currentTask = null;
+                _currentDrawTask = default;
+                _currentDrawTask = null;
             }
         }
     }

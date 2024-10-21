@@ -49,7 +49,7 @@ namespace Beast.Radar.Editor.Tile
             _sliderWidth = GUILayout.Width(60);
             
             _rectUI = new RectUI();
-            _rectUI.Bind<TileDrawer, TileDrawerTask>();
+            _rectUI.BindRect<TileDrawer, TileDrawerTask>();
             _thisAndAtlas = new Object[2];
         }
         
@@ -129,13 +129,13 @@ namespace Beast.Radar.Editor.Tile
                 
                 for (int i = 0; i < tiles.Count; i++)
                 {
-                    _rectUI.Temp(out TileDrawerTask task);
+                    _rectUI.TempTask(out TileDrawerTask task);
                     {
                         task.tile = tiles[i];
                         task.selectedIndex = _selectedIndex;
                         task.tileIndex = i;
                     }
-                    _rectUI.Draw(cellGrid.GetElement(i), task);
+                    _rectUI.DrawRect(cellGrid.GetElement(i), task);
 
                     if (_selectedIndex != task.selectedIndex)
                     {
