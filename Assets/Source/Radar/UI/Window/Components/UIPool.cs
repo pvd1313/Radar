@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class UIPool<T> where T : UIView, IUIPoolEntity
+    public class UIPool<T> where T : UIView, IUIPoolable
     {
         private readonly IUIFactory _uiFactory;
         private readonly Transform _root;
@@ -50,7 +50,6 @@ namespace Beast.Radar.UI
         {
             _uiFactory.Create(this, _prefabID, out T entity);
             entity.transform.SetParent(_root, false);
-            entity.Init(initParams);
             _all.Add(entity);
             return entity;
         }
