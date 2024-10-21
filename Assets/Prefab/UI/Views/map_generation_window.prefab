@@ -1733,7 +1733,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1075714925806160373, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_Name
-      value: buttonText_4056
+      value: buttonText_4096
       objectReference: {fileID: 0}
     - target: {fileID: 2552193380162127109, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_Sprite
@@ -1833,7 +1833,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_text
-      value: 4056
+      value: 4096
       objectReference: {fileID: 0}
     - target: {fileID: 4541878776036837791, guid: 22e594b27edb65445b5d7cd4d620db83, type: 3}
       propertyPath: m_fontSize
@@ -1883,7 +1883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfe4f8d56e543dcadfb626e776e2fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _value: 4056
+  _value: 4096
   _button: {fileID: 7304185561837987593}
   _selectable: {fileID: 2823898403543149875}
   _selectableVisual: {fileID: 9034639765280790736}
