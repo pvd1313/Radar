@@ -142,11 +142,10 @@ namespace Beast.Radar.Cinematic
             float2 screenPoint = _input.ScreenPoint;
             float2 worldPointBeforeZoom = _transform.ScreenPointToWorld(screenPoint);
             
-            float distanceFactor = Mathf.Lerp(0.1f, 10f, _transform.Zoom01);
-            float zoomDelta = _input.ScrollDelta * _motion.zoomSpeed * distanceFactor * Time.deltaTime;
-
-            _transform.AddZoom(-zoomDelta);
-
+            float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
+            float zoomValue = _input.ScrollDelta * distanceFactor * _motion.zoomSpeed * Time.deltaTime;
+            _transform.AddZoom(-zoomValue);
+            
             float2 worldPointAfterZoom = _transform.ScreenPointToWorld(screenPoint);
             float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
 
