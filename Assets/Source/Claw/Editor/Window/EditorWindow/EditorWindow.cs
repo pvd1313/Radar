@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Beast.Claw.Editor.Window
 {
     [FancyAsset]
-    public abstract class EditorWindow : UnityEditor.EditorWindow
+    public abstract class EditorWindow : UnityEditor.EditorWindow, IHasCustomMenu
     {
         public IFlow flow => _flow.Begin();
 
@@ -18,6 +18,21 @@ namespace Beast.Claw.Editor.Window
         protected EditorWindow()
         {
             _subscribeUnityEvents();
+        }
+        
+        public void AddItemsToMenu(GenericMenu menu)
+        {
+            Label message = "Reset";
+            
+            menu.AddItem(message.content, false, _ =>
+            {
+                _safeDispose();
+                
+                _safeReset();
+                
+                Repaint();
+                
+            }, null);
         }
 
         /// <summary>
@@ -42,22 +57,6 @@ namespace Beast.Claw.Editor.Window
         /// Called when window closing. Called before assembly reload.
         /// </summary>
         protected abstract void Dispose();
-
-        /// <summary>
-        /// Leads to: Dispose() -> Reset() -> ExitGUIException() -> Warmup()
-        /// </summary>
-        /// <exception cref="ExitGUIException"></exception>
-        protected void DrawResetButton()
-        {
-            _flow.Begin().LabelWidthAndButton("~", () =>
-            {
-                _safeDispose();
-                
-                _safeReset();
-
-                throw new ExitGUIException();
-            });
-        }
 
         private void _beforeAssemblyReload()
         {
