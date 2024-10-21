@@ -22,7 +22,7 @@ namespace Beast.Radar.Debug
     
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
         }
 
         private UniTask<OperationResult> _warmup()

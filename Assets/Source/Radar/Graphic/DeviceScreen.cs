@@ -19,7 +19,7 @@ namespace Beast.Radar.Graphic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.Tick, _tick);
+            handle.ListenUpdate(this, UpdateID.TICK, _tick);
         }
 
         private void _tick()

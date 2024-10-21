@@ -43,8 +43,8 @@ namespace Beast.Radar.UI
         public void Register(IGameCycleHandle handle)
         {
 #if DEVELOPMENT
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
-            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
 #endif
         }
         

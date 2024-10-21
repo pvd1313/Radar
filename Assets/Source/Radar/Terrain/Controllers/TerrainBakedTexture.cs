@@ -30,8 +30,8 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.GameLoad, _gameLoading);
-            handle.ListenOperation(this, OperationID.Dispose, _dispose);
+            handle.ListenOperation(this, OperationID.GAME_LOAD, _gameLoading);
+            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
         }
         
         private async UniTask<OperationResult> _gameLoading()

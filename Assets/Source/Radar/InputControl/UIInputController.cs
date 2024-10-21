@@ -36,9 +36,9 @@ namespace Beast.Radar.InputControl
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
-            handle.ListenOperation(this, OperationID.Dispose, _dispose);
-            handle.ListenUpdate(this, UpdateID.Tick, _tick);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenUpdate(this, UpdateID.TICK, _tick);
         }
 
         private UniTask<OperationResult> _warmup()

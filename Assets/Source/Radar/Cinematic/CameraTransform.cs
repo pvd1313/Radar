@@ -45,9 +45,9 @@ namespace Beast.Radar.Cinematic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
-            handle.ListenOperation(this, OperationID.GameLoad, _gameLoad);
-            handle.ListenOperation(this, OperationID.GameSave, _gameSave);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(this, OperationID.GAME_LOAD, _gameLoad);
+            handle.ListenOperation(this, OperationID.GAME_SAVE, _gameSave);
         }
 
         private UniTask<OperationResult> _warmup()

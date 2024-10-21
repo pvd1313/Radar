@@ -31,7 +31,7 @@ namespace Beast.Radar.InputControl
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.Tick, _tick);
+            handle.ListenUpdate(this, UpdateID.TICK, _tick);
         }
 
         public void ChangeBlock(bool isBlock)

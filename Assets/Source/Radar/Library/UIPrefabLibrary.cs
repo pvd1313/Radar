@@ -24,7 +24,7 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
         }
         
         public UniTask<OperationResult> _warmup()

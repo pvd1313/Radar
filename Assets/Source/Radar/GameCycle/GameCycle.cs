@@ -24,22 +24,22 @@ namespace Beast.Radar.GameCycle
             {
                 initializationEventIDs = new HashSet<string>
                 {
-                    OperationID.Warmup,
-                    OperationID.Dispose,
+                    OperationID.WARMUP,
+                    OperationID.DISPOSE,
                     
-                    OperationID.GameSave,
-                    OperationID.GameLoad,
+                    OperationID.GAME_SAVE,
+                    OperationID.GAME_LOAD,
                     
-                    OperationID.PreferencesSave,
-                    OperationID.PreferencesLoad
+                    OperationID.PREFERENCES_SAVE,
+                    OperationID.PREFERENCES_LOAD
                 },
 
                 updateEventIDs = new HashSet<string>
                 {
-                    UpdateID.Tick,
-                    UpdateID.Render,
-                    UpdateID.FixedUpdate,
-                    UpdateID.GizmosDraw
+                    UpdateID.TICK,
+                    UpdateID.RENDER,
+                    UpdateID.FIXED_UPDATE,
+                    UpdateID.GIZMOS_DRAW
                 }
             });
 
@@ -48,13 +48,13 @@ namespace Beast.Radar.GameCycle
                 return;
             }
             
-            OperationResult result = await _gameCycle.Execute(this, OperationID.PreferencesLoad);
+            OperationResult result = await _gameCycle.Execute(this, OperationID.PREFERENCES_LOAD);
             if (result.IsFailed())
             {
                 return;
             }
             
-            result = await _gameCycle.Execute(this, OperationID.Warmup);
+            result = await _gameCycle.Execute(this, OperationID.WARMUP);
             if (result.IsFailed())
             {
                 return;
@@ -67,18 +67,18 @@ namespace Beast.Radar.GameCycle
             }
             
             _mono = BScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
-            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FixedUpdate);
-            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GizmosDraw);
-            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.Tick);
-            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.Render);
+            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FIXED_UPDATE);
+            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GIZMOS_DRAW);
+            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.TICK);
+            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.RENDER);
             _mono.Destroyed += () => UniTask.Create(OnMonoDestroyed);
         }
 
         // In future we will have to also save preferences on application lost focus.
         private async UniTask OnMonoDestroyed()
         {
-            await _gameCycle.Execute(this, OperationID.PreferencesSave);
-            await _gameCycle.Execute(this, OperationID.Dispose);
+            await _gameCycle.Execute(this, OperationID.PREFERENCES_SAVE);
+            await _gameCycle.Execute(this, OperationID.DISPOSE);
         }
     }
 }

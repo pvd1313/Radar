@@ -24,11 +24,10 @@ namespace Beast.Claw.Gizmos
             _config = config;
         }
         
-        //TODO: https://risenbeast.youtrack.cloud/issue/R-59/Tech-Feature-High
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, "warmup", _warmup);
-            handle.ListenOperation(this, "dispose", _dispose);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
         }
         
         private UniTask<OperationResult> _warmup()

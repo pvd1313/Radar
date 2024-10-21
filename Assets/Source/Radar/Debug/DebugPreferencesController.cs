@@ -24,8 +24,8 @@ namespace Beast.Radar.Debug
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.PreferencesLoad, PreferencesLoad);
-            handle.ListenOperation(this, OperationID.PreferencesSave, PreferencesSave);
+            handle.ListenOperation(this, OperationID.PREFERENCES_LOAD, PreferencesLoad);
+            handle.ListenOperation(this, OperationID.PREFERENCES_SAVE, PreferencesSave);
         }
 
         private async UniTask<OperationResult> PreferencesLoad()

@@ -38,9 +38,9 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.Warmup, _warmup);
-            handle.ListenOperation(this, OperationID.Dispose, _dispose);
-            handle.ListenUpdate(this, UpdateID.Render, _render);
+            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenUpdate(this, UpdateID.RENDER, _render);
         }
         
         public void Render(TerrainColorRenderTask task)

@@ -56,7 +56,7 @@ namespace Beast.Radar.Serialization
 
                 await memory.DisposeAsync();
                 
-                return await _gameCycle.Execute(this, OperationID.GameLoad);
+                return await _gameCycle.Execute(this, OperationID.GAME_LOAD);
             }
             catch (Exception e)
             {
@@ -78,7 +78,7 @@ namespace Beast.Radar.Serialization
 
                 await _fileManager.Close(streamData);
                 
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GameLoad);
+                OperationResult result = await _gameCycle.Execute(this, OperationID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
@@ -96,7 +96,7 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GameSave);
+                OperationResult result = await _gameCycle.Execute(this, OperationID.GAME_SAVE);
                 if (result.status != EOperationStatus.Success)
                 {
                     return result;
