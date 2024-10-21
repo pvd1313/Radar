@@ -106,7 +106,8 @@ namespace Beast.Radar.UI
 
             foreach (EItemType type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
             {
-                _itemTypePool.GetNext(type);
+                DebugItemTypeButton typeButton = _itemTypePool.GetNext(type);
+                typeButton.SetType(type);
             }
 
             _uiFactory.Create(this, PrefabID.InputIconDisplay, out InputIconDisplay rightShoulderIcon);

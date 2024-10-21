@@ -102,7 +102,6 @@ namespace Beast.Radar.Cinematic
             _zoom();
         }
 
-
         private void _move()
         {
             if (!_input.IsPressMove)

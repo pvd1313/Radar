@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class DebugItemTypeButton : UIView, IUIPoolEntity, IUIRadioButton<DebugItemTypeButton>
+    public class DebugItemTypeButton : UIView, IUIPoolable, IUIRadioButton<DebugItemTypeButton>
     {
         public bool IsSelected { get; private set; }
         public EItemType ItemType { get; private set; }
@@ -16,13 +16,10 @@ namespace Beast.Radar.UI
         [SerializeField] private TextMeshProUGUI _typeText;
         [SerializeField] private UISelectable _selectable;
         [SerializeField] private SelectableColor _visualEffect;
-        
-        public void Init(params object[] parameters)
+
+        public void SetType(EItemType itemType)
         {
-            if (parameters[0] is EItemType itemType)
-            {
-                ItemType = itemType;
-            }
+            ItemType = itemType;
 
             switch (ItemType)
             {
@@ -43,18 +40,20 @@ namespace Beast.Radar.UI
                     _visualEffect.SetDefaultColor(new Color(0.3f, 0.5f, 0.7f));
                     break;
             }
+
             _typeText.SetText(ItemType == EItemType.None ? "all" : ItemType.ToString().ToLower());
-            _button.onClick.AddListener(Select);
         }
 
         public void Enable()
         {
+            _button.onClick.AddListener(Select);
             gameObject.SetActive(true);
         }
 
         public void Disable()
         {
             gameObject.SetActive(false);
+            _button.onClick.RemoveAllListeners();
         }
 
         public void Select()
@@ -71,6 +70,5 @@ namespace Beast.Radar.UI
             _selectable.SetInteractable(true);
             _visualEffect.SetDefaultMode();
         }
-        
     }
 }

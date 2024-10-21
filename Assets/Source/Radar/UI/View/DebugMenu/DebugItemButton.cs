@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class DebugItemButton : UIView, IUIPoolEntity, IUIRadioButton<DebugItemButton>
+    public class DebugItemButton : UIView, IUIPoolable, IUIRadioButton<DebugItemButton>
     {
         public bool IsSelected { get; private set; }
         public ItemData Item { get; private set; }
@@ -17,19 +17,16 @@ namespace Beast.Radar.UI
         [SerializeField] private UISelectable _selectable;
         [SerializeField] private SelectableColor _selectableColor;
         
-        public void Init(params object[] parameters)
-        {
-            _button.onClick.AddListener(Select);
-        }
-
         public void Enable()
         {
+            _button.onClick.AddListener(Select);
             gameObject.SetActive(true);
         }
 
         public void Disable()
         {
             gameObject.SetActive(false);
+            _button.onClick.RemoveAllListeners();
         }
 
         public void Select()

@@ -1,8 +1,7 @@
 namespace Beast.Radar.UI
 {
-    public interface IUIPoolEntity
+    public interface IUIPoolable
     {
-        void Init(params object[] parameters);
         void Enable();
         void Disable();
     }
