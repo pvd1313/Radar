@@ -8,6 +8,7 @@ namespace Beast.Claw.GameCycle
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;
         public bool preventDuplicatingSubscription;
+        public bool preventExternObjectMethodSubscription;
         
         public override IEnumerable<IConfig> Bind()
         {

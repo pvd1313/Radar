@@ -26,8 +26,8 @@ namespace Beast.Claw.Gizmos
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(this, UpdateID.TICK, _tick);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenUpdate(UpdateID.TICK, _tick);
         }
 
         private UniTask<OperationResult> _warmup()

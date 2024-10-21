@@ -1,7 +1,6 @@
 ﻿using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Radar.GameCycle;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -19,7 +18,7 @@ namespace Beast.Radar.Graphic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.TICK, _tick);
+            handle.ListenUpdate(UpdateID.TICK, _tick);
         }
 
         private void _tick()

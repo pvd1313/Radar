@@ -15,3 +15,4 @@ MonoBehaviour:
   exceptionStopsUpdates: 1
   updateExceptionThreshold: 0
   preventDuplicatingSubscription: 1
+  preventExternObjectMethodSubscription: 1

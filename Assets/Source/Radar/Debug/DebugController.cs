@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -22,7 +21,7 @@ namespace Beast.Radar.Debug
     
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
 
         private UniTask<OperationResult> _warmup()

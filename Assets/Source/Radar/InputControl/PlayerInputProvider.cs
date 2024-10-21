@@ -2,7 +2,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine.InputSystem;
@@ -26,8 +25,8 @@ namespace Beast.Radar.InputControl
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, Warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, Dispose);
+            handle.ListenOperation(OperationID.WARMUP, Warmup);
+            handle.ListenOperation(OperationID.DISPOSE, Dispose);
         }
         
         private UniTask<OperationResult> Warmup()

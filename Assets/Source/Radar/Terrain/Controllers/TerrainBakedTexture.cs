@@ -1,6 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
@@ -30,8 +29,8 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.GAME_LOAD, _gameLoading);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoading);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
         private async UniTask<OperationResult> _gameLoading()

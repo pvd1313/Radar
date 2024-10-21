@@ -2,7 +2,6 @@
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 
@@ -24,8 +23,8 @@ namespace Beast.Radar.Debug
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.PREFERENCES_LOAD, PreferencesLoad);
-            handle.ListenOperation(this, OperationID.PREFERENCES_SAVE, PreferencesSave);
+            handle.ListenOperation(OperationID.PREFERENCES_LOAD, PreferencesLoad);
+            handle.ListenOperation(OperationID.PREFERENCES_SAVE, PreferencesSave);
         }
 
         private async UniTask<OperationResult> PreferencesLoad()

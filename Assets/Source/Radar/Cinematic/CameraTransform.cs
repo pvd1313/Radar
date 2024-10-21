@@ -2,7 +2,6 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -45,9 +44,9 @@ namespace Beast.Radar.Cinematic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.GAME_LOAD, _gameLoad);
-            handle.ListenOperation(this, OperationID.GAME_SAVE, _gameSave);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
+            handle.ListenOperation(OperationID.GAME_SAVE, _gameSave);
         }
 
         private UniTask<OperationResult> _warmup()

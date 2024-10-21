@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Debug;
-using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -43,8 +42,8 @@ namespace Beast.Radar.UI
         public void Register(IGameCycleHandle handle)
         {
 #if DEVELOPMENT
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
 #endif
         }
         

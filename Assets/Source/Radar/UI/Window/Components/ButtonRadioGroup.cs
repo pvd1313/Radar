@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Debug;
 
 namespace Beast.Radar.UI
 {

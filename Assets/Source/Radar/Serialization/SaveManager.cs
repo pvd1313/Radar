@@ -4,7 +4,6 @@ using Beast.Claw;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
-using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 
 using BinaryReader = Beast.Claw.Serialization.BinaryReader;

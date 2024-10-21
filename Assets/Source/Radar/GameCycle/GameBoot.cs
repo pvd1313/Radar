@@ -1,11 +1,8 @@
 ﻿using Beast.Claw.GameCycle;
-using Beast.Radar.Core;
-using Beast.Radar.Debug;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.GameCycle
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Math;
-using Beast.Radar.GameCycle;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -31,7 +30,7 @@ namespace Beast.Radar.InputControl
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(this, UpdateID.TICK, _tick);
+            handle.ListenUpdate(UpdateID.TICK, _tick);
         }
 
         public void ChangeBlock(bool isBlock)

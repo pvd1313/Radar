@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using Beast.Claw;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Object = UnityEngine.Object;
 
 namespace Beast.Radar.Terrain
 {
@@ -38,9 +35,9 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(this, UpdateID.RENDER, _render);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenUpdate(UpdateID.RENDER, _render);
         }
         
         public void Render(TerrainColorRenderTask task)

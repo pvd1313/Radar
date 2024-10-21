@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.Core;
-using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
@@ -51,8 +49,8 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
         public void Open()

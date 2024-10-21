@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Beast.Radar.Debug
+﻿namespace Beast.Radar.Debug
 {
     public interface IDebugController
     {

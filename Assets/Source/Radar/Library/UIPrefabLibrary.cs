@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.GameCycle;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
         
         public UniTask<OperationResult> _warmup()

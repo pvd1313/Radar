@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.GameCycle
 {
-    public interface IGameCycle : IGameCycleHandle
+    public interface IGameCycle
     {
         public bool TryInitializeSelf(GameCycleParameters input);
         

@@ -4,9 +4,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
-using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -62,9 +60,9 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(this, UpdateID.RENDER, _render);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenUpdate(UpdateID.RENDER, _render);
         }
 
         public void Render(TerrainBiomeRenderTask task)

@@ -1,7 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -20,8 +19,8 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
         private UniTask<OperationResult> _warmup()

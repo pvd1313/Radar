@@ -5,17 +5,17 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
 {
-    public class GameCycle
+    public partial class GameCycle
     {
         private struct UpdateListener
         {
-            public IGameCycleListener listener;
+            public object listener;
             public Action action;
         }
         
         private struct InitializationListener
         {
-            public IGameCycleListener listener;
+            public object listener;
             public Func<UniTask<OperationResult>> action;
         }
         
@@ -30,8 +30,8 @@ namespace Beast.Claw.GameCycle
         private Dictionary<string, List<InitializationListener>> _initialization;
         private Dictionary<string, List<UpdateListener>> _update;
 
-        private Dictionary<string, HashSet<IGameCycleListener>> _updateHashset;
-        private Dictionary<string, HashSet<IGameCycleListener>> _initializationHashset;
+        private Dictionary<string, HashSet<object>> _updateHashset;
+        private Dictionary<string, HashSet<object>> _initializationHashset;
 
         private bool _isSubscribingListeners;
         private HashSet<string> _initializationEventIDs;
@@ -74,23 +74,26 @@ namespace Beast.Claw.GameCycle
 
             if (_config.preventDuplicatingSubscription)
             {
-                _updateHashset = new Dictionary<string, HashSet<IGameCycleListener>>();
-                _initializationHashset = new Dictionary<string, HashSet<IGameCycleListener>>();
+                _updateHashset = new Dictionary<string, HashSet<object>>();
+                _initializationHashset = new Dictionary<string, HashSet<object>>();
                 foreach (string eventID in _initializationEventIDs)
                 {
-                    _initializationHashset[eventID] = new HashSet<IGameCycleListener>();
+                    _initializationHashset[eventID] = new HashSet<object>();
                 }
                 foreach (string eventID in _updateEventIDs)
                 {
-                    _updateHashset[eventID] = new HashSet<IGameCycleListener>();
+                    _updateHashset[eventID] = new HashSet<object>();
                 }
             }
+
+            GameCycleHandle handle = new (this);
             
             foreach (IGameCycleListener subscriber in _subscribers)
             {
                 try
                 {
-                    subscriber.Register(_proxy);
+                    handle.currentListener = subscriber;
+                    subscriber.Register(handle);
                 }
                 catch (Exception e)
                 {
@@ -192,31 +195,37 @@ namespace Beast.Claw.GameCycle
             }
         }
 
-        public void ListenOperation<TOwner>(
-            TOwner owner, 
-            string eventID, 
-            Func<UniTask<OperationResult>> action) where TOwner : class, IGameCycleListener
+        private void _listenOperation(object owner, string eventID, Func<UniTask<OperationResult>> action)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
-            owner.ValidateNotNullThrowException(nameof(owner));
+            owner.ValidateNotNullThrowException(nameof(owner));;
             action.ValidateNotNullThrowException(nameof(action));
-            
-            
             
             if (!_initializationEventIDs.Contains(eventID))
             {
-                throw new InvalidOperationException(
-                    $"'{eventID}' is not valid initialization eventID ({typeof(TOwner)})");
+                string message = $"'{eventID}' is not valid initialization eventID ({owner.GetType()})";
+                throw new InvalidOperationException(message);
             }
 
             if (_config.preventDuplicatingSubscription)
             {
                 if (!_initializationHashset[eventID].Add(owner))
                 {
-                    throw new InvalidOperationException(
-                        $"'{typeof(TOwner)}' tried to listen twice to event '{eventID}'");
+                    string message = $"'{owner.GetType()}' tried to listen twice to event '{eventID}'";
+                    throw new InvalidOperationException(message);
                 }
             }
+            
+            if (_config.preventExternObjectMethodSubscription)
+            {
+                if (owner != action.Target)
+                {
+                    string message = $"'{owner.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                     $"that is implemented not inside '{owner.GetType().FullName}'";
+                    throw new InvalidOperationException(message);
+                }
+            }
+            
 
             _initialization[eventID].Add(new InitializationListener
             {
@@ -225,10 +234,7 @@ namespace Beast.Claw.GameCycle
             });
         }
 
-        public void ListenUpdate<TOwner>(
-            TOwner owner, 
-            string eventID, 
-            Action action) where TOwner : class, IGameCycleListener
+        private void _listenUpdate(object owner, string eventID, Action action)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
@@ -236,16 +242,26 @@ namespace Beast.Claw.GameCycle
             
             if (!_updateEventIDs.Contains(eventID))
             {
-                throw new InvalidOperationException(
-                    $"'{eventID}' is not valid update eventID ({typeof(TOwner)})");
+                string message = $"'{eventID}' is not valid update eventID ({owner.GetType().FullName})";
+                throw new InvalidOperationException(message);
+            }
+
+            if (_config.preventExternObjectMethodSubscription)
+            {
+                if (owner != action.Target)
+                {
+                    string message = $"'{owner.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                     $"that is implemented not inside '{owner.GetType().FullName}'";
+                    throw new InvalidOperationException(message);
+                }
             }
 
             if (_config.preventDuplicatingSubscription)
             {
                 if (!_updateHashset[eventID].Add(owner))
                 {
-                    throw new InvalidOperationException(
-                        $"'{typeof(TOwner)}' tried to listen twice to event '{eventID}'");
+                    string message = $"'{owner.GetType().FullName}' tried to listen twice to event '{eventID}'";
+                    throw new InvalidOperationException(message);
                 }
             }
             

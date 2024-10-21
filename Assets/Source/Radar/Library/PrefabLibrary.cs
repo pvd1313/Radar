@@ -2,7 +2,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
-using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
 
@@ -21,7 +20,7 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, Warmup);
+            handle.ListenOperation(OperationID.WARMUP, Warmup);
         }
 
         private async UniTask<OperationResult> Warmup()

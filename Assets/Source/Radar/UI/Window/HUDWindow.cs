@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.GameCycle;
-using Beast.Radar.GameCycle;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
@@ -20,8 +19,8 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(this, OperationID.WARMUP, _warmup);
-            handle.ListenOperation(this, OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
         public void Open()
