@@ -1,42 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
+using Beast.Radar.Core;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
+using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
     public class MapGenerationWindow : IWindow, IGameCycleListener
     {
-        private static readonly string[] Seeds = { "sky", "cloud", "black forest", "snail" };
-        private static readonly int[] Sizes = { 512, 1024, 2058, 4096 };
-
         private readonly IWindowManager _windowManager;
+        private readonly MapGenerationWindowConfig _generationConfig;
         private readonly IUIFactory _uiFactory;
         private readonly IUIInputController _uiInput;
-        private readonly IPlayerInputProvider _playerInput;
+        private readonly ITerrainPreviewRender _previewRender;
+        private readonly INewGameSetup _newGameSetup;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
         private SelectablesController _selectablesController;
         private ButtonRadioGroup<IntRadioButton> _sizeButtonsGroup;
-        private GenerationMapData _data;
+        
+        private Terrain.TerrainData _terrainData;
+        private RenderTexture _screenTexture;
         private int _seedIndex;
 
         public MapGenerationWindow(
+            MapGenerationWindowConfig generationConfig,
             IUIFactory uiFactory,
             IWindowManager windowManager,
             ISelectableZoneBuilder selectableBuilder,
             IUIInputController uiInput,
-            IPlayerInputProvider playerInput)
+            ITerrainPreviewRender previewRender,
+            INewGameSetup newGameSetup)
         {
+            _generationConfig = generationConfig;
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _selectableBuilder = selectableBuilder;
             _uiInput = uiInput;
-            _playerInput = playerInput;
+            _previewRender = previewRender;
+            _newGameSetup = newGameSetup;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -47,7 +57,9 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
+            _screenTexture = _previewRender.CreateTexture(this, 256);
             _selectablesController.Enable();
+            _configureView();
             _menuView.gameObject.SetActive(true);
         }
 
@@ -55,29 +67,37 @@ namespace Beast.Radar.UI
         {
             _menuView.gameObject.SetActive(false);
             _selectablesController.Disable();
+            BGraphic.TryDispose(ref _screenTexture);
         }
 
         private UniTask<OperationResult> _warmup()
         {
+            _terrainData = new Terrain.TerrainData()
+            {
+                biomeSize01 = 0.5f,
+                seed = 1,
+                terrainSize = 256,
+                water01 = 0.2f,
+            };
+
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
 
             _sizeButtonsGroup = new ButtonRadioGroup<IntRadioButton>(_menuView.sizeButtons);
             _sizeButtonsGroup.Warmup(startIndex: _menuView.sizeButtons.Length - 1);
 
-            _configureView();
             _configureSelectables();
             _subscribeView();
-            
+
             return OperationResult.SuccessSync();
         }
 
         private void _configureView()
         {
-            _menuView.waterSlider.SetValue(value: 0.5f, withNotify: false);
-            _menuView.forestSlider.SetValue(value: 0.5f, withNotify: false);
-            _menuView.biomeSlider.SetValue(value: 0.5f, withNotify: false);
-            _seedIndex = Random.Range(0, Seeds.Length);
+            _menuView.biomeSlider.SetValue(value: _terrainData.biomeSize01, withNotify: true);
+            _menuView.waterSlider.SetValue(value: _terrainData.water01, withNotify: true);
+            _menuView.forestSlider.SetValue(value: 0.5f, withNotify: true);
+            _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             _refreshSeed();
         }
 
@@ -120,8 +140,7 @@ namespace Beast.Radar.UI
             _menuView.waterSlider.EndedChange += _onWaterEndedChange;
             _menuView.biomeSlider.EndedChange += _onBiomeSizeEndedChange;
         }
-
-
+        
         private void _unsubscribeView()
         {
             _sizeButtonsGroup.Selected -= _onSizeSelected;
@@ -135,22 +154,25 @@ namespace Beast.Radar.UI
 
         private void _onBiomeSizeEndedChange(float value)
         {
-            _data.biomeSize = value;
+            _terrainData.biomeSize01 = value;
+            DrawTexture();
         }
 
         private void _onSizeSelected(IntRadioButton button)
         {
-            _data.size = button.Value;
+            _terrainData.terrainSize = button.Value;
+            DrawTexture();
         }
 
         private void _onWaterEndedChange(float value)
         {
-            _data.water = value;
+            _terrainData.water01 = value;
+            DrawTexture();
         }
 
         private void _onForestEndedChange(float value)
         {
-            _data.forest = value;
+          
         }
 
         private void _onSeedButtonsClicked(int step)
@@ -158,31 +180,45 @@ namespace Beast.Radar.UI
             _seedIndex += step;
             if (_seedIndex < 0)
             {
-                _seedIndex = Seeds.Length - 1;
+                _seedIndex = _generationConfig.seeds.Length - 1;
             }
-            else if(_seedIndex == Seeds.Length)
+            else if (_seedIndex == _generationConfig.seeds.Length)
             {
                 _seedIndex = 0;
             }
-            
+
             _refreshSeed();
+            DrawTexture();
         }
 
         private void _refreshSeed()
         {
-            string seedName = Seeds[_seedIndex];
+            SeedData seedData = _generationConfig.seeds[_seedIndex];
+            string seedName = seedData.name;
             _menuView.seedResult.SetText(seedName);
-            _data.seed = seedName.GetHashCode();
+            _terrainData.seed = seedData.value; 
+            DrawTexture();
         }
 
         private void _onCreateMapButtonClicked()
         {
-            //TODO: https://risenbeast.youtrack.cloud/issue/R-51/Implement-map-creation-action
+            _newGameSetup.StartNewGame(_terrainData);
+            _windowManager.Show(WindowID.MainHUD);
         }
 
         private void _onCloseButtonClicked()
         {
             _windowManager.Show(WindowID.MainHUD);
+        }
+
+        private void DrawTexture()
+        {
+            _previewRender.Render(new TerrainPreviewRenderTask
+            {
+                terrain = _terrainData,
+                outputTexture = _screenTexture
+            });
+            _menuView.mapImage.texture = _screenTexture;
         }
 
         private UniTask<OperationResult> _dispose()

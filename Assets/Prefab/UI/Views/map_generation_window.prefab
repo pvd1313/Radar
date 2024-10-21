@@ -63,6 +63,7 @@ MonoBehaviour:
   - {fileID: 1309450339371917579}
   - {fileID: 5451990106684193738}
   - {fileID: 1158012191844771984}
+  mapImage: {fileID: 8929615989659566975}
 --- !u!1 &1070949296882416862
 GameObject:
   m_ObjectHideFlags: 0
