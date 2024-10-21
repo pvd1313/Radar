@@ -6,6 +6,7 @@ using Beast.Radar.Debug;
 using Beast.Radar.GameCycle;
 using Beast.Radar.InputControl;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -72,6 +73,8 @@ namespace Beast.Radar.UI
 
             _subscribeView();
             _subscribeInput();
+            
+            _view.buildVersionText.SetText(Application.version);
             
             return OperationResult.SuccessSync();
         }

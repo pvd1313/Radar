@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
@@ -12,5 +13,6 @@ namespace Beast.Radar.UI
         public UIButton createMapButton;
         public UIButton closeButton;
         public IntRadioButton[] sizeButtons;
+        public RawImage mapImage;
     }
 }
