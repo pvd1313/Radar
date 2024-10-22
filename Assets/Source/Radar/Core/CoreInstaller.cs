@@ -39,10 +39,11 @@ namespace Beast.Radar.Core
             
             // Input & Camera
             yield return typeof(CameraTransform);
-            yield return typeof(InputControl.InputActionsProvider);
+            yield return typeof(InputActionsProvider);
             yield return typeof(UIInputController);
             yield return typeof(CameraInputController);
             yield return typeof(CameraController);
+            yield return typeof(PlayerInputController);
             
             // Terrain
             yield return typeof(TerrainBaker);
@@ -53,7 +54,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainPreviewRender);
             
             //Player
-            yield return typeof(PlayerController);
+            yield return typeof(PlayerMoveController);
         }
 
         protected override void BindCustom(DiContainer diContainer)
