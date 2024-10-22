@@ -64,15 +64,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""TouchDelta"",
-                    ""type"": ""Value"",
-                    ""id"": ""b66cc7c7-8e4f-4069-848d-6cd04b9b2749"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""380a3c00-eee9-4fd2-ad43-f3a02fed38f0"",
@@ -265,28 +256,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": ""InvertVector2"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f4be6bb6-168b-4656-80d3-bc0b855a39c1"",
-                    ""path"": ""<Mouse>/radius"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""MouseAndKeyboard"",
-                    ""action"": ""TouchDelta"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""84ac0cf1-bea2-4dd6-ac33-a8743784ac03"",
-                    ""path"": ""<Touchscreen>/delta"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Touch"",
-                    ""action"": ""TouchDelta"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -983,7 +952,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_SecondPosition = m_Player.FindAction("SecondPosition", throwIfNotFound: true);
         m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
-        m_Player_TouchDelta = m_Player.FindAction("TouchDelta", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Click = m_Player.FindAction("Click", throwIfNotFound: true);
         // UI
@@ -1068,7 +1036,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_SecondPosition;
     private readonly InputAction m_Player_Scroll;
-    private readonly InputAction m_Player_TouchDelta;
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Click;
     public struct PlayerActions
@@ -1079,7 +1046,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @SecondPosition => m_Wrapper.m_Player_SecondPosition;
         public InputAction @Scroll => m_Wrapper.m_Player_Scroll;
-        public InputAction @TouchDelta => m_Wrapper.m_Player_TouchDelta;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @Click => m_Wrapper.m_Player_Click;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1103,9 +1069,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Scroll.started += instance.OnScroll;
             @Scroll.performed += instance.OnScroll;
             @Scroll.canceled += instance.OnScroll;
-            @TouchDelta.started += instance.OnTouchDelta;
-            @TouchDelta.performed += instance.OnTouchDelta;
-            @TouchDelta.canceled += instance.OnTouchDelta;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
@@ -1128,9 +1091,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Scroll.started -= instance.OnScroll;
             @Scroll.performed -= instance.OnScroll;
             @Scroll.canceled -= instance.OnScroll;
-            @TouchDelta.started -= instance.OnTouchDelta;
-            @TouchDelta.performed -= instance.OnTouchDelta;
-            @TouchDelta.canceled -= instance.OnTouchDelta;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
@@ -1345,7 +1305,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnSecondPosition(InputAction.CallbackContext context);
         void OnScroll(InputAction.CallbackContext context);
-        void OnTouchDelta(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
     }

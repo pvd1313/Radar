@@ -15,7 +15,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInput;
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
         private readonly IDebugController _debugController;
 
         private DebugMenuView _view;
@@ -28,7 +28,7 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInput,
-            IInputActionsProvider inputActions,
+            IInputSystem inputActions,
             IDebugController debugController)
         {
             _windowManager = windowManager;

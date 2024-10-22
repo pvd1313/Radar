@@ -2,11 +2,12 @@
 
 namespace Beast.Radar.InputControl
 {
-    public interface IInputActionsProvider
+    public interface IInputSystem
     {
         event Action<EInputScheme> ChangedScheme;
         public InputActions Actions { get; }
         EInputScheme Scheme { get; }
         public float ClickDuration { get; }
+        public IGameActionMap GameActionMap { get; }
     }
 }

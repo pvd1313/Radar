@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _input;
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
 
         private UIPool<DebugItemButton> _itemsPool;
         private ButtonRadioGroup<DebugItemButton> _itemGroup;
@@ -35,14 +35,14 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController input,
-            IInputActionsProvider inputActionsProvider,
+            IInputSystem inputSystem,
             ItemData[] itemsData)
         {
             _view = view;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _input = input;
-            _inputActions = inputActionsProvider;
+            _inputActions = inputSystem;
             _itemsData = itemsData;
             _maxItemsCount = ItemGridSize.x * ItemGridSize.y;
         }

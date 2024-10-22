@@ -39,7 +39,7 @@ namespace Beast.Radar.Core
             
             // Input & Camera
             yield return typeof(CameraTransform);
-            yield return typeof(InputActionsProvider);
+            yield return typeof(InputSystem);
             yield return typeof(UIInputController);
             yield return typeof(CameraInputController);
             yield return typeof(CameraController);

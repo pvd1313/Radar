@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Cysharp.Threading.Tasks;
@@ -14,10 +13,10 @@ namespace Beast.Radar.InputControl
         public event Action<float2> ClickMove;
 
         private readonly ICameraTransform _cameraTransform;
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
 
         private float _startClickTime;
-        public PlayerInputController(ICameraTransform cameraTransform, IInputActionsProvider inputActions)
+        public PlayerInputController(ICameraTransform cameraTransform, IInputSystem inputActions)
         {
             _cameraTransform = cameraTransform;
             _inputActions = inputActions;
@@ -50,7 +49,6 @@ namespace Beast.Radar.InputControl
                 float2 mousePosition = _inputActions.Actions.Player.FirstPosition.ReadValue<Vector2>();
                 ClickMove?.Invoke(mousePosition);
             }
-            BDebug.LogInfo(this, $"{_startClickTime - endClickTime}");
         }
 
         private UniTask<OperationResult> _dispose()

@@ -5,10 +5,10 @@ namespace Beast.Radar.UI
 {
     public class InputIconsController
     {
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
         private readonly List<InputIconDisplay> _icons;
 
-        public InputIconsController(IInputActionsProvider inputActions, List<InputIconDisplay> icons)
+        public InputIconsController(IInputSystem inputActions, List<InputIconDisplay> icons)
         {
             _inputActions = inputActions;
             _icons = icons;

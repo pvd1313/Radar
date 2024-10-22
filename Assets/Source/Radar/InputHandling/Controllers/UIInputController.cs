@@ -21,15 +21,15 @@ namespace Beast.Radar.InputControl
         public event Action<int> TriggerPressed;
         public bool IsHardwareInput { get; private set; }
 
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
 
         private int2 _lastRightStickValue;
         private const float PRESS_COOLDOWN = 0.2f;
         private float _currentNavigationCooldown;
 
-        public UIInputController(IInputActionsProvider inputActionsProvider)
+        public UIInputController(IInputSystem inputSystem)
         {
-            _inputActions = inputActionsProvider;
+            _inputActions = inputSystem;
         }
 
         public void Register(IGameCycleHandle handle)

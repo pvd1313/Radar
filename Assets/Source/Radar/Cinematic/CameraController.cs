@@ -14,7 +14,7 @@ namespace Beast.Radar.Cinematic
     {
         private readonly CameraConfig _cameraConfig;
         private readonly ICameraInputController _input;
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
         private readonly ICameraTransform _transform;
         private readonly PrefabLibrary _prefabs;
         private readonly IScreen _screen;
@@ -25,14 +25,14 @@ namespace Beast.Radar.Cinematic
         public CameraController(
             CameraConfig cameraConfig,
             ICameraInputController inputController,
-            IInputActionsProvider inputActionsProvider,
+            IInputSystem inputSystem,
             ICameraTransform transform,
             PrefabLibrary prefabs,
             IScreen screen)
         {
             _cameraConfig = cameraConfig;
             _input = inputController;
-            _inputActions = inputActionsProvider;
+            _inputActions = inputSystem;
             _transform = transform;
             _prefabs = prefabs;
             _screen = screen;

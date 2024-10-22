@@ -42,15 +42,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "TouchDelta",
-                    "type": "Value",
-                    "id": "b66cc7c7-8e4f-4069-848d-6cd04b9b2749",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Pause",
                     "type": "Button",
                     "id": "380a3c00-eee9-4fd2-ad43-f3a02fed38f0",
@@ -243,28 +234,6 @@
                     "processors": "InvertVector2",
                     "groups": "Gamepad",
                     "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f4be6bb6-168b-4656-80d3-bc0b855a39c1",
-                    "path": "<Mouse>/radius",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "MouseAndKeyboard",
-                    "action": "TouchDelta",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "84ac0cf1-bea2-4dd6-ac33-a8743784ac03",
-                    "path": "<Touchscreen>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Touch",
-                    "action": "TouchDelta",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -8,29 +8,32 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class InputActionsProvider : IInputActionsProvider, IGameCycleListener
+    public class InputSystem : IInputSystem, IGameCycleListener
     {
         public event Action<EInputScheme> ChangedScheme;
-        
+
+        public IGameActionMap GameActionMap => _gameActionMap;
         public InputActions Actions { get; private set; }
         public EInputScheme Scheme => _inputScheme;
         public float ClickDuration => 0.1f;
 
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
+        private GameActionMap _gameActionMap;
         
-        public InputActionsProvider(PrefabLibrary config)
+        public InputSystem(PrefabLibrary config)
         {
             _view = config.playerInputPrefab;
         }
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, Warmup);
-            handle.ListenOperation(OperationID.DISPOSE, Dispose);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenUpdate(UpdateID.TICK, _tick);
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
-        
-        private UniTask<OperationResult> Warmup()
+
+        private UniTask<OperationResult> _warmup()
         {
             Actions = new InputActions();
             Actions.Enable();
@@ -39,23 +42,23 @@ namespace Beast.Radar.InputControl
 
             PlayerInputView newInstance = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
-            RefreshCurrentScheme(_view.playerInput);
-            _view.playerInput.onControlsChanged += RefreshCurrentScheme;
+            _refreshScheme(_view.playerInput);
+            _view.playerInput.onControlsChanged += _refreshScheme;
+
+            _gameActionMap = new GameActionMap(this, Actions);
+            _gameActionMap.Warmup();
             
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> Dispose()
+        private void _tick()
         {
-            _view.playerInput.onControlsChanged -= RefreshCurrentScheme;
-            Actions.Disable();
-            Actions.UI.Disable();
-            Actions.Player.Disable();
-
-            return OperationResult.SuccessSync();
+            
+            _gameActionMap.Update();
+            
         }
-        
-        private void RefreshCurrentScheme(PlayerInput input)
+
+        private void _refreshScheme(PlayerInput input)
         {
             Enum.TryParse(_view.playerInput.currentControlScheme, out _inputScheme);
             
@@ -66,6 +69,17 @@ namespace Beast.Radar.InputControl
             }
             
             ChangedScheme?.Invoke(_inputScheme);
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _view.playerInput.onControlsChanged -= _refreshScheme;
+            Actions.Disable();
+            Actions.UI.Disable();
+            Actions.Player.Disable();
+            _gameActionMap.Dispose();
+
+            return OperationResult.SuccessSync();
         }
     }
 }

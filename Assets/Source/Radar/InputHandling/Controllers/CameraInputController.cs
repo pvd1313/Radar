@@ -19,15 +19,15 @@ namespace Beast.Radar.InputControl
         public bool IsPressMove { get; private set; }
         public float ScrollDelta { get; private set; }
 
-        private readonly IInputActionsProvider _inputActions;
+        private readonly IInputSystem _inputActions;
 
         private float2 _startClickTime;
         private float _lastZoomDistance;
         private bool _isBlock;
 
-        public CameraInputController(IInputActionsProvider inputActionsProvider)
+        public CameraInputController(IInputSystem inputSystem)
         {
-            _inputActions = inputActionsProvider;
+            _inputActions = inputSystem;
         }
         
         public void Register(IGameCycleHandle handle)
