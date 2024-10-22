@@ -14,7 +14,7 @@ namespace Beast.Radar.Cinematic
     {
         private readonly CameraConfig _cameraConfig;
         private readonly ICameraInputController _input;
-        private readonly IPlayerInputProvider _inputProvider;
+        private readonly IInputActionsProvider _inputActions;
         private readonly ICameraTransform _transform;
         private readonly PrefabLibrary _prefabs;
         private readonly IScreen _screen;
@@ -25,14 +25,14 @@ namespace Beast.Radar.Cinematic
         public CameraController(
             CameraConfig cameraConfig,
             ICameraInputController inputController,
-            IPlayerInputProvider inputProvider,
+            IInputActionsProvider inputActionsProvider,
             ICameraTransform transform,
             PrefabLibrary prefabs,
             IScreen screen)
         {
             _cameraConfig = cameraConfig;
             _input = inputController;
-            _inputProvider = inputProvider;
+            _inputActions = inputActionsProvider;
             _transform = transform;
             _prefabs = prefabs;
             _screen = screen;
@@ -54,7 +54,7 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            _motion = _cameraConfig.GetMotionParameters(_inputProvider.Scheme);
+            _motion = _cameraConfig.GetMotionParameters(_inputActions.Scheme);
             
             _subscribeInput();
             
@@ -71,16 +71,16 @@ namespace Beast.Radar.Cinematic
         private void _subscribeInput()
         {
             _input.ChangedEarlyValues += _processCamera;
-            _inputProvider.ChangedScheme += _onChangedInputScheme;
+            _inputActions.ChangedScheme += _onChangedInputActionsScheme;
         }
 
         private void _unsubscribeInput()
         {
             _input.ChangedEarlyValues -= _processCamera;
-            _inputProvider.ChangedScheme -= _onChangedInputScheme;
+            _inputActions.ChangedScheme -= _onChangedInputActionsScheme;
         }
 
-        private void _onChangedInputScheme(EInputScheme scheme)
+        private void _onChangedInputActionsScheme(EInputScheme scheme)
         {
             _motion = _cameraConfig.GetMotionParameters(scheme);
         }

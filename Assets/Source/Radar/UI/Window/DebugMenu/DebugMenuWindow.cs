@@ -15,7 +15,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInput;
-        private readonly IPlayerInputProvider _playerInput;
+        private readonly IInputActionsProvider _inputActions;
         private readonly IDebugController _debugController;
 
         private DebugMenuView _view;
@@ -28,14 +28,14 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInput,
-            IPlayerInputProvider playerInput,
+            IInputActionsProvider inputActions,
             IDebugController debugController)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _uiInput = uiInput;
-            _playerInput = playerInput;
+            _inputActions = inputActions;
             _debugController = debugController;
         }
 
@@ -83,7 +83,7 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _inputActions, _getTestItems()),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
             });
             _panelsController.Warmup();
@@ -108,7 +108,7 @@ namespace Beast.Radar.UI
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_playerInput, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_inputActions, _view.inputIcons);
             _inputIconsController.Warmup();
         }
 
@@ -126,17 +126,17 @@ namespace Beast.Radar.UI
 
         private void _subscribeInput()
         {
-            _playerInput.ChangedScheme += _onInputSchemeChanged;
+            _inputActions.ChangedScheme += _onInputActionsSchemeChanged;
             _uiInput.SelectButtonPressed += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
-            _playerInput.ChangedScheme -= _onInputSchemeChanged;
+            _inputActions.ChangedScheme -= _onInputActionsSchemeChanged;
             _uiInput.SelectButtonPressed -= _onOpenButtonClicked;
         }
 
-        private void _onInputSchemeChanged(EInputScheme scheme)
+        private void _onInputActionsSchemeChanged(EInputScheme scheme)
         {
             foreach (InputIconDisplay icon in _view.inputIcons)
             {

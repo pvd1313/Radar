@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 
 namespace Beast.Radar.InputControl
 {
-    public class PlayerInputProvider : IPlayerInputProvider, IGameCycleListener
+    public class InputActionsProvider : IInputActionsProvider, IGameCycleListener
     {
         public event Action<EInputScheme> ChangedScheme;
         
@@ -18,7 +18,7 @@ namespace Beast.Radar.InputControl
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
         
-        public PlayerInputProvider(PrefabLibrary config)
+        public InputActionsProvider(PrefabLibrary config)
         {
             _view = config.playerInputPrefab;
         }
@@ -31,7 +31,7 @@ namespace Beast.Radar.InputControl
         
         private UniTask<OperationResult> Warmup()
         {
-            Actions = new InputActions();
+            Actions = new global::InputActions();
             Actions.Enable();
             
             PlayerInputView newInstance = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
