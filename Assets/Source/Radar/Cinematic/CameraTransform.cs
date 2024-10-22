@@ -12,7 +12,6 @@ namespace Beast.Radar.Cinematic
     public class CameraTransform : IGameCycleListener, ICameraTransform
     {
         public bool IsReady { get; private set; }
-        
         public float2 Position => (float2)_position;
         public IsometricCameraRotation RotationRad => _rotationRad;
         public float Zoom01 => _zoom01;
@@ -105,9 +104,14 @@ namespace Beast.Radar.Cinematic
             _setZoom(_zoom01 + zoomDelta);
         }
         
-        public float2 ScreenPointToWorld(float2 screenPoint)
+        public float2 ScreenToWorld(float2 screenPoint)
         {
             return ViewportToWorld(screenPoint / _screen.Size);
+        }
+
+        public float2 WorldToScreen(float2 worldPoint)
+        {
+            return WorldToViewport(worldPoint) * _screen.Size;
         }
 
         public float2 ViewportToWorld(float2 viewport)
@@ -119,7 +123,7 @@ namespace Beast.Radar.Cinematic
 
             return new float2(screen.x, screen.y);
         }
-        
+
         public float2 WorldToViewport(float2 worldPoint)
         {
             float2 localPoint = _worldToLocal(worldPoint - (float2)_position);
