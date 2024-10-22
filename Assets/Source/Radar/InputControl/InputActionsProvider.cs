@@ -14,6 +14,7 @@ namespace Beast.Radar.InputControl
         
         public InputActions Actions { get; private set; }
         public EInputScheme Scheme => _inputScheme;
+        public float ClickDuration => 0.1f;
 
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
@@ -31,9 +32,11 @@ namespace Beast.Radar.InputControl
         
         private UniTask<OperationResult> Warmup()
         {
-            Actions = new global::InputActions();
+            Actions = new InputActions();
             Actions.Enable();
-            
+            Actions.UI.Enable();
+            Actions.Player.Enable();
+
             PlayerInputView newInstance = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _view = newInstance;
             RefreshCurrentScheme(_view.playerInput);
@@ -46,6 +49,8 @@ namespace Beast.Radar.InputControl
         {
             _view.playerInput.onControlsChanged -= RefreshCurrentScheme;
             Actions.Disable();
+            Actions.UI.Disable();
+            Actions.Player.Disable();
 
             return OperationResult.SuccessSync();
         }

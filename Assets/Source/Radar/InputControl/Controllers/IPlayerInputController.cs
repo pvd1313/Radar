@@ -5,6 +5,6 @@ namespace Beast.Radar.InputControl
 {
     public interface IPlayerInputController
     {
-        public event Action<float2> PressMove;
+        public event Action<float2> ClickMove;
     }
 }

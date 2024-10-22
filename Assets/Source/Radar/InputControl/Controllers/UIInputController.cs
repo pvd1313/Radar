@@ -130,7 +130,6 @@ namespace Beast.Radar.InputControl
 
         private void _subscribeInputActions()
         {
-            _inputActions.Actions.UI.Enable();
             _inputActions.Actions.UI.Cancel.started += _onPressPause;
             _inputActions.Actions.UI.Select.started += _onPressSelect;
             _inputActions.Actions.UI.NorthButton.started += _onPressNorth;
@@ -143,7 +142,6 @@ namespace Beast.Radar.InputControl
 
         private void _unsubscribeInputActions()
         {
-            _inputActions.Actions.UI.Disable();
             _inputActions.Actions.UI.Cancel.started -= _onPressPause;
             _inputActions.Actions.UI.Select.started -= _onPressSelect;
             _inputActions.Actions.UI.NorthButton.started -= _onPressNorth;

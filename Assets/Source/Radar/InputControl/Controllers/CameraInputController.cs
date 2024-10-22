@@ -21,6 +21,7 @@ namespace Beast.Radar.InputControl
 
         private readonly IInputActionsProvider _inputActions;
 
+        private float2 _startClickTime;
         private float _lastZoomDistance;
         private bool _isBlock;
 
