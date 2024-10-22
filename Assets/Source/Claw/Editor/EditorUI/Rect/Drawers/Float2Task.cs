@@ -1,25 +1,35 @@
 ﻿namespace Beast.Claw.Editor.Drawers
 {
-    public class Float2Task : IValidatable
+    public class Float2Task : IRectDrawTask
     {
         public Label mainLabel;
         public Label label0;
         public Label label1;
+        public Label label2;
         public Style mainLabelStyle;
         public Style labelStyle0;
         public Style labelStyle1;
+        public Style labelStyle2;
         public Style valueStyle0;
         public Style valueStyle1;
         public float value0;
         public float value1;
+        public float fieldLabelSpacing;
 
-        public void SetStyle(UIStyleSet styleSet)
+        public void SetStyle(UIStyleGroup style)
         {
-            mainLabelStyle = styleSet.label;
-            labelStyle0 = styleSet.label;
-            labelStyle1 = styleSet.label;
-            valueStyle0 = styleSet.field;
-            valueStyle1 = styleSet.field;
+            mainLabelStyle = style.Label;
+            labelStyle0 = style.Label;
+            labelStyle1 = style.Label;
+            labelStyle2 = style.Label;
+            valueStyle0 = style.NumberField;
+            valueStyle1 = style.NumberField;
+            fieldLabelSpacing = style.MinorSpacing;
+
+            mainLabel = Label.NoLabel;
+            label0 = Label.NoLabel;
+            label1 = Label.NoLabel;
+            label2 = Label.NoLabel;
         }
         
         public string Validate()

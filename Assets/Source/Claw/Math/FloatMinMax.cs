@@ -24,6 +24,30 @@ namespace Beast.Claw.Math
             return min <= max;
         }
 
+        public float GetRange()
+        {
+            return max - min;
+        }
+
+        public FloatMinMax Shrink(float size)
+        {
+            float halfSize = size * 0.5f;
+
+            if (min + halfSize > max)
+            {
+                float center = (max + min) * 0.5f;
+
+                return new FloatMinMax(center, center);
+            }
+
+            return new FloatMinMax(min + halfSize, max - halfSize);
+        }
+
+        public float GetCenter()
+        {
+            return BMath.Lerp(this, 0.5f);
+        }
+
         public string Validate()
         {
             if (min > max)

@@ -1,6 +1,7 @@
 ﻿using System;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
+using Beast.Claw.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,9 +10,10 @@ namespace Beast.Claw.Editor.Window
     [FancyAsset]
     public abstract class EditorWindow : UnityEditor.EditorWindow, IHasCustomMenu
     {
-        public IFlow flow => _flow.Begin();
+        protected IFlow Begin => _flow.Begin();
 
-        private Flow _flow;
+        protected Flow _flow;
+        
         private bool _initialized;
         private bool _criticalFault;
         
@@ -138,7 +140,7 @@ namespace Beast.Claw.Editor.Window
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, GetType().FullName + ".SerializationReset()");
+                BDebug.LogException(this, e, this.TypeName() + ".SerializationReset()");
             }
         }
 
@@ -146,18 +148,19 @@ namespace Beast.Claw.Editor.Window
         {
             try
             {
-                Warmup();
-
                 _flow = new Flow();
+                
+                Warmup();
 
                 _initialized = true;
             }
             catch (Exception e)
             {
                 _criticalFault = true;
+
+                string message = $"{this.TypeName()}.Warmup(). Drawing is disabled. Reload domain to continue.";
                 
-                BDebug.LogException(this, e, GetType().FullName + ".Warmup(). Drawing is disabled. " +
-                                             "Reload domain to continue.");
+                BDebug.LogException(this, e, message);
             }
         }
 

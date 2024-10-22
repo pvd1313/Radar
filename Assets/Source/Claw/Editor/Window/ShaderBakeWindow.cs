@@ -30,7 +30,7 @@ namespace Beast.Claw.Editor.Window
 
         protected override void DrawUI()
         {
-            FlowUIResult result = flow.Vertical(ui =>
+            FlowUIResult result = Begin.Vertical(ui =>
             {
                 ui.AssetField(nameof(_renderMaterial), ref _renderMaterial);
                 ui.ValidateArgumentNotNull(_renderMaterial, nameof(_renderMaterial));
@@ -41,18 +41,19 @@ namespace Beast.Claw.Editor.Window
                 
                 ui.EnumSingleField(nameof(_outputTextureFormat), ref _outputTextureFormat);
                 
-                ui.Int2FieldTwoLine(nameof(_outputTextureSize), ref _outputTextureSize);
+                ui.GenericField(nameof(_outputTextureSize), ref _outputTextureSize);
+                
                 ui.ValidateIsTrue(_outputTextureSize is { x: > 0, y: > 0 }, "Invalid texture size");
             });
             
-            flow.Enabled(!result.validationFailed).Horizontal(ui =>
+            Begin.Enabled(!result.validationFailed).Horizontal(ui =>
             {
                 ui.Button("Bake", BakeMap);
 
-                flow.Enabled(_bakedTexture != null).Button("Save", SaveTexture);
+                Begin.Enabled(_bakedTexture != null).Button("Save", SaveTexture);
             });
 
-            flow.If(_previewTexture != null).Draw(ui =>
+            Begin.If(_previewTexture != null).Draw(ui =>
             {
                 ui.Label("Preview: ");
                 ui.TexturePreview(_previewTexture, PREVIEW_TEXTURE_SIZE.y);

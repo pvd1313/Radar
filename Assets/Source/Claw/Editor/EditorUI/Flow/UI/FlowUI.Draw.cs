@@ -25,11 +25,18 @@ namespace Beast.Claw.Editor
             isFold = EditorGUILayout.Foldout(isFold, label.content);
         }
 
-        public void ExperimentalGenericField<TValue>(Label label, ref TValue value)
+        public void GenericField<TValue>(Label label, ref TValue value)
         {
             Rect screen = EditorGUILayout.GetControlRect();
 
-            value = _flow.rectUI.DrawField(screen, label, value);
+            value = _flow.rectUI.Field(screen, label, value);
+        }
+        
+        public TValue GenericField<TValue>(Label label, TValue value)
+        {
+            Rect screen = EditorGUILayout.GetControlRect();
+
+            return _flow.rectUI.Field(screen, label, value);
         }
 
         [NoCustomStyle]

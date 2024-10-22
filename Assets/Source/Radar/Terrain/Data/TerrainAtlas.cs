@@ -11,7 +11,8 @@ namespace Beast.Radar.Terrain
     [Serializable]
     public class TerrainAtlas : IValidatable
     {
-        private static HashSet<int> _indexHash;
+        private static Dictionary<int, string> _indexToName;
+        private static Dictionary<int, Bounds> _indexToBounds;
         
         public Texture2D mainTexture;
         public Texture2D colorTexture;
@@ -51,30 +52,55 @@ namespace Beast.Radar.Terrain
 #if UNITY_EDITOR
             if (tiles != null)
             {
-                _indexHash ??= new HashSet<int>();
-                _indexHash.Clear();
+                _indexToName ??= new Dictionary<int, string>();
+                _indexToBounds ??= new Dictionary<int, Bounds>();
+                _indexToName.Clear();
+                _indexToBounds.Clear();
                 
-                foreach (TerrainTileData sprite in tiles)
+                foreach (TerrainTileData tile in tiles)
                 {
-                    if (!sprite.IsValid(out string errorMessage))
+                    if (!tile.IsValid(out string errorMessage))
                     {
-                        return $"Sprite '{sprite.name}' has issues: {errorMessage}";
+                        return $"Tile '{tile.name}' has issues: {errorMessage}";
                     }
 
-                    if (sprite.texture.width != pixelsPerTile || sprite.texture.height != pixelsPerTile)
+                    if (tile.texture.width != pixelsPerTile || tile.texture.height != pixelsPerTile)
                     {
-                        return $"Sprite '{sprite.name}' has size '{sprite.texture.Size()}' that does not equal to atlas PPT";
+                        return $"Tile '{tile.name}' has size '{tile.texture.Size()}' that does not equal to atlas PPT";
                     }
 
-                    if (sprite.index >= tileCount.x * tileCount.y)
+                    if (tile.index >= tileCount.x * tileCount.y)
                     {
-                        return $"Sprite '{sprite.name}' index ({sprite.index}) out of range {tileCount}";
+                        return $"Tile '{tile.name}' index ({tile.index}) out of range {tileCount}";
                     }
 
-                    if (!_indexHash.Add(sprite.index))
+                    if (_indexToName.TryGetValue(tile.index, out string existingTileName))
                     {
-                        return $"Sprite '{sprite.name}' has duplicated index";
+                        return $"Tile '{tile.name}' index ({tile.index}) conflicts with '{existingTileName}'";
                     }
+
+                    FloatMinMax water = tile.waterRange;
+                    FloatMinMax forest = tile.forestRange;
+
+                    float epsilon = BMath.EPSILON;
+
+                    Vector3 center = new (water.GetCenter(), forest.GetCenter(), 0);
+                    Vector3 size = new(water.Shrink(epsilon).GetRange(), forest.Shrink(epsilon).GetRange(), 1);
+
+                    Bounds bounds = new(center, size);
+
+                    foreach ((int tileIndex, Bounds tileBounds) in _indexToBounds)
+                    {
+                        if (!tileBounds.Intersects(bounds))
+                        {
+                            continue;
+                        }
+
+                        return $"Tile '{tile.name}' spawn range overlaps tile '{_indexToName[tileIndex]}'";
+                    }
+                    
+                    _indexToName[tile.index] = tile.name;
+                    _indexToBounds[tile.index] = bounds;
                 }
             }
 #endif

@@ -17,54 +17,54 @@ MonoBehaviour:
     colorTexture: {fileID: 2800000, guid: c4cee56f6f2fa464687c87c572475b84, type: 3}
     configTexture: {fileID: 2800000, guid: 59903cf665a13bc44a9263fbe3e9587d, type: 3}
     tiles:
-    - texture: {fileID: 2800000, guid: c834847cf1fbd1c43b2b5bc5b4e0603b, type: 3}
-      name: tile_water_deep
-      averageColor: {r: 0.050229784, g: 0.20396371, b: 0.5121822, a: 1}
-      yCropHeight: 0.515625
-      yBlendCenter: 0.2421875
-      spawnWaterRange:
-        min: 0
-        max: 0
-      spawnForestRange:
-        min: 0
-        max: 0
-      index: 3
-    - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
-      name: tile_water_shallow
-      averageColor: {r: 0.36516544, g: 0.5610831, b: 0.79621637, a: 1}
-      yCropHeight: 0.515625
-      yBlendCenter: 0.2421875
-      spawnWaterRange:
-        min: 0
-        max: 0
-      spawnForestRange:
-        min: 0
-        max: 0
-      index: 2
-    - texture: {fileID: 2800000, guid: 0b9b5d2d182e4164685e11f855d82d50, type: 3}
-      name: tile_water_coast
-      averageColor: {r: 0.7045075, g: 0.6122664, b: 0.28253296, a: 1}
-      yCropHeight: 0.515625
-      yBlendCenter: 0.2421875
-      spawnWaterRange:
-        min: 0
-        max: 0
-      spawnForestRange:
-        min: 0
-        max: 0
-      index: 1
     - texture: {fileID: 2800000, guid: 056b2f0132f809d4c932f6715e6d6b6f, type: 3}
       name: tile_grass
       averageColor: {r: 0.3854665, g: 0.5952704, b: 0.22526042, a: 1}
       yCropHeight: 0.515625
       yBlendCenter: 0.2421875
-      spawnWaterRange:
+      waterRange:
+        min: 0
+        max: 0.4
+      forestRange:
         min: 0
         max: 0
-      spawnForestRange:
-        min: 234
-        max: 0
       index: 0
+    - texture: {fileID: 2800000, guid: 0b9b5d2d182e4164685e11f855d82d50, type: 3}
+      name: tile_water_coast
+      averageColor: {r: 0.7045075, g: 0.6122664, b: 0.28253296, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      waterRange:
+        min: 0.4
+        max: 0.5
+      forestRange:
+        min: 0
+        max: 0
+      index: 1
+    - texture: {fileID: 2800000, guid: a9e3f9cf193b7854caebbddd291fcc74, type: 3}
+      name: tile_water_shallow
+      averageColor: {r: 0.36516544, g: 0.5610831, b: 0.79621637, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      waterRange:
+        min: 0.5
+        max: 0.8
+      forestRange:
+        min: 0
+        max: 0
+      index: 2
+    - texture: {fileID: 2800000, guid: c834847cf1fbd1c43b2b5bc5b4e0603b, type: 3}
+      name: tile_water_deep
+      averageColor: {r: 0.050229784, g: 0.20396371, b: 0.5121822, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      waterRange:
+        min: 0.8
+        max: 1
+      forestRange:
+        min: 0
+        max: 0
+      index: 3
     tileCount:
       x: 2
       y: 2

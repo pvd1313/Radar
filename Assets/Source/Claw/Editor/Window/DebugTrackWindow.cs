@@ -105,20 +105,20 @@ namespace Beast.Claw.Editor.Window
                 }
             }
 
-            flow.Horizontal(ui =>
+            Begin.Horizontal(ui =>
             {
                 const string FETCH_EDITOR = "EditorFetch";
                 const string PLAY_MODE_CLEAR = "PlayModeClear";
 
-                flow.LabelWidth(FETCH_EDITOR).Draw(ui => ui.CheckBoxLeft(FETCH_EDITOR, ref _editorFetch));
-                flow.LabelWidth(PLAY_MODE_CLEAR).Draw(ui => ui.CheckBoxLeft(PLAY_MODE_CLEAR, ref _playModeClear));
+                Begin.LabelWidth(FETCH_EDITOR).Draw(ui => ui.CheckBoxLeft(FETCH_EDITOR, ref _editorFetch));
+                Begin.LabelWidth(PLAY_MODE_CLEAR).Draw(ui => ui.CheckBoxLeft(PLAY_MODE_CLEAR, ref _playModeClear));
                 
                 ui.FlexibleSpace();
             });
             
-            flow.Horizontal(ui =>
+            Begin.Horizontal(ui =>
             {
-                flow.Option(_csButtonHeight, _csButtonWidth)
+                Begin.Option(_csButtonHeight, _csButtonWidth)
                     .Style(_csButton)
                     .Button( _isSharpMode ? _csIcon : _infoIcon, () =>
                     {
@@ -127,14 +127,14 @@ namespace Beast.Claw.Editor.Window
                 
                 const string FETCH_TICK_RATE_LABEL = "FetchTickRate";
                 
-                flow.LabelWidth(FETCH_TICK_RATE_LABEL)
+                Begin.LabelWidth(FETCH_TICK_RATE_LABEL)
                     .FieldWidth("XXX")
                     .Draw(ui =>
                 {
                     ui.IntField(FETCH_TICK_RATE_LABEL, ref _updateTickRate);
                 });
 
-                flow.Option(_tickRateButton).Draw(ui =>
+                Begin.Option(_tickRateButton).Draw(ui =>
                 {
                     ui.Button("3", () => _updateTickRate = 3);
                     ui.Button("10", () => _updateTickRate = 10);
@@ -144,7 +144,7 @@ namespace Beast.Claw.Editor.Window
                 ui.FlexibleSpace();
             });
 
-            flow.Horizontal(ui =>
+            Begin.Horizontal(ui =>
             {
                 // ui.Button("Reset", _reset);
                 ui.Button("Clear", BDebug.ClearTrackStorage);
@@ -152,7 +152,7 @@ namespace Beast.Claw.Editor.Window
                 ui.Button("Close", () => _setAllFolds(false));
             });
             
-            flow.Draw(ui => ui.Space(UIStyle.SIZE_MINOR_SPACE));
+            Begin.Draw(ui => ui.Space(UIStyle.SIZE_MINOR_SPACE));
 
             foreach (Type type in BDebug.TrackStorage.Keys)
             {
@@ -168,7 +168,7 @@ namespace Beast.Claw.Editor.Window
 
             (int a, int b) swapIndex = default;
 
-            flow.Vertical().Scroll(ref _scrollPosition, ui =>
+            Begin.Vertical().Scroll(ref _scrollPosition, ui =>
             {
                 for (int i = 0; i < _drawOrder.Count; i++)
                 {
@@ -178,7 +178,7 @@ namespace Beast.Claw.Editor.Window
                     _fullNameToType.TryGetValue(storageFullName, out Type storageType);
                     _typeInfo.SafeTryGetValueOrDefault(storageType, out TypeInfo storageInfo);
 
-                    flow.Horizontal(ui =>
+                    Begin.Horizontal(ui =>
                     {
                         if (storageInfo.isInitialized)
                         {
@@ -189,7 +189,7 @@ namespace Beast.Claw.Editor.Window
                             ui.Foldout(storageFullName, ref foldState);
                         }
 
-                        flow.Option(_smallButton, ui =>
+                        Begin.Option(_smallButton, ui =>
                         {
                             ui.Button(UIStyle.CHAR_ARROW_UP, () => swapIndex = (i, i - 1));
                             ui.Button(UIStyle.CHAR_ARROW_DOWN, () => swapIndex = (i, i + 1));
@@ -198,13 +198,13 @@ namespace Beast.Claw.Editor.Window
                     
                     _folds[storageFullName] = foldState;
 
-                    flow.If(foldState, ui =>
+                    Begin.If(foldState, ui =>
                     {
                         _fullNameToType.TryGetValue(storageFullName, out Type storageType);
 
-                        flow.If(storageInfo.isInitialized && _isSharpMode).Horizontal(ui =>
+                        Begin.If(storageInfo.isInitialized && _isSharpMode).Horizontal(ui =>
                         {
-                            flow.Enabled(storageInfo.hasScript)
+                            Begin.Enabled(storageInfo.hasScript)
                                 .Style(_csButton)
                                 .Option(_csButtonWidth, _csButtonHeight)
                                 .Button(_csIcon, () =>
@@ -212,12 +212,12 @@ namespace Beast.Claw.Editor.Window
                                 BAsset.TryOpenAsset(storageInfo.script);
                             });
 
-                            flow.Enabled(false).Style(_csText).Option(_csButtonHeight).PassiveLabel(storageInfo.fullName);
+                            Begin.Enabled(false).Style(_csText).Option(_csButtonHeight).PassiveLabel(storageInfo.fullName);
                         });
 
                         BDebug.TrackStorage.SafeTryGetValueOrDefault(storageType, out DebugTrackStorage storage);
 
-                        flow.Tab(ui =>
+                        Begin.Tab(ui =>
                         {
                             _trackStorageUI(ui, storage);
                         });
@@ -250,7 +250,7 @@ namespace Beast.Claw.Editor.Window
             
             foreach ((string id, float2 value) in storage.ReadAllFloat2())
             {
-                ui.Float2FieldOneLine(id, value);
+                ui.GenericField(id, value);
             }
             
             foreach ((string id, float3 value) in storage.ReadAllFloat3())

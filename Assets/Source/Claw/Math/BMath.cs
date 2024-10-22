@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace Beast.Claw.Math
 {
-    public static partial class BMath
+    public static class BMath
     {
-        public const float Deg2Rad = 0.017453292f;
-        public const float Rad2Deg = 57.29578f;
-        public const float TwoPI = (2 * math.PI);
+        public const float DEG2_RAD = 0.017453292f;
+        public const float RAD_2DEG = 57.29578f;
+        public const float TWO_PI = 2 * math.PI;
         public const float PI = math.PI;
+        public const float EPSILON = math.EPSILON;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sin(float angleRag)

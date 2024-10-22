@@ -13,8 +13,8 @@ namespace Beast.Radar.Terrain
         public Color averageColor;
         public float yCropHeight;
         public float yBlendCenter;
-        public FloatMinMax spawnWaterRange;
-        public FloatMinMax spawnForestRange;
+        public FloatMinMax waterRange;
+        public FloatMinMax forestRange;
         public int index;
         
         public string Validate()
@@ -49,14 +49,19 @@ namespace Beast.Radar.Terrain
                 return $"Invalid index " + index;
             }
 
-            if (!spawnWaterRange.IsValidRange() || !spawnWaterRange.IsNormalized())
+            if (!waterRange.IsValidRange() || !waterRange.IsNormalized())
             {
-                return $"Invalid spawn water range: {spawnWaterRange}";
+                return $"Invalid spawn water range: {waterRange}";
             }
 
-            if (!spawnForestRange.IsValidRange() || !spawnForestRange.IsNormalized())
+            if (!forestRange.IsValidRange() || !forestRange.IsNormalized())
             {
-                return $"Invalid spawn forest range: {spawnForestRange}";
+                return $"Invalid spawn forest range: {forestRange}";
+            }
+
+            if (forestRange.GetRange() + waterRange.GetRange() < BMath.EPSILON)
+            {
+                return $"Invalid spawn range. Must have range to being able to spawn tile";
             }
 
             return null;

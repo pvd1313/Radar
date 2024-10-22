@@ -7,6 +7,12 @@ namespace Beast.Claw.Editor
 {
     public struct Style
     {
+        public static Style NoStyle { get; } = new()
+        {
+            hasStyle = false,
+            style = GUIStyle.none
+        };
+        
         public bool hasStyle;
         public GUIStyle style;
         
@@ -20,7 +26,7 @@ namespace Beast.Claw.Editor
                 
                 BDebug.StaticLogWarning(message);
                 
-                return default;
+                return NoStyle;
             }
 
             return new Style

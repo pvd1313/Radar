@@ -19,9 +19,9 @@ namespace Beast.Claw.Math
 
         public static implicit operator quaternion(QuaternionEulerDeg euler)
         {
-            float x = euler.x * BMath.Deg2Rad;
-            float y = euler.y * BMath.Deg2Rad;
-            float z = euler.z * BMath.Deg2Rad;
+            float x = euler.x * BMath.DEG2_RAD;
+            float y = euler.y * BMath.DEG2_RAD;
+            float z = euler.z * BMath.DEG2_RAD;
 
             return quaternion.Euler(x, y, z, euler.order);
         }

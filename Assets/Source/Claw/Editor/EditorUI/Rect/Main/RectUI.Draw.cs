@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Attributes;
+﻿using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +6,18 @@ namespace Beast.Claw.Editor
 {
     public partial class RectUI
     {
+        public UIStyleGroup Style => _style;
+        
+        public IDisposable RemoveIndent()
+        {
+            return _indentPool.Next().RemoveIndent();
+        }
+
+        public IDisposable RemoveInteraction()
+        {
+            return _indentPool.Next().RemoveInteraction();
+        }
+        
         public void Label(Rect screen, Label label, Style style)
         {
             label.ValidateHasLabelThrowException();
@@ -41,16 +53,9 @@ namespace Beast.Claw.Editor
             EditorGUI.DrawRect(rect, color);
         }
         
-        public bool Button(Rect rect, [LabelCanBeEmpty] Label label, Style style)
+        public bool Button(Rect rect, Label label, Style style)
         {
-            style.ValidateHasStyleThrowException();   
-            
-            if (label.hasLabel)
-            {
-                return GUI.Button(rect, label.content, style.style);
-            }
-
-            return GUI.Button(rect, string.Empty, style.style);
+            return GUI.Button(rect, label.content, style.style);
         }
     }
 }

@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Collection;
 using Beast.Claw.Debug;
-using Beast.Claw.Editor.Drawers;
-using Beast.Claw.Editor.Fields;
-using Beast.Claw.Math;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,7 +17,7 @@ namespace Beast.Claw.Editor
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<CommandUndo> _commands = new();
         private readonly Empty _emptyFlow = new ();
-        private readonly TempArray<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
+        private readonly TempArrayStruct<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
 
         private int _flowDepth;
         private bool _validationFailed;
@@ -35,10 +31,8 @@ namespace Beast.Claw.Editor
         public Flow()
         {
             rectUI = new RectUI();
-            
-            rectUI.BindRect<Float2Rect, Float2Task>();
-            rectUI.BindField<Float2Field, float2>();
-            rectUI.BindField<FloatMinMaxField, FloatMinMax>();
+
+            new CommonDrawersContainer().Bind(rectUI);
         }
 
         private void _handleException(ref FlowUIResult uiResult, Exception exception)
