@@ -1,13 +1,19 @@
-﻿using Beast.Claw;
+﻿using Beast.Claw.Editor;
 using Beast.Radar.Terrain;
 
 namespace Beast.Radar.Editor.Tile
 {
-    public class TileDrawerTask : IValidatable
+    public class TileTask : IRectDrawTask
     {
         public int selectedIndex;
         public int tileIndex;
         public TerrainTileData tile;
+        public bool displaySpawnRange;
+        
+        public void SetStyle(UIStyleGroup style)
+        {
+            
+        }
             
         public string Validate()
         {

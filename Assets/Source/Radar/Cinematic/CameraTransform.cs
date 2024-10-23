@@ -50,7 +50,7 @@ namespace Beast.Radar.Cinematic
 
         private UniTask<OperationResult> _warmup()
         {
-            _rotationRad = _config.isometricRotationDeg * BMath.Deg2Rad;
+            _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;
             
             _rotation = float2x2.Rotate(_rotationRad.roll);
             _rotationInverse = float2x2.Rotate(_rotationRad.roll * -1);
@@ -159,8 +159,8 @@ namespace Beast.Radar.Cinematic
             BDebug.Track(this, nameof(_maxViewDistance), _maxViewDistance);
             BDebug.Track(this, nameof(_zoom01), _zoom01);
             BDebug.Track(this, nameof(_yScaleRollCos), _yScaleRollCos);
-            BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.Rad2Deg);
-            BDebug.Track(this, "roll", _rotationRad.roll * BMath.Rad2Deg);
+            BDebug.Track(this, "pitch", _rotationRad.pitch * BMath.RAD_2DEG);
+            BDebug.Track(this, "roll", _rotationRad.roll * BMath.RAD_2DEG);
         }
     }
 }

@@ -74,7 +74,7 @@ namespace Beast.Claw.Gizmos
             {
                 Polygon polygon = polygons[i];
                 GL.Color(polygon.color);
-                float step = BMath.TwoPI / polygon.topology;
+                float step = BMath.TWO_PI / polygon.topology;
                 float2 forward = new(polygon.radius, 0);
                 float2 startPoint = polygon.center + forward;
                 float2 prevPoint = startPoint;

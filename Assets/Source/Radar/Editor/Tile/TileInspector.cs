@@ -29,7 +29,7 @@ namespace Beast.Radar.Editor.Tile
         {
             _explorer = _explorerObject as ITileExplorer;
             
-            flow.If(_explorerObject == null).Draw(ui =>
+            Begin.If(_explorerObject == null).Draw(ui =>
             {
                 ui.WindowField("Explorer", ref _explorer);
                 
@@ -38,26 +38,28 @@ namespace Beast.Radar.Editor.Tile
 
             if (_explorerObject == null)
             {
-                flow.InfoBox("Open and link explorer window");
+                Begin.InfoBox("Open and link explorer window");
                 return;
             }
 
             TerrainTileData tile = _explorer.SelectedTile;
             if (tile == null)
             {
-                flow.InfoBox("No tile selected");
+                Begin.InfoBox("No tile selected");
                 return;
             }
 
-            flow.Record(_explorer.SelectedAsset, "Modify tile data").Draw(ui =>
+            Begin.Record(_explorer.SelectedAsset, "Modify tile data").Draw(ui =>
             {
-                flow.Horizontal(ui =>
+                ui.Validate(tile, tile.name ?? "tile");
+                
+                Begin.Horizontal(ui =>
                 {
                     ui.Label("Texture:");
                     
                     ui.FlexibleSpace();
                     
-                    flow.Enabled(BAsset.IsDirty(_explorer.SelectedAsset)).LabelWidthAndButton("SaveAsset", () =>
+                    Begin.Enabled(BAsset.IsDirty(_explorer.SelectedAsset)).LabelWidthAndButton("SaveAsset", () =>
                     {
                         BAsset.SaveIfDirty(_explorer.SelectedAsset);
                     });
@@ -65,17 +67,17 @@ namespace Beast.Radar.Editor.Tile
             
                 bool spriteHasTexture = tile.texture != null;
                 
-                flow.Tab().Horizontal().Draw(ui =>
+                Begin.Tab().Horizontal().Draw(ui =>
                 {
-                    flow.Enabled(false).PassiveLabel(spriteHasTexture ? tile.texture.name : "N/A");
+                    Begin.Enabled(false).PassiveLabel(spriteHasTexture ? tile.texture.name : "N/A");
                     
                     ui.AssetField(Label.NoLabel, ref tile.texture);
                 });
             
-                flow.Horizontal(ui =>
+                Begin.Horizontal(ui =>
                 {
                     ui.StringField(nameof(tile.name), ref tile.name);
-                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
+                    Begin.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
                     {
                         tile.name = tile.texture.name;
                     });
@@ -83,32 +85,38 @@ namespace Beast.Radar.Editor.Tile
                 
                 ui.IntField(nameof(tile.index), ref tile.index);
             
-                flow.Horizontal(ui =>
+                Begin.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(tile.yCropHeight), ref tile.yCropHeight);
-                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
+                    Begin.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
                     {
                         tile.yCropHeight = 1 - _helper.GetSpriteHeight(tile.texture);
                     });
                 });
             
-                flow.Horizontal(ui =>
+                Begin.Horizontal(ui =>
                 {
                     ui.FloatField(nameof(tile.yBlendCenter), ref tile.yBlendCenter);
-                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
+                    Begin.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
                     {
                         tile.yBlendCenter = _helper.GetSpriteHeight(tile.texture) * 0.5f;
                     });
                 });
                 
-                flow.Horizontal(ui =>
+                Begin.Horizontal(ui =>
                 {
                     ui.ColorField(nameof(tile.averageColor), ref tile.averageColor);
-                    flow.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
+                    Begin.Enabled(spriteHasTexture).Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
                     {
                         tile.averageColor = _helper.GetAverageColor(tile.texture);
                     });
                 });
+
+                //flow.Tab(ui =>
+                {
+                    ui.GenericField(nameof(tile.waterRange), ref tile.waterRange);
+                    ui.GenericField(nameof(tile.forestRange), ref tile.forestRange);
+                }//);
             });
         }
 

@@ -38,65 +38,65 @@ namespace Beast.Radar.Editor.Atlas
 
         protected override void DrawUI()
         {
-            flow.AssetField(Label.NoLabel, ref _asset);
+            Begin.AssetField(Label.NoLabel, ref _asset);
 
             if (_asset == null)
             {
-                flow.InfoBox("Open or create atlas");
+                Begin.InfoBox("Open or create atlas");
                 return;
             }
             
             _asset.data.TryValidate(out bool atlasIsValid, out string atlasErrorMessage);
 
-            flow.Horizontal(ui =>
+            Begin.Horizontal(ui =>
             {
-                flow.Enabled(_asset != null).Button("FixImports", _fixImports);
+                Begin.Enabled(_asset != null).Button("FixImports", _fixImports);
 
                 bool hasAllTextures = _asset != null &&
                                       _asset.data.mainTexture != null &&
                                       _asset.data.colorTexture != null &&
                                       _asset.data.configTexture != null;
 
-                flow.Enabled(hasAllTextures && atlasIsValid).Button("BakeTextures", ui =>
+                Begin.Enabled(hasAllTextures && atlasIsValid).Button("BakeTextures", ui =>
                 {
                     _bakeMainTexture(ui);
                     _bakeColorTexture(ui);
                     _bakeConfigTexture(ui);
                 });
                 
-                flow.Enabled(BAsset.IsNullOrDirty(_asset)).Button("SaveAsset", _saveAtlasAsset);
+                Begin.Enabled(BAsset.IsNullOrDirty(_asset)).Button("SaveAsset", _saveAtlasAsset);
             });
 
-            flow.Record(_asset, "Change atlas data").Vertical(ui =>
+            Begin.Record(_asset, "Change atlas data").Vertical(ui =>
             {
                 TerrainAtlas atlas = _asset.data;
 
-                flow.If(!atlasIsValid).WarningBox(atlasErrorMessage);
+                Begin.If(!atlasIsValid).WarningBox(atlasErrorMessage);
                 
                 ui.Foldout("Textures", ref _texturesFold);
 
-                flow.If(_texturesFold).Tab().Horizontal(ui =>
+                Begin.If(_texturesFold).Tab().Horizontal(ui =>
                 {
                     ui.AssetField(nameof(atlas.mainTexture), ref atlas.mainTexture);
                     string buttonName = atlas.mainTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeMainTexture);
+                    Begin.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeMainTexture);
                 });
 
-                flow.If(_texturesFold).Tab().Horizontal(ui =>
+                Begin.If(_texturesFold).Tab().Horizontal(ui =>
                 {
                     ui.AssetField(nameof(atlas.colorTexture), ref atlas.colorTexture);
                     string buttonName = atlas.colorTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeColorTexture);
+                    Begin.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeColorTexture);
                 });
 
-                flow.If(_texturesFold).Tab().Horizontal(ui =>
+                Begin.If(_texturesFold).Tab().Horizontal(ui =>
                 {
                     ui.AssetField(nameof(atlas.configTexture), ref atlas.configTexture);
                     string buttonName = atlas.configTexture == null ? NAME_SAVE : NAME_OVERRIDE;
-                    flow.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
+                    Begin.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
                 });
-                    
-                ui.Int2FieldTwoLine(nameof(atlas.tileCount), ref atlas.tileCount);
+
+                ui.GenericField(nameof(atlas.tileCount), ref atlas.tileCount);
                 ui.IntField(nameof(atlas.pixelsPerTile), ref atlas.pixelsPerTile);
             });
         }

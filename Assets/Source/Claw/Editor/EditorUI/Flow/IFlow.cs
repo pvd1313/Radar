@@ -7,6 +7,7 @@ namespace Beast.Claw.Editor
     public interface IFlow
     {
         FlowUIResult Draw(Action<FlowUI> action);
+        
         IFlow Enabled(bool isEnabled);
         IFlow Vertical();
         IFlow Horizontal();

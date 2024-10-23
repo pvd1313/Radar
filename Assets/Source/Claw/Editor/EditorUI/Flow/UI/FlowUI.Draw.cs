@@ -2,6 +2,7 @@
 using Beast.Claw.Attributes;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Math;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,6 +23,20 @@ namespace Beast.Claw.Editor
             }
             
             isFold = EditorGUILayout.Foldout(isFold, label.content);
+        }
+
+        public void GenericField<TValue>(Label label, ref TValue value)
+        {
+            Rect screen = EditorGUILayout.GetControlRect();
+
+            value = _flow.rectUI.Field(screen, label, value);
+        }
+        
+        public TValue GenericField<TValue>(Label label, TValue value)
+        {
+            Rect screen = EditorGUILayout.GetControlRect();
+
+            return _flow.rectUI.Field(screen, label, value);
         }
 
         [NoCustomStyle]

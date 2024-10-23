@@ -47,18 +47,18 @@ namespace Beast.Claw.Editor.Window
 
         protected override void DrawUI()
         {
-            flow.Horizontal().Draw(ui =>
+            Begin.Horizontal().Draw(ui =>
             {
-                flow.FieldWidth(0).Draw(ui => ui.ColorField(Label.NoLabel, ref _colorPicker));
+                Begin.FieldWidth(0).Draw(ui => ui.ColorField(Label.NoLabel, ref _colorPicker));
                 string label = "UnityEditor.EditorStyles:";
-                flow.LabelWidth(label).PassiveLabel(label);
+                Begin.LabelWidth(label).PassiveLabel(label);
             });
 
-            flow.Vertical().Scroll(ref _scrollPosition).Draw(ui =>
+            Begin.Vertical().Scroll(ref _scrollPosition).Draw(ui =>
             {
                 foreach (StyleData data in _styles)
                 {
-                    flow.Style(data.style).PassiveLabel(data.name);
+                    Begin.Style(data.style).PassiveLabel(data.name);
                 }
             });
         }

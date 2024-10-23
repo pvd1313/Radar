@@ -1,15 +1,35 @@
-﻿using Beast.Claw.Debug;
-using UnityEditor;
+﻿using System;
+using Beast.Claw.Collection;
+using Beast.Claw.Debug;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public struct Label
     {
-        public static Label NoLabel { get; } = default;
+        public static Label NoLabel { get; } = new()
+        {
+            hasLabel = false,
+            content = GUIContent.none
+        };
+
+        private static ObjectPoolStructType<GUIContent> _pool;
         
         public bool hasLabel;
         public GUIContent content;
+
+        static Label()
+        {
+            try
+            {
+                _pool = new ObjectPoolStructType<GUIContent>(32);
+            }
+            catch (Exception e)
+            {
+                BDebug.StaticLogException(e);
+            }
+        }
         
         public static implicit operator Label(GUIContent guiContent)
         {
@@ -44,11 +64,44 @@ namespace Beast.Claw.Editor
                 return NoLabel;
             }
 
+            GUIContent content = _pool.Next();
+            content.text = text;
+
             return new Label
             {
                 hasLabel = true,
-                content = EditorGUIUtility.TrTempContent(text)
+                content = content
             };
+        }
+
+        public float2 CalcSizeOrDefault(Style style)
+        {
+            if (!hasLabel)
+            {
+                return 0;
+            }
+
+            if (!style.hasStyle)
+            {
+                throw new ArgumentException("Style not set");
+            }
+            
+            return style.CalcSize(content);
+        }
+        
+        public float2 CalcSize(Style style)
+        {
+            if (!hasLabel)
+            {
+                throw new InvalidOperationException("Label not set");
+            }
+
+            if (!style.hasStyle)
+            {
+                throw new ArgumentException("Style not set");
+            }
+            
+            return style.CalcSize(content);
         }
 
         public void ValidateHasLabelThrowException()

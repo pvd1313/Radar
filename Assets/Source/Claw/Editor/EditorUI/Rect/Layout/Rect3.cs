@@ -8,6 +8,13 @@ namespace Beast.Claw.Editor
         public Rect rect1;
         public Rect rect2;
         
+        public Rect3(Rect r0, Rect r1, Rect r2)
+        {
+            rect0 = r0;
+            rect1 = r1;
+            rect2 = r2;
+        }
+        
         public void Deconstruct(out Rect r0, out Rect r1, out Rect r2)
         {
             r0 = rect0;

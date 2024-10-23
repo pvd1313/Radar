@@ -1,20 +1,19 @@
 ﻿using System;
+using Beast.Claw.Reflection;
 
 namespace Beast.Claw.Collection
 {
-    public readonly struct TempArray<TValue>
+    public readonly struct TempArrayStruct<TValue>
     {
-        private const int MAX_SAFE_CAPACITY = 64;
-
         public int Capacity => _capacity;
 
         private readonly TValue[][] _array;
         private readonly int _capacity;
         private readonly bool _isInitialized;
 
-        public TempArray(int capacity)
+        public TempArrayStruct(int capacity)
         {
-            if (capacity < 0 || capacity > MAX_SAFE_CAPACITY)
+            if (capacity < 0 || capacity > TempConfig.SAFE_CAPACITY)
             {
                 throw new ArgumentException("Invalid capacity: " + capacity);
             }
@@ -37,7 +36,7 @@ namespace Beast.Claw.Collection
             {
                 if (!_isInitialized)
                 {
-                    throw new InvalidCastException("TempArray was not initialized");
+                    throw new InvalidCastException($"{this.TypeName()} was not initialized");
                 }
             
                 if (arrayLength < 0 || arrayLength > _capacity)

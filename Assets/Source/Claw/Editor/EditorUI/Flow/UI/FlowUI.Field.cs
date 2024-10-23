@@ -4,6 +4,7 @@ using Beast.Claw.Collection;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
@@ -71,14 +72,6 @@ namespace Beast.Claw.Editor
         }
 
         [NoCustomStyle]
-        public float2 Float2FieldTwoLine([LabelMustBeSet] Label label, float2 value)
-        {
-            Float2FieldTwoLine(label, ref value);
-
-            return value;
-        }
-
-        [NoCustomStyle]
         public void Float2FieldTwoLine([LabelMustBeSet] Label label, ref float2 value)
         {
             _flow.NotifyDrawCall();
@@ -86,48 +79,6 @@ namespace Beast.Claw.Editor
             label.ValidateHasLabelThrowException();
 
             value = EditorGUILayout.Vector2Field(label.content, value, _flow.CurrentLayout);
-        }
-
-        [NoCustomStyle]
-        public float2 Float2FieldOneLine([LabelCanBeEmpty] Label label, float2 value)
-        {
-            Float2FieldOneLine(label, ref value);
-
-            return value;
-        }
-
-        [NoCustomStyle]
-        public void Float2FieldOneLine([LabelCanBeEmpty] Label label, ref float2 value)
-        {
-            _flow.NotifyDrawCall();
-            
-            Rect rect = EditorGUILayout.GetControlRect(false);
-
-            if (label.hasLabel)
-            {
-                rect = EditorGUI.PrefixLabel(rect, GUIUtility.GetControlID(FocusType.Passive), label.content);
-            }
-
-            const float LABEL_WIDTH = 15;
-            float fieldWidth = (rect.width - LABEL_WIDTH * 2) / 2;
-
-            Rect4 columns = rect.SliceToColumns4(LABEL_WIDTH, fieldWidth, LABEL_WIDTH, fieldWidth);
-            
-            int indentLevelBak = EditorGUI.indentLevel;
-            EditorGUI.indentLevel = 0;
-            
-            EditorGUI.BeginDisabledGroup(true);
-            GUIContent tempX = EditorGUIUtility.TrTempContent(" x");
-            EditorGUI.PrefixLabel(columns.rect0, GUIUtility.GetControlID(FocusType.Passive), tempX);
-            
-            GUIContent tempY = EditorGUIUtility.TrTempContent(" y");
-            EditorGUI.PrefixLabel(columns.rect2, GUIUtility.GetControlID(FocusType.Passive), tempY);
-            EditorGUI.EndDisabledGroup();
-            
-            value.x = EditorGUI.FloatField(columns.rect1, value.x);
-            value.y = EditorGUI.FloatField(columns.rect3, value.y);
-
-            EditorGUI.indentLevel = indentLevelBak;
         }
         
         [NoCustomStyle]
@@ -332,30 +283,6 @@ namespace Beast.Claw.Editor
                     value = EditorGUILayout.IntField(value, _flow.CurrentLayout);
                 }
             }
-        }
-
-        [NoCustomStyle]
-        public int2 Int2FieldTwoLine([LabelMustBeSet] Label label, int2 value)
-        {
-            _flow.NotifyDrawCall();
-            
-            Int2FieldTwoLine(label, ref value);
-
-            return value;
-        }
-        
-        [NoCustomStyle]
-        public void Int2FieldTwoLine([LabelMustBeSet] Label label, ref int2 value)
-        {
-            _flow.NotifyDrawCall();
-            
-            label.ValidateHasLabelThrowException();
-
-            Vector2 vector = new (value.x, value.y);
-
-            vector = EditorGUILayout.Vector2Field(label.content, vector);
-
-            value = new int2((int)vector.x, (int)vector.y);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Beast.Claw.Editor
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<CommandUndo> _commands = new();
         private readonly Empty _emptyFlow = new ();
-        private readonly TempArray<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
+        private readonly TempArrayStruct<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
 
         private int _flowDepth;
         private bool _validationFailed;
@@ -27,6 +27,13 @@ namespace Beast.Claw.Editor
         private int _commandCallCount;
         private bool _isFatal;
         private string _fatalMessage;
+
+        public Flow()
+        {
+            rectUI = new RectUI();
+
+            new CommonDrawersContainer().Bind(rectUI);
+        }
 
         private void _handleException(ref FlowUIResult uiResult, Exception exception)
         {

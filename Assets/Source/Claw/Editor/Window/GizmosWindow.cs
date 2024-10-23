@@ -30,12 +30,12 @@ namespace Beast.Claw.Editor.Window
         {
             if (GizmosStateStorage.HandleCount == 0)
             {
-                flow.InfoBox("No gizmos registered.");
+                Begin.InfoBox("No gizmos registered.");
                 _gizmos.Clear();
                 return;
             }
             
-            flow.Vertical().Scroll(ref _scrollPosition, ui =>
+            Begin.Vertical().Scroll(ref _scrollPosition, ui =>
             {
                 for (ushort i = 0; i < GizmosStateStorage.HandleCount; i++)
                 {
