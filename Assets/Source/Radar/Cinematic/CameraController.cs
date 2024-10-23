@@ -87,7 +87,7 @@ namespace Beast.Radar.Cinematic
 
         private void _processCamera()
         {
-            if (_input.LastTouchCount != _input.CurrentTouchCount)
+            if (_input.LastTouchCount.Value != _input.CurrentTouchCount.Value)
             {
                 return;
             }
@@ -112,15 +112,15 @@ namespace Beast.Radar.Cinematic
             
             if (_input.MoveDelta.State == EButtonState.Default)
             {
-                float2 a = _transform.ScreenToWorld(_input.ScreenPoint);
-                float2 b = _transform.ScreenToWorld(_input.LastScreenPoint);
+                float2 a = _transform.ScreenToWorld(_input.ScreenPoint.Value);
+                float2 b = _transform.ScreenToWorld(_input.LastScreenPoint.Value);
                 float2 moveDelta = b - a;
                 _transform.AddPosition(moveDelta, Space.World);
 
-                float2 viewport = _input.ScreenPoint / (float2)_screen.Size;
+                float2 viewport = _input.ScreenPoint.Value / (float2)_screen.Size;
 
                 BDebug.Track(this, "viewportPoint", viewport);
-                BDebug.Track(this, "screenPoint", _input.ScreenPoint);
+                BDebug.Track(this, "screenPoint", _input.ScreenPoint.Value);
                 BDebug.Track(this, "worldPoint", a);
             }
             else
@@ -137,7 +137,7 @@ namespace Beast.Radar.Cinematic
                 return;
             }
 
-            float2 screenPoint = _input.ScreenPoint;
+            float2 screenPoint = _input.ScreenPoint.Value;
             float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
             
             float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
