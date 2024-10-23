@@ -57,11 +57,8 @@ namespace Beast.Radar.Editor.Tile
                 float paddingY = BMath.Max(0, screen.size.y * 0.5f - ((float2)screenSize).y * 0.5f);
                 screen = screen.AddPadding(Padding.LeftRight(paddingX).WithTopDown(paddingY));
 
-                //_rectUI.Fill(screen, Color.black);
-
                 _drawTiles(screen, tiles, TileBiomeTask.Mode.Background);
                 _drawTiles(screen, tiles, TileBiomeTask.Mode.Label);
-                //_drawTiles(screen, tiles, TileBiomeTask.Mode.Interactive);
             });
         }
 

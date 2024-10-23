@@ -34,23 +34,13 @@ namespace Beast.Radar.Editor.Tile
                     return;
                 
                 case TileBiomeTask.Mode.Label:
-                    Label tileName = task.tile.name ?? "???";
+                    Label tileName = string.IsNullOrEmpty(task.tile.name) ? "???" : task.tile.name;
                     Style labelStyle = task.isSelected ? _labelStyleSelected : _labelStyleNormal;
                     float2 labelSize = labelStyle.CalcSize(tileName);
 
                     Rect labelRect = screen.AlignCenter(labelSize);
-
-                    // float xPadding = BMath.Max(0, labelSize.x - labelRect.width) * 0.5f;
-                    // float yPadding = BMath.Max(0, labelSize.y - labelRect.height) * 0.5f;
-
-                    //labelRect = labelRect.Expand(new float2(xPadding, yPadding));
             
                     _ui.Fill(labelRect, Color.black);
-                    
-                    // labelStyle.Scheme.alignment = 
-                    //     labelRect.x > screen.width ? 
-                    //     TextAnchor.MiddleLeft : 
-                    //     TextAnchor.MiddleCenter;
                     
                     _ui.Label(labelRect, tileName, labelStyle);
                     return;
