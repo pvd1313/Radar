@@ -14,13 +14,13 @@ namespace Beast.Radar.Terrain
 
         private readonly GameModel _game;
         private readonly ITerrainBaker _baker;
-        private readonly RenderConfig _config;
+        private readonly GraphicConfig _config;
         private RenderTexture _texture;
         
         public TerrainBakedTexture(
             GameModel game, 
             ITerrainBaker baker, 
-            RenderConfig config)
+            GraphicConfig config)
         {
             _game = game;
             _baker = baker;

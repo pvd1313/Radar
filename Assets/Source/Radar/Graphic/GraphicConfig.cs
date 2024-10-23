@@ -4,7 +4,7 @@ using Beast.Radar.Terrain;
 
 namespace Beast.Radar.Graphic
 {
-    public class RenderConfig : ScriptableConfig
+    public class GraphicConfig : ScriptableConfig
     {
         public TerrainRenderConfig terrain;
         public TileRenderConfig tile;

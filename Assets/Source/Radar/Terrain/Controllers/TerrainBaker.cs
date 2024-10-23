@@ -35,6 +35,7 @@ namespace Beast.Radar.Terrain
             task.ValidateThrowException();
             
             _material.SetFloat("_Water01", task.terrain.water01);
+            _material.SetFloat("_Forest01", task.terrain.water01);
             _material.SetFloat("_Seed", task.terrain.seed);
             _material.SetFloat("_BiomeSize01", task.terrain.biomeSize01);
             _material.SetFloat2("_TextureSize", task.outputTexture.Size());

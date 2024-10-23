@@ -8,7 +8,7 @@ namespace Beast.Claw.Editor
         public void StagedBeginDraw(out FlowUI ui, out FlowUIResult result)
         {
             result = default;
-            ui = new FlowUI(this);
+            ui = new FlowUI(this, _rectUI);
         }
         
         public void StagedHandleException(ref FlowUI ui, ref FlowUIResult result, Exception exception)

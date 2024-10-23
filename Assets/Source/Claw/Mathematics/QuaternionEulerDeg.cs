@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Claw.Math
+namespace Beast.Claw.Mathematics
 {
     public struct QuaternionEulerDeg
     {

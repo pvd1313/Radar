@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;

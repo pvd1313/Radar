@@ -8,11 +8,7 @@ namespace Beast.Claw.Editor
 {
     public struct Label
     {
-        public static Label NoLabel { get; } = new()
-        {
-            hasLabel = false,
-            content = GUIContent.none
-        };
+        public static Label NoLabel => new(GUIContent.none, false);
 
         private static ObjectPoolStructType<GUIContent> _pool;
         
@@ -29,6 +25,12 @@ namespace Beast.Claw.Editor
             {
                 BDebug.StaticLogException(e);
             }
+        }
+
+        public Label(GUIContent content, bool hasLabel)
+        {
+            this.content = content;
+            this.hasLabel = hasLabel;
         }
         
         public static implicit operator Label(GUIContent guiContent)
@@ -81,7 +83,7 @@ namespace Beast.Claw.Editor
                 return 0;
             }
 
-            if (!style.hasStyle)
+            if (!style.HasStyle)
             {
                 throw new ArgumentException("Style not set");
             }
@@ -96,7 +98,7 @@ namespace Beast.Claw.Editor
                 throw new InvalidOperationException("Label not set");
             }
 
-            if (!style.hasStyle)
+            if (!style.HasStyle)
             {
                 throw new ArgumentException("Style not set");
             }

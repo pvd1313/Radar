@@ -180,16 +180,20 @@ namespace Beast.Claw.Editor
         }
 
         [SupportsCustomStyle]
-        public void WindowField<TWindow>([LabelCanBeEmpty] Label label, ref TWindow window) 
+        public void WindowField<TWindow>([LabelCanBeEmpty] Label label, WindowContainer<TWindow> container) 
             where TWindow : class
         {
+            container.ValidateNotNullThrowException(nameof(container));
+            
             _flow.NotifyDrawCall();
 
+            // TODO : Optimize active window search (Resources.FindObjectsOfTypeAll)
+            //      : https://risenbeast.youtrack.cloud/issue/R-70
             EditorWindow[] editorWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
 
             StackIndexMap<TWindow> windowMap = new (stackalloc short[_flow.TempStringArray.Capacity]);
             
-            int selectedIndex = windowMap.FindAllWithTypeAndCurrent(editorWindows, window);
+            int selectedIndex = windowMap.FindAllWithTypeAndCurrent(editorWindows, container.Window);
             if (selectedIndex == -1)
             {
                 selectedIndex = 0;
@@ -199,7 +203,7 @@ namespace Beast.Claw.Editor
             windowNames[0] = _flow.TextNone;
             for (int i = 0; i < windowMap.Count; i++)
             {
-                windowNames[i + 1] = (windowMap[i] as EditorWindow)?.titleContent;
+                windowNames[i + 1] = (windowMap[i] as EditorWindow)?.titleContent ?? GUIContent.none;
             }
 
             int selectedIndexNew;
@@ -244,7 +248,14 @@ namespace Beast.Claw.Editor
 
             if (selectedIndexNew != selectedIndex)
             {
-                window = selectedIndexNew > 0 ? windowMap[selectedIndexNew - 1] : null;
+                if (selectedIndexNew > 0)
+                {
+                    container.SetReference(windowMap[selectedIndexNew - 1] as Object);
+                }
+                else
+                {
+                    container.SetReference(null);
+                }
             }
         }
 

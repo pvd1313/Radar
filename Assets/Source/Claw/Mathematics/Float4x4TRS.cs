@@ -1,8 +1,7 @@
 ﻿using Unity.Mathematics;
-
 using Matrix4x4 = UnityEngine.Matrix4x4;
 
-namespace Beast.Claw.Math
+namespace Beast.Claw.Mathematics
 {
     public struct Float4x4TRS
     {

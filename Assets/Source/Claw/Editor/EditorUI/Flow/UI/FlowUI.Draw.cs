@@ -1,7 +1,7 @@
 ﻿using System;
 using Beast.Claw.Attributes;
 using Beast.Claw.Attributes.Annotation;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -29,14 +29,14 @@ namespace Beast.Claw.Editor
         {
             Rect screen = EditorGUILayout.GetControlRect();
 
-            value = _flow.rectUI.Field(screen, label, value);
+            value = _rectUI.Field(screen, label, value);
         }
         
         public TValue GenericField<TValue>(Label label, TValue value)
         {
             Rect screen = EditorGUILayout.GetControlRect();
 
-            return _flow.rectUI.Field(screen, label, value);
+            return _rectUI.Field(screen, label, value);
         }
 
         [NoCustomStyle]

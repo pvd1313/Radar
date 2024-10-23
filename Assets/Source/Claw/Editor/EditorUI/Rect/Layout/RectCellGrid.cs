@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Math;
+﻿using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -48,7 +48,7 @@ namespace Beast.Claw.Editor
             // Remove horizontal slider.
             _totalSize.x = windowWidth - 20;
             int rowCount = BMath.CeilToInt(input.itemCount / (float)_columnCount);
-            _totalSize.y = _cellSize * rowCount + (rowCount - 1) * _spacing.y + _padding.top + _padding.bottom;
+            _totalSize.y = _cellSize * rowCount + (rowCount - 1) * _spacing.y + _padding.top + _padding.down;
         }
 
         public Rect GetElement(int elementIndex)

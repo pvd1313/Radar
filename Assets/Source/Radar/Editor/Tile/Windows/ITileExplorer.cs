@@ -1,11 +1,11 @@
-﻿using Beast.Radar.Terrain;
-using UnityEngine;
+﻿using Beast.Claw.Common;
+using Beast.Radar.Terrain;
 
 namespace Beast.Radar.Editor.Tile
 {
     public interface ITileExplorer
     {
-        Object SelectedAsset { get; }
+        ScriptableContainer<TerrainAtlas>  SelectedAsset { get; }
         
         TerrainTileData SelectedTile { get; }
     }

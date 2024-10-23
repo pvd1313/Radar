@@ -8,8 +8,6 @@ namespace Beast.Claw.Editor
         public TempArrayStruct<string> TempStringArray { get; } = new(TEMP_ARRAY_CAPACITY);
         public TempArrayStruct<GUIContent> TempContentArray { get; } = new(TEMP_ARRAY_CAPACITY);
 
-        public RectUI rectUI { get; }
-
         public GUIContent TextNone { get; } = new GUIContent("None");
         
         public GUIStyle CurrentStyle => _currentStyle;

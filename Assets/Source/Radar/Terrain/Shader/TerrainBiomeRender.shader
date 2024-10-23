@@ -38,6 +38,8 @@
             sampler2D _NoiseMap;
             float2 _NoiseMapSize;
 
+            sampler2D _IndexMap;
+
             sampler2D _DebugGridTexture;
             float2 _DebugGridTextureSize;
             
@@ -65,12 +67,6 @@
                 output.mainUV = screen_to_world_uv(clipUV, _TerrainTextureSize);
                 output.noiseUV = screen_to_world_uv(clipUV, _NoiseMapSize);
 
-                // Will not work with index mapping. We have to implement new solution for grid.
-// #ifdef DRAW_DEBUG_GRID_TEXTURE
-//                 output.gridUV = screen_to_world_uv(uv, _DebugGridTextureSize);
-//                 output.gridUV *= MAP_RENDER_PPU;
-// #endif
-
                 return output;
             }
 
@@ -80,31 +76,7 @@
                 float2 noise = beast_unpack_normal_2d(noiseRG) * power;
                 mainUV = mainUV + noise * offset / _TerrainTextureSize;
                 
-                return tex2D(_TerrainTexture, mainUV).r;
-            }
-
-            uint terrain_color_to_tile_index(float waterAmount)
-            {
-                if (waterAmount > 0.9f)
-                {
-                    // tile_water_deep
-                    return 3;
-                }
-
-                if (waterAmount > 0.1f)
-                {
-                    // tile_water_shallow
-                    return 2;
-                }
-
-                if (waterAmount > 0.05f)
-                {
-                    // tile_water_coast
-                    return 1;
-                }
-
-                // tile_grass
-                return 0;
+                return tex2D(_TerrainTexture, mainUV);
             }
 
             float4 fragment(FragmentInput input) : SV_Target
@@ -114,16 +86,14 @@
 
                 float4 terrainColorRGBA = saturate(color0 * color1);
 
-                uint tileIndex = terrain_color_to_tile_index(terrainColorRGBA.r);
+                float2 indexMapUV = terrainColorRGBA.rg;
+
+                float indexColorR = tex2D(_IndexMap, indexMapUV).r;
+
+                // In future we also have to process blending colors.
+                uint tileIndex = (uint)floor(indexColorR * 255.0f + 0.5f);
 
                 return float4(f16tof32(tileIndex), 0, 0, 0);
-
-                // Will not work with index mapping. We have to implement new solution for grid.
-// #ifdef DRAW_DEBUG_GRID_TEXTURE
-//                 float gridColor = tex2D(_DebugGridTexture, input.gridUV).r;
-//                 float gridTexelSize = _OutputHeight / _DebugGridTextureSize.y;
-//                 color = lerp(color, gridColor, 0.25 * saturate(1 - gridTexelSize));
-// #endif
             }
             
             ENDCG

@@ -34,27 +34,27 @@
         
         public string Validate()
         {
-            if (mainLabel.hasLabel && !mainLabelStyle.hasStyle)
+            if (mainLabel.hasLabel && !mainLabelStyle.HasStyle)
             {
                 return "Has main label, but has no style for it";
             }
 
-            if (label0.hasLabel && !labelStyle0.hasStyle)
+            if (label0.hasLabel && !labelStyle0.HasStyle)
             {
                 return "Has label0, but has no style for it";
             }
 
-            if (label1.hasLabel && !labelStyle1.hasStyle)
+            if (label1.hasLabel && !labelStyle1.HasStyle)
             {
                 return "Has label1, but has no style for it";
             }
 
-            if (!valueStyle0.hasStyle)
+            if (!valueStyle0.HasStyle)
             {
                 return "valueStyle0 not set";
             }
 
-            if (!valueStyle1.hasStyle)
+            if (!valueStyle1.HasStyle)
             {
                 return "valueStyle1 not set";
             }

@@ -9,6 +9,7 @@ namespace Beast.Claw.Editor
         public Style Label { get; private set; }
         public Style TextField { get; private set; }
         public Style NumberField { get; private set; }
+        public Style SelectionBox { get; private set; }
         
         public float MinorSpacing { get; private set; }
 
@@ -21,6 +22,7 @@ namespace Beast.Claw.Editor
                     Label = EditorStyles.label,
                     TextField = EditorStyles.textField,
                     NumberField = EditorStyles.numberField,
+                    SelectionBox = EditorStyles.selectionRect,
                     MinorSpacing = 5
                 };
             }

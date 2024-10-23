@@ -39,10 +39,6 @@
             sampler2D _TerrainTexture;
             float2 _TerrainUVOffset;
             float2 _TerrainTexelSize;
-
-            sampler2D _NoiseTexture;
-            float2 _NoiseTexelSize;
-            float2 _NoiseUVOffset;
             
             float _SolverTextureSize;
 
@@ -73,9 +69,7 @@
                 float2 configTexelSize = 1.0f / _TileAtlasTileCount;
                 float2 configRG = tex2D(_TileAtlasConfig, tileXY * configTexelSize + configTexelSize * 0.5f);
                 
-                float noiseR = tex2D(_NoiseTexture, _NoiseUVOffset + offset * _NoiseTexelSize).r;
-                
-                return float4(f16tof32(tileIndex), noiseR, configRG.r, configRG.g);
+                return float4(f16tof32(tileIndex), 0, configRG.r, configRG.g);
             }
             
             ENDCG

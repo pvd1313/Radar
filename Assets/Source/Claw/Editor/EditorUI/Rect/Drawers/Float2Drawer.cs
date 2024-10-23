@@ -7,7 +7,7 @@ namespace Beast.Claw.Editor.Drawers
     {
         private RectUI _ui;
 
-        public void Warmup(RectUI ui)
+        public void Warmup(RectUI ui, UIStyleGroup style)
         {
             _ui = ui;
         }

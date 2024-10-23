@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

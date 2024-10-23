@@ -1,6 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Graphic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -12,13 +12,13 @@ namespace Beast.Radar.Terrain
         private readonly IRender<TerrainBakeTask> _baker;
         private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
         private readonly IRender<TerrainColorRenderTask> _colorRender;
-        private readonly RenderConfig _config;
+        private readonly GraphicConfig _config;
 
         public TerrainPreviewRender(
             IRender<TerrainBakeTask> baker, 
             IRender<TerrainBiomeRenderTask> biomeRender,
             IRender<TerrainColorRenderTask> colorRender,
-            RenderConfig config)
+            GraphicConfig config)
         {
             _baker = baker;
             _biomeRender = biomeRender;
@@ -30,7 +30,7 @@ namespace Beast.Radar.Terrain
             where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            pixelSize.ValidateComponentsBiggerZeroThrowException(nameof(pixelSize));
+            pixelSize.ValidateComponentsBiggerThanZeroThrowException(nameof(pixelSize));
 
             RenderTextureData textureData = _config.terrain.colorTexture.WithSize(pixelSize);
             

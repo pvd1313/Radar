@@ -1,13 +1,13 @@
 ﻿using Beast.Claw.Editor.Drawers;
 using Beast.Claw.Editor.Fields;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Editor
 {
     public class CommonDrawersContainer
     {
-        public void Bind(RectUI ui)
+        public void BindAllTo(RectUI ui)
         {
             ui.BindDrawer<Float2Drawer, Float2Task>();
             

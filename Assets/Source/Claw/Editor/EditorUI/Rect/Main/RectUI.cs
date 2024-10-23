@@ -49,7 +49,7 @@ namespace Beast.Claw.Editor
             _rectTaskToPool[taskType] = new ObjectPoolClassType<TDrawTask>(POOL_CAPACITY);
             
             TDrawer drawer = new();
-            drawer.Warmup(this);
+            drawer.Warmup(this, _style);
 
             _rectTaskToAction[taskType] = () =>
             {
@@ -73,7 +73,7 @@ namespace Beast.Claw.Editor
             _fieldValueToContainer[valueType] = new DataContainer<TValue>();
 
             TDrawer drawer = new();
-            drawer.Warmup(this);
+            drawer.Warmup(this, _style);
 
             _fieldValueToAction[valueType] = () =>
             {

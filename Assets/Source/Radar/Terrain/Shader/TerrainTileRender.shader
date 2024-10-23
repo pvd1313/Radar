@@ -84,11 +84,10 @@
                 output.mainUV = tileUV;
 
                 // Second UV to reduce glitches when tiles are small.
-                float noisePower = solverRGBA.g;
                 float blendCenterY = solverRGBA.a;
                 float t = saturate(_TileAtlasPPU / (_OutputSize.y * _OutputTileHeight * 4));
                 float2 centerUV = tileUVShift + float2(0.5f, blendCenterY) / _TileAtlasTileCount;
-                output.centerUV = lerp(tileUV, centerUV, t * 0.5f + t * noisePower * 0.5f);
+                output.centerUV = lerp(tileUV, centerUV, t * 0.5f);
                 output.blendPower = t;
 
                 // Scale vertex to desired size.

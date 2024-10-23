@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Math
+namespace Beast.Claw.Mathematics
 {
     [Serializable]
     public struct IntMinMax

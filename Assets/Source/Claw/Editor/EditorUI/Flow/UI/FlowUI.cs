@@ -7,10 +7,12 @@ namespace Beast.Claw.Editor
     public readonly partial struct FlowUI
     {
         private readonly Flow _flow;
+        private readonly RectUI _rectUI;
 
-        public FlowUI(Flow flow)
+        public FlowUI(Flow flow, RectUI rectUI)
         {
             _flow = flow;
+            _rectUI = rectUI;
         }
 
         public Rect AllocateRect(float2 size)

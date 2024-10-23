@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -12,11 +12,12 @@ namespace Beast.Radar.Terrain
     public class TerrainAtlas : IValidatable
     {
         private static Dictionary<int, string> _indexToName;
-        private static Dictionary<int, Bounds> _indexToBounds;
+        private static Dictionary<int, FloatBounds2D> _indexToBounds;
         
         public Texture2D mainTexture;
         public Texture2D colorTexture;
         public Texture2D configTexture;
+        public Texture2D indexTexture;
 
 #if UNITY_EDITOR
         public List<TerrainTileData> tiles;
@@ -53,7 +54,7 @@ namespace Beast.Radar.Terrain
             if (tiles != null)
             {
                 _indexToName ??= new Dictionary<int, string>();
-                _indexToBounds ??= new Dictionary<int, Bounds>();
+                _indexToBounds ??= new Dictionary<int, FloatBounds2D>();
                 _indexToName.Clear();
                 _indexToBounds.Clear();
                 
@@ -78,18 +79,17 @@ namespace Beast.Radar.Terrain
                     {
                         return $"Tile '{tile.name}' index ({tile.index}) conflicts with '{existingTileName}'";
                     }
+                    
+                    _indexToName[tile.index] = tile.name;
 
-                    FloatMinMax water = tile.waterRange;
-                    FloatMinMax forest = tile.forestRange;
+                    if (!tile.isBiomeTile)
+                    {
+                        continue;
+                    }
 
-                    float epsilon = BMath.EPSILON;
-
-                    Vector3 center = new (water.GetCenter(), forest.GetCenter(), 0);
-                    Vector3 size = new(water.Shrink(epsilon).GetRange(), forest.Shrink(epsilon).GetRange(), 1);
-
-                    Bounds bounds = new(center, size);
-
-                    foreach ((int tileIndex, Bounds tileBounds) in _indexToBounds)
+                    FloatBounds2D bounds = tile.SpawnRangeAsBounds().Shrink(BMath.EPSILON);
+                    
+                    foreach ((int tileIndex, FloatBounds2D tileBounds) in _indexToBounds)
                     {
                         if (!tileBounds.Intersects(bounds))
                         {
@@ -99,7 +99,6 @@ namespace Beast.Radar.Terrain
                         return $"Tile '{tile.name}' spawn range overlaps tile '{_indexToName[tileIndex]}'";
                     }
                     
-                    _indexToName[tile.index] = tile.name;
                     _indexToBounds[tile.index] = bounds;
                 }
             }

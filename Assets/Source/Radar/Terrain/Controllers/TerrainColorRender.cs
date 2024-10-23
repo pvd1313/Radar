@@ -2,7 +2,7 @@
 using Beast.Claw;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
