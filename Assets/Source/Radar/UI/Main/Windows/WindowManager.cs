@@ -11,12 +11,15 @@ namespace Beast.Radar.UI
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
 
+        public string CurrentWindow => _currentWindowID ?? WindowID.None;
+
         private readonly IUIFactory _uiFactory;
         private readonly IUIInputController _uiInputController;
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
-        private IWindow _currentOpenedWindow;
+        private IWindow _currentWindow;
+        private string _currentWindowID;
 
         public WindowManager(IUIFactory uiFactory, IUIInputController input)
         {
@@ -64,9 +67,10 @@ namespace Beast.Radar.UI
                 throw new InvalidOperationException($"Window with ID '{windowID}' is not registered or does not exist.");
             }
 
-            _currentOpenedWindow?.Close();
-            _currentOpenedWindow = _allWindows[windowID];
-            _currentOpenedWindow.Open();
+            _currentWindow?.Close();
+            _currentWindow = _allWindows[windowID];
+            _currentWindowID = windowID;
+            _currentWindow.Open();
             
             bool isHasOpenedWindow = windowID != WindowID.MainHUD;
             
@@ -94,14 +98,14 @@ namespace Beast.Radar.UI
 
         private void _onPauseButtonPressed()
         {
-            Show(_currentOpenedWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+            Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
         }
 
         private void _onActionButtonPressed(ESelectionZone zone)
         {
             if (zone == ESelectionZone.EastButton)
             {
-                if (_currentOpenedWindow is not HUDWindow)
+                if (_currentWindow is not HUDWindow)
                 {
                     Show(WindowID.MainHUD);
                 }
