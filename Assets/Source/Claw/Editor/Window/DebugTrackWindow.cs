@@ -27,6 +27,7 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private int _updateTickRate = 3;
         [SerializeField] private bool _isSharpMode;
         [SerializeField] private bool _editorFetch;
+        [SerializeField] private bool _showArrayArrows;
 
         private Dictionary<Type, TypeInfo> _typeInfo;
         private bool _isPlaying;
@@ -141,12 +142,14 @@ namespace Beast.Claw.Editor.Window
                     ui.Button("60", () => _updateTickRate = 60);
                 });
                 
+                const string ARROWS = UIStyle.CHAR_ARROW_UP + UIStyle.CHAR_ARROW_DOWN;
+                Begin.LabelWidthAndButton(ARROWS, () => _showArrayArrows = !_showArrayArrows);
+                
                 ui.FlexibleSpace();
             });
 
             Begin.Horizontal(ui =>
             {
-                // ui.Button("Reset", _reset);
                 ui.Button("Clear", BDebug.ClearTrackStorage);
                 ui.Button("Open", () => _setAllFolds(true));
                 ui.Button("Close", () => _setAllFolds(false));
@@ -189,7 +192,7 @@ namespace Beast.Claw.Editor.Window
                             ui.Foldout(storageFullName, ref foldState);
                         }
 
-                        Begin.Option(_smallButton, ui =>
+                        Begin.If(_showArrayArrows).Option(_smallButton, ui =>
                         {
                             ui.Button(UIStyle.CHAR_ARROW_UP, () => swapIndex = (i, i - 1));
                             ui.Button(UIStyle.CHAR_ARROW_DOWN, () => swapIndex = (i, i + 1));
