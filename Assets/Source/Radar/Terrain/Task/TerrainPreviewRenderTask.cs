@@ -1,18 +1,17 @@
 ﻿using Beast.Claw;
-using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
     public struct TerrainPreviewRenderTask : IValidatable
     {
         public TerrainData terrain;
-        public RenderTexture outputTexture;
+        public TerrainPreviewTexture texture;
         
         public string Validate()
         {
-            if (outputTexture == null)
+            if (!texture.IsValid(out string error))
             {
-                return "outputTexture is null";
+                return error;
             }
 
             return terrain.Validate();

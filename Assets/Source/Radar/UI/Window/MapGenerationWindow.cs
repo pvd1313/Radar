@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Graphic;
 using Beast.Radar.Core;
 using Beast.Radar.InputControl;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
@@ -25,8 +23,8 @@ namespace Beast.Radar.UI
         private SelectablesController _selectablesController;
         private ButtonRadioGroup<IntRadioButton> _sizeButtonsGroup;
         
-        private Terrain.TerrainData _terrainData;
-        private RenderTexture _screenTexture;
+        private TerrainData _terrainData;
+        private TerrainPreviewTexture _terrainTexture;
         private int _seedIndex;
 
         public MapGenerationWindow(
@@ -55,7 +53,7 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-            _screenTexture = _previewRender.CreateTexture(this, 256);
+            _terrainTexture = _previewRender.CreateTexture(this, 256);
             _selectablesController.Enable();
             _configureView();
             _menuView.gameObject.SetActive(true);
@@ -65,12 +63,13 @@ namespace Beast.Radar.UI
         {
             _menuView.gameObject.SetActive(false);
             _selectablesController.Disable();
-            BGraphic.TryDispose(ref _screenTexture);
+            _terrainTexture.Dispose();
+            _terrainTexture = null;
         }
 
         private UniTask<OperationResult> _warmup()
         {
-            _terrainData = new Terrain.TerrainData()
+            _terrainData = new Terrain.TerrainData
             {
                 biomeSize01 = 0.5f,
                 seed = 1,
@@ -92,9 +91,9 @@ namespace Beast.Radar.UI
 
         private void _configureView()
         {
-            _menuView.biomeSlider.SetValue(value: _terrainData.biomeSize01, withNotify: true);
-            _menuView.waterSlider.SetValue(value: _terrainData.water01, withNotify: true);
-            _menuView.forestSlider.SetValue(value: 0.5f, withNotify: true);
+            _menuView.biomeSlider.SetValue(_terrainData.biomeSize01, true);
+            _menuView.waterSlider.SetValue(_terrainData.water01,true);
+            _menuView.forestSlider.SetValue(0.5f, true);
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             _refreshSeed();
         }
@@ -214,9 +213,10 @@ namespace Beast.Radar.UI
             _previewRender.Render(new TerrainPreviewRenderTask
             {
                 terrain = _terrainData,
-                outputTexture = _screenTexture
+                texture = _terrainTexture
             });
-            _menuView.mapImage.texture = _screenTexture;
+            
+            _menuView.mapImage.texture = _terrainTexture.color;
         }
 
         private UniTask<OperationResult> _dispose()

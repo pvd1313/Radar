@@ -26,60 +26,54 @@ namespace Beast.Radar.Terrain
             _config = config;
         }
         
-        public RenderTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize) 
+        public TerrainPreviewTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize) 
             where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             pixelSize.ValidateComponentsBiggerThanZeroThrowException(nameof(pixelSize));
 
-            RenderTextureData textureData = _config.terrain.colorTexture.WithSize(pixelSize);
-            
-            return BGraphic.CreatePermRenderTexture(owner, textureData);
+            RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(pixelSize);
+            RenderTextureData biomeData = _config.terrain.biomeTexture.WithSize(pixelSize);
+            RenderTextureData colorData = _config.terrain.colorTexture.WithSize(pixelSize);
+            colorData.texture.filterMode = FilterMode.Bilinear;
+
+            return new TerrainPreviewTexture
+            {
+                baker = BGraphic.CreatePermRenderTexture(owner, bakerData),
+                biome = BGraphic.CreatePermRenderTexture(owner, biomeData),
+                color = BGraphic.CreatePermRenderTexture(owner, colorData)
+            };
         }
-        
+
         public void Render(TerrainPreviewRenderTask task)
         {
             task.ValidateThrowException();
-            
-            RenderTexture bakedTexture = null;
-            RenderTexture biomeTexture = null;
-            
-            try
-            {
-                RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(task.terrain.terrainSize);
-                bakedTexture = BGraphic.CreateTempRenderTexture(this, bakerData);
-                _baker.Render(new TerrainBakeTask
-                {
-                    terrain = task.terrain,
-                    outputTexture = bakedTexture
-                });
 
-                RenderTextureData biomeData = _config.terrain.biomeTexture.WithSize(task.outputTexture);
-                biomeTexture = BGraphic.CreateTempRenderTexture(this, biomeData);
-                _biomeRender.Render(new TerrainBiomeRenderTask
-                {
-                    viewDistance = task.terrain.terrainSize.y,
-                    bakedTerrain = bakedTexture,
-                    outputBiomeTexture = biomeTexture,
-                    renderPosition = task.terrain.terrainSize.Multiply(0.5f),
-                    screenSize = task.outputTexture.Size()
-                });
-                
-                _colorRender.Render(new TerrainColorRenderTask
-                {
-                    biomeTexture = biomeTexture,
-                    biomeTextureUVOffset = 0.5f,
-                    biomeViewDistance = task.terrain.terrainSize.y,
-                    cameraViewDistance = task.terrain.terrainSize.y,
-                    screenSize = task.outputTexture.Size(),
-                    outputToTexture = task.outputTexture, 
-                });
-            }
-            finally
+            _baker.Render(new TerrainBakeTask
             {
-                BGraphic.TryDispose(ref bakedTexture);
-                BGraphic.TryDispose(ref biomeTexture);
-            }
+                terrain = task.terrain,
+                quality01 = 0,
+                outputTexture = task.texture.baker
+            });
+
+            _biomeRender.Render(new TerrainBiomeRenderTask
+            {
+                screenSize = task.texture.color.Size(),
+                renderPosition = task.texture.color.Size().Multiply(0.5f),
+                viewDistance = task.texture.color.height,
+                bakedTerrain = task.texture.baker,
+                outputBiomeTexture = task.texture.biome
+            });
+
+            _colorRender.Render(new TerrainColorRenderTask
+            {
+                cameraViewDistance = task.texture.color.height,
+                screenSize = task.texture.color.Size(),
+                biomeTextureUVOffset = 0.5f,
+                biomeViewDistance = task.texture.color.height,
+                biomeTexture = task.texture.biome,
+                outputToTexture = task.texture.color
+            });
         }
     }
 }
