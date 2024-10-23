@@ -12,7 +12,8 @@ namespace Beast.Claw.Editor.Window
     {
         protected IFlow Begin => _flow.Begin();
 
-        protected Flow _flow;
+        private Flow _flow;
+        protected RectUI _rectUI;
         
         private bool _initialized;
         private bool _criticalFault;
@@ -148,7 +149,9 @@ namespace Beast.Claw.Editor.Window
         {
             try
             {
-                _flow = new Flow();
+                _rectUI = new RectUI();
+                _flow = new Flow(_rectUI);
+                new CommonDrawersContainer().BindAllTo(_rectUI);
                 
                 Warmup();
 

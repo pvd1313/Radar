@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

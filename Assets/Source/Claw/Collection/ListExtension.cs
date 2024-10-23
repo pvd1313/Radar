@@ -20,6 +20,11 @@ namespace Beast.Claw.Collection
             return item;
         }
 
+        public static bool IsNullOrEmpty<TValue>(this IList<TValue> list)
+        {
+            return list == null || list.Count == 0;
+        }
+
         public static bool IsIndexInRange(this IList list, int index)
         {
             return index >= 0 && index < list.Count;

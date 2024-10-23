@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Editor;
 using Beast.Claw.Editor.Drawers;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Editor.Tile
@@ -19,14 +19,13 @@ namespace Beast.Radar.Editor.Tile
             _textColor = textColor;
         }
 
-        public void Warmup(RectUI ui)
+        public void Warmup(RectUI ui, UIStyleGroup style)
         {
             _ui = ui;
-            GUIStyle fieldStyle = new (ui.Style.Label.style);
-            fieldStyle.normal.textColor = _textColor;
-            fieldStyle.alignment = TextAnchor.MiddleCenter;
             
-            _fieldStyle = fieldStyle;
+            _fieldStyle = ui.Style.Label.Clone();
+            _fieldStyle.Scheme.normal.textColor = _textColor;
+            _fieldStyle.Scheme.alignment = TextAnchor.MiddleCenter;
         }
 
         public FloatMinMax Draw(FieldTask<FloatMinMax> field)

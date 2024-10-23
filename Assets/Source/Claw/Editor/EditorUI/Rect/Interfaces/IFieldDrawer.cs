@@ -2,7 +2,7 @@
 {
     public interface IFieldDrawer<TValue>
     {
-        public void Warmup(RectUI ui);
+        public void Warmup(RectUI ui, UIStyleGroup style);
 
         public TValue Draw(FieldTask<TValue> field);
     }

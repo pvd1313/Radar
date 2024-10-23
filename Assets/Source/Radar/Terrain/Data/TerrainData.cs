@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
@@ -13,6 +13,7 @@ namespace Beast.Radar.Terrain
         public int2 terrainSize;
         public float biomeSize01;
         public float water01;
+        public float forest01;
         
         public void Serialize(IBinaryWriter stream)
         {
@@ -20,6 +21,7 @@ namespace Beast.Radar.Terrain
             stream.WriteInt2(terrainSize);
             stream.WriteFloat(biomeSize01);
             stream.WriteFloat(water01);
+            stream.WriteFloat(forest01);
         }
 
         public void Deserialize(IBinaryReader stream)
@@ -28,6 +30,7 @@ namespace Beast.Radar.Terrain
             terrainSize = stream.ReadInt2();
             biomeSize01 = stream.ReadFloat();
             water01 = stream.ReadFloat();
+            forest01 = stream.ReadFloat();
         }
         
         public string Validate()
@@ -50,6 +53,11 @@ namespace Beast.Radar.Terrain
             if (water01 < 0 || water01 > 1)
             {
                 return "Invalid water: " + water01;
+            }
+            
+            if (forest01 < 0 || forest01 > 1)
+            {
+                return "Invalid forest: " + water01;
             }
 
             return null;

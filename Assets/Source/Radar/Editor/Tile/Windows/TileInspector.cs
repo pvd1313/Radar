@@ -1,4 +1,7 @@
-﻿using Beast.Claw.Editor;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Beast.Claw.Common;
+using Beast.Claw.Editor;
 using Beast.Radar.Editor.Atlas;
 using Beast.Radar.Terrain;
 using UnityEngine;
@@ -8,9 +11,8 @@ namespace Beast.Radar.Editor.Tile
 {
     public class TileInspector : EditorWindow
     {
-        [SerializeField] private Object _explorerObject;
-
-        private ITileExplorer _explorer;
+        [SerializeField] private WindowContainer<ITileExplorer> _explorer = new();
+        
         private GUILayoutOption _smallButtonSize;
         private TextureHelper _helper;
 
@@ -22,34 +24,31 @@ namespace Beast.Radar.Editor.Tile
 
         protected override void Reset()
         {
-            _explorerObject = null;
+            _explorer.SetReference(null);
         }
 
         protected override void DrawUI()
         {
-            _explorer = _explorerObject as ITileExplorer;
-            
-            Begin.If(_explorerObject == null).Draw(ui =>
+            Begin.If(_explorer.Window == null).Draw(ui =>
             {
-                ui.WindowField("Explorer", ref _explorer);
-                
-                _explorerObject = _explorer as Object;
+                ui.WindowField("Select Explorer", _explorer);
             });
 
-            if (_explorerObject == null)
+            if (_explorer.Window == null)
             {
-                Begin.InfoBox("Open and link explorer window");
                 return;
             }
 
-            TerrainTileData tile = _explorer.SelectedTile;
+            TerrainTileData tile = _explorer.Window.SelectedTile;
             if (tile == null)
             {
                 Begin.InfoBox("No tile selected");
                 return;
             }
 
-            Begin.Record(_explorer.SelectedAsset, "Modify tile data").Draw(ui =>
+            ScriptableContainer<TerrainAtlas> atlasAsset = _explorer.Window.SelectedAsset;
+
+            Begin.Record(atlasAsset, "Modify tile data").Draw(ui =>
             {
                 ui.Validate(tile, tile.name ?? "tile");
                 
@@ -59,9 +58,9 @@ namespace Beast.Radar.Editor.Tile
                     
                     ui.FlexibleSpace();
                     
-                    Begin.Enabled(BAsset.IsDirty(_explorer.SelectedAsset)).LabelWidthAndButton("SaveAsset", () =>
+                    Begin.Enabled(BAsset.IsDirty(atlasAsset)).LabelWidthAndButton("SaveAsset", () =>
                     {
-                        BAsset.SaveIfDirty(_explorer.SelectedAsset);
+                        BAsset.SaveIfDirty(atlasAsset);
                     });
                 });
             
@@ -83,7 +82,14 @@ namespace Beast.Radar.Editor.Tile
                     });
                 });
                 
-                ui.IntField(nameof(tile.index), ref tile.index);
+                Begin.Horizontal(ui =>
+                {
+                    ui.IntField(nameof(tile.index), ref tile.index);
+                    Begin.Option(_smallButtonSize).Button(UIStyle.CHAR_A, () =>
+                    {
+                        tile.index = _findNextFreeIndex(atlasAsset.data);
+                    });
+                });
             
                 Begin.Horizontal(ui =>
                 {
@@ -112,12 +118,32 @@ namespace Beast.Radar.Editor.Tile
                     });
                 });
 
-                //flow.Tab(ui =>
+                ui.CheckBoxRight(nameof(tile.isBiomeTile), ref tile.isBiomeTile);
+
+                Begin.Enabled(tile.isBiomeTile, ui =>
                 {
-                    ui.GenericField(nameof(tile.waterRange), ref tile.waterRange);
-                    ui.GenericField(nameof(tile.forestRange), ref tile.forestRange);
-                }//);
+                    ui.GenericField(nameof(tile.biomeWaterRange), ref tile.biomeWaterRange);
+                    ui.GenericField(nameof(tile.biomeForestRange), ref tile.biomeForestRange);
+                });
             });
+        }
+
+        private int _findNextFreeIndex(TerrainAtlas atlas)
+        {
+            HashSet<int> occupiedIndexes = atlas.tiles.Select(i => i.index).ToHashSet();
+
+            int i = 0;
+            for (; i < occupiedIndexes.Count && occupiedIndexes.Contains(i); i++)
+            {
+                
+            }
+
+            if (occupiedIndexes.Contains(i))
+            {
+                i++;
+            }
+
+            return i;
         }
 
         protected override void Dispose()

@@ -2,7 +2,7 @@
 using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,9 +14,9 @@ namespace Beast.Radar.Editor.Tile
 {
     public class TileExplorer : EditorWindow, ITileExplorer
     {
-        private static readonly FloatMinMax CELL_SIZE = new (48, 128);
+        private static readonly FloatMinMax CELL_SIZE = new (48, 196);
         
-        public Object SelectedAsset => _atlas;
+        public ScriptableContainer<TerrainAtlas> SelectedAsset => _atlas;
 
         public TerrainTileData SelectedTile
         {
@@ -47,7 +47,7 @@ namespace Beast.Radar.Editor.Tile
         {
             _sliderWidth = GUILayout.Width(60);
             
-            _flow.rectUI.BindDrawer<TileDrawer, TileTask>();
+            _rectUI.BindDrawer<TileDrawer, TileTask>();
             
             _thisAndAtlas = new Object[2];
         }
@@ -135,14 +135,14 @@ namespace Beast.Radar.Editor.Tile
                 
                 for (int i = 0; i < tiles.Count; i++)
                 {
-                    _flow.rectUI.TempTaskWithDefaultStyle(out TileTask task);
+                    _rectUI.TempTaskWithDefaultStyle(out TileTask task);
                     {
                         task.tile = tiles[i];
                         task.selectedIndex = _selectedIndex;
                         task.tileIndex = i;
                         task.displaySpawnRange = _spawnRangeDisplay;
                     }
-                    _flow.rectUI.Draw(cellGrid.GetElement(i), task);
+                    _rectUI.Draw(cellGrid.GetElement(i), task);
 
                     if (_selectedIndex != task.selectedIndex)
                     {

@@ -11,7 +11,7 @@ namespace Beast.Claw.Editor
         {
             if (_isFatal)
             {
-                new FlowUI(this).ErrorBox(_fatalMessage);
+                new FlowUI(this, _rectUI).ErrorBox(_fatalMessage);
                 
                 return _emptyFlow;
             }

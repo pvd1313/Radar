@@ -34,5 +34,15 @@ namespace Beast.Radar.Editor.Atlas
             importer.alphaSource = TextureImporterAlphaSource.None;
             importer.mipmapEnabled = false;
         }
+        
+        public void IndexTexture(UnityEditor.TextureImporter importer)
+        {
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.filterMode = FilterMode.Point;
+            importer.textureType = TextureImporterType.Default;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.alphaSource = TextureImporterAlphaSource.None;
+            importer.mipmapEnabled = false;
+        }
     }
 }

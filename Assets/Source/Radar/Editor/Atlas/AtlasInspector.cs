@@ -14,6 +14,7 @@ namespace Beast.Radar.Editor.Atlas
         private const string MAIN_POSTFIX = "_main.png";
         private const string COLOR_POSTFIX = "_color.png";
         private const string CONFIG_POSTFIX = "_config.png";
+        private const string INDEX_POSTFIX = "_index.png";
         private const string NAME_SAVE = "Save";
         private const string NAME_OVERRIDE = "Override";
         
@@ -55,13 +56,15 @@ namespace Beast.Radar.Editor.Atlas
                 bool hasAllTextures = _asset != null &&
                                       _asset.data.mainTexture != null &&
                                       _asset.data.colorTexture != null &&
-                                      _asset.data.configTexture != null;
+                                      _asset.data.configTexture != null &&
+                                      _asset.data.indexTexture != null;
 
                 Begin.Enabled(hasAllTextures && atlasIsValid).Button("BakeTextures", ui =>
                 {
                     _bakeMainTexture(ui);
                     _bakeColorTexture(ui);
                     _bakeConfigTexture(ui);
+                    _bakeIndexTexture(ui);
                 });
                 
                 Begin.Enabled(BAsset.IsNullOrDirty(_asset)).Button("SaveAsset", _saveAtlasAsset);
@@ -94,6 +97,13 @@ namespace Beast.Radar.Editor.Atlas
                     ui.AssetField(nameof(atlas.configTexture), ref atlas.configTexture);
                     string buttonName = atlas.configTexture == null ? NAME_SAVE : NAME_OVERRIDE;
                     Begin.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeConfigTexture);
+                });
+                
+                Begin.If(_texturesFold).Tab().Horizontal(ui =>
+                {
+                    ui.AssetField(nameof(atlas.indexTexture), ref atlas.indexTexture);
+                    string buttonName = atlas.indexTexture == null ? NAME_SAVE : NAME_OVERRIDE;
+                    Begin.Option(_bakeButtonSize).Enabled(atlasIsValid).Button(buttonName, _bakeIndexTexture);
                 });
 
                 ui.GenericField(nameof(atlas.tileCount), ref atlas.tileCount);
@@ -195,6 +205,31 @@ namespace Beast.Radar.Editor.Atlas
                 bakedTexture = _textureBaker.BakeConfigTexture(_asset.data);
 
                 _asset.data.configTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.ConfigTexture);
+            }
+            finally
+            {
+                if (bakedTexture != null)
+                {
+                    DestroyImmediate(bakedTexture);
+                }
+            }
+        }
+        
+        private void _bakeIndexTexture(FlowUI ui)
+        {
+            Texture2D bakedTexture = null;
+
+            try
+            {
+                string texturePath = _tryGetTexturePathOrNew(ui, _asset.data.indexTexture, INDEX_POSTFIX);
+                if (texturePath == null)
+                {
+                    return;
+                }
+                
+                bakedTexture = _textureBaker.BakeIndexTexture(_asset.data);
+
+                _asset.data.indexTexture = BAsset.SaveTexture(bakedTexture, texturePath, _textureImporter.IndexTexture);
             }
             finally
             {

@@ -160,6 +160,34 @@ float beast_fbm(float2 uv,
     return color;
 }
 
+// half beast_encode_RG(float r, float g)
+// {
+//     return (half)(r * 255.0) + (half)(g * 255.0 / 256.0);
+// }
+//
+// float2 beast_decode_RG(half x)
+// {
+//     float a = frac(x) * 255.0 / 255.0;
+//     float b = floor(x * 256.0) / 255.0;
+//     
+//     return float2(b, a); 
+// }
+//
+// // float2 beast_decode_RG(half x)
+// // {
+// //     return float2(floor(x) / 255.0, (x - floor(x)) * 256.0 / 255.0); 
+// // }
+//
+// void shadergraph_encode_RG_float(in float R, in float G, out half Result)
+// {
+//     Result = beast_encode_RG(R, G);
+// }
+//
+// void shadergraph_decode_RG_float(in half X, out float2 Result)
+// {
+//     Result = beast_decode_RG(X);
+// }
+
 void shadergraph_epsilon_step_float(in float X, out float Y)
 {
     float epsilon = 1e-6;

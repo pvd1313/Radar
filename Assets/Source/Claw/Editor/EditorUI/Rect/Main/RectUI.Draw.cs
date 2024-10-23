@@ -23,7 +23,7 @@ namespace Beast.Claw.Editor
             label.ValidateHasLabelThrowException();
             style.ValidateHasStyleThrowException();
             
-            GUI.Label(screen, label.content, style.style);
+            GUI.Label(screen, label.content, style);
         }
 
         public Rect PrefixLabel(Rect screen, Label label, Style style)
@@ -31,14 +31,14 @@ namespace Beast.Claw.Editor
             label.ValidateHasLabelThrowException();
             style.ValidateHasStyleThrowException();
             
-            return EditorGUI.PrefixLabel(screen, label.content, style.style);
+            return EditorGUI.PrefixLabel(screen, label.content, style);
         }
 
         public float FloatField(Rect screen, float value, Style style)
         {
             style.ValidateHasStyleThrowException();
 
-            return EditorGUI.FloatField(screen, value, style.style);
+            return EditorGUI.FloatField(screen, value, style);
         }
 
         public void Texture(Rect rect, Texture texture)
@@ -55,7 +55,7 @@ namespace Beast.Claw.Editor
         
         public bool Button(Rect rect, Label label, Style style)
         {
-            return GUI.Button(rect, label.content, style.style);
+            return GUI.Button(rect, label.content, style);
         }
     }
 }

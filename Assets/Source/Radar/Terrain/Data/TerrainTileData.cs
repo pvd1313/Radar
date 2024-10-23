@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain
@@ -13,9 +13,15 @@ namespace Beast.Radar.Terrain
         public Color averageColor;
         public float yCropHeight;
         public float yBlendCenter;
-        public FloatMinMax waterRange;
-        public FloatMinMax forestRange;
+        public FloatMinMax biomeWaterRange;
+        public FloatMinMax biomeForestRange;
+        public bool isBiomeTile;
         public int index;
+
+        public FloatBounds2D SpawnRangeAsBounds()
+        {
+            return new FloatBounds2D(biomeWaterRange, biomeForestRange);
+        }
         
         public string Validate()
         {
@@ -49,17 +55,22 @@ namespace Beast.Radar.Terrain
                 return $"Invalid index " + index;
             }
 
-            if (!waterRange.IsValidRange() || !waterRange.IsNormalized())
+            if (!isBiomeTile)
             {
-                return $"Invalid spawn water range: {waterRange}";
+                return null;
             }
 
-            if (!forestRange.IsValidRange() || !forestRange.IsNormalized())
+            if (!biomeWaterRange.IsValidRange() || !biomeWaterRange.IsNormalized())
             {
-                return $"Invalid spawn forest range: {forestRange}";
+                return $"Invalid spawn water range: {biomeWaterRange}";
             }
 
-            if (forestRange.GetRange() + waterRange.GetRange() < BMath.EPSILON)
+            if (!biomeForestRange.IsValidRange() || !biomeForestRange.IsNormalized())
+            {
+                return $"Invalid spawn forest range: {biomeForestRange}";
+            }
+
+            if (biomeForestRange.GetRange() + biomeWaterRange.GetRange() < BMath.EPSILON)
             {
                 return $"Invalid spawn range. Must have range to being able to spawn tile";
             }

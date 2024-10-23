@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 
 namespace Beast.Claw
@@ -13,6 +12,16 @@ namespace Beast.Claw
             if (errorMessage != null)
             {
                 throw new ValidationException(errorMessage);
+            }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateIsZeroOrGreaterThrowException(this float x, string argumentName)
+        {
+            if (x < 0)
+            {
+                string message = $"'{argumentName}' must be zero or greater, but was: {x}";
+                throw new ValidationException(message);
             }
         }
 
@@ -40,30 +49,31 @@ namespace Beast.Claw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNullThrowException<TArgument>(this TArgument obj, string objName) 
+        public static void ValidateNotNullThrowException<TArgument>(this TArgument value, string valueName) 
             where TArgument : class
         {
-            if (obj == null)
+            if (value == null)
             {
-                throw new ValidationException($"{objName} can not be null");
+                throw new ValidationException($"'{valueName}' can not be null.");
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotEmptyOrNullThrowException(this string text, string argName)
+        public static void ValidateNotEmptyOrNullThrowException(this string text, string argumentName)
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ValidationException($"{argName} can not be null or empty");
+                throw new ValidationException($"'{argumentName}' can not be null or empty.");
             }
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateComponentsBiggerZeroThrowException(this int2 size, string argName)
+        public static void ValidateComponentsBiggerThanZeroThrowException(this int2 vector, string argumentName)
         {
-            if (size.x <= 0 || size.y <= 0)
+            if (vector.x <= 0 || vector.y <= 0)
             {
-                throw new ValidationException($"Invalid size: {argName}: {size}");
+                string message = $"'{argumentName}' components must be bigger than zero, but was: {vector}.";
+                throw new ValidationException(message);
             }
         }
     }

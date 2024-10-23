@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Math
+namespace Beast.Claw.Mathematics
 {
     public static class BMath
     {
@@ -229,6 +229,12 @@ namespace Beast.Claw.Math
         public static float Ceil(float x)
         {
             return math.ceil(x);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Ceil(float2 x)
+        {
+            return new float2(math.ceil(x.x), math.ceil(x.y));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

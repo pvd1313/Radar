@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Math
+namespace Beast.Claw.Mathematics
 {
     [Serializable]
     public struct FloatMinMax : IValidatable
@@ -12,6 +12,16 @@ namespace Beast.Claw.Math
         {
             this.min = min;
             this.max = max;
+        }
+
+        public bool Intersects(FloatMinMax other)
+        {
+            return other.max >= min && max >= other.min;
+        }
+
+        public bool Contains(float x)
+        {
+            return x >= min && x <= max;
         }
 
         public bool IsNormalized()
@@ -29,8 +39,19 @@ namespace Beast.Claw.Math
             return max - min;
         }
 
+        public FloatMinMax Expand(float size)
+        {
+            size.ValidateIsZeroOrGreaterThrowException(nameof(size));
+
+            float halfSize = size * 0.5f;
+
+            return new FloatMinMax(min - halfSize, max + halfSize);
+        }
+
         public FloatMinMax Shrink(float size)
         {
+            size.ValidateIsZeroOrGreaterThrowException(nameof(size));
+            
             float halfSize = size * 0.5f;
 
             if (min + halfSize > max)

@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Mathematics;
+using Sirenix.Utilities;
+using Unity.Mathematics;
+using Unity.Plastic.Newtonsoft.Json;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
@@ -60,7 +64,7 @@ namespace Beast.Claw.Editor
             return new Rect4(slice[0], slice[1], slice[2], slice[3]);
         }
 
-        public static Rect Padding(this Rect rect, Padding padding)
+        public static Rect AddPadding(this Rect rect, Padding padding)
         {
             Vector2 position = rect.position;
             position.x += padding.left;
@@ -68,9 +72,22 @@ namespace Beast.Claw.Editor
 
             Vector2 size = rect.size;
             size.x -= padding.right + padding.left;
-            size.y -= padding.bottom + padding.top;
+            size.y -= padding.down + padding.top;
 
             return new Rect(position, size);
+        }
+
+        public static Rect AlignCenter(this Rect rect, float2 elementSize)
+        {
+            float2 position = (float2)rect.position + (float2)rect.size * 0.5f - elementSize * 0.5f;
+            return new Rect(position, elementSize);
+        }
+
+        public static Rect Expand(this Rect rect, float2 size)
+        {
+            float2 halfSize = size * 0.5f;
+
+            return new Rect((float2)rect.position - halfSize, (float2)rect.size + halfSize);
         }
     }
 }

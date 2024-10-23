@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
@@ -139,13 +139,6 @@ namespace Beast.Radar.Terrain
             _tileSolverMaterial.SetTexture("_TerrainTexture", _terrainBiome.Texture);
             _tileSolverMaterial.SetFloat2("_TerrainUVOffset", _terrainBiome.WorldToUVOffset(worldPoint));
             _tileSolverMaterial.SetFloat2("_TerrainTexelSize", _terrainBiome.TexelSize);
-            
-            float2 noiseTexelSize = _terrainBiome.TexelSize * _config.denoiseScale;
-            float2 noiseUVOffset = worldPoint / _terrainBiome.RenderDistance * _config.denoiseScale;
-            
-            _tileSolverMaterial.SetTexture("_NoiseTexture", _library.terrain.tileSolverNoise);
-            _tileSolverMaterial.SetFloat2("_NoiseTexelSize",  noiseTexelSize);
-            _tileSolverMaterial.SetFloat2("_NoiseUVOffset", noiseUVOffset);
             
             _tileSolverMaterial.SetFloat("_SolverTextureSize", solverTextureSize);
 

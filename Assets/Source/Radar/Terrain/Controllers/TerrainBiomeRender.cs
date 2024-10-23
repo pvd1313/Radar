@@ -2,7 +2,7 @@
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
@@ -35,7 +35,7 @@ namespace Beast.Radar.Terrain
         private readonly ITerrainBakedTexture _bakedTerrain;
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
-        private readonly RenderConfig _config;
+        private readonly GraphicConfig _config;
 
         private Material _renderMaterial;
         private RenderTexture _biomeTexture;
@@ -49,7 +49,7 @@ namespace Beast.Radar.Terrain
             ITerrainBakedTexture bakedTerrain,
             ICameraTransform camera,
             GraphicLibrary library,
-            RenderConfig config)
+            GraphicConfig config)
         {
             _screen = screen;
             _bakedTerrain = bakedTerrain;
@@ -167,6 +167,8 @@ namespace Beast.Radar.Terrain
             
             _renderMaterial.SetTexture("_TerrainTexture", task.bakedTerrain);
             _renderMaterial.SetFloat2("_TerrainTextureSize", task.bakedTerrain.Size());
+            
+            _renderMaterial.SetTexture("_IndexMap", _library.terrain.atlas.IndexTexture);
 
             _renderMaterial.SetTexture("_NoiseMap", _library.terrain.biomeRenderNoise);
             _renderMaterial.SetFloat2("_NoiseMapSize", _library.terrain.biomeRenderNoise.Size());

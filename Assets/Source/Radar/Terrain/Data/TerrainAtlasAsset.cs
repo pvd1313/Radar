@@ -8,6 +8,7 @@ namespace Beast.Radar.Terrain
         public Texture2D ColorTexture => data.colorTexture;
         public Texture2D MainTexture => data.mainTexture;
         public Texture2D ConfigTexture => data.configTexture;
+        public Texture2D IndexTexture => data.indexTexture;
 
     }
 }
