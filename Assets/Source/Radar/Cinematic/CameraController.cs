@@ -110,7 +110,7 @@ namespace Beast.Radar.Cinematic
             
             float zoomDistance = _transform.ViewDistance * BMath.Cos(_transform.RotationRad.roll);
             
-            if (_input.MoveDelta.Equals(float2.zero))
+            if (_input.MoveDelta.State == EButtonState.Default)
             {
                 float2 a = _transform.ScreenToWorld(_input.ScreenPoint);
                 float2 b = _transform.ScreenToWorld(_input.LastScreenPoint);
@@ -125,14 +125,14 @@ namespace Beast.Radar.Cinematic
             }
             else
             {
-                float2 moveDelta = _input.MoveDelta * _motion.motionSpeed * zoomDistance * -1;
+                float2 moveDelta = _input.MoveDelta.Value * _motion.motionSpeed * zoomDistance * -1;
                 _transform.AddPosition(moveDelta, Space.Self);
             }
         }
 
         private void _zoom()
         {
-            if (_input.ScrollDelta == 0)
+            if (_input.ScrollDelta.State == EButtonState.Default)
             {
                 return;
             }
@@ -141,7 +141,7 @@ namespace Beast.Radar.Cinematic
             float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
             
             float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
-            float zoomValue = _input.ScrollDelta * distanceFactor * _motion.zoomSpeed * Time.deltaTime;
+            float zoomValue = _input.ScrollDelta.Value * distanceFactor * _motion.zoomSpeed * Time.deltaTime;
             _transform.AddZoom(-zoomValue);
             
             float2 worldPointAfterZoom = _transform.ScreenToWorld(screenPoint);

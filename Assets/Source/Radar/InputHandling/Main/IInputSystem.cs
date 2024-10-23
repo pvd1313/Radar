@@ -8,6 +8,6 @@ namespace Beast.Radar.InputControl
         public InputActions Actions { get; }
         EInputScheme Scheme { get; }
         public float ClickDuration { get; }
-        public IGameActionMap GameActionMap { get; }
+        public ICameraInputController GameActionMap { get; }
     }
 }

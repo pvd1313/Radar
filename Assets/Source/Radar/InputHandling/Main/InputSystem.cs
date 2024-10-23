@@ -12,14 +12,13 @@ namespace Beast.Radar.InputControl
     {
         public event Action<EInputScheme> ChangedScheme;
 
-        public IGameActionMap GameActionMap => _gameActionMap;
         public InputActions Actions { get; private set; }
         public EInputScheme Scheme => _inputScheme;
         public float ClickDuration => 0.1f;
+        public ICameraInputController GameActionMap { get; }
 
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
-        private GameActionMap _gameActionMap;
         
         public InputSystem(PrefabLibrary config)
         {
@@ -29,7 +28,7 @@ namespace Beast.Radar.InputControl
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(UpdateID.TICK, _tick);
+       
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
@@ -45,19 +44,12 @@ namespace Beast.Radar.InputControl
             _refreshScheme(_view.playerInput);
             _view.playerInput.onControlsChanged += _refreshScheme;
 
-            _gameActionMap = new GameActionMap(this, Actions);
-            _gameActionMap.Warmup();
+ 
             
             return OperationResult.SuccessSync();
         }
 
-        private void _tick()
-        {
-            
-            _gameActionMap.Update();
-            
-        }
-
+   
         private void _refreshScheme(PlayerInput input)
         {
             Enum.TryParse(_view.playerInput.currentControlScheme, out _inputScheme);
@@ -77,7 +69,7 @@ namespace Beast.Radar.InputControl
             Actions.Disable();
             Actions.UI.Disable();
             Actions.Player.Disable();
-            _gameActionMap.Dispose();
+        
 
             return OperationResult.SuccessSync();
         }
