@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.Core;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
 using UnityEngine;

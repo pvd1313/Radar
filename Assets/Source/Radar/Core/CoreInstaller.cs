@@ -5,7 +5,7 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
@@ -38,12 +38,11 @@ namespace Beast.Radar.Core
             yield return typeof(MapGenerationWindow);
             
             // Input & Camera
-            yield return typeof(CameraTransform);
             yield return typeof(InputSystem);
+            yield return typeof(CameraTransform);
             yield return typeof(UIInputController);
-            yield return typeof(CameraInputController);
-            yield return typeof(CameraController);
             yield return typeof(PlayerInputController);
+            yield return typeof(CameraController);
             
             // Terrain
             yield return typeof(TerrainBaker);

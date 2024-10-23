@@ -2,7 +2,7 @@
 using Beast.Radar.UI;
 using Unity.Mathematics;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public interface IUIInputController
     {

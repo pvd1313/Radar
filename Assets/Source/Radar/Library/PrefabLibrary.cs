@@ -2,7 +2,7 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 

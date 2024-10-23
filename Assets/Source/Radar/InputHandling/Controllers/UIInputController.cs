@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class UIInputController : IUIInputController, IGameCycleListener
     {
@@ -21,7 +21,7 @@ namespace Beast.Radar.InputControl
         public event Action<int> TriggerPressed;
         public bool IsHardwareInput { get; private set; }
 
-        private readonly IInputSystem _inputActions;
+        private readonly IInputSystem _inputSystem;
 
         private int2 _lastRightStickValue;
         private const float PRESS_COOLDOWN = 0.2f;
@@ -29,7 +29,7 @@ namespace Beast.Radar.InputControl
 
         public UIInputController(IInputSystem inputSystem)
         {
-            _inputActions = inputSystem;
+            _inputSystem = inputSystem;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -43,7 +43,7 @@ namespace Beast.Radar.InputControl
         {
             _subscribeToInputSchemeChange();
 
-            IsHardwareInput = _inputActions.Scheme is not EInputScheme.Touch;
+            IsHardwareInput = _inputSystem.Scheme.Current is not EInputScheme.Touch;
 
             if (IsHardwareInput)
             {
@@ -55,7 +55,7 @@ namespace Beast.Radar.InputControl
 
         private void _tick()
         {
-            if (_inputActions.Scheme is EInputScheme.Touch or EInputScheme.None)
+            if (_inputSystem.Scheme.Current is EInputScheme.Touch or EInputScheme.None)
             {
                 return;
             }
@@ -66,12 +66,12 @@ namespace Beast.Radar.InputControl
 
         public EInputScheme GetScheme()
         {
-            return _inputActions.Scheme;
+            return _inputSystem.Scheme.Current;
         }
 
         private void _performRightStick()
         {
-            float2 rightStick = _inputActions.Actions.UI.RightStick.ReadValue<Vector2>();
+            float2 rightStick = _inputSystem.Actions.UI.RightStick.ReadValue<Vector2>();
             if (!rightStick.Equals(float2.zero))
             {
                 RightStickMoved?.Invoke(rightStick * Time.deltaTime);
@@ -80,7 +80,7 @@ namespace Beast.Radar.InputControl
 
         private void _performNavigate()
         {
-            float2 value = _inputActions.Actions.UI.Navigate.ReadValue<Vector2>();
+            float2 value = _inputSystem.Actions.UI.Navigate.ReadValue<Vector2>();
             if (!value.Equals(float2.zero))
             {
                 if (_currentNavigationCooldown == 0)
@@ -102,12 +102,12 @@ namespace Beast.Radar.InputControl
 
         private void _subscribeToInputSchemeChange()
         {
-            _inputActions.ChangedScheme += _onChangedScheme;
+            _inputSystem.Scheme.Changed += _onChangedScheme;
         }
 
         private void _unsubscribeToInputSchemeChange()
         {
-            _inputActions.ChangedScheme -= _onChangedScheme;
+            _inputSystem.Scheme.Changed -= _onChangedScheme;
         }
 
         private void _onChangedScheme(EInputScheme scheme)
@@ -130,26 +130,26 @@ namespace Beast.Radar.InputControl
 
         private void _subscribeInputActions()
         {
-            _inputActions.Actions.UI.Cancel.started += _onPressPause;
-            _inputActions.Actions.UI.Select.started += _onPressSelect;
-            _inputActions.Actions.UI.NorthButton.started += _onPressNorth;
-            _inputActions.Actions.UI.EastButton.started += _onPressEast;
-            _inputActions.Actions.UI.WestButton.started += _onPressWest;
-            _inputActions.Actions.UI.SouthButton.started += _onPressSouth;
-            _inputActions.Actions.UI.Trigger.started += _onPerformedTrigger;
-            _inputActions.Actions.UI.Shoulder.started += _onPerformedShoulder;
+            _inputSystem.Actions.UI.Cancel.started += _onPressPause;
+            _inputSystem.Actions.UI.Select.started += _onPressSelect;
+            _inputSystem.Actions.UI.NorthButton.started += _onPressNorth;
+            _inputSystem.Actions.UI.EastButton.started += _onPressEast;
+            _inputSystem.Actions.UI.WestButton.started += _onPressWest;
+            _inputSystem.Actions.UI.SouthButton.started += _onPressSouth;
+            _inputSystem.Actions.UI.Trigger.started += _onPerformedTrigger;
+            _inputSystem.Actions.UI.Shoulder.started += _onPerformedShoulder;
         }
 
         private void _unsubscribeInputActions()
         {
-            _inputActions.Actions.UI.Cancel.started -= _onPressPause;
-            _inputActions.Actions.UI.Select.started -= _onPressSelect;
-            _inputActions.Actions.UI.NorthButton.started -= _onPressNorth;
-            _inputActions.Actions.UI.EastButton.started -= _onPressEast;
-            _inputActions.Actions.UI.WestButton.started -= _onPressWest;
-            _inputActions.Actions.UI.SouthButton.started -= _onPressSouth;
-            _inputActions.Actions.UI.Trigger.started -= _onPerformedTrigger;
-            _inputActions.Actions.UI.Shoulder.started -= _onPerformedShoulder;
+            _inputSystem.Actions.UI.Cancel.started -= _onPressPause;
+            _inputSystem.Actions.UI.Select.started -= _onPressSelect;
+            _inputSystem.Actions.UI.NorthButton.started -= _onPressNorth;
+            _inputSystem.Actions.UI.EastButton.started -= _onPressEast;
+            _inputSystem.Actions.UI.WestButton.started -= _onPressWest;
+            _inputSystem.Actions.UI.SouthButton.started -= _onPressSouth;
+            _inputSystem.Actions.UI.Trigger.started -= _onPerformedTrigger;
+            _inputSystem.Actions.UI.Shoulder.started -= _onPerformedShoulder;
         }
 
         private void _onPressSouth(InputAction.CallbackContext obj)

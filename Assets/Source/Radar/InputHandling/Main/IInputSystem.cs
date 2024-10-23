@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public interface IInputSystem
     {
-        event Action<EInputScheme> ChangedScheme;
+        public IInputSchemeObserver Scheme { get; }
+        public IGameInputActions GameInput { get; }
+        
         public InputActions Actions { get; }
-        EInputScheme Scheme { get; }
         public float ClickDuration { get; }
-        public ICameraInputController GameActionMap { get; }
     }
 }

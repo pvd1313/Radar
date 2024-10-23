@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public interface IPlayerInputController
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Debug;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IUIInputController _uiInput;
-        private readonly IInputSystem _inputActions;
+        private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
 
         private DebugMenuView _view;
@@ -28,14 +28,14 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IUIInputController uiInput,
-            IInputSystem inputActions,
+            IInputSystem inputSystem,
             IDebugController debugController)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _uiInput = uiInput;
-            _inputActions = inputActions;
+            _inputSystem = inputSystem;
             _debugController = debugController;
         }
 
@@ -83,7 +83,7 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _inputActions, _getTestItems()),
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _inputSystem, _getTestItems()),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
             });
             _panelsController.Warmup();
@@ -108,7 +108,7 @@ namespace Beast.Radar.UI
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_inputActions, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_inputSystem, _view.inputIcons);
             _inputIconsController.Warmup();
         }
 
@@ -126,13 +126,13 @@ namespace Beast.Radar.UI
 
         private void _subscribeInput()
         {
-            _inputActions.ChangedScheme += _onInputActionsSchemeChanged;
+            _inputSystem.Scheme.Changed += _onInputActionsSchemeChanged;
             _uiInput.SelectButtonPressed += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
-            _inputActions.ChangedScheme -= _onInputActionsSchemeChanged;
+            _inputSystem.Scheme.Changed -= _onInputActionsSchemeChanged;
             _uiInput.SelectButtonPressed -= _onOpenButtonClicked;
         }
 

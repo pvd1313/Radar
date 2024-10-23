@@ -1,21 +1,19 @@
-﻿using System;
-using Beast.Claw.Common;
-using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
-using UnityEngine.InputSystem;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class InputSystem : IInputSystem, IGameCycleListener
     {
-        public event Action<EInputScheme> ChangedScheme;
-
+        public IInputSchemeObserver Scheme => _schemeObserver;
+        public IGameInputActions GameInput => _gameInputActions;
         public InputActions Actions { get; private set; }
-        public EInputScheme Scheme => _inputScheme;
         public float ClickDuration => 0.1f;
-        public ICameraInputController GameActionMap { get; }
+
+        private InputSchemeObserver _schemeObserver;
+        private GameInputActions _gameInputActions;
 
         private EInputScheme _inputScheme;
         private PlayerInputView _view;
@@ -28,48 +26,38 @@ namespace Beast.Radar.InputControl
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-       
+            handle.ListenUpdate(UpdateID.TICK, _tick);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private async UniTask<OperationResult> _warmup()
         {
             Actions = new InputActions();
             Actions.Enable();
             Actions.UI.Enable();
             Actions.Player.Enable();
-
-            PlayerInputView newInstance = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
-            _view = newInstance;
-            _refreshScheme(_view.playerInput);
-            _view.playerInput.onControlsChanged += _refreshScheme;
-
- 
             
-            return OperationResult.SuccessSync();
+            PlayerInputView playerInputView = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
+            _schemeObserver = new InputSchemeObserver(playerInputView);
+            _schemeObserver.Warmup();
+
+            _gameInputActions = new GameInputActions(Scheme, Actions);
+            await  UniTask.Yield();
+            
+            return OperationResult.Success();
         }
 
-   
-        private void _refreshScheme(PlayerInput input)
+        private void _tick()
         {
-            Enum.TryParse(_view.playerInput.currentControlScheme, out _inputScheme);
-            
-            if (_inputScheme == EInputScheme.MouseAndKeyboard && Mouse.current == null)
-            {
-                BDebug.LogError(this,"Try setting the mouse scheme with an empty mouse device.");
-                _inputScheme = EInputScheme.Touch;
-            }
-            
-            ChangedScheme?.Invoke(_inputScheme);
+            _gameInputActions.Update();
         }
 
         private UniTask<OperationResult> _dispose()
         {
-            _view.playerInput.onControlsChanged -= _refreshScheme;
+            _schemeObserver.Dispose();
             Actions.Disable();
             Actions.UI.Disable();
             Actions.Player.Disable();
-        
 
             return OperationResult.SuccessSync();
         }

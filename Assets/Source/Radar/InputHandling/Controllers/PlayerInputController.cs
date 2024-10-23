@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class PlayerInputController : IPlayerInputController, IGameCycleListener
     {

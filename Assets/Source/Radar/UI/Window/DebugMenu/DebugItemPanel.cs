@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Debug;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Unity.Mathematics;
 
 namespace Beast.Radar.UI

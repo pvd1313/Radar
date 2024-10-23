@@ -2,21 +2,21 @@
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class InputBlocker : IGameCycleListener
     {
         private readonly IWindowManager _windowManager;
-        private readonly ICameraInputController _cameraInput;
+        private readonly IInputSystem _inputSystem;
 
         private bool _isBlockInput;
         private bool _isOverUI;
         private bool _isOpenWindow;
         
-        public InputBlocker(IWindowManager windowManager, ICameraInputController cameraInputController)
+        public InputBlocker(IWindowManager windowManager, IInputSystem inputSystem)
         {
             _windowManager = windowManager;
-            _cameraInput = cameraInputController;
+            _inputSystem = inputSystem;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -69,12 +69,12 @@ namespace Beast.Radar.InputControl
             if (isBlock && !_isBlockInput)
             {
                 _isBlockInput = true;
-                _cameraInput.ChangeBlock(_isBlockInput);
+                _inputSystem.GameInput.ChangeBlock(_isBlockInput);
             }
             else if (!isBlock && _isBlockInput)
             {
                 _isBlockInput = false;
-                _cameraInput.ChangeBlock(_isBlockInput);
+                _inputSystem.GameInput.ChangeBlock(_isBlockInput);
             }
         }
     }

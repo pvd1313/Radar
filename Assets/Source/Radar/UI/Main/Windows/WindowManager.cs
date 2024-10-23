@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.GameCycle;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI

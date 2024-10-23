@@ -1,4 +1,4 @@
-﻿namespace Beast.Radar.UI
+﻿namespace Beast.Radar.InputHandling
 {
     public enum EInputButton
     {

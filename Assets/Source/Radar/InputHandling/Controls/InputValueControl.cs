@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class InputValueControl<TValue>
     {

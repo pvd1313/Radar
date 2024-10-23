@@ -3,7 +3,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Math;
 using Beast.Radar.Cinematic;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
