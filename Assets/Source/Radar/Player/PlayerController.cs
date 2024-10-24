@@ -101,10 +101,12 @@ namespace Beast.Radar.Player
             if (BMath.Distance(_startPressPosition, position) < 0.1f && duration < 0.2f)
             {
                 float2 worldClickPosition = _cameraTransform.ScreenToWorld(position);
+                
                 _currentTarget = new int2((int)worldClickPosition.x, (int)worldClickPosition.y);
 
                 Vector3 positionPosition = _player.body.position;
                 float2 playerScreenPosition = new float2(positionPosition.x, positionPosition.y);
+                
                 _currentCoordinate = _cameraTransform.ScreenToWorld(playerScreenPosition);
             }
         }
