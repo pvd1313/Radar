@@ -76,14 +76,14 @@ namespace Beast.Radar.Player
 
         private void _subscribeInput()
         {
-            _input.GameInput.ScreenPoint.PressStarted += _onPressStarted;
-            _input.GameInput.ScreenPoint.PressCanceled += _onPressCanceled;
+            _input.GameInput.Click.PressStarted += _onPressStarted;
+            _input.GameInput.Click.PressCanceled += _onPressCanceled;
         }
 
         private void _unsubscribeInput()
         {
-            _input.GameInput.ScreenPoint.PressStarted -= _onPressStarted;
-            _input.GameInput.ScreenPoint.PressCanceled -= _onPressCanceled;
+            _input.GameInput.Click.PressStarted -= _onPressStarted;
+            _input.GameInput.Click.PressCanceled -= _onPressCanceled;
         }
 
         private void _onPressStarted(float2 position)

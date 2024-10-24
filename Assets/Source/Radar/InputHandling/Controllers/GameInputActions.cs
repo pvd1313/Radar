@@ -10,7 +10,8 @@ namespace Beast.Radar.InputHandling
     public class GameInputActions : IGameInputActions
     {
         public event Action ChangedEarlyValues;
-        
+
+        public InputValueControl<float2> Click { get; } = new();
         public InputValueControl<float2> ScreenPoint { get; } = new();
         public InputValueControl<float2> LastScreenPoint { get; } = new();
         public InputValueControl<float2> MoveDelta { get; } = new();
@@ -61,9 +62,9 @@ namespace Beast.Radar.InputHandling
                 case EInputScheme.MouseAndKeyboard:
                     CurrentTouchCount.UpdateValue(_getTouchCount());
                     Scroll.UpdateValue(_inputActions.Game.Scroll.ReadValue<float>());
-                    ScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
-                        ? (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()
-                        : float2.zero);
+                    float2 mousePosition = _inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                    ScreenPoint.UpdateValue(mousePosition);
+                    Click.UpdateValue(CurrentTouchCount.Value > 0 ? mousePosition : float2.zero);
                     MoveDelta.UpdateValue((float2)_inputActions.Game.Move.ReadValue<Vector2>());
                     break;
                 
@@ -111,9 +112,9 @@ namespace Beast.Radar.InputHandling
                 case EInputScheme.MouseAndKeyboard:
                     _lastZoomDistance = 0f;
                     LastTouchCount.UpdateValue(_getTouchCount());
-                    LastScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
-                        ? (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()
-                        : float2.zero);
+                    float2 mousePosition = _inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                    LastScreenPoint.UpdateValue(mousePosition);
+                    Click.UpdateValue(CurrentTouchCount.Value > 0 ? mousePosition : float2.zero);
                     break;
                 
                 case EInputScheme.Gamepad:

@@ -7,6 +7,7 @@ namespace Beast.Radar.InputHandling
     {
         public event Action ChangedEarlyValues;
         
+        public InputValueControl<float2> Click { get; }
         public InputValueControl<float2> ScreenPoint { get; }
         public InputValueControl<float2> LastScreenPoint { get; }
         public InputValueControl<float2> MoveDelta{ get; }
