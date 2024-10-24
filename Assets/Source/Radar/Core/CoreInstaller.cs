@@ -42,7 +42,6 @@ namespace Beast.Radar.Core
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
             
-            
             // Terrain
             yield return typeof(TerrainBaker);
             yield return typeof(TerrainBiomeRender);

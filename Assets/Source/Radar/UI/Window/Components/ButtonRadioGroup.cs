@@ -37,6 +37,11 @@ namespace Beast.Radar.UI
             _setSelected(_buttons[index]);
         }
         
+        public void Select(TButton button)
+        {
+            _setSelected(button);
+        }
+        
         private void _subscribeButtons()
         {
             foreach (TButton radioButton in _buttons)

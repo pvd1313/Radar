@@ -62,6 +62,7 @@ namespace Beast.Radar.UI
         {
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _hideView();
+            _view.transform.SetSiblingIndex(2);
             _windowManager.Register(this, WindowID.Debug, _view);
             
             _configurePanels();

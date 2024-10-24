@@ -55,7 +55,7 @@ namespace Beast.Radar.UI
 
         public void Open()
         {
-            _terrainTexture = _previewRender.CreateTexture(this, 256);
+
             _selectablesController.Enable();
             _configureView();
             _drawTexture();
@@ -85,8 +85,7 @@ namespace Beast.Radar.UI
             };
             _sizeButtonsGroup = new ButtonRadioGroup<RadioButton>(_menuView.sizeButtons);
             _sizeButtonsGroup.Warmup();
-            _sizeButtonsGroup.Select(_menuView.sizeButtons.Length - 1);
-
+            
             _configureSelectables();
             _subscribeView();
             
@@ -95,6 +94,9 @@ namespace Beast.Radar.UI
 
         private void _configureView()
         {
+            RadioButton startSizeButton = _menuView.sizeButtons[3]; 
+            _terrainTexture = _previewRender.CreateTexture(this, _buttonSizes[startSizeButton]);
+            
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             SeedData seedData = _generationConfig.seeds[_seedIndex];
         
@@ -102,7 +104,7 @@ namespace Beast.Radar.UI
             {
                 biomeSize01 = 0.5f,
                 seed = seedData.value,
-                terrainSize = 256,
+                terrainSize = _buttonSizes[startSizeButton],
                 water01 = 0.2f,
                 forest01 = 0.2f
             };
@@ -111,6 +113,7 @@ namespace Beast.Radar.UI
             _menuView.waterSlider.SetValueWithoutNotify(_terrainData.water01);
             _menuView.forestSlider.SetValueWithoutNotify(_terrainData.forest01);
             _menuView.seedResult.SetText(seedData.name);
+            _sizeButtonsGroup.Select(startSizeButton);
         }
 
         private void _configureSelectables()
@@ -174,18 +177,21 @@ namespace Beast.Radar.UI
         {
             _terrainData.terrainSize = _buttonSizes[button];
             _drawTexture();
+            BDebug.Track(this, "size", _terrainData.terrainSize);
         }
 
         private void _onWaterEndedChange(float value)
         {
             _terrainData.water01 = value;
             _drawTexture();
+            BDebug.Track(this, "water", _terrainData.water01);
         }
 
         private void _onForestEndedChange(float value)
         {
             _terrainData.forest01 = value;
             _drawTexture();
+            BDebug.Track(this, "forest", _terrainData.forest01);
         }
 
         private void _onSeedButtonsClicked(int step)
@@ -200,19 +206,15 @@ namespace Beast.Radar.UI
                 _seedIndex = 0;
             }
 
-            _refreshSeed();
-            _drawTexture();
-        }
-
-        private void _refreshSeed()
-        {
             SeedData seedData = _generationConfig.seeds[_seedIndex];
             string seedName = seedData.name;
             _menuView.seedResult.SetText(seedName);
             _terrainData.seed = seedData.value; 
             _drawTexture();
+            
+            BDebug.Track(this, "seed", _terrainData.seed);
         }
-
+        
         private void _onCreateMapButtonClicked()
         {
             _newGameSetup.StartNewGame(_terrainData);
