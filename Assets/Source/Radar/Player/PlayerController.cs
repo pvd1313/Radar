@@ -61,11 +61,6 @@ namespace Beast.Radar.Player
 
         private void _move()
         {
-            if (_currentCoordinate.Equals(_currentTarget))
-            {
-                return;
-            }
-            
             _currentCoordinate = BMath.MoveTowards(
                 _currentCoordinate,
                 _currentTarget,
