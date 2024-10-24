@@ -5,28 +5,28 @@ namespace Beast.Radar.UI
 {
     public class InputIconsController
     {
-        private readonly IInputSystem _inputSystem;
+        private readonly IInputSchemeObserver _inputScheme;
         private readonly List<InputIconDisplay> _icons;
 
-        public InputIconsController(IInputSystem inputSystem, List<InputIconDisplay> icons)
+        public InputIconsController(IInputSchemeObserver inputScheme, List<InputIconDisplay> icons)
         {
-            _inputSystem = inputSystem;
+            _inputScheme = inputScheme;
             _icons = icons;
         }
 
         public void Warmup()
         {
-            _inputSystem.Scheme.Changed += _onInputActionsChangedScheme;    
+            _inputScheme.Changed += _onInputActionsChangedScheme;    
             
             foreach (InputIconDisplay icon in _icons)
             {
-                icon.Refresh(_inputSystem.Scheme.Current);
+                icon.Refresh(_inputScheme.Current);
             }
         }
 
         public void Dispose()
         {
-            _inputSystem.Scheme.Changed -= _onInputActionsChangedScheme;
+            _inputScheme.Changed -= _onInputActionsChangedScheme;
         }
 
         private void _onInputActionsChangedScheme(EInputScheme scheme)

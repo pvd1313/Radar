@@ -17,8 +17,7 @@ namespace Beast.Radar.UI
         private readonly ItemData[] _itemsData;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _input;
-        private readonly IInputSystem _inputActions;
+        private readonly IInputSystem _inputSystem;
 
         private UIPool<DebugItemButton> _itemsPool;
         private ButtonRadioGroup<DebugItemButton> _itemGroup;
@@ -34,15 +33,13 @@ namespace Beast.Radar.UI
             DebugItemPanelView view,
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
-            IUIInputController input,
             IInputSystem inputSystem,
             ItemData[] itemsData)
         {
             _view = view;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
-            _input = input;
-            _inputActions = inputSystem;
+            _inputSystem = inputSystem;
             _itemsData = itemsData;
             _maxItemsCount = ItemGridSize.x * ItemGridSize.y;
         }
@@ -76,8 +73,7 @@ namespace Beast.Radar.UI
             _view.body.SetActive(false);
             _selectablesController.Disable();
         }
-
-        #region Configure
+        
 
         private void _configureItemButtons()
         {
@@ -128,13 +124,13 @@ namespace Beast.Radar.UI
                 isLooping: true);
 
             Tuple<ESelectionZone, SelectableGridData> south = _zoneBuilder.Build(
-                ESelectionZone.SouthButton, _view.itemGrantButtons[0].Selectable);
+                ESelectionZone.FirstOptionButton, _view.itemGrantButtons[0].Selectable);
 
             Tuple<ESelectionZone, SelectableGridData> west = _zoneBuilder.Build(
-                ESelectionZone.WestButton, _view.itemGrantButtons[1].Selectable);
+                ESelectionZone.SecondOptionButton, _view.itemGrantButtons[1].Selectable);
 
             Tuple<ESelectionZone, SelectableGridData> north = _zoneBuilder.Build(
-                ESelectionZone.NorthButton, _view.itemGrantButtons[2].Selectable);
+                ESelectionZone.ThirdOptionButton, _view.itemGrantButtons[2].Selectable);
 
             UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
@@ -144,7 +140,7 @@ namespace Beast.Radar.UI
                 isFillHorizontally: false,
                 isLooping: false);
 
-            _selectablesController = new SelectablesController(_input,
+            _selectablesController = new SelectablesController(_inputSystem,
                 new Dictionary<ESelectionZone, SelectableGridData>
                 {
                     { dpadGrid.Item1, dpadGrid.Item2 },
@@ -159,14 +155,10 @@ namespace Beast.Radar.UI
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_inputActions, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_inputSystem.Scheme, _view.inputIcons);
             _inputIconsController.Warmup();
         }
-
-        #endregion
-
-        #region Events
-
+        
         private void _subscribe()
         {
             for (int i = 0; i < _view.itemGrantButtons.Length; i++)
@@ -247,7 +239,7 @@ namespace Beast.Radar.UI
                 : _itemsData.Where(i => i.type == typeButton.ItemType).ToArray();
 
             _currentPage = 1;
-            _refreshItemButtons(reverseColumnIndex: false);
+            _refreshItemButtons(false);
         }
 
         private void _refreshItemButtons(bool reverseColumnIndex)
@@ -272,6 +264,7 @@ namespace Beast.Radar.UI
                 isLooping: false);
           
             _itemGroup?.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
+            _itemGroup?.SelectFirst();
             _selectablesController?.RefreshGrid(dpadGrid.Item1, dpadGrid.Item2, reverseColumnIndex);
             
             _view.nextItems.SetInteractable(limit < _currentItemsData.Length);
@@ -296,7 +289,5 @@ namespace Beast.Radar.UI
                 _view.itemWeight.SetText("weight");
             }
         }
-
-        #endregion
     }
 }

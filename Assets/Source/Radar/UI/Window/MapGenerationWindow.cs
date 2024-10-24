@@ -14,9 +14,9 @@ namespace Beast.Radar.UI
         private readonly IWindowManager _windowManager;
         private readonly MapGenerationWindowConfig _generationConfig;
         private readonly IUIFactory _uiFactory;
-        private readonly IUIInputController _uiInput;
         private readonly ITerrainPreviewRender _previewRender;
         private readonly INewGameSetup _newGameSetup;
+        private readonly IInputSystem _inputSystem;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
@@ -32,17 +32,17 @@ namespace Beast.Radar.UI
             IUIFactory uiFactory,
             IWindowManager windowManager,
             ISelectableZoneBuilder selectableBuilder,
-            IUIInputController uiInput,
             ITerrainPreviewRender previewRender,
-            INewGameSetup newGameSetup)
+            INewGameSetup newGameSetup,
+            IInputSystem inputSystem)
         {
             _generationConfig = generationConfig;
             _uiFactory = uiFactory;
             _windowManager = windowManager;
             _selectableBuilder = selectableBuilder;
-            _uiInput = uiInput;
             _previewRender = previewRender;
             _newGameSetup = newGameSetup;
+            _inputSystem = inputSystem;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -123,7 +123,7 @@ namespace Beast.Radar.UI
                 { dpadGrid.Item1, dpadGrid.Item2 }
             };
 
-            _selectablesController = new SelectablesController(_uiInput, grids);
+            _selectablesController = new SelectablesController(_inputSystem, grids);
             _selectablesController.Warmup();
         }
 

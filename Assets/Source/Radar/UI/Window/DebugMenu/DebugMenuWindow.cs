@@ -14,7 +14,6 @@ namespace Beast.Radar.UI
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _uiInput;
         private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
 
@@ -27,14 +26,12 @@ namespace Beast.Radar.UI
             IWindowManager windowManager,
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
-            IUIInputController uiInput,
             IInputSystem inputSystem,
             IDebugController debugController)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
-            _uiInput = uiInput;
             _inputSystem = inputSystem;
             _debugController = debugController;
         }
@@ -83,8 +80,8 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _inputSystem, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _inputSystem, _getTestItems()),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _inputSystem, _debugController),
             });
             _panelsController.Warmup();
         }
@@ -102,38 +99,38 @@ namespace Beast.Radar.UI
                 { triggerGrid.Item1, triggerGrid.Item2 }
             };
             
-            _selectablesController = new SelectablesController(_uiInput, grids);
+            _selectablesController = new SelectablesController(_inputSystem, grids);
             _selectablesController.Warmup();
         }
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_inputSystem, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_inputSystem.Scheme, _view.inputIcons);
             _inputIconsController.Warmup();
         }
 
         private void _subscribeView()
         {
-            _view.openButton.Clicked += _onOpenButtonClicked;
-            _view.closeButton.Clicked += _onCloseButtonClicked;
+            _view.openButton.Clicked += Open;
+            _view.closeButton.Clicked += Close;
         }
 
         private void _unsubscribeView()
         {
-            _view.openButton.Clicked -= _onOpenButtonClicked;
-            _view.closeButton.Clicked -= _onCloseButtonClicked;
+            _view.openButton.Clicked -= Open;
+            _view.closeButton.Clicked -= Close;
         }
 
         private void _subscribeInput()
         {
             _inputSystem.Scheme.Changed += _onInputActionsSchemeChanged;
-            _uiInput.SelectButtonPressed += _onOpenButtonClicked;
+            _inputSystem.UIInput.OptionButtons.PressStarted += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
             _inputSystem.Scheme.Changed -= _onInputActionsSchemeChanged;
-            _uiInput.SelectButtonPressed -= _onOpenButtonClicked;
+            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOpenButtonClicked;
         }
 
         private void _onInputActionsSchemeChanged(EInputScheme scheme)
@@ -144,14 +141,16 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void _onCloseButtonClicked()
+        private void _onOpenButtonClicked(EInputOptionButton button)
         {
-            _windowManager.Show(WindowID.MainHUD);
-        }
-
-        private void _onOpenButtonClicked()
-        {
-            _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
+            if (button == EInputOptionButton.Back)
+            {
+                _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
+            }
+            else if(button == EInputOptionButton.Fourth && _isOpened())
+            {
+               _windowManager.Show(WindowID.MainHUD);
+            }
         }
 
         private bool _isOpened()

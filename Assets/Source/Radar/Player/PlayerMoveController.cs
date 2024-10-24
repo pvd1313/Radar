@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
@@ -14,17 +14,17 @@ namespace Beast.Radar.Player
     {
         private readonly ICameraTransform _cameraTransform;
         private readonly PrefabLibrary _library;
-        private readonly IPlayerInputController _input;
+        private readonly IInputSystem _input;
 
         private PlayerView _player;
         private int2 _currentTarget = new(512, 512);
         private float2 _currentCoordinate = new(512, 512);
-        private float _speed = 25;
+        private readonly float _speed = 25;
 
         public PlayerMoveController(
             ICameraTransform cameraTransform,
             PrefabLibrary library,
-            IPlayerInputController input)
+            IInputSystem input)
         {
             _cameraTransform = cameraTransform;
             _library = library;
@@ -40,7 +40,7 @@ namespace Beast.Radar.Player
         private UniTask<OperationResult> _warmup()
         {
             _spawn();
-            _input.ClickMove += _onClickMove;
+                //_input.ClickMove += _onClickMove;
             return OperationResult.SuccessSync();
         }
 

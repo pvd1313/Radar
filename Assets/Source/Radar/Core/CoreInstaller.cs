@@ -26,6 +26,11 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             
+            // Input & Camera
+            yield return typeof(InputSystem);
+            yield return typeof(CameraTransform);
+            yield return typeof(CameraController);
+            
             // UI Main
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
@@ -37,12 +42,6 @@ namespace Beast.Radar.Core
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
             
-            // Input & Camera
-            yield return typeof(InputSystem);
-            yield return typeof(CameraTransform);
-            yield return typeof(UIInputController);
-            yield return typeof(PlayerInputController);
-            yield return typeof(CameraController);
             
             // Terrain
             yield return typeof(TerrainBaker);

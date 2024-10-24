@@ -6,8 +6,8 @@ namespace Beast.Radar.InputHandling
     {
         public IInputSchemeObserver Scheme { get; }
         public IGameInputActions GameInput { get; }
+        public IUIInputActions UIInput { get; }
         
-        public InputActions Actions { get; }
         public float ClickDuration { get; }
     }
 }

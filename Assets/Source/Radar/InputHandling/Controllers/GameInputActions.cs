@@ -1,5 +1,5 @@
 ﻿using System;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,6 +16,7 @@ namespace Beast.Radar.InputHandling
         public InputValueControl<int> CurrentTouchCount { get; } = new();
         public InputValueControl<int> LastTouchCount { get; } = new();
         public InputValueControl<float> Scroll { get; } = new();
+        
         public bool IsPressMove { get; private set; }
 
         private readonly IInputSchemeObserver _inputSchemeObserver;
@@ -30,17 +31,6 @@ namespace Beast.Radar.InputHandling
             _inputSchemeObserver = inputSchemeObserver;
             _inputActions = inputAction;
         }
-        
-        public void ChangeBlock(bool isBlock)
-        {
-            _isBlock = isBlock;
-            
-            if (_isBlock)
-            {
-                LastTouchCount.UpdateValue(0);
-                IsPressMove = false;
-            }
-        }
 
         public void Update()
         {
@@ -51,6 +41,17 @@ namespace Beast.Radar.InputHandling
             
             _earlyInput();   
             _lateInput();
+        }
+
+        public void ChangeBlock(bool isBlock)
+        {
+            _isBlock = isBlock;
+            
+            if (_isBlock)
+            {
+                LastTouchCount.UpdateValue(0);
+                IsPressMove = false;
+            }
         }
 
         private void _earlyInput()

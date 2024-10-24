@@ -13,10 +13,10 @@ namespace Beast.Radar.InputHandling
         public event Action<float2> ClickMove;
 
         private readonly ICameraTransform _cameraTransform;
-        private readonly IInputSystem _inputActions;
+        private readonly InputActions _inputActions;
 
         private float _startClickTime;
-        public PlayerInputController(ICameraTransform cameraTransform, IInputSystem inputActions)
+        public PlayerInputController(ICameraTransform cameraTransform, InputActions inputActions)
         {
             _cameraTransform = cameraTransform;
             _inputActions = inputActions;
@@ -30,8 +30,8 @@ namespace Beast.Radar.InputHandling
 
         private UniTask<OperationResult> _warmup()
         {
-            _inputActions.Actions.Player.Click.started += _onClickStarted;
-            _inputActions.Actions.Player.Click.canceled += _onClickCanceled;
+            _inputActions.Player.Click.started += _onClickStarted;
+            _inputActions.Player.Click.canceled += _onClickCanceled;
             
             return OperationResult.SuccessSync();
         }
@@ -44,11 +44,13 @@ namespace Beast.Radar.InputHandling
         private void _onClickCanceled(InputAction.CallbackContext obj)
         {
             float endClickTime = Time.time;
-            if (endClickTime - _startClickTime <= _inputActions.ClickDuration)
+            
+            //todo !!!
+            /*if (endClickTime - _startClickTime <= _inputActions.ClickDuration)
             {
-                float2 mousePosition = _inputActions.Actions.Player.FirstPosition.ReadValue<Vector2>();
+               // float2 mousePosition = _inputSystem.Actions.Player.FirstPosition.ReadValue<Vector2>();
                 ClickMove?.Invoke(mousePosition);
-            }
+            }*/
         }
 
         private UniTask<OperationResult> _dispose()

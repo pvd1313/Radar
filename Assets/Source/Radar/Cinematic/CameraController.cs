@@ -2,7 +2,7 @@
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Math;
+using Beast.Claw.Mathematics;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;

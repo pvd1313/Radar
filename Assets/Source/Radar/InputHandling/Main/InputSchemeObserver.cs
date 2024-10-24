@@ -8,10 +8,10 @@ namespace Beast.Radar.InputHandling
     {
         public event Action<EInputScheme> Changed;
         
+        public bool IsHardwareInput { get; private set; }
         public EInputScheme Current => _inputScheme;
         
         private readonly PlayerInputView _view;
-        
         private EInputScheme _inputScheme;
         
         public InputSchemeObserver(PlayerInputView view)
@@ -38,6 +38,17 @@ namespace Beast.Radar.InputHandling
             {
                 BDebug.LogError(this,"Try setting the mouse scheme with an empty mouse device.");
                 _inputScheme = EInputScheme.Touch;
+            }
+            
+            switch (IsHardwareInput)
+            {
+                case false when _inputScheme is not EInputScheme.Touch:
+                    IsHardwareInput = true;
+                    break;
+
+                case true when _inputScheme is EInputScheme.Touch:
+                    IsHardwareInput = false;
+                    break;
             }
             
             Changed?.Invoke(_inputScheme);

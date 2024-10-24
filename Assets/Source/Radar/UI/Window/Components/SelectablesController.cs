@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Beast.Claw.Debug;
 using Beast.Radar.InputHandling;
 using Unity.Mathematics;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ namespace Beast.Radar.UI
     {
         public event Action<ESelectionZone, int2> TryWentBeyond;
 
-        private readonly IUIInputController _inputController;
+        private readonly IInputSystem _inputSystem;
         private readonly Dictionary<ESelectionZone, SelectableGridData> _selectableGrids;
 
         private UISelectable _currentSelectable;
@@ -19,10 +20,10 @@ namespace Beast.Radar.UI
         private bool _isUsed;
 
         public SelectablesController(
-            IUIInputController inputController,
+            IInputSystem inputSystem,
             Dictionary<ESelectionZone, SelectableGridData> selectables)
         {
-            _inputController = inputController;
+            _inputSystem = inputSystem;
             _selectableGrids = selectables;
         }
 
@@ -58,7 +59,7 @@ namespace Beast.Radar.UI
 
         public void RefreshGrid(ESelectionZone zone, SelectableGridData grid, bool reverseColumnIndex)
         {
-            if (!_inputController.IsHardwareInput)
+            if (!_inputSystem.Scheme.IsHardwareInput)
             {
                 return;
             }
@@ -87,7 +88,7 @@ namespace Beast.Radar.UI
         
         private void _setupCurrentSelectable()
         {
-            if (_isUsed && _inputController.IsHardwareInput && !_isSubscribedToInput)
+            if (_isUsed && _inputSystem.Scheme.IsHardwareInput && !_isSubscribedToInput)
             {
                 if (_currentSelectable == null)
                 {
@@ -125,17 +126,17 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputState()
         {
-            _inputController.ChangedEnable += _onInputControllerChangedEnable;
+            _inputSystem.UIInput.ChangedEnable += _onUIInputActionsChangedEnable;
         }
 
         private void _unsubscribeInputState()
         {
-            _inputController.ChangedEnable -= _onInputControllerChangedEnable;
+            _inputSystem.UIInput.ChangedEnable -= _onUIInputActionsChangedEnable;
         }
 
-        private void _onInputControllerChangedEnable()
+        private void _onUIInputActionsChangedEnable()
         {
-            if (_inputController.IsHardwareInput)
+            if (_inputSystem.Scheme.IsHardwareInput)
             {
                 _setupCurrentSelectable();
             }
@@ -193,33 +194,59 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputActions()
         {
-            _inputController.NavigatePressed += _onDpadPressed;
-            _inputController.ShoulderPressed += _onShoulderPressed;
-            _inputController.TriggerPressed += _onTriggerPressed;
-            _inputController.RightStickMoved += _onRightStickMoved;
-            _inputController.ActionButtonPressed += _onActionButtonPressed;
+            _inputSystem.UIInput.NavigatePressed += _onDpadPressed;
+            _inputSystem.UIInput.RightStickMoved += _onRightStickMoved;
+            _inputSystem.UIInput.Trigger.PressStarted += _onTriggerPressed;
+            _inputSystem.UIInput.Shoulder.PressStarted += _onShoulderPressed;
+            _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonPressed;
             _isSubscribedToInput = true;
+            BDebug.LogInfo(this, "subscribe");
         }
+
 
         private void _unsubscribeInputActions()
         {
-            _inputController.NavigatePressed -= _onDpadPressed;
-            _inputController.ShoulderPressed -= _onShoulderPressed;
-            _inputController.TriggerPressed -= _onTriggerPressed;
-            _inputController.RightStickMoved -= _onRightStickMoved;
-            _inputController.ActionButtonPressed -= _onActionButtonPressed;
+            _inputSystem.UIInput.NavigatePressed -= _onDpadPressed;
+            _inputSystem.UIInput.RightStickMoved -= _onRightStickMoved;
+            _inputSystem.UIInput.Trigger.PressPerformed -= _onTriggerPressed;
+            _inputSystem.UIInput.Shoulder.PressStarted -= _onShoulderPressed;
+            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonPressed;
             _isSubscribedToInput = false;
+            BDebug.LogInfo(this, "unsubscribe");
         }
 
-        private void _onActionButtonPressed(ESelectionZone zone)
+        private void _onOptionButtonPressed(EInputOptionButton obj)
         {
+            ESelectionZone zone;
+
+            switch (obj)
+            {
+                case EInputOptionButton.None:
+                case EInputOptionButton.Back:
+                case EInputOptionButton.Start:
+                case EInputOptionButton.Fourth:
+                default:
+                    return;
+
+                case EInputOptionButton.First:
+                    zone = ESelectionZone.FirstOptionButton;
+                    break;
+                case EInputOptionButton.Second:
+                    zone = ESelectionZone.SecondOptionButton;
+                    break;
+                case EInputOptionButton.Third:
+                    zone = ESelectionZone.ThirdOptionButton;
+                    break;
+                 
+            }
+            
             if (!_selectableGrids.ContainsKey(zone))
             {
                 return;
             }
 
-            bool isTrySelect = _inputController.GetScheme() == EInputScheme.Gamepad
-                               && zone == ESelectionZone.SouthButton
+            bool isTrySelect = _inputSystem.Scheme.Current == EInputScheme.Gamepad
+                               && zone == ESelectionZone.FirstOptionButton
                                && _selectableGrids.ContainsKey(ESelectionZone.Navigate); 
             
             if (isTrySelect)
@@ -254,11 +281,13 @@ namespace Beast.Radar.UI
 
         private void _onShoulderPressed(int value)
         {
+            BDebug.LogInfo(this, $"shoulder {value}");
             _performHorizontalAction(ESelectionZone.Shoulder, value);
         }
 
         private void _onTriggerPressed(int value)
         {
+            BDebug.LogInfo(this, $"trigger {value}");
             _performHorizontalAction(ESelectionZone.Trigger, value);
         }
 

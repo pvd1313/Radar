@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
@@ -12,16 +13,16 @@ namespace Beast.Radar.UI
         public event Action<bool> MouseOverUI;
 
         private readonly IUIFactory _uiFactory;
-        private readonly IUIInputController _uiInputController;
+        private readonly IInputSystem _inputSystem;
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
         private IWindow _currentOpenedWindow;
 
-        public WindowManager(IUIFactory uiFactory, IUIInputController input)
+        public WindowManager(IUIFactory uiFactory, IInputSystem inputSystem)
         {
             _uiFactory = uiFactory;
-            _uiInputController = input;
+            _inputSystem = inputSystem;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -29,23 +30,7 @@ namespace Beast.Radar.UI
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
-        
-        private UniTask<OperationResult> _warmup()
-        {
-            _canvas = _uiFactory.CreateCanvas(this);
-                
-            _subscribe();
-            
-            return OperationResult.SuccessSync();
-        }
 
-        private UniTask<OperationResult> _dispose()
-        {
-            _unsubscribe();
-
-            return OperationResult.SuccessSync();
-        }
-        
         public void Register(IWindow window, string windowID, UIView view)
         {
             if (_allWindows.ContainsKey(windowID))
@@ -73,18 +58,26 @@ namespace Beast.Radar.UI
             WindowChanged?.Invoke(isHasOpenedWindow);
         }
 
+        private UniTask<OperationResult> _warmup()
+        {
+            _canvas = _uiFactory.CreateCanvas(this);
+                
+            _subscribe();
+            
+            return OperationResult.SuccessSync();
+        }
+
         private void _subscribe()
         {
             _canvas.MouseOverUI += _onMouseOverUI;
-            _uiInputController.PauseButtonPressed += _onPauseButtonPressed;
-            _uiInputController.ActionButtonPressed += _onActionButtonPressed;
+            BDebug.LogInfo(this, $"{_inputSystem.UIInput == null }");
+            _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
         }
 
         private void _unsubscribe()
         {
             _canvas.MouseOverUI -= _onMouseOverUI;
-            _uiInputController.PauseButtonPressed -= _onPauseButtonPressed;
-            _uiInputController.ActionButtonPressed -= _onActionButtonPressed;
+            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonsPressStarted;
         }
 
         private void _onMouseOverUI(bool isOver)
@@ -92,20 +85,26 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isOver);       
         }
 
-        private void _onPauseButtonPressed()
+        private void _onOptionButtonsPressStarted(EInputOptionButton button)
         {
-            Show(_currentOpenedWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
-        }
-
-        private void _onActionButtonPressed(ESelectionZone zone)
-        {
-            if (zone == ESelectionZone.EastButton)
+            if (button == EInputOptionButton.Fourth)
             {
                 if (_currentOpenedWindow is not HUDWindow)
                 {
                     Show(WindowID.MainHUD);
                 }
             }
+            else if(button == EInputOptionButton.Start)
+            {
+                Show(_currentOpenedWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+            }
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribe();
+
+            return OperationResult.SuccessSync();
         }
     }
 }

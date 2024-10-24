@@ -4,8 +4,9 @@ namespace Beast.Radar.InputHandling
 {
     public interface IInputSchemeObserver
     {
-        event Action<EInputScheme> Changed;
-        
-        EInputScheme Current { get; }
+        public event Action<EInputScheme> Changed;
+        public EInputScheme Current { get; }
+        public bool IsHardwareInput { get; }
+
     }
 }
