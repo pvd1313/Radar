@@ -1,5 +1,5 @@
 using System;
-using Beast.Claw.JobUtilities;
+using Beast.Claw.Jobs;
 using Unity.Collections;
 
 namespace Beast.Claw.Gizmos

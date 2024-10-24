@@ -22,7 +22,7 @@ namespace Beast.Radar.GameCycle
         {
             bool success = _gameCycle.TryInitializeSelf(new GameCycleParameters
             {
-                initializationEventIDs = new HashSet<string>
+                operationEventIDs = new HashSet<string>
                 {
                     OperationID.WARMUP,
                     OperationID.DISPOSE,

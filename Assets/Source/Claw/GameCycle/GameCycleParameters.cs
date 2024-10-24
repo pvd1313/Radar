@@ -5,14 +5,14 @@ namespace Beast.Claw.GameCycle
 {
     public struct GameCycleParameters : IValidatable
     {
-        public HashSet<string> initializationEventIDs;
+        public HashSet<string> operationEventIDs;
         public HashSet<string> updateEventIDs;
         
         public string Validate()
         {
-            if (initializationEventIDs == null)
+            if (operationEventIDs == null)
             {
-                return $"{nameof(initializationEventIDs)} can not be null";
+                return $"{nameof(operationEventIDs)} can not be null";
             }
 
             if (updateEventIDs == null)

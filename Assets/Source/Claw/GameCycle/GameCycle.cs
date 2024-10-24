@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Beast.Claw.Debug;
+using Beast.Claw.Profiling;
+using Beast.Claw.Reflection;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
@@ -9,44 +12,51 @@ namespace Beast.Claw.GameCycle
     {
         private struct UpdateListener
         {
-            public object listener;
+            public object obj;
             public Action action;
         }
         
-        private struct InitializationListener
+        private struct OperationListener
         {
-            public object listener;
+            public object obj;
             public Func<UniTask<OperationResult>> action;
         }
         
         private readonly List<IGameCycleListener> _subscribers;
-        private readonly GameCycleConfig _config;
-        private readonly GameCycleProxy _proxy;
+        private readonly GameCycleConfig _cycleConfig;
+        private readonly ProfilerConfig _profilerConfig;
 
         private HashSet<object> _brokenUpdates;
         private Dictionary<object, int> _updateErrorCount;
         private bool _allUpdateIsBroken;
 
-        private Dictionary<string, List<InitializationListener>> _initialization;
-        private Dictionary<string, List<UpdateListener>> _update;
+        private Dictionary<string, List<OperationListener>> _operationListeners;
+        private Dictionary<string, List<UpdateListener>> _updateListeners;
 
         private Dictionary<string, HashSet<object>> _updateHashset;
-        private Dictionary<string, HashSet<object>> _initializationHashset;
+        private Dictionary<string, HashSet<object>> _operationHashset;
+
+        private Dictionary<string, Profiler> _updateProfilers;
+        private Dictionary<string, Profiler> _operationProfilers;
+        private bool _profilersInitialized;
+        private Dictionary<string, List<string>> _updateObjectNames;
+        private Dictionary<string, List<string>> _operationObjectNames;
 
         private bool _isSubscribingListeners;
-        private HashSet<string> _initializationEventIDs;
+        private HashSet<string> _operationEventIDs;
         private HashSet<string> _updateEventIDs;
 
         public GameCycle (
             GameCycleProxy proxy, 
-            GameCycleConfig config, 
+            GameCycleConfig cycleConfig, 
+            ProfilerConfig profilerConfig,
             List<IGameCycleListener> subscribers)
         {
-            _proxy = proxy;
             _subscribers = subscribers;
-            _config = config;
+            _cycleConfig = cycleConfig;
+            _profilerConfig = profilerConfig;
 
-            _proxy.Inject(this);
+            proxy.Inject(this);
         }
         
         public bool TryInitializeSelf(GameCycleParameters input)
@@ -58,27 +68,27 @@ namespace Beast.Claw.GameCycle
             _brokenUpdates = new HashSet<object>();
             _updateErrorCount = new Dictionary<object, int>();
 
-            _initializationEventIDs = input.initializationEventIDs;
+            _operationEventIDs = input.operationEventIDs;
             _updateEventIDs = input.updateEventIDs;
             
-            _initialization = new Dictionary<string, List<InitializationListener>>();
-            _update = new Dictionary<string, List<UpdateListener>>();
-            foreach (string eventID in _initializationEventIDs)
+            _operationListeners = new Dictionary<string, List<OperationListener>>();
+            _updateListeners = new Dictionary<string, List<UpdateListener>>();
+            foreach (string eventID in _operationEventIDs)
             {
-                _initialization[eventID] = new List<InitializationListener>();
+                _operationListeners[eventID] = new List<OperationListener>();
             }
             foreach (string eventID in _updateEventIDs)
             {
-                _update[eventID] = new List<UpdateListener>();
+                _updateListeners[eventID] = new List<UpdateListener>();
             }
 
-            if (_config.preventDuplicatingSubscription)
+            if (_cycleConfig.preventDuplicatingSubscription)
             {
                 _updateHashset = new Dictionary<string, HashSet<object>>();
-                _initializationHashset = new Dictionary<string, HashSet<object>>();
-                foreach (string eventID in _initializationEventIDs)
+                _operationHashset = new Dictionary<string, HashSet<object>>();
+                foreach (string eventID in _operationEventIDs)
                 {
-                    _initializationHashset[eventID] = new HashSet<object>();
+                    _operationHashset[eventID] = new HashSet<object>();
                 }
                 foreach (string eventID in _updateEventIDs)
                 {
@@ -108,6 +118,40 @@ namespace Beast.Claw.GameCycle
             return true;
         }
 
+        private void _tryInitializeProfiling()
+        {
+            if (_profilersInitialized)
+            {
+                return;
+            }
+            
+            _operationObjectNames = new Dictionary<string, List<string>>();
+            _operationProfilers = new Dictionary<string, Profiler>();
+            foreach (string eventID in _operationEventIDs)
+            {
+                _operationObjectNames[eventID] = _operationListeners[eventID]
+                    .Select(listener => listener.obj.GetType().Name).ToList();
+                
+                Profiler profiler = new (_profilerConfig);
+                profiler.Initialize();
+                _operationProfilers[eventID] = profiler;
+            }
+
+            _updateObjectNames = new Dictionary<string, List<string>>();
+            _updateProfilers = new Dictionary<string, Profiler>();
+            foreach (string eventID in _updateEventIDs)
+            {
+                _updateObjectNames[eventID] = _updateListeners[eventID]
+                    .Select(listener => listener.obj.GetType().Name).ToList();
+                
+                Profiler profiler = new (_profilerConfig);
+                profiler.Initialize();
+                _updateProfilers[eventID] = profiler;
+            }
+            
+            _profilersInitialized = true;
+        }
+
         public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) 
             where TOwner : class
         {
@@ -116,35 +160,74 @@ namespace Beast.Claw.GameCycle
             
             if (_isSubscribingListeners)
             {
-                throw new InvalidOperationException("Tried to invoke initialization during subscription");
+                throw new InvalidOperationException("Tried to invoke operation during subscription");
             }
 
-            if (!_initializationEventIDs.Contains(eventID))
+            if (!_operationEventIDs.Contains(eventID))
             {
-                throw new InvalidOperationException($"Tried to invoke invalid initialization event '{eventID}'");
+                throw new InvalidOperationException($"Tried to invoke invalid operation event '{eventID}'");
             }
             
             OperationResult result = OperationResult.Success();
+
+            bool profilingActive = _profilerConfig.AnyProfilingActive;
+            Profiler.Handle handle = Profiler.Handle.Disabled;
+            Profiler profiler = null;
+            List<string> objNames = null;
             
-            foreach (InitializationListener listener in _initialization[eventID])
+            if (profilingActive)
             {
+                _tryInitializeProfiling();
+                profiler = _operationProfilers[eventID];
+                profiler.FetchConfig();
+                objNames = _operationObjectNames[eventID];
+            }
+
+            List<OperationListener> listeners = _operationListeners[eventID];
+
+            for (int listenerIndex = 0; listenerIndex < listeners.Count; listenerIndex++)
+            {
+                OperationListener listener = listeners[listenerIndex];
+                
+                string sampleName = null;
+
                 try
                 {
+                    if (profilingActive)
+                    {
+                        handle = profiler.GetHandle(listener.obj);
+                        sampleName = objNames[listenerIndex];
+
+                        handle.BeginSample(sampleName);
+                    }
+
                     result = await listener.action.Invoke();
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(owner, e, $"Exception during {eventID} ({listener.listener.GetType()})");
+                    BDebug.LogException(owner, e, $"Exception during {eventID} ({listener.obj.GetType()})");
                     break;
                 }
-                
+                finally
+                {
+                    if (profilingActive)
+                    {
+                        handle.EndSample(sampleName);
+                    }
+                }
+
                 if (result.status != EOperationStatus.Success)
                 {
-                    BDebug.LogError(owner, $"Failed to {eventID} ({listener.listener.GetType()})");
+                    BDebug.LogError(owner, $"Failed to {eventID} ({listener.obj.GetType()})");
                     break;
                 }
             }
-            
+
+            if (profilingActive)
+            {
+                profiler.RebuildTree();
+            }
+
             return result;
         }
 
@@ -170,28 +253,68 @@ namespace Beast.Claw.GameCycle
             
             bool hasBrokenLogic = _brokenUpdates.Count > 0;
             
-            foreach (UpdateListener listener in _update[eventID])
+            bool profilingActive = _profilerConfig.AnyProfilingActive;
+            Profiler.Handle handle = Profiler.Handle.Disabled;
+            Profiler profiler = null;
+            List<string> objNames = null;
+            
+            if (profilingActive)
             {
-                if (hasBrokenLogic && _brokenUpdates.Contains(listener.listener))
+                _tryInitializeProfiling();
+                profiler = _updateProfilers[eventID];
+                profiler.FetchConfig();
+                objNames = _updateObjectNames[eventID];
+            }
+
+            List<UpdateListener> updateListeners = _updateListeners[eventID];
+
+            for (int listenerIndex = 0; listenerIndex < updateListeners.Count; listenerIndex++)
+            {
+                UpdateListener listener = updateListeners[listenerIndex];
+                
+                if (hasBrokenLogic && _brokenUpdates.Contains(listener.obj))
                 {
                     continue;
                 }
                 
+                string sampleName = null;
+
                 try
                 {
+
+                    if (profilingActive)
+                    {
+                        handle = profiler.GetHandle(listener.obj);
+                        sampleName = objNames[listenerIndex];
+                        
+                        handle.BeginSample(sampleName);
+                    }
+
                     listener.action.Invoke();
                 }
                 catch (Exception e)
                 {
-                    ProcessUpdatingException(e, eventID, listener.listener, out bool canContinueExecution);
+                    ProcessUpdatingException(e, eventID, listener.obj, out bool canContinueExecution);
 
                     if (!canContinueExecution)
                     {
                         _allUpdateIsBroken = true;
-                        
+
                         return;
                     }
                 }
+                finally
+                {
+                    if (profilingActive)
+                    {
+                        handle.EndSample(sampleName);
+                    }
+                }
+            }
+            
+            if (profilingActive)
+            {
+                profiler.RebuildTree();
             }
         }
 
@@ -201,22 +324,22 @@ namespace Beast.Claw.GameCycle
             owner.ValidateNotNullThrowException(nameof(owner));;
             action.ValidateNotNullThrowException(nameof(action));
             
-            if (!_initializationEventIDs.Contains(eventID))
+            if (!_operationEventIDs.Contains(eventID))
             {
-                string message = $"'{eventID}' is not valid initialization eventID ({owner.GetType()})";
+                string message = $"'{eventID}' is not valid operation eventID ({owner.GetType()})";
                 throw new InvalidOperationException(message);
             }
 
-            if (_config.preventDuplicatingSubscription)
+            if (_cycleConfig.preventDuplicatingSubscription)
             {
-                if (!_initializationHashset[eventID].Add(owner))
+                if (!_operationHashset[eventID].Add(owner))
                 {
                     string message = $"'{owner.GetType()}' tried to listen twice to event '{eventID}'";
                     throw new InvalidOperationException(message);
                 }
             }
             
-            if (_config.preventExternObjectMethodSubscription)
+            if (_cycleConfig.preventExternObjectMethodSubscription)
             {
                 if (owner != action.Target)
                 {
@@ -227,10 +350,10 @@ namespace Beast.Claw.GameCycle
             }
             
 
-            _initialization[eventID].Add(new InitializationListener
+            _operationListeners[eventID].Add(new OperationListener
             {
                 action = action,
-                listener = owner
+                obj = owner
             });
         }
 
@@ -246,7 +369,7 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException(message);
             }
 
-            if (_config.preventExternObjectMethodSubscription)
+            if (_cycleConfig.preventExternObjectMethodSubscription)
             {
                 if (owner != action.Target)
                 {
@@ -256,7 +379,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
 
-            if (_config.preventDuplicatingSubscription)
+            if (_cycleConfig.preventDuplicatingSubscription)
             {
                 if (!_updateHashset[eventID].Add(owner))
                 {
@@ -265,10 +388,10 @@ namespace Beast.Claw.GameCycle
                 }
             }
             
-            _update[eventID].Add(new UpdateListener
+            _updateListeners[eventID].Add(new UpdateListener
             {
                 action = action,
-                listener = owner
+                obj = owner
             });
         }
         
@@ -284,12 +407,12 @@ namespace Beast.Claw.GameCycle
             errorCount++;
             _updateErrorCount[logic] = errorCount;
         
-            if (errorCount > _config.updateExceptionThreshold)
+            if (errorCount > _cycleConfig.updateExceptionThreshold)
             {
                 _brokenUpdates.Add(logic);
             }
         
-            if (_config.exceptionStopsUpdates)
+            if (_cycleConfig.exceptionStopsUpdates)
             {
                 canContinueExecution = false;
             }

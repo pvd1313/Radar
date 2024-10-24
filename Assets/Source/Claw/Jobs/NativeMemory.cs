@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Unity.Collections;
 
-namespace Beast.Claw.JobUtilities
+namespace Beast.Claw.Jobs
 {
     public static class NativeMemory
     {

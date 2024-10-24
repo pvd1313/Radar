@@ -1,4 +1,4 @@
-namespace Beast.Claw.JobUtilities
+namespace Beast.Claw.Jobs
 {
     public struct ArrayMaintenanceData
     {

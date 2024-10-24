@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Beast.Claw.JobUtilities;
+using Beast.Claw.Jobs;
 using Unity.Collections;
 using UnityEngine;
 
