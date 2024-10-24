@@ -58,7 +58,7 @@ namespace Beast.Radar.Editor.Atlas
                     wrapMode = TextureWrapMode.Clamp
                 },
                 isLinear = true,
-                mipChain = true,
+                mipChain = false,
                 createInitialized = false,
                 format = TextureFormat.RGB24,
             });
