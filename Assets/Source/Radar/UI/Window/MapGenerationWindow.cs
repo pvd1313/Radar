@@ -76,6 +76,9 @@ namespace Beast.Radar.UI
             _hideView();
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
 
+            int size = (int)(_menuView.mapImage.rectTransform.sizeDelta.x * _generationConfig.previewSizeMultiplier); 
+            _terrainTexture = _previewRender.CreateTexture(this, size);
+
             _buttonSizes = new()
             {
                 {_menuView.sizeButtons[0], 512},
@@ -95,7 +98,6 @@ namespace Beast.Radar.UI
         private void _configureView()
         {
             RadioButton startSizeButton = _menuView.sizeButtons[3]; 
-            _terrainTexture = _previewRender.CreateTexture(this, _buttonSizes[startSizeButton]);
             
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             SeedData seedData = _generationConfig.seeds[_seedIndex];

@@ -21,3 +21,4 @@ MonoBehaviour:
     value: 345
   - name: snail
     value: 21312
+  previewSizeMultiplier: 0.5
