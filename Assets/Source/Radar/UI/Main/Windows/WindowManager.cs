@@ -12,12 +12,15 @@ namespace Beast.Radar.UI
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
 
+        public string CurrentWindow => _currentWindowID ?? WindowID.None;
+
         private readonly IUIFactory _uiFactory;
         private readonly IInputSystem _inputSystem;
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
-        private IWindow _currentOpenedWindow;
+        private IWindow _currentWindow;
+        private string _currentWindowID;
 
         public WindowManager(IUIFactory uiFactory, IInputSystem inputSystem)
         {
@@ -30,7 +33,16 @@ namespace Beast.Radar.UI
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
-
+        
+        private UniTask<OperationResult> _warmup()
+        {
+            _canvas = _uiFactory.CreateCanvas(this);
+                
+            _subscribe();
+            
+            return OperationResult.SuccessSync();
+        }
+        
         public void Register(IWindow window, string windowID, UIView view)
         {
             if (_allWindows.ContainsKey(windowID))
@@ -49,22 +61,14 @@ namespace Beast.Radar.UI
                 throw new InvalidOperationException($"Window with ID '{windowID}' is not registered or does not exist.");
             }
 
-            _currentOpenedWindow?.Close();
-            _currentOpenedWindow = _allWindows[windowID];
-            _currentOpenedWindow.Open();
+            _currentWindow?.Close();
+            _currentWindow = _allWindows[windowID];
+            _currentWindowID = windowID;
+            _currentWindow.Open();
             
             bool isHasOpenedWindow = windowID != WindowID.MainHUD;
             
             WindowChanged?.Invoke(isHasOpenedWindow);
-        }
-
-        private UniTask<OperationResult> _warmup()
-        {
-            _canvas = _uiFactory.CreateCanvas(this);
-                
-            _subscribe();
-            
-            return OperationResult.SuccessSync();
         }
 
         private void _subscribe()
@@ -89,14 +93,14 @@ namespace Beast.Radar.UI
         {
             if (button == EInputOptionButton.Fourth)
             {
-                if (_currentOpenedWindow is not HUDWindow)
+                if (_currentWindowID != WindowID.MainHUD)
                 {
                     Show(WindowID.MainHUD);
                 }
             }
             else if(button == EInputOptionButton.Start)
             {
-                Show(_currentOpenedWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+                Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
             }
         }
 
