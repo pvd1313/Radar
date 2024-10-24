@@ -9,6 +9,11 @@ namespace Beast.Radar.Terrain
         
         public string Validate()
         {
+            if (texture == null)
+            {
+                return "texture is null";
+            }
+            
             if (!texture.IsValid(out string error))
             {
                 return error;
