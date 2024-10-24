@@ -11,6 +11,9 @@
         {
             CGPROGRAM
 
+            #pragma multi_compile NOISE_SAMPLER_LOD_0 NOISE_SAMPLER_LOD_1
+            #pragma shader_feature NOISE_SAMPLER_LOD_0 NOISE_SAMPLER_LOD_1
+
             #pragma target 2.0
             
             #pragma vertex vertex
@@ -45,11 +48,11 @@
             
             float2 _OutputSize;
             float2 _OutputCenter;
+
+            float _NoiseSamplerLOD;
             
-            #define NOISE_OFFSET_0 float2(8, 8)
-            #define NOISE_POWER_0 float2(0.3, 0.2)
-            #define NOISE_OFFSET_1 float2(16, 16)
-            #define NOISE_POWER_1 float2(0.1, 0.075)
+            #define NOISE_OFFSET float2(16, 16)
+            #define NOISE_POWER float2(0.075, 0.1)
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
@@ -81,10 +84,16 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float4 color0 = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET_0, NOISE_POWER_0);
-                float4 color1 = noise_shift(input.mainUV, input.noiseUV * 1.5, NOISE_OFFSET_1, NOISE_POWER_1);
+#ifdef NOISE_SAMPLER_LOD_0
+                float4 noiseColor = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET, NOISE_POWER);
+                float4 terrainColor = tex2D(_TerrainTexture, input.mainUV);
+                float4 finalColor = lerp(terrainColor, noiseColor, 0.75f);
+                float4 terrainColorRGBA = lerp(terrainColor, finalColor, 1 - _NoiseSamplerLOD);
+#endif
 
-                float4 terrainColorRGBA = saturate(color0 * color1);
+#ifdef NOISE_SAMPLER_LOD_1
+                float4 terrainColorRGBA = tex2D(_TerrainTexture, input.mainUV);
+#endif
 
                 float2 indexMapUV = terrainColorRGBA.rg;
 

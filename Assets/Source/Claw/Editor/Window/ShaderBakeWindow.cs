@@ -17,6 +17,7 @@ namespace Beast.Claw.Editor.Window
 
         [SerializeField] private Texture2D _bakedTexture;
         [SerializeField] private Texture2D _previewTexture;
+        [SerializeField] private string _lastPath;
 
         protected override void Warmup()
         {
@@ -62,7 +63,7 @@ namespace Beast.Claw.Editor.Window
 
         private void SaveTexture(FlowUI ui)
         {
-            ui.SaveFileDialog("BackedTexture.png", (path) =>
+            ui.SaveFileDialogWithMemory("BackedTexture.png", ref _lastPath, path =>
             {
                 byte[] bin = _bakedTexture.EncodeToPNG();
                 

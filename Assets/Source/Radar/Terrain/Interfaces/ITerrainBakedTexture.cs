@@ -5,6 +5,6 @@ namespace Beast.Radar.Terrain
 {
     public interface ITerrainBakedTexture : IReady
     {
-        public RenderTexture Texture { get; }
+        public Texture Texture { get; }
     }
 }

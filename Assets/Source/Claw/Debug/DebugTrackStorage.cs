@@ -16,6 +16,7 @@ namespace Beast.Claw.Debug
         private readonly StringDictionary<float3> _float3 = new(StateStorageCapacity);
         private readonly StringDictionary<float4> _float4 = new(StateStorageCapacity);
         private readonly StringDictionary<string> _string = new(StateStorageCapacity);
+        private readonly StringDictionary<bool> _bool = new(StateStorageCapacity);
 
         public DebugTrackStorage(Type owner)
         {
@@ -33,6 +34,7 @@ namespace Beast.Claw.Debug
         public IEnumerable<KeyValuePair<string, float4>> ReadAllFloat4() => _ReadAll(_float4);
 
         public IEnumerable<KeyValuePair<string, string>> ReadAllString() => _ReadAll(_string);
+        public IEnumerable<KeyValuePair<string, bool>> ReadAllBool() => _ReadAll(_bool);
 
         public void Write(string id, float value) => _Write(_float, id, value);
 
@@ -45,6 +47,8 @@ namespace Beast.Claw.Debug
         public void Write(string id, float4 value) => _Write(_float4, id, value);
         
         public void Write(string id, string value) => _Write(_string, id, value);
+        
+        public void Write(string id, bool value) => _Write(_bool, id, value);
 
         private IEnumerable<KeyValuePair<string, T>> _ReadAll<T>(StringDictionary<T> storage)
         {

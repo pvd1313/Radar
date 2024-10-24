@@ -8,7 +8,10 @@ namespace Beast.Radar.Terrain
     [Serializable]
     public class TerrainRenderConfig : IConfig
     {
-        public RenderTextureData bakedTexture;
+        public float noiseSamplerLOD1;
+        public float noiseSamplerLOD0;
+        public RenderTextureData bakerRenderTexture;
+        public Texture2DParameters bakerTexture2D;
         public RenderTextureData biomeTexture;
         public RenderTextureData colorTexture;
         

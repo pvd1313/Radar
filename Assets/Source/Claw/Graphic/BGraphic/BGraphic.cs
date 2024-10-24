@@ -136,9 +136,9 @@ namespace Beast.Claw.Graphic
                 RenderTexture.active = sourceTexture;
                 
                 Rect rect = new (0, 0, targetTexture.width, targetTexture.height);
-                targetTexture.ReadPixels(rect, 0, 0, targetTexture.mipmapCount > 0);
+                targetTexture.ReadPixels(rect, 0, 0, false);
                 
-                targetTexture.Apply();
+                targetTexture.Apply(targetTexture.mipmapCount > 0);
             }
             finally
             {

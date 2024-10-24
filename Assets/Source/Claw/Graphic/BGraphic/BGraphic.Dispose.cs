@@ -37,6 +37,20 @@ namespace Beast.Claw.Graphic
             CommandBufferPool.Release(buffer);
         }
 
+        public static bool TryDispose(ref Texture2D texture)
+        {
+            if (texture == null)
+            {
+                return false;
+            }
+
+            Object.Destroy(texture);
+
+            texture = null;
+
+            return true;
+        }
+
         public static bool TryDispose(ref RenderTexture renderTexture)
         {
             if (renderTexture == null)

@@ -111,8 +111,8 @@ namespace Beast.Radar.Terrain
             viewportPoint = _camera.WorldToViewport(worldPoint);
             
             // Fade
-            float tileCountFade = BMath.ILerp(_config.fadeInCount, _config.maxCount, _tileCount);
-            float pixelSizeFade = BMath.ILerp(_config.fadeInPixelSize, _config.minPixelSize, _tilePixelSize);
+            float tileCountFade = BMath.InverseLerp(_config.fadeInCount, _config.maxCount, _tileCount);
+            float pixelSizeFade = BMath.InverseLerp(_config.fadeInPixelSize, _config.minPixelSize, _tilePixelSize);
             _blitTextureAlpha01 = 1.0f - BMath.Clamp01(BMath.Max(tileCountFade, pixelSizeFade));
             
             RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);

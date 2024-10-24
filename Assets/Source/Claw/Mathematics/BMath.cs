@@ -153,7 +153,7 @@ namespace Beast.Claw.Mathematics
         /// Inverse lerp / unlerp.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ILerp(FloatMinMax range, float value)
+        public static float InverseLerp(FloatMinMax range, float value)
         {
             return math.unlerp(range.min, range.max, value);
         }
@@ -162,7 +162,7 @@ namespace Beast.Claw.Mathematics
         /// Inverse lerp / unlerp.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ILerp(float min, float max, float value)
+        public static float InverseLerp(float min, float max, float value)
         {
             return math.unlerp(min, max, value);
         }

@@ -270,6 +270,12 @@ namespace Beast.Claw.Editor.Window
             {
                 ui.StringField(id, value);
             }
+            
+            foreach ((string id, bool value) in storage.ReadAllBool())
+            {
+                bool v = value;
+                ui.CheckBoxRight(id, ref v);
+            }
         }
 
         private void _setAllFolds(bool isOpen)

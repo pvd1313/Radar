@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: GraphicConfig
   m_EditorClassIdentifier: 
   terrain:
-    bakedTexture:
+    noiseSamplerLOD1: 4
+    noiseSamplerLOD0: 16
+    bakerRenderTexture:
       texture:
-        name: terrain_baked_texture
+        name: terrain_baked_RT
         size:
           x: 0
           y: 0
@@ -29,9 +31,21 @@ MonoBehaviour:
         readWrite: 1
         memoryless: 0
         vrUsage: 0
+    bakerTexture2D:
+      texture:
+        name: terrain_baked_texture2D
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 1
+      format: 62
+      mipChain: 0
+      isLinear: 1
+      createInitialized: 0
     biomeTexture:
       texture:
-        name: terrain_biome_texture
+        name: terrain_biome_RT
         size:
           x: 0
           y: 0
@@ -47,7 +61,7 @@ MonoBehaviour:
         vrUsage: 0
     colorTexture:
       texture:
-        name: 
+        name: terrain_color_RT
         size:
           x: 0
           y: 0

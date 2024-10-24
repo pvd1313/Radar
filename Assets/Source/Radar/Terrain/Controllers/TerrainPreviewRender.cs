@@ -32,7 +32,7 @@ namespace Beast.Radar.Terrain
             owner.ValidateNotNullThrowException(nameof(owner));
             pixelSize.ValidateComponentsBiggerThanZeroThrowException(nameof(pixelSize));
 
-            RenderTextureData bakerData = _config.terrain.bakedTexture.WithSize(pixelSize);
+            RenderTextureData bakerData = _config.terrain.bakerRenderTexture.WithSize(pixelSize);
             RenderTextureData biomeData = _config.terrain.biomeTexture.WithSize(pixelSize);
             RenderTextureData colorData = _config.terrain.colorTexture.WithSize(pixelSize);
             colorData.texture.filterMode = FilterMode.Bilinear;
@@ -62,7 +62,8 @@ namespace Beast.Radar.Terrain
                 renderPosition = task.texture.color.Size().Multiply(0.5f),
                 viewDistance = task.texture.color.height,
                 bakedTerrain = task.texture.baker,
-                outputBiomeTexture = task.texture.biome
+                outputBiomeTexture = task.texture.biome,
+                isPreview = true
             });
 
             _colorRender.Render(new TerrainColorRenderTask

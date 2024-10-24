@@ -72,6 +72,11 @@ inline float beast_dither_cs(float2 positionCS, float alpha)
     return alpha - BAYER_MATRIX[index];
 }
 
+inline float4 beast_tex2Dlod(sampler2D text, float2 uv, float lod)
+{
+    float4 uvLod = float4(uv.x, uv.y, 0, lod);
+    return tex2Dlod(text, uvLod);
+}
 
 inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {

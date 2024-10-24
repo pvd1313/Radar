@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Beast.Claw.Graphic
 {
@@ -29,6 +30,12 @@ namespace Beast.Claw.Graphic
         public static void SetFloat4(this Material material, string name, float4 vector)
         {
             material.SetVector(name, new Vector4(vector.x, vector.y, vector.z, vector.w));
+        }
+
+        public static void SetKeyword(this Material material, string name, bool isEnabled)
+        {
+            LocalKeyword keyword = new (material.shader, name);
+            material.SetKeyword(keyword, isEnabled);
         }
     }
 }

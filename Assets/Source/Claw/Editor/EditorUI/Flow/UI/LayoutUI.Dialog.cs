@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Beast.Claw.Common;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,6 +18,32 @@ namespace Beast.Claw.Editor
                 Application.dataPath,
                 Path.GetFileNameWithoutExtension(fileName),
                 Path.GetExtension(fileName).Replace(".", ""));
+            
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            action.Invoke(path);
+        }
+        
+        public void SaveFileDialogWithMemory(string fileName, ref string lastPath, Action<string> action)
+        {
+            fileName.ValidateNotEmptyOrNullThrowException(nameof(fileName));
+            action.ValidateNotNullThrowException("SaveAssetDialog : action");
+
+            string path = EditorUtility.SaveFilePanel(
+                "Save asset",
+                !lastPath.IsNullOrEmpty() ? lastPath : Application.dataPath,
+                Path.GetFileNameWithoutExtension(fileName),
+                Path.GetExtension(fileName).Replace(".", ""));
+
+            if (path.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            lastPath = path;
 
             action.Invoke(path);
         }
