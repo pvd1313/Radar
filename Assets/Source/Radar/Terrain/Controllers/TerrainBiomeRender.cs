@@ -38,7 +38,6 @@ namespace Beast.Radar.Terrain
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
         private readonly GraphicConfig _config;
-        private readonly IWindowManager _windows;
 
         private Material _renderMaterial;
         private RenderTexture _biomeTexture;
@@ -52,21 +51,20 @@ namespace Beast.Radar.Terrain
             ITerrainBakedTexture bakedTerrain,
             ICameraTransform camera,
             GraphicLibrary library,
-            GraphicConfig config,
-            IWindowManager windows)
+            GraphicConfig config)
         {
             _screen = screen;
             _bakedTerrain = bakedTerrain;
             _library = library;
             _camera = camera;
             _config = config;
-            _windows = windows;
         }
         
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
             handle.ListenUpdate(UpdateID.RENDER, _render);
         }
 
@@ -101,6 +99,13 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSync();
         }
         
+        private UniTask<OperationResult> _gameLoad()
+        {
+            _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
+
+            return OperationResult.SuccessSync();
+        }
+        
         public float2 WorldToUVOffset(float2 worldPoint)
         {
             float2 offset = (worldPoint - _renderResult.renderPosition) / _renderResult.renderDistance * 2;
@@ -119,14 +124,6 @@ namespace Beast.Radar.Terrain
             {
                 _dispose();
                 _warmup();
-            }
-
-            // TODO : Temp. Basically we should blit last state and do no render. As this render
-            //      : is the most heaviest it works for now.
-            //      : https://risenbeast.youtrack.cloud/issue/R-75/Render-Master
-            if (_windows.CurrentWindow != WindowID.MainHUD)
-            {
-                return;
             }
 
             _isReady = false;
@@ -155,12 +152,14 @@ namespace Beast.Radar.Terrain
             data.viewDistance = task.viewDistance;
             data.cellPixelSize = task.outputBiomeTexture.height / data.viewDistance / data.textureYScale;
             
+            // Upscale when very close to terrain.
             if (!task.isPreview && data.cellPixelSize > WorldTransform.CellTileCount)
             {
                 data.viewDistance *= data.cellPixelSize / WorldTransform.CellTileCount;
                 data.cellPixelSize = WorldTransform.CellTileCount;
             }
 
+            // Snap to grid.
             if (!task.isPreview)
             {
                 data.snapGridSize = WorldTransform.CellTileCount / data.cellPixelSize;
@@ -175,6 +174,29 @@ namespace Beast.Radar.Terrain
             data.renderDistance = data.viewDistance * data.textureYScale;
             data.texelSize = 1f / data.renderDistance / WorldTransform.CellTileCount;
             
+            // LODs.
+            if (task.isPreview || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)
+            {
+                data.noiseSamplerLOD = 1;
+            }
+            else
+            {
+                FloatMinMax minMax = new(_config.terrain.noiseSamplerLOD1, _config.terrain.noiseSamplerLOD0);
+                data.noiseSamplerLOD = BMath.Max(0, 1 - BMath.InverseLerp(minMax, data.cellPixelSize));
+            }
+            
+            // Prevent rendering when texture not moving.
+            if (!task.isPreview)
+            {
+                if (BMath.Approximately(data.renderPosition, _renderResult.renderPosition))
+                {
+                    BDebug.Track(this, "textureIsStatic", true);
+                    return data;
+                }
+                
+                BDebug.Track(this, "textureIsStatic", false);
+            }
+            
             _renderMaterial.SetFloat2("_OutputSize", data.renderDistance);
             _renderMaterial.SetFloat2("_OutputCenter", data.renderPosition);
             
@@ -185,16 +207,6 @@ namespace Beast.Radar.Terrain
 
             _renderMaterial.SetTexture("_NoiseMap", _library.terrain.biomeRenderNoise);
             _renderMaterial.SetFloat2("_NoiseMapSize", _library.terrain.biomeRenderNoise.Size());
-
-            if (task.isPreview || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)
-            {
-                data.noiseSamplerLOD = 1;
-            }
-            else
-            {
-                FloatMinMax minMax = new(_config.terrain.noiseSamplerLOD1, _config.terrain.noiseSamplerLOD0);
-                data.noiseSamplerLOD = BMath.Max(0, 1 - BMath.InverseLerp(minMax, data.cellPixelSize));
-            }
 
             _setNoisePassLOD(_renderMaterial, data.noiseSamplerLOD);
 
