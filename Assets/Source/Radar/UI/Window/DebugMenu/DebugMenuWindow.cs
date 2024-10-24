@@ -53,7 +53,7 @@ namespace Beast.Radar.UI
 
         public void Close()
         {
-            _view.screen.SetActive(false);
+            _hideView();
             _panelsController.Disable();
             _selectablesController.Disable();
         }
@@ -61,6 +61,7 @@ namespace Beast.Radar.UI
         private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
+            _hideView();
             _windowManager.Register(this, WindowID.Debug, _view);
             
             _configurePanels();
@@ -111,14 +112,14 @@ namespace Beast.Radar.UI
 
         private void _subscribeView()
         {
-            _view.openButton.Clicked += Open;
-            _view.closeButton.Clicked += Close;
+            _view.openButton.Clicked += _showWindow;
+            _view.closeButton.Clicked += _closeWindow;
         }
 
         private void _unsubscribeView()
         {
-            _view.openButton.Clicked -= Open;
-            _view.closeButton.Clicked -= Close;
+            _view.openButton.Clicked -= _showWindow;
+            _view.closeButton.Clicked -= _closeWindow;
         }
 
         private void _subscribeInput()
@@ -168,6 +169,21 @@ namespace Beast.Radar.UI
             _inputIconsController.Dispose();
 
             return OperationResult.SuccessSync();
+        }
+
+        private void _closeWindow()
+        {
+            _windowManager.Show(WindowID.MainHUD);
+        }
+
+        private void _showWindow()
+        {
+            _windowManager.Show(WindowID.Debug);
+        }
+
+        private void _hideView()
+        {
+            _view.screen.SetActive(false);
         }
 
         private static ItemData[] _getTestItems()

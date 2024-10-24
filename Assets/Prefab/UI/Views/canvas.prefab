@@ -61,7 +61,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &6146848954051826958
 MonoBehaviour:
@@ -185,11 +185,11 @@ MonoBehaviour:
   m_SubmitAction: {fileID: 3104494263228859906, guid: 324303d0f20c82b498588620a3b88279, type: 3}
   m_CancelAction: {fileID: 4777569101343875407, guid: 324303d0f20c82b498588620a3b88279, type: 3}
   m_LeftClickAction: {fileID: -7323630428320882495, guid: 324303d0f20c82b498588620a3b88279, type: 3}
-  m_MiddleClickAction: {fileID: 5055785118999830823, guid: 324303d0f20c82b498588620a3b88279, type: 3}
-  m_RightClickAction: {fileID: -120950560123355772, guid: 324303d0f20c82b498588620a3b88279, type: 3}
+  m_MiddleClickAction: {fileID: 0}
+  m_RightClickAction: {fileID: 0}
   m_ScrollWheelAction: {fileID: -5777059659758585275, guid: 324303d0f20c82b498588620a3b88279, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6880319857738513675, guid: 324303d0f20c82b498588620a3b88279, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: -5089433888742043892, guid: 324303d0f20c82b498588620a3b88279, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 0}
+  m_TrackedDeviceOrientationAction: {fileID: 0}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0

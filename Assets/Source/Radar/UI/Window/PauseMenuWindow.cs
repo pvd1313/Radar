@@ -50,13 +50,14 @@ namespace Beast.Radar.UI
 
         public void Close()
         {
-            _menuView.gameObject.SetActive(false);
+            _hideView();
             _selectablesController.Disable();
         }
 
         private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
+            _hideView();
             _windowManager.Register(this, WindowID.Pause, _menuView);
             
             _configureSelectables();
@@ -142,6 +143,11 @@ namespace Beast.Radar.UI
         {
             // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
             _saveManager.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+        }
+
+        private void _hideView()
+        {
+            _menuView.gameObject.SetActive(false);
         }
     }
 }

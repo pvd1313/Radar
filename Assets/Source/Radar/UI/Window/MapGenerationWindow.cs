@@ -64,7 +64,7 @@ namespace Beast.Radar.UI
 
         public void Close()
         {
-            _menuView.gameObject.SetActive(false);
+            _hideView();
             _selectablesController.Disable();
             _terrainTexture.Dispose();
             _terrainTexture = null;
@@ -73,8 +73,8 @@ namespace Beast.Radar.UI
         private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
+            _hideView();
             _windowManager.Register(this, WindowID.MapGeneration, _menuView);
-            _menuView.gameObject.SetActive(false);
 
             _buttonSizes = new()
             {
@@ -152,7 +152,7 @@ namespace Beast.Radar.UI
             _menuView.waterSlider.EndedChange += _onWaterEndedChange;
             _menuView.biomeSlider.EndedChange += _onBiomeSizeEndedChange;
         }
-        
+
         private void _unsubscribeView()
         {
             _sizeButtonsGroup.Selected -= _onSizeSelected;
@@ -185,7 +185,6 @@ namespace Beast.Radar.UI
         private void _onForestEndedChange(float value)
         {
             _terrainData.forest01 = value;
-            BDebug.LogInfo(this, $"{_terrainData.forest01}");
             _drawTexture();
         }
 
@@ -223,6 +222,11 @@ namespace Beast.Radar.UI
         private void _onCloseButtonClicked()
         {
             _windowManager.Show(WindowID.MainHUD);
+        }
+
+        private void _hideView()
+        {
+            _menuView.gameObject.SetActive(false);
         }
 
         private void _drawTexture()

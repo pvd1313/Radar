@@ -32,7 +32,7 @@ namespace Beast.Radar.InputHandling
             _inputActions = inputActions;
         }
         
-        public UniTask<OperationResult> Warmup()
+        public void Warmup()
         {
             _subscribeToInputSchemeChange();
 
@@ -40,8 +40,6 @@ namespace Beast.Radar.InputHandling
             {
                 _subscribeInputActions();
             }
-
-            return OperationResult.SuccessSync();
         }
 
         public void Update()

@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Debug;
 using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
@@ -45,8 +46,8 @@ namespace Beast.Radar.InputHandling
 
         public void ChangeBlock(bool isBlock)
         {
+            BDebug.LogInfo(this, $"change block {isBlock} {_isBlock}");
             _isBlock = isBlock;
-            
             if (_isBlock)
             {
                 LastTouchCount.UpdateValue(0);

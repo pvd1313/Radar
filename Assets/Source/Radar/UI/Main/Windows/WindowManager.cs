@@ -11,9 +11,7 @@ namespace Beast.Radar.UI
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
-
-        public string CurrentWindow => _currentWindowID ?? WindowID.None;
-
+        
         private readonly IUIFactory _uiFactory;
         private readonly IInputSystem _inputSystem;
         private readonly Dictionary<string, IWindow> _allWindows = new();
