@@ -200,7 +200,6 @@ namespace Beast.Radar.UI
             _inputSystem.UIInput.Shoulder.PressStarted += _onShoulderPressed;
             _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonPressed;
             _isSubscribedToInput = true;
-            BDebug.LogInfo(this, "subscribe");
         }
 
 
@@ -211,8 +210,7 @@ namespace Beast.Radar.UI
             _inputSystem.UIInput.Trigger.PressPerformed -= _onTriggerPressed;
             _inputSystem.UIInput.Shoulder.PressStarted -= _onShoulderPressed;
             _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonPressed;
-            _isSubscribedToInput = false;
-            BDebug.LogInfo(this, "unsubscribe");
+            _isSubscribedToInput = false; 
         }
 
         private void _onOptionButtonPressed(EInputOptionButton obj)
@@ -281,13 +279,11 @@ namespace Beast.Radar.UI
 
         private void _onShoulderPressed(int value)
         {
-            BDebug.LogInfo(this, $"shoulder {value}");
             _performHorizontalAction(ESelectionZone.Shoulder, value);
         }
 
         private void _onTriggerPressed(int value)
         {
-            BDebug.LogInfo(this, $"trigger {value}");
             _performHorizontalAction(ESelectionZone.Trigger, value);
         }
 

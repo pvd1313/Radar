@@ -10,8 +10,8 @@ namespace Beast.Radar.UI
         public event Action<float> EndedChange;
         public UISelectable Selectable => _selectable;
 
-        private const float ChangeSpeed = 1.5f; 
-        
+        private const float ChangeSpeed = 1.5f;
+
         [SerializeField] private Slider _slider;
         [SerializeField] private UISelectable _selectable;
 
@@ -24,17 +24,15 @@ namespace Beast.Radar.UI
         {
             _slider.value += value * ChangeSpeed;
         }
-        
-        public void SetValue(float value, bool withNotify)
+
+        public void SetValueWithNotify(float value)
         {
-            if (withNotify)
-            {
-                _slider.value = value;
-            }
-            else
-            {
-                _slider.SetValueWithoutNotify(value);
-            }
+            _slider.value = value;
+        }
+
+        public void SetValueWithoutNotify(float value)
+        {
+            _slider.SetValueWithoutNotify(value);
         }
     }
 }

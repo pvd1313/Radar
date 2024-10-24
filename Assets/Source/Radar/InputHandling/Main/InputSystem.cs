@@ -33,9 +33,8 @@ namespace Beast.Radar.InputHandling
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private async UniTask<OperationResult> _warmup()
+        private  UniTask<OperationResult> _warmup()
         {
-            BDebug.LogInfo(this,"1. =)");
             _actions = new InputActions();
             _actions.Enable();
             _actions.UI.Enable();
@@ -51,10 +50,7 @@ namespace Beast.Radar.InputHandling
             _gameInputActions = new GameInputActions(Scheme, _actions);
             
             
-            BDebug.LogInfo(this,"2. =)");
-            await UniTask.Yield();
-            
-            return OperationResult.Success();
+            return OperationResult.SuccessSync();
         }
 
         private void _tick()

@@ -1,6 +1,4 @@
-﻿using System;
-using Beast.Claw.Debug;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 
 namespace Beast.Radar.InputHandling
 {
@@ -49,17 +47,14 @@ namespace Beast.Radar.InputHandling
                     return;
                 
                 case 0 when control.State == EButtonState.Pressed:
-                    BDebug.LogInfo(control, "End");
                     control.EndPress(touchCount);
                     break;
                 
                 case > 0 when control.State == EButtonState.Default:
                     control.StartPress(touchCount);
-                    BDebug.LogInfo(control, "Start");
                     break;
                 
                 case > 0 when control.State == EButtonState.Pressed:
-                    BDebug.LogInfo(control, "Perform");
                     control.PerformPress(touchCount);
                     break;
             }

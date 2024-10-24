@@ -19,7 +19,7 @@ namespace Beast.Radar.UI
         
         public void Enable()
         {
-            _button.onClick.AddListener(Select);
+            _button.onClick.AddListener(Click);
             gameObject.SetActive(true);
         }
 
@@ -29,10 +29,14 @@ namespace Beast.Radar.UI
             _button.onClick.RemoveAllListeners();
         }
 
+        public void Click()
+        {
+            Clicked?.Invoke(this);
+        }
+        
         public void Select()
         {
             IsSelected = true;
-            Clicked?.Invoke(this);
             _selectableColor.SetSelectedMode();
         }
 

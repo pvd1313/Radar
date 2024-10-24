@@ -74,7 +74,6 @@ namespace Beast.Radar.UI
         private void _subscribe()
         {
             _canvas.MouseOverUI += _onMouseOverUI;
-            BDebug.LogInfo(this, $"{_inputSystem.UIInput == null }");
             _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
         }
 

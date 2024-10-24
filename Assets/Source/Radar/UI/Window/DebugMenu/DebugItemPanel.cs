@@ -264,7 +264,6 @@ namespace Beast.Radar.UI
                 isLooping: false);
           
             _itemGroup?.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
-            _itemGroup?.SelectFirst();
             _selectablesController?.RefreshGrid(dpadGrid.Item1, dpadGrid.Item2, reverseColumnIndex);
             
             _view.nextItems.SetInteractable(limit < _currentItemsData.Length);

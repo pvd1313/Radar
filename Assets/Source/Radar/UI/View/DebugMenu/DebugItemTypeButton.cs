@@ -56,6 +56,10 @@ namespace Beast.Radar.UI
             _button.onClick.RemoveAllListeners();
         }
 
+        public void Click()
+        {
+            
+        }
         public void Select()
         {
             Clicked?.Invoke(this);
