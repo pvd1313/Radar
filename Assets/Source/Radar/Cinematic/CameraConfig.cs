@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 
 namespace Beast.Radar.Cinematic
 {

@@ -8,9 +8,9 @@
         RightStick,
         Navigate,
         Shoulder,
-        NorthButton,
-        EastButton,
-        WestButton,
-        SouthButton
+        FirstOptionButton,
+        SecondOptionButton,
+        ThirdOptionButton,
+        FourthOptionButton,
     }
 }

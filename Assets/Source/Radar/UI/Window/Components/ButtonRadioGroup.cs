@@ -14,11 +14,9 @@ namespace Beast.Radar.UI
             _buttons = buttons;
         }
         
-        public void Warmup(int startIndex = 0)
+        public void Warmup()
         {
             _subscribeButtons();
-            SelectedButton = _buttons[startIndex];
-            SelectedButton.Select();
         }
 
         public void Dispose()
@@ -31,8 +29,19 @@ namespace Beast.Radar.UI
             _unsubscribeButtons();
             _buttons = otherButtons;
             _subscribeButtons();
+            _setSelected(_buttons[0]);
         }
 
+        public void Select(int index)
+        {
+            _setSelected(_buttons[index]);
+        }
+        
+        public void Select(TButton button)
+        {
+            _setSelected(button);
+        }
+        
         private void _subscribeButtons()
         {
             foreach (TButton radioButton in _buttons)
@@ -61,6 +70,7 @@ namespace Beast.Radar.UI
             }
 
             SelectedButton = button;
+            SelectedButton.Select();
 
             Selected?.Invoke(SelectedButton);
         }

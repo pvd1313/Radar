@@ -2,13 +2,22 @@
     "name": "InputActions",
     "maps": [
         {
-            "name": "Player",
+            "name": "Game",
             "id": "ed474518-ea7c-40e4-8ff4-97f9a67318f5",
             "actions": [
                 {
                     "name": "FirstPosition",
                     "type": "PassThrough",
                     "id": "76b8a19b-e83a-4b3c-95f9-1283b5a1a104",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SecondPosition",
+                    "type": "Value",
+                    "id": "e26d0f14-a6cd-4393-9393-cba86009cb08",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -24,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SecondPosition",
-                    "type": "Value",
-                    "id": "e26d0f14-a6cd-4393-9393-cba86009cb08",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Scroll",
                     "type": "PassThrough",
                     "id": "522783da-cbaf-4dad-97a8-65070a4531b4",
@@ -42,18 +42,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "TouchDelta",
-                    "type": "Value",
-                    "id": "b66cc7c7-8e4f-4069-848d-6cd04b9b2749",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Pause",
+                    "name": "Click",
                     "type": "Button",
-                    "id": "380a3c00-eee9-4fd2-ad43-f3a02fed38f0",
+                    "id": "365d2c3e-bc81-494d-8b87-b3fae467bc2b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -80,17 +71,6 @@
                     "processors": "Clamp(min=-1,max=1)",
                     "groups": "Gamepad",
                     "action": "Scroll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0b4b1eb7-6992-49ca-9ea6-e0af5dfeef76",
-                    "path": "<Touchscreen>/touch1/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Touch",
-                    "action": "SecondPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -239,45 +219,45 @@
                 },
                 {
                     "name": "",
-                    "id": "f4be6bb6-168b-4656-80d3-bc0b855a39c1",
-                    "path": "<Mouse>/radius",
+                    "id": "53d37d2c-944b-4f47-bf70-a2bc71045371",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "TouchDelta",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "84ac0cf1-bea2-4dd6-ac33-a8743784ac03",
-                    "path": "<Touchscreen>/delta",
+                    "id": "540bd21c-4ffc-4bb9-a120-182bd0b5efa6",
+                    "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
-                    "action": "TouchDelta",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "f45e3e52-1656-43bc-8dfd-525bf820b401",
-                    "path": "<Gamepad>/start",
+                    "id": "98534267-40e1-4150-be2b-809a73a48327",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Pause",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "33697513-a8a3-4859-91ba-299156d1a8ef",
-                    "path": "<Keyboard>/escape",
+                    "id": "0b4b1eb7-6992-49ca-9ea6-e0af5dfeef76",
+                    "path": "<Touchscreen>/touch1/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "MouseAndKeyboard",
-                    "action": "Pause",
+                    "groups": "Touch",
+                    "action": "SecondPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -306,7 +286,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Cancel",
+                    "name": "Start",
                     "type": "Button",
                     "id": "c8179eb4-c16f-4eac-9646-8731f06657dd",
                     "expectedControlType": "Button",
@@ -324,7 +304,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Select",
+                    "name": "Back",
                     "type": "Button",
                     "id": "02fe9eae-f037-4a28-81e2-90164d7b820f",
                     "expectedControlType": "Button",
@@ -333,7 +313,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Navigate",
+                    "name": "MainNavigate",
                     "type": "PassThrough",
                     "id": "7ded50ff-01ed-4988-be6e-04f8fcd0c9a6",
                     "expectedControlType": "Vector2",
@@ -342,7 +322,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "RightStick",
+                    "name": "OptionNavigate",
                     "type": "PassThrough",
                     "id": "3e877188-a0b9-4191-a719-50dfdf2ce884",
                     "expectedControlType": "Vector2",
@@ -378,7 +358,25 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "NorthButton",
+                    "name": "FirstOption",
+                    "type": "Button",
+                    "id": "5029f657-c906-4596-be8e-d9edebd67ba3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SecondOption",
+                    "type": "Button",
+                    "id": "5e0a0c09-c79f-41b5-8436-17fdcb25d102",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThirdOption",
                     "type": "Button",
                     "id": "51696313-4048-4d59-8677-0576af36a136",
                     "expectedControlType": "Button",
@@ -394,33 +392,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "WestButton",
-                    "type": "Button",
-                    "id": "5e0a0c09-c79f-41b5-8436-17fdcb25d102",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "SouthButton",
-                    "type": "Button",
-                    "id": "5029f657-c906-4596-be8e-d9edebd67ba3",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "LeftStick",
-                    "type": "PassThrough",
-                    "id": "007b2e66-cd9c-4c12-8011-1932495308dd",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -431,7 +402,7 @@
                     "interactions": "",
                     "processors": "InvertVector2(invertX=false)",
                     "groups": "",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -442,7 +413,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -453,7 +424,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -464,7 +435,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -475,7 +446,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -486,7 +457,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -497,7 +468,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -508,7 +479,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -519,7 +490,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -530,7 +501,7 @@
                     "interactions": "",
                     "processors": "InvertVector2(invertX=false)",
                     "groups": "",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -618,7 +589,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "NorthButton",
+                    "action": "ThirdOption",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -629,7 +600,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "NorthButton",
+                    "action": "ThirdOption",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -641,28 +612,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "EastButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b41d4f8d-6fea-49ad-b403-d6b0bd6df0b5",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "WestButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "75a5e4f0-8f6a-44cf-b930-28e0b5215de5",
-                    "path": "<Keyboard>/2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "MouseAndKeyboard",
-                    "action": "WestButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -728,7 +677,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "RightStick",
+                    "action": "OptionNavigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -783,7 +732,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Select",
+                    "action": "Back",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -816,7 +765,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MouseAndKeyboard",
-                    "action": "Cancel",
+                    "action": "Start",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -827,29 +776,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "804cd311-fa4e-4d71-ba43-316e65cee1e2",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "SouthButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7dd9f3e7-05f9-4caa-940a-1beb1d0f57b6",
-                    "path": "<Keyboard>/1",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "MouseAndKeyboard",
-                    "action": "SouthButton",
+                    "action": "Start",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -860,7 +787,51 @@
                     "interactions": "",
                     "processors": "InvertVector2(invertX=false),NormalizeVector2",
                     "groups": "Gamepad",
-                    "action": "Navigate",
+                    "action": "MainNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "804cd311-fa4e-4d71-ba43-316e65cee1e2",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "FirstOption",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7dd9f3e7-05f9-4caa-940a-1beb1d0f57b6",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "FirstOption",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b41d4f8d-6fea-49ad-b403-d6b0bd6df0b5",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SecondOption",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "75a5e4f0-8f6a-44cf-b930-28e0b5215de5",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "SecondOption",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

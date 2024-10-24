@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
@@ -10,21 +11,19 @@ namespace Beast.Radar.UI
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
-
-        public string CurrentWindow => _currentWindowID ?? WindowID.None;
-
+        
         private readonly IUIFactory _uiFactory;
-        private readonly IUIInputController _uiInputController;
+        private readonly IInputSystem _inputSystem;
         private readonly Dictionary<string, IWindow> _allWindows = new();
 
         private CanvasView _canvas;
         private IWindow _currentWindow;
         private string _currentWindowID;
 
-        public WindowManager(IUIFactory uiFactory, IUIInputController input)
+        public WindowManager(IUIFactory uiFactory, IInputSystem inputSystem)
         {
             _uiFactory = uiFactory;
-            _uiInputController = input;
+            _inputSystem = inputSystem;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -39,13 +38,6 @@ namespace Beast.Radar.UI
                 
             _subscribe();
             
-            return OperationResult.SuccessSync();
-        }
-
-        private UniTask<OperationResult> _dispose()
-        {
-            _unsubscribe();
-
             return OperationResult.SuccessSync();
         }
         
@@ -80,15 +72,13 @@ namespace Beast.Radar.UI
         private void _subscribe()
         {
             _canvas.MouseOverUI += _onMouseOverUI;
-            _uiInputController.PauseButtonPressed += _onPauseButtonPressed;
-            _uiInputController.ActionButtonPressed += _onActionButtonPressed;
+            _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
         }
 
         private void _unsubscribe()
         {
             _canvas.MouseOverUI -= _onMouseOverUI;
-            _uiInputController.PauseButtonPressed -= _onPauseButtonPressed;
-            _uiInputController.ActionButtonPressed -= _onActionButtonPressed;
+            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonsPressStarted;
         }
 
         private void _onMouseOverUI(bool isOver)
@@ -96,20 +86,26 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isOver);       
         }
 
-        private void _onPauseButtonPressed()
+        private void _onOptionButtonsPressStarted(EInputOptionButton button)
         {
-            Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
-        }
-
-        private void _onActionButtonPressed(ESelectionZone zone)
-        {
-            if (zone == ESelectionZone.EastButton)
+            if (button == EInputOptionButton.Fourth)
             {
-                if (_currentWindow is not HUDWindow)
+                if (_currentWindowID != WindowID.MainHUD)
                 {
                     Show(WindowID.MainHUD);
                 }
             }
+            else if(button == EInputOptionButton.Start)
+            {
+                Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+            }
+        }
+
+        private UniTask<OperationResult> _dispose()
+        {
+            _unsubscribe();
+
+            return OperationResult.SuccessSync();
         }
     }
 }

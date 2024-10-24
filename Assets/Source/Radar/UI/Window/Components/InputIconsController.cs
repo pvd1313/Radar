@@ -1,35 +1,35 @@
 ﻿using System.Collections.Generic;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 
 namespace Beast.Radar.UI
 {
     public class InputIconsController
     {
-        private readonly IPlayerInputProvider _playerInput;
+        private readonly IInputSchemeObserver _inputScheme;
         private readonly List<InputIconDisplay> _icons;
 
-        public InputIconsController(IPlayerInputProvider playerInput, List<InputIconDisplay> icons)
+        public InputIconsController(IInputSchemeObserver inputScheme, List<InputIconDisplay> icons)
         {
-            _playerInput = playerInput;
+            _inputScheme = inputScheme;
             _icons = icons;
         }
 
         public void Warmup()
         {
-            _playerInput.ChangedScheme += _onPlayerInputChangedScheme;    
+            _inputScheme.Changed += _onInputActionsChangedScheme;    
             
             foreach (InputIconDisplay icon in _icons)
             {
-                icon.Refresh(_playerInput.Scheme);
+                icon.Refresh(_inputScheme.Current);
             }
         }
 
         public void Dispose()
         {
-            _playerInput.ChangedScheme -= _onPlayerInputChangedScheme;
+            _inputScheme.Changed -= _onInputActionsChangedScheme;
         }
 
-        private void _onPlayerInputChangedScheme(EInputScheme scheme)
+        private void _onInputActionsChangedScheme(EInputScheme scheme)
         {
             foreach (InputIconDisplay icon in _icons)
             {

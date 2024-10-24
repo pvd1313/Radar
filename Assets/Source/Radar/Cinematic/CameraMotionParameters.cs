@@ -1,5 +1,5 @@
 ﻿using System;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 
 namespace Beast.Radar.Cinematic
 {

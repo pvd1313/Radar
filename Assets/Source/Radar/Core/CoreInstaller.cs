@@ -5,7 +5,8 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
+using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
@@ -25,6 +26,11 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             
+            // Input & Camera
+            yield return typeof(InputSystem);
+            yield return typeof(CameraTransform);
+            yield return typeof(CameraController);
+            
             // UI Main
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
@@ -36,13 +42,6 @@ namespace Beast.Radar.Core
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
             
-            // Input & Camera
-            yield return typeof(CameraTransform);
-            yield return typeof(PlayerInputProvider);
-            yield return typeof(UIInputController);
-            yield return typeof(CameraInputController);
-            yield return typeof(CameraController);
-            
             // Terrain
             yield return typeof(TerrainBaker);
             yield return typeof(TerrainBiomeRender);
@@ -50,6 +49,9 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);
             yield return typeof(TerrainPreviewRender);
+            
+            //Player
+            yield return typeof(PlayerController);
         }
 
         protected override void BindCustom(DiContainer diContainer)

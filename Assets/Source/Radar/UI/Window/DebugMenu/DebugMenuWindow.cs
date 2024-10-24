@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Debug;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -14,8 +14,7 @@ namespace Beast.Radar.UI
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _uiInput;
-        private readonly IPlayerInputProvider _playerInput;
+        private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
 
         private DebugMenuView _view;
@@ -27,15 +26,13 @@ namespace Beast.Radar.UI
             IWindowManager windowManager,
             IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
-            IUIInputController uiInput,
-            IPlayerInputProvider playerInput,
+            IInputSystem inputSystem,
             IDebugController debugController)
         {
             _windowManager = windowManager;
             _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
-            _uiInput = uiInput;
-            _playerInput = playerInput;
+            _inputSystem = inputSystem;
             _debugController = debugController;
         }
 
@@ -56,7 +53,7 @@ namespace Beast.Radar.UI
 
         public void Close()
         {
-            _view.screen.SetActive(false);
+            _hideView();
             _panelsController.Disable();
             _selectablesController.Disable();
         }
@@ -64,6 +61,8 @@ namespace Beast.Radar.UI
         private UniTask<OperationResult> _warmup()
         {
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
+            _hideView();
+            _view.transform.SetSiblingIndex(2);
             _windowManager.Register(this, WindowID.Debug, _view);
             
             _configurePanels();
@@ -83,8 +82,8 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _uiInput, _playerInput, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _uiInput, _debugController),
+                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _inputSystem, _getTestItems()),
+                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _inputSystem, _debugController),
             });
             _panelsController.Warmup();
         }
@@ -102,41 +101,41 @@ namespace Beast.Radar.UI
                 { triggerGrid.Item1, triggerGrid.Item2 }
             };
             
-            _selectablesController = new SelectablesController(_uiInput, grids);
+            _selectablesController = new SelectablesController(_inputSystem, grids);
             _selectablesController.Warmup();
         }
 
         private void _configureInputIcons()
         {
-            _inputIconsController = new InputIconsController(_playerInput, _view.inputIcons);
+            _inputIconsController = new InputIconsController(_inputSystem.Scheme, _view.inputIcons);
             _inputIconsController.Warmup();
         }
 
         private void _subscribeView()
         {
-            _view.openButton.Clicked += _onOpenButtonClicked;
-            _view.closeButton.Clicked += _onCloseButtonClicked;
+            _view.openButton.Clicked += _showWindow;
+            _view.closeButton.Clicked += _closeWindow;
         }
 
         private void _unsubscribeView()
         {
-            _view.openButton.Clicked -= _onOpenButtonClicked;
-            _view.closeButton.Clicked -= _onCloseButtonClicked;
+            _view.openButton.Clicked -= _showWindow;
+            _view.closeButton.Clicked -= _closeWindow;
         }
 
         private void _subscribeInput()
         {
-            _playerInput.ChangedScheme += _onInputSchemeChanged;
-            _uiInput.SelectButtonPressed += _onOpenButtonClicked;
+            _inputSystem.Scheme.Changed += _onInputActionsSchemeChanged;
+            _inputSystem.UIInput.OptionButtons.PressStarted += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
-            _playerInput.ChangedScheme -= _onInputSchemeChanged;
-            _uiInput.SelectButtonPressed -= _onOpenButtonClicked;
+            _inputSystem.Scheme.Changed -= _onInputActionsSchemeChanged;
+            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOpenButtonClicked;
         }
 
-        private void _onInputSchemeChanged(EInputScheme scheme)
+        private void _onInputActionsSchemeChanged(EInputScheme scheme)
         {
             foreach (InputIconDisplay icon in _view.inputIcons)
             {
@@ -144,14 +143,16 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void _onCloseButtonClicked()
+        private void _onOpenButtonClicked(EInputOptionButton button)
         {
-            _windowManager.Show(WindowID.MainHUD);
-        }
-
-        private void _onOpenButtonClicked()
-        {
-            _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
+            if (button == EInputOptionButton.Back)
+            {
+                _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
+            }
+            else if(button == EInputOptionButton.Fourth && _isOpened())
+            {
+               _windowManager.Show(WindowID.MainHUD);
+            }
         }
 
         private bool _isOpened()
@@ -169,6 +170,21 @@ namespace Beast.Radar.UI
             _inputIconsController.Dispose();
 
             return OperationResult.SuccessSync();
+        }
+
+        private void _closeWindow()
+        {
+            _windowManager.Show(WindowID.MainHUD);
+        }
+
+        private void _showWindow()
+        {
+            _windowManager.Show(WindowID.Debug);
+        }
+
+        private void _hideView()
+        {
+            _view.screen.SetActive(false);
         }
 
         private static ItemData[] _getTestItems()

@@ -1,6 +1,6 @@
 ﻿using UnityEngine.InputSystem;
 
-namespace Beast.Radar.InputControl
+namespace Beast.Radar.InputHandling
 {
     public class PlayerInputView : Claw.Common.Mono
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Debug;
 using Beast.Radar.Debug;
-using Beast.Radar.InputControl;
+using Beast.Radar.InputHandling;
 using UnityEngine;
 
 namespace Beast.Radar.UI
@@ -11,7 +11,7 @@ namespace Beast.Radar.UI
     {
         private readonly DebugSettingsPanelView _view;
         private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IUIInputController _uiInputController;
+        private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
         private readonly float[] _timeScales = { 1, 3, 10 };
         
@@ -21,11 +21,11 @@ namespace Beast.Radar.UI
         public DebugSettingsPanel(
             DebugSettingsPanelView view,
             ISelectableZoneBuilder zoneBuilder,
-            IUIInputController uiInputController, 
+            IInputSystem inputSystem, 
             IDebugController debugController)
         {
             _zoneBuilder = zoneBuilder;
-            _uiInputController = uiInputController;
+            _inputSystem = inputSystem;
             _debugController = debugController;
             _view = view;
         }
@@ -95,7 +95,7 @@ namespace Beast.Radar.UI
                { dpadGrid.Item1, dpadGrid.Item2 }
            };
            
-           _selectablesController = new SelectablesController(_uiInputController, grids);
+           _selectablesController = new SelectablesController(_inputSystem, grids);
            _selectablesController.Warmup();
         }
 
@@ -148,6 +148,5 @@ namespace Beast.Radar.UI
         }
 
         #endregion
-
     }
 }

@@ -12,7 +12,7 @@ namespace Beast.Radar.UI
         public UISlider biomeSlider;
         public UIButton createMapButton;
         public UIButton closeButton;
-        public IntRadioButton[] sizeButtons;
         public RawImage mapImage;
+        public RadioButton[] sizeButtons;
     }
 }

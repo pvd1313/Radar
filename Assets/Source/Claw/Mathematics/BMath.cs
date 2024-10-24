@@ -148,6 +148,22 @@ namespace Beast.Claw.Mathematics
         {
             return math.lerp(min, max, t);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 MoveTowards(float2 current, float2 target, float t)
+        {
+            float2 delta = target - current;
+            float distance = math.length(delta);
+
+            if (distance <= t || distance == 0f)
+            {
+                return target;
+            }
+
+            float2 direction = math.normalize(delta);
+            float2 step = direction * t;
+            return current + step;
+        }
 
         /// <summary>
         /// Inverse lerp / unlerp.

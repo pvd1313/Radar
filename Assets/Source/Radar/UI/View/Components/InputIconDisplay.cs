@@ -1,4 +1,4 @@
-﻿using Beast.Radar.InputControl;
+﻿using Beast.Radar.InputHandling;
 using TMPro;
 using UnityEngine;
 
