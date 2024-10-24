@@ -11,6 +11,8 @@ namespace Beast.Radar.UI
     {
         public event Action<bool> WindowChanged;
         public event Action<bool> MouseOverUI;
+
+        public string CurrentWindow => _currentWindowID ?? WindowID.None;
         
         private readonly IUIFactory _uiFactory;
         private readonly IInputSystem _inputSystem;
@@ -40,7 +42,7 @@ namespace Beast.Radar.UI
             
             return OperationResult.SuccessSync();
         }
-        
+
         public void Register(IWindow window, string windowID, UIView view)
         {
             if (_allWindows.ContainsKey(windowID))
