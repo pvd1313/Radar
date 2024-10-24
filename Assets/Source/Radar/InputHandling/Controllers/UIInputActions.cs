@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Debug;
 using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
@@ -63,13 +62,13 @@ namespace Beast.Radar.InputHandling
 
         private void _performOptionNavigation()
         {
-            float2 rightStick = (float2)_inputActions.UI.RightStick.ReadValue<Vector2>();
+            float2 rightStick = _inputActions.UI.OptionNavigate.ReadValue<Vector2>();
             OptionNavigation.UpdateValue(rightStick);
         }
 
         private void _performNavigate()
         {
-            float2 value = (float2)_inputActions.UI.Navigate.ReadValue<Vector2>();
+            float2 value = _inputActions.UI.MainNavigate.ReadValue<Vector2>();
             MainNavigation.UpdateValue(int2.zero);
            
             if (!value.Equals(float2.zero))
@@ -121,20 +120,20 @@ namespace Beast.Radar.InputHandling
 
         private void _subscribeInputActions()
         {
-            _inputActions.UI.Cancel.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Start);
-            _inputActions.UI.Cancel.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
+            _inputActions.UI.Start.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Start);
+            _inputActions.UI.Start.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
             
-            _inputActions.UI.Select.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Back);
-            _inputActions.UI.Select.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
+            _inputActions.UI.Back.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Back);
+            _inputActions.UI.Back.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
 
-            _inputActions.UI.SouthButton.started += _ => OptionButtons.UpdateValue(EInputOptionButton.First);
-            _inputActions.UI.SouthButton.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
+            _inputActions.UI.FirstOption.started += _ => OptionButtons.UpdateValue(EInputOptionButton.First);
+            _inputActions.UI.FirstOption.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
             
-            _inputActions.UI.WestButton.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Second);
-            _inputActions.UI.WestButton.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
+            _inputActions.UI.SecondOption.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Second);
+            _inputActions.UI.SecondOption.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
             
-            _inputActions.UI.NorthButton.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Third);
-            _inputActions.UI.NorthButton.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
+            _inputActions.UI.ThirdOption.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Third);
+            _inputActions.UI.ThirdOption.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
             
             _inputActions.UI.EastButton.started += _ => OptionButtons.UpdateValue(EInputOptionButton.Fourth);
             _inputActions.UI.EastButton.canceled += _ => OptionButtons.UpdateValue(EInputOptionButton.None);
@@ -153,7 +152,6 @@ namespace Beast.Radar.InputHandling
         private void _onPerformedShoulder(InputAction.CallbackContext obj)
         {
             float value = obj.ReadValue<float>();
-            BDebug.LogInfo(this, $"shoulder {value}");
             Shoulder.UpdateValue(_roundValue(value));
             Shoulder.EndPress(0);
         }
@@ -161,7 +159,6 @@ namespace Beast.Radar.InputHandling
         private void _onPerformedTrigger(InputAction.CallbackContext obj)
         {
             float value = obj.ReadValue<float>();
-            BDebug.LogInfo(this, $"trigger {value}");
             Trigger.UpdateValue(_roundValue(value, 0.2f));
             Trigger.EndPress(0);
         }

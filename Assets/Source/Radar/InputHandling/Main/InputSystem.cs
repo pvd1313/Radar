@@ -38,7 +38,7 @@ namespace Beast.Radar.InputHandling
             _actions = new InputActions();
             _actions.Enable();
             _actions.UI.Enable();
-            _actions.Player.Enable();
+            _actions.Game.Enable();
             
             PlayerInputView playerInputView = BScene.InstantiateMono(this, _view, float3.zero, quaternion.identity);
             _schemeObserver = new InputSchemeObserver(playerInputView);
@@ -48,7 +48,6 @@ namespace Beast.Radar.InputHandling
             _uiInputActions.Warmup();
             
             _gameInputActions = new GameInputActions(Scheme, _actions);
-            
             
             return OperationResult.SuccessSync();
         }
@@ -65,7 +64,7 @@ namespace Beast.Radar.InputHandling
             _schemeObserver.Dispose();
             _actions.Disable();
             _actions.UI.Disable();
-            _actions.Player.Disable();
+            _actions.Game.Disable();
 
             return OperationResult.SuccessSync();
         }

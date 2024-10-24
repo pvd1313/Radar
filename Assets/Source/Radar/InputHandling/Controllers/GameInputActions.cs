@@ -60,18 +60,18 @@ namespace Beast.Radar.InputHandling
             {
                 case EInputScheme.MouseAndKeyboard:
                     CurrentTouchCount.UpdateValue(_getTouchCount());
-                    Scroll.UpdateValue(_inputActions.Player.Scroll.ReadValue<float>());
+                    Scroll.UpdateValue(_inputActions.Game.Scroll.ReadValue<float>());
                     ScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
-                        ? (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>()
+                        ? (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()
                         : float2.zero);
-                    MoveDelta.UpdateValue((float2)_inputActions.Player.Move.ReadValue<Vector2>());
+                    MoveDelta.UpdateValue((float2)_inputActions.Game.Move.ReadValue<Vector2>());
                     break;
                 
                 case EInputScheme.Gamepad:
                     CurrentTouchCount.UpdateValue(0);
-                    Scroll.UpdateValue(_inputActions.Player.Scroll.ReadValue<float>());
+                    Scroll.UpdateValue(_inputActions.Game.Scroll.ReadValue<float>());
                     ScreenPoint.UpdateValue(_getScreenCenter());
-                    MoveDelta.UpdateValue((float2)_inputActions.Player.Move.ReadValue<Vector2>());
+                    MoveDelta.UpdateValue((float2)_inputActions.Game.Move.ReadValue<Vector2>());
                     break;
                 
                 case EInputScheme.Touch:
@@ -84,12 +84,12 @@ namespace Beast.Radar.InputHandling
                     
                         case 1:
                             Scroll.UpdateValue(0);
-                            ScreenPoint.UpdateValue((float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>());
+                            ScreenPoint.UpdateValue((float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>());
                             break;
                     
                         case 2:
-                            float2 t0 = (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>();
-                            float2 t1 = (float2)_inputActions.Player.SecondPosition.ReadValue<Vector2>();
+                            float2 t0 = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                            float2 t1 = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
                             Scroll.UpdateValue(_lastZoomDistance == 0f 
                                 ? 0 
                                 : BMath.Distance(t0, t1) - _lastZoomDistance);
@@ -112,7 +112,7 @@ namespace Beast.Radar.InputHandling
                     _lastZoomDistance = 0f;
                     LastTouchCount.UpdateValue(_getTouchCount());
                     LastScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
-                        ? (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>()
+                        ? (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()
                         : float2.zero);
                     break;
                 
@@ -132,12 +132,12 @@ namespace Beast.Radar.InputHandling
                         
                         case 1:
                             _lastZoomDistance = 0f;
-                            LastScreenPoint.UpdateValue((float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>()); 
+                            LastScreenPoint.UpdateValue((float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()); 
                             break;
                         
                         case 2:
-                            float2 t0 = (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>();
-                            float2 t1 = (float2)_inputActions.Player.SecondPosition.ReadValue<Vector2>();
+                            float2 t0 = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                            float2 t1 = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
                             _lastZoomDistance = BMath.Distance(t0, t1);
                             LastScreenPoint.UpdateValue((t0 + t1) * 0.5f);
                             break;
