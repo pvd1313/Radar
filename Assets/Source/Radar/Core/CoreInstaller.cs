@@ -52,7 +52,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainPreviewRender);
             
             //Player
-            yield return typeof(PlayerMoveController);
+            yield return typeof(PlayerController);
         }
 
         protected override void BindCustom(DiContainer diContainer)

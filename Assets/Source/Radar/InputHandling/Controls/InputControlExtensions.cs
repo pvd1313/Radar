@@ -4,7 +4,6 @@ namespace Beast.Radar.InputHandling
 {
     public static class InputControlExtensions
     {
-        
         public static void UpdateValue(this InputValueControl<EInputOptionButton> control, EInputOptionButton value)
         {
             switch (value)
@@ -35,7 +34,6 @@ namespace Beast.Radar.InputHandling
                 case EInputOptionButton.Start when control.State is EButtonState.Pressed:
                     control.PerformPress(value);
                     break;
-                
             }
         }
         
@@ -68,7 +66,8 @@ namespace Beast.Radar.InputHandling
                     return;
                 
                 case 0 when control.State == EButtonState.Pressed:
-                    control.EndPress(value);
+                    control.EndPress(control.Value);
+                    control.SetValue(0);
                     break;
               
                 case > 0 when control.State == EButtonState.Default:
@@ -90,8 +89,31 @@ namespace Beast.Radar.InputHandling
                     return;
 
                 case false when control.State == EButtonState.Pressed:
-                    control.EndPress(value);
+                    control.EndPress(control.Value);
                     control.SetValue(float2.zero);
+                    break;
+
+                case true when control.State == EButtonState.Default:
+                    control.StartPress(value);
+                    break;
+
+                case true when control.State == EButtonState.Pressed:
+                    control.PerformPress(value);
+                    break;
+            }
+        }
+        
+        public static void UpdateValue(this InputValueControl<int2> control, int2 value)
+        {
+            bool isPress = !value.Equals(int2.zero);
+            switch (isPress)
+            {
+                case false when control.State == EButtonState.Default:
+                    return;
+
+                case false when control.State == EButtonState.Pressed:
+                    control.EndPress(control.Value);
+                    control.SetValue(int2.zero);;
                     break;
 
                 case true when control.State == EButtonState.Default:

@@ -1,8 +1,6 @@
 ﻿using System;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
-using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,11 +10,11 @@ namespace Beast.Radar.InputHandling
     public class UIInputActions : IUIInputActions
     {
         public event Action ChangedEnable;
-        public event Action<int2> NavigatePressed;
-        public event Action<float2> RightStickMoved;
         public InputValueControl<EInputOptionButton> OptionButtons { get; } = new();
         public InputValueControl<int> Trigger { get; } = new();
         public InputValueControl<int> Shoulder { get; } = new();
+        public InputValueControl<int2> MainNavigation { get; } = new();
+        public InputValueControl<float2> OptionNavigation { get; } = new();
 
         private readonly IInputSchemeObserver _inputScheme;
         private readonly InputActions _inputActions;
@@ -49,11 +47,8 @@ namespace Beast.Radar.InputHandling
                 return;
             }
 
-            _performRightStick();
+            _performOptionNavigation();
             _performNavigate();
-            
-            BDebug.Track(this, "Option button", OptionButtons.State.ToString());
-            BDebug.Track(this, "Option button value", OptionButtons.Value.ToString());
         }
 
         public void Dispose()
@@ -66,29 +61,26 @@ namespace Beast.Radar.InputHandling
             }
         }
 
-        private void _performRightStick()
+        private void _performOptionNavigation()
         {
             float2 rightStick = (float2)_inputActions.UI.RightStick.ReadValue<Vector2>();
-         
-            if (!rightStick.Equals(float2.zero))
-            {
-                RightStickMoved?.Invoke(rightStick * Time.deltaTime);
-            }
+            OptionNavigation.UpdateValue(rightStick);
         }
 
         private void _performNavigate()
         {
             float2 value = (float2)_inputActions.UI.Navigate.ReadValue<Vector2>();
+            MainNavigation.UpdateValue(int2.zero);
            
             if (!value.Equals(float2.zero))
             {
                 if (_currentNavigationCooldown == 0)
                 {
-                    NavigatePressed?.Invoke(_roundValue(value));
+                    MainNavigation.UpdateValue(_roundValue(value));
                 }
 
                 _currentNavigationCooldown += Time.deltaTime;
-                if (_currentNavigationCooldown >= PRESS_COOLDOWN)
+                if ( _currentNavigationCooldown >= PRESS_COOLDOWN)
                 {
                     _currentNavigationCooldown = 0;
                 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Beast.Claw.Debug;
 using Beast.Radar.InputHandling;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using Time = UnityEngine.Time;
 
 namespace Beast.Radar.UI
 {
@@ -194,19 +194,18 @@ namespace Beast.Radar.UI
 
         private void _subscribeInputActions()
         {
-            _inputSystem.UIInput.NavigatePressed += _onDpadPressed;
-            _inputSystem.UIInput.RightStickMoved += _onRightStickMoved;
+            _inputSystem.UIInput.MainNavigation.PressStarted += _onDpadPressed;
+            _inputSystem.UIInput.OptionNavigation.PressPerformed += _onRightStickMoved;
             _inputSystem.UIInput.Trigger.PressStarted += _onTriggerPressed;
             _inputSystem.UIInput.Shoulder.PressStarted += _onShoulderPressed;
             _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonPressed;
             _isSubscribedToInput = true;
         }
-
-
+        
         private void _unsubscribeInputActions()
         {
-            _inputSystem.UIInput.NavigatePressed -= _onDpadPressed;
-            _inputSystem.UIInput.RightStickMoved -= _onRightStickMoved;
+            _inputSystem.UIInput.MainNavigation.PressStarted -= _onDpadPressed;
+            _inputSystem.UIInput.OptionNavigation.PressPerformed -= _onRightStickMoved;
             _inputSystem.UIInput.Trigger.PressPerformed -= _onTriggerPressed;
             _inputSystem.UIInput.Shoulder.PressStarted -= _onShoulderPressed;
             _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonPressed;
@@ -273,7 +272,7 @@ namespace Beast.Radar.UI
         {
             if (_currentSelectable != null && _currentSelectable.TryGetComponent(out UISlider slider))
             {
-                slider.AddValue(direction.x);
+                slider.AddValue(direction.x * Time.deltaTime);
             }
         }
 

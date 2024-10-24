@@ -46,7 +46,6 @@ namespace Beast.Radar.InputHandling
 
         public void ChangeBlock(bool isBlock)
         {
-            BDebug.LogInfo(this, $"change block {isBlock} {_isBlock}");
             _isBlock = isBlock;
             if (_isBlock)
             {
@@ -62,7 +61,9 @@ namespace Beast.Radar.InputHandling
                 case EInputScheme.MouseAndKeyboard:
                     CurrentTouchCount.UpdateValue(_getTouchCount());
                     Scroll.UpdateValue(_inputActions.Player.Scroll.ReadValue<float>());
-                    ScreenPoint.UpdateValue((float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>());
+                    ScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
+                        ? (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>()
+                        : float2.zero);
                     MoveDelta.UpdateValue((float2)_inputActions.Player.Move.ReadValue<Vector2>());
                     break;
                 
@@ -110,7 +111,9 @@ namespace Beast.Radar.InputHandling
                 case EInputScheme.MouseAndKeyboard:
                     _lastZoomDistance = 0f;
                     LastTouchCount.UpdateValue(_getTouchCount());
-                    LastScreenPoint.UpdateValue((float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>());
+                    LastScreenPoint.UpdateValue(CurrentTouchCount.Value > 0 
+                        ? (float2)_inputActions.Player.FirstPosition.ReadValue<Vector2>()
+                        : float2.zero);
                     break;
                 
                 case EInputScheme.Gamepad:
