@@ -40,7 +40,7 @@ MonoBehaviour:
         wrapMode: 1
         filterMode: 1
       format: 62
-      mipChain: 0
+      mipChain: 1
       isLinear: 1
       createInitialized: 0
     biomeTexture:
