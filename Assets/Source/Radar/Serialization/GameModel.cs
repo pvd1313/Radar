@@ -10,17 +10,20 @@ namespace Beast.Radar.Serialization
     {
         public TerrainData terrain;
         public CameraState camera;
+        public PlayerData player;
         
         public void Serialize(IBinaryWriter stream)
         {
             stream.Write(terrain);
             stream.Write(camera);
+            stream.Write(player);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
             stream.Read(ref terrain);
             stream.Read(ref camera);
+            stream.Read(ref player);
         }
     }
 }
