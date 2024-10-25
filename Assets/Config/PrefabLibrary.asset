@@ -32,3 +32,7 @@ MonoBehaviour:
       prefab: {fileID: 7382000023934807756, guid: 520ec31127b5b764ebccdc3f4adfe206, type: 3}
     - id: input_icon_display
       prefab: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
+    - id: loading_window
+      prefab: {fileID: 5222784808474298362, guid: 1f62dcdb84059fe4d9e629c148507415, type: 3}
+    - id: loading_window_task
+      prefab: {fileID: 6940698891875794264, guid: ccf78dd6822b91d4e81934dc623cbb5e, type: 3}

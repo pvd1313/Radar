@@ -4,6 +4,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
+using ModestTree;
 
 namespace Beast.Radar.UI
 {
@@ -17,11 +18,11 @@ namespace Beast.Radar.UI
         private readonly IUIFactory _uiFactory;
         private readonly IInputSystem _inputSystem;
         private readonly Dictionary<string, IWindow> _allWindows = new();
-
+        
         private CanvasView _canvas;
         private IWindow _currentWindow;
         private string _currentWindowID;
-
+        
         public WindowManager(IUIFactory uiFactory, IInputSystem inputSystem)
         {
             _uiFactory = uiFactory;
@@ -49,8 +50,11 @@ namespace Beast.Radar.UI
             {
                 throw new InvalidOperationException($"'{windowID}' is already registered");
             }
-            
+
+            int windowIndex = WindowID.WindowIndex.IndexOf(windowID);
             view.transform.SetParent(_canvas.transform, false);
+            view.transform.SetSiblingIndex(windowIndex);
+            
             _allWindows.Add(windowID, window);  
         }
 
