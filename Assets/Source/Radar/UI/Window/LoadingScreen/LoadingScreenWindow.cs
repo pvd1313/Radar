@@ -11,7 +11,7 @@ namespace Beast.Radar.UI
         private readonly IWindowManager _windowManager;
 
         private LoadingScreenView _view;
-        private UIPool<LoadingTaskText> _loadingTasksPoll;
+        private UIPool<LoadingTaskText> _loadingTasksPool;
 
         private LoadingTaskText _lastLoadingTask;
 
@@ -31,7 +31,7 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.LoadingScreen, out _view);
             _view.gameObject.SetActive(false);
 
-            _loadingTasksPoll = new UIPool<LoadingTaskText>(_uiFactory, PrefabID.LoadingScreenTask, _view.logContent);
+            _loadingTasksPool = new UIPool<LoadingTaskText>(_uiFactory, PrefabID.LoadingScreenTask, _view.logContent);
             
             _windowManager.Register(this, WindowID.LoadingScreen, _view);
             
@@ -51,13 +51,13 @@ namespace Beast.Radar.UI
 
         private void _addTask(string task)
         {
-            if (_loadingTasksPoll.GetEnabledCount() == MAX_TASK_COUNT)
+            if (_loadingTasksPool.GetEnabledCount() == MAX_TASK_COUNT)
             {
-                _loadingTasksPoll.Disable(_loadingTasksPoll.GetByIndex(0));
+                _loadingTasksPool.Disable(_loadingTasksPool.GetByIndex(0));
             }
 
             //TODO https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen 
-            _lastLoadingTask = _loadingTasksPoll.GetNext();
+            _lastLoadingTask = _loadingTasksPool.GetNext();
             _lastLoadingTask.SetTask(task);
         }
 

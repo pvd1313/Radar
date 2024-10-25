@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
 {
-    public interface IGameCycle
+    public interface IGameCycle : IDisposable
     {
         public IReadOnlyDictionary<string, IProfiler> Profilers { get; }
         

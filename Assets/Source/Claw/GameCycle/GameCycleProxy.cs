@@ -43,6 +43,11 @@ namespace Beast.Claw.GameCycle
             {
                 return await _gameCycle.Execute(owner, eventID);
             }
+
+            public void Dispose()
+            {
+                _gameCycle?.Dispose();
+            }
         }
     }
 }

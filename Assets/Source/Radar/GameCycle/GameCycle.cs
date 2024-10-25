@@ -78,7 +78,10 @@ namespace Beast.Radar.GameCycle
         private async UniTask OnMonoDestroyed()
         {
             await _gameCycle.Execute(this, OperationID.PREFERENCES_SAVE);
+            
             await _gameCycle.Execute(this, OperationID.DISPOSE);
+            
+            _gameCycle.Dispose();
         }
     }
 }

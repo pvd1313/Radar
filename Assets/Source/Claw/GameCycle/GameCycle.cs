@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
 {
-    public partial class GameCycle
+    public partial class GameCycle : IDisposable
     {
         private struct UpdateListener
         {
@@ -439,6 +439,21 @@ namespace Beast.Claw.GameCycle
             else
             {
                 canContinueExecution = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_profilersInitialized)
+            {
+                foreach (Profiler profiler in _profilers.Values)
+                {
+                    profiler.Dispose();
+                }
+                
+                _profilers.Clear();
+                
+                _profilersInitialized = false;
             }
         }
     }
