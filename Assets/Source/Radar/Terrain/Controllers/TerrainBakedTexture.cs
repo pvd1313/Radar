@@ -30,13 +30,13 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoading);
+            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private async UniTask<OperationResult> _gameLoading()
+        private async UniTask<OperationResult> _gameLoad(OperationContext context)
         {
-            await _dispose();
+            await _dispose(context);
 
             RenderTextureData tempData = _config.terrain.bakerRenderTexture.WithSize(_game.terrain.terrainSize);
             
@@ -74,7 +74,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.Success();
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             IsReady = false;
 

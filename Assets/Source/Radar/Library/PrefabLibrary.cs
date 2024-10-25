@@ -22,12 +22,12 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, Warmup);
+            handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
 
-        private async UniTask<OperationResult> Warmup()
+        private async UniTask<OperationResult> _warmup(OperationContext context)
         {
-            OperationResult result = await ui._warmup();
+            OperationResult result = await ui._warmup(context);
             
             if (result.status != EOperationStatus.Success)
             {

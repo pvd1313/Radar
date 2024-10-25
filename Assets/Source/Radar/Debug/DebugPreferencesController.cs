@@ -23,11 +23,11 @@ namespace Beast.Radar.Debug
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.PREFERENCES_LOAD, PreferencesLoad);
-            handle.ListenOperation(OperationID.PREFERENCES_SAVE, PreferencesSave);
+            handle.ListenOperation(OperationID.PREFERENCES_LOAD, _preferencesLoad);
+            handle.ListenOperation(OperationID.PREFERENCES_SAVE, _preferencesSave);
         }
 
-        private async UniTask<OperationResult> PreferencesLoad()
+        private async UniTask<OperationResult> _preferencesLoad(OperationContext context)
         {
             bool fileExists = await _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
@@ -58,7 +58,7 @@ namespace Beast.Radar.Debug
             return OperationResult.Success();
         }
         
-        private async UniTask<OperationResult> PreferencesSave()
+        private async UniTask<OperationResult> _preferencesSave(OperationContext context)
         {
             StreamData stream = await _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 

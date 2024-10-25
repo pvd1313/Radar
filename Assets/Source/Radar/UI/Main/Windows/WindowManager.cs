@@ -35,7 +35,7 @@ namespace Beast.Radar.UI
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _canvas = _uiFactory.CreateCanvas(this);
                 
@@ -107,7 +107,7 @@ namespace Beast.Radar.UI
             }
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribe();
 

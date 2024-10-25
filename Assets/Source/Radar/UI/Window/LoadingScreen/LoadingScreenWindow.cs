@@ -5,7 +5,7 @@ namespace Beast.Radar.UI
 {
     public class LoadingScreenWindow : IWindow, IGameCycleListener
     {
-        private const  int MAX_TASKS_COUNT = 20;
+        private const int MAX_TASK_COUNT = 20;
         
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
@@ -26,7 +26,7 @@ namespace Beast.Radar.UI
             handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _uiFactory.Create(this, PrefabID.LoadingScreen, out _view);
             _view.gameObject.SetActive(false);
@@ -51,7 +51,7 @@ namespace Beast.Radar.UI
 
         private void _addTask(string task)
         {
-            if (_loadingTasksPoll.GetEnabledCount() == MAX_TASKS_COUNT)
+            if (_loadingTasksPoll.GetEnabledCount() == MAX_TASK_COUNT)
             {
                 _loadingTasksPoll.Disable(_loadingTasksPoll.GetByIndex(0));
             }

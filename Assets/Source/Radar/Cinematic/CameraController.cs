@@ -42,7 +42,7 @@ namespace Beast.Radar.Cinematic
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             BScene.InstantiateMono
             (
@@ -59,7 +59,7 @@ namespace Beast.Radar.Cinematic
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeInput();
 

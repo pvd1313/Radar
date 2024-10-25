@@ -33,7 +33,7 @@ namespace Beast.Radar.InputHandling
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private  UniTask<OperationResult> _warmup()
+        private  UniTask<OperationResult> _warmup(OperationContext context)
         {
             _actions = new InputActions();
             _actions.Enable();
@@ -52,13 +52,13 @@ namespace Beast.Radar.InputHandling
             return OperationResult.SuccessSync();
         }
 
-        private void _tick()
+        private void _tick(UpdateContext context)
         {
             _gameInputActions.Update();
             _uiInputActions.Update();
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _uiInputActions.Dispose();
             _schemeObserver.Dispose();

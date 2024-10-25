@@ -2,7 +2,6 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -52,7 +51,7 @@ namespace Beast.Radar.Terrain
             handle.ListenUpdate(UpdateID.RENDER, _render);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
@@ -64,7 +63,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSync();
         }
         
-        private void _render()
+        private void _render(UpdateContext context)
         {
             if (!_terrainBiome.IsReady)
             {
@@ -73,8 +72,8 @@ namespace Beast.Radar.Terrain
 
             if (!_screen.Size.Equals(_tileToScreenBuffer.Size()))
             {
-                _dispose();
-                _warmup();
+                _dispose(default);
+                _warmup(default);
             }
             
             // if (Time.time % 1 > 0.5f)
@@ -220,7 +219,7 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             BGraphic.TryDispose(ref _tileBlitMaterial);
             BGraphic.TryDispose(ref _tileSolverMaterial);

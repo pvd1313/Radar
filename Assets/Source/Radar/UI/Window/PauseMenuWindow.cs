@@ -54,7 +54,7 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
             _hideView();
@@ -68,7 +68,7 @@ namespace Beast.Radar.UI
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeView();
             

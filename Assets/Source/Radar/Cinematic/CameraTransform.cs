@@ -48,7 +48,7 @@ namespace Beast.Radar.Cinematic
             handle.ListenOperation(OperationID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;
             
@@ -63,7 +63,7 @@ namespace Beast.Radar.Cinematic
             return OperationResult.SuccessSync();
         }
 
-        private UniTask<OperationResult> _gameLoad()
+        private UniTask<OperationResult> _gameLoad(OperationContext context)
         {
             _position = _game.camera.position;
 
@@ -77,7 +77,7 @@ namespace Beast.Radar.Cinematic
             return OperationResult.SuccessSync();
         }
         
-        private UniTask<OperationResult> _gameSave()
+        private UniTask<OperationResult> _gameSave(OperationContext context)
         {
             _game.camera.position = (float2)_position;
             _game.camera.zoom01 = _zoom01;

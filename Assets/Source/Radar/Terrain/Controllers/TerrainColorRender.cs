@@ -61,14 +61,14 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(material);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
             return OperationResult.SuccessSync();
         }
         
-        private void _render()
+        private void _render(UpdateContext context)
         {
             if (!_biomeRender.IsReady || !_camera.IsReady)
             {
@@ -150,7 +150,7 @@ namespace Beast.Radar.Terrain
             }
         }
         
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             BGraphic.TryDispose(ref _materialForCamera);
 

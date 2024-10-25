@@ -75,9 +75,9 @@ namespace Beast.Radar.Terrain
             _renderBiome(task);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
-            _dispose();
+            _dispose(context);
 
             Application.targetFrameRate = 9999;
             
@@ -99,7 +99,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSync();
         }
         
-        private UniTask<OperationResult> _gameLoad()
+        private UniTask<OperationResult> _gameLoad(OperationContext context)
         {
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
@@ -113,7 +113,7 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _render()
+        private void _render(UpdateContext context)
         {
             if (!_bakedTerrain.IsReady || !_camera.IsReady)
             {
@@ -122,8 +122,8 @@ namespace Beast.Radar.Terrain
 
             if (!_screen.Size.Equals(_renderTextureForScreenSize))
             {
-                _dispose();
-                _warmup();
+                _dispose(default);
+                _warmup(default);
             }
 
             _isReady = false;
@@ -228,7 +228,7 @@ namespace Beast.Radar.Terrain
             material.SetFloat("_NoiseSamplerLOD", lod);
         }
         
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _isReady = false;
 

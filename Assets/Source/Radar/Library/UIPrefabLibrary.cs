@@ -26,7 +26,7 @@ namespace Beast.Radar
             handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
         
-        public UniTask<OperationResult> _warmup()
+        public UniTask<OperationResult> _warmup(OperationContext context)
         {
             _window = window.ToDictionary(w => w.id, w => w.prefab);
 

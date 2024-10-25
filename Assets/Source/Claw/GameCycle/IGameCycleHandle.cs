@@ -5,8 +5,8 @@ namespace Beast.Claw.GameCycle
 {
     public interface IGameCycleHandle
     {
-        void ListenOperation(string eventID, Func<UniTask<OperationResult>> operation);
+        void ListenOperation(string eventID, Func<OperationContext, UniTask<OperationResult>> operation);
 
-        void ListenUpdate(string eventID, Action update);
+        void ListenUpdate(string eventID, Action<UpdateContext> update);
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
-using Beast.Claw.Reflection;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
@@ -13,13 +12,13 @@ namespace Beast.Claw.GameCycle
         private struct UpdateListener
         {
             public object obj;
-            public Action action;
+            public Action<UpdateContext> action;
         }
         
         private struct OperationListener
         {
             public object obj;
-            public Func<UniTask<OperationResult>> action;
+            public Func<OperationContext, UniTask<OperationResult>> action;
         }
 
         private readonly Proxy _proxy;
@@ -214,8 +213,8 @@ namespace Beast.Claw.GameCycle
 
                 try
                 {
-
-                    result = await listener.action.Invoke();
+                    OperationContext context = default;
+                    result = await listener.action.Invoke(context);
                 }
                 catch (Exception e)
                 {
@@ -310,7 +309,8 @@ namespace Beast.Claw.GameCycle
 
                 try
                 {
-                    listener.action.Invoke();
+                    UpdateContext context = default;
+                    listener.action.Invoke(context);
                 }
                 catch (Exception e)
                 {
@@ -338,7 +338,7 @@ namespace Beast.Claw.GameCycle
             }
         }
 
-        private void _listenOperation(object owner, string eventID, Func<UniTask<OperationResult>> action)
+        private void _listenOperation(object owner, string eventID, Func<OperationContext, UniTask<OperationResult>> action)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));;
@@ -377,7 +377,7 @@ namespace Beast.Claw.GameCycle
             });
         }
 
-        private void _listenUpdate(object owner, string eventID, Action action)
+        private void _listenUpdate(object owner, string eventID, Action<UpdateContext> action)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));

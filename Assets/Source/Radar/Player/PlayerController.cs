@@ -42,7 +42,7 @@ namespace Beast.Radar.Player
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _spawnPlayer();
             _subscribeInput();
@@ -50,7 +50,7 @@ namespace Beast.Radar.Player
             return OperationResult.SuccessSync();
         }
 
-        private void _tick()
+        private void _tick(UpdateContext context)
         {
             _move();
         }
@@ -107,7 +107,7 @@ namespace Beast.Radar.Player
             }
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeInput();
 

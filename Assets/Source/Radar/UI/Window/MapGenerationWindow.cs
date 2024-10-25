@@ -70,7 +70,7 @@ namespace Beast.Radar.UI
             _terrainTexture = null;
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _hideView();
@@ -244,7 +244,7 @@ namespace Beast.Radar.UI
             _menuView.mapImage.texture = _terrainTexture.color;
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeView();
 

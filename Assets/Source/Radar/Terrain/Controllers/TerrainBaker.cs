@@ -23,7 +23,7 @@ namespace Beast.Radar.Terrain
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.baker);
             
@@ -49,7 +49,7 @@ namespace Beast.Radar.Terrain
             });
         }
         
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             BGraphic.TryDispose(ref _material);
 

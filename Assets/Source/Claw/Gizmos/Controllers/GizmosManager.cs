@@ -31,11 +31,11 @@ namespace Beast.Claw.Gizmos
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(UpdateID.GIZMOS_DRAW, _onRender);
+            handle.ListenUpdate(UpdateID.GIZMOS_DRAW, _gizmosDraw);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _wireLines = new ShapeStorage<Line>(BufferSize);
             _wireRects = new ShapeStorage<Rect>(BufferSize);
@@ -61,7 +61,7 @@ namespace Beast.Claw.Gizmos
             return new GizmosHandle(id, this);
         }
 
-        private void _onRender()
+        private void _gizmosDraw(UpdateContext context)
         {
             _material.SetPass(0);
             
@@ -92,7 +92,7 @@ namespace Beast.Claw.Gizmos
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _wireLines.Dispose();
             _wireRects.Dispose();

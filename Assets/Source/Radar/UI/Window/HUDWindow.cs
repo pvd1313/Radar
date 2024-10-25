@@ -33,7 +33,7 @@ namespace Beast.Radar.UI
             _setActive(false);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             _uiFactory.Create(this, PrefabID.HudWindow, out _view);
                 
@@ -64,7 +64,7 @@ namespace Beast.Radar.UI
             _windowManager.Show(WindowID.Pause);
         }
 
-        private UniTask<OperationResult> _dispose()
+        private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeView();
 

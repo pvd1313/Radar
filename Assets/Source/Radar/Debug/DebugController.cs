@@ -24,7 +24,7 @@ namespace Beast.Radar.Debug
             handle.ListenOperation(OperationID.WARMUP, _warmup);
         }
 
-        private UniTask<OperationResult> _warmup()
+        private UniTask<OperationResult> _warmup(OperationContext context)
         {
             SetElementState(DebugElementID.LogConsoleID, _preferences.isShowLog);
             SetElementState(DebugElementID.FpsCounterID, _preferences.isShowFps);
