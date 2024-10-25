@@ -102,7 +102,7 @@ namespace Beast.Radar.UI
 
             foreach (EItemType type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
             {
-                DebugItemTypeButton typeButton = _itemTypePool.GetNext(type);
+                DebugItemTypeButton typeButton = _itemTypePool.GetNext();
                 typeButton.SetType(type);
             }
 
