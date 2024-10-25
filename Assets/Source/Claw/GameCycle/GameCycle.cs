@@ -241,9 +241,12 @@ namespace Beast.Claw.GameCycle
             {
                 profiler.RebuildTree();
 
-                string info = _profilerTreeStringBuilder.ToString(profiler.Reader, eventID);
+                if (_profilerConfig.logOperationProfiling)
+                {
+                    string info = _profilerTreeStringBuilder.ToString(profiler.Reader, eventID);
                 
-                BDebug.StaticLogInfo(info);
+                    BDebug.StaticLogInfo(info);
+                }
             }
 
             return result;
