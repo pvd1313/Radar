@@ -2,7 +2,7 @@
 using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 
-namespace Beast.Radar.Cinematic
+namespace Beast.Claw.Graphic
 {
     [Serializable]
     public struct IsometricCameraRotation

@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Graphic;
 using Beast.Radar.Cinematic;
 using Unity.Mathematics;
 using UnityEngine;

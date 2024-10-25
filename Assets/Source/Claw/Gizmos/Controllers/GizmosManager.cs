@@ -1,4 +1,5 @@
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Beast.Claw.Gizmos
         private const int BufferSize = 256;
         
         private readonly GizmosConfig _config;
+        private readonly ICameraTransform _camera;
 
         private Material _material;
         private ShapeStorage<Line> _wireLines;
@@ -19,14 +21,16 @@ namespace Beast.Claw.Gizmos
         private ShapeStorage<Square> _wireSquares;
         private ShapeStorage<Square> _screenSquares;
 
-        public GizmosManager(GizmosConfig config)
+        public GizmosManager(GizmosConfig config, ICameraTransform camera)
         {
             _config = config;
+            _camera = camera;
         }
         
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenUpdate(UpdateID.GIZMOS_DRAW, _onRender);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
@@ -39,7 +43,7 @@ namespace Beast.Claw.Gizmos
             _screenSquares = new ShapeStorage<Square>(BufferSize);
             _material = new Material(_config.Shader);
 
-            Camera.onPostRender += _onRender;
+
 
             return OperationResult.SuccessSync();
         }
@@ -58,11 +62,11 @@ namespace Beast.Claw.Gizmos
             return new GizmosHandle(id, this);
         }
 
-        private void _onRender(Camera camera)
+        private void _onRender()
         {
             _material.SetPass(0);
             
-            GizmosScreenDrawer.BeginDraw(camera);
+            GizmosScreenDrawer.BeginDraw(_camera);
             GizmosScreenDrawer.DrawSquares(_screenSquares);
             GizmosScreenDrawer.EndDraw();
             
@@ -97,7 +101,6 @@ namespace Beast.Claw.Gizmos
             _wireSquares.Dispose();
             _screenSquares.Dispose();
             Object.Destroy(_material);
-            Camera.onPostRender -= _onRender;
 
             return OperationResult.SuccessSync();
         }

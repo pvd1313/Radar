@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Graphic;
 
 namespace Beast.Radar.Cinematic
 {

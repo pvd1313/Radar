@@ -1,3 +1,4 @@
+using Beast.Claw.Graphic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -6,9 +7,9 @@ namespace Beast.Claw.Gizmos
 {
     internal static class GizmosScreenDrawer
     {
-        private static Camera Camera;
+        private static ICameraTransform Camera;
         
-        public static void BeginDraw(Camera camera)
+        public static void BeginDraw(ICameraTransform camera)
         {
             Camera = camera;
             
@@ -30,8 +31,7 @@ namespace Beast.Claw.Gizmos
             {
                 Square square = squares[i];
                 GL.Color(square.color);
-                Vector3 screenCenter = Camera.WorldToScreenPoint(new Vector3(square.center.x, square.center.y, 0));
-                float2 center = new float2(screenCenter.x, screenCenter.y);
+                float2 center = Camera.WorldToScreen(square.center);
                 float halfSize = square.size / 2f;
                 float2 p0 = center + new float2(-halfSize, -halfSize);
                 float2 p1 = center + new float2(-halfSize, +halfSize);
