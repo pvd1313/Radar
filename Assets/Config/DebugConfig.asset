@@ -15,7 +15,7 @@ MonoBehaviour:
   logConsolePrefab: {fileID: 989928176995441208, guid: 63fe3b6b5cb3b17499cccb9e46d347ab, type: 3}
   fpsCounterPrefab: {fileID: 7138569744337414946, guid: ec09055262c4e754aa082930f5fd04ef, type: 3}
   profiler:
-    enableClawProfiling: 0
-    enableUnityProfiling: 1
+    enableClawProfiling: 1
+    enableUnityProfiling: 0
     maxRecordCount: 1024
     stackSize: 16

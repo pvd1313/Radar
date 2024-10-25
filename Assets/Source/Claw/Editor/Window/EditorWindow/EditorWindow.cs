@@ -12,7 +12,7 @@ namespace Beast.Claw.Editor.Window
     {
         protected IFlow Begin => _flow.Begin();
 
-        private Flow _flow;
+        protected Flow _flow;
         protected RectUI _rectUI;
         
         private bool _initialized;

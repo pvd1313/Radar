@@ -17,7 +17,9 @@ namespace Beast.Claw.Editor
                     changesDetected = false,
                 };
             }
-            
+
+            public IFlow Begin() => this;
+
             public IFlow Enabled(bool isEnabled) => this;
             public IFlow Vertical() => this;
             public IFlow Horizontal() => this;

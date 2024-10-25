@@ -26,32 +26,32 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private List<string> _drawOrder = new();
         [SerializeField] private int _updateTickRate = 3;
         [SerializeField] private bool _isSharpMode;
-        [SerializeField] private bool _editorFetch;
         [SerializeField] private bool _showArrayArrows;
+
+        [SerializeField] private RepaintTickRateBar _tickRateBar;
 
         private Dictionary<Type, TypeInfo> _typeInfo;
         private bool _isPlaying;
-        private DateTime _lastUpdateTime;
         private Dictionary<string, Type> _fullNameToType;
         
         private GUILayoutOption _smallButton;
         private GUILayoutOption _csButtonWidth;
         private GUILayoutOption _csButtonHeight;
-        private GUILayoutOption _tickRateButton;
         private GUIStyle _csText;
         private GUIStyle _csButton;
         private GUIContent _csIcon;
         private GUIContent _infoIcon;
 
+        public DebugTrackWindow()
+        {
+            _tickRateBar = new RepaintTickRateBar(this);
+        }
+
         protected override void Warmup()
         {
-            EditorApplication.update += _onEditorApplicationUpdate;
-            
-            _lastUpdateTime = DateTime.Now;
             _typeInfo = new Dictionary<Type, TypeInfo>();
             _fullNameToType = new Dictionary<string, Type>();
             
-            _tickRateButton = GUILayout.Width(UIStyle.SIZE_TWO_CHAR);
             _smallButton = GUILayout.Width(UIStyle.SIZE_ONE_CHAR);
             _csButtonWidth = GUILayout.Width(UIStyle.SIZE_ONE_CHAR);
             _csButtonHeight = GUILayout.Height(UIStyle.SIZE_ONE_CHAR);
@@ -69,6 +69,8 @@ namespace Beast.Claw.Editor.Window
             {
                 alignment = TextAnchor.MiddleLeft,
             };
+            
+            _tickRateBar.Warmup();
         }
         
         protected override void Reset()
@@ -77,21 +79,6 @@ namespace Beast.Claw.Editor.Window
             _folds?.Clear();
             _typeInfo?.Clear();
             _fullNameToType?.Clear();
-        }
-
-        private void _onEditorApplicationUpdate()
-        {
-            if (!EditorApplication.isPlaying && !_editorFetch)
-            {
-                return;
-            }
-            
-            DateTime now = DateTime.Now;
-            if ((now - _lastUpdateTime).TotalSeconds >= 1f / _updateTickRate)
-            {
-                _lastUpdateTime = now;
-                Repaint();
-            }
         }
 
         protected override void DrawUI()
@@ -108,17 +95,6 @@ namespace Beast.Claw.Editor.Window
 
             Begin.Horizontal(ui =>
             {
-                const string FETCH_EDITOR = "EditorFetch";
-                const string PLAY_MODE_CLEAR = "PlayModeClear";
-
-                Begin.LabelWidth(FETCH_EDITOR).Draw(ui => ui.CheckBoxLeft(FETCH_EDITOR, ref _editorFetch));
-                Begin.LabelWidth(PLAY_MODE_CLEAR).Draw(ui => ui.CheckBoxLeft(PLAY_MODE_CLEAR, ref _playModeClear));
-                
-                ui.FlexibleSpace();
-            });
-            
-            Begin.Horizontal(ui =>
-            {
                 Begin.Option(_csButtonHeight, _csButtonWidth)
                     .Style(_csButton)
                     .Button( _isSharpMode ? _csIcon : _infoIcon, () =>
@@ -126,24 +102,20 @@ namespace Beast.Claw.Editor.Window
                         _isSharpMode = !_isSharpMode;
                     });
                 
-                const string FETCH_TICK_RATE_LABEL = "FetchTickRate";
-                
-                Begin.LabelWidth(FETCH_TICK_RATE_LABEL)
-                    .FieldWidth("XXX")
-                    .Draw(ui =>
-                {
-                    ui.IntField(FETCH_TICK_RATE_LABEL, ref _updateTickRate);
-                });
+                const string PLAY_MODE_CLEAR = "PlayModeClear";
 
-                Begin.Option(_tickRateButton).Draw(ui =>
-                {
-                    ui.Button("3", () => _updateTickRate = 3);
-                    ui.Button("10", () => _updateTickRate = 10);
-                    ui.Button("60", () => _updateTickRate = 60);
-                });
+                Begin.LabelWidth(PLAY_MODE_CLEAR)
+                    .Draw(ui => ui.CheckBoxRight(PLAY_MODE_CLEAR, ref _playModeClear));
                 
                 const string ARROWS = UIStyle.CHAR_ARROW_UP + UIStyle.CHAR_ARROW_DOWN;
                 Begin.LabelWidthAndButton(ARROWS, () => _showArrayArrows = !_showArrayArrows);
+                
+                ui.FlexibleSpace();
+            });
+            
+            Begin.Horizontal(ui =>
+            {
+                _tickRateBar.Draw(_flow);
                 
                 ui.FlexibleSpace();
             });
@@ -307,7 +279,7 @@ namespace Beast.Claw.Editor.Window
         
         protected override void Dispose()
         {
-            EditorApplication.update -= _onEditorApplicationUpdate;
+            _tickRateBar.Dispose();
         }
     }
 }

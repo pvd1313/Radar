@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Beast.Claw.Profiling;
 using UnityEngine;
 
-namespace Beast.Claw.Profiling
+namespace Beast.Claw.Editor.Window.Profiler
 {
-    public class ProfilerView
+    public class ProfilerTreeGUI
     {
-        private readonly FloatToStringConverter _converter = new();
+        private readonly FloatToStringConverter _converter = new("D2");
 
         public void OnGUI(Rect rect, IEnumerable<ProfilerNode> nodes)
         {
@@ -19,9 +20,9 @@ namespace Beast.Claw.Profiling
 
                 GUI.Label(rect, node.name);
                 
-                _converter.ToString(node.time, out string exponent, out string fraction);
+                _converter.ToString(node.timeMS, out string exponent, out string fraction);
                 
-                if ((int) node.time > 0)
+                if ((int) node.timeMS > 0)
                 {
                     GUI.Label(rectLeft, exponent);
                 }

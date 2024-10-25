@@ -2,7 +2,7 @@ namespace Beast.Claw.Profiling
 {
     public interface IProfiler
     {
-        ProfilingTreeReader Reader { get; }
+        ProfilerTreeReader Reader { get; }
         
         Profiler.Handle GetHandle(object owner);
     }

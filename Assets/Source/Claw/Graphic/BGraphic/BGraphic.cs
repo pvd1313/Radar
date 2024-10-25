@@ -41,7 +41,7 @@ namespace Beast.Claw.Graphic
 
         public static RenderTexture CreatePermRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
             
             RenderTexture texture = new (
                 input.texture.size.x,
@@ -62,7 +62,7 @@ namespace Beast.Claw.Graphic
 
         public static RenderTexture CreateTempRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
             
             RenderTexture texture = RenderTexture.GetTemporary(
                 input.texture.size.x,
@@ -85,7 +85,7 @@ namespace Beast.Claw.Graphic
         public static Material CreateMaterial<TOwner>(TOwner owner, MaterialParameters input) where TOwner : class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
             
             return new Material(input.shader)
             {
@@ -108,7 +108,7 @@ namespace Beast.Claw.Graphic
             where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
 
             return new Texture2D(
                 input.texture.size.x,
@@ -148,7 +148,7 @@ namespace Beast.Claw.Graphic
 
         public static void DrawTexture2DToRenderTexture(Texture2DToRenderTexture input)
         {
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
 
             RenderTexture bakTexture = RenderTexture.active;
 

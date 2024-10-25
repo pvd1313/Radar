@@ -70,7 +70,7 @@ namespace Beast.Radar.Terrain
 
         public void Render(TerrainBiomeRenderTask task)
         {
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
             
             _renderBiome(task);
         }
@@ -144,7 +144,7 @@ namespace Beast.Radar.Terrain
 
         private RenderResult _renderBiome(TerrainBiomeRenderTask task)
         {
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
 
             RenderResult data;
             

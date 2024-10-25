@@ -42,7 +42,7 @@ namespace Beast.Radar.Terrain
         
         public void Render(TerrainColorRenderTask task)
         {
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
 
             if (task.outputToCamera)
             {
@@ -89,7 +89,8 @@ namespace Beast.Radar.Terrain
 
         private void _renderColorTexture(Material renderMaterial, TerrainColorRenderTask task)
         {
-            task.ValidateThrowException();
+            renderMaterial.ValidateNotNullThrowException(nameof(renderMaterial));
+            task.ValidateThrowException(nameof(task));
             
             float yScale = BMath.Cos(task.cameraRotationRad.roll) * (task.cameraViewDistance / task.biomeViewDistance);
             float2x2 rotation = float2x2.Rotate(task.cameraRotationRad.roll * -1.0f);

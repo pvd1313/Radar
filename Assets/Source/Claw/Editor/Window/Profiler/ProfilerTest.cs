@@ -5,9 +5,9 @@ using System.Threading;
 using Beast.Claw.Profiling;
 using NUnit.Framework;
 
-namespace Beast.Claw.Editor.Window.Profiler.Tests
+namespace Beast.Claw.Editor.Window.Profiler
 {
-    internal class ProfilerManagerTests
+    public class ProfilerTest
     {
         private Profiling.Profiler _manager;
         private ProfilerConfig _config;
@@ -152,7 +152,7 @@ namespace Beast.Claw.Editor.Window.Profiler.Tests
             _manager.RebuildTree();
             _manager.Reader.Read(0, 2, _nodes, out _totalNodeCount);
 
-            float actualTime = _nodes[1].time;
+            float actualTime = _nodes[1].timeMS;
             float expectedTime = timer.ElapsedTicks / (float) Stopwatch.Frequency * 1000;
             Assert.That(actualTime, Is.EqualTo(expectedTime).Within(actualTime * 0.01f));
         }

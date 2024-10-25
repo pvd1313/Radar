@@ -41,6 +41,7 @@ namespace Beast.Claw.GameCycle
         private bool _profilersInitialized;
         private Dictionary<string, List<string>> _updateObjectNames;
         private Dictionary<string, List<string>> _operationObjectNames;
+        private ProfilerTreeStringBuilder _profilerTreeStringBuilder;
 
         private bool _isSubscribingListeners;
         private HashSet<string> _operationEventIDs;
@@ -61,7 +62,7 @@ namespace Beast.Claw.GameCycle
         
         public bool TryInitializeSelf(GameCycleParameters input)
         {
-            input.ValidateThrowException();
+            input.ValidateThrowException(nameof(input));
             
             _isSubscribingListeners = true;
 
@@ -124,6 +125,8 @@ namespace Beast.Claw.GameCycle
             {
                 return;
             }
+
+            _profilerTreeStringBuilder = new ProfilerTreeStringBuilder();
             
             _operationObjectNames = new Dictionary<string, List<string>>();
             _operationProfilers = new Dictionary<string, Profiler>();
@@ -190,16 +193,17 @@ namespace Beast.Claw.GameCycle
                 OperationListener listener = listeners[listenerIndex];
                 
                 string sampleName = null;
+                
+                if (profilingActive)
+                {
+                    handle = profiler.GetHandle(listener.obj);
+                    sampleName = objNames[listenerIndex];
+
+                    handle.BeginSample(sampleName);
+                }
 
                 try
                 {
-                    if (profilingActive)
-                    {
-                        handle = profiler.GetHandle(listener.obj);
-                        sampleName = objNames[listenerIndex];
-
-                        handle.BeginSample(sampleName);
-                    }
 
                     result = await listener.action.Invoke();
                 }
@@ -223,9 +227,13 @@ namespace Beast.Claw.GameCycle
                 }
             }
 
-            if (profilingActive)
+            if (_profilerConfig.enableClawProfiling)
             {
                 profiler.RebuildTree();
+
+                string info = _profilerTreeStringBuilder.ToString(profiler.Reader, eventID);
+                
+                BDebug.StaticLogInfo(info);
             }
 
             return result;
@@ -278,18 +286,17 @@ namespace Beast.Claw.GameCycle
                 }
                 
                 string sampleName = null;
+                
+                if (profilingActive)
+                {
+                    handle = profiler.GetHandle(listener.obj);
+                    sampleName = objNames[listenerIndex];
+                        
+                    handle.BeginSample(sampleName);
+                }
 
                 try
                 {
-
-                    if (profilingActive)
-                    {
-                        handle = profiler.GetHandle(listener.obj);
-                        sampleName = objNames[listenerIndex];
-                        
-                        handle.BeginSample(sampleName);
-                    }
-
                     listener.action.Invoke();
                 }
                 catch (Exception e)
@@ -312,7 +319,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
             
-            if (profilingActive)
+            if (_profilerConfig.enableClawProfiling)
             {
                 profiler.RebuildTree();
             }

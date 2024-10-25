@@ -32,7 +32,7 @@ namespace Beast.Radar.Terrain
 
         public void Render(TerrainBakeTask task)
         {
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
             
             _material.SetFloat("_Water01", task.terrain.water01);
             _material.SetFloat("_Forest01", task.terrain.forest01);
