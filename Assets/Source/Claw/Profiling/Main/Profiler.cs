@@ -50,11 +50,12 @@ namespace Beast.Claw.Profiling
             _samplesTimer.Start();
             _profilingTree = new ProfilerTree
             {
-                childs = NativeMemory.CreateTempArray<ushort>(1),
-                names = NativeMemory.CreateTempArray<ushort>(1),
-                siblings = NativeMemory.CreateTempArray<ushort>(1),
-                times = NativeMemory.CreateTempArray<float>(1),
-                text = _namesActive
+                childs = NativeMemory.CreatePermArray<ushort>(1),
+                names = NativeMemory.CreatePermArray<ushort>(1),
+                siblings = NativeMemory.CreatePermArray<ushort>(1),
+                times = NativeMemory.CreatePermArray<float>(1),
+                text = _namesActive,
+                nodeCount = 1
             };
             _profilingTree.times[0] = 0;
             _profilingTree.childs[0] = 0;
@@ -79,15 +80,15 @@ namespace Beast.Claw.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outNames = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outSiblings = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
-                outTimes = NativeMemory.CreateTempJobArray<float>(nodeCount),
-                outState = NativeMemory.CreateTempJobArray<TreeBuildState>(1),
-                parentStack = NativeMemory.CreateTempJobArray<ushort>(_config.stackSize),
-                siblingStack = NativeMemory.CreateTempJobArray<ushort>(_config.stackSize),
-                timeStack = NativeMemory.CreateTempJobArray<int>(_config.stackSize),
-                nameHashStack = NativeMemory.CreateTempJobArray<int>(_config.stackSize)
+                outChilds = NativeMemory.CreatePermArray<ushort>(nodeCount),
+                outNames = NativeMemory.CreatePermArray<ushort>(nodeCount),
+                outSiblings = NativeMemory.CreatePermArray<ushort>(nodeCount),
+                outTimes = NativeMemory.CreatePermArray<float>(nodeCount),
+                outState = NativeMemory.CreateTempArray<TreeBuildState>(1),
+                parentStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
+                siblingStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
+                timeStack = NativeMemory.CreateTempArray<int>(_config.stackSize),
+                nameHashStack = NativeMemory.CreateTempArray<int>(_config.stackSize)
             };
             
             UnityEngine.Profiling.Profiler.BeginSample("ProfilingManager.BuildTreeJob");
@@ -118,7 +119,7 @@ namespace Beast.Claw.Profiling
                     siblings = job.outSiblings,
                     times = job.outTimes,
                     text = _namesActive,
-                    nodeCount = _recordCount
+                    nodeCount = _recordCount + 1
                 };
                 
                 _recordCount = 0;

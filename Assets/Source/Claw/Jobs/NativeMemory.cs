@@ -6,15 +6,9 @@ namespace Beast.Claw.Jobs
     public static class NativeMemory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeArray<T> CreateTempJobArray<T>(int length) where T : unmanaged
-        {
-            return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeArray<T> CreateTempArray<T>(int length) where T : unmanaged
         {
-            return new NativeArray<T>(length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
