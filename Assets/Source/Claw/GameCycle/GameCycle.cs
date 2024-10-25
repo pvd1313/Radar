@@ -21,7 +21,8 @@ namespace Beast.Claw.GameCycle
             public object obj;
             public Func<UniTask<OperationResult>> action;
         }
-        
+
+        private readonly Proxy _proxy;
         private readonly List<IGameCycleListener> _subscribers;
         private readonly GameCycleConfig _cycleConfig;
         private readonly ProfilerConfig _profilerConfig;
@@ -36,8 +37,7 @@ namespace Beast.Claw.GameCycle
         private Dictionary<string, HashSet<object>> _updateHashset;
         private Dictionary<string, HashSet<object>> _operationHashset;
 
-        private Dictionary<string, Profiler> _updateProfilers;
-        private Dictionary<string, Profiler> _operationProfilers;
+        private Dictionary<string, Profiler> _profilers;
         private bool _profilersInitialized;
         private Dictionary<string, List<string>> _updateObjectNames;
         private Dictionary<string, List<string>> _operationObjectNames;
@@ -48,21 +48,30 @@ namespace Beast.Claw.GameCycle
         private HashSet<string> _updateEventIDs;
 
         public GameCycle (
-            GameCycleProxy proxy, 
+            Proxy proxy, 
             GameCycleConfig cycleConfig, 
             ProfilerConfig profilerConfig,
             List<IGameCycleListener> subscribers)
         {
+            _proxy = proxy;
             _subscribers = subscribers;
             _cycleConfig = cycleConfig;
             _profilerConfig = profilerConfig;
 
-            proxy.Inject(this);
+            _proxy.Inject(this);
         }
         
         public bool TryInitializeSelf(GameCycleParameters input)
         {
             input.ValidateThrowException(nameof(input));
+
+            List<string> idsIntersection = input.updateEventIDs.Intersect(input.operationEventIDs).ToList();
+
+            if (idsIntersection.Count > 0)
+            {
+                string conflictingIds = string.Join(", ", idsIntersection);
+                throw new InvalidOperationException("Command ids must be unique. Duplicated: " + conflictingIds);
+            }
             
             _isSubscribingListeners = true;
 
@@ -127,9 +136,9 @@ namespace Beast.Claw.GameCycle
             }
 
             _profilerTreeStringBuilder = new ProfilerTreeStringBuilder();
+            _profilers = new Dictionary<string, Profiler>();
             
             _operationObjectNames = new Dictionary<string, List<string>>();
-            _operationProfilers = new Dictionary<string, Profiler>();
             foreach (string eventID in _operationEventIDs)
             {
                 _operationObjectNames[eventID] = _operationListeners[eventID]
@@ -137,11 +146,10 @@ namespace Beast.Claw.GameCycle
                 
                 Profiler profiler = new (_profilerConfig);
                 profiler.Initialize();
-                _operationProfilers[eventID] = profiler;
+                _profilers[eventID] = profiler;
             }
 
             _updateObjectNames = new Dictionary<string, List<string>>();
-            _updateProfilers = new Dictionary<string, Profiler>();
             foreach (string eventID in _updateEventIDs)
             {
                 _updateObjectNames[eventID] = _updateListeners[eventID]
@@ -149,8 +157,10 @@ namespace Beast.Claw.GameCycle
                 
                 Profiler profiler = new (_profilerConfig);
                 profiler.Initialize();
-                _updateProfilers[eventID] = profiler;
+                _profilers[eventID] = profiler;
             }
+            
+            _proxy.InitializeProfilers();
             
             _profilersInitialized = true;
         }
@@ -181,7 +191,7 @@ namespace Beast.Claw.GameCycle
             if (profilingActive)
             {
                 _tryInitializeProfiling();
-                profiler = _operationProfilers[eventID];
+                profiler = _profilers[eventID];
                 profiler.FetchConfig();
                 objNames = _operationObjectNames[eventID];
             }
@@ -269,7 +279,7 @@ namespace Beast.Claw.GameCycle
             if (profilingActive)
             {
                 _tryInitializeProfiling();
-                profiler = _updateProfilers[eventID];
+                profiler = _profilers[eventID];
                 profiler.FetchConfig();
                 objNames = _updateObjectNames[eventID];
             }

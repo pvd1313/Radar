@@ -79,15 +79,15 @@ namespace Beast.Claw.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = NativeMemory.CreateTempArray<ushort>(nodeCount),
-                outNames = NativeMemory.CreateTempArray<ushort>(nodeCount),
-                outSiblings = NativeMemory.CreateTempArray<ushort>(nodeCount),
-                outTimes = NativeMemory.CreateTempArray<float>(nodeCount),
-                outState = NativeMemory.CreateTempArray<TreeBuildState>(1),
-                parentStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
-                siblingStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
-                timeStack = NativeMemory.CreateTempArray<int>(_config.stackSize),
-                nameHashStack = NativeMemory.CreateTempArray<int>(_config.stackSize)
+                outChilds = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
+                outNames = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
+                outSiblings = NativeMemory.CreateTempJobArray<ushort>(nodeCount),
+                outTimes = NativeMemory.CreateTempJobArray<float>(nodeCount),
+                outState = NativeMemory.CreateTempJobArray<TreeBuildState>(1),
+                parentStack = NativeMemory.CreateTempJobArray<ushort>(_config.stackSize),
+                siblingStack = NativeMemory.CreateTempJobArray<ushort>(_config.stackSize),
+                timeStack = NativeMemory.CreateTempJobArray<int>(_config.stackSize),
+                nameHashStack = NativeMemory.CreateTempJobArray<int>(_config.stackSize)
             };
             
             UnityEngine.Profiling.Profiler.BeginSample("ProfilingManager.BuildTreeJob");

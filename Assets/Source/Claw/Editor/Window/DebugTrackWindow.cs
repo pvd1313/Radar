@@ -24,7 +24,6 @@ namespace Beast.Claw.Editor.Window
         [SerializeField] private float2 _scrollPosition;
         [SerializeField] private UnitySerializableDictionary<string, bool> _folds = new();
         [SerializeField] private List<string> _drawOrder = new();
-        [SerializeField] private int _updateTickRate = 3;
         [SerializeField] private bool _isSharpMode;
         [SerializeField] private bool _showArrayArrows;
 

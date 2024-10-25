@@ -6,6 +6,7 @@ namespace Beast.Claw.Editor.Window.Profiler
     public class ProfilerWindow : EditorWindow
     {
         [SerializeField] private RepaintTickRateBar _tickRateBar;
+        [SerializeField] private int _selectedProfilerIndex;
         
         private InjectionReference<IGameCycle> _gameCycle;
         private ProfilerTreeGUI _treeView;
@@ -41,6 +42,11 @@ namespace Beast.Claw.Editor.Window.Profiler
                 Begin.InfoBox("GameCycle not found.");
                 
                 return;
+            }
+
+            if (_gameCycle.Reference.Profilers.Count == 0)
+            {
+                Begin.InfoBox("No Profilers found in GameCycle");
             }
         }
 

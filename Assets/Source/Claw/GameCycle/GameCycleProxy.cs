@@ -1,29 +1,48 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Beast.Claw.Profiling;
+using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
 {
-    public class GameCycleProxy : IGameCycle
+    partial class GameCycle
     {
-        private GameCycle _gameCycle;
-
-        public void Inject(GameCycle gameCycle)
+        public class Proxy : IGameCycle
         {
-            _gameCycle = gameCycle;
-        }
+            public IReadOnlyDictionary<string, IProfiler> Profilers => _profilers;
         
-        public bool TryInitializeSelf(GameCycleParameters input)
-        {
-            return _gameCycle.TryInitializeSelf(input);
-        }
+            private GameCycle _gameCycle;
+            private Dictionary<string, IProfiler> _profilers;
 
-        public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
-        {
-            _gameCycle.Update(owner, eventID);
-        }
+            public void Inject(GameCycle gameCycle)
+            {
+                _gameCycle = gameCycle;
+                _profilers = new Dictionary<string, IProfiler>();
+            }
 
-        public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class
-        {
-            return await _gameCycle.Execute(owner, eventID);
+            public void InitializeProfilers()
+            {
+                _profilers.Clear();
+                
+                foreach ((string name, Profiler profiler) in _gameCycle._profilers)
+                {
+                    _profilers.Add(name, profiler);
+                }
+            }
+
+            public bool TryInitializeSelf(GameCycleParameters input)
+            {
+                return _gameCycle.TryInitializeSelf(input);
+            }
+
+            public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
+            {
+                _gameCycle.Update(owner, eventID);
+            }
+
+            public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class
+            {
+                return await _gameCycle.Execute(owner, eventID);
+            }
         }
     }
 }

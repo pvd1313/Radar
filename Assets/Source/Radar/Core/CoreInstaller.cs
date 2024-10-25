@@ -57,7 +57,7 @@ namespace Beast.Radar.Core
         protected override void BindCustom(DiContainer diContainer)
         {
             diContainer.Bind<Claw.GameCycle.GameCycle>().FromNew().AsSingle().NonLazy();
-            diContainer.BindInterfacesAndSelfTo<GameCycleProxy>().FromNew().AsSingle().NonLazy();
+            diContainer.BindInterfacesAndSelfTo<Claw.GameCycle.GameCycle.Proxy>().FromNew().AsSingle().NonLazy();
             diContainer.Bind<GameModel>().FromNew().AsSingle().NonLazy();
         }
     }
