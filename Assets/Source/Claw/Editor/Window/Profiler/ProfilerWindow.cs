@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
+using Beast.Claw.Collection;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Profiling;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Editor.Window.Profiler
@@ -6,26 +11,44 @@ namespace Beast.Claw.Editor.Window.Profiler
     public class ProfilerWindow : EditorWindow
     {
         [SerializeField] private RepaintTickRateBar _tickRateBar;
+        [SerializeField] private string _selectedProfilerName;
+        [SerializeField] private UnitySerializableDictionary<string, int> _profilerNameToIndex;
+        [SerializeField] private float2[] _elementSizes;
+        [SerializeField] private float2[] _elementPositions;
         [SerializeField] private int _selectedProfilerIndex;
-        
+        [SerializeField] private float2 _scrollPosition;
+
+        private Style _buttonStyleNormal;
+        private Style _labelStyle;
+        private Style _buttonStyleSelected;
         private InjectionReference<IGameCycle> _gameCycle;
         private ProfilerTreeGUI _treeView;
+        private List<ProfilerNode> _nodesBuffer;
+
+        private string _lastDrawnProfilerName;
 
         public ProfilerWindow()
         {
             _tickRateBar = new RepaintTickRateBar(this);
+            _profilerNameToIndex = new UnitySerializableDictionary<string, int>();
+            _nodesBuffer = new List<ProfilerNode>();
+            _selectedProfilerIndex = -1;
         }
         
         protected override void Warmup()
         {
             _gameCycle = new InjectionReference<IGameCycle>();
             _treeView = new ProfilerTreeGUI();
+            _buttonStyleNormal = _rectUI.Style.Button;
+            _labelStyle = _rectUI.Style.Label;
+            _buttonStyleSelected = _rectUI.Style.Button.Clone();
+            _buttonStyleSelected.Scheme.normal.textColor = Color.yellow;
             _tickRateBar.Warmup();
         }
 
         protected override void Reset()
         {
-            
+            _profilerNameToIndex.Clear();
         }
 
         protected override void DrawUI()
@@ -48,83 +71,94 @@ namespace Beast.Claw.Editor.Window.Profiler
             {
                 Begin.InfoBox("No Profilers found in GameCycle");
             }
+
+            _tryRebuildProfilers();
+
+            Begin.Draw(ui =>
+            {
+                FlexGrid flex = new (new FlexGrid.Input
+                {
+                    elementSizes = new Span<float2>(_elementSizes),
+                    outputPositions = new Span<float2>(_elementPositions),
+                    screenSize = position.size
+                });
+
+                Rect uiRect = ui.AllocateRect(flex.TotalSize);
+
+                IProfiler selectedProfiler = null;
+
+                foreach ((string profilerName, IProfiler profiler) in _gameCycle.Reference.Profilers)
+                {
+                    int profilerIndex = _profilerNameToIndex[profilerName];
+                    Style buttonStyle = _buttonStyleNormal;
+
+                    if (profilerIndex == _selectedProfilerIndex)
+                    {
+                        selectedProfiler = profiler;
+                        buttonStyle = _buttonStyleSelected;
+                    }
+
+                    Rect buttonRect = flex[profilerIndex].AddPosition(uiRect.position);
+                    
+                    if (_rectUI.Button(buttonRect, profilerName, buttonStyle))
+                    {
+                        selectedProfiler = profiler;
+                        _selectedProfilerIndex = profilerIndex;
+                    }
+                }
+
+                Begin.If(selectedProfiler != null).Scroll(ref _scrollPosition).Draw(ui =>
+                {
+                    ProfilerTreeReader reader = selectedProfiler.Reader;
+
+                    selectedProfiler.Reader.Read(0, reader.NodeCount, _nodesBuffer, out _);
+
+                    Rect rect = ui.AllocateRect(new float2(position.width - 15, 20 * _nodesBuffer.Count));
+                    rect.width -= 4;
+                    
+                    _treeView.OnGUI(rect, _nodesBuffer);
+                });
+            });
+        }
+
+        private void _tryRebuildProfilers()
+        {
+            bool needsRebuild = false;
+            
+            foreach (string profilerName in _gameCycle.Reference.Profilers.Keys)
+            {
+                if (!_profilerNameToIndex.ContainsKey(profilerName))
+                {
+                    needsRebuild = true;
+                    break;
+                }
+            }
+
+            if (!needsRebuild)
+            {
+                return;
+            }
+
+            int profilerCount = _gameCycle.Reference.Profilers.Count;
+            _profilerNameToIndex.Clear();
+
+            _selectedProfilerIndex = -1;
+            _elementSizes = new float2[profilerCount];
+            _elementPositions = new float2[profilerCount];
+            int i = 0;
+            
+            foreach (string profilerName in _gameCycle.Reference.Profilers.Keys)
+            {
+                _elementSizes[i] = _labelStyle.CalcSize(profilerName) + new float2(10, 5);
+                _profilerNameToIndex[profilerName] = i;
+
+                i++;
+            }
         }
 
         protected override void Dispose()
         {
             _tickRateBar.Dispose();
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // private Stopwatch _stopwatch;
-        // private List<ProfilerNode> _nodes;
-        //
-        // private int _offset;
-        // private int _yScroll;
-        // private ProfilingNodesView _view;
-
-        // private void OnGUI()
-        // {
-        //     // var profilingManager = SceneContextUtil.TryResolve<I>();
-        //     // if (profilingManager is null)
-        //     // {
-        //     //     return;
-        //     // }
-        //     //
-        //     // var currentEvent = Event.current;
-        //     // if (currentEvent.isScrollWheel)
-        //     // {
-        //     //     _yScroll = (int) currentEvent.delta.y;
-        //     //     return;
-        //     // }
-        //     //
-        //     // _view ??= new ProfilingNodesView();
-        //     //
-        //     // _stopwatch ??= new Stopwatch();
-        //     // _stopwatch.Reset();
-        //     // _stopwatch.Start();
-        //     //
-        //     // DrawTreeJobSafe(profilingManager.Reader);
-        //     //
-        //     // _stopwatch.Stop();
-        //     //
-        //     // SpaceDebug.LogState("DrawTree ms", _stopwatch.ElapsedTicks / (float) Stopwatch.Frequency * 1000);
-        //     
-        //     // Repaint();
-        // }
-
-        // private void DrawTreeJobSafe(ProfilingTreeReader tree)
-        // {
-        //     var currentEvent = Event.current;
-        //
-        //     if (currentEvent.type == EventType.Layout)
-        //     {
-        //         _nodes ??= new List<ProfilingNode>();
-        //         var displayCount = position.height / 20;
-        //         tree.Read(_offset,  (int) Math.Ceiling(displayCount), _nodes, out var totalNodeCount);
-        //
-        //         var lastNode = Math.Max(0, totalNodeCount - (int) Math.Floor(displayCount));
-        //         _offset = Mathf.Clamp(_offset + _yScroll, 0, lastNode);
-        //         _yScroll = 0;
-        //     }
-        //
-        //     var rect = EditorGUILayout.GetControlRect(false);
-        //     
-        //     _view.OnGUI(rect, _nodes);
-        // }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using Beast.Claw.Debug;
 using UnityEditor;
+using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public struct UIStyleGroup
     {
         public Style Label { get; private set; }
+        public Style Button { get; private set; }
         public Style TextField { get; private set; }
         public Style NumberField { get; private set; }
         public Style SelectionBox { get; private set; }
@@ -23,6 +25,7 @@ namespace Beast.Claw.Editor
                     TextField = EditorStyles.textField,
                     NumberField = EditorStyles.numberField,
                     SelectionBox = EditorStyles.selectionRect,
+                    Button = GUI.skin.button,
                     MinorSpacing = 5
                 };
             }

@@ -77,6 +77,13 @@ namespace Beast.Claw.Editor
             return new Rect(position, size);
         }
 
+        public static Rect AddPosition(this Rect rect, float2 position)
+        {
+            rect.position += (Vector2) position;
+
+            return rect;
+        }
+
         public static Rect AlignCenter(this Rect rect, float2 elementSize)
         {
             float2 position = (float2)rect.position + (float2)rect.size * 0.5f - elementSize * 0.5f;

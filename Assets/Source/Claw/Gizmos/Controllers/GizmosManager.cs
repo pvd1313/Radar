@@ -43,8 +43,6 @@ namespace Beast.Claw.Gizmos
             _screenSquares = new ShapeStorage<Square>(BufferSize);
             _material = new Material(_config.Shader);
 
-
-
             return OperationResult.SuccessSync();
         }
 
