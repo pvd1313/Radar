@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Beast.Claw.Mathematics;
-using Unity.Plastic.Antlr3.Runtime.Misc;
 
 namespace Beast.Claw.Profiling
 {
     public class ProfilerTreeStringBuilder
     {
         private readonly StringBuilder _builder = new();
-        private readonly List<ProfilerNode> _nodes = new ListStack<ProfilerNode>();
+        private readonly List<ProfilerNode> _nodes = new ();
         private readonly FloatToStringConverter _floatToString = new ("D");
 
         public string ToString(ProfilerTreeReader reader, string header)
