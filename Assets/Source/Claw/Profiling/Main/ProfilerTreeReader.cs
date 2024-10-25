@@ -6,22 +6,27 @@ using Unity.Mathematics;
 
 namespace Beast.Claw.Profiling
 {
-    public struct ProfilingTreeReader
+    public readonly struct ProfilerTreeReader
     {
-        private ProfilerTree _tree;
+        public int NodeCount => _tree.nodeCount;
+        
+        private readonly ProfilerTree _tree;
 
-        public ProfilingTreeReader(ProfilerTree tree)
+        public ProfilerTreeReader(ProfilerTree tree)
         {
             _tree = tree;
         }
         
         public void Read(int offset, int count, List<ProfilerNode> result, out int totalNodeCount)
         {
+            _tree.ValidateThrowException(nameof(_tree));
+            
             if (offset < 0) throw new ArgumentException($"{nameof(offset)} can not be negative");
             if (count < 0) throw new ArgumentException($"{nameof(count)} can not be negative");
+            if (count > _tree.nodeCount) throw new AggregateException("Can not read more nodes than exists");
             if (result is null) throw new ArgumentNullException(nameof(result));
-
-            ReadTreeJob job = new ReadTreeJob
+            
+            ReadTreeJob job = new ()
             {
                 inChilds = _tree.childs,
                 inNames = _tree.names,
@@ -45,7 +50,7 @@ namespace Beast.Claw.Profiling
                 {
                     name = _tree.text[node.name],
                     deep = node.deep,
-                    time = node.time
+                    timeMS = node.time
                 });
             }
 

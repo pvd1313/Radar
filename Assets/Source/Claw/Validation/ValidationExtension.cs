@@ -6,12 +6,12 @@ namespace Beast.Claw
     public static class ValidationExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateThrowException<TData>(this TData data) where TData : IValidatable
+        public static void ValidateThrowException<TData>(this TData data, string argumentName) where TData : IValidatable
         {
             string errorMessage = data.Validate();
             if (errorMessage != null)
             {
-                throw new ValidationException(errorMessage);
+                throw new ValidationException(argumentName + ": " + errorMessage);
             }
         }
         

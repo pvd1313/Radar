@@ -17,7 +17,7 @@ namespace Beast.Radar.Core
         
         public void StartNewGame(TerrainData terrain)
         {
-            terrain.ValidateThrowException();
+            terrain.ValidateThrowException(nameof(terrain));
 
             GameModel model = new ()
             {

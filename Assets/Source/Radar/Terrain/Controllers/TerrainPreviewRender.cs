@@ -47,7 +47,7 @@ namespace Beast.Radar.Terrain
 
         public void Render(TerrainPreviewRenderTask task)
         {
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
 
             _baker.Render(new TerrainBakeTask
             {

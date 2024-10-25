@@ -9,7 +9,7 @@ namespace Beast.Claw.Profiling
 {
     public partial class Profiler : IProfiler, IDisposable
     {
-        public ProfilingTreeReader Reader => new (_profilingTree);
+        public ProfilerTreeReader Reader => new (_profilingTree);
         
         private readonly ProfilerConfig _config;
 
@@ -28,7 +28,7 @@ namespace Beast.Claw.Profiling
 
         public Profiler(ProfilerConfig config)
         {
-            config.ValidateThrowException();
+            config.ValidateThrowException(nameof(config));
             
             _config = config;
         }
@@ -99,8 +99,6 @@ namespace Beast.Claw.Profiling
             float elapsedMS = _buildTreeJobTimer.ElapsedTicks / (float)Stopwatch.Frequency * 1000;
             BDebug.Track(this, "BuildTreeJobMS", elapsedMS);
 
-            _recordCount = 0;
-
             try
             {
                 _exceptionHandler.HandleJobState(_namesActive, job);
@@ -119,8 +117,11 @@ namespace Beast.Claw.Profiling
                     names = job.outNames,
                     siblings = job.outSiblings,
                     times = job.outTimes,
-                    text = _namesActive
+                    text = _namesActive,
+                    nodeCount = _recordCount
                 };
+                
+                _recordCount = 0;
                 
                 (_namesActive, _namesPassive) = (_namesPassive, _namesActive);
                 

@@ -155,7 +155,7 @@ namespace Beast.Claw.Editor
                 throw new InvalidOperationException(message);
             }
             
-            task.ValidateThrowException();
+            task.ValidateThrowException(nameof(task));
 
             _currentScreen = rect;
             _currentDrawTask = task;

@@ -4,6 +4,6 @@ namespace Beast.Claw.Profiling
     {
         public string name;
         public int deep;
-        public float time;
+        public float timeMS;
     }
 }

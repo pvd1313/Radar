@@ -7,25 +7,25 @@ namespace Beast.Claw.Profiling
         private readonly string[] _fraction;
         private readonly string[] _exponent;
 
-        public FloatToStringConverter()
+        public FloatToStringConverter(string format)
         {
-            _fraction = new string[100];
-            for (int i = 0; i < 100; i++)
-            {
-                _fraction[i] = "." + i.ToString("D2");
-            }
-            
             _exponent = new string[100];
             for (int i = 0; i < 100; i++)
             {
-                _exponent[i] = i.ToString("D2");
+                _exponent[i] = i.ToString(format);
+            }
+            
+            _fraction = new string[100];
+            for (int i = 0; i < 100; i++)
+            {
+                _fraction[i] = "." + i.ToString(format);
             }
         }
         
-        public void ToString(float value, out string exponent, out string fraction)
+        public void ToString(float value, out string exponent, out string fractionWithDot)
         {
             exponent = _exponent[BMath.Min(99, (int) value)];
-            fraction = _fraction[(int) (value % 1 * 100)];
+            fractionWithDot = _fraction[(int) (value % 1 * 100)];
         }
     }
 }
