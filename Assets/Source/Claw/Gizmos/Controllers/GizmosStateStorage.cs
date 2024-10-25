@@ -8,15 +8,25 @@ namespace Beast.Claw.Gizmos
 {
     public static class GizmosStateStorage 
     {
-        public static int Version { get; private set; }
         public static int HandleCount => _lastHandleId;
+        public static bool IsInitialize { get; private set; }
+        private static int Version { get; set; }
 
-        private static Dictionary<string, ushort> _handleToId = new Dictionary<string, ushort>();
+        private static Dictionary<string, ushort> _handleToId = new();
         private static ushort _lastHandleId;
-        private static NativeArray<int> _activityChunks = NativeMemory.CreatePermArray<int>(0);
-        private static NativeArray<Color> _colors = NativeMemory.CreatePermArray<Color>(0);
-        private static readonly List<string> _names = new();
-
+        private static NativeArray<int> _activityChunks;
+        private static NativeArray<Color> _colors;
+        private static  List<string> _names = new();
+        
+        public static void Initialize()
+        {
+            _handleToId = new Dictionary<string, ushort>();
+            _lastHandleId = 0;
+            _activityChunks = NativeMemory.CreatePermArray<int>(0);
+            _colors = NativeMemory.CreatePermArray<Color>(0);
+            _names = new List<string>();
+            IsInitialize = true;
+        }
         
         public static ushort GetOrCreateHandleId(string name, Color defaultColor)
         {
@@ -118,6 +128,19 @@ namespace Beast.Claw.Gizmos
             return _names[handleId];
         }
 
+        public static void Dispose()
+        {
+            IsInitialize = false;
+            if (_activityChunks.IsCreated)
+            {
+                _activityChunks.Dispose();
+            }
+            if (_colors.IsCreated)
+            {
+                _colors.Dispose();
+            }
+        }
+        
         private static void _setChunkActivityBit(ushort handleId, bool active)
         {
             if (active)

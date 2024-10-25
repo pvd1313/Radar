@@ -25,6 +25,7 @@ namespace Beast.Claw.Gizmos
         {
             _config = config;
             _camera = camera;
+            GizmosStateStorage.Initialize();
         }
         
         public void Register(IGameCycleHandle handle)
@@ -98,6 +99,7 @@ namespace Beast.Claw.Gizmos
             _wirePolygons.Dispose();
             _wireSquares.Dispose();
             _screenSquares.Dispose();
+            GizmosStateStorage.Dispose();
             Object.Destroy(_material);
 
             return OperationResult.SuccessSync();

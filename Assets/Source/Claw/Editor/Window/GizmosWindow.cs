@@ -28,6 +28,11 @@ namespace Beast.Claw.Editor.Window
         
         protected override void DrawUI()
         {
+            if (!GizmosStateStorage.IsInitialize)
+            {
+                return;
+            }
+            
             if (GizmosStateStorage.HandleCount == 0)
             {
                 Begin.InfoBox("No gizmos registered.");
