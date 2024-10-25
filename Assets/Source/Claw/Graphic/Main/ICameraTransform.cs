@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.Cinematic
+namespace Beast.Claw.Graphic
 {
     public interface ICameraTransform : IReady
     {
