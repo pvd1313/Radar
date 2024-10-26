@@ -2,6 +2,6 @@
 {
     public interface IValidatable
     {
-        public string Validate();
+        string Validate();
     }
 }

@@ -56,14 +56,14 @@ namespace Beast.Radar.Cinematic
             
             _subscribeInput();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeInput();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _subscribeInput()

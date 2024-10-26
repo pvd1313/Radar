@@ -35,7 +35,7 @@ namespace Beast.Radar.UI
             
             _windowManager.Register(this, WindowID.LoadingScreen, _view);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         public void Open()

@@ -47,7 +47,7 @@ namespace Beast.Radar.Player
             _spawnPlayer();
             _subscribeInput();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _tick(UpdateContext context)
@@ -111,7 +111,7 @@ namespace Beast.Radar.Player
         {
             _unsubscribeInput();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

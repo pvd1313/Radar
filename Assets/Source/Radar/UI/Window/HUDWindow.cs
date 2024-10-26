@@ -41,7 +41,7 @@ namespace Beast.Radar.UI
                 
             _subscribeView();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _setActive(bool isActive)
@@ -68,7 +68,7 @@ namespace Beast.Radar.UI
         {
             _unsubscribeView();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

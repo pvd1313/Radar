@@ -30,7 +30,7 @@ namespace Beast.Radar
         {
             _window = window.ToDictionary(w => w.id, w => w.prefab);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public UIView GetWindow(string prefabID)

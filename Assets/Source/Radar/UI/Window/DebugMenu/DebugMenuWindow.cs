@@ -74,7 +74,7 @@ namespace Beast.Radar.UI
             
             _view.buildVersionText.SetText(Application.version);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _configurePanels()
@@ -169,7 +169,7 @@ namespace Beast.Radar.UI
             _selectablesController.Dispose();
             _inputIconsController.Dispose();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _closeWindow()

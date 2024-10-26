@@ -89,7 +89,7 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _configureView()
@@ -251,7 +251,7 @@ namespace Beast.Radar.UI
             _selectablesController.Dispose();
             _sizeButtonsGroup.Dispose();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

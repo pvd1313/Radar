@@ -38,7 +38,7 @@ namespace Beast.Claw.Gizmos
             {
                 AddDrawer(drawer);
             }
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _tick(UpdateContext context)

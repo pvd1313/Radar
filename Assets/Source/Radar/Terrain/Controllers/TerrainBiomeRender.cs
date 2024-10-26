@@ -96,14 +96,14 @@ namespace Beast.Radar.Terrain
             RenderTextureData textureData = _config.terrain.biomeTexture.WithSize(textureSize);
             _biomeTexture = BGraphic.CreatePermRenderTexture(this, textureData);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         private UniTask<OperationResult> _gameLoad(OperationContext context)
         {
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         public float2 WorldToUVOffset(float2 worldPoint)
@@ -235,7 +235,7 @@ namespace Beast.Radar.Terrain
             BGraphic.TryDispose(ref _renderMaterial);
             BGraphic.TryDispose(ref _biomeTexture);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         private void _debugTrack(RenderResult stack)

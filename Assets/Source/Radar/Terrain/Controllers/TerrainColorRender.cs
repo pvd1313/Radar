@@ -65,7 +65,7 @@ namespace Beast.Radar.Terrain
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         private void _render(UpdateContext context)
@@ -154,7 +154,7 @@ namespace Beast.Radar.Terrain
         {
             BGraphic.TryDispose(ref _materialForCamera);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

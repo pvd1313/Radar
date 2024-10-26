@@ -60,7 +60,7 @@ namespace Beast.Radar.Terrain
             RenderTextureData textureData = _config.renderTexture.WithSize(_screen.Size);
             _tileToScreenBuffer = BGraphic.CreatePermRenderTexture(this, textureData);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         private void _render(UpdateContext context)
@@ -226,7 +226,7 @@ namespace Beast.Radar.Terrain
             BGraphic.TryDispose(ref _tileRenderMaterial);
             BGraphic.TryDispose(ref _tileToScreenBuffer);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

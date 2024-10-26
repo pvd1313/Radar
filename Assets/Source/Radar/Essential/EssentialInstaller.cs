@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Asset;
 using Beast.Claw.Common;
 using Beast.Radar.Graphic;
 using Beast.Radar.UI;
@@ -15,6 +16,7 @@ namespace Beast.Radar.Essential
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
             yield return typeof(LoadingScreenWindow);
+            yield return typeof(AssetManager);
         }
 
         protected override void BindCustom(DiContainer diContainer)

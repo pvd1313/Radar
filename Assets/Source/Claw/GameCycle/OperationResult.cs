@@ -33,7 +33,7 @@ namespace Beast.Claw.GameCycle
             };
         }
 
-        public static UniTask<OperationResult> SuccessSync()
+        public static UniTask<OperationResult> SuccessSyncronous()
         {
             return UniTask.FromResult(Success());
         }

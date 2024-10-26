@@ -80,7 +80,7 @@ namespace Beast.Radar.Terrain
 
             BGraphic.TryDispose(ref _texture);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

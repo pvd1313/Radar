@@ -42,7 +42,7 @@ namespace Beast.Radar.UI
                 
             _subscribe();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public void Register(IWindow window, string windowID, UIView view)
@@ -113,7 +113,7 @@ namespace Beast.Radar.UI
         {
             _unsubscribe();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

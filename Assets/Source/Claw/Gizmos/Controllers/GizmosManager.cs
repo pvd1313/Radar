@@ -44,7 +44,7 @@ namespace Beast.Claw.Gizmos
             _screenSquares = new ShapeStorage<Square>(BUFFER_SIZE);
             _material = new Material(_config.Shader);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
@@ -102,7 +102,7 @@ namespace Beast.Claw.Gizmos
             GizmosStateStorage.Dispose();
             Object.Destroy(_material);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

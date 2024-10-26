@@ -29,14 +29,14 @@ namespace Beast.Radar.InputHandling
         {
             _subscribeWindowManager();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private UniTask<OperationResult> _dispose(OperationContext context)
         {
             _unsubscribeWindowManager();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _subscribeWindowManager()

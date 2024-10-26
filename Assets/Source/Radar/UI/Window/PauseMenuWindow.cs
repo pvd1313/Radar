@@ -65,7 +65,7 @@ namespace Beast.Radar.UI
             
             _selectablesController.Warmup();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private UniTask<OperationResult> _dispose(OperationContext context)
@@ -74,7 +74,7 @@ namespace Beast.Radar.UI
             
             _selectablesController.Dispose();
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _configureSelectables()

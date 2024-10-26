@@ -29,7 +29,7 @@ namespace Beast.Radar.Debug
             SetElementState(DebugElementID.LogConsoleID, _preferences.isShowLog);
             SetElementState(DebugElementID.FpsCounterID, _preferences.isShowFps);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public void SetElementState(string elementID, bool isActive)

@@ -60,7 +60,7 @@ namespace Beast.Radar.Cinematic
 
             _yScaleRollCos = BMath.Cos(_rotationRad.roll);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private UniTask<OperationResult> _gameLoad(OperationContext context)
@@ -74,7 +74,7 @@ namespace Beast.Radar.Cinematic
             
             IsReady = true;
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
         
         private UniTask<OperationResult> _gameSave(OperationContext context)
@@ -82,7 +82,7 @@ namespace Beast.Radar.Cinematic
             _game.camera.position = (float2)_position;
             _game.camera.zoom01 = _zoom01;
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public void AddPosition(float2 delta, Space space)

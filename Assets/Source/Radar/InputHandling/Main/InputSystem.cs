@@ -49,7 +49,7 @@ namespace Beast.Radar.InputHandling
             
             _gameInputActions = new GameInputActions(Scheme, _actions);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         private void _tick(UpdateContext context)
@@ -66,7 +66,7 @@ namespace Beast.Radar.InputHandling
             _actions.UI.Disable();
             _actions.Game.Disable();
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

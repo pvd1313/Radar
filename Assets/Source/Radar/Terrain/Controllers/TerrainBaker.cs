@@ -28,7 +28,7 @@ namespace Beast.Radar.Terrain
         {
             _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.baker);
             
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
 
         public void Render(TerrainBakeTask task)
@@ -58,7 +58,7 @@ namespace Beast.Radar.Terrain
         {
             BGraphic.TryDispose(ref _material);
 
-            return OperationResult.SuccessSync();
+            return OperationResult.SuccessSyncronous();
         }
     }
 }
