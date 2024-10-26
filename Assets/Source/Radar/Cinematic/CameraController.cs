@@ -15,7 +15,6 @@ namespace Beast.Radar.Cinematic
         private readonly CameraConfig _cameraConfig;
         private readonly IInputSystem _inputSystem;
         private readonly ICameraTransform _transform;
-        private readonly PrefabLibrary _prefabs;
         private readonly IScreen _screen;
 
         private CameraMotionParameters _motion;
@@ -25,14 +24,12 @@ namespace Beast.Radar.Cinematic
             CameraConfig cameraConfig,
             IInputSystem inputSystem,
             ICameraTransform transform,
-            PrefabLibrary prefabs,
             IScreen screen)
         {
             _cameraConfig = cameraConfig;
             _inputSystem = inputSystem;
 
             _transform = transform;
-            _prefabs = prefabs;
             _screen = screen;
         }
         
@@ -44,14 +41,6 @@ namespace Beast.Radar.Cinematic
 
         private UniTask<OperationResult> _warmup(OperationContext context)
         {
-            BScene.InstantiateMono
-            (
-                this,
-                _prefabs.cameraPrefab,
-                new float3(0, 0, -1),
-                quaternion.identity
-            );
-
             _motion = _cameraConfig.GetMotionParameters(_inputSystem.Scheme.Current);
             
             _subscribeInput();

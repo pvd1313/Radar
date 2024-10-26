@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
+using Zenject;
 
 namespace Beast.Claw.GameCycle
 {
@@ -22,9 +22,9 @@ namespace Beast.Claw.GameCycle
         }
 
         private readonly Proxy _proxy;
-        private readonly List<IGameCycleListener> _subscribers;
         private readonly GameCycleConfig _cycleConfig;
         private readonly ProfilerConfig _profilerConfig;
+        private readonly DiContainer _container;
 
         private HashSet<object> _brokenUpdates;
         private Dictionary<object, int> _updateErrorCount;
@@ -36,79 +36,132 @@ namespace Beast.Claw.GameCycle
         private Dictionary<string, HashSet<object>> _updateHashset;
         private Dictionary<string, HashSet<object>> _operationHashset;
 
-        private Dictionary<string, Profiler> _profilers;
-        private bool _profilersInitialized;
-        private Dictionary<string, List<string>> _updateObjectNames;
-        private Dictionary<string, List<string>> _operationObjectNames;
-        private ProfilerTreeStringBuilder _profilerTreeStringBuilder;
+        private Dictionary<string, HashSet<object>> _singleFiredObjects;
 
+        // private Dictionary<string, Profiler> _profilers;
+        // private bool _profilersInitialized;
+        // private Dictionary<string, List<string>> _updateObjectNames;
+        // private Dictionary<string, List<string>> _operationObjectNames;
+        // private ProfilerTreeStringBuilder _profilerTreeStringBuilder;
+        
+        private HashSet<object> _registeredListeners;
+
+        private bool _initialized;
         private bool _isSubscribingListeners;
-        private HashSet<string> _operationEventIDs;
-        private HashSet<string> _updateEventIDs;
+        private Dictionary<string, OperationInfo> _operationEvents;
+        private HashSet<string> _updateEvents;
 
         public GameCycle (
             Proxy proxy, 
             GameCycleConfig cycleConfig, 
             ProfilerConfig profilerConfig,
-            List<IGameCycleListener> subscribers)
+            DiContainer container)
         {
             _proxy = proxy;
-            _subscribers = subscribers;
             _cycleConfig = cycleConfig;
             _profilerConfig = profilerConfig;
+            _container = container;
 
             _proxy.Inject(this);
         }
         
-        public bool TryInitializeSelf(GameCycleParameters input)
+        private void _initialize(GameCycleData input)
         {
-            input.ValidateThrowException(nameof(input));
-
-            List<string> idsIntersection = input.updateEventIDs.Intersect(input.operationEventIDs).ToList();
-
-            if (idsIntersection.Count > 0)
+            if (_initialized)
             {
-                string conflictingIds = string.Join(", ", idsIntersection);
-                throw new InvalidOperationException("Command ids must be unique. Duplicated: " + conflictingIds);
+                throw new InvalidOperationException("Already initialized");
             }
             
-            _isSubscribingListeners = true;
+            input.ValidateThrowException(nameof(input));
+            
+            _initialized = true;
 
-            _brokenUpdates = new HashSet<object>();
-            _updateErrorCount = new Dictionary<object, int>();
-
-            _operationEventIDs = input.operationEventIDs;
-            _updateEventIDs = input.updateEventIDs;
+            _operationEvents = new Dictionary<string, OperationInfo>();
+            _updateEvents = new HashSet<string>();
+            _registeredListeners = new HashSet<object>();
+            _singleFiredObjects = new Dictionary<string, HashSet<object>>();
             
             _operationListeners = new Dictionary<string, List<OperationListener>>();
             _updateListeners = new Dictionary<string, List<UpdateListener>>();
-            foreach (string eventID in _operationEventIDs)
+            
+            HashSet<string> commandIds = new (input.operationEvents.Count + input.updateEvents.Count);
+            
+            foreach (string id in input.updateEvents)
             {
-                _operationListeners[eventID] = new List<OperationListener>();
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new InvalidOperationException("Empty command id in updateEvents list");
+                }
+                
+                if (!commandIds.Add(id))
+                {
+                    throw new InvalidOperationException($"Command ids must be unique. Duplicated: '{id}'");;
+                }
+                
+                _updateEvents.Add(id);
+                _updateListeners[id] = new List<UpdateListener>();
             }
-            foreach (string eventID in _updateEventIDs)
+            
+            foreach (OperationInfo op in input.operationEvents)
             {
-                _updateListeners[eventID] = new List<UpdateListener>();
+                if (!commandIds.Add(op.id))
+                {
+                    throw new InvalidOperationException($"Command ids must be unique. Duplicated: '{op.id}'");
+                }
+                
+                if (string.IsNullOrEmpty(op.id))
+                {
+                    throw new InvalidOperationException("Empty command id in operation list");
+                }
+
+                if (op.executedOncePerObject)
+                {
+                    _singleFiredObjects[op.id] = new HashSet<object>();
+                }
+
+                _operationEvents[op.id] = op;
+                _operationListeners[op.id] = new List<OperationListener>();
             }
+            
+            _brokenUpdates = new HashSet<object>();
+            _updateErrorCount = new Dictionary<object, int>();
 
             if (_cycleConfig.preventDuplicatingSubscription)
             {
                 _updateHashset = new Dictionary<string, HashSet<object>>();
                 _operationHashset = new Dictionary<string, HashSet<object>>();
-                foreach (string eventID in _operationEventIDs)
+                
+                foreach (string eventID in _operationEvents.Keys)
                 {
                     _operationHashset[eventID] = new HashSet<object>();
                 }
-                foreach (string eventID in _updateEventIDs)
+                
+                foreach (string eventID in _updateEvents)
                 {
                     _updateHashset[eventID] = new HashSet<object>();
                 }
             }
+        }
 
-            GameCycleHandle handle = new (this);
+        private void _registerListeners()
+        {
+            _isSubscribingListeners = true;
             
-            foreach (IGameCycleListener subscriber in _subscribers)
+            GameCycleHandle handle = new (this);
+
+            List<IGameCycleListener> listeners = _container.TryResolve<List<IGameCycleListener>>();
+            if (listeners == null)
             {
+                throw new Exception("Failed to resolve listeners");
+            }
+            
+            foreach (IGameCycleListener subscriber in listeners)
+            {
+                if (_registeredListeners.Contains(subscriber))
+                {
+                    continue;
+                }
+
                 try
                 {
                     handle.currentListener = subscriber;
@@ -117,54 +170,56 @@ namespace Beast.Claw.GameCycle
                 catch (Exception e)
                 {
                     BDebug.LogException(this, e, $"Exception during subscription ({subscriber.GetType()})");
-                    
-                    return false;
+
+                    throw;
+                }
+                finally
+                {
+                    _registeredListeners.Add(subscriber);
                 }
             }
-
+            
             _isSubscribingListeners = false;
-
-            return true;
         }
 
-        private void _tryInitializeProfiling()
-        {
-            if (_profilersInitialized)
-            {
-                return;
-            }
+        // private void _tryInitializeProfiling()
+        // {
+        //     if (_profilersInitialized)
+        //     {
+        //         return;
+        //     }
+        //
+        //     _profilerTreeStringBuilder = new ProfilerTreeStringBuilder();
+        //     _profilers = new Dictionary<string, Profiler>();
+        //     
+        //     _operationObjectNames = new Dictionary<string, List<string>>();
+        //     foreach (string eventID in _operationEvents)
+        //     {
+        //         _operationObjectNames[eventID] = _operationListeners[eventID]
+        //             .Select(listener => listener.obj.GetType().Name).ToList();
+        //         
+        //         Profiler profiler = new (_profilerConfig);
+        //         profiler.Initialize();
+        //         _profilers[eventID] = profiler;
+        //     }
+        //
+        //     _updateObjectNames = new Dictionary<string, List<string>>();
+        //     foreach (string eventID in _updateEvents)
+        //     {
+        //         _updateObjectNames[eventID] = _updateListeners[eventID]
+        //             .Select(listener => listener.obj.GetType().Name).ToList();
+        //         
+        //         Profiler profiler = new (_profilerConfig);
+        //         profiler.Initialize();
+        //         _profilers[eventID] = profiler;
+        //     }
+        //     
+        //     _proxy.InitializeProfilers();
+        //     
+        //     _profilersInitialized = true;
+        // }
 
-            _profilerTreeStringBuilder = new ProfilerTreeStringBuilder();
-            _profilers = new Dictionary<string, Profiler>();
-            
-            _operationObjectNames = new Dictionary<string, List<string>>();
-            foreach (string eventID in _operationEventIDs)
-            {
-                _operationObjectNames[eventID] = _operationListeners[eventID]
-                    .Select(listener => listener.obj.GetType().Name).ToList();
-                
-                Profiler profiler = new (_profilerConfig);
-                profiler.Initialize();
-                _profilers[eventID] = profiler;
-            }
-
-            _updateObjectNames = new Dictionary<string, List<string>>();
-            foreach (string eventID in _updateEventIDs)
-            {
-                _updateObjectNames[eventID] = _updateListeners[eventID]
-                    .Select(listener => listener.obj.GetType().Name).ToList();
-                
-                Profiler profiler = new (_profilerConfig);
-                profiler.Initialize();
-                _profilers[eventID] = profiler;
-            }
-            
-            _proxy.InitializeProfilers();
-            
-            _profilersInitialized = true;
-        }
-
-        public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) 
+        private async UniTask<OperationResult> _execute<TOwner>(TOwner owner, string eventID) 
             where TOwner : class
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
@@ -175,41 +230,52 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException("Tried to invoke operation during subscription");
             }
 
-            if (!_operationEventIDs.Contains(eventID))
+            if (!_operationEvents.TryGetValue(eventID, out OperationInfo operationInfo))
             {
-                throw new InvalidOperationException($"Tried to invoke invalid operation event '{eventID}'");
+                throw new InvalidOperationException($"Tried to invoke invalid operation '{eventID}'");
             }
             
             OperationResult result = OperationResult.Success();
 
-            bool profilingActive = _profilerConfig.AnyProfilingActive;
-            Profiler.Handle handle = Profiler.Handle.Disabled;
-            Profiler profiler = null;
-            List<string> objNames = null;
-            
-            if (profilingActive)
+            HashSet<object> alreadyFired = null;
+            if (operationInfo.executedOncePerObject)
             {
-                _tryInitializeProfiling();
-                profiler = _profilers[eventID];
-                profiler.FetchConfig();
-                objNames = _operationObjectNames[eventID];
+                alreadyFired = _singleFiredObjects[eventID];
             }
+
+            // bool profilingActive = _profilerConfig.AnyProfilingActive;
+            // Profiler.Handle handle = Profiler.Handle.Disabled;
+            // Profiler profiler = null;
+            // List<string> objNames = null;
+            //
+            // if (profilingActive)
+            // {
+            //     _tryInitializeProfiling();
+            //     profiler = _profilers[eventID];
+            //     profiler.FetchConfig();
+            //     objNames = _operationObjectNames[eventID];
+            // }
 
             List<OperationListener> listeners = _operationListeners[eventID];
 
             for (int listenerIndex = 0; listenerIndex < listeners.Count; listenerIndex++)
             {
                 OperationListener listener = listeners[listenerIndex];
-                
-                string sampleName = null;
-                
-                if (profilingActive)
-                {
-                    handle = profiler.GetHandle(listener.obj);
-                    sampleName = objNames[listenerIndex];
 
-                    handle.BeginSample(sampleName);
+                if (operationInfo.executedOncePerObject && !alreadyFired.Add(listener.obj))
+                {
+                    continue;
                 }
+                
+                // string sampleName = null;
+                
+                // if (profilingActive)
+                // {
+                //     handle = profiler.GetHandle(listener.obj);
+                //     sampleName = objNames[listenerIndex];
+                //
+                //     handle.BeginSample(sampleName);
+                // }
 
                 try
                 {
@@ -223,10 +289,10 @@ namespace Beast.Claw.GameCycle
                 }
                 finally
                 {
-                    if (profilingActive)
-                    {
-                        handle.EndSample(sampleName);
-                    }
+                    // if (profilingActive)
+                    // {
+                    //     handle.EndSample(sampleName);
+                    // }
                 }
 
                 if (result.status != EOperationStatus.Success)
@@ -236,22 +302,22 @@ namespace Beast.Claw.GameCycle
                 }
             }
 
-            if (_profilerConfig.enableClawProfiling)
-            {
-                profiler.RebuildTree();
-
-                if (_profilerConfig.logOperationProfiling)
-                {
-                    string info = _profilerTreeStringBuilder.ToString(profiler.Reader, eventID);
-                
-                    BDebug.StaticLogInfo(info);
-                }
-            }
+            // if (_profilerConfig.enableClawProfiling)
+            // {
+            //     profiler.RebuildTree();
+            //
+            //     if (_profilerConfig.logOperationProfiling)
+            //     {
+            //         string info = _profilerTreeStringBuilder.ToString(profiler.Reader, eventID);
+            //     
+            //         BDebug.StaticLogInfo(info);
+            //     }
+            // }
 
             return result;
         }
 
-        public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
+        private void _update<TOwner>(TOwner owner, string eventID) where TOwner : class
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
@@ -266,25 +332,25 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException("Tried to invoke update during subscription");
             }
             
-            if (!_updateEventIDs.Contains(eventID))
+            if (!_updateEvents.Contains(eventID))
             {
-                throw new InvalidOperationException($"Tried to invoke invalid update event '{eventID}'");
+                throw new InvalidOperationException($"Tried to invoke invalid update '{eventID}'");
             }
             
             bool hasBrokenLogic = _brokenUpdates.Count > 0;
             
-            bool profilingActive = _profilerConfig.AnyProfilingActive;
-            Profiler.Handle handle = Profiler.Handle.Disabled;
-            Profiler profiler = null;
-            List<string> objNames = null;
-            
-            if (profilingActive)
-            {
-                _tryInitializeProfiling();
-                profiler = _profilers[eventID];
-                profiler.FetchConfig();
-                objNames = _updateObjectNames[eventID];
-            }
+            // bool profilingActive = _profilerConfig.AnyProfilingActive;
+            // Profiler.Handle handle = Profiler.Handle.Disabled;
+            // Profiler profiler = null;
+            // List<string> objNames = null;
+            //
+            // if (profilingActive)
+            // {
+            //     _tryInitializeProfiling();
+            //     profiler = _profilers[eventID];
+            //     profiler.FetchConfig();
+            //     objNames = _updateObjectNames[eventID];
+            // }
 
             List<UpdateListener> updateListeners = _updateListeners[eventID];
 
@@ -297,15 +363,15 @@ namespace Beast.Claw.GameCycle
                     continue;
                 }
                 
-                string sampleName = null;
+                // string sampleName = null;
                 
-                if (profilingActive)
-                {
-                    handle = profiler.GetHandle(listener.obj);
-                    sampleName = objNames[listenerIndex];
-                        
-                    handle.BeginSample(sampleName);
-                }
+                // if (profilingActive)
+                // {
+                //     handle = profiler.GetHandle(listener.obj);
+                //     sampleName = objNames[listenerIndex];
+                //         
+                //     handle.BeginSample(sampleName);
+                // }
 
                 try
                 {
@@ -325,26 +391,26 @@ namespace Beast.Claw.GameCycle
                 }
                 finally
                 {
-                    if (profilingActive)
-                    {
-                        handle.EndSample(sampleName);
-                    }
+                    // if (profilingActive)
+                    // {
+                    //     handle.EndSample(sampleName);
+                    // }
                 }
             }
             
-            if (_profilerConfig.enableClawProfiling)
-            {
-                profiler.RebuildTree();
-            }
+            // if (_profilerConfig.enableClawProfiling)
+            // {
+            //     profiler.RebuildTree();
+            // }
         }
 
         private void _listenOperation(object owner, string eventID, Func<OperationContext, UniTask<OperationResult>> action)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
-            owner.ValidateNotNullThrowException(nameof(owner));;
+            owner.ValidateNotNullThrowException(nameof(owner));
             action.ValidateNotNullThrowException(nameof(action));
             
-            if (!_operationEventIDs.Contains(eventID))
+            if (!_operationEvents.ContainsKey(eventID))
             {
                 string message = $"'{eventID}' is not valid operation eventID ({owner.GetType()})";
                 throw new InvalidOperationException(message);
@@ -368,7 +434,6 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException(message);
                 }
             }
-            
 
             _operationListeners[eventID].Add(new OperationListener
             {
@@ -383,7 +448,7 @@ namespace Beast.Claw.GameCycle
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             action.ValidateNotNullThrowException(nameof(action));
             
-            if (!_updateEventIDs.Contains(eventID))
+            if (!_updateEvents.Contains(eventID))
             {
                 string message = $"'{eventID}' is not valid update eventID ({owner.GetType().FullName})";
                 throw new InvalidOperationException(message);
@@ -444,17 +509,17 @@ namespace Beast.Claw.GameCycle
 
         public void Dispose()
         {
-            if (_profilersInitialized)
-            {
-                foreach (Profiler profiler in _profilers.Values)
-                {
-                    profiler.Dispose();
-                }
-                
-                _profilers.Clear();
-                
-                _profilersInitialized = false;
-            }
+            // if (_profilersInitialized)
+            // {
+            //     foreach (Profiler profiler in _profilers.Values)
+            //     {
+            //         profiler.Dispose();
+            //     }
+            //     
+            //     _profilers.Clear();
+            //     
+            //     _profilersInitialized = false;
+            // }
         }
     }
 }

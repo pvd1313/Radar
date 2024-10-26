@@ -11,4 +11,5 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scene/IsometricTest/IsometricTest.unity
     guid: e064ac9dbe5f66344bf12e313716b747
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 5404a949754f07545baad1e0f0941778, type: 2}

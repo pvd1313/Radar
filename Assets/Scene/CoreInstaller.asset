@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: CoreInstaller
   m_EditorClassIdentifier: 
   configs:
-  - {fileID: 11400000, guid: 3f423c598d102204eb3d91246f02940d, type: 2}
   - {fileID: 11400000, guid: 311e55c83d9a3de4992836e5718ceae3, type: 2}
   - {fileID: 11400000, guid: e2c9e161e164b294195fd8e46c2a4ea8, type: 2}
   - {fileID: 11400000, guid: 5e0edc1acc2a06f45afac8ee2f8a3fdc, type: 2}

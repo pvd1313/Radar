@@ -9,7 +9,9 @@ namespace Beast.Claw.GameCycle
     {
         public IReadOnlyDictionary<string, IProfiler> Profilers { get; }
         
-        public bool TryInitializeSelf(GameCycleParameters input);
+        public void Initialize(GameCycleData input);
+
+        public void RegisterListeners();
         
         UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class;
 

@@ -20,58 +20,58 @@ namespace Beast.Radar.GameCycle
 
         public async void Initialize()
         {
-            bool success = _gameCycle.TryInitializeSelf(new GameCycleParameters
-            {
-                operationEventIDs = new HashSet<string>
-                {
-                    OperationID.WARMUP,
-                    OperationID.DISPOSE,
-                    
-                    OperationID.GAME_SAVE,
-                    OperationID.GAME_LOAD,
-                    
-                    OperationID.PREFERENCES_SAVE,
-                    OperationID.PREFERENCES_LOAD
-                },
-
-                updateEventIDs = new HashSet<string>
-                {
-                    UpdateID.TICK,
-                    UpdateID.RENDER,
-                    UpdateID.FIXED_UPDATE,
-                    UpdateID.GIZMOS_DRAW
-                }
-            });
-
-            if (!success)
-            {
-                return;
-            }
-            
-            OperationResult result = await _gameCycle.Execute(this, OperationID.PREFERENCES_LOAD);
-            if (result.IsFailed())
-            {
-                return;
-            }
-            
-            result = await _gameCycle.Execute(this, OperationID.WARMUP);
-            if (result.IsFailed())
-            {
-                return;
-            }
-
-            result = await _boot.Boot();
-            if (result.IsFailed())
-            {
-                return;
-            }
-            
-            _mono = BScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
-            _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FIXED_UPDATE);
-            _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GIZMOS_DRAW);
-            _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.TICK);
-            _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.RENDER);
-            _mono.Destroyed += () => UniTask.Create(OnMonoDestroyed);
+            // bool success = _gameCycle.TryInitializeSelf(new GameCycleData
+            // {
+            //     operationEvents = new HashSet<string>
+            //     {
+            //         OperationID.WARMUP,
+            //         OperationID.DISPOSE,
+            //         
+            //         OperationID.GAME_SAVE,
+            //         OperationID.GAME_LOAD,
+            //         
+            //         OperationID.PREFERENCES_SAVE,
+            //         OperationID.PREFERENCES_LOAD
+            //     },
+            //
+            //     updateEvents = new HashSet<string>
+            //     {
+            //         UpdateID.TICK,
+            //         UpdateID.RENDER,
+            //         UpdateID.FIXED_UPDATE,
+            //         UpdateID.GIZMOS_DRAW
+            //     }
+            // });
+            //
+            // if (!success)
+            // {
+            //     return;
+            // }
+            //
+            // OperationResult result = await _gameCycle.Execute(this, OperationID.PREFERENCES_LOAD);
+            // if (result.IsFailed())
+            // {
+            //     return;
+            // }
+            //
+            // result = await _gameCycle.Execute(this, OperationID.WARMUP);
+            // if (result.IsFailed())
+            // {
+            //     return;
+            // }
+            //
+            // result = await _boot.Boot();
+            // if (result.IsFailed())
+            // {
+            //     return;
+            // }
+            //
+            // _mono = BScene.CreateGameObject(this).AddComponent<GameUpdateHandler>();
+            // _mono.FixedUpdated += () => _gameCycle.Update(this, UpdateID.FIXED_UPDATE);
+            // _mono.GizmosDraw += () => _gameCycle.Update(this, UpdateID.GIZMOS_DRAW);
+            // _mono.FrameBegin += () => _gameCycle.Update(this, UpdateID.TICK);
+            // _mono.FrameEnd += () => _gameCycle.Update(this, UpdateID.RENDER);
+            // _mono.Destroyed += () => UniTask.Create(OnMonoDestroyed);
         }
 
         // In future we will have to also save preferences on application lost focus.
