@@ -67,9 +67,9 @@ namespace Beast.Claw.Editor.Window.Profiler
                 return;
             }
 
-            if (_gameCycle.Reference.Profilers.Count == 0)
+            if (_gameCycle.Reference.AllOperations.Count == 0)
             {
-                Begin.InfoBox("No Profilers found in GameCycle");
+                Begin.InfoBox("No operations found in GameCycle");
             }
 
             _tryRebuildProfilers();
@@ -87,10 +87,12 @@ namespace Beast.Claw.Editor.Window.Profiler
 
                 IProfiler selectedProfiler = null;
 
-                foreach ((string profilerName, IProfiler profiler) in _gameCycle.Reference.Profilers)
+                foreach (string operationName in _gameCycle.Reference.AllOperations)
                 {
-                    int profilerIndex = _profilerNameToIndex[profilerName];
+                    int profilerIndex = _profilerNameToIndex[operationName];
                     Style buttonStyle = _buttonStyleNormal;
+
+                    IProfiler profiler = _gameCycle.Reference.TryGetProfiler(operationName);
 
                     if (profilerIndex == _selectedProfilerIndex)
                     {
@@ -100,7 +102,7 @@ namespace Beast.Claw.Editor.Window.Profiler
 
                     Rect buttonRect = flex[profilerIndex].AddPosition(uiRect.position);
                     
-                    if (_rectUI.Button(buttonRect, profilerName, buttonStyle))
+                    if (_rectUI.Button(buttonRect, operationName, buttonStyle))
                     {
                         selectedProfiler = profiler;
                         _selectedProfilerIndex = profilerIndex;
@@ -125,7 +127,7 @@ namespace Beast.Claw.Editor.Window.Profiler
         {
             bool needsRebuild = false;
             
-            foreach (string profilerName in _gameCycle.Reference.Profilers.Keys)
+            foreach (string profilerName in _gameCycle.Reference.AllOperations)
             {
                 if (!_profilerNameToIndex.ContainsKey(profilerName))
                 {
@@ -139,7 +141,7 @@ namespace Beast.Claw.Editor.Window.Profiler
                 return;
             }
 
-            int profilerCount = _gameCycle.Reference.Profilers.Count;
+            int profilerCount = _gameCycle.Reference.AllOperations.Count;
             _profilerNameToIndex.Clear();
 
             _selectedProfilerIndex = -1;
@@ -147,7 +149,7 @@ namespace Beast.Claw.Editor.Window.Profiler
             _elementPositions = new float2[profilerCount];
             int i = 0;
             
-            foreach (string profilerName in _gameCycle.Reference.Profilers.Keys)
+            foreach (string profilerName in _gameCycle.Reference.AllOperations)
             {
                 _elementSizes[i] = _labelStyle.CalcSize(profilerName) + new float2(10, 5);
                 _profilerNameToIndex[profilerName] = i;

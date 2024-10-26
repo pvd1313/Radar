@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameCycle
@@ -15,10 +16,11 @@ namespace Beast.Claw.GameCycle
                 public object target;
             }
 
+            public RunnerProfiler Profiler => _profiler;
+
             public OperationInfo Operation => _operation;
             
             private readonly GameCycleConfig _config;
-            private readonly GameCycle _gameCycle;
 
             private readonly HashSet<object> _singleFireObjects;
             private readonly List<Listener> _listeners;
@@ -28,15 +30,16 @@ namespace Beast.Claw.GameCycle
             private readonly Dictionary<object, int> _blockingLogicCounters;
             private readonly HashSet<object> _blockingBrokenLogic;
             private bool _blockingLogicAllBroken;
+            private ProfilerTreeStringBuilder _treeBuilder;
+            
+            private RunnerProfiler _profiler;
 
-            public Runner(GameCycle gameCycle, GameCycleConfig config, OperationInfo operationInfo)
+            public Runner(GameCycleConfig config, OperationInfo operationInfo)
             {
                 config.ValidateNotNullThrowException(nameof(config));
-                gameCycle.ValidateNotNullThrowException(nameof(gameCycle));
                 operationInfo.ValidateThrowException(nameof(operationInfo));
                 
                 _config = config;
-                _gameCycle = gameCycle;
                 _operation = operationInfo;
 
                 if (operationInfo.frequency == EOperationFrequency.OncePerObjectLife)
@@ -78,11 +81,20 @@ namespace Beast.Claw.GameCycle
 
                 if (_operation.order == EOperationOrder.FromFirstToLastInjected)
                 {
+                    // https://risenbeast.youtrack.cloud/issue/R-79/Game-loading-optimization
+                    // TODO: also this might create spikes. It is better to increase capacity ealier.
                     _listeners.Add(listener);
                 }
                 else
                 {
+                    // TODO: This is not effective
                     _listeners.Insert(0, listener);
+                }
+
+                if (_profiler.isInitialized)
+                {
+                    _profiler.Dispose();
+                    _profiler = default;
                 }
             }
 
@@ -93,13 +105,32 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException("Invalid flow type");
                 }
 
-                return await new RunnerConcurrent
+                RunnerProfiler profiler = default;
+
+                if (_config.profiler.AnyProfilingActive)
                 {
+                    _treeBuilder ??= new ProfilerTreeStringBuilder();
+
+                    if (!_profiler.isInitialized)
+                    {
+                        _profiler = new RunnerProfiler(_config.profiler, _listeners);
+                    }
+                    
+                    profiler = _profiler;
+                }
+
+                OperationResult result = await new RunnerConcurrent
+                {
+                    profiler = profiler,
+                    treeStringBuilder = _treeBuilder,
                     singleFiredObjects = _singleFireObjects,
                     operationID = _operation.id,
                     listeners = _listeners,
-                    frequency = _operation.frequency
+                    frequency = _operation.frequency, 
+                    config = _config
                 }.Run();
+
+                return result;
             }
 
             public void ExecuteBlocking()
@@ -113,20 +144,43 @@ namespace Beast.Claw.GameCycle
                 {
                     return;
                 }
+                
+                RunnerProfiler profiler = default;
+
+                if (_config.profiler.AnyProfilingActive)
+                {
+                    if (!_profiler.isInitialized)
+                    {
+                        _profiler = new RunnerProfiler(_config.profiler, _listeners);
+                    }
+                    
+                    profiler = _profiler;
+                }
 
                 RunnerBlocking runner = new()
                 {
+                    profiler = profiler,
                     listeners = _listeners,
                     exceptionStopsExecution = _config.exceptionStopsUpdates,
                     exceptionThreshold = _config.updateExceptionThreshold,
                     operationID = _operation.id,
                     brokenObjects = _blockingBrokenLogic,
-                    objectErrorCount = _blockingLogicCounters
+                    objectErrorCount = _blockingLogicCounters,
+                    config = _config
                 };
                 
                 runner.Run();
 
                 _blockingLogicAllBroken = runner.allLogicIsBroken;
+            }
+
+            public void Dispose()
+            {
+                if (_profiler.isInitialized)
+                {
+                    _profiler.Dispose();
+                    _profiler = default;
+                }
             }
         }
     }

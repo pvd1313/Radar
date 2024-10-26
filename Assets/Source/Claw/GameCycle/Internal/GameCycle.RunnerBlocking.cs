@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Debug;
+using Beast.Claw.Profiling;
 
 namespace Beast.Claw.GameCycle
 {
@@ -15,16 +16,30 @@ namespace Beast.Claw.GameCycle
             public int exceptionThreshold;
             public bool exceptionStopsExecution;
             public bool allLogicIsBroken;
+            public GameCycleConfig config;
+            public RunnerProfiler profiler;
             
             public void Run()
             {
                 bool hasBrokenLogic = brokenObjects.Count > 0;
                 
-                foreach (Runner.Listener listener in listeners)
+                Profiler.Handle handle = default;
+                string objectName = null;
+
+                for (int i = 0; i < listeners.Count; i++)
                 {
+                    Runner.Listener listener = listeners[i];
+                    
                     if (hasBrokenLogic && brokenObjects.Contains(listener.target))
                     {
                         continue;
+                    }
+                    
+                    if (profiler.isInitialized)
+                    {
+                        objectName = profiler.objectNames[i];
+                        handle = profiler.profiler.GetHandle(listener.target);
+                        handle.BeginSample(objectName);
                     }
 
                     try
@@ -39,13 +54,24 @@ namespace Beast.Claw.GameCycle
                         if (!canContinue)
                         {
                             allLogicIsBroken = true;
-                            
+
                             break;
                         }
                     }
+                    finally
+                    {
+                        if (profiler.isInitialized)
+                        {
+                            handle.EndSample(objectName);
+                        }
+                    }
+                }
+                
+                if (profiler.isInitialized && config.profiler.enableClawProfiling)
+                {
+                    profiler.profiler.RebuildTree();
                 }
             }
-            
             
             private void ProcessException(Exception e, Runner.Listener listener, out bool canContinueExecution)
             {

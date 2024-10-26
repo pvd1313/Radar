@@ -43,6 +43,8 @@ namespace Beast.Claw.GameCycle
             await _gameCycle.Execute(this, OperationID.PREFERENCES_SAVE);
             
             await _gameCycle.Execute(this, OperationID.DISPOSE);
+            
+            _gameCycle.Dispose();
         }
     }
 }
