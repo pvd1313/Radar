@@ -16,14 +16,62 @@ namespace Beast.Claw.GameCycle
                 _gameCycle = gameCycle;
             }
         
-            public void ListenOperation(string eventID, Func<OperationContext, UniTask<OperationResult>> operation)
+            public void ListenOperation(string eventID, Func<OperationContext, UniTask<OperationResult>> action)
             {
-                _gameCycle._listenOperation(currentListener, eventID, operation);
+                eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
+                action.ValidateNotNullThrowException(nameof(action));
+                
+                if (currentListener != action.Target)
+                {
+                    string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                     $"that is implemented not inside '{currentListener.GetType().FullName}'";
+                    throw new InvalidOperationException(message);
+                }
+
+                if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
+                {
+                    throw new InvalidOperationException($"Unknown event '{eventID}'");
+                }
+
+                if (runner.Operation.flow != EOperationFlowType.Concurrent)
+                {
+                    throw new InvalidOperationException("Wrong event type for subscription");
+                }
+                
+                runner.AddListener(new Runner.Listener
+                {
+                    target = currentListener,
+                    concurrent = action
+                });
             }
 
-            public void ListenUpdate(string eventID, Action<OperationContext> update)
+            public void ListenUpdate(string eventID, Action<OperationContext> action)
             {
-                _gameCycle._listenUpdate(currentListener, eventID, update);
+                eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
+                action.ValidateNotNullThrowException(nameof(action));
+                
+                if (currentListener != action.Target)
+                {
+                    string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                     $"that is implemented not inside '{currentListener.GetType().FullName}'";
+                    throw new InvalidOperationException(message);
+                }
+                
+                if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
+                {
+                    throw new InvalidOperationException($"Unknown event '{eventID}'");
+                }
+                
+                if (runner.Operation.flow != EOperationFlowType.Blocking)
+                {
+                    throw new InvalidOperationException("Wrong event type for subscription");
+                }
+                
+                runner.AddListener(new Runner.Listener
+                {
+                    target = currentListener,
+                    blocking = action
+                });
             }
         }
     }

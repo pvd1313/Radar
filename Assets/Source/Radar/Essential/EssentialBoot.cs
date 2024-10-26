@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Beast.Radar.Core;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using Zenject;
 
 namespace Beast.Radar.Essential
@@ -43,25 +41,7 @@ namespace Beast.Radar.Essential
         {
             _gameCycle.Initialize(new GameCycleInitialization
             {
-                operations = new List<OperationInfo>
-                {
-                    new (OperationID.WARMUP, true),
-                    new (OperationID.DISPOSE, true),
-                    
-                    new (OperationID.GAME_SAVE, false),
-                    new (OperationID.GAME_LOAD, false),
-                    
-                    new (OperationID.PREFERENCES_SAVE, false),
-                    new (OperationID.PREFERENCES_LOAD, false)
-                },
-                
-                updates = new List<string>
-                {
-                    OperationID.TICK,
-                    OperationID.RENDER,
-                    OperationID.FIXED_UPDATE,
-                    OperationID.GIZMOS_DRAW
-                }
+                operations = new GameCycleOperationList().All
             });
             
             _gameCycle.RegisterListeners();

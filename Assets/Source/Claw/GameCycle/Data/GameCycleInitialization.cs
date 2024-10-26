@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 
+
+
 namespace Beast.Claw.GameCycle
 {
     public struct GameCycleInitialization : IValidatable
     {
+        private static readonly HashSet<string> OPERATION_NAMES = new();
+        
         public List<OperationInfo> operations;
-        public List<string> updates;
         
         public string Validate()
         {
@@ -13,10 +16,22 @@ namespace Beast.Claw.GameCycle
             {
                 return $"{nameof(operations)} can not be null";
             }
+            
+            OPERATION_NAMES.Clear();
 
-            if (updates == null)
+            for (int i = 0; i < operations.Count; i++)
             {
-                return $"{nameof(updates)} can not be null";
+                OperationInfo operationInfo = operations[i];
+                
+                if (!operationInfo.IsValid(out string error))
+                {
+                    return $"Invalid operation at index {i}: " + error;
+                }
+
+                if (!OPERATION_NAMES.Add(operationInfo.id))
+                {
+                    return $"Duplicated operation id '{operationInfo.id}'";
+                }
             }
 
             return null;
