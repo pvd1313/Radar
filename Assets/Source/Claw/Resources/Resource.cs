@@ -3,10 +3,10 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
 
-namespace Beast.Claw.Asset
+namespace Beast.Claw.Resources
 {
     [Serializable]
-    public class AssetReference<TObject> : ISerializationCallbackReceiver, IAssetReference<TObject> 
+    public class Resource<TObject> : ISerializationCallbackReceiver, IResource<TObject> 
         where TObject : Object
     {
         public Guid Guid => _guid;

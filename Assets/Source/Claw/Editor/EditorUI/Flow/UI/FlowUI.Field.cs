@@ -189,7 +189,7 @@ namespace Beast.Claw.Editor
 
             // TODO : Optimize active window search (Resources.FindObjectsOfTypeAll)
             //      : https://risenbeast.youtrack.cloud/issue/R-70
-            EditorWindow[] editorWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+            EditorWindow[] editorWindows = UnityEngine.Resources.FindObjectsOfTypeAll<EditorWindow>();
 
             StackIndexMap<TWindow> windowMap = new (stackalloc short[_flow.TempStringArray.Capacity]);
             

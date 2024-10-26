@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.Cinematic;
-using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
@@ -15,11 +14,15 @@ namespace Beast.Radar.Core
 {
     public class CoreInstaller : ScriptableInstaller
     {
+        protected override IEnumerable<IConfig> BindConfigs()
+        {
+            yield break;
+        }
+
         protected override IEnumerable<Type> BindInterfaces()
         {
             // Main
-            yield return typeof(GameCycle.GameCycle);
-            yield return typeof(GameBoot);
+            yield return typeof(CoreBoot);
             yield return typeof(SaveManager);
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);

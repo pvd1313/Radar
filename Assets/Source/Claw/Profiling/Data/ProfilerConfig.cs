@@ -1,16 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
 
 namespace Beast.Claw.Profiling
 {
-    [System.Serializable]
+    [Serializable]
     public class ProfilerConfig : IConfig, IValidatable
     {
         private const int MAX_RECORD_COUNT = (1 << 16) - 2;
 
         public bool AnyProfilingActive => enableClawProfiling || enableUnityProfiling;
 
-        public bool logOperationProfiling;
         public bool enableClawProfiling;
         public bool enableUnityProfiling;
         public int maxRecordCount;

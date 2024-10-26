@@ -14,6 +14,11 @@ namespace Beast.Claw.Common
         
         public override void InstallBindings()
         {
+            foreach (IConfig config in BindConfigs())
+            {
+                _bindConfigSelfAndChildrenRecursive(config, 0);
+            }
+            
             foreach (ScriptableConfig config in configs)
             {
                 _bindConfigSelfAndChildrenRecursive(config, 0);
@@ -27,6 +32,8 @@ namespace Beast.Claw.Common
                 Container.BindInterfacesTo(logicType).AsSingle();
             }
         }
+
+        protected abstract IEnumerable<IConfig> BindConfigs();
 
         protected abstract IEnumerable<Type> BindInterfaces();
 

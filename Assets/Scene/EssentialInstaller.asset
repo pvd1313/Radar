@@ -15,5 +15,15 @@ MonoBehaviour:
   configs:
   - {fileID: 11400000, guid: f57d73aed794eb045b42e40b84323626, type: 2}
   - {fileID: 11400000, guid: 3f423c598d102204eb3d91246f02940d, type: 2}
-  - {fileID: 11400000, guid: 4141a72247cd17641b16b0511f04723e, type: 2}
-  - {fileID: 11400000, guid: d003fabb3a8287346b920f8856454ad2, type: 2}
+  _essentialConfig:
+    installers:
+    - _reference:
+        m_AssetGUID: 5ddebb1b31180f94d8f1457e3a62411a
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - _reference:
+        m_AssetGUID: 7ce29ab08b76fc0449f4a492a9b0d179
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0

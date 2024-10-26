@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using Beast.Claw.Asset;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Resources;
 
 namespace Beast.Radar.Essential
 {
-    public class EssentialConfig : ScriptableConfig
+    [Serializable]
+    public class EssentialConfig : IConfig
     {
-        public List<AssetReference<ScriptableInstaller>> coreInstallers;
+        public List<Resource<ScriptableInstaller>> installers; 
         
-        public override IEnumerable<IConfig> Bind()
+        public IEnumerable<IConfig> Bind()
         {
             yield break;
         }

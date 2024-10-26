@@ -7,7 +7,6 @@
     <type fullname="Beast.Claw.Graphic.TempRenderTextureData" preserve="nothing" serialized="true" />
     <type fullname="Beast.Claw.Graphic.Texture2DParameters" preserve="nothing" serialized="true" />
     <type fullname="Beast.Claw.Mathematics.FloatMinMax" preserve="nothing" serialized="true" />
-    <type fullname="Beast.Claw.Profiling.ProfilerConfig" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Beast.Radar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Beast.Radar.Cinematic.CameraConfig" preserve="all" />

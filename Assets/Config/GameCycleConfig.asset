@@ -16,3 +16,9 @@ MonoBehaviour:
   updateExceptionThreshold: 0
   preventDuplicatingSubscription: 1
   preventExternObjectMethodSubscription: 1
+  profiler:
+    enableClawProfiling: 1
+    enableUnityProfiling: 1
+    maxRecordCount: 1024
+    stackSize: 16
+  flushOperationProfilerToLog: 1

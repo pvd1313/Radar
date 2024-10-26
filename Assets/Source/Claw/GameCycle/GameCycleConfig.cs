@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Profiling;
 
 namespace Beast.Claw.GameCycle
 {
@@ -9,6 +10,8 @@ namespace Beast.Claw.GameCycle
         public int updateExceptionThreshold;
         public bool preventDuplicatingSubscription;
         public bool preventExternObjectMethodSubscription;
+        public ProfilerConfig profiler;
+        public bool flushOperationProfilerToLog;
         
         public override IEnumerable<IConfig> Bind()
         {

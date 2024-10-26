@@ -1,9 +1,9 @@
 ﻿using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Radar.GameCycle
+namespace Beast.Radar.Core
 {
-    public interface IGameBoot
+    public interface ICoreBoot
     {
         public UniTask<OperationResult> Boot();
     }

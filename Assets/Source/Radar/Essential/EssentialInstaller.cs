@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Asset;
 using Beast.Claw.Common;
+using Beast.Claw.Resources;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Beast.Radar.UI;
+using UnityEngine;
 using Zenject;
 
 namespace Beast.Radar.Essential
 {
     public class EssentialInstaller : ScriptableInstaller
     {
+        [SerializeField] private EssentialConfig _essentialConfig;
+
+        protected override IEnumerable<IConfig> BindConfigs()
+        {
+            yield return _essentialConfig;
+        }
+
         protected override IEnumerable<Type> BindInterfaces()
         {
             yield return typeof(CameraSpawner);
@@ -18,7 +26,7 @@ namespace Beast.Radar.Essential
             yield return typeof(UIFactory);
             yield return typeof(WindowManager);
             yield return typeof(LoadingScreenWindow);
-            yield return typeof(AssetManager);
+            yield return typeof(ResourceManager);
             yield return typeof(EssentialBoot);
         }
 

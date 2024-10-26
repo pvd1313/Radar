@@ -22,7 +22,7 @@ namespace Beast.Claw.GameCycle
         }
 
         private readonly Proxy _proxy;
-        private readonly GameCycleConfig _cycleConfig;
+        private readonly GameCycleConfig _config;
         private readonly ProfilerConfig _profilerConfig;
         private readonly DiContainer _container;
 
@@ -53,13 +53,11 @@ namespace Beast.Claw.GameCycle
 
         public GameCycle (
             Proxy proxy, 
-            GameCycleConfig cycleConfig, 
-            ProfilerConfig profilerConfig,
+            GameCycleConfig config,
             DiContainer container)
         {
             _proxy = proxy;
-            _cycleConfig = cycleConfig;
-            _profilerConfig = profilerConfig;
+            _config = config;
             _container = container;
 
             _proxy.Inject(this);
@@ -126,7 +124,7 @@ namespace Beast.Claw.GameCycle
             _brokenUpdates = new HashSet<object>();
             _updateErrorCount = new Dictionary<object, int>();
 
-            if (_cycleConfig.preventDuplicatingSubscription)
+            if (_config.preventDuplicatingSubscription)
             {
                 _updateHashset = new Dictionary<string, HashSet<object>>();
                 _operationHashset = new Dictionary<string, HashSet<object>>();
@@ -416,7 +414,7 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException(message);
             }
 
-            if (_cycleConfig.preventDuplicatingSubscription)
+            if (_config.preventDuplicatingSubscription)
             {
                 if (!_operationHashset[eventID].Add(owner))
                 {
@@ -425,7 +423,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
             
-            if (_cycleConfig.preventExternObjectMethodSubscription)
+            if (_config.preventExternObjectMethodSubscription)
             {
                 if (owner != action.Target)
                 {
@@ -454,7 +452,7 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException(message);
             }
 
-            if (_cycleConfig.preventExternObjectMethodSubscription)
+            if (_config.preventExternObjectMethodSubscription)
             {
                 if (owner != action.Target)
                 {
@@ -464,7 +462,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
 
-            if (_cycleConfig.preventDuplicatingSubscription)
+            if (_config.preventDuplicatingSubscription)
             {
                 if (!_updateHashset[eventID].Add(owner))
                 {
@@ -492,12 +490,12 @@ namespace Beast.Claw.GameCycle
             errorCount++;
             _updateErrorCount[logic] = errorCount;
         
-            if (errorCount > _cycleConfig.updateExceptionThreshold)
+            if (errorCount > _config.updateExceptionThreshold)
             {
                 _brokenUpdates.Add(logic);
             }
         
-            if (_cycleConfig.exceptionStopsUpdates)
+            if (_config.exceptionStopsUpdates)
             {
                 canContinueExecution = false;
             }

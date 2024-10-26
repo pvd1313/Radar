@@ -5,12 +5,11 @@ using Beast.Claw.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-
 using Object = UnityEngine.Object;
 
-namespace Beast.Claw.Asset
+namespace Beast.Claw.Resources
 {
-    public class AssetManager : IAssetManager, IGameCycleListener
+    public class ResourceManager : IResourceManager, IGameCycleListener
     {
         private class AssetInfo
         {
@@ -43,7 +42,7 @@ namespace Beast.Claw.Asset
             return OperationResult.SuccessSyncronous();
         }
 
-        public async UniTask<TObject> Load<TOwner, TObject>(TOwner owner, IAssetReference<TObject> reference) 
+        public async UniTask<TObject> Load<TOwner, TObject>(TOwner owner, IResource<TObject> reference) 
             where TObject : Object
             where TOwner : class
         {
@@ -70,9 +69,10 @@ namespace Beast.Claw.Asset
             _activeLoads.Add(reference.Guid);
             
             AsyncOperationHandle handle = reference.Reference.LoadAssetAsync<TObject>();
-            handle.ReleaseHandleOnCompletion();
+            // handle.ReleaseHandleOnCompletion();
             
             info = new AssetInfo(reference.Guid, handle);
+            info.occupiedBy.Add(owner);
             _assets[reference.Guid] = info;
 
             await UniTask.WaitUntil(() => handle.IsDone);
@@ -84,7 +84,7 @@ namespace Beast.Claw.Asset
             return (TObject) info.asset;
         }
 
-        public void Dispose<TOwner, TObject>(TOwner owner, IAssetReference<TObject> reference) 
+        public void Release<TOwner, TObject>(TOwner owner, IResource<TObject> reference) 
             where TOwner : class
             where TObject : Object
         {
@@ -105,7 +105,7 @@ namespace Beast.Claw.Asset
 
             if (!info.occupiedBy.Remove(owner))
             {
-                string text = $"Asset '{info.guid}' is not owned by '{owner.TypeName()}'";
+                string text = $"Asset '{info.guid}' is not occupied by '{owner.TypeName()}'";
                 throw new InvalidOperationException(text);
             }
 

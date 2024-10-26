@@ -1,23 +1,42 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Resources;
+using Beast.Radar.Core;
 using Beast.Radar.UI;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using Zenject;
 
 namespace Beast.Radar.Essential
 {
-    public class EssentialBoot : Zenject.IInitializable
+    public class EssentialBoot : IInitializable, IGameCycleListener
     {
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
         private readonly IGameCycle _gameCycle;
+        private readonly IResourceManager _resources;
+        private readonly DiContainer _container;
+
+        private ScriptableInstaller[] _coreInstallers;
 
         public EssentialBoot(
             EssentialConfig config, 
             IWindowManager windows, 
-            IGameCycle gameCycle)
+            IGameCycle gameCycle,
+            IResourceManager resources,
+            DiContainer container)
         {
             _config = config;
             _windows = windows;
             _gameCycle = gameCycle;
+            _resources = resources;
+            _container = container;
+        }
+        
+        public void Register(IGameCycleHandle handle)
+        {
+            handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
         public async void Initialize()
@@ -49,7 +68,46 @@ namespace Beast.Radar.Essential
 
             await _gameCycle.Execute(this, OperationID.WARMUP);
 
+            await _startupCore();
+        }
+
+        private async UniTask _startupCore()
+        {
+            // TODO: Probably we may have special "splashcreen" loading screen? Or add style to loading window...
             _windows.Show(WindowID.LoadingScreen);
+            
+            // TODO: Start displaying loading infos.
+            //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
+
+            _coreInstallers = new ScriptableInstaller[_config.installers.Count];
+            for (int i = 0; i < _coreInstallers.Length; i++)
+            {
+                _coreInstallers[i] = await _resources.Load(this, _config.installers[i]);
+            }
+
+            foreach (ScriptableInstaller installer in _coreInstallers)
+            {
+                _container.Inject(installer);
+                
+                installer.InstallBindings();
+            }
+
+            await _container.Resolve<ICoreBoot>().Boot();
+        }
+
+        private UniTask<OperationResult> _dispose(OperationContext context)
+        {
+            if (_coreInstallers != null)
+            {
+                for (int i = 0; i < _coreInstallers.Length; i++)
+                {
+                    _resources.Release(this, _config.installers[i]);
+                }
+
+                _coreInstallers = null;
+            }
+
+            return OperationResult.SuccessSyncronous();
         }
     }
 }

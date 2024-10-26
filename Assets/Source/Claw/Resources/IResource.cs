@@ -2,9 +2,9 @@
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
 
-namespace Beast.Claw.Asset
+namespace Beast.Claw.Resources
 {
-    public interface IAssetReference<TObject> : IValidatable where TObject : Object
+    public interface IResource<TObject> : IValidatable where TObject : Object
     {
         public Guid Guid { get; }
         

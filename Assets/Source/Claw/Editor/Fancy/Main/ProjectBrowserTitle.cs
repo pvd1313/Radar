@@ -82,7 +82,7 @@ namespace Beast.Claw.Editor.Fancy.Main
 
                 _lastUpdateTime = time;
                 
-                Object[] allWindows = Resources.FindObjectsOfTypeAll(ProjectBrowserType);
+                Object[] allWindows = UnityEngine.Resources.FindObjectsOfTypeAll(ProjectBrowserType);
                 foreach (Object windowObject in allWindows)
                 {
                     // Window may not be initialized yet. This hack fixes it.

@@ -9,6 +9,11 @@ namespace Beast.Radar.Debug
 {
     public class DebugInstaller : ScriptableInstaller
     {
+        protected override IEnumerable<IConfig> BindConfigs()
+        {
+            yield break;
+        }
+
         protected override IEnumerable<Type> BindInterfaces()
         {
 #if DEVELOPMENT
