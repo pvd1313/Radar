@@ -9,7 +9,7 @@ namespace Beast.Claw.Gizmos
     {
         public int RenderVersion { get; private set; }
         
-        private const int BufferSize = 256;
+        private const int BUFFER_SIZE = 256;
         
         private readonly GizmosConfig _config;
         private readonly ICameraTransform _camera;
@@ -37,11 +37,11 @@ namespace Beast.Claw.Gizmos
         
         private UniTask<OperationResult> _warmup(OperationContext context)
         {
-            _wireLines = new ShapeStorage<Line>(BufferSize);
-            _wireRects = new ShapeStorage<Rect>(BufferSize);
-            _wirePolygons = new ShapeStorage<Polygon>(BufferSize);
-            _wireSquares = new ShapeStorage<Square>(BufferSize);
-            _screenSquares = new ShapeStorage<Square>(BufferSize);
+            _wireLines = new ShapeStorage<Line>(BUFFER_SIZE);
+            _wireRects = new ShapeStorage<Rect>(BUFFER_SIZE);
+            _wirePolygons = new ShapeStorage<Polygon>(BUFFER_SIZE);
+            _wireSquares = new ShapeStorage<Square>(BUFFER_SIZE);
+            _screenSquares = new ShapeStorage<Square>(BUFFER_SIZE);
             _material = new Material(_config.Shader);
 
             return OperationResult.SuccessSync();

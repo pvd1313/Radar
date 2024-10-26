@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using ModestTree;
 
@@ -10,23 +9,23 @@ namespace Beast.Radar.UI
 {
     public class WindowManager : IWindowManager, IGameCycleListener
     {
-        public event Action<bool> WindowChanged;
+        public event Action<string> WindowChanged;
         public event Action<bool> MouseOverUI;
 
         public string CurrentWindow => _currentWindowID ?? WindowID.None;
         
         private readonly IUIFactory _uiFactory;
-        private readonly IInputSystem _inputSystem;
-        private readonly Dictionary<string, IWindow> _allWindows = new();
+        // private readonly IInputSystem _inputSystem;
         
+        private Dictionary<string, IWindow> _windows;
         private CanvasView _canvas;
         private IWindow _currentWindow;
         private string _currentWindowID;
         
-        public WindowManager(IUIFactory uiFactory, IInputSystem inputSystem)
+        public WindowManager(IUIFactory uiFactory/*, IInputSystem inputSystem*/)
         {
             _uiFactory = uiFactory;
-            _inputSystem = inputSystem;
+            // _inputSystem = inputSystem;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -37,6 +36,8 @@ namespace Beast.Radar.UI
         
         private UniTask<OperationResult> _warmup(OperationContext context)
         {
+            _windows = new Dictionary<string, IWindow>();
+            
             _canvas = _uiFactory.CreateCanvas(this);
                 
             _subscribe();
@@ -46,7 +47,7 @@ namespace Beast.Radar.UI
 
         public void Register(IWindow window, string windowID, UIView view)
         {
-            if (_allWindows.ContainsKey(windowID))
+            if (_windows.ContainsKey(windowID))
             {
                 throw new InvalidOperationException($"'{windowID}' is already registered");
             }
@@ -55,57 +56,58 @@ namespace Beast.Radar.UI
             view.transform.SetParent(_canvas.transform, false);
             view.transform.SetSiblingIndex(windowIndex);
             
-            _allWindows.Add(windowID, window);  
+            _windows.Add(windowID, window);  
         }
 
         public void Show(string windowID)
         {
-            if (!_allWindows.ContainsKey(windowID))
+            if (!_windows.TryGetValue(windowID, out IWindow newWindow))
             {
-                throw new InvalidOperationException($"Window with ID '{windowID}' is not registered or does not exist.");
+                throw new InvalidOperationException($"Window '{windowID}' was not found.");
             }
-
+            
             _currentWindow?.Close();
-            _currentWindow = _allWindows[windowID];
+            _currentWindow = newWindow;
             _currentWindowID = windowID;
             _currentWindow.Open();
-            
-            bool isHasOpenedWindow = windowID != WindowID.MainHUD;
-            
-            WindowChanged?.Invoke(isHasOpenedWindow);
+
+            if (_currentWindow != newWindow)
+            {
+                WindowChanged?.Invoke(windowID);
+            }
         }
 
         private void _subscribe()
         {
             _canvas.MouseOverUI += _onMouseOverUI;
-            _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
+            // _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
         }
 
         private void _unsubscribe()
         {
             _canvas.MouseOverUI -= _onMouseOverUI;
-            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonsPressStarted;
+            // _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonsPressStarted;
         }
 
-        private void _onMouseOverUI(bool isOver)
+        private void _onMouseOverUI(bool isMouseOverUI)
         {
-            MouseOverUI?.Invoke(isOver);       
+            MouseOverUI?.Invoke(isMouseOverUI);       
         }
 
-        private void _onOptionButtonsPressStarted(EInputOptionButton button)
-        {
-            if (button == EInputOptionButton.Fourth)
-            {
-                if (_currentWindowID != WindowID.MainHUD)
-                {
-                    Show(WindowID.MainHUD);
-                }
-            }
-            else if(button == EInputOptionButton.Start)
-            {
-                Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
-            }
-        }
+        // private void _onOptionButtonsPressStarted(EInputOptionButton button)
+        // {
+        //     if (button == EInputOptionButton.Fourth)
+        //     {
+        //         if (_currentWindowID != WindowID.MainHUD)
+        //         {
+        //             Show(WindowID.MainHUD);
+        //         }
+        //     }
+        //     else if(button == EInputOptionButton.Start)
+        //     {
+        //         Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
+        //     }
+        // }
 
         private UniTask<OperationResult> _dispose(OperationContext context)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Beast.Radar.GameCycle;
 using Beast.Radar.Graphic;
@@ -22,7 +21,6 @@ namespace Beast.Radar.Core
             yield return typeof(GameCycle.GameCycle);
             yield return typeof(GameBoot);
             yield return typeof(SaveManager);
-            yield return typeof(DeviceScreen);
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             
@@ -31,15 +29,12 @@ namespace Beast.Radar.Core
             yield return typeof(CameraTransform);
             yield return typeof(CameraController);
             
-            // UI Main
-            yield return typeof(UIFactory);
-            yield return typeof(WindowManager);
+            // UI
             yield return typeof(InputBlocker);
             yield return typeof(SelectableZoneBuilder);
 
             // UI Windows
             yield return typeof(HUDWindow);
-            yield return typeof(LoadingScreenWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
             
@@ -57,8 +52,6 @@ namespace Beast.Radar.Core
 
         protected override void BindCustom(DiContainer diContainer)
         {
-            diContainer.Bind<Claw.GameCycle.GameCycle>().FromNew().AsSingle().NonLazy();
-            diContainer.BindInterfacesAndSelfTo<Claw.GameCycle.GameCycle.Proxy>().FromNew().AsSingle().NonLazy();
             diContainer.Bind<GameModel>().FromNew().AsSingle().NonLazy();
         }
     }

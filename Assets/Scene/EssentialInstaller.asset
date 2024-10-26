@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2a281e1a51e4f93bac7e9a58378e76d, type: 3}
-  m_Name: GizmosInstaller
+  m_Script: {fileID: 11500000, guid: be037901d2eb45b6b4f6e8f05aaa1e38, type: 3}
+  m_Name: EssentialInstaller
   m_EditorClassIdentifier: 
   configs:
-  - {fileID: 11400000, guid: e5cfc40c9e44bcb45a019b233e558ff5, type: 2}
+  - {fileID: 11400000, guid: f57d73aed794eb045b42e40b84323626, type: 2}

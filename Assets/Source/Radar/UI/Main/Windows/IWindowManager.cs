@@ -4,7 +4,7 @@ namespace Beast.Radar.UI
 {
     public interface IWindowManager
     {
-        event Action<bool> WindowChanged; 
+        event Action<string> WindowChanged; 
         event Action<bool> MouseOverUI;
         
         public string CurrentWindow { get; }

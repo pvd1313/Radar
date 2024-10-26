@@ -10,8 +10,8 @@ namespace Beast.Radar.InputHandling
         private readonly IInputSystem _inputSystem;
 
         private bool _isBlockInput;
-        private bool _isOverUI;
-        private bool _isOpenWindow;
+        private bool _isMouseOverUI;
+        private bool _isHUDClosed;
         
         public InputBlocker(IWindowManager windowManager, IInputSystem inputSystem)
         {
@@ -51,21 +51,21 @@ namespace Beast.Radar.InputHandling
             _windowManager.WindowChanged -= _onWindowChanged;
         }
 
-        private void _onWindowChanged(bool isHasOpenedWindow)
+        private void _onWindowChanged(string newWindowID)
         {
-            _isOpenWindow = isHasOpenedWindow;
+            _isHUDClosed = newWindowID != WindowID.MainHUD;
             _refreshBlockState();
         }
 
-        private void _onMouseOverUI(bool over)
+        private void _onMouseOverUI(bool isMouseOverUI)
         {
-            _isOverUI = over;
+            _isMouseOverUI = isMouseOverUI;
             _refreshBlockState();
         }
 
         private void _refreshBlockState()
         {
-            bool isBlock = _isOpenWindow || _isOverUI;
+            bool isBlock = _isHUDClosed || _isMouseOverUI;
             if (isBlock && !_isBlockInput)
             {
                 _isBlockInput = true;
