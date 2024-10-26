@@ -38,7 +38,7 @@ namespace Beast.Radar.Player
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(UpdateID.TICK, _tick);
+            handle.ListenUpdate(OperationID.TICK, _tick);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
 
@@ -50,7 +50,7 @@ namespace Beast.Radar.Player
             return OperationResult.SuccessSyncronous();
         }
 
-        private void _tick(UpdateContext context)
+        private void _tick(OperationContext context)
         {
             _move();
         }

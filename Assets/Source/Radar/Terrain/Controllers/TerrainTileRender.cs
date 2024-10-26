@@ -48,7 +48,7 @@ namespace Beast.Radar.Terrain
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(UpdateID.RENDER, _render);
+            handle.ListenUpdate(OperationID.RENDER, _render);
         }
 
         private UniTask<OperationResult> _warmup(OperationContext context)
@@ -63,7 +63,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSyncronous();
         }
         
-        private void _render(UpdateContext context)
+        private void _render(OperationContext context)
         {
             if (!_terrainBiome.IsReady)
             {

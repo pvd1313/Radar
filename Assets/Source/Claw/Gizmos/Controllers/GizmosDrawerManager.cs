@@ -27,7 +27,7 @@ namespace Beast.Claw.Gizmos
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(UpdateID.TICK, _tick);
+            handle.ListenUpdate(OperationID.TICK, _tick);
         }
 
         private UniTask<OperationResult> _warmup(OperationContext context)
@@ -41,7 +41,7 @@ namespace Beast.Claw.Gizmos
             return OperationResult.SuccessSyncronous();
         }
 
-        private void _tick(UpdateContext context)
+        private void _tick(OperationContext context)
         {
             foreach (DrawerInfo info in _drawers.Values)
             {

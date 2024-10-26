@@ -12,7 +12,7 @@ namespace Beast.Claw.GameCycle
         private struct UpdateListener
         {
             public object obj;
-            public Action<UpdateContext> action;
+            public Action<OperationContext> action;
         }
         
         private struct OperationListener
@@ -63,7 +63,7 @@ namespace Beast.Claw.GameCycle
             _proxy.Inject(this);
         }
         
-        private void _initialize(GameCycleData input)
+        private void _initialize(GameCycleInitialization input)
         {
             if (_initialized)
             {
@@ -82,9 +82,9 @@ namespace Beast.Claw.GameCycle
             _operationListeners = new Dictionary<string, List<OperationListener>>();
             _updateListeners = new Dictionary<string, List<UpdateListener>>();
             
-            HashSet<string> commandIds = new (input.operationEvents.Count + input.updateEvents.Count);
+            HashSet<string> commandIds = new (input.operations.Count + input.updates.Count);
             
-            foreach (string id in input.updateEvents)
+            foreach (string id in input.updates)
             {
                 if (string.IsNullOrEmpty(id))
                 {
@@ -100,7 +100,7 @@ namespace Beast.Claw.GameCycle
                 _updateListeners[id] = new List<UpdateListener>();
             }
             
-            foreach (OperationInfo op in input.operationEvents)
+            foreach (OperationInfo op in input.operations)
             {
                 if (!commandIds.Add(op.id))
                 {
@@ -145,7 +145,7 @@ namespace Beast.Claw.GameCycle
         {
             _isSubscribingListeners = true;
             
-            GameCycleHandle handle = new (this);
+            Handle handle = new (this);
 
             List<IGameCycleListener> listeners = _container.TryResolve<List<IGameCycleListener>>();
             if (listeners == null)
@@ -373,7 +373,7 @@ namespace Beast.Claw.GameCycle
 
                 try
                 {
-                    UpdateContext context = default;
+                    OperationContext context = default;
                     listener.action.Invoke(context);
                 }
                 catch (Exception e)
@@ -440,7 +440,7 @@ namespace Beast.Claw.GameCycle
             });
         }
 
-        private void _listenUpdate(object owner, string eventID, Action<UpdateContext> action)
+        private void _listenUpdate(object owner, string eventID, Action<OperationContext> action)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));

@@ -2,8 +2,8 @@
 {
     public struct OperationInfo
     {
-        public bool executedOncePerObject;
-        public string id;
+        public readonly bool executedOncePerObject;
+        public readonly string id;
 
         public OperationInfo(string id, bool executedOncePerObject)
         {

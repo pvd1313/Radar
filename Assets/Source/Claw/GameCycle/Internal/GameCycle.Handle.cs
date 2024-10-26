@@ -5,13 +5,13 @@ namespace Beast.Claw.GameCycle
 {
     partial class GameCycle
     {
-        private class GameCycleHandle : IGameCycleHandle
+        private class Handle : IGameCycleHandle
         {
             public object currentListener;
         
             private readonly GameCycle _gameCycle;
 
-            public GameCycleHandle(GameCycle gameCycle)
+            public Handle(GameCycle gameCycle)
             {
                 _gameCycle = gameCycle;
             }
@@ -21,7 +21,7 @@ namespace Beast.Claw.GameCycle
                 _gameCycle._listenOperation(currentListener, eventID, operation);
             }
 
-            public void ListenUpdate(string eventID, Action<UpdateContext> update)
+            public void ListenUpdate(string eventID, Action<OperationContext> update)
             {
                 _gameCycle._listenUpdate(currentListener, eventID, update);
             }

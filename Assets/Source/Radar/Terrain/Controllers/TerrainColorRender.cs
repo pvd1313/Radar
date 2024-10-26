@@ -37,7 +37,7 @@ namespace Beast.Radar.Terrain
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(UpdateID.RENDER, _render);
+            handle.ListenUpdate(OperationID.RENDER, _render);
         }
         
         public void Render(TerrainColorRenderTask task)
@@ -68,7 +68,7 @@ namespace Beast.Radar.Terrain
             return OperationResult.SuccessSyncronous();
         }
         
-        private void _render(UpdateContext context)
+        private void _render(OperationContext context)
         {
             if (!_biomeRender.IsReady || !_camera.IsReady)
             {

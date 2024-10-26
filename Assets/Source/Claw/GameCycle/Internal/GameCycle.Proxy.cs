@@ -29,7 +29,7 @@ namespace Beast.Claw.GameCycle
             //     }
             // }
 
-            public void Initialize(GameCycleData input)
+            public void Initialize(GameCycleInitialization input)
             {
                 _gameCycle._initialize(input);
             }

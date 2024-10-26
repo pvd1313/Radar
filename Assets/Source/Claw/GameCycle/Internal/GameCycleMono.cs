@@ -15,22 +15,22 @@ namespace Beast.Claw.GameCycle
 
         private void Update()
         {
-            _gameCycle.Update(this, UpdateID.TICK);
+            _gameCycle.Update(this, OperationID.TICK);
         }
 
         private void FixedUpdate()
         {
-            _gameCycle.Update(this, UpdateID.FIXED_UPDATE);
+            _gameCycle.Update(this, OperationID.FIXED_UPDATE);
         }
 
         private void OnDrawGizmos()
         {
-            _gameCycle.Update(this, UpdateID.GIZMOS_DRAW);
+            _gameCycle.Update(this, OperationID.GIZMOS_DRAW);
         }
 
         private void LateUpdate()
         {
-            _gameCycle.Update(this, UpdateID.RENDER);
+            _gameCycle.Update(this, OperationID.RENDER);
         }
 
         private void OnDestroy()

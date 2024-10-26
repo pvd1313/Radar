@@ -7,6 +7,6 @@ namespace Beast.Claw.GameCycle
     {
         void ListenOperation(string eventID, Func<OperationContext, UniTask<OperationResult>> operation);
 
-        void ListenUpdate(string eventID, Action<UpdateContext> update);
+        void ListenUpdate(string eventID, Action<OperationContext> update);
     }
 }

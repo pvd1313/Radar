@@ -65,7 +65,7 @@ namespace Beast.Radar.Terrain
             handle.ListenOperation(OperationID.WARMUP, _warmup);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
             handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
-            handle.ListenUpdate(UpdateID.RENDER, _render);
+            handle.ListenUpdate(OperationID.RENDER, _render);
         }
 
         public void Render(TerrainBiomeRenderTask task)
@@ -113,7 +113,7 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _render(UpdateContext context)
+        private void _render(OperationContext context)
         {
             if (!_bakedTerrain.IsReady || !_camera.IsReady)
             {

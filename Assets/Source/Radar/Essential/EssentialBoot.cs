@@ -41,9 +41,9 @@ namespace Beast.Radar.Essential
         
         public async void Initialize()
         {
-            _gameCycle.Initialize(new GameCycleData
+            _gameCycle.Initialize(new GameCycleInitialization
             {
-                operationEvents = new List<OperationInfo>
+                operations = new List<OperationInfo>
                 {
                     new (OperationID.WARMUP, true),
                     new (OperationID.DISPOSE, true),
@@ -55,12 +55,12 @@ namespace Beast.Radar.Essential
                     new (OperationID.PREFERENCES_LOAD, false)
                 },
                 
-                updateEvents = new List<string>
+                updates = new List<string>
                 {
-                    UpdateID.TICK,
-                    UpdateID.RENDER,
-                    UpdateID.FIXED_UPDATE,
-                    UpdateID.GIZMOS_DRAW
+                    OperationID.TICK,
+                    OperationID.RENDER,
+                    OperationID.FIXED_UPDATE,
+                    OperationID.GIZMOS_DRAW
                 }
             });
             

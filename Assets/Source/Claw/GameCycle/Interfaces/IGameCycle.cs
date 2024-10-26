@@ -9,7 +9,7 @@ namespace Beast.Claw.GameCycle
     {
         public IReadOnlyDictionary<string, IProfiler> Profilers { get; }
         
-        public void Initialize(GameCycleData input);
+        public void Initialize(GameCycleInitialization input);
 
         public void RegisterListeners();
         

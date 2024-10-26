@@ -10,5 +10,10 @@
         
         public const string GAME_LOAD = "game_load";
         public const string GAME_SAVE = "game_save";
+        
+        public const string TICK = "tick";
+        public const string RENDER = "render";
+        public const string FIXED_UPDATE = "fixed_update";
+        public const string GIZMOS_DRAW = "gizmos_draw";
     }
 }

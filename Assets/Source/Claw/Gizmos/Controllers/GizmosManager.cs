@@ -31,7 +31,7 @@ namespace Beast.Claw.Gizmos
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(UpdateID.GIZMOS_DRAW, _gizmosDraw);
+            handle.ListenUpdate(OperationID.GIZMOS_DRAW, _gizmosDraw);
             handle.ListenOperation(OperationID.DISPOSE, _dispose);
         }
         
@@ -61,7 +61,7 @@ namespace Beast.Claw.Gizmos
             return new GizmosHandle(id, this);
         }
 
-        private void _gizmosDraw(UpdateContext context)
+        private void _gizmosDraw(OperationContext context)
         {
             _material.SetPass(0);
             
