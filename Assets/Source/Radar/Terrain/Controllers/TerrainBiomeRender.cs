@@ -62,10 +62,10 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
-            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
-            handle.ListenUpdate(OperationID.RENDER, _render);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenUpdate(ActionID.RENDER, _render);
         }
 
         public void Render(TerrainBiomeRenderTask task)
@@ -75,7 +75,7 @@ namespace Beast.Radar.Terrain
             _renderBiome(task);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _dispose(context);
 
@@ -96,14 +96,14 @@ namespace Beast.Radar.Terrain
             RenderTextureData textureData = _config.terrain.biomeTexture.WithSize(textureSize);
             _biomeTexture = BGraphic.CreatePermRenderTexture(this, textureData);
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
-        private UniTask<OperationResult> _gameLoad(OperationContext context)
+        private UniTask<ActionResult> _gameLoad(ActionContext context)
         {
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
         public float2 WorldToUVOffset(float2 worldPoint)
@@ -113,7 +113,7 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _render(OperationContext context)
+        private void _render(ActionContext context)
         {
             if (!_bakedTerrain.IsReady || !_camera.IsReady)
             {
@@ -228,14 +228,14 @@ namespace Beast.Radar.Terrain
             material.SetFloat("_NoiseSamplerLOD", lod);
         }
         
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _isReady = false;
 
             BGraphic.TryDispose(ref _renderMaterial);
             BGraphic.TryDispose(ref _biomeTexture);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
         private void _debugTrack(RenderResult stack)

@@ -49,8 +49,8 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
         public void Open()
@@ -70,7 +70,7 @@ namespace Beast.Radar.UI
             _terrainTexture = null;
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _hideView();
@@ -89,7 +89,7 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         private void _configureView()
@@ -244,14 +244,14 @@ namespace Beast.Radar.UI
             _menuView.mapImage.texture = _terrainTexture.color;
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _unsubscribeView();
 
             _selectablesController.Dispose();
             _sizeButtonsGroup.Dispose();
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

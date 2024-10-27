@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public static class OperationID
+    public static class ActionID
     {
         public const string PREFERENCES_LOAD = "preferences_load";
         public const string PREFERENCES_SAVE = "preferences_save";

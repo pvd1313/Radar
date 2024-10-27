@@ -26,7 +26,7 @@ namespace Beast.Radar.Core
             _gameCycle = gameCycle;
         }
         
-        public async UniTask<OperationResult> Boot()
+        public async UniTask<ActionResult> Boot()
         {
             // TODO: Start displaying loading infos.
             //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
@@ -34,9 +34,9 @@ namespace Beast.Radar.Core
             
             _gameCycle.RegisterListeners();
 
-            await _gameCycle.Execute(this, OperationID.PREFERENCES_LOAD);
+            await _gameCycle.Execute(this, ActionID.PREFERENCES_LOAD);
 
-            await _gameCycle.Execute(this, OperationID.WARMUP);
+            await _gameCycle.Execute(this, ActionID.WARMUP);
 
             BScene.CreateGameObject(this)
                 .AddComponent<GameCycleMono>()
@@ -54,7 +54,7 @@ namespace Beast.Radar.Core
                 
                 if (saveExists)
                 {
-                    OperationResult result = await _save.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                    ActionResult result = await _save.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
 
                     if (result.IsSuccess())
                     {
@@ -71,7 +71,7 @@ namespace Beast.Radar.Core
                 }
             }
 
-            return OperationResult.Success();
+            return ActionResult.Success();
         }
     }
 }

@@ -12,11 +12,11 @@ namespace Beast.Claw.GameCycle
         private readonly DiContainer _container;
 
         private Dictionary<string, Runner> _runners;
-        private HashSet<object> _registeredListeners;
-        private List<string> _allOperations;
+        private List<string> _operationIds;
 
         private bool _initialized;
         private bool _isRegisteringListeners;
+        private int _listenerCount;
 
         public GameCycle (Proxy proxy, GameCycleConfig config, DiContainer container)
         {
@@ -37,14 +37,13 @@ namespace Beast.Claw.GameCycle
             
             _initialized = true;
 
-            _registeredListeners = new HashSet<object>();
             _runners = new Dictionary<string, Runner>();
-            _allOperations = new List<string>(input.operations.Count);
+            _operationIds = new List<string>(input.actions.Count);
 
-            foreach (OperationInfo operation in input.operations)
+            foreach (ActionInfo operation in input.actions)
             {
                 _runners[operation.id] = new Runner(_config, operation);
-                _allOperations.Add(operation.id);
+                _operationIds.Add(operation.id);
             }
         }
 
@@ -53,20 +52,23 @@ namespace Beast.Claw.GameCycle
             _isRegisteringListeners = true;
             
             Handle handle = new (this);
-
+            
             List<IGameCycleListener> listeners = _container.TryResolve<List<IGameCycleListener>>();
+            
             if (listeners == null)
             {
                 throw new Exception("Failed to resolve listeners");
             }
-            
-            foreach (IGameCycleListener subscriber in listeners)
-            {
-                if (_registeredListeners.Contains(subscriber))
-                {
-                    continue;
-                }
 
+            if (listeners.Count < _listenerCount)
+            {
+                throw new Exception("New listener count is less than already registered listener count");
+            }
+
+            for (int i = _listenerCount; i < listeners.Count; i++)
+            {
+                IGameCycleListener subscriber = listeners[i];
+                
                 try
                 {
                     handle.currentListener = subscriber;
@@ -78,16 +80,14 @@ namespace Beast.Claw.GameCycle
 
                     throw;
                 }
-                finally
-                {
-                    _registeredListeners.Add(subscriber);
-                }
             }
-            
+
+            _listenerCount = listeners.Count;
+
             _isRegisteringListeners = false;
         }
 
-        private async UniTask<OperationResult> _execute<TOwner>(TOwner owner, string eventID) 
+        private async UniTask<ActionResult> _execute<TOwner>(TOwner owner, string eventID) 
             where TOwner : class
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
@@ -103,7 +103,7 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException($"Tried to invoke invalid operation '{eventID}'");
             }
 
-            return await runner.ExecuteConcurrent();
+            return await runner.ExecuteConcurrent(owner);
         }
 
         private void _update<TOwner>(TOwner owner, string eventID) where TOwner : class
@@ -124,7 +124,7 @@ namespace Beast.Claw.GameCycle
             runner.ExecuteBlocking();
         }
 
-        public void Dispose()
+        private void _dispose()
         {
             foreach (Runner runner in _runners.Values)
             {

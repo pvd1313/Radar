@@ -21,22 +21,22 @@ namespace Beast.Radar.InputHandling
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _subscribeWindowManager();
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _unsubscribeWindowManager();
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         private void _subscribeWindowManager()

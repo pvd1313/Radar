@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
 
@@ -10,14 +11,14 @@ namespace Beast.Claw.GameCycle
         private struct RunnerBlocking
         {
             public HashSet<object> brokenObjects;
-            public List<Runner.Listener> listeners;
+            public ItemBuffer<Runner.Listener> listeners;
             public Dictionary<object, int> objectErrorCount;
             public string operationID;
             public int exceptionThreshold;
             public bool exceptionStopsExecution;
             public bool allLogicIsBroken;
-            public GameCycleConfig config;
             public RunnerProfiler profiler;
+            public bool enableClawProfiling;
             
             public void Run()
             {
@@ -35,16 +36,16 @@ namespace Beast.Claw.GameCycle
                         continue;
                     }
                     
-                    if (profiler.isInitialized)
+                    if (profiler.IsInitialized)
                     {
-                        objectName = profiler.objectNames[i];
-                        handle = profiler.profiler.GetHandle(listener.target);
+                        objectName = profiler.ObjectNames[i];
+                        handle = profiler.Profiler.GetHandle(listener.target);
                         handle.BeginSample(objectName);
                     }
 
                     try
                     {
-                        OperationContext context = default;
+                        ActionContext context = default;
                         listener.blocking.Invoke(context);
                     }
                     catch (Exception e)
@@ -60,16 +61,16 @@ namespace Beast.Claw.GameCycle
                     }
                     finally
                     {
-                        if (profiler.isInitialized)
+                        if (profiler.IsInitialized)
                         {
                             handle.EndSample(objectName);
                         }
                     }
                 }
                 
-                if (profiler.isInitialized && config.profiler.enableClawProfiling)
+                if (profiler.IsInitialized && enableClawProfiling)
                 {
-                    profiler.profiler.RebuildTree();
+                    profiler.Profiler.RebuildTree();
                 }
             }
             

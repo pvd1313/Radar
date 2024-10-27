@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public enum EOperationFrequency
+    public enum EActionFrequency
     {
         Invalid,
         EveryTimeEventFired,

@@ -46,12 +46,12 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(OperationID.RENDER, _render);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenUpdate(ActionID.RENDER, _render);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
@@ -60,10 +60,10 @@ namespace Beast.Radar.Terrain
             RenderTextureData textureData = _config.renderTexture.WithSize(_screen.Size);
             _tileToScreenBuffer = BGraphic.CreatePermRenderTexture(this, textureData);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
-        private void _render(OperationContext context)
+        private void _render(ActionContext context)
         {
             if (!_terrainBiome.IsReady)
             {
@@ -219,14 +219,14 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             BGraphic.TryDispose(ref _tileBlitMaterial);
             BGraphic.TryDispose(ref _tileSolverMaterial);
             BGraphic.TryDispose(ref _tileRenderMaterial);
             BGraphic.TryDispose(ref _tileToScreenBuffer);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

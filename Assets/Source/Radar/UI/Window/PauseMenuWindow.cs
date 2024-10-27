@@ -34,8 +34,8 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
         public async void Open()
@@ -54,7 +54,7 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
             _hideView();
@@ -65,16 +65,16 @@ namespace Beast.Radar.UI
             
             _selectablesController.Warmup();
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _unsubscribeView();
             
             _selectablesController.Dispose();
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         private void _configureSelectables()

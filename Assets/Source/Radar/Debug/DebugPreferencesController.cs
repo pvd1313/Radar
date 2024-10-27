@@ -23,16 +23,16 @@ namespace Beast.Radar.Debug
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.PREFERENCES_LOAD, _preferencesLoad);
-            handle.ListenOperation(OperationID.PREFERENCES_SAVE, _preferencesSave);
+            handle.ListenOperation(ActionID.PREFERENCES_LOAD, _preferencesLoad);
+            handle.ListenOperation(ActionID.PREFERENCES_SAVE, _preferencesSave);
         }
 
-        private async UniTask<OperationResult> _preferencesLoad(OperationContext context)
+        private async UniTask<ActionResult> _preferencesLoad(ActionContext context)
         {
             bool fileExists = await _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
             {
-                return OperationResult.Success();
+                return ActionResult.Success();
             }
 
             StreamData stream = await _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
@@ -55,10 +55,10 @@ namespace Beast.Radar.Debug
             // TODO : https://risenbeast.youtrack.cloud/issue/R-46/Unity-Task-Success
             //      : We should probably return fail.
             //      : But game cycle should be able to ignore that fail as it is not critical.
-            return OperationResult.Success();
+            return ActionResult.Success();
         }
         
-        private async UniTask<OperationResult> _preferencesSave(OperationContext context)
+        private async UniTask<ActionResult> _preferencesSave(ActionContext context)
         {
             StreamData stream = await _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 
@@ -78,7 +78,7 @@ namespace Beast.Radar.Debug
             }
             
             // TODO : https://risenbeast.youtrack.cloud/issue/R-46/Unity-Task-Success
-            return OperationResult.Success();
+            return ActionResult.Success();
         }
     }
 }

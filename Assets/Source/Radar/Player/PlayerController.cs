@@ -37,20 +37,20 @@ namespace Beast.Radar.Player
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(OperationID.TICK, _tick);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenUpdate(ActionID.TICK, _tick);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _spawnPlayer();
             _subscribeInput();
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(OperationContext context)
+        private void _tick(ActionContext context)
         {
             _move();
         }
@@ -107,11 +107,11 @@ namespace Beast.Radar.Player
             }
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _unsubscribeInput();
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

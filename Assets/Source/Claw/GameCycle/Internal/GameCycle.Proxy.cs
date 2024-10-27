@@ -8,7 +8,7 @@ namespace Beast.Claw.GameCycle
     {
         public class Proxy : IGameCycle
         {
-            public IReadOnlyList<string> AllOperations => _gameCycle._allOperations;
+            public IReadOnlyList<string> AllOperations => _gameCycle._operationIds;
 
             private GameCycle _gameCycle;
 
@@ -34,12 +34,12 @@ namespace Beast.Claw.GameCycle
                     return null;
                 }
 
-                if (!runner.Profiler.isInitialized)
+                if (!runner.Profiler.IsInitialized)
                 {
                     return null;
                 }
 
-                return runner.Profiler.profiler;
+                return runner.Profiler.Profiler;
             }
 
             public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
@@ -47,14 +47,14 @@ namespace Beast.Claw.GameCycle
                 _gameCycle._update(owner, eventID);
             }
 
-            public async UniTask<OperationResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class
+            public async UniTask<ActionResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class
             {
                 return await _gameCycle._execute(owner, eventID);
             }
 
             public void Dispose()
             {
-                _gameCycle?.Dispose();
+                _gameCycle?._dispose();
             }
         }
     }

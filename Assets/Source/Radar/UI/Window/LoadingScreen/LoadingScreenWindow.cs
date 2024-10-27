@@ -23,10 +23,10 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.LoadingScreen, out _view);
             _view.gameObject.SetActive(false);
@@ -35,7 +35,7 @@ namespace Beast.Radar.UI
             
             _windowManager.Register(this, WindowID.LoadingScreen, _view);
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
         public void Open()

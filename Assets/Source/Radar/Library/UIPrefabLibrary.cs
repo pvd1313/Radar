@@ -23,14 +23,14 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
         
-        public UniTask<OperationResult> _warmup(OperationContext context)
+        public UniTask<ActionResult> _warmup(ActionContext context)
         {
             _window = window.ToDictionary(w => w.id, w => w.prefab);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         public UIView GetWindow(string prefabID)

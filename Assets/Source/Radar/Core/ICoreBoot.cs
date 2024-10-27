@@ -5,6 +5,6 @@ namespace Beast.Radar.Core
 {
     public interface ICoreBoot
     {
-        public UniTask<OperationResult> Boot();
+        public UniTask<ActionResult> Boot();
     }
 }

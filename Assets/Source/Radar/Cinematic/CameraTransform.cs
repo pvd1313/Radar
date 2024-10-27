@@ -43,12 +43,12 @@ namespace Beast.Radar.Cinematic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
-            handle.ListenOperation(OperationID.GAME_SAVE, _gameSave);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;
             
@@ -60,10 +60,10 @@ namespace Beast.Radar.Cinematic
 
             _yScaleRollCos = BMath.Cos(_rotationRad.roll);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<OperationResult> _gameLoad(OperationContext context)
+        private UniTask<ActionResult> _gameLoad(ActionContext context)
         {
             _position = _game.camera.position;
 
@@ -74,15 +74,15 @@ namespace Beast.Radar.Cinematic
             
             IsReady = true;
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
-        private UniTask<OperationResult> _gameSave(OperationContext context)
+        private UniTask<ActionResult> _gameSave(ActionContext context)
         {
             _game.camera.position = (float2)_position;
             _game.camera.zoom01 = _zoom01;
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         public void AddPosition(float2 delta, Space space)

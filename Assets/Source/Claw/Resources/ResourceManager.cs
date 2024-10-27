@@ -31,15 +31,15 @@ namespace Beast.Claw.Resources
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _assets = new Dictionary<Guid, AssetInfo>();
             _activeLoads = new HashSet<Guid>();
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         public async UniTask<TObject> Load<TOwner, TObject>(TOwner owner, IResource<TObject> reference) 

@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public enum EOperationOrder
+    public enum EActionOrder
     {
         Invalid,
         FromFirstToLastInjected,

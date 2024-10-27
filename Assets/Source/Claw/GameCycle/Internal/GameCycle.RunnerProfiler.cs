@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using Beast.Claw.Collection;
 using Beast.Claw.Profiling;
 
 namespace Beast.Claw.GameCycle
@@ -8,27 +10,38 @@ namespace Beast.Claw.GameCycle
     {
         private struct RunnerProfiler : IDisposable
         {
-            public readonly bool isInitialized;
-            public readonly List<string> objectNames;
-            public readonly Profiler profiler;
+            public bool IsInitialized => _isInitialized;
+            public Profiler Profiler => _profiler;
+            public ItemBuffer<string> ObjectNames => _objectNames;
             
-            public RunnerProfiler(ProfilerConfig config, List<Runner.Listener> listeners)
+            private bool _isInitialized;
+            private Profiler _profiler;
+            private ItemBuffer<string> _objectNames;
+            
+            public RunnerProfiler(ProfilerConfig config, ItemBuffer<Runner.Listener> listeners)
             {
-                objectNames = new List<string>(listeners.Count);
-
-                foreach (Runner.Listener listener in listeners)
+                _objectNames = new ItemBuffer<string>(listeners.Capacity);
+                
+                for (int i = 0; i < listeners.Count; i++)
                 {
-                    objectNames.Add(listener.target.GetType().Name);
+                    _objectNames.Add(listeners[i].target.GetType().Name);
                 }
 
-                profiler = new Profiler(config);
-                profiler.Initialize();
-                isInitialized = true;
+                _profiler = new Profiler(config);
+                _profiler.Initialize();
+                _isInitialized = true;
             }
 
             public void Dispose()
             {
-                profiler.Dispose();
+                _profiler?.Dispose();
+
+                if (_objectNames.IsInitialized)
+                {
+                    _objectNames = default;
+                }
+
+                _isInitialized = false;
             }
         }
     }

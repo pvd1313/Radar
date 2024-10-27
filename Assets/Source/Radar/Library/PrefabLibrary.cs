@@ -22,19 +22,19 @@ namespace Beast.Radar
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
 
-        private async UniTask<OperationResult> _warmup(OperationContext context)
+        private async UniTask<ActionResult> _warmup(ActionContext context)
         {
-            OperationResult result = await ui._warmup(context);
+            ActionResult result = await ui._warmup(context);
             
-            if (result.status != EOperationStatus.Success)
+            if (result.status != EActionStatus.Success)
             {
                 return result;
             }
             
-            return OperationResult.Success();
+            return ActionResult.Success();
         }
     }
 }

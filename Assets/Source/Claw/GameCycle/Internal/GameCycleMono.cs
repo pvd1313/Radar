@@ -15,22 +15,22 @@ namespace Beast.Claw.GameCycle
 
         private void Update()
         {
-            _gameCycle.Update(this, OperationID.TICK);
+            _gameCycle.Update(this, ActionID.TICK);
         }
 
         private void FixedUpdate()
         {
-            _gameCycle.Update(this, OperationID.FIXED_UPDATE);
+            _gameCycle.Update(this, ActionID.FIXED_UPDATE);
         }
 
         private void OnDrawGizmos()
         {
-            _gameCycle.Update(this, OperationID.GIZMOS_DRAW);
+            _gameCycle.Update(this, ActionID.GIZMOS_DRAW);
         }
 
         private void LateUpdate()
         {
-            _gameCycle.Update(this, OperationID.RENDER);
+            _gameCycle.Update(this, ActionID.RENDER);
         }
 
         private void OnDestroy()
@@ -40,9 +40,9 @@ namespace Beast.Claw.GameCycle
 
         private async UniTask OnMonoDestroyed()
         {
-            await _gameCycle.Execute(this, OperationID.PREFERENCES_SAVE);
+            await _gameCycle.Execute(this, ActionID.PREFERENCES_SAVE);
             
-            await _gameCycle.Execute(this, OperationID.DISPOSE);
+            await _gameCycle.Execute(this, ActionID.DISPOSE);
             
             _gameCycle.Dispose();
         }

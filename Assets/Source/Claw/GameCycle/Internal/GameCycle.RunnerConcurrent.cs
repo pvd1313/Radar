@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Collection;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
@@ -10,21 +11,23 @@ namespace Beast.Claw.GameCycle
     {
         private struct RunnerConcurrent
         {
+            public object owner;
             public HashSet<object> singleFiredObjects;
-            public EOperationFrequency frequency;
-            public List<Runner.Listener> listeners;
+            public EActionFrequency frequency;
+            public ItemBuffer<Runner.Listener> listeners;
             public string operationID;
             public RunnerProfiler profiler;
-            public GameCycleConfig config;
             public ProfilerTreeStringBuilder treeStringBuilder;
+            public bool enableClawProfiling;
+            public bool flushProfilerToConsole;
             
-            public async UniTask<OperationResult> Run()
+            public async UniTask<ActionResult> Run()
             {
-                OperationResult result = OperationResult.Success();
+                ActionResult result = ActionResult.Success();
 
-                if (profiler.isInitialized)
+                if (profiler.IsInitialized)
                 {
-                    profiler.profiler.FetchConfig();
+                    profiler.Profiler.FetchConfig();
                 }
                 
                 Profiler.Handle handle = default;
@@ -33,22 +36,22 @@ namespace Beast.Claw.GameCycle
                 for (int i = 0; i < listeners.Count; i++)
                 {
                     Runner.Listener listener = listeners[i];
-                    if (frequency == EOperationFrequency.OncePerObjectLife &&
+                    if (frequency == EActionFrequency.OncePerObjectLife &&
                         !singleFiredObjects.Add(listener.target))
                     {
                         continue;
                     }
 
-                    if (profiler.isInitialized)
+                    if (profiler.IsInitialized)
                     {
-                        objectName = profiler.objectNames[i];
-                        handle = profiler.profiler.GetHandle(listener.target);
+                        objectName = profiler.ObjectNames[i];
+                        handle = profiler.Profiler.GetHandle(listener.target);
                         handle.BeginSample(objectName);
                     }
 
                     try
                     {
-                        OperationContext context = default;
+                        ActionContext context = default;
 
                         result = await listener.concurrent.Invoke(context);
 
@@ -64,24 +67,25 @@ namespace Beast.Claw.GameCycle
                         BDebug.LogException(this, e,
                             $"Exception during '{operationID}' ({listener.GetType().FullName})");
 
-                        return OperationResult.Failed();
+                        return ActionResult.Failed();
                     }
                     finally
                     {
-                        if (profiler.isInitialized)
+                        if (profiler.IsInitialized)
                         {
                             handle.EndSample(objectName);
                         }
                     }
                 }
 
-                if (profiler.isInitialized && config.profiler.enableClawProfiling)
+                if (profiler.IsInitialized && enableClawProfiling)
                 {
-                    profiler.profiler.RebuildTree();
+                    profiler.Profiler.RebuildTree();
 
-                    if (config.flushOperationProfilerToLog)
+                    if (flushProfilerToConsole)
                     {
-                        string info = treeStringBuilder.ToString(profiler.profiler.Reader, operationID);
+                        string title = owner.GetType().Name + ": " + operationID;
+                        string info = treeStringBuilder.ToString(profiler.Profiler.Reader, title);
 
                         BDebug.StaticLogInfo(info);
                     }

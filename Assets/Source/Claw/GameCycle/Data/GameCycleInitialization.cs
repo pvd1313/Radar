@@ -6,29 +6,29 @@ namespace Beast.Claw.GameCycle
 {
     public struct GameCycleInitialization : IValidatable
     {
-        private static readonly HashSet<string> OPERATION_NAMES = new();
+        private static readonly HashSet<string> ACTION_NAMES = new();
         
-        public List<OperationInfo> operations;
+        public List<ActionInfo> actions;
         
         public string Validate()
         {
-            if (operations == null)
+            if (actions == null)
             {
-                return $"{nameof(operations)} can not be null";
+                return $"{nameof(actions)} can not be null";
             }
             
-            OPERATION_NAMES.Clear();
+            ACTION_NAMES.Clear();
 
-            for (int i = 0; i < operations.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
-                OperationInfo operationInfo = operations[i];
+                ActionInfo operationInfo = actions[i];
                 
                 if (!operationInfo.IsValid(out string error))
                 {
                     return $"Invalid operation at index {i}: " + error;
                 }
 
-                if (!OPERATION_NAMES.Add(operationInfo.id))
+                if (!ACTION_NAMES.Add(operationInfo.id))
                 {
                     return $"Duplicated operation id '{operationInfo.id}'";
                 }

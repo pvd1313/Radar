@@ -35,9 +35,9 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
-            handle.ListenUpdate(OperationID.RENDER, _render);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenUpdate(ActionID.RENDER, _render);
         }
         
         public void Render(TerrainColorRenderTask task)
@@ -61,14 +61,14 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(material);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
         
-        private void _render(OperationContext context)
+        private void _render(ActionContext context)
         {
             if (!_biomeRender.IsReady || !_camera.IsReady)
             {
@@ -150,11 +150,11 @@ namespace Beast.Radar.Terrain
             }
         }
         
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             BGraphic.TryDispose(ref _materialForCamera);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

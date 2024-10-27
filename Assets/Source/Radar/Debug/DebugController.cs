@@ -21,15 +21,15 @@ namespace Beast.Radar.Debug
     
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             SetElementState(DebugElementID.LogConsoleID, _preferences.isShowLog);
             SetElementState(DebugElementID.FpsCounterID, _preferences.isShowFps);
             
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         public void SetElementState(string elementID, bool isActive)

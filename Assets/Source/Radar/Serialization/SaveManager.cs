@@ -38,7 +38,7 @@ namespace Beast.Radar.Serialization
             return await _fileManager.Exists(folderName, fileName);
         }
 
-        public async UniTask<OperationResult> Load(GameModel model)
+        public async UniTask<ActionResult> Load(GameModel model)
         {
             model.ValidateNotNullThrowException(nameof(model));
             
@@ -55,17 +55,17 @@ namespace Beast.Radar.Serialization
 
                 await memory.DisposeAsync();
                 
-                return await _gameCycle.Execute(this, OperationID.GAME_LOAD);
+                return await _gameCycle.Execute(this, ActionID.GAME_LOAD);
             }
             catch (Exception e)
             {
                 BDebug.LogException(this, e, "Failed to load default game save");
                 
-                return OperationResult.Failed();
+                return ActionResult.Failed();
             }
         }
 
-        public async UniTask<OperationResult> Load(string folderName, string fileName)
+        public async UniTask<ActionResult> Load(string folderName, string fileName)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Beast.Radar.Serialization
 
                 await _fileManager.Close(streamData);
                 
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GAME_LOAD);
+                ActionResult result = await _gameCycle.Execute(this, ActionID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
@@ -87,16 +87,16 @@ namespace Beast.Radar.Serialization
             {
                 BDebug.LogException(this, e, $"Failed to load game state '{folderName}/{fileName}'");
                 
-                return OperationResult.Failed();
+                return ActionResult.Failed();
             }
         }
 
-        public async UniTask<OperationResult> Save(string folderName, string fileName)
+        public async UniTask<ActionResult> Save(string folderName, string fileName)
         {
             try
             {
-                OperationResult result = await _gameCycle.Execute(this, OperationID.GAME_SAVE);
-                if (result.status != EOperationStatus.Success)
+                ActionResult result = await _gameCycle.Execute(this, ActionID.GAME_SAVE);
+                if (result.status != EActionStatus.Success)
                 {
                     return result;
                 }
@@ -116,7 +116,7 @@ namespace Beast.Radar.Serialization
             {
                 BDebug.LogException(this, e, $"Failed to save game state '{folderName}/{fileName}'");
                 
-                return OperationResult.Failed();
+                return ActionResult.Failed();
             }
         }
     }

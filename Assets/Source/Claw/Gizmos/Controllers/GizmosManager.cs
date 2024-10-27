@@ -30,12 +30,12 @@ namespace Beast.Claw.Gizmos
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.WARMUP, _warmup);
-            handle.ListenUpdate(OperationID.GIZMOS_DRAW, _gizmosDraw);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenUpdate(ActionID.GIZMOS_DRAW, _gizmosDraw);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<OperationResult> _warmup(OperationContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _wireLines = new ShapeStorage<Line>(BUFFER_SIZE);
             _wireRects = new ShapeStorage<Rect>(BUFFER_SIZE);
@@ -44,7 +44,7 @@ namespace Beast.Claw.Gizmos
             _screenSquares = new ShapeStorage<Square>(BUFFER_SIZE);
             _material = new Material(_config.Shader);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
 
         public GizmosHandle GetHandle(object owner, string name, Color defaultColor)
@@ -61,7 +61,7 @@ namespace Beast.Claw.Gizmos
             return new GizmosHandle(id, this);
         }
 
-        private void _gizmosDraw(OperationContext context)
+        private void _gizmosDraw(ActionContext context)
         {
             _material.SetPass(0);
             
@@ -92,7 +92,7 @@ namespace Beast.Claw.Gizmos
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             _wireLines.Dispose();
             _wireRects.Dispose();
@@ -102,7 +102,7 @@ namespace Beast.Claw.Gizmos
             GizmosStateStorage.Dispose();
             Object.Destroy(_material);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

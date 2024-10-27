@@ -18,10 +18,10 @@ namespace Beast.Radar.Graphic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(OperationID.TICK, _tick);
+            handle.ListenUpdate(ActionID.TICK, _tick);
         }
 
-        private void _tick(OperationContext context)
+        private void _tick(ActionContext context)
         {
             BDebug.Track(this, nameof(Size), Size);
             BDebug.Track(this, nameof(Aspect), Aspect);

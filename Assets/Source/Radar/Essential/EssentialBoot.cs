@@ -34,19 +34,19 @@ namespace Beast.Radar.Essential
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
         public async void Initialize()
         {
             _gameCycle.Initialize(new GameCycleInitialization
             {
-                operations = new GameCycleOperationList().All
+                actions = new GameCycleActionList().All
             });
             
             _gameCycle.RegisterListeners();
 
-            await _gameCycle.Execute(this, OperationID.WARMUP);
+            await _gameCycle.Execute(this, ActionID.WARMUP);
 
             await _startupCore();
         }
@@ -75,7 +75,7 @@ namespace Beast.Radar.Essential
             await _container.Resolve<ICoreBoot>().Boot();
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             if (_coreInstallers != null)
             {
@@ -87,7 +87,7 @@ namespace Beast.Radar.Essential
                 _coreInstallers = null;
             }
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

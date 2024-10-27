@@ -30,11 +30,11 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(OperationID.GAME_LOAD, _gameLoad);
-            handle.ListenOperation(OperationID.DISPOSE, _dispose);
+            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        private async UniTask<OperationResult> _gameLoad(OperationContext context)
+        private async UniTask<ActionResult> _gameLoad(ActionContext context)
         {
             await _dispose(context);
 
@@ -71,16 +71,16 @@ namespace Beast.Radar.Terrain
 
             IsReady = true;
 
-            return OperationResult.Success();
+            return ActionResult.Success();
         }
 
-        private UniTask<OperationResult> _dispose(OperationContext context)
+        private UniTask<ActionResult> _dispose(ActionContext context)
         {
             IsReady = false;
 
             BGraphic.TryDispose(ref _texture);
 
-            return OperationResult.SuccessSyncronous();
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

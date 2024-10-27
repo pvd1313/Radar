@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public enum EOperationFlowType
+    public enum EActionFlowType
     {
         Invalid,
         Blocking,
