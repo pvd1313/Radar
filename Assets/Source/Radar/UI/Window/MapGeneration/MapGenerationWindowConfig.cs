@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using UnityEngine;
+using Beast.Radar.Terrain;
 
-namespace Beast.Radar.Terrain
+namespace Beast.Radar.UI
 {
     public class MapGenerationWindowConfig : ScriptableConfig
     {
