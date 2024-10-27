@@ -17,7 +17,7 @@ MonoBehaviour:
   preventDuplicateSubscription: 1
   preventExternSubscription: 1
   profiler:
-    enableClawProfiling: 1
+    enableClawProfiling: 0
     enableUnityProfiling: 0
     maxRecordCount: 128
     stackSize: 16
