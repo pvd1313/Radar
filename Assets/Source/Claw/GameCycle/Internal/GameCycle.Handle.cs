@@ -1,6 +1,6 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Cysharp.Threading.Tasks;
-using UnityEngine.Rendering;
 
 namespace Beast.Claw.GameCycle
 {
@@ -11,12 +11,10 @@ namespace Beast.Claw.GameCycle
             public object currentListener;
         
             private readonly GameCycle _gameCycle;
-            private readonly bool _preventExternMethod;
 
             public Handle(GameCycle gameCycle)
             {
                 _gameCycle = gameCycle;
-                _preventExternMethod = gameCycle._config.preventExternSubscription;
             }
         
             public void ListenOperation(string eventID, Func<ActionContext, UniTask<ActionResult>> action)
@@ -24,7 +22,7 @@ namespace Beast.Claw.GameCycle
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));
                 
-                if (_preventExternMethod && currentListener != action.Target)
+                if (Build.IS_DEVELOPMENT && currentListener != action.Target)
                 {
                     string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
                                      $"that is implemented not inside '{currentListener.GetType().FullName}'";
@@ -36,7 +34,7 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }
 
-                if (runner.Operation.flow != EActionFlowType.Concurrent)
+                if (Build.IS_DEVELOPMENT && runner.Operation.flow != EActionFlowType.Concurrent)
                 {
                     throw new InvalidOperationException("Wrong event type for subscription");
                 }
@@ -53,7 +51,7 @@ namespace Beast.Claw.GameCycle
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));
                 
-                if (_preventExternMethod && currentListener != action.Target)
+                if (Build.IS_DEVELOPMENT && currentListener != action.Target)
                 {
                     string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
                                      $"that is implemented not inside '{currentListener.GetType().FullName}'";
@@ -65,7 +63,7 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }
                 
-                if (runner.Operation.flow != EActionFlowType.Blocking)
+                if (Build.IS_DEVELOPMENT && runner.Operation.flow != EActionFlowType.Blocking)
                 {
                     throw new InvalidOperationException("Wrong event type for subscription");
                 }

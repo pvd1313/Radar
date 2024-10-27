@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Beast.Claw.Attributes;
 using Zenject;
 
@@ -68,9 +69,9 @@ namespace Beast.Claw.Common
             }
         }
 
+        [Conditional("DEVELOPMENT")]
         private void ValidateConfigTypeAndReference(IConfig config)
         {
-#if DEVELOPMENT
             Type childType = config.GetType();
             if (!childType.IsClass)
             {
@@ -83,7 +84,6 @@ namespace Beast.Claw.Common
                 string message = "Tried to bind null into container. Config: " + config.GetType().FullName;
                 throw new InvalidOperationException(message);
             }
-#endif
         }
     }
 }

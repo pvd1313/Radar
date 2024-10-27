@@ -8,8 +8,6 @@ namespace Beast.Claw.GameCycle
     {
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;
-        public bool preventDuplicateSubscription;
-        public bool preventExternSubscription;
         public ProfilerConfig profiler;
         public bool logConcurrentAction;
         

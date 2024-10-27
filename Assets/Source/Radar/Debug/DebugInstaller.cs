@@ -16,21 +16,23 @@ namespace Beast.Radar.Debug
 
         protected override IEnumerable<Type> BindInterfaces()
         {
-#if DEVELOPMENT
-            yield return typeof(GizmosManager);
-            yield return typeof(GizmosDrawerManager);
+            if (Build.IS_DEVELOPMENT)
+            {
+                yield return typeof(GizmosManager);
+                yield return typeof(GizmosDrawerManager);
             
-            yield return typeof(DebugController);
-            yield return typeof(DebugPreferencesController);
-            yield return typeof(DebugMenuWindow);
-#endif
+                yield return typeof(DebugController);
+                yield return typeof(DebugPreferencesController);
+                yield return typeof(DebugMenuWindow);
+            }
         }
 
         protected override void BindCustom(DiContainer diContainer)
         {
-#if DEVELOPMENT
-            diContainer.Bind<DebugPreferences>().FromNew().AsSingle().NonLazy();
-#endif
+            if (Build.IS_DEVELOPMENT)
+            {
+                diContainer.Bind<DebugPreferences>().FromNew().AsSingle().NonLazy();
+            }
         }
     }
 }

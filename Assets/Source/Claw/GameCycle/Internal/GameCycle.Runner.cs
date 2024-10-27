@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
@@ -26,7 +27,6 @@ namespace Beast.Claw.GameCycle
             private readonly HashSet<object> _singleFireObjects;
             private readonly HashSet<object> _duplicateSubscriptionListeners;
             private readonly ActionInfo _operation;
-            private readonly bool _preventDuplicateSubscription;
             private readonly Dictionary<object, int> _blockingLogicCounters;
             private readonly HashSet<object> _blockingBrokenLogic;
 
@@ -44,7 +44,6 @@ namespace Beast.Claw.GameCycle
                 
                 _config = config;
                 _operation = operationInfo;
-                _preventDuplicateSubscription = _config.preventDuplicateSubscription;
 
                 if (_operation.frequency == EActionFrequency.OncePerObjectLife)
                 {
@@ -64,7 +63,7 @@ namespace Beast.Claw.GameCycle
                 
                 _listeners = new ItemBuffer<Listener>(_operation.bufferCapacity);
 
-                if (_preventDuplicateSubscription)
+                if (Build.IS_DEVELOPMENT)
                 {
                     _duplicateSubscriptionListeners = new HashSet<object>(_operation.bufferCapacity);
                 }
@@ -74,7 +73,7 @@ namespace Beast.Claw.GameCycle
             {
                 listener.target.ValidateNotNullThrowException("listener.target");
 
-                if (_preventDuplicateSubscription && !_duplicateSubscriptionListeners.Add(listener.target))
+                if (Build.IS_DEVELOPMENT && !_duplicateSubscriptionListeners.Add(listener.target))
                 {
                     string message =
                         $"'{listener.target.GetType().FullName}' is already listening to '{_operation.id}'";
@@ -94,7 +93,7 @@ namespace Beast.Claw.GameCycle
 
                 if (_operation.order == EActionOrder.FromFirstToLastInjected)
                 {
-                    if (_listeners.Count >= _operation.bufferCapacity)
+                    if (Build.IS_DEVELOPMENT && _listeners.Count >= _operation.bufferCapacity)
                     {
                         throw new OutOfMemoryException("Not enough capacity to store all listeners");
                     }
@@ -103,7 +102,7 @@ namespace Beast.Claw.GameCycle
                 }
                 else
                 {
-                    if (_listeners.Count + _lastToFirstTempBuffer.Count >= _operation.bufferCapacity)
+                    if (Build.IS_DEVELOPMENT && _listeners.Count + _lastToFirstTempBuffer.Count >= _operation.bufferCapacity)
                     {
                         throw new OutOfMemoryException("Not enough capacity to store all listeners");
                     }
@@ -123,7 +122,7 @@ namespace Beast.Claw.GameCycle
             {
                 owner.ValidateNotNullThrowException(nameof(owner));
                 
-                if (_operation.flow != EActionFlowType.Concurrent)
+                if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Concurrent)
                 {
                     throw new InvalidOperationException("Invalid flow type");
                 }
@@ -148,7 +147,7 @@ namespace Beast.Claw.GameCycle
 
             public void ExecuteBlocking()
             {
-                if (_operation.flow != EActionFlowType.Blocking)
+                if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Blocking)
                 {
                     throw new InvalidOperationException("Invalid flow type");
                 }

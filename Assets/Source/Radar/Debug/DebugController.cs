@@ -34,6 +34,7 @@ namespace Beast.Radar.Debug
 
         public void SetElementState(string elementID, bool isActive)
         {
+#if DEVELOPMENT
             switch (elementID)
             {
                 case DebugElementID.FpsCounterID:
@@ -46,6 +47,7 @@ namespace Beast.Radar.Debug
                     _preferences.isShowLog = isActive;
                     break;
             }
+#endif
         }
         
         public bool GetElementState(string elementID)

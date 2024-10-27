@@ -1,10 +1,12 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 
 namespace Beast.Claw
 {
     public static class ValidationExtension
     {
+        [Conditional("DEVELOPMENT")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ValidateThrowException<TData>(this TData data, string argumentName) where TData : IValidatable
         {
@@ -15,12 +17,45 @@ namespace Beast.Claw
             }
         }
         
+        [Conditional("DEVELOPMENT")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ValidateIsZeroOrGreaterThrowException(this float x, string argumentName)
         {
             if (x < 0)
             {
                 string message = $"'{argumentName}' must be zero or greater, but was: {x}";
+                throw new ValidationException(message);
+            }
+        }
+        
+        [Conditional("DEVELOPMENT")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNotNullThrowException<TArgument>(this TArgument value, string valueName) 
+            where TArgument : class
+        {
+            if (value == null)
+            {
+                throw new ValidationException($"'{valueName}' can not be null.");
+            }
+        }
+
+        [Conditional("DEVELOPMENT")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNotEmptyOrNullThrowException(this string text, string argumentName)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ValidationException($"'{argumentName}' can not be null or empty.");
+            }
+        }
+        
+        [Conditional("DEVELOPMENT")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateComponentsBiggerThanZeroThrowException(this int2 vector, string argumentName)
+        {
+            if (vector.x <= 0 || vector.y <= 0)
+            {
+                string message = $"'{argumentName}' components must be bigger than zero, but was: {vector}.";
                 throw new ValidationException(message);
             }
         }
@@ -46,35 +81,6 @@ namespace Beast.Claw
 
             errorMessage = data.Validate();
             isValid = errorMessage == null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotNullThrowException<TArgument>(this TArgument value, string valueName) 
-            where TArgument : class
-        {
-            if (value == null)
-            {
-                throw new ValidationException($"'{valueName}' can not be null.");
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateNotEmptyOrNullThrowException(this string text, string argumentName)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                throw new ValidationException($"'{argumentName}' can not be null or empty.");
-            }
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateComponentsBiggerThanZeroThrowException(this int2 vector, string argumentName)
-        {
-            if (vector.x <= 0 || vector.y <= 0)
-            {
-                string message = $"'{argumentName}' components must be bigger than zero, but was: {vector}.";
-                throw new ValidationException(message);
-            }
         }
     }
 }
