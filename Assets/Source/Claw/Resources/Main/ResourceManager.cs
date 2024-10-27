@@ -45,37 +45,37 @@ namespace Beast.Claw.Resources
             return ActionResult.SuccessSyncronous();
         }
 
-        public async UniTask<TObject> Load<TOwner, TObject>(TOwner owner, IResource<TObject> reference) 
+        public async UniTask<TObject> Load<TOwner, TObject>(TOwner owner, IAddress<TObject> address) 
             where TObject : Object
             where TOwner : class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            reference.ValidateThrowException(nameof(reference));
+            address.ValidateThrowException(nameof(address));
 
-            if (_assets.TryGetValue(reference.Guid, out AssetInfo info))
+            if (_assets.TryGetValue(address.Guid, out AssetInfo info))
             {
                 if (!info.occupiedBy.Add(owner))
                 {
-                    string message = $"'{owner.TypeName()}' tried to load asset twice: {reference.Guid}";
+                    string message = $"'{owner.TypeName()}' tried to load asset twice: {address.Guid}";
 
                     throw new InvalidOperationException(message);
                 }
 
-                if (_activeLoads.Contains(reference.Guid))
+                if (_activeLoads.Contains(address.Guid))
                 {
-                    await UniTask.WaitUntil(() => _activeLoads.Contains(reference.Guid)); 
+                    await UniTask.WaitUntil(() => _activeLoads.Contains(address.Guid)); 
                 }
 
-                return (TObject) _assets[reference.Guid].asset;
+                return (TObject) _assets[address.Guid].asset;
             }
 
-            _activeLoads.Add(reference.Guid);
+            _activeLoads.Add(address.Guid);
             
-            AsyncOperationHandle handle = reference.Reference.LoadAssetAsync<TObject>();
+            AsyncOperationHandle handle = address.Reference.LoadAssetAsync<TObject>();
             
-            info = new AssetInfo(reference.Guid, handle);
+            info = new AssetInfo(address.Guid, handle);
             info.occupiedBy.Add(owner);
-            _assets[reference.Guid] = info;
+            _assets[address.Guid] = info;
 
             await UniTask.WaitUntil(() => handle.IsDone);
             
@@ -86,23 +86,23 @@ namespace Beast.Claw.Resources
             return (TObject) info.asset;
         }
 
-        public void Release<TOwner, TObject>(TOwner owner, IResource<TObject> reference) 
+        public void Release<TOwner, TObject>(TOwner owner, IAddress<TObject> address) 
             where TOwner : class
             where TObject : Object
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            reference.ValidateThrowException(nameof(reference));
+            address.ValidateThrowException(nameof(address));
 
-            if (_activeLoads.Contains(reference.Guid))
+            if (_activeLoads.Contains(address.Guid))
             {
                 string text =
-                    $"'{owner.TypeName()}' tried to unload asset that is still being loaded: '{reference.Guid}'";
+                    $"'{owner.TypeName()}' tried to unload asset that is still being loaded: '{address.Guid}'";
                 throw new InvalidOperationException(text);
             }
 
-            if (!_assets.TryGetValue(reference.Guid, out AssetInfo info))
+            if (!_assets.TryGetValue(address.Guid, out AssetInfo info))
             {
-                throw new InvalidOperationException($"No asset loaded with guid: '{reference.Guid}'");
+                throw new InvalidOperationException($"No asset loaded with guid: '{address.Guid}'");
             }
 
             if (!info.occupiedBy.Remove(owner))

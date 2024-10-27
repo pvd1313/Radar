@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
     [Serializable]
-    public class Resource<TObject> : ISerializationCallbackReceiver, IResource<TObject> 
+    public class Address<TObject> : ISerializationCallbackReceiver, IAddress<TObject> 
         where TObject : Object
     {
         public Guid Guid => _guid;
@@ -22,7 +23,7 @@ namespace Beast.Claw.Resources
         {
             if (!_hasGuid)
             {
-                return "Reference not set or GUID parsing failed.";
+                return "Reference is not set or GUID parsing failed.";
             }
             
             return null;
