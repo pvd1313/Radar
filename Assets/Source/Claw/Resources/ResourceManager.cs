@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Reflection;
 using Cysharp.Threading.Tasks;
@@ -32,6 +34,7 @@ namespace Beast.Claw.Resources
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
@@ -69,7 +72,6 @@ namespace Beast.Claw.Resources
             _activeLoads.Add(reference.Guid);
             
             AsyncOperationHandle handle = reference.Reference.LoadAssetAsync<TObject>();
-            // handle.ReleaseHandleOnCompletion();
             
             info = new AssetInfo(reference.Guid, handle);
             info.occupiedBy.Add(owner);
@@ -115,6 +117,54 @@ namespace Beast.Claw.Resources
 
                 _assets.Remove(info.guid);
             }
+        }
+        
+        private UniTask<ActionResult> _dispose(ActionContext context)
+        {
+            if (_assets.Count > 0)
+            {
+                StringBuilder builder = new ();
+                builder.AppendLine("Some assets are not being released upon dispose:");
+
+                foreach ((Guid guid, AssetInfo info) in _assets)
+                {
+                    builder.Append(' ', 4);
+                    builder.Append(guid);
+
+                    if (!_activeLoads.Contains(guid))
+                    {
+                        builder.Append('(');
+                        builder.Append(info.asset.name);
+                        builder.Append(')');
+                    }
+                    
+                    builder.Append(": ");
+
+                    int i = 0;
+                    foreach (object owner in info.occupiedBy)
+                    {
+                        builder.Append(owner.GetType().FullName);
+
+                        if (i < info.occupiedBy.Count - 1)
+                        {
+                            builder.Append(", ");
+                        }
+                        
+                        i++;
+                    }
+
+                    builder.AppendLine();
+                    
+                    Addressables.Release(info.handle);
+                }
+                
+                _assets.Clear();
+                _activeLoads.Clear();
+                
+                BDebug.LogError(this, builder.ToString());
+            }
+            
+            return ActionResult.SuccessSyncronous();
         }
     }
 }

@@ -83,7 +83,7 @@ namespace Beast.Radar.Essential
                 {
                     _resources.Release(this, _config.installers[i]);
                 }
-
+            
                 _coreInstallers = null;
             }
 
