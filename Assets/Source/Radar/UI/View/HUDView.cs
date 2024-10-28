@@ -3,5 +3,6 @@
     public class HUDView : UIView
     {
         public UIButton pauseButton;
+        public UIText timeText;
     }
 }

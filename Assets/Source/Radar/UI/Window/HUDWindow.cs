@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.GameCycle;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
@@ -7,19 +8,22 @@ namespace Beast.Radar.UI
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
+        private readonly IWorldTime _worldTime;
         private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
         
-        public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager)
+        public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager, IWorldTime worldTime)
         {
             _uiFactory = uiFactory;
             _windowManager = windowManager;
+            _worldTime = worldTime;
         }
         
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenUpdate(ActionID.TICK, _tick);
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
@@ -42,6 +46,12 @@ namespace Beast.Radar.UI
             _subscribeView();
             
             return ActionResult.SuccessSyncronous();
+        }
+
+        private void _tick(ActionContext obj)
+        {
+            
+            _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
         }
 
         private void _setActive(bool isActive)
