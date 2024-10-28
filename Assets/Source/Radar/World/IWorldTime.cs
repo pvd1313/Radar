@@ -1,8 +1,7 @@
-﻿namespace Beast.Radar.GameTime
+﻿namespace Beast.Radar.World
 {
     public interface IWorldTime
     {
-        float Minutes { get; }
         float GetHours();
     }
 }

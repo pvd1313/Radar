@@ -4,10 +4,10 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmos;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Serialization;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -29,7 +29,6 @@ namespace Beast.Radar.Player
         private float2 _currentTarget = new(512, 512);
         private float2 _currentPosition = new(512, 512);
         private int2 _cellIndex;
-
 
         private float2 _startPressPosition;
         private int _texelSize;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 
-namespace Beast.Radar.GameTime
+namespace Beast.Radar.World
 {
     public class WorldTimeConfig : ScriptableConfig
     {

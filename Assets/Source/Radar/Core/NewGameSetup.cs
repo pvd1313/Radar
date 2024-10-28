@@ -4,6 +4,7 @@ using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
+using Beast.Radar.World;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Core
@@ -32,7 +33,8 @@ namespace Beast.Radar.Core
                 player = new PlayerData
                 {
                     position = int2.zero
-                }
+                },
+                world = new WorldData()
             };
 
             _saveManager.Load(model);
