@@ -24,7 +24,7 @@ namespace Beast.Radar.World
         {
             handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameSave);
+            handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
         }
 
         private UniTask<ActionResult> _gameLoad(ActionContext arg)
@@ -46,15 +46,25 @@ namespace Beast.Radar.World
             if (_seconds >= 60)
             {
                 _minutes++;
-                
                 _seconds -= 60;
-                BDebug.Track(this, "hour", GetHours());
+                BDebug.Track(this, "time", $"{GetHours()}:{GetMinutes()}");
             }
         }
 
+        
         public float GetHours()
         {
             return (_minutes / 60) % 24;
+        }
+
+        public float GetTotalHours()
+        {
+            return (float)_minutes / 60 + (_seconds / 3600);
+        }
+
+        public float GetMinutes()
+        {
+            return _minutes % 60;
         }
     }
 }

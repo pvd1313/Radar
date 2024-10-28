@@ -119,9 +119,9 @@ namespace Beast.Radar.Player
 
         private void _move()
         {
-            float deltaGameHours = _worldTime.GetHours() - _lastRecordedGameHours;
+            float deltaGameHours = _worldTime.GetTotalHours() - _lastRecordedGameHours;
+            _lastRecordedGameHours = _worldTime.GetTotalHours();
 
-            _lastRecordedGameHours = _worldTime.GetHours();
             _currentPosition = BMath.MoveTowards(
                 _currentPosition,
                 _currentTarget,
@@ -131,11 +131,12 @@ namespace Beast.Radar.Player
             float2 worldPosition = _cameraTransform.WorldToScreen(_currentPosition);
 
             _player.body.position = new Vector3(worldPosition.x, worldPosition.y, 0);
+            
             _gizmoHandle.DrawScreenDot(_currentTarget + new float2(-_halfTexelSize, _halfTexelSize));
-
             _gizmoHandle.DrawScreenDot(_currentTarget + new float2(-_halfTexelSize, -_halfTexelSize));
             _gizmoHandle.DrawScreenDot(_currentTarget + new float2(_halfTexelSize, -_halfTexelSize));
             _gizmoHandle.DrawScreenDot(_currentTarget + new float2(_halfTexelSize, _halfTexelSize));
+            
             BDebug.Track(this, "target", _currentTarget);
             BDebug.Track(this, "coordinate", _currentPosition);
         }

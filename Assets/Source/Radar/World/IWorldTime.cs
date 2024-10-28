@@ -3,5 +3,7 @@
     public interface IWorldTime
     {
         float GetHours();
+        float GetTotalHours();
+        float GetMinutes();
     }
 }
