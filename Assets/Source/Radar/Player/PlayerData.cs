@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
-namespace Beast.Radar.Serialization
+namespace Beast.Radar.Player
 {
     public struct PlayerData : ISerializable
     {

@@ -1,6 +1,7 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
+using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
