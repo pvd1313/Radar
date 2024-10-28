@@ -8,45 +8,38 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerMovement : IPlayerMovement
+    public class PlayerPosition : IPlayerPosition
     {
         private readonly PlayerView _view;
         private readonly IWorldTime _time;
-        private readonly IInputSystem _input;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
+        private readonly InputValueControl<float2> _clickInput;
+        private readonly float _halfTexelSize;
 
         private float2 _currentTarget;
         private float2 _currentPosition;
         private int2 _targetCell;
 
         private float2 _startPressPosition;
-        private float _halfTexelSize;
+        private float _startPressTime;
         private float _lastRecordedHours;
-        
-        public PlayerMovement(
-            PlayerView view, 
-            IWorldTime time, 
-            IInputSystem input, 
+        private bool _isCheckClick;
+
+        public PlayerPosition(
+            PlayerView view,
+            IWorldTime time,
+            IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera)
         {
             _view = view;
             _time = time;
-            _input = input;
             _config = config;
             _camera = camera;
-        }
-
-        public void Warmup()
-        {
+            
+            _clickInput = input.GameInput.Click;
             _halfTexelSize = (1f / WorldTransform.CellTileCount) / 2.0f;
-            _subscribeInput();
-        }
-        
-        public void Dispose()
-        {
-            _unsubscribeInput();
         }
 
         public int2 GetPosition()
@@ -56,11 +49,13 @@ namespace Beast.Radar.Player
 
         public void SetPosition(int2 cellIndex)
         {
-            _view.body.position = _indexToWorld(cellIndex).AsVector3();
+            _view.body.position = _indexToWorld(cellIndex).XY0();
         }
 
-        public void Move()
+        public void Update()
         {
+            FollowClick();
+
             float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
             _lastRecordedHours = _time.GetTotalHours();
 
@@ -70,60 +65,60 @@ namespace Beast.Radar.Player
                 _config.moveSpeed * deltaGameHours
             );
 
-            _view.body.position = _camera.WorldToScreen(_currentPosition).AsVector3();
-            _view.target.position = _camera.WorldToScreen(_currentTarget).AsVector3();
+            _view.body.position = _camera.WorldToScreen(_currentPosition).XY0();
+            _view.target.position = _camera.WorldToScreen(_currentTarget).XY0();
 
             if (_view.target.gameObject.activeSelf != BMath.Distance(_currentPosition, _currentTarget) > 0.1f)
             {
                 _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
             }
-            
+
             BDebug.Track(this, "position", _currentPosition);
         }
 
-        private void _subscribeInput()
+        private void FollowClick()
         {
-            _input.GameInput.Click.PressStarted += _onPressStarted;
-            _input.GameInput.Click.PressCanceled += _onPressCanceled;
-        }
-        
-        private void _unsubscribeInput()
-        {
-            _input.GameInput.Click.PressStarted -= _onPressStarted;
-            _input.GameInput.Click.PressCanceled -= _onPressCanceled;
-        }
-
-        private void _onPressStarted(float2 position)
-        {
-            _startPressPosition = position;
-        }
-
-        private void _onPressCanceled(float2 position, float duration)
-        {
-            if (BMath.Distance(_startPressPosition, position) < 0.1f && duration < 0.2f)
+            if (_clickInput.State == EButtonState.Pressed && !_isCheckClick)
             {
-                _currentTarget = _camera.ScreenToWorld(position);
-                _targetCell = _worldToIndex(_currentTarget);
+                _startPressPosition = _clickInput.Value;
+                _isCheckClick = true;
+            }
 
-                if (_currentTarget.y > _currentPosition.y)
+            if (_isCheckClick && _clickInput.State == EButtonState.Default)
+            {
+                if (_clickInput.PressedTime < 0.2f && BMath.Distance(_clickInput.LastValue, _startPressPosition) < 0.1f)
                 {
-                    _view.target.SetAsFirstSibling();
-                }
-                else
-                {
-                    _view.target.SetAsLastSibling();
+                    _setTarget(_startPressPosition);
                 }
                 
-                BDebug.Track(this, "target", _currentTarget);
-                BDebug.Track(this, "target cell", _targetCell);
+                _isCheckClick = false;
             }
+        }
+
+
+        private void _setTarget(float2 position)
+        {
+            _currentTarget = _camera.ScreenToWorld(position);
+            _targetCell = _worldToIndex(_currentTarget);
+
+            if (_currentTarget.y > _currentPosition.y)
+            {
+                _view.target.SetAsFirstSibling();
+            }
+            else
+            {
+                _view.target.SetAsLastSibling();
+            }
+
+            BDebug.Track(this, "target", _currentTarget);
+            BDebug.Track(this, "target cell", _targetCell);
         }
 
         private float2 _indexToWorld(int2 index)
         {
             return (float2)index / WorldTransform.CellTileCount + new float2(_halfTexelSize, _halfTexelSize);
         }
-        
+
         private int2 _worldToIndex(float2 worldPosition)
         {
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);

@@ -18,11 +18,9 @@ namespace Beast.Radar.Player
         private readonly IWorldTime _time;
         private readonly GameModel _game;
         
-        private IPlayerMovement _movement => _playerMovement;
-        private PlayerMovement _playerMovement;
+        private IPlayerPosition _position;
         
         private PlayerView _view;
-        
         
         public PlayerController(
             ICameraTransform camera,
@@ -53,34 +51,32 @@ namespace Beast.Radar.Player
         {
             _view = BScene.InstantiateMono(this, _library.playerViewPrefab, float3.zero, quaternion.identity);
             
-            _playerMovement = new PlayerMovement(_view, _time, _input, _config, _camera);
-            _playerMovement.Warmup();
+            _position = new PlayerPosition(_view, _time, _input, _config, _camera);
             
             return ActionResult.SuccessSyncronous();
         }
 
         private void _tick(ActionContext context)
         {
-            _movement.Move();
+            _position.Update();
         }
 
         private UniTask<ActionResult> _gameLoad(ActionContext arg)
         {
-            _movement.SetPosition(_game.player.position);
+            _position.SetPosition(_game.player.position);
             
             return ActionResult.SuccessSyncronous();
         }
 
         private UniTask<ActionResult> _gameSave(ActionContext arg)
         {
-            _game.player.position = _movement.GetPosition();
+            _game.player.position = _position.GetPosition();
 
             return ActionResult.SuccessSyncronous();
         }
 
         private UniTask<ActionResult> _dispose(ActionContext context)
         {
-            _playerMovement.Dispose();
             return ActionResult.SuccessSyncronous();
         }
     }

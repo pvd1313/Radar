@@ -51,7 +51,6 @@ namespace Beast.Radar.World
             }
         }
 
-        
         public float GetHours()
         {
             return (_minutes / 60) % 24;

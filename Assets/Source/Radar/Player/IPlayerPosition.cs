@@ -2,10 +2,10 @@
 
 namespace Beast.Radar.Player
 {
-    public interface IPlayerMovement
+    public interface IPlayerPosition
     {
         int2 GetPosition();
         void SetPosition(int2 cellIndex);
-        void Move();
+        void Update();
     }
 }

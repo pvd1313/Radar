@@ -8,9 +8,10 @@ namespace Beast.Radar.InputHandling
         public event Action PressStarted;
         public event Action<float> PressCanceled;
         public EButtonState State { get; private set; }
-
+        public float PressedTime  { get; private set; }
+        
         private float _startPressTime;
-
+        
         public void StartPress()
         {
             State = EButtonState.Pressed;
@@ -21,7 +22,8 @@ namespace Beast.Radar.InputHandling
         public void EndPress()
         {
             State = EButtonState.Default;
-            PressCanceled?.Invoke(Time.time - _startPressTime);
+            PressedTime = Time.time - _startPressTime;
+            PressCanceled?.Invoke(PressedTime);
         }
     }
 }
