@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Beast.Radar.Essential
 {
-    public class EssentialBoot : IInitializable, IGameCycleListener
+    public class EssentialBoot : Controller, IInitializable
     {
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
@@ -30,11 +30,6 @@ namespace Beast.Radar.Essential
             _gameCycle = gameCycle;
             _resources = resources;
             _container = container;
-        }
-        
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
         public async void Initialize()
@@ -62,7 +57,7 @@ namespace Beast.Radar.Essential
             _coreInstallers = new ScriptableInstaller[_config.installers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
-                _coreInstallers[i] = await _resources.Load(this, _config.installers[i]);
+                _coreInstallers[i] = await _resources.LoadAsset(this, _config.installers[i]);
             }
 
             foreach (ScriptableInstaller installer in _coreInstallers)
@@ -73,21 +68,6 @@ namespace Beast.Radar.Essential
             }
 
             await _container.Resolve<ICoreBoot>().Boot();
-        }
-
-        private UniTask<ActionResult> _dispose(ActionContext context)
-        {
-            if (_coreInstallers != null)
-            {
-                for (int i = 0; i < _coreInstallers.Length; i++)
-                {
-                    _resources.Release(this, _config.installers[i]);
-                }
-            
-                _coreInstallers = null;
-            }
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }
