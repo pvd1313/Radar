@@ -7,6 +7,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
@@ -83,7 +84,7 @@ namespace Beast.Radar.UI
             };
         }
         
-        private async UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _idToWindow = new Dictionary<string, WindowData>(64);
 
@@ -92,13 +93,11 @@ namespace Beast.Radar.UI
                 _debugHandleRecords = new List<Record>(256);
             }
 
-            CanvasView prefab = await _resources.LoadPrefab(this, _library.canvas);
-
-            _canvas = await _factory.Instantiate(this, prefab);
+            _canvas = BScene.InstantiateMono(this, _library.canvas, float3.zero, quaternion.identity);
             
             _canvas.MouseOverUI += _onMouseOverUI;
 
-            return ActionResult.Success();
+            return ActionResult.SuccessSyncronous();
         }
         
         private async UniTask _open<TData>(string windowID, TData data)

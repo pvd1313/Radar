@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Resources;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace Beast.Radar
     [Serializable]
     public class UIPrefabLibrary : IConfig, IGameCycleListener
     {
-        public Address<CanvasView> canvas;
+        public CanvasView canvas;
         public UIPrefab[] window;
 
         private Dictionary<string, UIView> _window;

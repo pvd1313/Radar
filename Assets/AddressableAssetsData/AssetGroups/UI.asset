@@ -16,12 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 012eb37e42a8b2e47a4ae3e981ba6ed8
-  m_SerializeEntries:
-  - m_GUID: 2819355c00a7dca46807fcb3591cc28e
-    m_Address: Assets/Prefab/UI/Views/canvas.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
