@@ -50,6 +50,7 @@ namespace Beast.Radar.InputHandling
             _isBlock = isBlock;
             if (_isBlock)
             {
+                Click.UpdateValue(new float2(0,0));
                 LastTouchCount.UpdateValue(0);
                 IsPressMove = false;
             }

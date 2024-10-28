@@ -8,13 +8,6 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
-    public interface IPlayerMovement
-    {
-        int2 GetPosition();
-        void SetPosition(int2 cellIndex);
-        void Move();
-    }
-    
     public class PlayerMovement : IPlayerMovement
     {
         private readonly PlayerView _view;
@@ -58,12 +51,7 @@ namespace Beast.Radar.Player
 
         public int2 GetPosition()
         {
-            return (int2)BMath.Floor(_currentPosition * WorldTransform.CellTileCount);
-        }
-
-        public void SetTarget(int2 cellIndex)
-        {
-            _targetCell = cellIndex;
+            return _worldToIndex(_currentPosition);
         }
 
         public void SetPosition(int2 cellIndex)
@@ -84,8 +72,13 @@ namespace Beast.Radar.Player
 
             _view.body.position = _camera.WorldToScreen(_currentPosition).AsVector3();
             _view.target.position = _camera.WorldToScreen(_currentTarget).AsVector3();
+
+            if (_view.target.gameObject.activeSelf != BMath.Distance(_currentPosition, _currentTarget) > 0.1f)
+            {
+                _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
+            }
             
-            BDebug.Track(this, "coordinate", _currentPosition);
+            BDebug.Track(this, "position", _currentPosition);
         }
 
         private void _subscribeInput()
@@ -93,6 +86,7 @@ namespace Beast.Radar.Player
             _input.GameInput.Click.PressStarted += _onPressStarted;
             _input.GameInput.Click.PressCanceled += _onPressCanceled;
         }
+        
         private void _unsubscribeInput()
         {
             _input.GameInput.Click.PressStarted -= _onPressStarted;
@@ -108,21 +102,31 @@ namespace Beast.Radar.Player
         {
             if (BMath.Distance(_startPressPosition, position) < 0.1f && duration < 0.2f)
             {
-                float2 worldPosition = _camera.ScreenToWorld(position);
+                _currentTarget = _camera.ScreenToWorld(position);
+                _targetCell = _worldToIndex(_currentTarget);
+
+                if (_currentTarget.y > _currentPosition.y)
+                {
+                    _view.target.SetAsFirstSibling();
+                }
+                else
+                {
+                    _view.target.SetAsLastSibling();
+                }
                 
-                _targetCell = (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
-
-                _currentTarget =_indexToWorld(_targetCell);
-
                 BDebug.Track(this, "target", _currentTarget);
-                BDebug.Track(this, "target cell index", _targetCell);
-                BDebug.Track(this, "test target cell index", _indexToWorld(_targetCell));
+                BDebug.Track(this, "target cell", _targetCell);
             }
         }
 
         private float2 _indexToWorld(int2 index)
         {
             return (float2)index / WorldTransform.CellTileCount + new float2(_halfTexelSize, _halfTexelSize);
+        }
+        
+        private int2 _worldToIndex(float2 worldPosition)
+        {
+            return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
         }
     }
 }
