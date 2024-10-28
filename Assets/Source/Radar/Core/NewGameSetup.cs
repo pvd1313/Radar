@@ -3,6 +3,7 @@ using Beast.Claw.Mathematics;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
+using Unity.Mathematics;
 
 namespace Beast.Radar.Core
 {
@@ -26,6 +27,10 @@ namespace Beast.Radar.Core
                 {
                     position = terrain.terrainSize.Multiply(0.5f),
                     zoom01 = 1
+                },
+                player = new PlayerData
+                {
+                    position = int2.zero
                 }
             };
 
