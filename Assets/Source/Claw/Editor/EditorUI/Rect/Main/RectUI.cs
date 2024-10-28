@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public partial class RectUI
     {
-        private class DataContainer<TValue>
-        {
-            public TValue data;
-        }
-        
         private const int POOL_CAPACITY = 16;
         
         private readonly Dictionary<Type, Type> _rectTaskToDrawer = new();

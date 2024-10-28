@@ -1,29 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using Beast.Claw;
+using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
-using ModestTree;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class WindowManager : IWindowManager, IGameCycleListener
+    public partial class WindowManager : Controller, IWindowManager, IGameCycleListener
     {
         public event Action<string> WindowChanged;
         public event Action<bool> MouseOverUI;
 
-        public string CurrentWindow => _currentWindowID ?? WindowID.None;
+        public Transform CanvasTransform => _canvas.transform;
+        public string CurrentWindow => _currentWindow;
         
-        private readonly IUIFactory _uiFactory;
-        // private readonly IInputSystem _inputSystem;
+        private readonly UIPrefabLibrary _library;
+        private readonly IResourceManager _resources;
+        private readonly IPrefabFactory _factory;
         
-        private Dictionary<string, IWindow> _windows;
+        private Dictionary<string, WindowData> _idToWindow;
+        private List<Record> _debugHandleRecords;
         private CanvasView _canvas;
-        private IWindow _currentWindow;
-        private string _currentWindowID;
         
-        public WindowManager(IUIFactory uiFactory/*, IInputSystem inputSystem*/)
+        private string _currentWindow = WindowID.None;
+        
+        public WindowManager(UIPrefabLibrary library, IResourceManager resources, IPrefabFactory factory /*, IInputSystem inputSystem*/)
         {
-            _uiFactory = uiFactory;
+            _resources = resources;
+            _factory = factory;
+            _library = library;
             // _inputSystem = inputSystem;
         }
         
@@ -33,64 +43,158 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
         {
-            _windows = new Dictionary<string, IWindow>();
-            
-            _canvas = _uiFactory.CreateCanvas(this);
-                
-            _subscribe();
-            
-            return ActionResult.SuccessSyncronous();
-        }
+            owner.ValidateNotNullThrowException(nameof(owner));
+            windowID.ValidateNotEmptyOrNullThrowException(nameof(windowID));
 
-        public void Register(IWindow window, string windowID, UIView view)
-        {
-            if (_windows.ContainsKey(windowID))
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new InvalidOperationException($"'{windowID}' is already registered");
-            }
-
-            int windowIndex = WindowID.WindowIndex.IndexOf(windowID);
-            view.transform.SetParent(_canvas.transform, false);
-            view.transform.SetSiblingIndex(windowIndex);
-            
-            _windows.Add(windowID, window);  
-        }
-
-        public void Show(string windowID)
-        {
-            if (!_windows.TryGetValue(windowID, out IWindow newWindow))
-            {
-                throw new InvalidOperationException($"Window '{windowID}' was not found.");
+                _debugHandleRecords.Add(new Record
+                {
+                    obtainedBy = owner,
+                    dataType = typeof(TData),
+                    windowID = windowID
+                });
             }
             
-            _currentWindow?.Close();
-            _currentWindow = newWindow;
-            _currentWindowID = windowID;
-            _currentWindow.Open();
-
-            if (_currentWindow != newWindow)
-            {
-                WindowChanged?.Invoke(windowID);
-            }
+            return new Handle<TData>(this, windowID);
         }
-
-        private void _subscribe()
+        
+        public void Register<TData>(IWindow<TData> window, string windowID) where TData : struct
         {
+            window.ValidateNotNullThrowException(nameof(window));
+            windowID.ValidateNotEmptyOrNullThrowException(nameof(windowID));
+
+            if (Build.IS_DEVELOPMENT && _idToWindow.ContainsKey(windowID))
+            {
+                throw new InvalidOperationException($"Windows with '{windowID}' is already registered");
+            }
+
+            DataContainer<TData> dataContainer = new ();
+
+            _idToWindow[windowID] = new WindowData
+            {
+                openWindow = () => window.Open(dataContainer.data),
+                closeWindow = window.Close,
+                dataContainer = dataContainer,
+                dataType = typeof(TData),
+                windowID = windowID
+            };
+        }
+        
+        private async UniTask<ActionResult> _warmup(ActionContext context)
+        {
+            _idToWindow = new Dictionary<string, WindowData>(64);
+
+            if (Build.IS_DEVELOPMENT)
+            {
+                _debugHandleRecords = new List<Record>(256);
+            }
+
+            CanvasView prefab = await _resources.LoadPrefab(this, _library.canvas);
+
+            _canvas = await _factory.Instantiate(this, prefab);
+            
             _canvas.MouseOverUI += _onMouseOverUI;
-            // _inputSystem.UIInput.OptionButtons.PressStarted += _onOptionButtonsPressStarted;
-        }
 
-        private void _unsubscribe()
+            return ActionResult.Success();
+        }
+        
+        private async UniTask _open<TData>(string windowID, TData data)
         {
-            _canvas.MouseOverUI -= _onMouseOverUI;
-            // _inputSystem.UIInput.OptionButtons.PressStarted -= _onOptionButtonsPressStarted;
+            if (!_idToWindow.TryGetValue(windowID, out WindowData windowData))
+            {
+                throw new InvalidOperationException($"Window with id '{windowID}' was not found.");
+            }
+
+            if (Build.IS_DEVELOPMENT && typeof(TData) != windowData.dataType)
+            {
+                string message = $"Expected '{windowData.dataType.FullName}' data type to open '{windowID}', " +
+                                 $"but got '{typeof(TData).FullName}'";
+                throw new InvalidOperationException(message);
+            }
+
+            if (_currentWindow != WindowID.None)
+            {
+                try
+                {
+                    await _idToWindow[_currentWindow].closeWindow();
+                }
+                catch (Exception e)
+                {
+                    BDebug.LogException(this, e, $"Failed to close window '{windowID}'");    
+                }
+                
+                _currentWindow = WindowID.None;
+            }
+
+            DataContainer<TData> dataContainer = (DataContainer<TData>)windowData.dataContainer;
+            dataContainer.data = data;
+            
+            try
+            {
+                await windowData.openWindow();
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(this, e, $"Failed to open window '{windowID}'");    
+            }
+
+            _currentWindow = windowID;
+            
+            WindowChanged?.Invoke(_currentWindow);
         }
 
         private void _onMouseOverUI(bool isMouseOverUI)
         {
             MouseOverUI?.Invoke(isMouseOverUI);       
+        }
+        
+        private UniTask<ActionResult> _dispose(ActionContext arg)
+        {
+            if (Build.IS_DEVELOPMENT)
+            {
+                StringBuilder builder = new();
+
+                builder.AppendLine("Found invalid handles:");
+                bool foundInvalidHandles = false;
+
+                foreach (Record record in _debugHandleRecords)
+                {
+                    if (!_idToWindow.TryGetValue(record.windowID, out WindowData windowData))
+                    {
+                        builder.Append(record.obtainedBy.Meta.name);
+                        builder.Append(": Unknown windowID (");
+                        builder.Append(record.windowID);
+                        builder.AppendLine(")");
+
+                        foundInvalidHandles = true;
+                        continue;
+                    }
+
+                    if (windowData.dataType != record.dataType)
+                    {
+                        builder.Append(record.obtainedBy.Meta.name);
+                        builder.Append(": Window data type mistmatch (");
+                        builder.Append(windowData.windowID);
+                        builder.Append(") Expected: (");
+                        builder.Append(windowData.dataType.FullName);
+                        builder.Append("), but got (");
+                        builder.Append(record.dataType.FullName);
+                        builder.AppendLine(")");
+
+                        foundInvalidHandles = true;
+                    }
+                }
+
+                if (foundInvalidHandles)
+                {
+                    BDebug.LogError(this, builder.ToString());
+                }
+            }
+
+            return ActionResult.SuccessSyncronous();
         }
 
         // private void _onOptionButtonsPressStarted(EInputOptionButton button)
@@ -107,12 +211,5 @@ namespace Beast.Radar.UI
         //         Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
         //     }
         // }
-
-        private UniTask<ActionResult> _dispose(ActionContext context)
-        {
-            _unsubscribe();
-
-            return ActionResult.SuccessSyncronous();
-        }
     }
 }

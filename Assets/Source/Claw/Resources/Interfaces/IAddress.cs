@@ -8,6 +8,6 @@ namespace Beast.Claw.Resources
     {
         public Guid Guid { get; }
         
-        public AssetReferenceT<TObject> Reference { get;}
+        public AssetReference Reference { get;}
     }
 }

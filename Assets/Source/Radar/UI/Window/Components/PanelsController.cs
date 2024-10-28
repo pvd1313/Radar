@@ -36,7 +36,7 @@
         public void Enable()
         {
             _buttons[_currentIndex].SetInteractable(false);
-            _folders[_currentIndex].Open();
+            _folders[_currentIndex].Open(default);
         }
 
         public void Disable()
@@ -50,7 +50,7 @@
             _folders[_currentIndex].Close();
             _currentIndex = index;
             _buttons[_currentIndex].SetInteractable(false);
-            _folders[_currentIndex].Open();
+            _folders[_currentIndex].Open(default);
         }
     }
 }

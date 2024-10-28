@@ -1,15 +1,17 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class HUDWindow : IWindow, IGameCycleListener
+    public class HUDWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
         private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
+        private IWindowHandle<Empty> _pauseMenu;
         
         public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager)
         {
@@ -23,21 +25,29 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        public void Open()
+        public UniTask Open(Empty data)
         {
            _setActive(true);
+
+           return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _setActive(false);
+
+            return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.HudWindow, out _view);
                 
-            _windowManager.Register(this, WindowID.MainHUD, _view);
+            _windowManager.Register(this, WindowID.MainHUD);
+            
+            _view.transform.SetParent(_windowManager.CanvasTransform, false);
+
+            _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.Pause);
                 
             _subscribeView();
             
@@ -61,7 +71,7 @@ namespace Beast.Radar.UI
 
         private void _onClickedPauseButton()
         {
-            _windowManager.Show(WindowID.Pause);
+            _pauseMenu.Open(default);
         }
 
         private UniTask<ActionResult> _dispose(ActionContext context)

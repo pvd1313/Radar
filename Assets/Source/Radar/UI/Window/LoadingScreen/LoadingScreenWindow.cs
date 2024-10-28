@@ -1,9 +1,10 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class LoadingScreenWindow : IWindow, IGameCycleListener
+    public class LoadingScreenWindow : IWindow<Empty>, IGameCycleListener
     {
         private const int MAX_TASK_COUNT = 20;
         
@@ -33,20 +34,25 @@ namespace Beast.Radar.UI
 
             _loadingTasksPool = new UIPool<LoadingTaskText>(_uiFactory, PrefabID.LoadingScreenTask, _view.logContent);
             
-            _windowManager.Register(this, WindowID.LoadingScreen, _view);
+            _windowManager.Register(this, WindowID.LoadingScreen);
+            _view.transform.SetParent(_windowManager.CanvasTransform, false);
             
             return ActionResult.SuccessSyncronous();
         }
         
-        public void Open()
+        public UniTask Open(Empty data)
         {
             _view.progressButton.SetInteractable(false);
             _view.gameObject.SetActive(true);
+            
+            return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _view.gameObject.SetActive(false);
+            
+            return UniTask.CompletedTask;
         }
 
         private void _addTask(string task)

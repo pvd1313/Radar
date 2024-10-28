@@ -43,17 +43,13 @@ namespace Beast.Radar.Essential
 
             await _gameCycle.Execute(this, ActionID.WARMUP);
 
+            await _windows.GetHandle<Empty>(this, WindowID.LoadingScreen).Open(default);
+
             await _startupCore();
         }
 
         private async UniTask _startupCore()
         {
-            // TODO: Probably we may have special "splashcreen" loading screen? Or add style to loading window...
-            _windows.Show(WindowID.LoadingScreen);
-            
-            // TODO: Start displaying loading infos.
-            //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
-
             _coreInstallers = new ScriptableInstaller[_config.installers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
