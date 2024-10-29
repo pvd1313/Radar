@@ -60,7 +60,6 @@ namespace Beast.Radar.UI
 
         private void _tick(ActionContext obj)
         {
-            
             _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
         }
 

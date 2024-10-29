@@ -152,7 +152,7 @@ namespace Beast.Radar.UI
         {
             // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
             _saveManager.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
-            _windowManager.Show(WindowID.MainHUD);
+            _mainHUD.Open(default);
         }
 
         private void _hideView()
