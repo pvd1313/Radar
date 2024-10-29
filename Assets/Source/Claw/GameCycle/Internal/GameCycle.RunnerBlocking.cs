@@ -45,7 +45,7 @@ namespace Beast.Claw.GameCycle
 
                     try
                     {
-                        ActionContext context = default;
+                        BlockingContext context = default;
                         listener.blocking.Invoke(context);
                     }
                     catch (Exception e)

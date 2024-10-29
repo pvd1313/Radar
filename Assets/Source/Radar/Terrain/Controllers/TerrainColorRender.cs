@@ -3,7 +3,6 @@ using Beast.Claw;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -61,14 +60,14 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(material);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
             return ActionResult.SuccessSyncronous();
         }
         
-        private void _render(ActionContext context)
+        private void _render(BlockingContext context)
         {
             if (!_biomeRender.IsReady || !_camera.IsReady)
             {
@@ -150,7 +149,7 @@ namespace Beast.Radar.Terrain
             }
         }
         
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             BGraphic.TryDispose(ref _materialForCamera);
 

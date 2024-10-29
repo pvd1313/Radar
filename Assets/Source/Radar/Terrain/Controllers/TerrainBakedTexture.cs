@@ -34,7 +34,7 @@ namespace Beast.Radar.Terrain
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        private async UniTask<ActionResult> _gameLoad(ActionContext context)
+        private async UniTask<ActionResult> _gameLoad(ConcurrentContext context)
         {
             await _dispose(context);
 
@@ -74,7 +74,7 @@ namespace Beast.Radar.Terrain
             return ActionResult.Success();
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             IsReady = false;
 

@@ -1,8 +1,9 @@
 ﻿namespace Beast.Radar.Debug
 {
-    public static class DebugElementID
+    public enum DebugElementID
     {
-        public const string LogConsoleID = "log_console";
-        public const string FpsCounterID = "fps_counter";
+        Invalid,
+        LogConsoleID, 
+        FpsCounterID
     }
 }

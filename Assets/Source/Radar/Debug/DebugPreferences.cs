@@ -4,19 +4,19 @@ namespace Beast.Radar.Debug
 {
     public class DebugPreferences : ISerializable
     {
-        public bool isShowLog = true;
-        public bool isShowFps = true;
+        public bool showLogConsole = true;
+        public bool showFPSCounter = true;
         
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteBool(isShowLog);
-            stream.WriteBool(isShowFps);
+            stream.WriteBool(showLogConsole);
+            stream.WriteBool(showFPSCounter);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            isShowLog = stream.ReadBool();
-            isShowFps = stream.ReadBool();
+            showLogConsole = stream.ReadBool();
+            showFPSCounter = stream.ReadBool();
         }
     }
 }

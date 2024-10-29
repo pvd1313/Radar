@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
-  m_Name: Installers_ContentUpdateGroupSchema
+  m_Name: Prefab_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 11400000, guid: b6b89b7dce2a09a4f9db6c20ebff6b02, type: 2}
+  m_Group: {fileID: 11400000, guid: feb2a4dfe4a53224687d0d8a42f10a46, type: 2}
   m_StaticContent: 0

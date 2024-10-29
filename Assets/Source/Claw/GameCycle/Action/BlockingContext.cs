@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameCycle
 {
-    public struct ActionContext
+    public struct BlockingContext
     {
         
     }

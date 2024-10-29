@@ -8,7 +8,7 @@ namespace Beast.Radar.UI
 {
     public class HUDWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly IWorldTime _worldTime;
         private readonly SelectablesController _selectablesController;
@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
         
-        public HUDWindow(UIPrefabLibrary library, IWindowManager windowManager, IWorldTime worldTime)
+        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager, IWorldTime worldTime)
         {
             _library = library;
             _windowManager = windowManager;
@@ -44,7 +44,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
             
@@ -59,7 +59,7 @@ namespace Beast.Radar.UI
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ActionContext obj)
+        private void _tick(ConcurrentContext context)
         {
             _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
         }
@@ -84,7 +84,7 @@ namespace Beast.Radar.UI
             _pauseMenu.Open(default);
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeView();
 

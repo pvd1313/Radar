@@ -30,7 +30,7 @@ namespace Beast.Claw.Gizmos
             handle.ListenUpdate(ActionID.TICK, _tick);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _drawers = new Dictionary<IGizmosDrawer, DrawerInfo>();
             
@@ -38,10 +38,11 @@ namespace Beast.Claw.Gizmos
             {
                 AddDrawer(drawer);
             }
+            
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ActionContext context)
+        private void _tick(BlockingContext context)
         {
             foreach (DrawerInfo info in _drawers.Values)
             {

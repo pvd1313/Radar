@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: DebugInstaller
   m_EditorClassIdentifier: 
   configs:
-  - {fileID: 11400000, guid: d003fabb3a8287346b920f8856454ad2, type: 2}
   - {fileID: 11400000, guid: e5cfc40c9e44bcb45a019b233e558ff5, type: 2}

@@ -19,7 +19,7 @@ namespace Beast.Radar.UI
         private readonly ITerrainPreviewRender _previewRender;
         private readonly INewGameSetup _newGameSetup;
         private readonly IInputSystem _inputSystem;
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
@@ -39,7 +39,7 @@ namespace Beast.Radar.UI
             ITerrainPreviewRender previewRender,
             INewGameSetup newGameSetup,
             IInputSystem inputSystem,
-            UIPrefabLibrary library)
+            CorePrefabLibrary library)
         {
             _generationConfig = generationConfig;
             _windowManager = windowManager;
@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
@@ -254,7 +254,7 @@ namespace Beast.Radar.UI
             _menuView.mapImage.texture = _terrainTexture.color;
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeView();
 

@@ -21,7 +21,7 @@ namespace Beast.Radar.Graphic
             handle.ListenUpdate(ActionID.TICK, _tick);
         }
 
-        private void _tick(ActionContext context)
+        private void _tick(BlockingContext context)
         {
             BDebug.Track(this, nameof(Size), Size);
             BDebug.Track(this, nameof(Aspect), Aspect);

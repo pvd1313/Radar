@@ -38,7 +38,7 @@ namespace Beast.Radar.Cinematic
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _motion = _cameraConfig.GetMotionParameters(_inputSystem.Scheme.Current);
             
@@ -47,7 +47,7 @@ namespace Beast.Radar.Cinematic
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeInput();
 

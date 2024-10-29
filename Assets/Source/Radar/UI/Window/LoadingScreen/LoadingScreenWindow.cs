@@ -9,7 +9,7 @@ namespace Beast.Radar.UI
     {
         private const int MAX_TASK_COUNT = 20;
 
-        private readonly UIPrefabLibrary _library;
+        private readonly EssentialPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
 
         private LoadingScreenView _view;
@@ -17,7 +17,7 @@ namespace Beast.Radar.UI
 
         private LoadingTaskText _lastLoadingTask;
 
-        public LoadingScreenWindow(UIPrefabLibrary library, IWindowManager windowManager)
+        public LoadingScreenWindow(EssentialPrefabLibrary library, IWindowManager windowManager)
         {
             _library = library;
             _windowManager = windowManager;
@@ -28,7 +28,7 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.loadingScreen, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);

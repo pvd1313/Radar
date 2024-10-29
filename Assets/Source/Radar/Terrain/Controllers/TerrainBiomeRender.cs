@@ -3,9 +3,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
-using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -75,7 +73,7 @@ namespace Beast.Radar.Terrain
             _renderBiome(task);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _dispose(context);
 
@@ -99,7 +97,7 @@ namespace Beast.Radar.Terrain
             return ActionResult.SuccessSyncronous();
         }
         
-        private UniTask<ActionResult> _gameLoad(ActionContext context)
+        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
         {
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
@@ -113,7 +111,7 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private void _render(ActionContext context)
+        private void _render(BlockingContext context)
         {
             if (!_bakedTerrain.IsReady || !_camera.IsReady)
             {
@@ -228,7 +226,7 @@ namespace Beast.Radar.Terrain
             material.SetFloat("_NoiseSamplerLOD", lod);
         }
         
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _isReady = false;
 

@@ -25,14 +25,14 @@ namespace Beast.Radar.InputHandling
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _subscribeWindowManager();
 
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeWindowManager();
             

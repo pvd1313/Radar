@@ -13,8 +13,8 @@ namespace Beast.Radar.Essential
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
         private readonly IGameCycle _gameCycle;
-        private readonly IResourceManager _resources;
         private readonly DiContainer _container;
+        private readonly IResourceManager _resources;
 
         private ScriptableInstaller[] _coreInstallers;
 
@@ -22,14 +22,14 @@ namespace Beast.Radar.Essential
             EssentialConfig config, 
             IWindowManager windows, 
             IGameCycle gameCycle,
-            IResourceManager resources,
-            DiContainer container)
+            DiContainer container,
+            IResourceManager resources)
         {
             _config = config;
             _windows = windows;
             _gameCycle = gameCycle;
-            _resources = resources;
             _container = container;
+            _resources = resources;
         }
         
         public async void Initialize()

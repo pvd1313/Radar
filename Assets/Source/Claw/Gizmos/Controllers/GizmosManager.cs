@@ -35,7 +35,7 @@ namespace Beast.Claw.Gizmos
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _wireLines = new ShapeStorage<Line>(BUFFER_SIZE);
             _wireRects = new ShapeStorage<Rect>(BUFFER_SIZE);
@@ -61,7 +61,7 @@ namespace Beast.Claw.Gizmos
             return new GizmosHandle(id, this);
         }
 
-        private void _gizmosDraw(ActionContext context)
+        private void _gizmosDraw(BlockingContext context)
         {
             _material.SetPass(0);
             
@@ -92,7 +92,7 @@ namespace Beast.Claw.Gizmos
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _wireLines.Dispose();
             _wireRects.Dispose();

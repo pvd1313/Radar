@@ -27,7 +27,7 @@ namespace Beast.Radar.Debug
             handle.ListenOperation(ActionID.PREFERENCES_SAVE, _preferencesSave);
         }
 
-        private async UniTask<ActionResult> _preferencesLoad(ActionContext context)
+        private async UniTask<ActionResult> _preferencesLoad(ConcurrentContext context)
         {
             bool fileExists = await _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
@@ -58,7 +58,7 @@ namespace Beast.Radar.Debug
             return ActionResult.Success();
         }
         
-        private async UniTask<ActionResult> _preferencesSave(ActionContext context)
+        private async UniTask<ActionResult> _preferencesSave(ConcurrentContext context)
         {
             StreamData stream = await _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 
