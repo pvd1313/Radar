@@ -6,14 +6,15 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.Debug;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
     public class DebugMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
+        private readonly UIPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
-        private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
@@ -26,14 +27,14 @@ namespace Beast.Radar.UI
         private IWindowHandle<Empty> _debugWindow;
         
         public DebugMenuWindow(
+            UIPrefabLibrary library,
             IWindowManager windowManager,
-            IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,
             IDebugController debugController)
         {
+            _library = library;
             _windowManager = windowManager;
-            _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _inputSystem = inputSystem;
             _debugController = debugController;
@@ -65,7 +66,7 @@ namespace Beast.Radar.UI
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
+            _view = BScene.InstantiateMono(this, _library.debugMenu, float3.zero, quaternion.identity);
             _hideView();
             _view.transform.SetSiblingIndex(2);
             _windowManager.Register(this, WindowID.Debug);
@@ -91,7 +92,7 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_view.itemView, _uiFactory, _zoneBuilder, _inputSystem, _getTestItems()),
+                new DebugItemPanel(_library, _view.itemView, _zoneBuilder, _inputSystem, _getTestItems()),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _inputSystem, _debugController),
             });
             _panelsController.Warmup();

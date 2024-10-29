@@ -5,42 +5,28 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Beast.Radar
 {
     [Serializable]
-    public class UIPrefabLibrary : IConfig, IGameCycleListener
+    public class UIPrefabLibrary : IConfig
     {
         public CanvasView canvas;
-        public UIPrefab[] window;
-
-        private Dictionary<string, UIView> _window;
         
+        public HUDView hud;
+        public MapGenerationView mapGeneration;
+        public PauseMenuView pauseMenu;
+        public LoadingScreenView loadingScreen;
+        public LoadingTaskText loadingTaskText;
+        public DebugMenuView debugMenu;
+        public DebugItemButton debugItemButton;
+        public DebugItemTypeButton debugItemTypeButton;
+        public InputIconDisplay inputIconDisplay;
+
         public IEnumerable<IConfig> Bind()
         {
             yield break;
-        }
-        
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-        }
-        
-        public UniTask<ActionResult> _warmup(ActionContext context)
-        {
-            _window = window.ToDictionary(w => w.id, w => w.prefab);
-
-            return ActionResult.SuccessSyncronous();
-        }
-
-        public UIView GetWindow(string prefabID)
-        {
-            if (_window.TryGetValue(prefabID, out UIView prefab))
-            {
-                return prefab;
-            }
-            
-            throw new InvalidOperationException($"Prefab '{prefabID}' was not found");
         }
     }
 }

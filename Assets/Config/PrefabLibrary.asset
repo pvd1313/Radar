@@ -17,6 +17,18 @@ MonoBehaviour:
   playerViewPrefab: {fileID: -1277675084398546024, guid: 4d04b7825d838b64da1a038da4ccdef1, type: 3}
   ui:
     canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
+    hud: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
+    mapGeneration: {fileID: 8042904576330020168, guid: ee2e1f39d664940468d1bd98676f200f, type: 3}
+    pauseMenu: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}
+    loadingScreen: {fileID: 5222784808474298362, guid: 1f62dcdb84059fe4d9e629c148507415, type: 3}
+    loadingScreenTask: {fileID: 6940698891875794264, guid: ccf78dd6822b91d4e81934dc623cbb5e, type: 3}
+    loadingTaskText: {fileID: 3985179231620626817, guid: ccf78dd6822b91d4e81934dc623cbb5e, type: 3}
+    debugMenu: {fileID: 5656068328770286066, guid: 6058ed36518bdf945b5ec02f91221128, type: 3}
+    debugMenuButton: {fileID: 5689346852516115500, guid: c4b7b2a852e16114ea451382d987f0b6, type: 3}
+    debugItemButton: {fileID: 5689346852516115500, guid: c4b7b2a852e16114ea451382d987f0b6, type: 3}
+    debugMenuTypeButton: {fileID: 7382000023934807756, guid: 520ec31127b5b764ebccdc3f4adfe206, type: 3}
+    debugItemTypeButton: {fileID: 7382000023934807756, guid: 520ec31127b5b764ebccdc3f4adfe206, type: 3}
+    inputIconDisplay: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
     window:
     - id: hud_window
       prefab: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}

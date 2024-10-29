@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Beast.Claw.Common;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
     public class UIPool<TPoolable> where TPoolable : UIView, IUIPoolable
     {
-        private readonly IUIFactory _uiFactory;
         private readonly Transform _root;
-        private readonly string _prefabID;
+        private readonly TPoolable _prefab;
         private readonly List<TPoolable> _all = new();
         private readonly List<TPoolable> _enabled = new();
 
-        public UIPool(IUIFactory uiFactory, string prefabID, Transform root)
+        public UIPool(TPoolable prefab, Transform root)
         {
             _root = root;
-            _uiFactory = uiFactory;
-            _prefabID = prefabID;
+            _prefab = prefab;
         }
 
         public TPoolable GetNext()
@@ -60,7 +60,7 @@ namespace Beast.Radar.UI
 
         private TPoolable _addNewEntity()
         {
-            _uiFactory.Create(this, _prefabID, out TPoolable entity);
+            TPoolable entity = BScene.InstantiateMono(this, _prefab, float3.zero, quaternion.identity);
             entity.transform.SetParent(_root, false);
             _all.Add(entity);
             return entity;

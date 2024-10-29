@@ -5,12 +5,13 @@ using Beast.Claw.GameCycle;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly IUIFactory _uiFactory;
+        private readonly UIPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
@@ -22,13 +23,13 @@ namespace Beast.Radar.UI
         private IWindowHandle<Empty> _mapGenerationWindow;
 
         public PauseMenuWindow(
-            IUIFactory uiFactory,
+            UIPrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem)
         {
-            _uiFactory = uiFactory;
+            _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
             _zoneBuilder = zoneBuilder;
@@ -61,7 +62,7 @@ namespace Beast.Radar.UI
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
+             _menuView = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
             _hideView();
             _windowManager.Register(this, WindowID.Pause);
             _menuView.transform.SetParent(_windowManager.CanvasTransform, false);

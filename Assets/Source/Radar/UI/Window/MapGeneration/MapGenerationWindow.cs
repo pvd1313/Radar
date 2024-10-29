@@ -7,6 +7,7 @@ using Beast.Radar.Core;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
@@ -15,10 +16,10 @@ namespace Beast.Radar.UI
     {
         private readonly IWindowManager _windowManager;
         private readonly MapGenerationWindowConfig _generationConfig;
-        private readonly IUIFactory _uiFactory;
         private readonly ITerrainPreviewRender _previewRender;
         private readonly INewGameSetup _newGameSetup;
         private readonly IInputSystem _inputSystem;
+        private readonly UIPrefabLibrary _library;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
@@ -33,20 +34,20 @@ namespace Beast.Radar.UI
 
         public MapGenerationWindow(
             MapGenerationWindowConfig generationConfig,
-            IUIFactory uiFactory,
             IWindowManager windowManager,
             ISelectableZoneBuilder selectableBuilder,
             ITerrainPreviewRender previewRender,
             INewGameSetup newGameSetup,
-            IInputSystem inputSystem)
+            IInputSystem inputSystem,
+            UIPrefabLibrary library)
         {
             _generationConfig = generationConfig;
-            _uiFactory = uiFactory;
             _windowManager = windowManager;
             _selectableBuilder = selectableBuilder;
             _previewRender = previewRender;
             _newGameSetup = newGameSetup;
             _inputSystem = inputSystem;
+            _library = library;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -77,7 +78,7 @@ namespace Beast.Radar.UI
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
+            _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
             _windowManager.Register(this, WindowID.MapGeneration);
 

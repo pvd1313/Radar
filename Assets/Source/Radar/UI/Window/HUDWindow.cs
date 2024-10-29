@@ -2,12 +2,13 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class HUDWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly IUIFactory _uiFactory;
+        private readonly UIPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly IWorldTime _worldTime;
         private readonly SelectablesController _selectablesController;
@@ -15,9 +16,9 @@ namespace Beast.Radar.UI
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
         
-        public HUDWindow(IUIFactory uiFactory, IWindowManager windowManager, IWorldTime worldTime)
+        public HUDWindow(UIPrefabLibrary library, IWindowManager windowManager, IWorldTime worldTime)
         {
-            _uiFactory = uiFactory;
+            _library = library;
             _windowManager = windowManager;
             _worldTime = worldTime;
         }
@@ -45,8 +46,8 @@ namespace Beast.Radar.UI
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _uiFactory.Create(this, PrefabID.HudWindow, out _view);
-                
+            _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
+            
             _windowManager.Register(this, WindowID.MainHUD);
             
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
