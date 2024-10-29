@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dad44889f1840279c0d409a4fbdec87, type: 3}
   m_Name: WorldTimeConfig
   m_EditorClassIdentifier: 
-  multiplier: 0
+  secondMultiplier: 60
