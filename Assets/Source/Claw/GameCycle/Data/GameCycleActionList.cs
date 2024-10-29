@@ -12,7 +12,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.OncePerObjectLife,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = true,
             },
             new ActionInfo
             {
@@ -20,7 +21,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromLastToFirstInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.OncePerObjectLife,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = true
             },
             
             new ActionInfo
@@ -29,7 +31,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 32
+                bufferCapacity = 32,
+                flushProfilerToConsole = true
             },
             new ActionInfo
             {
@@ -37,7 +40,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 32
+                bufferCapacity = 32,
+                flushProfilerToConsole = true
             },
             
             new ActionInfo
@@ -46,7 +50,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 16
+                bufferCapacity = 16,
+                flushProfilerToConsole = true,
             },
             new ActionInfo
             {
@@ -54,7 +59,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 16
+                bufferCapacity = 16,
+                flushProfilerToConsole = true
             },
             
             new ActionInfo
@@ -63,7 +69,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = false
             },
             new ActionInfo
             {
@@ -71,7 +78,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = false
             },
             new ActionInfo
             {
@@ -79,7 +87,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = false,
             },
             new ActionInfo
             {
@@ -87,7 +96,8 @@ namespace Beast.Claw.GameCycle
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128
+                bufferCapacity = 128,
+                flushProfilerToConsole = false,
             }
         };
     }

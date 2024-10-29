@@ -138,14 +138,14 @@ namespace Beast.Claw.GameCycle
                     operationID = _operation.id,
                     listeners = _listeners,
                     frequency = _operation.frequency,
-                    flushProfilerToConsole = _config.logConcurrentAction,
+                    flushProfilerToConsole = _operation.flushProfilerToConsole,
                     enableClawProfiling = _config.profiler.enableClawProfiling
                 }.Run();
 
                 return result;
             }
 
-            public void ExecuteBlocking()
+            public void ExecuteBlocking<TOwner>(TOwner owner)
             {
                 if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Blocking)
                 {
@@ -168,7 +168,10 @@ namespace Beast.Claw.GameCycle
                     operationID = _operation.id,
                     brokenObjects = _blockingBrokenLogic,
                     objectErrorCount = _blockingLogicCounters,
-                    enableClawProfiling = _config.profiler.enableClawProfiling
+                    enableClawProfiling = _config.profiler.enableClawProfiling,
+                    flushProfilerToConsole = _operation.flushProfilerToConsole, 
+                    treeStringBuilder = _treeBuilder,
+                    owner = owner
                 };
                 
                 runner.Run();
@@ -190,7 +193,7 @@ namespace Beast.Claw.GameCycle
             {
                 if (_config.profiler.AnyProfilingActive)
                 {
-                    if (_operation.flow == EActionFlowType.Concurrent)
+                    if (_operation.flushProfilerToConsole)
                     {
                         _treeBuilder ??= new ProfilerTreeStringBuilder();
                     }

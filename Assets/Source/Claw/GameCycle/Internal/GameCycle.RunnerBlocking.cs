@@ -10,6 +10,7 @@ namespace Beast.Claw.GameCycle
     {
         private struct RunnerBlocking
         {
+            public object owner;
             public HashSet<object> brokenObjects;
             public ItemBuffer<Runner.Listener> listeners;
             public Dictionary<object, int> objectErrorCount;
@@ -19,6 +20,8 @@ namespace Beast.Claw.GameCycle
             public bool allLogicIsBroken;
             public RunnerProfiler profiler;
             public bool enableClawProfiling;
+            public bool flushProfilerToConsole;
+            public ProfilerTreeStringBuilder treeStringBuilder;
             
             public void Run()
             {
@@ -71,6 +74,14 @@ namespace Beast.Claw.GameCycle
                 if (profiler.IsInitialized && enableClawProfiling)
                 {
                     profiler.Profiler.RebuildTree();
+                    
+                    if (flushProfilerToConsole)
+                    {
+                        string title = owner.GetType().Name + ": " + operationID;
+                        string info = treeStringBuilder.ToString(profiler.Profiler.Reader, title);
+
+                        BDebug.StaticLogInfo(info);
+                    }
                 }
             }
             
