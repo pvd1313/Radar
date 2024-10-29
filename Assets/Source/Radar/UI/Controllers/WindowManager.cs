@@ -138,6 +138,8 @@ namespace Beast.Radar.UI
             _currentWindow = windowID;
             
             WindowChanged?.Invoke(_currentWindow);
+
+            await UniTask.NextFrame();
         }
 
         private void _onMouseOverUI(bool isMouseOverUI)

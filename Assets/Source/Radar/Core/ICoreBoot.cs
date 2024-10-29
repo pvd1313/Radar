@@ -1,10 +1,10 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Core
 {
     public interface ICoreBoot
     {
-        public UniTask<ActionResult> Boot();
+        public UniTask Boot(IProgressTracker tracker);
     }
 }

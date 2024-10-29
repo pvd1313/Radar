@@ -23,63 +23,39 @@ namespace Beast.Radar.UI
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
         public UniTask Open(Empty data)
         {
-           _setActive(true);
+            _view.gameObject.SetActive(true);
 
            return UniTask.CompletedTask;
         }
 
         public UniTask Close()
         {
-            _setActive(false);
+            _view.gameObject.SetActive(false);
 
             return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
-            _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
-            
             _windowManager.Register(this, WindowID.MainHUD);
             
+            _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
+            _view.gameObject.SetActive(false);
+            _view.pauseButton.Clicked += _onClickedPauseButton;
 
             _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.Pause);
-                
-            _subscribeView();
             
             return ActionResult.SuccessSyncronous();
-        }
-
-        private void _setActive(bool isActive)
-        {
-            _view.pauseButton.SetInteractable(isActive);
-        }
-
-        private void _subscribeView()
-        {
-            _view.pauseButton.Clicked += _onClickedPauseButton;
-        }
-
-        private void _unsubscribeView()
-        {
-            _view.pauseButton.Clicked -= _onClickedPauseButton;
         }
 
         private void _onClickedPauseButton()
         {
             _pauseMenu.Open(default);
-        }
-
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
-        {
-            _unsubscribeView();
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }
