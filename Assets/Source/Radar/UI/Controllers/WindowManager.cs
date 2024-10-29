@@ -21,8 +21,6 @@ namespace Beast.Radar.UI
         public string CurrentWindow => _currentWindow;
         
         private readonly UIPrefabLibrary _library;
-        private readonly IResourceManager _resources;
-        private readonly IPrefabFactory _factory;
         
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
@@ -30,10 +28,8 @@ namespace Beast.Radar.UI
         
         private string _currentWindow = WindowID.None;
         
-        public WindowManager(UIPrefabLibrary library, IResourceManager resources, IPrefabFactory factory /*, IInputSystem inputSystem*/)
+        public WindowManager(UIPrefabLibrary library /*, IInputSystem inputSystem*/)
         {
-            _resources = resources;
-            _factory = factory;
             _library = library;
             // _inputSystem = inputSystem;
         }
@@ -69,7 +65,7 @@ namespace Beast.Radar.UI
 
             if (Build.IS_DEVELOPMENT && _idToWindow.ContainsKey(windowID))
             {
-                throw new InvalidOperationException($"Windows with '{windowID}' is already registered");
+                throw new InvalidOperationException($"Window with '{windowID}' is already registered");
             }
 
             DataContainer<TData> dataContainer = new ();

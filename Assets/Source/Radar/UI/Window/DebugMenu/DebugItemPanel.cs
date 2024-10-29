@@ -15,9 +15,9 @@ namespace Beast.Radar.UI
         private static readonly int2 ItemGridSize = new(15, 4);
 
         private readonly int _maxItemsCount;
+        private readonly UIPrefabLibrary _library;
         private readonly DebugItemPanelView _view;
         private readonly ItemData[] _itemsData;
-        private readonly IUIFactory _uiFactory;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
 
@@ -32,14 +32,14 @@ namespace Beast.Radar.UI
         private int _currentPage = 1;
 
         public DebugItemPanel(
+            UIPrefabLibrary library,
             DebugItemPanelView view,
-            IUIFactory uiFactory,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,
             ItemData[] itemsData)
         {
+            _library = library;
             _view = view;
-            _uiFactory = uiFactory;
             _zoneBuilder = zoneBuilder;
             _inputSystem = inputSystem;
             _itemsData = itemsData;
@@ -83,7 +83,7 @@ namespace Beast.Radar.UI
 
         private void _configureItemButtons()
         {
-            _itemsPool = new UIPool<DebugItemButton>(_uiFactory, PrefabID.DebugItemButton, _view.itemsRoot);
+            _itemsPool = new UIPool<DebugItemButton>(_library.debugItemButton, _view.itemsRoot);
 
             _currentItemsData = _itemsData;
             _currentPage = 1;
@@ -96,15 +96,12 @@ namespace Beast.Radar.UI
 
         private void _configureItemTypeButtons()
         {
-            _uiFactory.Create(this, PrefabID.InputIconDisplay, out InputIconDisplay leftShoulderIcon);
+            InputIconDisplay leftShoulderIcon = BScene.InstantiateMono(this, _library.inputIconDisplay, float3.zero, quaternion.identity);
             leftShoulderIcon.SetKey(EInputButton.LeftShoulder);
             leftShoulderIcon.transform.SetParent(_view.itemTypeRoot);
             _view.inputIcons.Add(leftShoulderIcon);
 
-            _itemTypePool = new UIPool<DebugItemTypeButton>(
-                _uiFactory,
-                PrefabID.DebugItemTypeButton,
-                _view.itemTypeRoot);
+            _itemTypePool = new UIPool<DebugItemTypeButton>(_library.debugItemTypeButton, _view.itemTypeRoot);
 
             foreach (EItemType type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
             {
@@ -112,7 +109,7 @@ namespace Beast.Radar.UI
                 typeButton.SetType(type);
             }
 
-            _uiFactory.Create(this, PrefabID.InputIconDisplay, out InputIconDisplay rightShoulderIcon);
+            InputIconDisplay rightShoulderIcon = BScene.InstantiateMono(this, _library.inputIconDisplay, float3.zero, quaternion.identity);
             rightShoulderIcon.SetKey(EInputButton.RightShoulder);
             rightShoulderIcon.transform.SetParent(_view.itemTypeRoot);
             _view.inputIcons.Add(rightShoulderIcon);

@@ -8,7 +8,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar
 {
-    public class PrefabLibrary : ScriptableConfig, IGameCycleListener
+    public class PrefabLibrary : ScriptableConfig
     {
         public CameraView cameraPrefab;
         public PlayerInputView playerInputPrefab;
@@ -18,23 +18,6 @@ namespace Beast.Radar
         public override IEnumerable<IConfig> Bind()
         {
             yield return ui;
-        }
-        
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-        }
-
-        private async UniTask<ActionResult> _warmup(ActionContext context)
-        {
-            ActionResult result = await ui._warmup(context);
-            
-            if (result.status != EActionStatus.Success)
-            {
-                return result;
-            }
-            
-            return ActionResult.Success();
         }
     }
 }

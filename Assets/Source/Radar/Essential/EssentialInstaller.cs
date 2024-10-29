@@ -24,7 +24,6 @@ namespace Beast.Radar.Essential
             yield return typeof(CameraSpawner);
             yield return typeof(DeviceScreen);
             yield return typeof(PrefabFactory);
-            yield return typeof(UIFactory);
             yield return typeof(WindowManager);
             yield return typeof(LoadingScreenWindow);
             yield return typeof(ResourceManager);

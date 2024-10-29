@@ -1,14 +1,15 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class LoadingScreenWindow : IWindow<Empty>, IGameCycleListener
     {
         private const int MAX_TASK_COUNT = 20;
-        
-        private readonly IUIFactory _uiFactory;
+
+        private readonly UIPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
 
         private LoadingScreenView _view;
@@ -16,9 +17,9 @@ namespace Beast.Radar.UI
 
         private LoadingTaskText _lastLoadingTask;
 
-        public LoadingScreenWindow(IUIFactory uiFactory, IWindowManager windowManager)
+        public LoadingScreenWindow(UIPrefabLibrary library, IWindowManager windowManager)
         {
-            _uiFactory = uiFactory;
+            _library = library;
             _windowManager = windowManager;
         }
 
@@ -29,10 +30,10 @@ namespace Beast.Radar.UI
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _uiFactory.Create(this, PrefabID.LoadingScreen, out _view);
+            _view = BScene.InstantiateMono(this, _library.loadingScreen, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);
 
-            _loadingTasksPool = new UIPool<LoadingTaskText>(_uiFactory, PrefabID.LoadingScreenTask, _view.logContent);
+            _loadingTasksPool = new UIPool<LoadingTaskText>(_library.loadingTaskText, _view.logContent);
             
             _windowManager.Register(this, WindowID.LoadingScreen);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
