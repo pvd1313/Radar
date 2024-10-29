@@ -18,6 +18,7 @@ namespace Beast.Radar.UI
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
+        private readonly IResourceManager _resources;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
@@ -34,13 +35,15 @@ namespace Beast.Radar.UI
             IWindowManager windowManager,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,
-            IDebugController debugController)
+            IDebugController debugController,
+            IResourceManager resources)
         {
             _library = library;
             _windowManager = windowManager;
             _zoneBuilder = zoneBuilder;
             _inputSystem = inputSystem;
             _debugController = debugController;
+            _resources = resources;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -81,9 +84,9 @@ namespace Beast.Radar.UI
             
             _viewBuildingTask = UniTask.Create(async () =>
             {
-                DebugPrefabLibrary debugLibrary = await BResource.LoadAsset(this, _library.debug);
+                DebugPrefabLibrary debugLibrary = await _resources.LoadAsset(this, _library.debug);
 
-                _view = await BFactory.Instantiate(this, debugLibrary.debugMenu);
+                _view = await BFactory.InstantiateMono(this, debugLibrary.debugMenu);
                 _view.transform.SetSiblingIndex(2);
                 _view.transform.SetParent(_windowManager.CanvasTransform, false);
                 

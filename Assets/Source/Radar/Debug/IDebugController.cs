@@ -2,7 +2,7 @@
 {
     public interface IDebugController
     {
-        void SetElementState(string elementID, bool isActive);
-        bool GetElementState(string elementID);
+        void SetElementState(DebugElementID id, bool isActive);
+        bool GetElementState(DebugElementID id);
     }
 }

@@ -16,3 +16,15 @@ MonoBehaviour:
   debugItemButton: {fileID: 5689346852516115500, guid: c4b7b2a852e16114ea451382d987f0b6, type: 3}
   debugItemTypeButton: {fileID: 7382000023934807756, guid: 520ec31127b5b764ebccdc3f4adfe206, type: 3}
   inputIconDisplay: {fileID: 1221457939449360905, guid: aee2added7dea2e429babb75e31e3d49, type: 3}
+  logConsole:
+    _reference:
+      m_AssetGUID: 63fe3b6b5cb3b17499cccb9e46d347ab
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  fpsCounter:
+    _reference:
+      m_AssetGUID: ec09055262c4e754aa082930f5fd04ef
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

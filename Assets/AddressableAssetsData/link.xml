@@ -1,6 +1,7 @@
 <linker>
   <assembly fullname="Beast.Claw, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Beast.Claw.Gizmos.GizmosConfig" preserve="all" />
+    <type fullname="Beast.Claw.Resources.Address`1[UnityEngine.GameObject]" preserve="nothing" serialized="true" />
     <type fullname="Beast.Claw.Graphic.IsometricCameraRotation" preserve="nothing" serialized="true" />
     <type fullname="Beast.Claw.Graphic.PlanarTextureData" preserve="nothing" serialized="true" />
     <type fullname="Beast.Claw.Graphic.RenderTextureData" preserve="nothing" serialized="true" />
@@ -14,7 +15,6 @@
     <type fullname="Beast.Radar.Cinematic.CameraConfig" preserve="all" />
     <type fullname="Beast.Radar.Core.CoreInstaller" preserve="all" />
     <type fullname="Beast.Radar.CorePrefabLibrary" preserve="all" />
-    <type fullname="Beast.Radar.Debug.DebugConfig" preserve="all" />
     <type fullname="Beast.Radar.Debug.DebugInstaller" preserve="all" />
     <type fullname="Beast.Radar.DebugGraphicLibrary" preserve="all" />
     <type fullname="Beast.Radar.DebugPrefabLibrary" preserve="all" />
@@ -172,6 +172,7 @@
     <type fullname="UnityEngine.UI.Navigation" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.SpriteState" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Toggle/ToggleEvent" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UI.Slider/SliderEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/Entry" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.EventSystems.EventTrigger/TriggerEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.FontData" preserve="nothing" serialized="true" />
@@ -180,7 +181,6 @@
     <type fullname="UnityEngine.UI.InputField/SubmitEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.ScrollRect/ScrollRectEvent" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Scrollbar/ScrollEvent" preserve="nothing" serialized="true" />
-    <type fullname="UnityEngine.UI.Slider/SliderEvent" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Canvas" preserve="all" />

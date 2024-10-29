@@ -18,12 +18,12 @@ MonoBehaviour:
   m_GUID: 3b281e30f811ca04aa003420574f0ee1
   m_SerializeEntries:
   - m_GUID: 5ddebb1b31180f94d8f1457e3a62411a
-    m_Address: Assets/Scene/CoreInstaller.asset
+    m_Address: CoreInstaller
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7ce29ab08b76fc0449f4a492a9b0d179
-    m_Address: Assets/Scene/DebugInstaller.asset
+    m_Address: DebugInstaller
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

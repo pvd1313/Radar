@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Resources;
 using Beast.Radar.Cinematic;
@@ -19,8 +18,9 @@ namespace Beast.Radar.Essential
             yield return _essentialConfig;
         }
 
-        protected override IEnumerable<Type> BindInterfaces()
+        protected override IEnumerable<System.Type> BindInterfaces()
         {
+            yield return typeof(ResourceManager);
             yield return typeof(CameraSpawner);
             yield return typeof(DeviceScreen);
             yield return typeof(WindowManager);
