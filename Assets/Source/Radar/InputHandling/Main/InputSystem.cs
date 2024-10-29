@@ -19,11 +19,10 @@ namespace Beast.Radar.InputHandling
         private GameInputActions _gameInputActions;
         private UIInputActions _uiInputActions;
         private InputActions _actions;
-
-
-        public InputSystem(PrefabLibrary config)
+        
+        public InputSystem(CorePrefabLibrary config)
         {
-            _view = config.playerInputPrefab;
+            _view = config.playerInput;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -33,7 +32,7 @@ namespace Beast.Radar.InputHandling
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        private  UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _actions = new InputActions();
             _actions.Enable();

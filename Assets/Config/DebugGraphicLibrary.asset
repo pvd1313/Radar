@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d030767d256c40d4b4f807d609e5a395, type: 3}
+  m_Name: DebugGraphicLibrary
+  m_EditorClassIdentifier: 
+  bakedTerrain: {fileID: 2800000, guid: 58b335f725136d34f87e526fd13b0d9f, type: 3}
+  terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}
+  unlitTextureShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
+  unlitColorShader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
+  magic0: 0
+  magic1: 0
+  magic2: 0
+  toggle0: 0
+  toggle1: 0
+  toggle2: 0

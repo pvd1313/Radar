@@ -5,7 +5,6 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace Beast.Radar.UI
         public Transform CanvasTransform => _canvas.transform;
         public string CurrentWindow => _currentWindow;
         
-        private readonly UIPrefabLibrary _library;
+        private readonly EssentialPrefabLibrary _library;
         
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
@@ -28,7 +27,7 @@ namespace Beast.Radar.UI
         
         private string _currentWindow = WindowID.None;
         
-        public WindowManager(UIPrefabLibrary library /*, IInputSystem inputSystem*/)
+        public WindowManager(EssentialPrefabLibrary library /*, IInputSystem inputSystem*/)
         {
             _library = library;
             // _inputSystem = inputSystem;

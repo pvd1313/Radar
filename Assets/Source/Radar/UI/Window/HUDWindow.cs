@@ -7,14 +7,14 @@ namespace Beast.Radar.UI
 {
     public class HUDWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
         
-        public HUDWindow(UIPrefabLibrary library, IWindowManager windowManager)
+        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager)
         {
             _library = library;
             _windowManager = windowManager;

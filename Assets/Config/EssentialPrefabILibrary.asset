@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d77c9998965345c495ac8ebdcc4d9ac5, type: 3}
+  m_Name: EssentialPrefabILibrary
+  m_EditorClassIdentifier: 
+  camera: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
+  canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
+  loadingScreen: {fileID: 5222784808474298362, guid: 1f62dcdb84059fe4d9e629c148507415, type: 3}
+  loadingTaskText: {fileID: 3985179231620626817, guid: ccf78dd6822b91d4e81934dc623cbb5e, type: 3}

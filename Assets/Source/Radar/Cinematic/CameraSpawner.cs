@@ -7,11 +7,11 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraSpawner : IGameCycleListener
     {
-        private readonly PrefabLibrary _prefabs;
+        private readonly EssentialPrefabLibrary _library;
 
-        public CameraSpawner(PrefabLibrary prefabs)
+        public CameraSpawner(EssentialPrefabLibrary library)
         {
-            _prefabs = prefabs;
+            _library = library;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -24,7 +24,7 @@ namespace Beast.Radar.Cinematic
             BScene.InstantiateMono
             (
                 this,
-                _prefabs.cameraPrefab,
+                _library.camera,
                 new float3(0, 0, -1),
                 quaternion.identity
             );

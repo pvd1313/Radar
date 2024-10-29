@@ -19,7 +19,7 @@ namespace Beast.Radar.UI
         private readonly ITerrainPreviewRender _previewRender;
         private readonly INewGameSetup _newGameSetup;
         private readonly IInputSystem _inputSystem;
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
@@ -39,7 +39,7 @@ namespace Beast.Radar.UI
             ITerrainPreviewRender previewRender,
             INewGameSetup newGameSetup,
             IInputSystem inputSystem,
-            UIPrefabLibrary library)
+            CorePrefabLibrary library)
         {
             _generationConfig = generationConfig;
             _windowManager = windowManager;

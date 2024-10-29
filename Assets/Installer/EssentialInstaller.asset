@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EssentialInstaller
   m_EditorClassIdentifier: 
   configs:
-  - {fileID: 11400000, guid: f57d73aed794eb045b42e40b84323626, type: 2}
   - {fileID: 11400000, guid: 3f423c598d102204eb3d91246f02940d, type: 2}
+  - {fileID: 11400000, guid: f397dc389a78d0e4d8a71ca4a2d8c28c, type: 2}
   _essentialConfig:
     installers:
     - _reference:

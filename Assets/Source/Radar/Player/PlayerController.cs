@@ -15,7 +15,7 @@ namespace Beast.Radar.Player
 {
     public class PlayerController : IGameCycleListener
     {
-        private readonly PrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly PlayerConfig _playerConfig;
         private readonly GameModel _game;
         private readonly ICameraTransform _cameraTransform;
@@ -37,7 +37,7 @@ namespace Beast.Radar.Player
 
         public PlayerController(
             ICameraTransform cameraTransform,
-            PrefabLibrary library,
+            CorePrefabLibrary library,
             PlayerConfig playerConfig,
             IInputSystem input,
             IGizmosManager gizmosManager,
@@ -106,7 +106,7 @@ namespace Beast.Radar.Player
                                  $"| spawn position = {spawnPosition}");*/
             if (_player == null)
             {
-                _player = BScene.InstantiateMono(this, _library.playerViewPrefab, spawnPosition, quaternion.identity);
+                _player = BScene.InstantiateMono(this, _library.playerView, spawnPosition, quaternion.identity);
             }
             else
             {

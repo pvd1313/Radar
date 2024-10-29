@@ -9,7 +9,7 @@ namespace Beast.Radar.UI
     {
         private const int MAX_TASK_COUNT = 20;
 
-        private readonly UIPrefabLibrary _library;
+        private readonly EssentialPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
 
         private LoadingScreenView _view;
@@ -17,7 +17,7 @@ namespace Beast.Radar.UI
 
         private LoadingTaskText _lastLoadingTask;
 
-        public LoadingScreenWindow(UIPrefabLibrary library, IWindowManager windowManager)
+        public LoadingScreenWindow(EssentialPrefabLibrary library, IWindowManager windowManager)
         {
             _library = library;
             _windowManager = windowManager;

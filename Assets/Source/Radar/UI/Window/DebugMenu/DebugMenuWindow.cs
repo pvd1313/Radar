@@ -13,7 +13,7 @@ namespace Beast.Radar.UI
 {
     public class DebugMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
         private IWindowHandle<Empty> _debugWindow;
         
         public DebugMenuWindow(
-            UIPrefabLibrary library,
+            CorePrefabLibrary library,
             IWindowManager windowManager,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,

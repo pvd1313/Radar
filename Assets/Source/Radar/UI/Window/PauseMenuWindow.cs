@@ -11,7 +11,7 @@ namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly UIPrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
@@ -23,7 +23,7 @@ namespace Beast.Radar.UI
         private IWindowHandle<Empty> _mapGenerationWindow;
 
         public PauseMenuWindow(
-            UIPrefabLibrary library,
+            CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
             ISelectableZoneBuilder zoneBuilder,
