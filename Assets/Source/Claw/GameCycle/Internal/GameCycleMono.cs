@@ -1,5 +1,4 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Beast.Claw.GameCycle
@@ -36,6 +35,14 @@ namespace Beast.Claw.GameCycle
         private void OnDestroy()
         {
             UniTask.Create(OnMonoDestroyed);
+        }
+
+        private void OnApplicationPause(bool isPaused)
+        {
+            if (isPaused)
+            {
+                _gameCycle.Execute(this, ActionID.PREFERENCES_SAVE).Forget();
+            }
         }
 
         private async UniTask OnMonoDestroyed()
