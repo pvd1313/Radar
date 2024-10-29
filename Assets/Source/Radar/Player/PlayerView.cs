@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Beast.Radar.UI;
+using UnityEngine;
 
 namespace Beast.Radar.Player
 {
@@ -6,5 +7,6 @@ namespace Beast.Radar.Player
     {
         public Transform body;
         public Transform target;
+        public UIText targetText;
     }
 }

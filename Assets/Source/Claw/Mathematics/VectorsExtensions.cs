@@ -9,5 +9,10 @@ namespace Beast.Claw.Mathematics
         {
             return new Vector3(value.x, value.y, 0);
         }
+        
+        public static float2 XY(this Vector3 value)
+        {
+            return new float2(value.x, value.y);
+        }
     }
 }

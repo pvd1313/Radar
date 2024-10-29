@@ -50,11 +50,12 @@ namespace Beast.Radar.Player
         public void SetPosition(int2 cellIndex)
         {
             _view.body.position = _indexToWorld(cellIndex).XY0();
+            _currentPosition = _view.body.position.XY();
         }
 
         public void Update()
         {
-            FollowClick();
+            _followClick();
 
             float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
             _lastRecordedHours = _time.GetTotalHours();
@@ -72,11 +73,15 @@ namespace Beast.Radar.Player
             {
                 _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
             }
+            
+            float distance = BMath.Distance(_currentPosition, _currentTarget);
+            string travelTime = _time.CalculateTravelTime(_currentPosition, _currentTarget, _config.moveSpeed);
+            _view.targetText.SetText($"{distance:F0}\n{travelTime}");
 
             BDebug.Track(this, "position", _currentPosition);
         }
 
-        private void FollowClick()
+        private void _followClick()
         {
             if (_clickInput.State == EButtonState.Pressed && !_isCheckClick)
             {
@@ -94,7 +99,6 @@ namespace Beast.Radar.Player
                 _isCheckClick = false;
             }
         }
-
 
         private void _setTarget(float2 position)
         {
