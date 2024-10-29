@@ -51,7 +51,7 @@ namespace Beast.Radar.Terrain
             handle.ListenUpdate(ActionID.RENDER, _render);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
@@ -63,7 +63,7 @@ namespace Beast.Radar.Terrain
             return ActionResult.SuccessSyncronous();
         }
         
-        private void _render(ActionContext context)
+        private void _render(BlockingContext context)
         {
             if (!_terrainBiome.IsReady)
             {
@@ -219,7 +219,7 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             BGraphic.TryDispose(ref _tileBlitMaterial);
             BGraphic.TryDispose(ref _tileSolverMaterial);

@@ -79,7 +79,7 @@ namespace Beast.Radar.UI
             };
         }
         
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _idToWindow = new Dictionary<string, WindowData>(64);
 
@@ -145,7 +145,7 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isMouseOverUI);       
         }
         
-        private UniTask<ActionResult> _dispose(ActionContext arg)
+        private UniTask<ActionResult> _dispose(ConcurrentContext arg)
         {
             if (Build.IS_DEVELOPMENT)
             {

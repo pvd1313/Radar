@@ -40,7 +40,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
             
@@ -75,7 +75,7 @@ namespace Beast.Radar.UI
             _pauseMenu.Open(default);
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeView();
 

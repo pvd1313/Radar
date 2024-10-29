@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _windowManager.Register(this, WindowID.Debug);
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
@@ -198,7 +198,7 @@ namespace Beast.Radar.UI
             return _view.screen.activeSelf;
         }
 
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeView();
             _unsubscribeInput();

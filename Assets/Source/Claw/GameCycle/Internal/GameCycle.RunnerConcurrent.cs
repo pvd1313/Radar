@@ -51,7 +51,7 @@ namespace Beast.Claw.GameCycle
 
                     try
                     {
-                        ActionContext context = default;
+                        ConcurrentContext context = default;
 
                         result = await listener.concurrent.Invoke(context);
 

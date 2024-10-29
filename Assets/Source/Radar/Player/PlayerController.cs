@@ -60,7 +60,7 @@ namespace Beast.Radar.Player
             handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext context)
+        private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _halfTextelSize = (1f / WorldTransform.CellTileCount) / 2.0f;
             
@@ -71,19 +71,19 @@ namespace Beast.Radar.Player
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ActionContext context)
+        private void _tick(BlockingContext context)
         {
             _move();
         }
 
-        private UniTask<ActionResult> _gameLoad(ActionContext arg)
+        private UniTask<ActionResult> _gameLoad(ConcurrentContext arg)
         {
             _spawnPlayer();
             
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _gameSave(ActionContext arg)
+        private UniTask<ActionResult> _gameSave(ConcurrentContext arg)
         {
             _game.player.position = _cellIndex;
             
@@ -166,7 +166,7 @@ namespace Beast.Radar.Player
             }
         }
         
-        private UniTask<ActionResult> _dispose(ActionContext context)
+        private UniTask<ActionResult> _dispose(ConcurrentContext context)
         {
             _unsubscribeInput();
 
