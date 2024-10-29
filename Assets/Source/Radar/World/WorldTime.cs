@@ -53,9 +53,19 @@ namespace Beast.Radar.World
             }
         }
 
+        public int GetDays()
+        {
+            return (int)(_minutes / (60 * 24));
+        }
+        
         public float GetHours()
         {
             return (_minutes / 60) % 24;
+        }
+
+        public float GetMinutes()
+        {
+            return _minutes % 60;
         }
 
         public float GetTotalHours()
@@ -63,11 +73,6 @@ namespace Beast.Radar.World
             return (float)_minutes / 60 + (_seconds / 3600);
         }
 
-        public float GetMinutes()
-        {
-            return _minutes % 60;
-        }
-        
         public string CalculateTravelTime(float2 a, float2 b, float speed)
         {
             float distance = BMath.Distance(a, b);

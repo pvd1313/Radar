@@ -8,14 +8,5 @@
         public static readonly string Pause = "pause_window";
         public static readonly string MapGeneration = "map_generation_window";
         public static readonly string LoadingScreen = "loading_window";
-
-        public static string[] WindowIndex = new[]
-        {
-            MainHUD,
-            Debug,
-            Pause,
-            MapGeneration,
-            LoadingScreen,
-        };
     }
 }

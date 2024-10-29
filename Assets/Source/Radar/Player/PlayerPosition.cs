@@ -31,7 +31,7 @@ namespace Beast.Radar.Player
             IWorldTime time,
             IInputSystem input,
             PlayerConfig config,
-            ICameraTransform camera)
+            ICameraTransform camera) 
         {
             _view = view;
             _time = time;
