@@ -76,7 +76,7 @@ namespace Beast.Claw.GameCycle
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, $"Exception during registration ({subscriber.GetType()})");
+                    BDebug.LogException(e);
 
                     throw;
                 }

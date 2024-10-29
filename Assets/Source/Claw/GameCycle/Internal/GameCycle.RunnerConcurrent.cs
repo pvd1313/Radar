@@ -64,8 +64,7 @@ namespace Beast.Claw.GameCycle
                     }
                     catch (Exception e)
                     {
-                        BDebug.LogException(this, e,
-                            $"Exception during '{operationID}' ({listener.GetType().FullName})");
+                        BDebug.LogException(e);
 
                         return ActionResult.Failed();
                     }

@@ -45,7 +45,7 @@ namespace Beast.Radar.Debug
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Error during debug preferences load. ({stream.path})");
+                BDebug.LogException(e);
             }
             finally
             {
@@ -70,7 +70,7 @@ namespace Beast.Radar.Debug
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Error during debug preferences save. ({stream.path})");
+                BDebug.LogException(e);
             }
             finally
             {

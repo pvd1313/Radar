@@ -141,7 +141,7 @@ namespace Beast.Claw.Editor.Window
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, this.TypeName() + ".SerializationReset()");
+                BDebug.LogException(e);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Beast.Claw.Editor.Window
 
                 string message = $"{this.TypeName()}.Warmup(). Drawing is disabled. Reload domain to continue.";
                 
-                BDebug.LogException(this, e, message);
+                BDebug.LogException(e);
             }
         }
 
@@ -177,7 +177,7 @@ namespace Beast.Claw.Editor.Window
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, GetType().FullName + ".Dispose()");
+                BDebug.LogException(e);
             }
         }
 

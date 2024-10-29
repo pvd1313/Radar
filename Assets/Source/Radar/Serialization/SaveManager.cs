@@ -56,7 +56,7 @@ namespace Beast.Radar.Serialization
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, "Failed to load default game save");
+                BDebug.LogException(e);
                 
                 return ActionResult.Failed();
             }
@@ -82,7 +82,7 @@ namespace Beast.Radar.Serialization
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Failed to load game state '{folderName}/{fileName}'");
+                BDebug.LogException(e);
                 
                 return ActionResult.Failed();
             }
@@ -98,7 +98,7 @@ namespace Beast.Radar.Serialization
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, "Failed to save game");
+                    BDebug.LogException(e);
                 }
 
                 StreamData stream = _fileManager.OpenToWrite(folderName, fileName);
@@ -112,7 +112,7 @@ namespace Beast.Radar.Serialization
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Failed to save game state '{folderName}/{fileName}'");
+                BDebug.LogException(e);
             }
         }
     }

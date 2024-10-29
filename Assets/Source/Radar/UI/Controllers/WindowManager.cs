@@ -117,7 +117,7 @@ namespace Beast.Radar.UI
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, $"Failed to close window '{windowID}'");    
+                    BDebug.LogException(e);    
                 }
                 
                 _currentWindow = WindowID.None;
@@ -132,7 +132,7 @@ namespace Beast.Radar.UI
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Failed to open window '{windowID}'");    
+                BDebug.LogException(e);    
             }
 
             _currentWindow = windowID;

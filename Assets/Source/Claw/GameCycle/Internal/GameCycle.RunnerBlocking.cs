@@ -76,7 +76,7 @@ namespace Beast.Claw.GameCycle
             
             private void ProcessException(Exception e, Runner.Listener listener, out bool canContinueExecution)
             {
-                BDebug.LogException(this, e, listener.GetType().FullName + "." + operationID + "()");
+                BDebug.LogException(e);
             
                 objectErrorCount.TryGetValue(listener.target, out int errorCount);
                 errorCount++;

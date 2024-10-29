@@ -48,7 +48,7 @@ namespace Beast.Claw.Editor
 
             EditorGUILayout.TextArea(exception.StackTrace);
 
-            BDebug.StaticLogException(exception);
+            BDebug.LogException(exception);
         }
 
         private void _recordUndoWithType(EUndoCommandType type)

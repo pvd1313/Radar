@@ -52,7 +52,7 @@ namespace Beast.Claw.Editor.Fancy.Main
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
             }
         }
 
@@ -108,7 +108,7 @@ namespace Beast.Claw.Editor.Fancy.Main
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
 
                 EditorApplication.update -= OnApplicationUpdate;
             }
