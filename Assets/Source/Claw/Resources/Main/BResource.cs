@@ -7,9 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
-    public class ResourceManager : IResourceManager
+    public class BResource
     {
-        public async UniTask<TObject> LoadAsset<TObject>(IController owner, IAddress<TObject> address) where TObject : Object
+        public static async UniTask<TObject> LoadAsset<TObject>(IController owner, IAddress<TObject> address) where TObject : Object
         {
             if (address.Reference.OperationHandle.IsValid())
             {
@@ -28,7 +28,7 @@ namespace Beast.Claw.Resources
             return handle.Result;
         }
 
-        public async UniTask<TMono> LoadPrefab<TMono>(IController owner, IAddress<TMono> address) where TMono : MonoBehaviour
+        public static async UniTask<TMono> LoadPrefab<TMono>(IController owner, IAddress<TMono> address) where TMono : MonoBehaviour
         {
             if (address.Reference.OperationHandle.IsValid())
             {

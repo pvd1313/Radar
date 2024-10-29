@@ -15,7 +15,7 @@ namespace Beast.Radar.UI
         private static readonly int2 ItemGridSize = new(15, 4);
 
         private readonly int _maxItemsCount;
-        private readonly CorePrefabLibrary _library;
+        private readonly DebugPrefabLibrary _library;
         private readonly DebugItemPanelView _view;
         private readonly ItemData[] _itemsData;
         private readonly ISelectableZoneBuilder _zoneBuilder;
@@ -32,7 +32,7 @@ namespace Beast.Radar.UI
         private int _currentPage = 1;
 
         public DebugItemPanel(
-            CorePrefabLibrary library,
+            DebugPrefabLibrary library,
             DebugItemPanelView view,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,

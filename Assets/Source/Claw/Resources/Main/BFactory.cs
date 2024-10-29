@@ -7,9 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
-    public class PrefabFactory : IPrefabFactory
+    public class BFactory
     {
-        public async UniTask<TMono> Instantiate<TMono>(IController owner, TMono prefab) where TMono : MonoBehaviour
+        public static async UniTask<TMono> Instantiate<TMono>(IController owner, TMono prefab) where TMono : MonoBehaviour
         {
             prefab.ValidateNotNullThrowException(nameof(prefab));
 

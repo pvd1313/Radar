@@ -5,6 +5,7 @@ using Beast.Radar.Core;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using Zenject;
+using ResourceManager = System.Resources.ResourceManager;
 
 namespace Beast.Radar.Essential
 {
@@ -13,7 +14,6 @@ namespace Beast.Radar.Essential
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
         private readonly IGameCycle _gameCycle;
-        private readonly IResourceManager _resources;
         private readonly DiContainer _container;
 
         private ScriptableInstaller[] _coreInstallers;
@@ -22,13 +22,11 @@ namespace Beast.Radar.Essential
             EssentialConfig config, 
             IWindowManager windows, 
             IGameCycle gameCycle,
-            IResourceManager resources,
             DiContainer container)
         {
             _config = config;
             _windows = windows;
             _gameCycle = gameCycle;
-            _resources = resources;
             _container = container;
         }
         
@@ -53,7 +51,7 @@ namespace Beast.Radar.Essential
             _coreInstallers = new ScriptableInstaller[_config.installers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
-                _coreInstallers[i] = await _resources.LoadAsset(this, _config.installers[i]);
+                _coreInstallers[i] = await BResource.LoadAsset(this, _config.installers[i]);
             }
 
             foreach (ScriptableInstaller installer in _coreInstallers)

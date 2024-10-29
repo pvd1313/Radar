@@ -9,6 +9,7 @@ namespace Beast.Radar
         public DebugMenuView debugMenu;
         public DebugItemButton debugItemButton;
         public DebugItemTypeButton debugItemTypeButton;
+        public InputIconDisplay inputIconDisplay;
         
         public override IEnumerable<IConfig> Bind()
         {

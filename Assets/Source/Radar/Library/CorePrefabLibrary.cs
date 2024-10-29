@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Resources;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Beast.Radar.UI;
@@ -16,10 +17,8 @@ namespace Beast.Radar
         public HUDView hud;
         public MapGenerationView mapGeneration;
         public PauseMenuView pauseMenu;
-        public DebugMenuView debugMenu;
-        public DebugItemButton debugItemButton;
-        public DebugItemTypeButton debugItemTypeButton;
-        public InputIconDisplay inputIconDisplay;
+
+        public Address<DebugPrefabLibrary> debug;
         
         public override IEnumerable<IConfig> Bind()
         {

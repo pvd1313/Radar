@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Resources;
 using Beast.Radar.Debug;
 using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
@@ -25,6 +25,9 @@ namespace Beast.Radar.UI
         private InputIconsController _inputIconsController;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _debugWindow;
+
+        private UniTask _viewBuildingTask;
+        private bool _viewReady;
         
         public DebugMenuWindow(
             CorePrefabLibrary library,
@@ -46,53 +49,68 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        public UniTask Open(Empty data)
+        public async UniTask Open(Empty data)
         {
+            if (!_viewReady)
+            {
+                await _viewBuildingTask;
+            }
+            
             _panelsController.Enable();
             _selectablesController.Enable();
             _view.screen.SetActive(true);
-
-            return UniTask.CompletedTask;
         }
 
-        public UniTask Close()
+        public async UniTask Close()
         {
+            if (!_viewReady)
+            {
+                await _viewBuildingTask;
+            }
+            
             _hideView();
             _panelsController.Disable();
             _selectablesController.Disable();
-            
-            return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
-            _view = BScene.InstantiateMono(this, _library.debugMenu, float3.zero, quaternion.identity);
-            _hideView();
-            _view.transform.SetSiblingIndex(2);
             _windowManager.Register(this, WindowID.Debug);
-            _view.transform.SetParent(_windowManager.CanvasTransform, false);
-
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
             _debugWindow = _windowManager.GetHandle<Empty>(this, WindowID.Debug);
             
-            _configurePanels();
-            _configureSelectables();
-            _configureInputIcons();
+            _viewBuildingTask = UniTask.Create(async () =>
+            {
+                DebugPrefabLibrary debugLibrary = await BResource.LoadAsset(this, _library.debug);
 
-            _subscribeView();
-            _subscribeInput();
-            
-            _view.buildVersionText.SetText(Application.version);
+                _view = await BFactory.Instantiate(this, debugLibrary.debugMenu);
+                _view.transform.SetSiblingIndex(2);
+                _view.transform.SetParent(_windowManager.CanvasTransform, false);
+                
+                _configurePanels(debugLibrary);
+                
+                _configureSelectables();
+                
+                _configureInputIcons();
+                
+                _subscribeView();
+                
+                _subscribeInput();
+                
+                _view.buildVersionText.SetText(Application.version);
+
+                _viewReady = true;
+            });
             
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _configurePanels()
+        private void _configurePanels(DebugPrefabLibrary library)
         {
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(_library, _view.itemView, _zoneBuilder, _inputSystem, _getTestItems()),
+                new DebugItemPanel(library, _view.itemView, _zoneBuilder, _inputSystem, _getTestItems()),
                 new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _inputSystem, _debugController),
             });
             _panelsController.Warmup();
