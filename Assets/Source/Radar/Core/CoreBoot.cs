@@ -39,10 +39,10 @@ namespace Beast.Radar.Core
             _gameCycle.RegisterListeners();
 
             await tracker.Next("Core: Loading preferences");
-            await _gameCycle.Execute(this, ActionID.PREFERENCES_LOAD);
+            await _gameCycle.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);
 
             await tracker.Next("Core: Warmup");
-            await _gameCycle.Execute(this, ActionID.WARMUP);
+            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
 
             BScene.CreateGameObject(this)
                 .AddComponent<GameCycleMono>()
@@ -52,7 +52,7 @@ namespace Beast.Radar.Core
             {
                 await tracker.Next("Loading integrated save");
                 
-                await _save.Load(_integratedSave.model);
+                await _save.LoadAsync(_integratedSave.model);
             
                 await mainHUD.Open(default);
             
@@ -61,12 +61,12 @@ namespace Beast.Radar.Core
 
             Action nextAction;
 
-            bool saveExists = await _save.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            bool saveExists = _save.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
                 
             if (saveExists)
             {
                 await tracker.Next("Loading game save");
-                ActionResult result = await _save.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                ActionResult result = await _save.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
 
                 if (result.IsSuccess())
                 {

@@ -60,10 +60,10 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenUpdate(ActionID.RENDER, _render);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenBlocking(ActionID.RENDER, _render);
         }
 
         public void Render(TerrainBiomeRenderTask task)
@@ -75,10 +75,8 @@ namespace Beast.Radar.Terrain
 
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
-            _dispose(context);
+            _dispose(default);
 
-            Application.targetFrameRate = 9999;
-            
             _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.biomeRender);
 
             _renderTextureForScreenSize = _screen.Size;
@@ -226,14 +224,12 @@ namespace Beast.Radar.Terrain
             material.SetFloat("_NoiseSamplerLOD", lod);
         }
         
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _isReady = false;
 
             BGraphic.TryDispose(ref _renderMaterial);
             BGraphic.TryDispose(ref _biomeTexture);
-
-            return ActionResult.SuccessSyncronous();
         }
         
         private void _debugTrack(RenderResult stack)

@@ -42,12 +42,12 @@ namespace Beast.Claw.GameCycle
                 return runner.Profiler.Profiler;
             }
 
-            public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class
+            public void ExecuteBlocking<TOwner>(TOwner owner, string eventID) where TOwner : class
             {
                 _gameCycle._update(owner, eventID);
             }
 
-            public async UniTask<ActionResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class
+            public async UniTask<ActionResult> ExecuteConcurrent<TOwner>(TOwner owner, string eventID) where TOwner : class
             {
                 return await _gameCycle._execute(owner, eventID);
             }

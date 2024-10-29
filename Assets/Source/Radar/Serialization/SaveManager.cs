@@ -18,27 +18,24 @@ namespace Beast.Radar.Serialization
         
         private readonly GameModel _gameModel;
         private readonly IGameCycle _gameCycle;
-        private readonly IntegratedSave _library;
         private readonly IFileManager _fileManager;
 
         public SaveManager(
             GameModel gameModel, 
             IGameCycle gameCycle,
-            IntegratedSave library,
             IFileManager fileManager)
         {
             _gameModel = gameModel;
             _gameCycle = gameCycle;
-            _library = library;
             _fileManager = fileManager;
         }
         
-        public async UniTask<bool> Exists(string folderName, string fileName)
+        public bool Exists(string folderName, string fileName)
         {
-            return await _fileManager.Exists(folderName, fileName);
+            return _fileManager.Exists(folderName, fileName);
         }
 
-        public async UniTask<ActionResult> Load(GameModel model)
+        public async UniTask<ActionResult> LoadAsync(GameModel model)
         {
             model.ValidateNotNullThrowException(nameof(model));
             
@@ -55,7 +52,7 @@ namespace Beast.Radar.Serialization
 
                 await memory.DisposeAsync();
                 
-                return await _gameCycle.Execute(this, ActionID.GAME_LOAD);
+                return await _gameCycle.ExecuteConcurrent(this, ActionID.GAME_LOAD);
             }
             catch (Exception e)
             {
@@ -65,19 +62,19 @@ namespace Beast.Radar.Serialization
             }
         }
 
-        public async UniTask<ActionResult> Load(string folderName, string fileName)
+        public async UniTask<ActionResult> LoadAsync(string folderName, string fileName)
         {
             try
             {
-                StreamData streamData = await _fileManager.OpenToRead(folderName, fileName);
+                StreamData streamData = _fileManager.OpenToRead(folderName, fileName);
                 
                 BinaryReader binaryReader = new (streamData.stream);
 
                 binaryReader.Read(_gameModel);
 
-                await _fileManager.Close(streamData);
+                _fileManager.Close(streamData);
                 
-                ActionResult result = await _gameCycle.Execute(this, ActionID.GAME_LOAD);
+                ActionResult result = await _gameCycle.ExecuteConcurrent(this, ActionID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
@@ -91,32 +88,31 @@ namespace Beast.Radar.Serialization
             }
         }
 
-        public async UniTask<ActionResult> Save(string folderName, string fileName)
+        public void Save(string folderName, string fileName)
         {
             try
             {
-                ActionResult result = await _gameCycle.Execute(this, ActionID.GAME_SAVE);
-                if (result.status != EActionStatus.Success)
+                try
                 {
-                    return result;
+                    _gameCycle.ExecuteBlocking(this, ActionID.GAME_SAVE);
+                }
+                catch (Exception e)
+                {
+                    BDebug.LogException(this, e, "Failed to save game");
                 }
 
-                StreamData stream = await _fileManager.OpenToWrite(folderName, fileName);
+                StreamData stream = _fileManager.OpenToWrite(folderName, fileName);
                 BinaryWriter writer = new (stream.stream);
 
                 writer.Write(_gameModel);
 
-                await _fileManager.Close(stream);
+                _fileManager.Close(stream);
                 
                 BDebug.LogInfo(this, $"Saved game state to '{stream.path}'");
-
-                return result;
             }
             catch (Exception e)
             {
                 BDebug.LogException(this, e, $"Failed to save game state '{folderName}/{fileName}'");
-                
-                return ActionResult.Failed();
             }
         }
     }

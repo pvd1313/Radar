@@ -35,8 +35,8 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
@@ -147,7 +147,7 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isMouseOverUI);       
         }
         
-        private UniTask<ActionResult> _dispose(ConcurrentContext arg)
+        private void _dispose(BlockingContext context)
         {
             if (Build.IS_DEVELOPMENT)
             {
@@ -189,8 +189,6 @@ namespace Beast.Radar.UI
                     BDebug.LogError(this, builder.ToString());
                 }
             }
-
-            return ActionResult.SuccessSyncronous();
         }
 
         // private void _onOptionButtonsPressStarted(EInputOptionButton button)

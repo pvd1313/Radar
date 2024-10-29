@@ -18,7 +18,7 @@ namespace Beast.Claw.GameCycle
             {
                 id = ActionID.DISPOSE,
                 order = EActionOrder.FromLastToFirstInjected,
-                flow = EActionFlowType.Concurrent,
+                flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.OncePerObjectLife,
                 bufferCapacity = 128
             },
@@ -35,7 +35,7 @@ namespace Beast.Claw.GameCycle
             {
                 id = ActionID.GAME_SAVE,
                 order = EActionOrder.FromFirstToLastInjected,
-                flow = EActionFlowType.Concurrent,
+                flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 32
             },
@@ -52,7 +52,7 @@ namespace Beast.Claw.GameCycle
             {
                 id = ActionID.PREFERENCES_SAVE,
                 order = EActionOrder.FromFirstToLastInjected,
-                flow = EActionFlowType.Concurrent,
+                flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 16
             },

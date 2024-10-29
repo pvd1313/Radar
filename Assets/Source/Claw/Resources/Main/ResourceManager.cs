@@ -17,8 +17,8 @@ namespace Beast.Claw.Resources
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
         public async UniTask<TObject> LoadAsset<TObject>(IController owner, IAddress<TObject> address)
@@ -132,8 +132,10 @@ namespace Beast.Claw.Resources
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
+            // Technically this is required only for Editor.
+            // Without it some assets may can junked upon load (DebugLogConsole).
             foreach (AssetReference assetReference in _loadedAssets)
             {
                 if (assetReference.IsValid())
@@ -143,8 +145,6 @@ namespace Beast.Claw.Resources
             }
             
             _loadedAssets.Clear();
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

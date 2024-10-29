@@ -1,11 +1,11 @@
-﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Claw.GameCycle
 {
     public class GameCycleMono : MonoBehaviour
     {
         private IGameCycle _gameCycle;
+        private bool _savedPreferences;
         
         public void Initialize(IGameCycle gameCycle)
         {
@@ -14,44 +14,39 @@ namespace Beast.Claw.GameCycle
 
         private void Update()
         {
-            _gameCycle.Update(this, ActionID.TICK);
+            _gameCycle.ExecuteBlocking(this, ActionID.TICK);
         }
 
         private void FixedUpdate()
         {
-            _gameCycle.Update(this, ActionID.FIXED_UPDATE);
+            _gameCycle.ExecuteBlocking(this, ActionID.FIXED_UPDATE);
         }
 
         private void OnDrawGizmos()
         {
-            _gameCycle.Update(this, ActionID.GIZMOS_DRAW);
+            _gameCycle.ExecuteBlocking(this, ActionID.GIZMOS_DRAW);
         }
 
         private void LateUpdate()
         {
-            _gameCycle.Update(this, ActionID.RENDER);
+            _gameCycle.ExecuteBlocking(this, ActionID.RENDER);
         }
 
         private void OnDestroy()
         {
-            UniTask.Create(OnMonoDestroyed);
+            _gameCycle.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
+            
+            _gameCycle.ExecuteBlocking(this, ActionID.DISPOSE);
+            
+            _gameCycle.Dispose();
         }
 
         private void OnApplicationPause(bool isPaused)
         {
             if (isPaused)
             {
-                _gameCycle.Execute(this, ActionID.PREFERENCES_SAVE).Forget();
+                _gameCycle.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
             }
-        }
-
-        private async UniTask OnMonoDestroyed()
-        {
-            await _gameCycle.Execute(this, ActionID.PREFERENCES_SAVE);
-            
-            await _gameCycle.Execute(this, ActionID.DISPOSE);
-            
-            _gameCycle.Dispose();
         }
     }
 }

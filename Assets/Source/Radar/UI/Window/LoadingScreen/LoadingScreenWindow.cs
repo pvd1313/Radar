@@ -29,7 +29,7 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
         
         public UniTask Open(LoadingScreenInput input)

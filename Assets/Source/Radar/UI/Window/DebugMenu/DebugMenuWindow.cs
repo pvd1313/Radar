@@ -48,8 +48,8 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         public async UniTask Open(Empty data)
@@ -198,7 +198,7 @@ namespace Beast.Radar.UI
             return _view.screen.activeSelf;
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _unsubscribeView();
             _unsubscribeInput();
@@ -206,8 +206,6 @@ namespace Beast.Radar.UI
             _panelsController.Dispose();
             _selectablesController.Dispose();
             _inputIconsController.Dispose();
-
-            return ActionResult.SuccessSyncronous();
         }
 
         private void _closeWindow()

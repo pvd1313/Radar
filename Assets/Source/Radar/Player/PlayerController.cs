@@ -53,11 +53,11 @@ namespace Beast.Radar.Player
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.TICK, _tick);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
@@ -83,13 +83,11 @@ namespace Beast.Radar.Player
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _gameSave(ConcurrentContext context)
+        private void _gameSave(BlockingContext context)
         {
             _game.player.position = _cellIndex;
             
             BDebug.Track(this, "save game player", _game.player.position);
-            
-            return ActionResult.SuccessSyncronous();
         }
 
         // private void _spawnPlayer()
@@ -166,11 +164,9 @@ namespace Beast.Radar.Player
             }
         }
         
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _unsubscribeInput();
-
-            return ActionResult.SuccessSyncronous();
         }
 
         private float2 _indexToWorld(int2 index)

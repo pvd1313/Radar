@@ -30,13 +30,13 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
-        private async UniTask<ActionResult> _gameLoad(ConcurrentContext context)
+        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
         {
-            await _dispose(context);
+            _dispose(default);
 
             RenderTextureData tempData = _config.terrain.bakerRenderTexture.WithSize(_game.terrain.terrainSize);
             
@@ -71,16 +71,14 @@ namespace Beast.Radar.Terrain
 
             IsReady = true;
 
-            return ActionResult.Success();
+            return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             IsReady = false;
 
             BGraphic.TryDispose(ref _texture);
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

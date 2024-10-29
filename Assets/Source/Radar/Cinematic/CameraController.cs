@@ -34,36 +34,17 @@ namespace Beast.Radar.Cinematic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
 
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
             _motion = _cameraConfig.GetMotionParameters(_inputSystem.Scheme.Current);
-            
-            _subscribeInput();
-            
-            return ActionResult.SuccessSyncronous();
-        }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
-        {
-            _unsubscribeInput();
-
-            return ActionResult.SuccessSyncronous();
-        }
-
-        private void _subscribeInput()
-        {
             _inputSystem.GameInput.ChangedEarlyValues += _processCamera;
             _inputSystem.Scheme.Changed += _onChangedInputActionsScheme;
-        }
 
-        private void _unsubscribeInput()
-        {
-            _inputSystem.GameInput.ChangedEarlyValues -= _processCamera;
-            _inputSystem.Scheme.Changed -= _onChangedInputActionsScheme;
+            return ActionResult.SuccessSyncronous();
         }
 
         private void _onChangedInputActionsScheme(EInputScheme scheme)

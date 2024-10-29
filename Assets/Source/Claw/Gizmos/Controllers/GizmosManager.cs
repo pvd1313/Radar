@@ -30,9 +30,9 @@ namespace Beast.Claw.Gizmos
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenUpdate(ActionID.GIZMOS_DRAW, _gizmosDraw);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.GIZMOS_DRAW, _gizmosDraw);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
@@ -92,7 +92,7 @@ namespace Beast.Claw.Gizmos
         internal void ScheduleWireSquareDraw(Square square) => _wireSquares.Add(square);
         internal void ScheduleScreenSquareDraw(Square square) => _screenSquares.Add(square);
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _wireLines.Dispose();
             _wireRects.Dispose();
@@ -101,8 +101,6 @@ namespace Beast.Claw.Gizmos
             _screenSquares.Dispose();
             GizmosStateStorage.Dispose();
             Object.Destroy(_material);
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

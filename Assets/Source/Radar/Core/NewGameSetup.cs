@@ -34,7 +34,7 @@ namespace Beast.Radar.Core
                 }
             };
 
-            _saveManager.Load(model);
+            _saveManager.LoadAsync(model);
         }
     }
 }

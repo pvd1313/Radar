@@ -38,18 +38,20 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
-        public async UniTask Open(Empty data)
+        public UniTask Open(Empty data)
         {
             _selectablesController.Enable();
             _menuView.gameObject.SetActive(true);
             _menuView.loadButton.SetInteractable(false);
 
-            bool saveExists = await _saveManager.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            bool saveExists = _saveManager.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
             _menuView.loadButton.SetInteractable(saveExists);
+            
+            return UniTask.CompletedTask;
         }
 
         public UniTask Close()
@@ -78,13 +80,11 @@ namespace Beast.Radar.UI
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _unsubscribeView();
             
             _selectablesController.Dispose();
-            
-            return ActionResult.SuccessSyncronous();
         }
 
         private void _configureSelectables()
@@ -140,11 +140,11 @@ namespace Beast.Radar.UI
             _mapGenerationWindow.Open(default);
         }
 
-        private async void _onClickedSaveButton()
+        private void _onClickedSaveButton()
         {
             // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
             // Also should block UI during save
-            await _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
             
             _menuView.loadButton.SetInteractable(true);
         }
@@ -152,7 +152,7 @@ namespace Beast.Radar.UI
         private void _onClickedLoadButton()
         {
             // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-            _saveManager.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            _saveManager.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
         }
 
         private void _hideView()

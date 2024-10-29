@@ -18,7 +18,7 @@ namespace Beast.Radar.Graphic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(ActionID.TICK, _tick);
+            handle.ListenBlocking(ActionID.TICK, _tick);
         }
 
         private void _tick(BlockingContext context)

@@ -20,8 +20,8 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
@@ -54,11 +54,9 @@ namespace Beast.Radar.Terrain
             });
         }
         
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             BGraphic.TryDispose(ref _material);
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

@@ -46,9 +46,9 @@ namespace Beast.Radar.Terrain
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
-            handle.ListenUpdate(ActionID.RENDER, _render);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
+            handle.ListenBlocking(ActionID.RENDER, _render);
         }
 
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
@@ -219,14 +219,12 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             BGraphic.TryDispose(ref _tileBlitMaterial);
             BGraphic.TryDispose(ref _tileSolverMaterial);
             BGraphic.TryDispose(ref _tileRenderMaterial);
             BGraphic.TryDispose(ref _tileToScreenBuffer);
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

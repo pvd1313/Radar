@@ -41,7 +41,7 @@ namespace Beast.Radar.Essential
             
             _gameCycle.RegisterListeners();
 
-            await _gameCycle.Execute(this, ActionID.WARMUP);
+            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
 
             await _startupCore();
         }

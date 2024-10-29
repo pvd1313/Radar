@@ -21,34 +21,15 @@ namespace Beast.Radar.InputHandling
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
         
         private UniTask<ActionResult> _warmup(ConcurrentContext context)
         {
-            _subscribeWindowManager();
-
-            return ActionResult.SuccessSyncronous();
-        }
-
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
-        {
-            _unsubscribeWindowManager();
-            
-            return ActionResult.SuccessSyncronous();
-        }
-
-        private void _subscribeWindowManager()
-        {
             _windowManager.MouseOverUI += _onMouseOverUI;
             _windowManager.WindowChanged += _onWindowChanged;
-        }
 
-        private void _unsubscribeWindowManager()
-        {
-            _windowManager.MouseOverUI -= _onMouseOverUI;
-            _windowManager.WindowChanged -= _onWindowChanged;
+            return ActionResult.SuccessSyncronous();
         }
 
         private void _onWindowChanged(string newWindowID)
