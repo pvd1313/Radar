@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Radar.InputHandling;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace Beast.Radar.UI
@@ -62,16 +64,20 @@ namespace Beast.Radar.UI
             _itemGroup.Dispose();
         }
 
-        public void Open()
+        public UniTask Open(Empty data)
         {
             _selectablesController.Enable();
             _view.body.SetActive(true);
+            
+            return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _view.body.SetActive(false);
             _selectablesController.Disable();
+            
+            return UniTask.CompletedTask;
         }
         
 

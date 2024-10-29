@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Radar.Debug;
 using Beast.Radar.InputHandling;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Beast.Radar.UI
@@ -43,7 +45,7 @@ namespace Beast.Radar.UI
             _selectablesController.Dispose();
         }
 
-        public void Open()
+        public UniTask Open(Empty data)
         {
             _view.fpsToggle.SetValue(
                 value: _debugController.GetElementState(DebugElementID.FpsCounterID), 
@@ -55,14 +57,17 @@ namespace Beast.Radar.UI
             
             _selectablesController.Enable();
             _view.body.SetActive(true);
+
+            return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _view.body.SetActive(false);
             _selectablesController.Disable();
+            
+            return UniTask.CompletedTask;
         }
-        
 
         private void _initializeFrameRates()
         {

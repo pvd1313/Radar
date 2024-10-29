@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Debug;
 using Beast.Radar.InputHandling;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class DebugMenuWindow : IWindow, IGameCycleListener
+    public class DebugMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
         private readonly IWindowManager _windowManager;
         private readonly IUIFactory _uiFactory;
@@ -21,6 +22,8 @@ namespace Beast.Radar.UI
         private PanelsController _panelsController;
         private SelectablesController _selectablesController;
         private InputIconsController _inputIconsController;
+        private IWindowHandle<Empty> _mainHUD;
+        private IWindowHandle<Empty> _debugWindow;
         
         public DebugMenuWindow(
             IWindowManager windowManager,
@@ -42,18 +45,22 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
         
-        public void Open()
+        public UniTask Open(Empty data)
         {
             _panelsController.Enable();
             _selectablesController.Enable();
             _view.screen.SetActive(true);
+
+            return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _hideView();
             _panelsController.Disable();
             _selectablesController.Disable();
+            
+            return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
@@ -61,7 +68,11 @@ namespace Beast.Radar.UI
             _uiFactory.Create(this, PrefabID.DebugWindow, out _view);
             _hideView();
             _view.transform.SetSiblingIndex(2);
-            _windowManager.Register(this, WindowID.Debug, _view);
+            _windowManager.Register(this, WindowID.Debug);
+            _view.transform.SetParent(_windowManager.CanvasTransform, false);
+
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
+            _debugWindow = _windowManager.GetHandle<Empty>(this, WindowID.Debug);
             
             _configurePanels();
             _configureSelectables();
@@ -145,11 +156,18 @@ namespace Beast.Radar.UI
         {
             if (button == EInputOptionButton.Back)
             {
-                _windowManager.Show(_isOpened() ? WindowID.MainHUD : WindowID.Debug);
+                if (_isOpened())
+                {
+                    _mainHUD.Open(default);
+                }
+                else
+                {
+                    _debugWindow.Open(default);
+                }
             }
             else if(button == EInputOptionButton.Fourth && _isOpened())
             {
-               _windowManager.Show(WindowID.MainHUD);
+                _mainHUD.Open(default);
             }
         }
 
@@ -172,12 +190,12 @@ namespace Beast.Radar.UI
 
         private void _closeWindow()
         {
-            _windowManager.Show(WindowID.MainHUD);
+            _mainHUD.Open(default);
         }
 
         private void _showWindow()
         {
-            _windowManager.Show(WindowID.Debug);
+            _debugWindow.Open(default);
         }
 
         private void _hideView()

@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Beast.Radar.Essential
 {
-    public class EssentialBoot : IInitializable, IGameCycleListener
+    public class EssentialBoot : Controller, IInitializable
     {
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
@@ -32,11 +32,6 @@ namespace Beast.Radar.Essential
             _container = container;
         }
         
-        public void Register(IGameCycleHandle handle)
-        {
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
-        }
-        
         public async void Initialize()
         {
             _gameCycle.Initialize(new GameCycleInitialization
@@ -48,21 +43,17 @@ namespace Beast.Radar.Essential
 
             await _gameCycle.Execute(this, ActionID.WARMUP);
 
+            await _windows.GetHandle<Empty>(this, WindowID.LoadingScreen).Open(default);
+
             await _startupCore();
         }
 
         private async UniTask _startupCore()
         {
-            // TODO: Probably we may have special "splashcreen" loading screen? Or add style to loading window...
-            _windows.Show(WindowID.LoadingScreen);
-            
-            // TODO: Start displaying loading infos.
-            //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
-
             _coreInstallers = new ScriptableInstaller[_config.installers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
-                _coreInstallers[i] = await _resources.Load(this, _config.installers[i]);
+                _coreInstallers[i] = await _resources.LoadAsset(this, _config.installers[i]);
             }
 
             foreach (ScriptableInstaller installer in _coreInstallers)
@@ -73,21 +64,6 @@ namespace Beast.Radar.Essential
             }
 
             await _container.Resolve<ICoreBoot>().Boot();
-        }
-
-        private UniTask<ActionResult> _dispose(ActionContext context)
-        {
-            if (_coreInstallers != null)
-            {
-                for (int i = 0; i < _coreInstallers.Length; i++)
-                {
-                    _resources.Release(this, _config.installers[i]);
-                }
-            
-                _coreInstallers = null;
-            }
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

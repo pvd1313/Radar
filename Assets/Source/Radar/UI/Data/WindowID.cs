@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Beast.Radar.UI
+﻿namespace Beast.Radar.UI
 {
     public static class WindowID
     {

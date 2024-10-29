@@ -12,9 +12,9 @@ namespace Beast.Claw.Resources
     {
         public Guid Guid => _guid;
         
-        public AssetReferenceT<TObject> Reference => _reference;
+        public AssetReference Reference => _reference;
         
-        [SerializeField] private AssetReferenceT<TObject> _reference;
+        [SerializeField] private AssetReference _reference;
 
         private Guid _guid;
         private bool _hasGuid;

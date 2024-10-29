@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Core
 {
-    public class CoreBoot : ICoreBoot
+    public class CoreBoot : Controller, ICoreBoot
     {
         private readonly IWindowManager _window;
         private readonly ISaveManager _save;
@@ -28,9 +28,13 @@ namespace Beast.Radar.Core
         
         public async UniTask<ActionResult> Boot()
         {
+            IWindowHandle<Empty> loadingScreen = _window.GetHandle<Empty>(this, WindowID.LoadingScreen);
+            IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.MainHUD);
+            IWindowHandle<Empty> mapGeneration = _window.GetHandle<Empty>(this, WindowID.MapGeneration);
+
             // TODO: Start displaying loading infos.
             //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
-            _window.Show(WindowID.LoadingScreen);
+            await loadingScreen.Open(default);
             
             _gameCycle.RegisterListeners();
 
@@ -45,8 +49,8 @@ namespace Beast.Radar.Core
             if (Application.isEditor)
             {
                 await _save.Load(_integratedSave.model);
-                
-                _window.Show(WindowID.MainHUD);
+
+                await mainHUD.Open(default);
             }
             else
             {
@@ -58,16 +62,16 @@ namespace Beast.Radar.Core
 
                     if (result.IsSuccess())
                     {
-                        _window.Show(WindowID.MainHUD);
+                        await mainHUD.Open(default);
                     }
                     else
                     {
-                        _window.Show(WindowID.MapGeneration);
+                        await mapGeneration.Open(default);
                     }
                 }
                 else
                 {
-                    _window.Show(WindowID.MapGeneration);
+                    await mapGeneration.Open(default);
                 }
             }
 

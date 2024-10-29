@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Core;
@@ -10,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
-    public class MapGenerationWindow : IWindow, IGameCycleListener
+    public class MapGenerationWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
         private readonly IWindowManager _windowManager;
         private readonly MapGenerationWindowConfig _generationConfig;
@@ -28,6 +29,7 @@ namespace Beast.Radar.UI
         private TerrainData _terrainData;
         private TerrainPreviewTexture _terrainTexture;
         private int _seedIndex;
+        private IWindowHandle<Empty> _mainHUD;
 
         public MapGenerationWindow(
             MapGenerationWindowConfig generationConfig,
@@ -53,28 +55,35 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        public void Open()
+        public UniTask Open(Empty data)
         {
-
             _selectablesController.Enable();
             _configureView();
             _drawTexture();
             _menuView.gameObject.SetActive(true);
+
+            return UniTask.CompletedTask;
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _hideView();
             _selectablesController.Disable();
             _terrainTexture.Dispose();
             _terrainTexture = null;
+
+            return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.MapGenerationWindow, out _menuView);
             _hideView();
-            _windowManager.Register(this, WindowID.MapGeneration, _menuView);
+            _windowManager.Register(this, WindowID.MapGeneration);
+
+            _menuView.transform.SetParent(_windowManager.CanvasTransform, false);
+
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
 
             _buttonSizes = new()
             {
@@ -220,12 +229,12 @@ namespace Beast.Radar.UI
         private void _onCreateMapButtonClicked()
         {
             _newGameSetup.StartNewGame(_terrainData);
-            _windowManager.Show(WindowID.MainHUD);
+            _mainHUD.Open(default);
         }
 
         private void _onCloseButtonClicked()
         {
-            _windowManager.Show(WindowID.MainHUD);
+            _mainHUD.Open(default);
         }
 
         private void _hideView()

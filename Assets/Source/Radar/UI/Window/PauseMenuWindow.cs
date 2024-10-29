@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Serialization;
@@ -7,7 +8,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class PauseMenuWindow : IWindow, IGameCycleListener
+    public class PauseMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
         private readonly IUIFactory _uiFactory;
         private readonly IWindowManager _windowManager;
@@ -17,6 +18,8 @@ namespace Beast.Radar.UI
 
         private PauseMenuView _menuView;
         private SelectablesController _selectablesController;
+        private IWindowHandle<Empty> _mainHUD;
+        private IWindowHandle<Empty> _mapGenerationWindow;
 
         public PauseMenuWindow(
             IUIFactory uiFactory,
@@ -38,7 +41,7 @@ namespace Beast.Radar.UI
             handle.ListenOperation(ActionID.DISPOSE, _dispose);
         }
 
-        public async void Open()
+        public async UniTask Open(Empty data)
         {
             _selectablesController.Enable();
             _menuView.gameObject.SetActive(true);
@@ -48,17 +51,23 @@ namespace Beast.Radar.UI
             _menuView.loadButton.SetInteractable(saveExists);
         }
 
-        public void Close()
+        public UniTask Close()
         {
             _hideView();
             _selectablesController.Disable();
+
+            return UniTask.CompletedTask;
         }
 
         private UniTask<ActionResult> _warmup(ActionContext context)
         {
             _uiFactory.Create(this, PrefabID.PauseWindow, out _menuView);
             _hideView();
-            _windowManager.Register(this, WindowID.Pause, _menuView);
+            _windowManager.Register(this, WindowID.Pause);
+            _menuView.transform.SetParent(_windowManager.CanvasTransform, false);
+
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
+            _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MapGeneration);
             
             _configureSelectables();
             _subscribeView();
@@ -122,12 +131,12 @@ namespace Beast.Radar.UI
 
         private void _onClickedClosePanelButton()
         {
-            _windowManager.Show(WindowID.MainHUD);
+            _mainHUD.Open(default);
         }
 
         private void _onClickedNewGameButton()
         {
-            _windowManager.Show(WindowID.MapGeneration);
+            _mapGenerationWindow.Open(default);
         }
 
         private async void _onClickedSaveButton()
