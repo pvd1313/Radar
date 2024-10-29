@@ -125,11 +125,11 @@ namespace Beast.Claw.Resources
             return handle.Task.Result;
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _loadedAssets = new List<AssetReference>(256);
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _dispose(BlockingContext context)

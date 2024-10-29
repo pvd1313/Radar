@@ -28,7 +28,7 @@ namespace Beast.Radar.Debug
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             UniTask.Create(async () =>
             {
@@ -43,7 +43,7 @@ namespace Beast.Radar.Debug
                 _fpsCounter.SetActive(_preferences.showFPSCounter);
             });
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         public void SetElementState(DebugElementID id, bool isActive)

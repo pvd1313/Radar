@@ -51,7 +51,7 @@ namespace Beast.Radar.Terrain
             handle.ListenBlocking(ActionID.RENDER, _render);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
@@ -60,7 +60,7 @@ namespace Beast.Radar.Terrain
             RenderTextureData textureData = _config.renderTexture.WithSize(_screen.Size);
             _tileToScreenBuffer = BGraphic.CreatePermRenderTexture(this, textureData);
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private void _render(BlockingContext context)

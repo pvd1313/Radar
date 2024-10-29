@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
@@ -99,7 +99,7 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _configureView()

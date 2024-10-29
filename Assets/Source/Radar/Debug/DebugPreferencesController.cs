@@ -27,12 +27,12 @@ namespace Beast.Radar.Debug
             handle.ListenBlocking(ActionID.PREFERENCES_SAVE, _preferencesSave);
         }
 
-        private UniTask<ActionResult> _preferencesLoad(ConcurrentContext context)
+        private UniTask _preferencesLoad(ConcurrentContext context)
         {
             bool fileExists = _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
             {
-                return ActionResult.SuccessSyncronous();
+                return UniTask.CompletedTask;
             }
 
             StreamData stream = _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
@@ -52,10 +52,7 @@ namespace Beast.Radar.Debug
                 _fileManager.Close(stream);
             }
 
-            // TODO : https://risenbeast.youtrack.cloud/issue/R-46/Unity-Task-Success
-            //      : We should probably return fail.
-            //      : But game cycle should be able to ignore that fail as it is not critical.
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private void _preferencesSave(BlockingContext context)

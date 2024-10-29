@@ -68,7 +68,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.loadingScreen, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);
@@ -79,7 +79,7 @@ namespace Beast.Radar.UI
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
             _view.progressButton.Clicked += _onProgressButtonClicked;
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private void _onProgressButtonClicked()

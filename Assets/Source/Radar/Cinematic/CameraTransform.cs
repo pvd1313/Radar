@@ -48,7 +48,7 @@ namespace Beast.Radar.Cinematic
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;
             
@@ -60,10 +60,10 @@ namespace Beast.Radar.Cinematic
 
             _yScaleRollCos = BMath.Cos(_rotationRad.roll);
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
+        private UniTask _gameLoad(ConcurrentContext context)
         {
             _position = _game.camera.position;
 
@@ -73,8 +73,8 @@ namespace Beast.Radar.Cinematic
             _setZoom(_game.camera.zoom01);
             
             IsReady = true;
-            
-            return ActionResult.SuccessSyncronous();
+
+            return UniTask.CompletedTask;
         }
         
         private void _gameSave(BlockingContext context)

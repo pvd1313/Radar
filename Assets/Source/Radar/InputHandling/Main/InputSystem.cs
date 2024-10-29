@@ -32,7 +32,7 @@ namespace Beast.Radar.InputHandling
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _actions = new InputActions();
             _actions.Enable();
@@ -48,7 +48,7 @@ namespace Beast.Radar.InputHandling
             
             _gameInputActions = new GameInputActions(Scheme, _actions);
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext context)

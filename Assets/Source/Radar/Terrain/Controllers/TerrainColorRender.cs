@@ -60,11 +60,11 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(material);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private void _render(BlockingContext context)

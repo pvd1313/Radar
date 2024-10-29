@@ -24,11 +24,11 @@ namespace Beast.Radar.Terrain
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.baker);
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         public void Render(TerrainBakeTask task)

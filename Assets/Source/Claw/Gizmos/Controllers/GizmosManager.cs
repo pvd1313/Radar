@@ -35,7 +35,7 @@ namespace Beast.Claw.Gizmos
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _wireLines = new ShapeStorage<Line>(BUFFER_SIZE);
             _wireRects = new ShapeStorage<Rect>(BUFFER_SIZE);
@@ -44,7 +44,7 @@ namespace Beast.Claw.Gizmos
             _screenSquares = new ShapeStorage<Square>(BUFFER_SIZE);
             _material = new Material(_config.Shader);
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         public GizmosHandle GetHandle(object owner, string name, Color defaultColor)

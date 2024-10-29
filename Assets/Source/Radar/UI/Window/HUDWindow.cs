@@ -39,7 +39,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _windowManager.Register(this, WindowID.MainHUD);
             
@@ -50,7 +50,7 @@ namespace Beast.Radar.UI
 
             _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.Pause);
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _onClickedPauseButton()

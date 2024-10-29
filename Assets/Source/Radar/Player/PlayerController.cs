@@ -60,7 +60,7 @@ namespace Beast.Radar.Player
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _halfTexelSize = (1f / WorldTransform.CellTileCount) / 2.0f;
             
@@ -68,7 +68,7 @@ namespace Beast.Radar.Player
             
             _subscribeInput();
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext context)
@@ -76,11 +76,11 @@ namespace Beast.Radar.Player
             // _move();
         }
 
-        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
+        private UniTask _gameLoad(ConcurrentContext context)
         {
             // _spawnPlayer();
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _gameSave(BlockingContext context)

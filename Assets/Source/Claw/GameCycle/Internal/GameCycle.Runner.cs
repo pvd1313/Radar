@@ -14,7 +14,7 @@ namespace Beast.Claw.GameCycle
             public struct Listener
             {
                 public Action<BlockingContext> blocking;
-                public Func<ConcurrentContext, UniTask<ActionResult>> concurrent;
+                public Func<ConcurrentContext, UniTask> concurrent;
                 public object target;
             }
 

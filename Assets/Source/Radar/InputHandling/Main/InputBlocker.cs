@@ -24,12 +24,12 @@ namespace Beast.Radar.InputHandling
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _windowManager.MouseOverUI += _onMouseOverUI;
             _windowManager.WindowChanged += _onWindowChanged;
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _onWindowChanged(string newWindowID)

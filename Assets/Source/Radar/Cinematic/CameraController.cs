@@ -37,14 +37,14 @@ namespace Beast.Radar.Cinematic
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _motion = _cameraConfig.GetMotionParameters(_inputSystem.Scheme.Current);
 
             _inputSystem.GameInput.ChangedEarlyValues += _processCamera;
             _inputSystem.Scheme.Changed += _onChangedInputActionsScheme;
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _onChangedInputActionsScheme(EInputScheme scheme)

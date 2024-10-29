@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
             _selectablesController.Disable();
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _windowManager.Register(this, WindowID.Debug);
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
@@ -105,7 +105,7 @@ namespace Beast.Radar.UI
                 _viewReady = true;
             });
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _configurePanels(DebugPrefabLibrary library)

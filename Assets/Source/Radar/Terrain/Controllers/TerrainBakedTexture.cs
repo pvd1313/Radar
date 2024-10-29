@@ -34,7 +34,7 @@ namespace Beast.Radar.Terrain
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
-        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
+        private UniTask _gameLoad(ConcurrentContext context)
         {
             _dispose(default);
 
@@ -71,7 +71,7 @@ namespace Beast.Radar.Terrain
 
             IsReady = true;
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _dispose(BlockingContext context)

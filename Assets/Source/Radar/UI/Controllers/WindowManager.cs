@@ -79,7 +79,7 @@ namespace Beast.Radar.UI
             };
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _idToWindow = new Dictionary<string, WindowData>(64);
 
@@ -92,7 +92,7 @@ namespace Beast.Radar.UI
             
             _canvas.MouseOverUI += _onMouseOverUI;
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private async UniTask _open<TData>(string windowID, TData data)
