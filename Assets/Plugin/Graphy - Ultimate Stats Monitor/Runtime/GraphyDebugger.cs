@@ -491,9 +491,9 @@ namespace Tayx.Graphy
                 case DebugVariable.Fps:
                     return m_fpsMonitor != null ? m_fpsMonitor.CurrentFPS : 0;
                 case DebugVariable.Fps_Min:
-                    return m_fpsMonitor != null ? m_fpsMonitor.OnePercentFPS : 0;
+                    return 0;
                 case DebugVariable.Fps_Max:
-                    return m_fpsMonitor != null ? m_fpsMonitor.Zero1PercentFps : 0;
+                    return 0;
                 case DebugVariable.Fps_Avg:
                     return m_fpsMonitor != null ? m_fpsMonitor.AverageFPS : 0;
 

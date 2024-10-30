@@ -79,12 +79,12 @@ namespace Tayx.Graphy.Fps
                 SetFpsRelatedTextColor( m_msText, m_fps );
 
                 // Update 1% fps
-                m_onePercentFpsText.text = ((int) (m_fpsMonitor.OnePercentFPS)).ToStringNonAlloc();
-                SetFpsRelatedTextColor( m_onePercentFpsText, m_fpsMonitor.OnePercentFPS );
+                // m_onePercentFpsText.text = ((int) (m_fpsMonitor.OnePercentFPS)).ToStringNonAlloc();
+                // SetFpsRelatedTextColor( m_onePercentFpsText, m_fpsMonitor.OnePercentFPS );
 
                 // Update 0.1% fps
-                m_zero1PercentFpsText.text = ((int) (m_fpsMonitor.Zero1PercentFps)).ToStringNonAlloc();
-                SetFpsRelatedTextColor( m_zero1PercentFpsText, m_fpsMonitor.Zero1PercentFps );
+                // m_zero1PercentFpsText.text = ((int) (m_fpsMonitor.Zero1PercentFps)).ToStringNonAlloc();
+                // SetFpsRelatedTextColor( m_zero1PercentFpsText, m_fpsMonitor.Zero1PercentFps );
 
                 // Update avg fps
                 m_avgFpsText.text = ((int) (m_fpsMonitor.AverageFPS)).ToStringNonAlloc();

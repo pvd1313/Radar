@@ -343,8 +343,8 @@ namespace Tayx.Graphy
 
         public float CurrentFPS => m_fpsMonitor.CurrentFPS;
         public float AverageFPS => m_fpsMonitor.AverageFPS;
-        public float OnePercentFPS => m_fpsMonitor.OnePercentFPS;
-        public float Zero1PercentFps => m_fpsMonitor.Zero1PercentFps;
+        // public float OnePercentFPS => m_fpsMonitor.OnePercentFPS;
+        // public float Zero1PercentFps => m_fpsMonitor.Zero1PercentFps;
 
         // Ram ---------------------------------------------------------------------------
 
