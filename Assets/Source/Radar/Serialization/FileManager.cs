@@ -26,7 +26,6 @@ namespace Beast.Radar.Serialization
             {
                 stream = new FileStream(filePath, FileMode.Open),
                 path = filePath,
-                isReading = true
             };
         }
         
@@ -38,19 +37,7 @@ namespace Beast.Radar.Serialization
             {
                 stream = new FileStream(filePath, FileMode.Create),
                 path = filePath,
-                isReading = false
             };
-        }
-
-        public void Close(StreamData stream)
-        {
-            if (!stream.isReading)
-            {
-                stream.stream.Flush();
-            }
-            
-            stream.stream.Close();
-            stream.stream.Dispose();
         }
 
         private static string _getOrCreateFilePath(string folderName, string fileName)

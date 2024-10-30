@@ -66,14 +66,12 @@ namespace Beast.Radar.Serialization
         {
             try
             {
-                StreamData streamData = _fileManager.OpenToRead(folderName, fileName);
+                await using StreamData streamData = _fileManager.OpenToRead(folderName, fileName);
                 
                 BinaryReader binaryReader = new (streamData.stream);
 
                 binaryReader.Read(_gameModel);
 
-                _fileManager.Close(streamData);
-                
                 ActionResult result = await _gameCycle.ExecuteConcurrent(this, ActionID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
@@ -101,13 +99,13 @@ namespace Beast.Radar.Serialization
                     BDebug.LogException(e);
                 }
 
-                StreamData stream = _fileManager.OpenToWrite(folderName, fileName);
+                using StreamData stream = _fileManager.OpenToWrite(folderName, fileName);
                 BinaryWriter writer = new (stream.stream);
 
                 writer.Write(_gameModel);
-
-                _fileManager.Close(stream);
                 
+                stream.stream.Flush();
+
                 BDebug.LogInfo(this, $"Saved game state to '{stream.path}'");
             }
             catch (Exception e)

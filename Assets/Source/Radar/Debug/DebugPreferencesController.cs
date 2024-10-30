@@ -35,7 +35,7 @@ namespace Beast.Radar.Debug
                 return UniTask.CompletedTask;
             }
 
-            StreamData stream = _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
+            using StreamData stream = _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
 
             try
             {
@@ -47,31 +47,25 @@ namespace Beast.Radar.Debug
             {
                 BDebug.LogException(e);
             }
-            finally
-            {
-                _fileManager.Close(stream);
-            }
 
             return UniTask.CompletedTask;
         }
         
         private void _preferencesSave(BlockingContext context)
         {
-            StreamData stream = _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
+            using StreamData stream = _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 
             try
             {
                 BinaryWriter writer = new (stream.stream);
                 
                 _preferences.Serialize(writer);
+                
+                stream.stream.Flush();
             }
             catch (Exception e)
             {
                 BDebug.LogException(e);
-            }
-            finally
-            {
-                _fileManager.Close(stream);
             }
         }
     }
