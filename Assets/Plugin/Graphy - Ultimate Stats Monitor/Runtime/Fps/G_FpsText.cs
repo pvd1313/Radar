@@ -25,8 +25,8 @@ namespace Tayx.Graphy.Fps
         [SerializeField] private Text m_msText = null;
 
         [SerializeField] private Text m_avgFpsText = null;
-        [SerializeField] private Text m_onePercentFpsText = null;
-        [SerializeField] private Text m_zero1PercentFpsText = null;
+        //[SerializeField] private Text m_onePercentFpsText = null;
+        //[SerializeField] private Text m_zero1PercentFpsText = null;
 
         #endregion
 
