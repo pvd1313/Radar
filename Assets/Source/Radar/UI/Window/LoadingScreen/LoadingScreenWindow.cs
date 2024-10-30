@@ -1,11 +1,13 @@
-﻿using Beast.Claw.Common;
+﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class LoadingScreenWindow : IWindow<Empty>, IGameCycleListener
+    public class LoadingScreenWindow : IWindow<LoadingScreenInput>, IGameCycleListener
     {
         private const int MAX_TASK_COUNT = 20;
 
@@ -16,6 +18,8 @@ namespace Beast.Radar.UI
         private UIPool<LoadingTaskText> _loadingTasksPool;
 
         private LoadingTaskText _lastLoadingTask;
+        private IProgressTracker _progressTracker;
+        private Action _progressButtonAction;
 
         public LoadingScreenWindow(EssentialPrefabLibrary library, IWindowManager windowManager)
         {
@@ -25,10 +29,46 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+        }
+        
+        public UniTask Open(LoadingScreenInput input)
+        {
+            _view.progressButton.SetInteractable(false);
+            _view.gameObject.SetActive(true);
+
+            _setProgressValue(input.currentProgress);
+            _progressTracker = input.progressTracker;
+
+            if (input.clearLastProgress)
+            {
+                _loadingTasksPool.DisableAll();
+            }
+            
+            if (_progressTracker != null)
+            {
+                _progressTracker.Updated += _onProgressTrackerUpdated;
+            }
+
+            _progressButtonAction = input.continueButtonAction;
+            
+            return UniTask.CompletedTask;
+        }
+        
+        public UniTask Close()
+        {
+            _view.gameObject.SetActive(false);
+
+            if (_progressTracker != null)
+            {
+                _progressTracker.Updated -= _onProgressTrackerUpdated;
+                _progressTracker = null;
+            }
+            
+            return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.loadingScreen, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);
@@ -37,23 +77,21 @@ namespace Beast.Radar.UI
             
             _windowManager.Register(this, WindowID.LoadingScreen);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
+            _view.progressButton.Clicked += _onProgressButtonClicked;
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
-        public UniTask Open(Empty data)
+        private void _onProgressButtonClicked()
         {
-            _view.progressButton.SetInteractable(false);
-            _view.gameObject.SetActive(true);
-            
-            return UniTask.CompletedTask;
+            _progressButtonAction?.Invoke();
         }
 
-        public UniTask Close()
+        private void _onProgressTrackerUpdated(ProgressTrackerInfo info)
         {
-            _view.gameObject.SetActive(false);
-            
-            return UniTask.CompletedTask;
+            _setProgressValue(info.progress01);
+            _addTask(info.currentStep);
+            _stopLoadLastTask(string.Empty);
         }
 
         private void _addTask(string task)
@@ -63,14 +101,12 @@ namespace Beast.Radar.UI
                 _loadingTasksPool.Disable(_loadingTasksPool.GetByIndex(0));
             }
 
-            //TODO https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen 
             _lastLoadingTask = _loadingTasksPool.GetNext();
             _lastLoadingTask.SetTask(task);
         }
 
         private void _stopLoadLastTask(string duration)
         {
-            //TODO https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen 
             if (_lastLoadingTask != null)
             {
                 _lastLoadingTask.Completed(duration);
@@ -78,17 +114,15 @@ namespace Beast.Radar.UI
             }
         }
 
-        private void _setProgressValue()
+        private void _setProgressValue(float value01)
         {
-            //TODO https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen 
-            float normalizeValue = 0;
+            _view.progressFill.SetValue(value01);
+            _view.buttonText.SetText(BMath.FloorToInt(value01 * 100).ToString());
             
-            _view.progressFill.SetValue(normalizeValue);
-            _view.buttonText.SetText((normalizeValue * 100).ToString());
-            
-            if (normalizeValue >= 1)
+            if (value01 >= 1)
             {
                 _view.progressButton.SetInteractable(true);
+                _view.buttonText.SetText("TAP");
             }
         }
     }

@@ -16,10 +16,10 @@ namespace Beast.Radar.Cinematic
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             BScene.InstantiateMono
             (
@@ -29,7 +29,7 @@ namespace Beast.Radar.Cinematic
                 quaternion.identity
             );
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
     }
 }

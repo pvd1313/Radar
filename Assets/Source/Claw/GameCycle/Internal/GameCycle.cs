@@ -18,7 +18,7 @@ namespace Beast.Claw.GameCycle
         private bool _isRegisteringListeners;
         private int _listenerCount;
 
-        public GameCycle (Proxy proxy, GameCycleConfig config, DiContainer container)
+        public GameCycle(Proxy proxy, GameCycleConfig config, DiContainer container)
         {
             _config = config;
             _container = container;
@@ -76,7 +76,7 @@ namespace Beast.Claw.GameCycle
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, $"Exception during registration ({subscriber.GetType()})");
+                    BDebug.LogException(e);
 
                     throw;
                 }
@@ -121,7 +121,7 @@ namespace Beast.Claw.GameCycle
                 throw new InvalidOperationException($"Tried to invoke invalid update '{eventID}'");
             }
             
-            runner.ExecuteBlocking();
+            runner.ExecuteBlocking(owner);
         }
 
         private void _dispose()

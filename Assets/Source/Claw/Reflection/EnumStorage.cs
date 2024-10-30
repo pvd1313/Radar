@@ -16,7 +16,7 @@ namespace Beast.Claw.Reflection
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
             }
         }
     }

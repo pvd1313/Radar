@@ -37,7 +37,7 @@ namespace Beast.Radar.Core
                 world = new WorldData()
             };
 
-            _saveManager.Load(model);
+            _saveManager.LoadAsync(model);
         }
     }
 }

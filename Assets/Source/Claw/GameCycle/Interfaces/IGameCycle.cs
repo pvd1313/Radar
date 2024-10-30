@@ -15,9 +15,9 @@ namespace Beast.Claw.GameCycle
         
         public IProfiler TryGetProfiler(string operationName);
         
-        UniTask<ActionResult> Execute<TOwner>(TOwner owner, string eventID) where TOwner : class;
+        UniTask<ActionResult> ExecuteConcurrent<TOwner>(TOwner owner, string eventID) where TOwner : class;
 
-        public void Update<TOwner>(TOwner owner, string eventID) where TOwner : class;
+        public void ExecuteBlocking<TOwner>(TOwner owner, string eventID) where TOwner : class;
 
         public void Dispose();
     }

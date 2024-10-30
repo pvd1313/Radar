@@ -6,6 +6,7 @@
         public EActionFrequency frequency;
         public EActionOrder order;
         public int bufferCapacity;
+        public bool flushProfilerToConsole;
         public string id;
 
         public string Validate()

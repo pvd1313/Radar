@@ -17,7 +17,7 @@ namespace Beast.Claw.GameCycle
                 _gameCycle = gameCycle;
             }
         
-            public void ListenOperation(string eventID, Func<ConcurrentContext, UniTask<ActionResult>> action)
+            public void ListenConcurrent(string eventID, Func<ConcurrentContext, UniTask> action)
             {
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));
@@ -46,7 +46,7 @@ namespace Beast.Claw.GameCycle
                 });
             }
 
-            public void ListenUpdate(string eventID, Action<BlockingContext> action)
+            public void ListenBlocking(string eventID, Action<BlockingContext> action)
             {
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));

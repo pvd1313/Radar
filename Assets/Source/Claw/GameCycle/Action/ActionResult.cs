@@ -32,10 +32,5 @@ namespace Beast.Claw.GameCycle
                 status = EActionStatus.Failed
             };
         }
-
-        public static UniTask<ActionResult> SuccessSyncronous()
-        {
-            return UniTask.FromResult(Success());
-        }
     }
 }

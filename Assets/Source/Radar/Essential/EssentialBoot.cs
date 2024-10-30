@@ -41,21 +41,34 @@ namespace Beast.Radar.Essential
             
             _gameCycle.RegisterListeners();
 
-            await _gameCycle.Execute(this, ActionID.WARMUP);
-
-            await _windows.GetHandle<Empty>(this, WindowID.LoadingScreen).Open(default);
+            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
 
             await _startupCore();
         }
 
         private async UniTask _startupCore()
         {
+            ProgressTracker tracker = new ();
+
+            await _windows.GetHandle<LoadingScreenInput>(this, WindowID.LoadingScreen)
+                .Open(new LoadingScreenInput
+                {
+                    progressTracker = tracker,
+                    clearLastProgress = true,
+                    currentProgress = 0,
+                    continueButtonAction = null
+                });
+
+            tracker.Begin(3, 0.3f);
+
+            await tracker.Next("Loading installers");
             _coreInstallers = new ScriptableInstaller[_config.installers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
                 _coreInstallers[i] = await _resources.LoadAsset(this, _config.installers[i]);
             }
 
+            await tracker.Next("Binding installers");
             foreach (ScriptableInstaller installer in _coreInstallers)
             {
                 _container.Inject(installer);
@@ -63,7 +76,8 @@ namespace Beast.Radar.Essential
                 installer.InstallBindings();
             }
 
-            await _container.Resolve<ICoreBoot>().Boot();
+            await tracker.Next("Booting core");
+            await _container.Resolve<ICoreBoot>().Boot(tracker);
         }
     }
 }

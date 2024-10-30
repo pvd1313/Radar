@@ -31,7 +31,7 @@ namespace Beast.Claw.Editor
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
             }
 
             return default;

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
@@ -26,56 +27,70 @@ namespace Beast.Radar.Core
             _gameCycle = gameCycle;
         }
         
-        public async UniTask<ActionResult> Boot()
+        public async UniTask Boot(IProgressTracker tracker)
         {
-            IWindowHandle<Empty> loadingScreen = _window.GetHandle<Empty>(this, WindowID.LoadingScreen);
             IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.MainHUD);
             IWindowHandle<Empty> mapGeneration = _window.GetHandle<Empty>(this, WindowID.MapGeneration);
+            IWindowHandle<LoadingScreenInput> loadingScreen = _window.GetHandle<LoadingScreenInput>(this, WindowID.LoadingScreen);
 
-            // TODO: Start displaying loading infos.
-            //     : https://risenbeast.youtrack.cloud/issue/R-78/Loading-progress-in-ui-screen
-            await loadingScreen.Open(default);
-            
+            tracker.Begin(4, 1 - tracker.Progress);
+
+            await tracker.Next("Core: Registering GameCycle listeners");
             _gameCycle.RegisterListeners();
 
-            await _gameCycle.Execute(this, ActionID.PREFERENCES_LOAD);
+            await tracker.Next("Core: Loading preferences");
+            await _gameCycle.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);
 
-            await _gameCycle.Execute(this, ActionID.WARMUP);
+            await tracker.Next("Core: Warmup");
+            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
 
             BScene.CreateGameObject(this)
                 .AddComponent<GameCycleMono>()
                 .Initialize(_gameCycle);
-            
+
             if (Application.isEditor)
             {
-                await _save.Load(_integratedSave.model);
-
-                await mainHUD.Open(default);
-            }
-            else
-            {
-                bool saveExists = await _save.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                await tracker.Next("Loading integrated save");
                 
-                if (saveExists)
-                {
-                    ActionResult result = await _save.Load(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                await _save.LoadAsync(_integratedSave.model);
+            
+                await mainHUD.Open(default);
+            
+                return;
+            }
 
-                    if (result.IsSuccess())
-                    {
-                        await mainHUD.Open(default);
-                    }
-                    else
-                    {
-                        await mapGeneration.Open(default);
-                    }
+            Action nextAction;
+
+            bool saveExists = _save.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                
+            if (saveExists)
+            {
+                await tracker.Next("Loading game save");
+                ActionResult result = await _save.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+
+                if (result.IsSuccess())
+                {
+                    nextAction = () => mainHUD.Open(default);
                 }
                 else
                 {
-                    await mapGeneration.Open(default);
+                    nextAction = () => mapGeneration.Open(default);
                 }
             }
+            else
+            {
+                nextAction = () => mapGeneration.Open(default);
+            }
 
-            return ActionResult.Success();
+            await tracker.Next("Waiting for player input");
+
+            await loadingScreen.Open(new LoadingScreenInput
+            {
+                clearLastProgress = false,
+                currentProgress = 1,
+                progressTracker = null,
+                continueButtonAction = nextAction
+            });
         }
     }
 }

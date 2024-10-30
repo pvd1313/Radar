@@ -27,12 +27,12 @@ namespace Beast.Radar.InputHandling
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.TICK, _tick);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _actions = new InputActions();
             _actions.Enable();
@@ -48,7 +48,7 @@ namespace Beast.Radar.InputHandling
             
             _gameInputActions = new GameInputActions(Scheme, _actions);
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext context)
@@ -57,15 +57,13 @@ namespace Beast.Radar.InputHandling
             _uiInputActions.Update();
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _uiInputActions.Dispose();
             _schemeObserver.Dispose();
             _actions.Disable();
             _actions.UI.Disable();
             _actions.Game.Disable();
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

@@ -52,8 +52,8 @@ namespace Beast.Radar.UI
 
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
         public UniTask Open(Empty data)
@@ -76,7 +76,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
@@ -99,7 +99,7 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
             
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
         private void _configureView()
@@ -254,14 +254,12 @@ namespace Beast.Radar.UI
             _menuView.mapImage.texture = _terrainTexture.color;
         }
 
-        private UniTask<ActionResult> _dispose(ConcurrentContext context)
+        private void _dispose(BlockingContext context)
         {
             _unsubscribeView();
 
             _selectablesController.Dispose();
             _sizeButtonsGroup.Dispose();
-
-            return ActionResult.SuccessSyncronous();
         }
     }
 }

@@ -26,11 +26,11 @@ namespace Beast.Claw.Gizmos
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenUpdate(ActionID.TICK, _tick);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.TICK, _tick);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _drawers = new Dictionary<IGizmosDrawer, DrawerInfo>();
             
@@ -38,8 +38,8 @@ namespace Beast.Claw.Gizmos
             {
                 AddDrawer(drawer);
             }
-            
-            return ActionResult.SuccessSyncronous();
+
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext context)

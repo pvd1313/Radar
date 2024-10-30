@@ -9,7 +9,6 @@ namespace Beast.Claw.GameCycle
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;
         public ProfilerConfig profiler;
-        public bool logConcurrentAction;
         
         public override IEnumerable<IConfig> Bind()
         {

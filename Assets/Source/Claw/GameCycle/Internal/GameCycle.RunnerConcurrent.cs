@@ -53,19 +53,11 @@ namespace Beast.Claw.GameCycle
                     {
                         ConcurrentContext context = default;
 
-                        result = await listener.concurrent.Invoke(context);
-
-                        if (!result.IsSuccess())
-                        {
-                            BDebug.LogError(this, $"Error during '{operationID}' ({listener.GetType().FullName})");
-
-                            return result;
-                        }
+                        await listener.concurrent.Invoke(context);
                     }
                     catch (Exception e)
                     {
-                        BDebug.LogException(this, e,
-                            $"Exception during '{operationID}' ({listener.GetType().FullName})");
+                        BDebug.LogException(e);
 
                         return ActionResult.Failed();
                     }

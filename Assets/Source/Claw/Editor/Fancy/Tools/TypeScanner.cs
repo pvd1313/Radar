@@ -26,7 +26,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
             }
         }
 

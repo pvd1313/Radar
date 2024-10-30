@@ -35,7 +35,7 @@ namespace Beast.Claw.Graphic
             }
             catch (Exception e)
             {
-                BDebug.StaticLogException(e);
+                BDebug.LogException(e);
             }
         }
 

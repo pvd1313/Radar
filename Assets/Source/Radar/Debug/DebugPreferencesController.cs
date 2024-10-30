@@ -23,19 +23,19 @@ namespace Beast.Radar.Debug
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.PREFERENCES_LOAD, _preferencesLoad);
-            handle.ListenOperation(ActionID.PREFERENCES_SAVE, _preferencesSave);
+            handle.ListenConcurrent(ActionID.PREFERENCES_LOAD, _preferencesLoad);
+            handle.ListenBlocking(ActionID.PREFERENCES_SAVE, _preferencesSave);
         }
 
-        private async UniTask<ActionResult> _preferencesLoad(ConcurrentContext context)
+        private UniTask _preferencesLoad(ConcurrentContext context)
         {
-            bool fileExists = await _fileManager.Exists(FOLDER_NAME, FILE_NAME);
+            bool fileExists = _fileManager.Exists(FOLDER_NAME, FILE_NAME);
             if (!fileExists)
             {
-                return ActionResult.Success();
+                return UniTask.CompletedTask;
             }
 
-            StreamData stream = await _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
+            StreamData stream = _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
 
             try
             {
@@ -45,22 +45,19 @@ namespace Beast.Radar.Debug
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Error during debug preferences load. ({stream.path})");
+                BDebug.LogException(e);
             }
             finally
             {
-                await _fileManager.Close(stream);
+                _fileManager.Close(stream);
             }
 
-            // TODO : https://risenbeast.youtrack.cloud/issue/R-46/Unity-Task-Success
-            //      : We should probably return fail.
-            //      : But game cycle should be able to ignore that fail as it is not critical.
-            return ActionResult.Success();
+            return UniTask.CompletedTask;
         }
         
-        private async UniTask<ActionResult> _preferencesSave(ConcurrentContext context)
+        private void _preferencesSave(BlockingContext context)
         {
-            StreamData stream = await _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
+            StreamData stream = _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
 
             try
             {
@@ -70,15 +67,12 @@ namespace Beast.Radar.Debug
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Error during debug preferences save. ({stream.path})");
+                BDebug.LogException(e);
             }
             finally
             {
-                await _fileManager.Close(stream);
+                _fileManager.Close(stream);
             }
-            
-            // TODO : https://risenbeast.youtrack.cloud/issue/R-46/Unity-Task-Success
-            return ActionResult.Success();
         }
     }
 }

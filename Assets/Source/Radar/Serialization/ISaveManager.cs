@@ -5,12 +5,12 @@ namespace Beast.Radar.Serialization
 {
     public interface ISaveManager
     {
-        UniTask<ActionResult> Load(GameModel model);
+        UniTask<ActionResult> LoadAsync(GameModel model);
 
-        UniTask<bool> Exists(string folderName, string fileName);
+        bool Exists(string folderName, string fileName);
 
-        UniTask<ActionResult> Load(string folderName, string fileName);
+        UniTask<ActionResult> LoadAsync(string folderName, string fileName);
         
-        UniTask<ActionResult> Save(string folderName, string fileName);
+        void Save(string folderName, string fileName);
     }
 }

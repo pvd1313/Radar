@@ -5,8 +5,8 @@ namespace Beast.Claw.GameCycle
 {
     public interface IGameCycleHandle
     {
-        void ListenOperation(string eventID, Func<ConcurrentContext, UniTask<ActionResult>> action);
+        void ListenConcurrent(string eventID, Func<ConcurrentContext, UniTask> action);
 
-        void ListenUpdate(string eventID, Action<BlockingContext> action);
+        void ListenBlocking(string eventID, Action<BlockingContext> action);
     }
 }

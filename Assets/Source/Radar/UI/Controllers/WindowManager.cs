@@ -35,8 +35,8 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.DISPOSE, _dispose);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
@@ -79,7 +79,7 @@ namespace Beast.Radar.UI
             };
         }
         
-        private UniTask<ActionResult> _warmup(ConcurrentContext context)
+        private UniTask _warmup(ConcurrentContext context)
         {
             _idToWindow = new Dictionary<string, WindowData>(64);
 
@@ -92,7 +92,7 @@ namespace Beast.Radar.UI
             
             _canvas.MouseOverUI += _onMouseOverUI;
 
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
         
         private async UniTask _open<TData>(string windowID, TData data)
@@ -117,7 +117,7 @@ namespace Beast.Radar.UI
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(this, e, $"Failed to close window '{windowID}'");    
+                    BDebug.LogException(e);    
                 }
                 
                 _currentWindow = WindowID.None;
@@ -132,12 +132,14 @@ namespace Beast.Radar.UI
             }
             catch (Exception e)
             {
-                BDebug.LogException(this, e, $"Failed to open window '{windowID}'");    
+                BDebug.LogException(e);    
             }
 
             _currentWindow = windowID;
             
             WindowChanged?.Invoke(_currentWindow);
+
+            await UniTask.NextFrame();
         }
 
         private void _onMouseOverUI(bool isMouseOverUI)
@@ -145,7 +147,7 @@ namespace Beast.Radar.UI
             MouseOverUI?.Invoke(isMouseOverUI);       
         }
         
-        private UniTask<ActionResult> _dispose(ConcurrentContext arg)
+        private void _dispose(BlockingContext context)
         {
             if (Build.IS_DEVELOPMENT)
             {
@@ -187,8 +189,6 @@ namespace Beast.Radar.UI
                     BDebug.LogError(this, builder.ToString());
                 }
             }
-
-            return ActionResult.SuccessSyncronous();
         }
 
         // private void _onOptionButtonsPressStarted(EInputOptionButton button)
