@@ -11,14 +11,14 @@ namespace Beast.Radar.UI
 {
     public class PlayerViewController : IGameCycleListener 
     {
-        private readonly PrefabLibrary _library;
+        private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;
         private readonly IWorldTime _time;
         private readonly IPlayerMovement _player;
 
         private PlayerView _view;
 
-        public PlayerViewController(PrefabLibrary library, ICameraTransform camera, IWorldTime time, IPlayerMovement player)
+        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IWorldTime time, IPlayerMovement player)
         {
             _library = library;
             _camera = camera;
@@ -32,7 +32,7 @@ namespace Beast.Radar.UI
             handle.ListenUpdate(ActionID.TICK, _tick);
         }
 
-        private void _tick(ActionContext arg)
+        private void _tick(BlockingContext blockingContext)
         {
             _view.body.position = _camera.WorldToScreen(_player.Position).XY0();
             _view.target.position = _camera.WorldToScreen(_player.Target).XY0();
@@ -57,9 +57,9 @@ namespace Beast.Radar.UI
             }
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext arg)
+        private UniTask<ActionResult> _warmup(ConcurrentContext arg)
         {
-            _view = BScene.InstantiateMono(this, _library.playerViewPrefab, float3.zero, quaternion.identity);
+            _view = BScene.InstantiateMono(this, _library.playerView, float3.zero, quaternion.identity);
 
             return ActionResult.SuccessSyncronous();
         }

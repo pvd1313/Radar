@@ -29,19 +29,19 @@ namespace Beast.Radar.World
             handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _gameLoad(ActionContext arg)
+        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
         {
             _minutes = _gameModel.world.minutes;
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _gameSave(ActionContext arg)
+        private UniTask<ActionResult> _gameSave(ConcurrentContext context)
         {
             _gameModel.world.minutes = _minutes;
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ActionContext obj)
+        private void _tick(BlockingContext context)
         {
             _seconds += Time.deltaTime * _config.secondMultiplier;
 

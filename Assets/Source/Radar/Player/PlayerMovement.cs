@@ -17,13 +17,14 @@ namespace Beast.Radar.Player
         public float2 Target { get; private set; }
         public float Speed { get; private set; }
 
+        private readonly IPlayerState _state;
         private readonly IWorldTime _time;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
         private readonly GameModel _gameModel;
         private readonly IInputSystem _input;
 
-        private  InputValueControl<float2> _clickInput;
+        private InputValueControl<float2> _clickInput;
         private float _halfTexelSize;
         private float2 _startPressPosition;
         private float _startPressTime;
@@ -31,12 +32,14 @@ namespace Beast.Radar.Player
         private bool _isCheckClick;
 
         public PlayerMovement(
+            IPlayerState state,
             IWorldTime time,
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
             GameModel gameModel)
         {
+            _state = state;
             _time = time;
             _config = config;
             _camera = camera;
@@ -52,7 +55,7 @@ namespace Beast.Radar.Player
             handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _warmup(ActionContext arg)
+        private UniTask<ActionResult> _warmup(ConcurrentContext arg)
         {
             _clickInput = _input.GameInput.Click;
             
@@ -63,14 +66,14 @@ namespace Beast.Radar.Player
             return ActionResult.SuccessSyncronous();
         }
 
-        private UniTask<ActionResult> _gameLoad(ActionContext arg)
+        private UniTask<ActionResult> _gameLoad(ConcurrentContext arg)
         {
             Position = _indexToWorld(_gameModel.player.position);
             
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ActionContext obj)
+        private void _tick(BlockingContext obj)
         {
             _followClick();
 
@@ -78,12 +81,16 @@ namespace Beast.Radar.Player
          
             _lastRecordedHours = _time.GetTotalHours();
 
+            if (_state.TryGetState(EPlayerState.IS_MOVE.ToString(), out bool isMove) && isMove)
+            {
+                //move toward
+            }
             Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
 
             BDebug.Track(this, "position", Position);
         }
 
-        private UniTask<ActionResult> _gameSave(ActionContext arg)
+        private UniTask<ActionResult> _gameSave(ConcurrentContext arg)
         {
             _gameModel.player.position = _worldToIndex(Position);
             

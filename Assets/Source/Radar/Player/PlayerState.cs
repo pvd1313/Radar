@@ -4,8 +4,6 @@ namespace Beast.Radar.Player
 {
     public class PlayerState : IPlayerState
     {
-        public static string IsMove = "is_move";
-
         private readonly Dictionary<string, object> _states = new();
 
         public void SetState<TValue>(string tag, TValue value)
