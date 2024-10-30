@@ -165,6 +165,22 @@ float beast_fbm(float2 uv,
     return color;
 }
 
+float beast_rect(float2 uv,
+                 float color,
+                 float RectColor,
+                 float2 LineWidth)
+{
+    if (uv.x < LineWidth.x ||
+        uv.y < LineWidth.y ||
+        uv.x > 1 - LineWidth.x ||
+        uv.y > 1 - LineWidth.y)
+    {
+        return  RectColor;
+    }
+    
+    return color;
+}
+
 // half beast_encode_RG(float r, float g)
 // {
 //     return (half)(r * 255.0) + (half)(g * 255.0 / 256.0);

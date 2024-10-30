@@ -18,6 +18,7 @@ namespace Beast.Radar.Terrain
         public TerrainAtlasAsset atlas;
 
         public Texture2D biomeRenderNoise;
+        public Texture2D bakerGradient;
         
         public IEnumerable<IConfig> Bind()
         {

@@ -23,7 +23,7 @@ MonoBehaviour:
           y: 0
         wrapMode: 1
         filterMode: 1
-      format: 13
+      format: 25
       depth: 0
       mipCount: 0
       temp:

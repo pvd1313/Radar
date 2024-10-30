@@ -51,8 +51,8 @@
 
             float _NoiseSamplerLOD;
             
-            #define NOISE_OFFSET float2(16, 16)
-            #define NOISE_POWER float2(0.075, 0.1)
+            #define NOISE_OFFSET float2(8, 8)
+            #define NOISE_POWER float2(0.075, 0.1) * 1.5f
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
@@ -87,7 +87,7 @@
 #ifdef NOISE_SAMPLER_LOD_0
                 float4 noiseColor = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET, NOISE_POWER);
                 float4 terrainColor = tex2D(_TerrainTexture, input.mainUV);
-                float4 finalColor = lerp(terrainColor, noiseColor, 0.75f);
+                float4 finalColor = lerp(terrainColor, noiseColor, 1.0f);
                 float4 terrainColorRGBA = lerp(terrainColor, finalColor, 1 - _NoiseSamplerLOD);
 #endif
 
