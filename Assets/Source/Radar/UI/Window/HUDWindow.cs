@@ -59,7 +59,7 @@ namespace Beast.Radar.UI
             return ActionResult.SuccessSyncronous();
         }
 
-        private void _tick(ConcurrentContext context)
+        private void _tick(BlockingContext context)
         {
             _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
         }
