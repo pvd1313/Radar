@@ -5,6 +5,10 @@
         public UIButton newGameButton;
         public UIButton saveButton;
         public UIButton loadButton;
-        public UIButton[] closePanelButtons;
+        public UIButton closeButton;
+        public UIStepButtons mapMovementButtons;
+        public UIText mapMovementText;
+        public UIToggle fpsToggle;
+        public UIToggle pathfindingToggle;
     }
 }

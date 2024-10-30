@@ -50,14 +50,15 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainPreviewRender);
             
             //Player
-            yield return typeof(PlayerState);
+            yield return typeof(PlayerPreferencesController);
             yield return typeof(WorldTime);
-            yield return typeof(PlayerMovement);
+            yield return typeof(PlayerController);
             yield return typeof(PlayerViewController);
         }
 
         protected override void BindCustom(DiContainer diContainer)
         {
+            diContainer.Bind<PlayerPreferences>().FromNew().AsSingle().NonLazy();
             diContainer.Bind<GameModel>().FromNew().AsSingle().NonLazy();
         }
     }

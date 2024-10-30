@@ -15,11 +15,11 @@ namespace Beast.Radar.UI
         private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;
         private readonly IWorldTime _time;
-        private readonly IPlayerMovement _player;
+        private readonly IPlayerController _player;
 
         private PlayerView _view;
 
-        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IWorldTime time, IPlayerMovement player)
+        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IWorldTime time, IPlayerController player)
         {
             _library = library;
             _camera = camera;

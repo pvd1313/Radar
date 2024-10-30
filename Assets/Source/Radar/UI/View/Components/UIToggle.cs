@@ -7,7 +7,7 @@ namespace Beast.Radar.UI
     public class UIToggle : UIView
     {
         public UISelectable Selectable => _selectable;
-        public event Action<bool> Changed; 
+        public event Action<bool> Changed;
 
         [SerializeField] private Toggle _toggle;
         [SerializeField] private UISelectable _selectable;
@@ -17,16 +17,14 @@ namespace Beast.Radar.UI
             _toggle.onValueChanged.AddListener(on => Changed?.Invoke(on));
         }
 
-        public void SetValue(bool value, bool withNotify)
+        public void SetValueWithNotify(bool value)
         {
-            if (withNotify)
-            {
-                _toggle.isOn = value;
-            }
-            else
-            {
-                _toggle.SetIsOnWithoutNotify(value);
-            }
+            _toggle.isOn = value;
+        }
+
+        public void SetValueWithoutNotify(bool value)
+        {
+            _toggle.SetIsOnWithoutNotify(value);
         }
     }
 }

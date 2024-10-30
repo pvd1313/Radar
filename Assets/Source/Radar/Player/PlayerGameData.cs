@@ -3,10 +3,10 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
-    public struct PlayerData : ISerializable
+    public struct PlayerGameData : ISerializable
     {
         public int2 position;
-        
+
         public void Serialize(IBinaryWriter stream)
         {
             stream.WriteInt2(position);

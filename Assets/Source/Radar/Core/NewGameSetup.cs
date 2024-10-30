@@ -30,9 +30,9 @@ namespace Beast.Radar.Core
                     position = terrain.terrainSize.Multiply(0.5f),
                     zoom01 = 1
                 },
-                player = new PlayerData
+                player = new PlayerGameData
                 {
-                    position = int2.zero
+                    position = int2.zero,
                 },
                 world = new WorldData()
             };

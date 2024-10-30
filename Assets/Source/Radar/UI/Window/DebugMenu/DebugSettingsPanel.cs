@@ -38,23 +38,12 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
         }
-
-        public void Dispose()
-        {
-            _unsubscribeView();
-            _selectablesController.Dispose();
-        }
-
+        
         public UniTask Open(Empty data)
         {
-            _view.fpsToggle.SetValue(
-                value: _debugController.GetElementState(DebugElementID.FpsCounterID), 
-                withNotify: false);
-            
-            _view.logToggle.SetValue(
-                value: _debugController.GetElementState(DebugElementID.LogConsoleID), 
-                withNotify: false);
-            
+            _view.fpsToggle.SetValueWithoutNotify(_debugController.GetElementState(DebugElementID.FpsCounterID));
+            _view.logToggle.SetValueWithoutNotify(_debugController.GetElementState(DebugElementID.LogConsoleID));
+
             _selectablesController.Enable();
             _view.body.SetActive(true);
 
@@ -104,54 +93,30 @@ namespace Beast.Radar.UI
            _selectablesController.Warmup();
         }
 
-        #region View events
-
         private void _subscribeView()
         {
             for (int i = 0; i < _view.timeScaleButtons.Length; i++)
             {
                 int index = i;
-                _view.timeScaleButtons[i].Clicked += () => _onTimeScaleButtonClicked(index);
+                _view.timeScaleButtons[i].Clicked += () =>
+                {
+                    Time.timeScale = _timeScales[index];
+                    BDebug.LogInfo(this, $"Time scale = {_timeScales[index]}");
+                };
             }
 
             for (int i = 0; i < _view.frameRateButtons.Length; i++)
             {
                 int index = i;
-                _view.frameRateButtons[i].Clicked += () => _onFrameRateButtonClicked(index);
+                _view.frameRateButtons[i].Clicked += () =>
+                {
+                    Application.targetFrameRate = _frameRates[index];
+                    BDebug.LogInfo(this, $"Target frame rate = {_frameRates[index]}");
+                };
             }
 
-            _view.fpsToggle.Changed += _onFpsToggleChanged;
-            _view.logToggle.Changed += _onLogToggleChanged;
+            _view.fpsToggle.Changed += on => _debugController.SetElementState(DebugElementID.LogConsoleID, on);
+            _view.logToggle.Changed += on => _debugController.SetElementState(DebugElementID.FpsCounterID, on);
         }
-
-        private void _unsubscribeView()
-        {
-            _view.fpsToggle.Changed -= _onFpsToggleChanged;
-            _view.logToggle.Changed -= _onLogToggleChanged;
-        }
-
-        private void _onLogToggleChanged(bool on)
-        {
-            _debugController.SetElementState(DebugElementID.LogConsoleID, on);
-        }
-
-        private void _onFpsToggleChanged(bool on)
-        {
-            _debugController.SetElementState(DebugElementID.FpsCounterID, on);
-        }
-
-        private void _onTimeScaleButtonClicked(int index)
-        {
-            Time.timeScale = _timeScales[index];
-            BDebug.LogInfo(this, $"Time scale = {_timeScales[index]}");
-        }
-
-        private void _onFrameRateButtonClicked(int index)
-        {
-            Application.targetFrameRate = _frameRates[index];
-            BDebug.LogInfo(this, $"Target frame rate = {_frameRates[index]}");
-        }
-
-        #endregion
     }
 }

@@ -203,7 +203,6 @@ namespace Beast.Radar.UI
             _unsubscribeView();
             _unsubscribeInput();
             
-            _panelsController.Dispose();
             _selectablesController.Dispose();
             _inputIconsController.Dispose();
         }

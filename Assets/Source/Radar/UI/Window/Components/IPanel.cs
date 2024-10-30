@@ -5,6 +5,5 @@ namespace Beast.Radar.UI
     public interface IPanel : IWindow<Empty>
     {
         void Warmup();
-        void Dispose();
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.InputHandling;
+using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -16,47 +19,54 @@ namespace Beast.Radar.UI
         private readonly ISaveManager _saveManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
-
-        private PauseMenuView _menuView;
+        private readonly PlayerPreferences _playerPreferences;
+        
+        private PauseMenuView _view;
         private SelectablesController _selectablesController;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
-
+        
         public PauseMenuWindow(
             CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
             ISelectableZoneBuilder zoneBuilder,
-            IInputSystem inputSystem)
+            IInputSystem inputSystem,
+            PlayerPreferences playerPreferences)
         {
             _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
             _zoneBuilder = zoneBuilder;
             _inputSystem = inputSystem;
+            _playerPreferences = playerPreferences;
         }
 
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
         public UniTask Open(Empty data)
         {
             _selectablesController.Enable();
-            _menuView.gameObject.SetActive(true);
-            _menuView.loadButton.SetInteractable(false);
+            _view.gameObject.SetActive(true);
+            _view.loadButton.SetInteractable(false);
 
             bool saveExists = _saveManager.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
-            _menuView.loadButton.SetInteractable(saveExists);
+            _view.loadButton.SetInteractable(saveExists);
+
+            _view.fpsToggle.SetValueWithoutNotify(_playerPreferences.isMaxFps);
+            _view.pathfindingToggle.SetValueWithoutNotify(_playerPreferences.isAutoPathfinding);
+            _refreshMapMovementText();
             
             return UniTask.CompletedTask;
         }
 
         public UniTask Close()
         {
-            _hideView();
+            _view.gameObject.SetActive(false);
+
             _selectablesController.Disable();
 
             return UniTask.CompletedTask;
@@ -64,101 +74,109 @@ namespace Beast.Radar.UI
 
         private UniTask _warmup(ConcurrentContext context)
         {
-             _menuView = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
-            _hideView();
+            _view = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
+            _view.gameObject.SetActive(false);
             _windowManager.Register(this, WindowID.Pause);
-            _menuView.transform.SetParent(_windowManager.CanvasTransform, false);
+            _view.transform.SetParent(_windowManager.CanvasTransform, false);
 
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
             _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MapGeneration);
-            
+
             _configureSelectables();
             _subscribeView();
-            
+
             _selectablesController.Warmup();
-            
+
             return UniTask.CompletedTask;
         }
-
-        private void _dispose(BlockingContext context)
-        {
-            _unsubscribeView();
-            
-            _selectablesController.Dispose();
-        }
-
+        
         private void _configureSelectables()
         {
             Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.Navigate, 
+                zone: ESelectionZone.Navigate,
                 selectables: new[]
                 {
-                    _menuView.newGameButton.Selectable,
-                    _menuView.saveButton.Selectable,
-                    _menuView.loadButton.Selectable,
-                }, 
-                isFillHorizontally: false, 
+                    _view.newGameButton.Selectable,
+                    _view.saveButton.Selectable,
+                    _view.loadButton.Selectable,
+                },
+                isFillHorizontally: false,
                 isLooping: true);
 
-            _selectablesController = new SelectablesController(_inputSystem, new Dictionary<ESelectionZone, SelectableGridData>
-            {
-                { dpadGrid.Item1, dpadGrid.Item2 }
-            });
+            _selectablesController = new SelectablesController(_inputSystem,
+                new Dictionary<ESelectionZone, SelectableGridData>
+                {
+                    { dpadGrid.Item1, dpadGrid.Item2 }
+                });
         }
 
         private void _subscribeView()
         {
-            _menuView.loadButton.Clicked += _onClickedLoadButton;
-            _menuView.saveButton.Clicked += _onClickedSaveButton;
-            _menuView.newGameButton.Clicked += _onClickedNewGameButton;
+            _view.closeButton.Clicked += () => { _mainHUD.Open(default); };
 
-            foreach (UIButton closeButton in _menuView.closePanelButtons)
+            _view.loadButton.Clicked += () =>
             {
-                closeButton.Clicked += _onClickedClosePanelButton;
-            }
-        }
+                // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
+                _saveManager.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                _mainHUD.Open(default);
+            };
 
-        private void _unsubscribeView()
-        {
-            _menuView.loadButton.Clicked -= _onClickedLoadButton;
-            _menuView.saveButton.Clicked -= _onClickedSaveButton;
-            _menuView.newGameButton.Clicked -= _onClickedNewGameButton;
-
-            foreach (UIButton closeButton in _menuView.closePanelButtons)
+            _view.saveButton.Clicked += () =>
             {
-                closeButton.Clicked -= _onClickedClosePanelButton;
-            }
-        }
+                // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
+                // Also should block UI during save
+                _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                _view.loadButton.SetInteractable(true);
+            };
 
-        private void _onClickedClosePanelButton()
-        {
-            _mainHUD.Open(default);
-        }
+            _view.newGameButton.Clicked += () =>
+            {
+                _mapGenerationWindow.Open(default);
+            };
 
-        private void _onClickedNewGameButton()
-        {
-            _mapGenerationWindow.Open(default);
-        }
+            _view.fpsToggle.Changed += on =>
+            {
+                _playerPreferences.isMaxFps = on;
+                _setFPS();
+            };
 
-        private void _onClickedSaveButton()
-        {
-            // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-            // Also should block UI during save
-            _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            _view.pathfindingToggle.Changed += on =>
+            {
+                _playerPreferences.isAutoPathfinding = on;
+            };
             
-            _menuView.loadButton.SetInteractable(true);
+            _view.mapMovementButtons.Increment.Clicked += () =>
+            {
+                _playerPreferences.isSingleTapMovement = !_playerPreferences.isSingleTapMovement;
+                _refreshMapMovementText();
+            };
+            
+            _view.mapMovementButtons.Decrement.Clicked += () =>
+            {
+                _playerPreferences.isSingleTapMovement = !_playerPreferences.isSingleTapMovement;
+                _refreshMapMovementText();
+            };
         }
 
-        private void _onClickedLoadButton()
+        private void _refreshMapMovementText()
         {
-            // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-            _saveManager.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
-            _mainHUD.Open(default);
+            string mapMovementMode = _playerPreferences.isSingleTapMovement ? "single tap" : "double tap";
+            _view.mapMovementText.SetText(mapMovementMode);
+            BDebug.LogInfo(this, $"set map movement value = {mapMovementMode}({_playerPreferences.isSingleTapMovement})");
         }
 
-        private void _hideView()
+        private void _setFPS()
         {
-            _menuView.gameObject.SetActive(false);
+            if (_playerPreferences.isMaxFps)
+            {
+                RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
+                float screenRate = (float)refreshRate.numerator / refreshRate.denominator;
+                Application.targetFrameRate = (int)screenRate;
+            }
+            else
+            {
+                Application.targetFrameRate = 30;
+            }
         }
     }
 }

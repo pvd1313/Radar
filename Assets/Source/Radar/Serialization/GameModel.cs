@@ -12,7 +12,7 @@ namespace Beast.Radar.Serialization
     {
         public TerrainData terrain;
         public CameraState camera;
-        public PlayerData player;
+        public PlayerGameData player;
         public WorldData world;
         
         public void Serialize(IBinaryWriter stream)

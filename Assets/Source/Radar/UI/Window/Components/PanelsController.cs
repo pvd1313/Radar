@@ -24,15 +24,7 @@
                 folder.Warmup();
             }
         }
-
-        public void Dispose()
-        {
-            foreach (IPanel folder in _folders)
-            {
-                folder.Dispose();
-            }
-        }
-
+        
         public void Enable()
         {
             _buttons[_currentIndex].SetInteractable(false);
