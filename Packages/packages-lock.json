@@ -23,13 +23,6 @@
       "dependencies": {},
       "hash": "acfb232f623bcd3573935ac6023ee9b2eaaddb06"
     },
-    "com.tayx.graphy": {
-      "version": "3.0.5",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
     "com.unity.2d.animation": {
       "version": "9.1.1",
       "depth": 1,
