@@ -14,5 +14,10 @@ namespace Beast.Claw.Mathematics
         {
             return new float2(value.x, value.y);
         }
+
+        public static bool IsNan(this float2 value)
+        {
+            return float.IsNaN(value.x) || float.IsNaN(value.y);
+        }
     }
 }

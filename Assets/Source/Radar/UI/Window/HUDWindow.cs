@@ -25,8 +25,8 @@ namespace Beast.Radar.UI
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup); 
+            handle.ListenBlocking(ActionID.TICK, _tick);
         }
 
         public UniTask Open(Empty data)
@@ -60,6 +60,11 @@ namespace Beast.Radar.UI
         private void _onClickedPauseButton()
         {
             _pauseMenu.Open(default);
+        }
+        
+        private void _tick(BlockingContext context)
+        {
+            _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
         }
     }
 }

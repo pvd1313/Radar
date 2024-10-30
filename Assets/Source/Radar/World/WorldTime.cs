@@ -24,21 +24,20 @@ namespace Beast.Radar.World
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
+            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenBlocking(ActionID.TICK, _tick);
+            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _gameLoad(ConcurrentContext context)
+        private UniTask _gameLoad(ConcurrentContext context)
         {
             _minutes = _gameModel.world.minutes;
-            return ActionResult.SuccessSyncronous();
+            return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _gameSave(ConcurrentContext context)
+        private void _gameSave(BlockingContext context)
         {
             _gameModel.world.minutes = _minutes;
-            return ActionResult.SuccessSyncronous();
         }
 
         private void _tick(BlockingContext context)

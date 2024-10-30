@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -13,6 +14,7 @@ namespace Beast.Radar.Player
 {
     public class PlayerMovement : IPlayerMovement, IGameCycleListener
     {
+        public bool IsReady { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
         public float Speed { get; private set; }
@@ -31,6 +33,7 @@ namespace Beast.Radar.Player
         private float _lastRecordedHours;
         private bool _isCheckClick;
 
+
         public PlayerMovement(
             IPlayerState state,
             IWorldTime time,
@@ -46,31 +49,35 @@ namespace Beast.Radar.Player
             _gameModel = gameModel;
             _input = input;
         }
-        
+
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenOperation(ActionID.WARMUP, _warmup);
-            handle.ListenOperation(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenUpdate(ActionID.TICK, _tick);
-            handle.ListenOperation(ActionID.GAME_SAVE, _gameSave);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
+            handle.ListenBlocking(ActionID.TICK, _tick);
+            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
-        private UniTask<ActionResult> _warmup(ConcurrentContext arg)
+        private UniTask _warmup(ConcurrentContext arg)
         {
             _clickInput = _input.GameInput.Click;
             
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
             Speed = _config.moveSpeed;
-            
-            return ActionResult.SuccessSyncronous();
+
+            return UniTask.CompletedTask;
         }
 
-        private UniTask<ActionResult> _gameLoad(ConcurrentContext arg)
+        private UniTask _gameLoad(ConcurrentContext arg)
         {
             Position = _indexToWorld(_gameModel.player.position);
             
-            return ActionResult.SuccessSyncronous();
+            Target = Position;
+            
+            IsReady = true;
+            
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext obj)
@@ -90,11 +97,9 @@ namespace Beast.Radar.Player
             BDebug.Track(this, "position", Position);
         }
 
-        private UniTask<ActionResult> _gameSave(ConcurrentContext arg)
+        private void _gameSave(BlockingContext obj)
         {
             _gameModel.player.position = _worldToIndex(Position);
-            
-            return ActionResult.SuccessSyncronous();
         }
 
         private void _followClick()
