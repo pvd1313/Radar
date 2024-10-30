@@ -9,6 +9,7 @@ using Beast.Radar.Serialization;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Player
 {
@@ -24,6 +25,7 @@ namespace Beast.Radar.Player
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
         private readonly GameModel _gameModel;
+        private readonly PlayerPreferences _preferences;
         private readonly IInputSystem _input;
 
         private InputValueControl<float2> _clickInput;
@@ -32,19 +34,20 @@ namespace Beast.Radar.Player
         private float _startPressTime;
         private float _lastRecordedHours;
         private bool _isCheckClick;
-
-
+        
         public PlayerController(
             IWorldTime time,
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
-            GameModel gameModel)
+            GameModel gameModel, 
+            PlayerPreferences preferences)
         {
             _time = time;
             _config = config;
             _camera = camera;
             _gameModel = gameModel;
+            _preferences = preferences;
             _input = input;
         }
 
@@ -81,15 +84,17 @@ namespace Beast.Radar.Player
         private void _tick(BlockingContext obj)
         {
             _followClick();
+            
+            if (IsMovement)
+            { 
+                float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
+                
+                Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
+                
+                BDebug.Track(this, "position", Position);
+            }
 
-            float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
-         
             _lastRecordedHours = _time.GetTotalHours();
-
-
-            Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
-
-            BDebug.Track(this, "position", Position);
         }
 
         private void _gameSave(BlockingContext obj)
@@ -115,6 +120,13 @@ namespace Beast.Radar.Player
                     BDebug.Track(this, "target", Target);
                     BDebug.Track(this, "target cell", _worldToIndex(Target));
                 }
+
+                IsMovement = _clickInput.TapCount switch
+                {
+                    1 => _preferences.isSingleTapMovement,
+                    > 1 => !_preferences.isSingleTapMovement,
+                    _ => IsMovement
+                };
 
                 _isCheckClick = false;
             }
