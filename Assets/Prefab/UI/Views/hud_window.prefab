@@ -200,12 +200,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a4749fa45c0b594fb6622c35e207867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeText: {fileID: 841410131789523757}
   pauseButton: {fileID: 5982709598072105746}
+  pathfindingButton: {fileID: 7990457993774341838}
+  pathfindingImage: {fileID: 1125605190527838183}
   moveButton: {fileID: 185914367830149623}
   moveImage: {fileID: 7199493154554163422}
-  timeText: {fileID: 841410131789523757}
-  pathfindingButton: {fileID: 7990457993774341838}
-  pathfindingImage: {fileID: 7199493154554163422}
 --- !u!1001 &1537148883528858879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -347,6 +347,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 856e230c31565f84d9e557c6065abc2f, type: 3}
+--- !u!114 &1125605190527838183 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1930917476730624792, guid: 856e230c31565f84d9e557c6065abc2f, type: 3}
+  m_PrefabInstance: {fileID: 1537148883528858879}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b55928d0d7d4df8b8432a732dd27415, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2027206715927503801 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 682041388782919494, guid: 856e230c31565f84d9e557c6065abc2f, type: 3}

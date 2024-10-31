@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
@@ -13,9 +14,10 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : Controller, IGameCycleListener
+    public class PlayerController : Controller, IPlayerController, IGameCycleListener
     {
         public event Action ChangeMovementState;
+        public event Action ChangeTarget;
         public bool IsReady { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
@@ -80,7 +82,7 @@ namespace Beast.Radar.Player
         private UniTask _gameLoad(ConcurrentContext arg)
         {
             Position = _indexToWorld(_gameModel.player.position);
-
+            
             Target = Position;
 
             IsReady = true;
@@ -93,7 +95,7 @@ namespace Beast.Radar.Player
             _gameModel.player.position = _worldToIndex(Position);
         }
 
-        private async void _tick(BlockingContext obj)
+        private void _tick(BlockingContext obj)
         {
             _followClick();
 
@@ -102,6 +104,11 @@ namespace Beast.Radar.Player
                 float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
 
                 Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
+
+                if (BMath.Distance(Position, Target) < 0.05f)
+                {
+                    SwitchMovement();
+                }
 
                 BDebug.Track(this, "position", Position);
             }
@@ -133,7 +140,7 @@ namespace Beast.Radar.Player
                     {
                         if (_clickInput.TapCount == 1 )
                         {
-                            Target = _camera.ScreenToWorld(_startPressPosition);
+                            _setTarget(_camera.ScreenToWorld(_startPressPosition));
                             if (IsMovement)
                             {
                                 SwitchMovement();
@@ -146,7 +153,7 @@ namespace Beast.Radar.Player
                     }
                     else if (_clickInput.TapCount == 1)
                     {
-                        Target = _camera.ScreenToWorld(_startPressPosition);
+                        _setTarget(_camera.ScreenToWorld(_startPressPosition));
                         if (!IsMovement)
                         {
                             SwitchMovement();
@@ -162,6 +169,12 @@ namespace Beast.Radar.Player
             }
         }
 
+        private void _setTarget(float2 target)
+        {
+            Target = target;
+            ChangeTarget?.Invoke();
+        }
+        
         private float2 _indexToWorld(int2 index)
         {
             return (float2)index / WorldTransform.CellTileCount + new float2(_halfTexelSize, _halfTexelSize);

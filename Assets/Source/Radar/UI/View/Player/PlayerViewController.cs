@@ -35,6 +35,24 @@ namespace Beast.Radar.UI
         private UniTask _warmup(ConcurrentContext arg)
         {
             _view = BScene.InstantiateMono(this, _library.playerView, float3.zero, quaternion.identity);
+
+            _view.target.gameObject.SetActive(false);
+            
+            _player.ChangeTarget += () =>
+            {
+                _refreshTargetView();
+                
+                if (_player.Target.y > _player.Position.y)
+                {
+                    _view.target.SetAsFirstSibling();
+                }
+                else
+                {
+                    _view.target.SetAsLastSibling();
+                }
+            };
+            
+            
             return UniTask.CompletedTask;
         }
 
@@ -44,26 +62,30 @@ namespace Beast.Radar.UI
             {
                 _view.body.position = _camera.WorldToScreen(_player.Position).XY0();
                 _view.target.position = _camera.WorldToScreen(_player.Target).XY0();
-
-                if (_view.target.gameObject.activeSelf != BMath.Distance(_player.Position, _player.Target) > 0.1f)
-                {
-                    _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
-                }
                 
-                float distance = BMath.Distance(_player.Position, _player.Target);
-                string travelTime = _time.CalculateTravelTime(_player.Position, _player.Target, _player.Speed);
-                _view.targetText.SetText($"{distance:F0}\n{travelTime}");
-                
-                //----------------------- from event
-                if (_player.Target.y > _player.Position.y)
+                if (_player.IsMovement)
                 {
-                    _view.target.SetAsFirstSibling();
-                }
-                else
-                {
-                    _view.target.SetAsLastSibling();
+                    _refreshTargetView();
                 }
             }
+        }
+
+        private void _refreshTargetView()
+        {
+            if (_view.target.gameObject.activeSelf != BMath.Distance(_player.Position, _player.Target) > 0.1f)
+            {
+                _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
+            }
+            
+            float distance = BMath.Distance(_player.Position, _player.Target);
+
+            if (_view.targetText.gameObject.activeSelf != distance > 1)
+            {
+                _view.targetText.gameObject.SetActive(!_view.targetText.gameObject.activeSelf);
+            }
+            
+            string travelTime = _time.CalculateTravelTime(_player.Position, _player.Target, _player.Speed);
+            _view.targetText.SetText($"{distance:F0}\n{travelTime}");
         }
     }
 }

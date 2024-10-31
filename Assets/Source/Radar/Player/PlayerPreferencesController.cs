@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
@@ -7,7 +8,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerPreferencesController : IGameCycleListener
+    public class PlayerPreferencesController : Controller, IGameCycleListener
     {
         private const string FOLDER_NAME = "preferences";
         private const string FILE_NAME = "player";
@@ -68,5 +69,6 @@ namespace Beast.Radar.Player
                 BDebug.LogException(e);
             }
         }
+        
     }
 }
