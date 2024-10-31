@@ -18,6 +18,7 @@ namespace Beast.Radar.Terrain
         private readonly ITerrainBaker _baker;
         private readonly GraphicConfig _config;
         private Texture2D _texture;
+        private TerrainData _terrainData;
         
         public TerrainBakedTexture(
             GameModel game, 
@@ -37,6 +38,12 @@ namespace Beast.Radar.Terrain
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
+            if (_terrainData.IsSame(_game.terrain))
+            {
+                IsReady = true;
+                return UniTask.CompletedTask;
+            }
+            
             _dispose(default);
 
             RenderTextureData tempData = _config.terrain.bakerRenderTexture.WithSize(_game.terrain.terrainSize);
@@ -69,6 +76,8 @@ namespace Beast.Radar.Terrain
             Profiler.EndSample();
             
             BGraphic.Dispose(renderTexture);
+
+            _terrainData = _game.terrain;
 
             IsReady = true;
 

@@ -32,6 +32,16 @@ namespace Beast.Radar.Terrain
             water01 = stream.ReadFloat();
             forest01 = stream.ReadFloat();
         }
+
+        public bool IsSame(TerrainData other)
+        {
+            return seed == other.seed &&
+                   terrainSize.x == other.terrainSize.x &&
+                   terrainSize.y == other.terrainSize.y &&
+                   BMath.Approximately(biomeSize01, other.biomeSize01) &&
+                   BMath.Approximately(water01, other.water01) &&
+                   BMath.Approximately(forest01, other.forest01);
+        }
         
         public string Validate()
         {
