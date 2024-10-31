@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Mathematics;
 
-namespace Beast.Claw.Profiling
+namespace Beast.Claw.Common
 {
     public class FloatToStringConverter
     {

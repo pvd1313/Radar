@@ -1,9 +1,11 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using Unity.Mathematics;
 
 namespace Beast.Radar.World
 {
     public interface IWorldTime
     {
+        event Action Changed;
         float GetHours();
         float GetTotalHours();
         float GetMinutes();

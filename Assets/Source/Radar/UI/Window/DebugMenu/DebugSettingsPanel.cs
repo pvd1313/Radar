@@ -115,8 +115,8 @@ namespace Beast.Radar.UI
                 };
             }
 
-            _view.fpsToggle.Changed += on => _debugController.SetElementState(DebugElementID.LogConsoleID, on);
-            _view.logToggle.Changed += on => _debugController.SetElementState(DebugElementID.FpsCounterID, on);
+            _view.fpsToggle.Changed += on => _debugController.SetElementState(DebugElementID.FpsCounterID, on);
+            _view.logToggle.Changed += on => _debugController.SetElementState(DebugElementID.LogConsoleID, on);
         }
     }
 }

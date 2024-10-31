@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using System;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Serialization;
@@ -10,6 +11,8 @@ namespace Beast.Radar.World
 {
     public class WorldTime : IWorldTime, IGameCycleListener
     {
+        public event Action Changed;
+        
         private readonly WorldTimeConfig _config;
         private readonly GameModel _gameModel;
 
@@ -21,7 +24,7 @@ namespace Beast.Radar.World
             _config = config;
             _gameModel = gameModel;
         }
-        
+
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
@@ -48,6 +51,9 @@ namespace Beast.Radar.World
             {
                 _minutes++;
                 _seconds -= 60;
+
+                Changed?.Invoke();
+                
                 BDebug.Track(this, "time", $"{GetHours()}:{GetMinutes()}");
             }
         }
@@ -56,7 +62,7 @@ namespace Beast.Radar.World
         {
             return (int)(_minutes / (60 * 24));
         }
-        
+
         public float GetHours()
         {
             return (_minutes / 60) % 24;

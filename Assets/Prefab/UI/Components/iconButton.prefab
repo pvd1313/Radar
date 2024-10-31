@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5899587062664904461}
   - component: {fileID: 7393160855876786396}
   - component: {fileID: 1797124993703945837}
+  - component: {fileID: 1930917476730624792}
   m_Layer: 0
   m_Name: icon
   m_TagString: Untagged
@@ -75,6 +76,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1930917476730624792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2443788172219948322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b55928d0d7d4df8b8432a732dd27415, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 1797124993703945837}
 --- !u!1001 &3082487805271671535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85,7 +99,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 677521541624871196, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Name
-      value: iconButton Variant
+      value: iconButton
       objectReference: {fileID: 0}
     - target: {fileID: 2571603028301061545, guid: 59bbf5c6a8b830e4798a49be48dc53e4, type: 3}
       propertyPath: m_Pivot.x
