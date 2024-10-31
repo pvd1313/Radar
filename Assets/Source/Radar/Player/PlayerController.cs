@@ -2,6 +2,7 @@
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Gizmos;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Graphic;
@@ -14,16 +15,20 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : Controller, IPlayerController, IGameCycleListener
+    public class PlayerController : Controller, IPlayerController, IGameCycleListener, IGizmosDrawer
     {
         public event Action ChangeMovementState;
         public event Action ChangeTarget;
         public bool IsReady { get; private set; }
+        public float2 TempPosition { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
         public float Speed { get; private set; }
         public bool IsMovement { get; private set; }
 
+        private const float MULTI_CLICK_DELAY = 0.3f;
+        
+        private float _clickTimer;
         private readonly IWorldTime _time;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
@@ -82,6 +87,7 @@ namespace Beast.Radar.Player
         private UniTask _gameLoad(ConcurrentContext arg)
         {
             Position = _indexToWorld(_gameModel.player.position);
+            TempPosition = Position;
             
             Target = Position;
 
@@ -94,31 +100,33 @@ namespace Beast.Radar.Player
         {
             _gameModel.player.position = _worldToIndex(Position);
         }
-
+        
         private void _tick(BlockingContext obj)
         {
             _followClick();
 
             if (IsMovement)
             {
-                float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
-
-                Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
-
-                if (BMath.Distance(Position, Target) < 0.05f)
+                if (Position.Equals(Target))
                 {
                     SwitchMovement();
+                    return;
                 }
+                
+                float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
 
+                TempPosition = BMath.MoveTowards(TempPosition, Target, Speed * deltaGameHours);
+                int2 cell = _worldToIndex(TempPosition);
+                Position = _indexToWorld(cell);
+                
+
+                BDebug.Track(this, "temp position", TempPosition);
                 BDebug.Track(this, "position", Position);
             }
 
             _lastRecordedHours = _time.GetTotalHours();
         }
-
-        private float _clickTimer;
-        private const float MULTI_CLICK_DELAY = 0.3f;
-
+        
         private void _followClick()
         {
             if (_clickTimer < MULTI_CLICK_DELAY)
@@ -169,9 +177,11 @@ namespace Beast.Radar.Player
             }
         }
 
-        private void _setTarget(float2 target)
+        private void _setTarget(float2 worldTarget)
         {
-            Target = target;
+            int2 index = _worldToIndex(worldTarget);
+            Target = _indexToWorld(index);
+            BDebug.LogInfo(this, $"{worldTarget}->{index}->{Target}");
             ChangeTarget?.Invoke();
         }
         
@@ -183,6 +193,19 @@ namespace Beast.Radar.Player
         private int2 _worldToIndex(float2 worldPosition)
         {
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
+        }
+
+        public Color GizmosColor { get; } = Color.magenta;
+        public void Draw(GizmosHandle handle)
+        {
+            if (!IsReady)
+            {
+                return;
+            }
+            handle.DrawScreenDot(Position + new float2(_halfTexelSize,_halfTexelSize));
+            handle.DrawScreenDot(Position + new float2(_halfTexelSize,-_halfTexelSize));
+            handle.DrawScreenDot(Position + new float2(-_halfTexelSize,-_halfTexelSize));
+            handle.DrawScreenDot(Position + new float2(-_halfTexelSize,-_halfTexelSize));
         }
     }
 }

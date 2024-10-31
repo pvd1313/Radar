@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: WorldTimeConfig
   m_EditorClassIdentifier: 
   secondMultiplier: 60
+  idleTimeScale: 0.15

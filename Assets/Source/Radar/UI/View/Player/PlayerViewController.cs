@@ -72,20 +72,31 @@ namespace Beast.Radar.UI
 
         private void _refreshTargetView()
         {
-            if (_view.target.gameObject.activeSelf != BMath.Distance(_player.Position, _player.Target) > 0.1f)
+            bool isNear = _player.Position.Equals(_player.Target);
+         
+            if (_view.target.gameObject.activeSelf == isNear)
             {
                 _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
             }
             
-            float distance = BMath.Distance(_player.Position, _player.Target);
-
-            if (_view.targetText.gameObject.activeSelf != distance > 1)
-            {
-                _view.targetText.gameObject.SetActive(!_view.targetText.gameObject.activeSelf);
-            }
-            
             string travelTime = _time.CalculateTravelTime(_player.Position, _player.Target, _player.Speed);
-            _view.targetText.SetText($"{distance:F0}\n{travelTime}");
+            
+            float distance = BMath.Distance(_player.Position, _player.Target) * 1000;
+            UnityEngine.Debug.Log(distance);   
+   
+            string distanceText;
+
+            if (distance < 1000)
+            {
+                distanceText = $"{distance:F0} м";
+            }
+            else
+            {
+                float distanceInKm = distance / 1000f;
+                distanceText = $"{distanceInKm:F1} км";
+            }
+
+            _view.targetText.SetText($"{distanceText}\n{travelTime}");
         }
     }
 }
