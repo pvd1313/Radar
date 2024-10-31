@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : IPlayerController, IGameCycleListener
+    public class PlayerController : Controller, IGameCycleListener
     {
         public event Action ChangeMovementState;
         public bool IsReady { get; private set; }

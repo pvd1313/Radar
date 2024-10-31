@@ -15,10 +15,10 @@ namespace Beast.Claw.GameCycle
             {
                 public Action<BlockingContext> blocking;
                 public Func<ConcurrentContext, UniTask> concurrent;
-                public object target;
+                public IController target;
             }
 
-            public RunnerProfiler Profiler => _profiler;
+            public Profiler Profiler => _profiler;
 
             public ActionInfo Operation => _operation;
             
@@ -34,8 +34,7 @@ namespace Beast.Claw.GameCycle
             private ItemBuffer<Listener> _lastToFirstTempBuffer;
             private bool _blockingLogicAllBroken;
             private ProfilerTreeStringBuilder _treeBuilder;
-            
-            private RunnerProfiler _profiler;
+            private Profiler _profiler;
 
             public Runner(GameCycleConfig config, ActionInfo operationInfo)
             {
@@ -109,16 +108,9 @@ namespace Beast.Claw.GameCycle
 
                     _lastToFirstTempBuffer.Add(listener);
                 }
-
-                if (_profiler.IsInitialized)
-                {
-                    _profiler.Dispose();
-                    _profiler = default;
-                }
             }
 
-            public async UniTask<ActionResult> ExecuteConcurrent<TOwner>(TOwner owner)
-                where TOwner : class
+            public async UniTask<ActionResult> ExecuteConcurrent(IController owner)
             {
                 owner.ValidateNotNullThrowException(nameof(owner));
                 
@@ -139,13 +131,13 @@ namespace Beast.Claw.GameCycle
                     listeners = _listeners,
                     frequency = _operation.frequency,
                     flushProfilerToConsole = _operation.flushProfilerToConsole,
-                    enableClawProfiling = _config.profiler.enableClawProfiling
+                    enableClawProfiling = _config.profiler.customProfilingEnabled
                 }.Run();
 
                 return result;
             }
 
-            public void ExecuteBlocking<TOwner>(TOwner owner)
+            public void ExecuteBlocking(IController owner)
             {
                 if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Blocking)
                 {
@@ -168,7 +160,7 @@ namespace Beast.Claw.GameCycle
                     operationID = _operation.id,
                     brokenObjects = _blockingBrokenLogic,
                     objectErrorCount = _blockingLogicCounters,
-                    enableClawProfiling = _config.profiler.enableClawProfiling,
+                    enableClawProfiling = _config.profiler.customProfilingEnabled,
                     flushProfilerToConsole = _operation.flushProfilerToConsole, 
                     treeStringBuilder = _treeBuilder,
                     owner = owner
@@ -189,7 +181,7 @@ namespace Beast.Claw.GameCycle
                 }
             }
 
-            private RunnerProfiler _setupProfiler()
+            private Profiler _setupProfiler()
             {
                 if (_config.profiler.AnyProfilingActive)
                 {
@@ -197,16 +189,19 @@ namespace Beast.Claw.GameCycle
                     {
                         _treeBuilder ??= new ProfilerTreeStringBuilder();
                     }
-                    
-                    if (!_profiler.IsInitialized)
+
+                    if (_profiler == null)
                     {
-                        _profiler = new RunnerProfiler(_config.profiler, _listeners);
+                        _profiler = new Profiler(_config.profiler);
+                        _profiler.Initialize();
                     }
+                    
+                    _profiler.FetchConfig();
 
                     return _profiler;
                 }
 
-                return default;
+                return null;
             }
             
             public void Dispose()
@@ -221,11 +216,8 @@ namespace Beast.Claw.GameCycle
                     _listeners = default;
                 }
                 
-                if (_profiler.IsInitialized)
-                {
-                    _profiler.Dispose();
-                    _profiler = default;
-                }
+                _profiler?.Dispose();
+                _profiler = null;
             }
         }
     }

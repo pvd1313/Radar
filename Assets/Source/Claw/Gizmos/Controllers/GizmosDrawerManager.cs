@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Gizmos
 {
-    public class GizmosDrawerManager : IGizmosDrawerManager, IGameCycleListener
+    public class GizmosDrawerManager : Controller, IGizmosDrawerManager, IGameCycleListener
     {
         private struct DrawerInfo
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Beast.Claw.Common;
+using System;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Beast.Radar.World
 {
-    public class WorldTime : IWorldTime, IGameCycleListener
+    public class WorldTime : Controller, IWorldTime, IGameCycleListener
     {
         public event Action Changed;
         

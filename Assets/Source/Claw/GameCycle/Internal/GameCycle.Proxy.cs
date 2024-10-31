@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
@@ -34,22 +35,17 @@ namespace Beast.Claw.GameCycle
                     return null;
                 }
 
-                if (!runner.Profiler.IsInitialized)
-                {
-                    return null;
-                }
-
-                return runner.Profiler.Profiler;
+                return runner.Profiler;
             }
 
-            public void ExecuteBlocking<TOwner>(TOwner owner, string eventID) where TOwner : class
+            public void ExecuteBlocking(IController owner, string eventID)
             {
-                _gameCycle._update(owner, eventID);
+                _gameCycle._executeBlocking(owner, eventID);
             }
 
-            public async UniTask<ActionResult> ExecuteConcurrent<TOwner>(TOwner owner, string eventID) where TOwner : class
+            public async UniTask<ActionResult> ExecuteConcurrent(IController owner, string eventID)
             {
-                return await _gameCycle._execute(owner, eventID);
+                return await _gameCycle._executeConcurrent(owner, eventID);
             }
 
             public void Dispose()

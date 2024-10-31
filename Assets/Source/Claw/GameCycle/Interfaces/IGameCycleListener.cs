@@ -1,6 +1,8 @@
-﻿namespace Beast.Claw.GameCycle
+﻿using Beast.Claw.Common;
+
+namespace Beast.Claw.GameCycle
 {
-    public interface IGameCycleListener
+    public interface IGameCycleListener : IController
     {
         void Register(IGameCycleHandle handle);
     }

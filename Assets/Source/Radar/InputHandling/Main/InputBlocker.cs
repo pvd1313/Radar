@@ -1,10 +1,11 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.InputHandling
 {
-    public class InputBlocker : IGameCycleListener
+    public class InputBlocker : Controller, IGameCycleListener
     {
         private readonly IWindowManager _windowManager;
         private readonly IInputSystem _inputSystem;

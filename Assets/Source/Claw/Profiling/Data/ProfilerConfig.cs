@@ -9,17 +9,28 @@ namespace Beast.Claw.Profiling
     {
         private const int MAX_RECORD_COUNT = (1 << 16) - 2;
 
-        public bool AnyProfilingActive => enableClawProfiling || enableUnityProfiling;
+        public bool AnyProfilingActive
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (UnityEditorInternal.ProfilerDriver.enabled)
+                {
+                    return true;
+                }
+#endif
 
-        public bool enableClawProfiling;
-        public bool enableUnityProfiling;
+                return customProfilingEnabled || UnityEngine.Profiling.Profiler.enabled;
+            }
+        }
+
+        public bool customProfilingEnabled;
         public int maxRecordCount;
         public int stackSize;
 
-        public ProfilerConfig(bool enableClawProfiling, bool enableUnityProfiling, int maxRecordCount, int stackSize)
+        public ProfilerConfig(bool customProfilingEnabled, int maxRecordCount, int stackSize)
         {
-            this.enableClawProfiling = enableClawProfiling;
-            this.enableUnityProfiling = enableUnityProfiling;
+            this.customProfilingEnabled = customProfilingEnabled;
             this.maxRecordCount = maxRecordCount;
             this.stackSize = stackSize;
         }

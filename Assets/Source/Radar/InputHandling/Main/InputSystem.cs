@@ -1,12 +1,11 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace Beast.Radar.InputHandling
 {
-    public class InputSystem : IInputSystem, IGameCycleListener
+    public class InputSystem : Controller, IInputSystem, IGameCycleListener
     {
         public IInputSchemeObserver Scheme => _schemeObserver;
         public IGameInputActions GameInput => _gameInputActions;

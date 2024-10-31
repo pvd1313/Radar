@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
@@ -11,12 +12,12 @@ namespace Beast.Claw.GameCycle
     {
         private struct RunnerConcurrent
         {
-            public object owner;
+            public IController owner;
             public HashSet<object> singleFiredObjects;
             public EActionFrequency frequency;
             public ItemBuffer<Runner.Listener> listeners;
             public string operationID;
-            public RunnerProfiler profiler;
+            public Profiler profiler;
             public ProfilerTreeStringBuilder treeStringBuilder;
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
@@ -25,13 +26,10 @@ namespace Beast.Claw.GameCycle
             {
                 ActionResult result = ActionResult.Success();
 
-                if (profiler.IsInitialized)
-                {
-                    profiler.Profiler.FetchConfig();
-                }
+                bool hasProfiler = profiler != null;
                 
                 Profiler.Handle handle = default;
-                string objectName = null;
+                string listenerName = null;
 
                 for (int i = 0; i < listeners.Count; i++)
                 {
@@ -42,11 +40,11 @@ namespace Beast.Claw.GameCycle
                         continue;
                     }
 
-                    if (profiler.IsInitialized)
+                    if (hasProfiler)
                     {
-                        objectName = profiler.ObjectNames[i];
-                        handle = profiler.Profiler.GetHandle(listener.target);
-                        handle.BeginSample(objectName);
+                        handle = profiler.GetHandle(listener.target);
+                        listenerName = listener.target.Meta.name;
+                        handle.BeginSample(listenerName);
                     }
 
                     try
@@ -63,21 +61,21 @@ namespace Beast.Claw.GameCycle
                     }
                     finally
                     {
-                        if (profiler.IsInitialized)
+                        if (hasProfiler)
                         {
-                            handle.EndSample(objectName);
+                            handle.EndSample(listenerName);
                         }
                     }
                 }
 
-                if (profiler.IsInitialized && enableClawProfiling)
+                if (hasProfiler && enableClawProfiling)
                 {
-                    profiler.Profiler.RebuildTree();
+                    profiler.RebuildTree();
 
                     if (flushProfilerToConsole)
                     {
-                        string title = owner.GetType().Name + ": " + operationID;
-                        string info = treeStringBuilder.ToString(profiler.Profiler.Reader, title);
+                        string title = owner.Meta.name + ": " + operationID;
+                        string info = treeStringBuilder.ToString(profiler.Reader, title);
 
                         BDebug.StaticLogInfo(info);
                     }

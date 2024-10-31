@@ -1,3 +1,4 @@
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Gizmos
 {
-    public class GizmosManager : IGizmosManager, IGameCycleListener
+    public class GizmosManager : Controller, IGizmosManager, IGameCycleListener
     {
         public int RenderVersion { get; private set; }
         

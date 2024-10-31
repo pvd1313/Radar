@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraSpawner : IGameCycleListener
+    public class CameraSpawner : Controller, IGameCycleListener
     {
         private readonly EssentialPrefabLibrary _library;
 

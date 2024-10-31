@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -10,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainTileRender : IGameCycleListener
+    public class TerrainTileRender : Controller, IGameCycleListener
     {
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;

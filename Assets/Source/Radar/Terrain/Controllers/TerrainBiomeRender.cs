@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBiomeRender : ITerrainBiomeRender, IGameCycleListener
+    public class TerrainBiomeRender : Controller, ITerrainBiomeRender, IGameCycleListener
     {
         private struct RenderResult
         {

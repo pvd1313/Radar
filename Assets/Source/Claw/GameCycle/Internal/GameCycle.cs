@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Cysharp.Threading.Tasks;
 using Zenject;
@@ -87,8 +88,7 @@ namespace Beast.Claw.GameCycle
             _isRegisteringListeners = false;
         }
 
-        private async UniTask<ActionResult> _execute<TOwner>(TOwner owner, string eventID) 
-            where TOwner : class
+        private async UniTask<ActionResult> _executeConcurrent(IController owner, string eventID) 
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
@@ -106,7 +106,7 @@ namespace Beast.Claw.GameCycle
             return await runner.ExecuteConcurrent(owner);
         }
 
-        private void _update<TOwner>(TOwner owner, string eventID) where TOwner : class
+        private void _executeBlocking(IController owner, string eventID)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));

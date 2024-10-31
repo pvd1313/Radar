@@ -18,7 +18,7 @@ namespace Beast.Claw.Editor.Window.Profiler
         public void SetUp()
         {
             _nodes = new List<ProfilerNode>();
-            _config = new ProfilerConfig(true, true, 2, 2);
+            _config = new ProfilerConfig(true, 2, 2);
             _manager = new Profiling.Profiler(_config);
             _totalNodeCount = 0;
             _manager.Initialize();

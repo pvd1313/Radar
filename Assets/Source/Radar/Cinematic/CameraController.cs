@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : IGameCycleListener
+    public class CameraController : Controller, IGameCycleListener
     {
         private readonly CameraConfig _cameraConfig;
         private readonly IInputSystem _inputSystem;

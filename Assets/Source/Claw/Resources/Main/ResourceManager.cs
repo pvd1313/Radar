@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
-    public class ResourceManager : IResourceManager, IGameCycleListener
+    public class ResourceManager : Controller, IResourceManager, IGameCycleListener
     {
         private List<AssetReference> _loadedAssets;
         

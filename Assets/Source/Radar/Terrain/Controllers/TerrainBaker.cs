@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
@@ -8,7 +9,7 @@ using Random = System.Random;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBaker : ITerrainBaker, IGameCycleListener
+    public class TerrainBaker : Controller, ITerrainBaker, IGameCycleListener
     {
         private readonly GraphicLibrary _graphicLibrary;
 

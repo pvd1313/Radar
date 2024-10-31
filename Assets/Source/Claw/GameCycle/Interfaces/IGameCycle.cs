@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
@@ -14,10 +15,10 @@ namespace Beast.Claw.GameCycle
         public void RegisterListeners();
         
         public IProfiler TryGetProfiler(string operationName);
-        
-        UniTask<ActionResult> ExecuteConcurrent<TOwner>(TOwner owner, string eventID) where TOwner : class;
 
-        public void ExecuteBlocking<TOwner>(TOwner owner, string eventID) where TOwner : class;
+        UniTask<ActionResult> ExecuteConcurrent(IController owner, string eventID);
+
+        public void ExecuteBlocking(IController owner, string eventID);
 
         public void Dispose();
     }
