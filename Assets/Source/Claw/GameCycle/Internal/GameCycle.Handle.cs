@@ -8,7 +8,7 @@ namespace Beast.Claw.GameCycle
     {
         private class Handle : IGameCycleHandle
         {
-            public object currentListener;
+            public IController currentListener;
         
             private readonly GameCycle _gameCycle;
 

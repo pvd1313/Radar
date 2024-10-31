@@ -1,12 +1,20 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Common;
+using UnityEngine;
 
 namespace Beast.Claw.GameCycle
 {
-    public class GameCycleMono : MonoBehaviour
+    public class GameCycleMono : MonoBehaviour, IController
     {
+        public ControllerMeta Meta { get; private set; }
+        
         private IGameCycle _gameCycle;
         private bool _savedPreferences;
-        
+
+        private void Awake()
+        {
+            Meta = ControllerMeta.Create(this);
+        }
+
         public void Initialize(IGameCycle gameCycle)
         {
             _gameCycle = gameCycle;

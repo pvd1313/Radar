@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Serialization;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Beast.Radar.World
 {
-    public class WorldTime : IWorldTime, IGameCycleListener
+    public class WorldTime : Controller, IWorldTime, IGameCycleListener
     {
         private readonly WorldTimeConfig _config;
         private readonly GameModel _gameModel;

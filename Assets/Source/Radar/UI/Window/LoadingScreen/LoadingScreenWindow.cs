@@ -7,7 +7,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class LoadingScreenWindow : IWindow<LoadingScreenInput>, IGameCycleListener
+    public class LoadingScreenWindow : Controller, IWindow<LoadingScreenInput>, IGameCycleListener
     {
         private const int MAX_TASK_COUNT = 20;
 

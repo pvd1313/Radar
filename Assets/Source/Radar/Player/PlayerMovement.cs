@@ -12,7 +12,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerMovement : IPlayerMovement, IGameCycleListener
+    public class PlayerMovement : Controller, IPlayerMovement, IGameCycleListener
     {
         public bool IsReady { get; private set; }
         public float2 Position { get; private set; }

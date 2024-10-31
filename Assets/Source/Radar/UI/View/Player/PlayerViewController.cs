@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -10,7 +9,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class PlayerViewController : IGameCycleListener 
+    public class PlayerViewController : Controller, IGameCycleListener 
     {
         private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;

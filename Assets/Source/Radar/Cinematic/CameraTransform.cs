@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransform : IGameCycleListener, ICameraTransform
+    public class CameraTransform : Controller, IGameCycleListener, ICameraTransform
     {
         public bool IsReady { get; private set; }
         public float2 Position => (float2)_position;

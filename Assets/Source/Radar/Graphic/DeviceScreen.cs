@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Unity.Mathematics;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Graphic
 {
-    public class DeviceScreen : IScreen, IGameCycleListener
+    public class DeviceScreen : Controller, IScreen, IGameCycleListener
     {
         public int2 Size => new(Screen.width, Screen.height);
         

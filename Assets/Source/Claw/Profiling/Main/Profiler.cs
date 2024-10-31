@@ -35,8 +35,7 @@ namespace Beast.Claw.Profiling
 
         public void Initialize()
         {
-            _enableClawProfiling = _config.enableClawProfiling;
-            _enableUnityProfiling = _config.enableUnityProfiling;
+            _enableClawProfiling = _config.customProfilingEnabled;
             _buildTreeJobTimer = new Stopwatch();
             _maxRecordCount = _config.maxRecordCount;
             _records = new NativeArray<ProfilerRecord>(_maxRecordCount, Allocator.Persistent);
@@ -65,8 +64,8 @@ namespace Beast.Claw.Profiling
 
         public void FetchConfig()
         {
-            _enableClawProfiling = _config.enableClawProfiling;
-            _enableUnityProfiling = _config.enableUnityProfiling;
+            _enableClawProfiling = _config.customProfilingEnabled;
+            _enableUnityProfiling = UnityEngine.Profiling.Profiler.enabled;
         }
 
         public void RebuildTree()

@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : IGameCycleListener
+    public class PlayerController : Controller, IGameCycleListener
     {
         private readonly CorePrefabLibrary _library;
         private readonly PlayerConfig _playerConfig;

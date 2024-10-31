@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
@@ -8,7 +9,7 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedTexture : ITerrainBakedTexture, IGameCycleListener
+    public class TerrainBakedTexture : Controller, ITerrainBakedTexture, IGameCycleListener
     {
         public Texture Texture => _texture;
         public bool IsReady { get; private set; }

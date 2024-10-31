@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Serialization;
@@ -11,7 +12,7 @@ using BinaryWriter = Beast.Claw.Serialization.BinaryWriter;
 
 namespace Beast.Radar.Serialization
 {
-    public class SaveManager : ISaveManager
+    public class SaveManager : Controller, ISaveManager
     {
         public const string DEFAULT_FILE = "default";
         public const string DEFAULT_FOLDER = "default";

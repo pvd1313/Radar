@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -11,7 +12,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainColorRender : IGameCycleListener, ITerrainColorRender
+    public class TerrainColorRender : Controller, IGameCycleListener, ITerrainColorRender
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
