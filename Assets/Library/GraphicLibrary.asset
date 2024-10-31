@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   terrain:
-    baker: {fileID: -6465566751694194690, guid: 192c15a4b239bf64eb601d53e70f4d6a, type: 3}
+    baker: {fileID: 4800000, guid: cf608f21d73b4f99b86e98286fff5e43, type: 3}
     biomeRender: {fileID: 4800000, guid: 5bc1fdcf1eeb510438a969209cecbb60, type: 3}
     colorRender: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
     tileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
@@ -22,15 +22,10 @@ MonoBehaviour:
     tileBlit: {fileID: 4800000, guid: 67855c2abf36497495818c93ce69c6e3, type: 3}
     atlas: {fileID: 11400000, guid: 6e6728df6976fa148a1c870121b61ac4, type: 2}
     biomeRenderNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
-    tileSolverNoise: {fileID: 2800000, guid: 3835e5ae39a91c241b9671e1850537d9, type: 3}
+    bakerGradient: {fileID: 2800000, guid: 74188ebf709932842ba00bb826524350, type: 3}
   debug:
-    bakedTerrain: {fileID: 2800000, guid: d870bc43f066a434993545eef452fec1, type: 3}
-    terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}
-    unlitTextureShader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
-    unlitColorShader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
-    magic0: 0
-    magic1: 0
-    magic2: 0
-    toggle0: 0
-    toggle1: 0
-    toggle2: 0
+    _reference:
+      m_AssetGUID: 619dd61405a1fba418f8629e50bba905
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

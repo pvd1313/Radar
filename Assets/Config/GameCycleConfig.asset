@@ -16,6 +16,6 @@ MonoBehaviour:
   updateExceptionThreshold: 0
   profiler:
     enableClawProfiling: 0
-    enableUnityProfiling: 0
+    enableUnityProfiling: 1
     maxRecordCount: 128
     stackSize: 16

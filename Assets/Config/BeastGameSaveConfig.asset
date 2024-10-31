@@ -19,7 +19,8 @@ MonoBehaviour:
         x: 4096
         y: 4096
       biomeSize01: 0.5
-      water01: 0.3
+      water01: 0.5
+      forest01: 0.5
     camera:
       zoom01: 0.5
       position:
