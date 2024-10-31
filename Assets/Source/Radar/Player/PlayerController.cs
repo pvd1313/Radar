@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Common;
+﻿using System;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
@@ -15,11 +15,12 @@ namespace Beast.Radar.Player
 {
     public class PlayerController : IPlayerController, IGameCycleListener
     {
+        public event Action ChangeMovementState;
         public bool IsReady { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
         public float Speed { get; private set; }
-        public bool IsMovement { get; private set;}
+        public bool IsMovement { get; private set; }
 
         private readonly IWorldTime _time;
         private readonly PlayerConfig _config;
@@ -34,13 +35,13 @@ namespace Beast.Radar.Player
         private float _startPressTime;
         private float _lastRecordedHours;
         private bool _isCheckClick;
-        
+
         public PlayerController(
             IWorldTime time,
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
-            GameModel gameModel, 
+            GameModel gameModel,
             PlayerPreferences preferences)
         {
             _time = time;
@@ -59,10 +60,16 @@ namespace Beast.Radar.Player
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
+        public void SwitchMovement()
+        {
+            IsMovement = !IsMovement;
+            ChangeMovementState?.Invoke();
+        }
+        
         private UniTask _warmup(ConcurrentContext arg)
         {
             _clickInput = _input.GameInput.Click;
-            
+
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
             Speed = _config.moveSpeed;
@@ -73,28 +80,12 @@ namespace Beast.Radar.Player
         private UniTask _gameLoad(ConcurrentContext arg)
         {
             Position = _indexToWorld(_gameModel.player.position);
-            
+
             Target = Position;
-            
+
             IsReady = true;
-            
+
             return UniTask.CompletedTask;
-        }
-
-        private void _tick(BlockingContext obj)
-        {
-            _followClick();
-            
-            if (IsMovement)
-            { 
-                float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
-                
-                Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
-                
-                BDebug.Track(this, "position", Position);
-            }
-
-            _lastRecordedHours = _time.GetTotalHours();
         }
 
         private void _gameSave(BlockingContext obj)
@@ -102,32 +93,71 @@ namespace Beast.Radar.Player
             _gameModel.player.position = _worldToIndex(Position);
         }
 
+        private async void _tick(BlockingContext obj)
+        {
+            _followClick();
+
+            if (IsMovement)
+            {
+                float deltaGameHours = _time.GetTotalHours() - _lastRecordedHours;
+
+                Position = BMath.MoveTowards(Position, Target, Speed * deltaGameHours);
+
+                BDebug.Track(this, "position", Position);
+            }
+
+            _lastRecordedHours = _time.GetTotalHours();
+        }
+
+        private float _clickTimer;
+        private const float MULTI_CLICK_DELAY = 0.3f;
+
         private void _followClick()
         {
+            if (_clickTimer < MULTI_CLICK_DELAY)
+            {
+                _clickTimer += Time.deltaTime;
+            }
+
             if (_clickInput.State == EButtonState.Pressed && !_isCheckClick)
             {
                 _startPressPosition = _clickInput.Value;
-             
                 _isCheckClick = true;
             }
 
             if (_isCheckClick && _clickInput.State == EButtonState.Default)
             {
-                if (_clickInput.PressedTime < 0.2f && BMath.Distance(_startPressPosition, _clickInput.LastValue) < 0.1f)
+                if (BMath.Distance(_startPressPosition, _clickInput.LastValue) < 0.1f)
                 {
-                    Target = _camera.ScreenToWorld(_startPressPosition);
+                    if (!_preferences.isSingleTapMovement)
+                    {
+                        if (_clickInput.TapCount == 1 )
+                        {
+                            Target = _camera.ScreenToWorld(_startPressPosition);
+                            if (IsMovement)
+                            {
+                                SwitchMovement();
+                            }
+                        }
+                        else if(_clickTimer < MULTI_CLICK_DELAY && _clickInput.TapCount == 2 && !IsMovement)
+                        {
+                            SwitchMovement();
+                        }
+                    }
+                    else if (_clickInput.TapCount == 1)
+                    {
+                        Target = _camera.ScreenToWorld(_startPressPosition);
+                        if (!IsMovement)
+                        {
+                            SwitchMovement();
+                        }
+                    }
                     
                     BDebug.Track(this, "target", Target);
                     BDebug.Track(this, "target cell", _worldToIndex(Target));
                 }
-
-                IsMovement = _clickInput.TapCount switch
-                {
-                    1 => _preferences.isSingleTapMovement,
-                    > 1 => !_preferences.isSingleTapMovement,
-                    _ => IsMovement
-                };
-
+                
+                _clickTimer = 0;
                 _isCheckClick = false;
             }
         }

@@ -9,31 +9,31 @@ namespace Beast.Radar.UI
 {
     public class HUDWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
+        private readonly PlayerPreferences _preferences;
         private readonly CorePrefabLibrary _library;
+        private readonly UIConfig _config;
+        private readonly IPlayerController _player;
         private readonly IWindowManager _windowManager;
-        private readonly IWorldTime _worldTime;
-        private readonly IPlayerController _playerController;
-        private readonly PlayerPreferences _playerPreferences;
-        private readonly UIConfig _uiConfig;
+        private readonly IWorldTime _time;
 
-        private IntToStringConverter _intToString;
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
+        private IntToStringConverter _intToString;
 
         public HUDWindow(
+            PlayerPreferences preferences,
             CorePrefabLibrary library,
+            UIConfig config,
             IWindowManager windowManager,
-            IWorldTime worldTime,
-            IPlayerController playerController,
-            PlayerPreferences playerPreferences,
-            UIConfig uiConfig)
+            IPlayerController player,
+            IWorldTime time)
         {
+            _preferences = preferences;
             _library = library;
+            _config = config;
             _windowManager = windowManager;
-            _worldTime = worldTime;
-            _playerController = playerController;
-            _playerPreferences = playerPreferences;
-            _uiConfig = uiConfig;
+            _player = player;
+            _time = time;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -43,7 +43,7 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            _view.pathfindingImage.SetAlpha(_playerPreferences.isAutoPathfinding ? 0.5f : 0.2f);
+            _view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
 
             _view.gameObject.SetActive(true);
 
@@ -76,35 +76,34 @@ namespace Beast.Radar.UI
 
         private void _subscribe()
         {
-            _worldTime.Changed += () =>
+            _time.Changed += () =>
             {
                 string time = string.Concat(
-                    _intToString.ToString((int)_worldTime.GetHours()),
+                    _intToString.ToString((int)_time.GetHours()),
                     ":",
-                    _intToString.ToString((int)_worldTime.GetMinutes()));
+                    _intToString.ToString((int)_time.GetMinutes()));
                 _view.timeText.SetText(time);
             };
 
-            _playerController.ChangeMovementState += () =>
+            _player.ChangeMovementState += () =>
             {
-                _view.moveImage.SetSprite(_playerController.IsMovement
-                    ? _uiConfig.onMoveButtonSprite
-                    : _uiConfig.offMoveButtonSprite);
+                _view.moveImage.SetSprite(_player.IsMovement
+                    ? _config.offMoveButtonSprite
+                    : _config.onMoveButtonSprite);
+            };
+           
+            _view.moveButton.Clicked += () =>
+            {
+                _player.SwitchMovement();
             };
 
             _view.pauseButton.Clicked += () => { _pauseMenu.Open(default); };
 
             _view.pathfindingButton.Clicked += () =>
             {
-                _playerPreferences.isAutoPathfinding = !_playerPreferences.isAutoPathfinding;
-                _view.pathfindingImage.SetAlpha(_playerPreferences.isAutoPathfinding ? 0.5f : 0.2f);
-            };
-
-            _view.moveButton.Clicked += () =>
-            {
-                _playerController.SwitchMovement();
+                _preferences.isAutoPathfinding = !_preferences.isAutoPathfinding;
+                _view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
             };
         }
-        
     }
 }
