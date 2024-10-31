@@ -10,9 +10,10 @@ namespace Beast.Radar.Terrain
     {
         public float noiseSamplerLOD1;
         public float noiseSamplerLOD0;
-        public RenderTextureData bakerRenderTexture;
-        public Texture2DParameters bakerTexture2D;
-        public RenderTextureData biomeTexture;
+        public RenderTextureData fbmRenderTexture;
+        public Texture2DParameters fbmTexture2D;
+        public RenderTextureData biomeRenderTexture;
+        public Texture2DParameters biomeTexture2D;
         public RenderTextureData colorTexture;
         
         public IEnumerable<IConfig> Bind()

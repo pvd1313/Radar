@@ -15,9 +15,9 @@ MonoBehaviour:
   terrain:
     noiseSamplerLOD1: 4
     noiseSamplerLOD0: 16
-    bakerRenderTexture:
+    fbmRenderTexture:
       texture:
-        name: terrain_baked_RT
+        name: terrain_fbm_RT
         size:
           x: 0
           y: 0
@@ -31,9 +31,9 @@ MonoBehaviour:
         readWrite: 1
         memoryless: 0
         vrUsage: 0
-    bakerTexture2D:
+    fbmTexture2D:
       texture:
-        name: terrain_baked_texture2D
+        name: terrain_fbm_texture2D
         size:
           x: 0
           y: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
       mipChain: 1
       isLinear: 1
       createInitialized: 0
-    biomeTexture:
+    biomeRenderTexture:
       texture:
         name: terrain_biome_RT
         size:
@@ -59,6 +59,18 @@ MonoBehaviour:
         readWrite: 1
         memoryless: 0
         vrUsage: 0
+    biomeTexture2D:
+      texture:
+        name: terrain_biome_texture2D
+        size:
+          x: 0
+          y: 0
+        wrapMode: 1
+        filterMode: 0
+      format: 15
+      mipChain: 0
+      isLinear: 1
+      createInitialized: 0
     colorTexture:
       texture:
         name: terrain_color_RT

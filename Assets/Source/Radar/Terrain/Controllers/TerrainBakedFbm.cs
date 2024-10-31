@@ -9,24 +9,24 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedTexture : Controller, ITerrainBakedTexture, IGameCycleListener
+    public class TerrainBakedFbm : Controller, ITerrainBakedFbm, IGameCycleListener
     {
-        public Texture Texture => _texture;
         public bool IsReady { get; private set; }
+        public Texture Texture => _texture;
 
         private readonly GameModel _game;
-        private readonly ITerrainBaker _baker;
+        private readonly ITerrainFbmRender _fbmRender;
         private readonly GraphicConfig _config;
         private Texture2D _texture;
         private TerrainData _terrainData;
         
-        public TerrainBakedTexture(
+        public TerrainBakedFbm(
             GameModel game, 
-            ITerrainBaker baker, 
+            ITerrainFbmRender fbmRender, 
             GraphicConfig config)
         {
             _game = game;
-            _baker = baker;
+            _fbmRender = fbmRender;
             _config = config;
         }
         
@@ -46,32 +46,28 @@ namespace Beast.Radar.Terrain
             
             _dispose(default);
 
-            RenderTextureData tempData = _config.terrain.bakerRenderTexture.WithSize(_game.terrain.terrainSize);
+            RenderTextureData tempData = _config.terrain.fbmRenderTexture.WithSize(_game.terrain.terrainSize);
             
-            Profiler.BeginSample("TerrainBakedTexture._gameLoading() #0");
-            
+            Profiler.BeginSample("CreateTempRenderTexture");
             RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, tempData);
-            
             Profiler.EndSample();
             
-            Profiler.BeginSample("TerrainBakedTexture._gameLoading() #1");
-            
-            _baker.Render(new TerrainBakeTask
+            Profiler.BeginSample("fbmRender.Render");
+            _fbmRender.Render(new TerrainFbmRenderTask
             {
                 terrain = _game.terrain,
                 outputTexture = renderTexture,
                 quality01 = 1
             });
-            
             Profiler.EndSample();
 
-            Texture2DParameters permData = _config.terrain.bakerTexture2D.WithSize(_game.terrain.terrainSize);
+            Texture2DParameters permData = _config.terrain.fbmTexture2D.WithSize(_game.terrain.terrainSize);
             
-            Profiler.BeginSample("TerrainBakedTexture._gameLoading() #2");
+            Profiler.BeginSample("CreateTexture2D");
             _texture = BGraphic.CreateTexture2D(this, permData);
             Profiler.EndSample();
 
-            Profiler.BeginSample("TerrainBakedTexture._gameLoading() #3");
+            Profiler.BeginSample("BlitRenderTextureTo2D");
             BGraphic.BlitRenderTextureTo2D(renderTexture, _texture);
             Profiler.EndSample();
             

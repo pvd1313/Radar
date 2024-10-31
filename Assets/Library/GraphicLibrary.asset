@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   terrain:
-    baker: {fileID: 4800000, guid: cf608f21d73b4f99b86e98286fff5e43, type: 3}
+    fbmRender: {fileID: 4800000, guid: 7f9946d7c86d8f8439402b271ce4073b, type: 3}
     biomeRender: {fileID: 4800000, guid: 5bc1fdcf1eeb510438a969209cecbb60, type: 3}
     colorRender: {fileID: 4800000, guid: 0e96317cb0c84981a891b690f6c61c52, type: 3}
     tileSolver: {fileID: 4800000, guid: 76f2789e061d4f1d930f984aead8735d, type: 3}
