@@ -17,6 +17,9 @@ namespace Beast.Radar.World
         private readonly WorldTimeConfig _config;
         private readonly GameModel _gameModel;
 
+        private float _playerStateMultiplier;
+
+        private bool _isPause;
         private ulong _minutes;
         private float _seconds;
 
@@ -24,6 +27,7 @@ namespace Beast.Radar.World
         {
             _config = config;
             _gameModel = gameModel;
+            _playerStateMultiplier = _config.idleTimeScale;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -46,7 +50,12 @@ namespace Beast.Radar.World
 
         private void _tick(BlockingContext context)
         {
-            _seconds += Time.deltaTime * _config.secondMultiplier;
+            if (_isPause)
+            {
+                return;
+            }
+            
+            _seconds += Time.deltaTime * _config.secondMultiplier * _playerStateMultiplier;
 
             if (_seconds >= 60)
             {
@@ -57,6 +66,21 @@ namespace Beast.Radar.World
                 
                 BDebug.Track(this, "time", $"{GetHours()}:{GetMinutes()}");
             }
+        }
+
+        public void SetPlayerStateMultiplier(bool onAction)
+        {
+            _playerStateMultiplier = onAction ? 1 : _config.idleTimeScale;
+        }
+
+        public void Start()
+        {
+            _isPause = false;
+        }
+
+        public void Stop()
+        {
+            _isPause = true;
         }
 
         public int GetDays()
