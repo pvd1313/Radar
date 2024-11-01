@@ -3,7 +3,7 @@
 namespace Beast.Radar.Terrain
 {
     [Serializable]
-    public struct SeedData
+    public struct MapGenerationSeed
     {
         public string name;
         public int value;
