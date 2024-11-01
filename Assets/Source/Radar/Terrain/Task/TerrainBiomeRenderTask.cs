@@ -10,7 +10,7 @@ namespace Beast.Radar.Terrain
         public float2 renderPosition;
         public float viewDistance;
         public Texture bakedTerrain;
-        public bool isPreview;
+        public bool useDynamicConstraints;
         
         public RenderTexture outputBiomeTexture;
         

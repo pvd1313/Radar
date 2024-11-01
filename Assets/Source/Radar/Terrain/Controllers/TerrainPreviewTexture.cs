@@ -7,7 +7,7 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainPreviewTexture : IDisposable, IValidatable
     {
-        public RenderTexture baker;
+        public RenderTexture fbm;
         public RenderTexture biome;
         public RenderTexture color;
 
@@ -23,9 +23,9 @@ namespace Beast.Radar.Terrain
                 return "outputTexture is null";
             }
 
-            if (baker == null)
+            if (fbm == null)
             {
-                return "bakedTerrain is null";
+                return "fbm is null";
             }
 
             return null;
@@ -33,7 +33,7 @@ namespace Beast.Radar.Terrain
         
         public void Dispose()
         {
-            BGraphic.TryDispose(ref baker);
+            BGraphic.TryDispose(ref fbm);
             BGraphic.TryDispose(ref biome);
             BGraphic.TryDispose(ref color);
         }

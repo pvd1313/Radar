@@ -224,6 +224,12 @@ namespace Beast.Claw.Mathematics
         {
             return (int)math.floor(a);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 FloorToInt(float2 a)
+        {
+            return (int2)math.floor(a);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Ceil(float x)
@@ -263,6 +269,12 @@ namespace Beast.Claw.Mathematics
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
+        {
+            return math.clamp(value, min, max);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Clamp(int value, int min, int max)
         {
             return math.clamp(value, min, max);
         }

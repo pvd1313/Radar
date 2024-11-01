@@ -42,12 +42,14 @@ namespace Beast.Radar.Core
             yield return typeof(MapGenerationWindow);
             
             // Terrain
-            yield return typeof(TerrainBaker);
+            yield return typeof(TerrainFbmRender);
             yield return typeof(TerrainBiomeRender);
-            yield return typeof(TerrainBakedTexture);
+            yield return typeof(TerrainBakedFbm);
             yield return typeof(TerrainColorRender);
             yield return typeof(TerrainTileRender);
             yield return typeof(TerrainPreviewRender);
+            yield return typeof(TerrainBakedBiome);
+            yield return typeof(TerrainTest);
             
             //Player
             yield return typeof(PlayerPreferencesController);

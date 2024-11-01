@@ -8,7 +8,7 @@ namespace Beast.Radar.Terrain
     [Serializable]
     public class TerrainGraphicLibrary : IConfig
     {
-        public Shader baker;
+        public Shader fbmRender;
         public Shader biomeRender;
         public Shader colorRender;
 

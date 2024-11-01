@@ -30,10 +30,9 @@ namespace Beast.Radar.Terrain
         public Texture Texture => _biomeTexture;
         public float2 TexelSize => _renderResult.texelSize;
         public float ViewDistance => _renderResult.viewDistance;
-        public float RenderDistance => _renderResult.renderDistance;
 
         private readonly IScreen _screen;
-        private readonly ITerrainBakedTexture _bakedTerrain;
+        private readonly ITerrainBakedFbm _bakedTerrain;
         private readonly GraphicLibrary _library;
         private readonly ICameraTransform _camera;
         private readonly GraphicConfig _config;
@@ -47,7 +46,7 @@ namespace Beast.Radar.Terrain
 
         public TerrainBiomeRender(
             IScreen screen,
-            ITerrainBakedTexture bakedTerrain,
+            ITerrainBakedFbm bakedTerrain,
             ICameraTransform camera,
             GraphicLibrary library,
             GraphicConfig config)
@@ -73,6 +72,13 @@ namespace Beast.Radar.Terrain
             
             _renderBiome(task);
         }
+        
+        public float2 WorldToUVOffset(float2 worldPoint)
+        {
+            float2 offset = (worldPoint - _renderResult.renderPosition) / _renderResult.renderDistance * 2;
+            
+            return (offset + 1) * 0.5f;
+        }
 
         private UniTask _warmup(ConcurrentContext context)
         {
@@ -88,7 +94,7 @@ namespace Beast.Radar.Terrain
             textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount) *
                           WorldTransform.CellTileCount;
 
-            RenderTextureData textureData = _config.terrain.biomeTexture.WithSize(textureSize);
+            RenderTextureData textureData = _config.terrain.biomeRenderTexture.WithSize(textureSize);
             _biomeTexture = BGraphic.CreatePermRenderTexture(this, textureData);
 
             return UniTask.CompletedTask;
@@ -99,13 +105,6 @@ namespace Beast.Radar.Terrain
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
             return UniTask.CompletedTask;
-        }
-        
-        public float2 WorldToUVOffset(float2 worldPoint)
-        {
-            float2 offset = (worldPoint - _renderResult.renderPosition) / _renderResult.renderDistance * 2;
-            
-            return (offset + 1) * 0.5f;
         }
 
         private void _render(BlockingContext context)
@@ -130,6 +129,7 @@ namespace Beast.Radar.Terrain
                 renderPosition = _camera.Position,
                 screenSize = _screen.Size,
                 viewDistance = _camera.ViewDistance,
+                useDynamicConstraints = true,
             });
             
             _debugTrack(_renderResult);
@@ -148,14 +148,14 @@ namespace Beast.Radar.Terrain
             data.cellPixelSize = task.outputBiomeTexture.height / data.viewDistance / data.textureYScale;
             
             // Upscale when very close to terrain.
-            if (!task.isPreview && data.cellPixelSize > WorldTransform.CellTileCount)
+            if (task.useDynamicConstraints && data.cellPixelSize > WorldTransform.CellTileCount)
             {
                 data.viewDistance *= data.cellPixelSize / WorldTransform.CellTileCount;
                 data.cellPixelSize = WorldTransform.CellTileCount;
             }
 
             // Snap to grid.
-            if (!task.isPreview)
+            if (task.useDynamicConstraints)
             {
                 data.snapGridSize = WorldTransform.CellTileCount / data.cellPixelSize;
                 data.renderPosition = BMath.Floor(task.renderPosition / data.snapGridSize) * data.snapGridSize;
@@ -170,7 +170,7 @@ namespace Beast.Radar.Terrain
             data.texelSize = 1f / data.renderDistance / WorldTransform.CellTileCount;
             
             // LODs.
-            if (task.isPreview || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)
+            if (!task.useDynamicConstraints || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)
             {
                 data.noiseSamplerLOD = 1;
             }
@@ -181,7 +181,7 @@ namespace Beast.Radar.Terrain
             }
             
             // Prevent rendering when texture not moving.
-            if (!task.isPreview)
+            if (task.useDynamicConstraints)
             {
                 if (BMath.Approximately(data.renderPosition, _renderResult.renderPosition))
                 {

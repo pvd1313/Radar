@@ -9,18 +9,18 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainPreviewRender : ITerrainPreviewRender
     {
-        private readonly IRender<TerrainBakeTask> _baker;
+        private readonly IRender<TerrainFbmRenderTask> _fbmRender;
         private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
         private readonly IRender<TerrainColorRenderTask> _colorRender;
         private readonly GraphicConfig _config;
 
         public TerrainPreviewRender(
-            IRender<TerrainBakeTask> baker, 
+            IRender<TerrainFbmRenderTask> fbmRender, 
             IRender<TerrainBiomeRenderTask> biomeRender,
             IRender<TerrainColorRenderTask> colorRender,
             GraphicConfig config)
         {
-            _baker = baker;
+            _fbmRender = fbmRender;
             _biomeRender = biomeRender;
             _colorRender = colorRender;
             _config = config;
@@ -32,14 +32,14 @@ namespace Beast.Radar.Terrain
             owner.ValidateNotNullThrowException(nameof(owner));
             pixelSize.ValidateComponentsBiggerThanZeroThrowException(nameof(pixelSize));
 
-            RenderTextureData bakerData = _config.terrain.bakerRenderTexture.WithSize(pixelSize);
-            RenderTextureData biomeData = _config.terrain.biomeTexture.WithSize(pixelSize);
+            RenderTextureData bakerData = _config.terrain.fbmRenderTexture.WithSize(pixelSize);
+            RenderTextureData biomeData = _config.terrain.biomeRenderTexture.WithSize(pixelSize);
             RenderTextureData colorData = _config.terrain.colorTexture.WithSize(pixelSize);
             colorData.texture.filterMode = FilterMode.Bilinear;
 
             return new TerrainPreviewTexture
             {
-                baker = BGraphic.CreatePermRenderTexture(owner, bakerData),
+                fbm = BGraphic.CreatePermRenderTexture(owner, bakerData),
                 biome = BGraphic.CreatePermRenderTexture(owner, biomeData),
                 color = BGraphic.CreatePermRenderTexture(owner, colorData)
             };
@@ -49,11 +49,11 @@ namespace Beast.Radar.Terrain
         {
             task.ValidateThrowException(nameof(task));
 
-            _baker.Render(new TerrainBakeTask
+            _fbmRender.Render(new TerrainFbmRenderTask
             {
                 terrain = task.terrain,
                 quality01 = 0,
-                outputTexture = task.texture.baker
+                outputTexture = task.texture.fbm
             });
 
             _biomeRender.Render(new TerrainBiomeRenderTask
@@ -61,9 +61,9 @@ namespace Beast.Radar.Terrain
                 screenSize = task.texture.color.Size(),
                 renderPosition = task.texture.color.Size().Multiply(0.5f),
                 viewDistance = task.texture.color.height,
-                bakedTerrain = task.texture.baker,
+                bakedTerrain = task.texture.fbm,
                 outputBiomeTexture = task.texture.biome,
-                isPreview = true
+                useDynamicConstraints = false
             });
 
             _colorRender.Render(new TerrainColorRenderTask
