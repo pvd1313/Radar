@@ -38,56 +38,15 @@ namespace Beast.Radar.Player.Path
                 int2 gridSize = new int2(4096, 4096);
 
                 NativeArray<PathNode> pathNodeArray = new(gridSize.x * gridSize.y, Allocator.Temp);
-                for (int x = 0; x < gridSize.x; x++)
-                {
-                    for (int y = 0; y < gridSize.y; y++)
-                    {
-                        PathNode pathNode = new PathNode();
-                        pathNode.x = x;
-                        pathNode.y = y;
-                        pathNode.index = CalculateIndex(x, y, gridSize.x);
-
-                        pathNode.gCost = int.MaxValue;
-                        pathNode.hCost = CalculateDistanceCost(new int2(x, y), endPosition);
-                        pathNode.CalculateFCost();
-
-                        pathNode.isWalkable = true;
-
-                        pathNode.cameFromNodeIndex = -1;
-
-                        pathNodeArray[pathNode.index] = pathNode;
-                    }
-                }
-
-              
-                {  // test grid
-                    PathNode walkableNode = pathNodeArray[CalculateIndex(1, 0, gridSize.x)];
-                    walkableNode.SetWalkable(false);
-                    pathNodeArray[walkableNode.index] = walkableNode;
-
-                    walkableNode = pathNodeArray[CalculateIndex(2, 0, gridSize.x)];
-                    walkableNode.SetWalkable(false);
-                    pathNodeArray[walkableNode.index] = walkableNode;
-
-                    walkableNode = pathNodeArray[CalculateIndex(1, 1, gridSize.x)];
-                    walkableNode.SetWalkable(false);
-                    pathNodeArray[walkableNode.index] = walkableNode;
-                } // test grid
-
-
+               
                 NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(new[]
                 {
-                    new int2(-1, 0),
-                    new int2(1, 0),
-                    new int2(0, 1),
-                    new int2(0, -1),
-                    new int2(-1, -1),
-                    new int2(-1, 1),
-                    new int2(1 - 1),
-                    new int2(1, 1),
+                    new int2(-1, 0), new int2(1, 0), new int2(0, 1), new int2(0, -1),
+                    new int2(-1, -1), new int2(-1, 1), new int2(1, -1), new int2(1, 1),
                 }, Allocator.Temp);
 
                 int endNodeIndex = CalculateIndex(endPosition.x, endPosition.y, gridSize.x);
+                InitializePathNodes(pathNodeArray, gridSize, endPosition);
 
                 PathNode startNode = pathNodeArray[CalculateIndex(startPosition.x, startPosition.y, gridSize.x)];
                 startNode.gCost = 0;
@@ -96,140 +55,100 @@ namespace Beast.Radar.Player.Path
 
                 NativeList<int> openList = new(Allocator.Temp);
                 NativeList<int> closedList = new(Allocator.Temp);
-
                 openList.Add(startNode.index);
 
                 while (openList.Length > 0)
                 {
                     int currentNodeIndex = GetLowestCostFNodeIndex(openList, pathNodeArray);
                     PathNode currentNode = pathNodeArray[currentNodeIndex];
+                    if (currentNodeIndex == endNodeIndex) break;
 
-                    if (currentNodeIndex == endNodeIndex)
-                    {
-                        // reached destination
-                        break;
-                    }
-
-                    for (int i = 0; i < openList.Length; i++)
-                    {
-                        if (openList[i] == currentNodeIndex)
-                        {
-                            openList.RemoveAtSwapBack(i);
-                            break;
-                        }
-                    }
-
+                    openList.RemoveAtSwapBack(openList.IndexOf(currentNodeIndex));
                     closedList.Add(currentNodeIndex);
 
                     for (int i = 0; i < neighbourOffsetArray.Length; i++)
                     {
-                        int2 neighbourOffset = neighbourOffsetArray[i];
-                        int2 neighbourPosition =
-                            new int2(currentNode.x + neighbourOffset.x, currentNode.y + neighbourOffset.y);
-                        // wtf?
-                        if (!IsPositionInsideGrid(neighbourPosition, gridSize))
-                        {
-                            continue;
-                        }
+                        int2 neighbourPosition = new int2(currentNode.x, currentNode.y) + neighbourOffsetArray[i];
+                        if (!IsPositionInsideGrid(neighbourPosition, gridSize)) continue;
 
-                        // wtf?
                         int neighbourNodeIndex = CalculateIndex(neighbourPosition.x, neighbourPosition.y, gridSize.x);
+                        if (closedList.Contains(neighbourNodeIndex)) continue;
 
-                        if (closedList.Contains(neighbourNodeIndex))
-                        {
-                            continue;
-                        }
-
-                        // wtf?
                         PathNode neighbourNode = pathNodeArray[neighbourNodeIndex];
-                        if (!neighbourNode.isWalkable)
-                        {
-                            continue;
-                        }
+                        if (!neighbourNode.isWalkable) continue;
 
-                        int2 currentNodePosition = new int2(currentNode.x, currentNode.y);
-
-                        int tentativeGCost =
-                            currentNode.gCost + CalculateDistanceCost(currentNodePosition, neighbourPosition);
-
+                        int tentativeGCost = currentNode.gCost + CalculateDistanceCost(new int2(currentNode.x, currentNode.y), neighbourPosition);
                         if (tentativeGCost < neighbourNode.gCost)
                         {
                             neighbourNode.cameFromNodeIndex = currentNodeIndex;
                             neighbourNode.gCost = tentativeGCost;
                             neighbourNode.CalculateFCost();
-
                             pathNodeArray[neighbourNodeIndex] = neighbourNode;
 
-                            if (!openList.Contains(neighbourNode.index))
-                            {
-                                openList.Add(neighbourNode.index);
-                            }
+                            if (!openList.Contains(neighbourNode.index)) openList.Add(neighbourNode.index);
                         }
                     }
                 }
 
-                PathNode endNode = pathNodeArray[endNodeIndex];
-                if (endNode.cameFromNodeIndex == -1)
+                if (pathNodeArray[endNodeIndex].cameFromNodeIndex == -1)
                 {
                     BDebug.LogWarning(this, "Did not find a path");
-                }
-                else
-                {
-                    NativeArray<int2> path = CalculatePath(pathNodeArray, endNode);
-                    foreach (int2 int2 in path)
-                    {
-                        BDebug.LogInfo(this, int2.ToString());
-                    }
-
-                    path.Dispose();
-                    BDebug.LogInfo(this, "Fount a path");
                 }
 
                 pathNodeArray.Dispose();
                 neighbourOffsetArray.Dispose();
                 openList.Dispose();
                 closedList.Dispose();
-                
                 stopwatch.Stop();
-            
+                
                 BDebug.LogInfo(this, $"{stopwatch.ElapsedMilliseconds} ms");
+            }
+
+            private void InitializePathNodes(NativeArray<PathNode> pathNodeArray, int2 gridSize, int2 endPosition)
+            {
+                for (int x = 0; x < gridSize.x; x++)
+                {
+                    for (int y = 0; y < gridSize.y; y++)
+                    {
+                        int index = CalculateIndex(x, y, gridSize.x);
+                        pathNodeArray[index] = new PathNode
+                        {
+                            x = x,
+                            y = y,
+                            index = index,
+                            gCost = int.MaxValue,
+                            hCost = CalculateDistanceCost(new int2(x, y), endPosition),
+                            isWalkable = true,
+                            cameFromNodeIndex = -1
+                        };
+                        pathNodeArray[index].CalculateFCost();
+                    }
+                }
             }
 
             private NativeArray<int2> CalculatePath(NativeArray<PathNode> pathNodes, PathNode endNode)
             {
-                if (endNode.cameFromNodeIndex == -1)
+                if (endNode.cameFromNodeIndex == -1) return new NativeArray<int2>(0, Allocator.Temp);
+                NativeList<int2> path = new(Allocator.Temp);
+                while (endNode.cameFromNodeIndex != -1)
                 {
-                    BDebug.LogInfo(this, "Couldn't find a path!");
-                    return new NativeArray<int2>(0, Allocator.Temp);
-                }
-                else
-                {
-                    NativeList<int2> path = new(Allocator.Temp);
                     path.Add(new int2(endNode.x, endNode.y));
-
-                    PathNode currentNode = endNode;
-                    while (currentNode.cameFromNodeIndex != -1)
-                    {
-                        PathNode cameFromNode = pathNodes[currentNode.cameFromNodeIndex];
-                        path.Add(new int2(cameFromNode.x, cameFromNode.y));
-                        currentNode = cameFromNode;
-                    }
-
-                    return path;
+                    endNode = pathNodes[endNode.cameFromNodeIndex];
                 }
+                return path.ToArray(Allocator.Temp);
             }
 
-            private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize)
+            private void LogPath(NativeArray<int2> path)
             {
-                return gridPosition.x >= 0 && gridPosition.y >= 0
-                                           && gridPosition.x < gridSize.x
-                                           && gridPosition.y < gridSize.y;
+                foreach (var position in path) BDebug.LogInfo(this, position.ToString());
+                path.Dispose();
+                BDebug.LogInfo(this, "Found a path");
             }
 
-            private int CalculateIndex(int x, int y, int gridWidth)
-            {
-                return x + y * gridWidth;
-            }
+            private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize) =>
+                gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < gridSize.x && gridPosition.y < gridSize.y;
+
+            private int CalculateIndex(int x, int y, int gridWidth) => x + y * gridWidth;
 
             private int CalculateDistanceCost(int2 startPosition, int2 targetPosition)
             {
@@ -241,44 +160,36 @@ namespace Beast.Radar.Player.Path
 
             private int GetLowestCostFNodeIndex(NativeList<int> openList, NativeArray<PathNode> pathNodes)
             {
-                PathNode lowestCostPathNode = pathNodes[openList[0]];
-                for (int i = 0; i < openList.Length; i++)
+                int lowestCostIndex = openList[0];
+                int lowestCost = pathNodes[lowestCostIndex].fCost;
+                for (int i = 1; i < openList.Length; i++)
                 {
-                    PathNode testPathNode = pathNodes[openList[i]];
-                    if (testPathNode.fCost < lowestCostPathNode.fCost)
+                    int nodeIndex = openList[i];
+                    int nodeFCost = pathNodes[nodeIndex].fCost;
+                    if (nodeFCost < lowestCost)
                     {
-                        lowestCostPathNode = testPathNode;
+                        lowestCost = nodeFCost;
+                        lowestCostIndex = nodeIndex;
                     }
                 }
-
-                return lowestCostPathNode.index;
+                return lowestCostIndex;
             }
         }
-        
 
         private struct PathNode
         {
             public int x;
             public int y;
-
             public int index;
-
             public int gCost;
             public int hCost;
             public int fCost;
-
-            public bool isWalkable;
-
             public int cameFromNodeIndex;
+            public bool isWalkable;
 
             public void CalculateFCost()
             {
                 fCost = gCost + hCost;
-            }
-
-            public void SetWalkable(bool walkable)
-            {
-                isWalkable = walkable;
             }
         }
     }
