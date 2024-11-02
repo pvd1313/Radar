@@ -15,6 +15,7 @@ namespace Beast.Radar.Terrain
         private const int MAP_1KM_BLOCK_SIZE = 128;
 
         public TextureWithBlocks Terrain1kmCell => _biomeWithBlocks;
+        public AveragePixelCountTexture Terrain8kmCell => _biomePacked;
         
         public bool IsReady { get; private set; }
 
@@ -23,6 +24,7 @@ namespace Beast.Radar.Terrain
         private readonly GraphicConfig _graphicConfig;
         private readonly GameModel _game;
         private TextureWithBlocks _biomeWithBlocks;
+        private AveragePixelCountTexture _biomePacked;
         private TerrainData _bakedForTerrain;
 
         public TerrainBakedBiome(
@@ -82,6 +84,11 @@ namespace Beast.Radar.Terrain
             Profiler.BeginSample("TextureWithBlocks.FromBiomeTexture");
             _biomeWithBlocks = TextureWithBlocks.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
             Profiler.EndSample();
+
+            Profiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
+            int cellSize = BMath.Clamp(_game.terrain.terrainSize.x / 256, 8, 16);
+            _biomePacked = AveragePixelCountTexture.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
+            Profiler.EndSample();
             
             Profiler.BeginSample("Dispose Textures");
             BGraphic.Dispose(biomeRenderTexture);
@@ -98,6 +105,7 @@ namespace Beast.Radar.Terrain
             IsReady = false;
             
             _biomeWithBlocks.Dispose();
+            _biomePacked.Dispose();
         }
     }
 }

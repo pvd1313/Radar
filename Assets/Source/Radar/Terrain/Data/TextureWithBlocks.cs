@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Beast.Claw;
 using Beast.Claw.Common;
+using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
 using Unity.Collections;
@@ -11,32 +13,16 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
+    /// <summary>
+    /// This texture's array is packed into NxN blocks to improve CPU reading speed.
+    /// </summary>
     public struct TextureWithBlocks
     {
-        private NativeArray<byte> _texture;
-        private bool _isCreated;
-        private int _blockSize;
-        private int _blockCountX;
-
-        public byte GetPixelClamped(int2 position)
-        {
-            if (!_isCreated)
-            {
-                throw new InvalidOperationException(nameof(TextureWithBlocks) + " was disposed or was not initialized");
-            }
-            
-            position.x = BMath.Clamp(position.x, 0, _blockSize * _blockCountX - 1);
-            position.y = BMath.Clamp(position.y, 0, _blockSize * _blockCountX - 1);
-
-            int2 blockXY = position / _blockSize;
-            int blockSizeSqr = _blockSize * _blockSize;
-            int blockOffset = blockXY.y * _blockCountX * blockSizeSqr + blockXY.x * blockSizeSqr;
-            int2 innerXY = position % _blockSize;
-            int innerOffset = innerXY.y * _blockSize + innerXY.x;
-
-            return _texture[blockOffset + innerOffset];
-        }
-
+        public NativeArray<byte> texture;
+        public bool isCreated;
+        public int blockSize;
+        public int blockCountX;
+        
         public static TextureWithBlocks FromBiomeTexture(Texture2D biomeTexture, int blockSize)
         {
             biomeTexture.ValidateNotNullThrowException(nameof(biomeTexture));
@@ -46,13 +32,19 @@ namespace Beast.Radar.Terrain
                 throw new ArgumentException("Invalid block size: " + blockSize);
             }
 
+            if (Build.IS_DEVELOPMENT &&
+                (biomeTexture.width != biomeTexture.height || !BMath.IsPowerOf2(biomeTexture.width)))
+            {
+                throw new AggregateException($"Invalid texture size: {biomeTexture.Size()}");
+            }
+
             int blockCountX = biomeTexture.width / blockSize;
             
             Profiler.BeginSample("AllocateNativeArray");
             NativeArray<byte> textureWithBlocks = NativeMemory.CreatePermArray<byte>(biomeTexture.width * biomeTexture.width);
             Profiler.EndSample();
             
-            TextureToBlocksJob job = new()
+            CreateTextureBlocksJob job = new()
             {
                 inputTexture = biomeTexture.GetRawTextureData<short>(),
                 inputTextureSize = biomeTexture.width,
@@ -66,22 +58,53 @@ namespace Beast.Radar.Terrain
 
             return new TextureWithBlocks
             {
-                _isCreated = true,
-                _texture = job.outputTextureBlocks,
-                _blockSize = blockSize,
-                _blockCountX = blockCountX
+                isCreated = true,
+                texture = job.outputTextureBlocks,
+                blockSize = blockSize,
+                blockCountX = blockCountX
             };
+        }
+
+        public byte GetPixelClamped(int2 worldPosition)
+        {
+            if (Build.IS_DEVELOPMENT && !isCreated)
+            {
+                throw new ObjectDisposedException(nameof(TextureWithBlocks));
+            }
+            
+            worldPosition.x = BMath.Clamp(worldPosition.x, 0, blockSize * blockCountX - 1);
+            worldPosition.y = BMath.Clamp(worldPosition.y, 0, blockSize * blockCountX - 1);
+            
+            int blockOffset = GetBlockOffset(worldPosition);
+            int innerOffset = GetInnerOffset(worldPosition);
+
+            return texture[blockOffset + innerOffset];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetBlockOffset(int2 absolutePosition)
+        {
+            int2 blockXY = absolutePosition / blockSize;
+            
+            return (blockXY.y * blockCountX + blockXY.x) * (blockSize * blockSize);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetInnerOffset(int2 absolutePosition)
+        {
+            int2 innerXY = absolutePosition % blockSize;
+            return innerXY.y * blockSize + innerXY.x;
         }
 
         public void Dispose()
         {
-            if (!_isCreated)
+            if (!isCreated)
             {
                 return;
             }
             
-            _texture.Dispose();
-            _isCreated = false;
+            texture.Dispose();
+            isCreated = false;
         }
     }
 }

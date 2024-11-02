@@ -16,13 +16,13 @@ MonoBehaviour:
     terrain:
       seed: 1
       terrainSize:
-        x: 4096
-        y: 4096
+        x: 2048
+        y: 2048
       biomeSize01: 0.5
       water01: 0.5
       forest01: 0.5
     camera:
       zoom01: 0.5
       position:
-        x: 2048
-        y: 2048
+        x: 1024
+        y: 1024

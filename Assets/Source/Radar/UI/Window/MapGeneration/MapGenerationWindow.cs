@@ -110,12 +110,12 @@ namespace Beast.Radar.UI
             RadioButton startSizeButton = _menuView.sizeButtons[3]; 
             
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
-            SeedData seedData = _generationConfig.seeds[_seedIndex];
+            MapGenerationSeed seed = _generationConfig.seeds[_seedIndex];
         
             _terrainData = new TerrainData
             {
                 biomeSize01 = 0.5f,
-                seed = seedData.value,
+                seed = seed.value,
                 terrainSize = _buttonSizes[startSizeButton],
                 water01 = 0.2f,
                 forest01 = 0.2f
@@ -124,7 +124,7 @@ namespace Beast.Radar.UI
             _menuView.biomeSlider.SetValueWithoutNotify(_terrainData.biomeSize01);
             _menuView.waterSlider.SetValueWithoutNotify(_terrainData.water01);
             _menuView.forestSlider.SetValueWithoutNotify(_terrainData.forest01);
-            _menuView.seedResult.SetText(seedData.name);
+            _menuView.seedResult.SetText(seed.name);
             _sizeButtonsGroup.Select(startSizeButton);
         }
 
@@ -218,7 +218,7 @@ namespace Beast.Radar.UI
                 _seedIndex = 0;
             }
 
-            SeedData seedData = _generationConfig.seeds[_seedIndex];
+            MapGenerationSeed seedData = _generationConfig.seeds[_seedIndex];
             string seedName = seedData.name;
             _menuView.seedResult.SetText(seedName);
             _terrainData.seed = seedData.value; 

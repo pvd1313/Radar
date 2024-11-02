@@ -49,7 +49,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainTileRender);
             yield return typeof(TerrainPreviewRender);
             yield return typeof(TerrainBakedBiome);
-            yield return typeof(TerrainTest);
+            yield return typeof(TerrainBiomeTest);
             
             //Player
             yield return typeof(PlayerPreferencesController);
