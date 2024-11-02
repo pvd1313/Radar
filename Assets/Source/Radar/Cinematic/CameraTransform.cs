@@ -69,7 +69,7 @@ namespace Beast.Radar.Cinematic
             _position = _game.camera.position;
 
             _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
-            _maxViewDistance = BMath.Max(_game.terrain.terrainSize.x, _game.terrain.terrainSize.y) * _zoomMax;
+            _maxViewDistance = _game.terrain.terrainSize * _zoomMax;
 
             _setZoom(_game.camera.zoom01);
             
@@ -135,12 +135,12 @@ namespace Beast.Radar.Cinematic
 
         private float2 _worldToLocal(float2 vector)
         {
-            return _scale.Multiply(_rotation.Multiply(vector));
+            return _scale.Mul(_rotation.Mul(vector));
         }
 
         private float2 _localToWorld(float2 vector)
         {
-            return _rotationInverse.Multiply(_scaleInverse.Multiply(vector));
+            return _rotationInverse.Mul(_scaleInverse.Mul(vector));
         }
 
         private void _setZoom(float zoom)

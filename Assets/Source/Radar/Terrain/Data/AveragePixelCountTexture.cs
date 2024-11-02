@@ -12,23 +12,34 @@ namespace Beast.Radar.Terrain
     /// <summary>
     /// This texture contains info of most appeared pixel in NxN block.
     /// </summary>
-    public struct AveragePixelCountTexture : IDisposable
+    public struct AveragePixelCountTexture<TValue> : IDisposable where TValue : unmanaged
     {
-        public bool isCreated;
         public int cellSize;
         public int cellCountX;
-        public NativeArray<byte> texture;
+        public NativeArray<TValue> texture;
 
-        public byte GetPixelClamped(int2 worldPosition)
+        public TValue GetPixelClamped(int2 worldPosition)
         {
-            int2 cellPosition = BMath.FloorToInt(worldPosition.Divide(cellSize));
+            int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
             cellPosition.x = BMath.Clamp(cellPosition.x, 0, cellCountX - 1);
             cellPosition.y = BMath.Clamp(cellPosition.y, 0, cellCountX - 1);
 
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
 
-        public static AveragePixelCountTexture FromTextureWithBlocks(TextureWithBlocks texture, int cellSize)
+        public TValue GetPixel(int2 worldPosition)
+        {
+            int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
+            
+            return texture[cellPosition.y * cellCountX + cellPosition.x];
+        }
+
+        public int2 FloorToCellWorldPosition(int2 worldPosition)
+        {
+            return BMath.FloorToInt(worldPosition.Div(cellSize)) * cellSize;
+        }
+
+        public static AveragePixelCountTexture<EBiomeName> FromTextureWithBlocks(TextureWithBlocks<EBiomeName> texture, int cellSize)
         {
             if (Build.IS_DEVELOPMENT && (cellSize <= 1 || !BMath.IsPowerOf2(cellSize)) || cellSize > 16)
             {
@@ -42,7 +53,7 @@ namespace Beast.Radar.Terrain
             {
                 outputCellSize = cellSize,
                 sourceTexture = texture,
-                outputTexture = NativeMemory.CreatePermArray<byte>(cellCountX * cellCountX)
+                outputTexture = NativeMemory.CreatePermArray<EBiomeName>(cellCountX * cellCountX)
             };
             Profiler.EndSample();
             
@@ -50,9 +61,8 @@ namespace Beast.Radar.Terrain
             job.Schedule(texture.blockCountX * texture.blockCountX, 16).Complete();
             Profiler.EndSample();
 
-            return new AveragePixelCountTexture
+            return new AveragePixelCountTexture<EBiomeName>
             {
-                isCreated = true,
                 cellSize = cellSize,
                 texture = job.outputTexture,
                 cellCountX = cellCountX
@@ -61,12 +71,11 @@ namespace Beast.Radar.Terrain
 
         public void Dispose()
         {
-            if (!isCreated)
+            if (!texture.IsCreated)
             {
                 return;
             }
-
-            isCreated = false;
+            
             texture.Dispose();
         }
     }

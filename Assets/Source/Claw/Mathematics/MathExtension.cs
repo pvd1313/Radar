@@ -4,17 +4,17 @@ namespace Beast.Claw.Mathematics
 {
     public static class MathExtension
     {
-        public static float2 Multiply(this int2 vector, float scale)
+        public static float2 Mul(this int2 vector, float scale)
         {
             return new float2(vector.x * scale, vector.y * scale);
         }
         
-        public static float2 Divide(this int2 vector, float scale)
+        public static float2 Div(this int2 vector, float scale)
         {
             return new float2(vector.x / scale, vector.y / scale);
         }
         
-        public static float2 Multiply(this float2x2 matrix, float2 vector)
+        public static float2 Mul(this float2x2 matrix, float2 vector)
         {
             float x = matrix.c0.x * vector.x + matrix.c1.x * vector.y;
             float y = matrix.c0.y * vector.x + matrix.c1.y * vector.y;

@@ -106,7 +106,7 @@ namespace Beast.Radar.Terrain
             renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
             renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
 
-            renderMaterial.SetFloat2("_OutputSize", task.screenSize.Multiply(yScale));
+            renderMaterial.SetFloat2("_OutputSize", task.screenSize.Mul(yScale));
 
             float2 outputCenter = task.biomeTextureUVOffset;
             renderMaterial.SetFloat2("_OutputCenter", task.biomeTexture.Size() * outputCenter);

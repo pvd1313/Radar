@@ -13,18 +13,6 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainBiomeTest : Controller, IGameCycleListener
     {
-        private enum BiomeName
-        {
-            Empty = 0,
-            Plains = 1,
-            Coast = 2,
-            Sand = 6,
-            Shallow = 3,
-            Deep = 4,
-            Grass = 5,
-            Forest = 7
-        }
-        
         private readonly IInputSystem _input;
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _biome;
@@ -77,9 +65,9 @@ namespace Beast.Radar.Terrain
             
             BDebug.Track(this, "WorldPoint_1KM", worldPoint1km);
             
-            byte biomeIndex = _biome.Terrain1kmCell.GetPixelClamped(worldPoint1km);
+            EBiomeName biomeIndex = _biome.Terrain1kmCell.GetPixelClamped(worldPoint1km);
             
-            BDebug.Track(this, "Biome_1KM", ((BiomeName) biomeIndex).ToString());
+            BDebug.Track(this, "Biome_1KM", (biomeIndex).ToString());
             
             // 8-16 km
             int cellSize = _biome.Terrain8kmCell.cellSize;
@@ -95,7 +83,7 @@ namespace Beast.Radar.Terrain
 
             biomeIndex = _biome.Terrain8kmCell.GetPixelClamped(worldPoint1km);
             
-            BDebug.Track(this, "Biome_8KM", ((BiomeName) biomeIndex).ToString());
+            BDebug.Track(this, "Biome_8KM", (biomeIndex).ToString());
         }
     }
 }

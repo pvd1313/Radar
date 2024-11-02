@@ -59,7 +59,7 @@ namespace Beast.Radar.Terrain
             _biomeRender.Render(new TerrainBiomeRenderTask
             {
                 screenSize = task.texture.color.Size(),
-                renderPosition = task.texture.color.Size().Multiply(0.5f),
+                renderPosition = task.texture.color.Size().Mul(0.5f),
                 viewDistance = task.texture.color.height,
                 bakedTerrain = task.texture.fbm,
                 outputBiomeTexture = task.texture.biome,

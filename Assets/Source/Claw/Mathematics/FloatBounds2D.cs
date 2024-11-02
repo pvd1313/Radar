@@ -19,6 +19,12 @@ namespace Beast.Claw.Mathematics
             x = new FloatMinMax(xMin, xMax);
             y = new FloatMinMax(yMin, yMax);
         }
+        
+        public FloatBounds2D(float min, float max)
+        {
+            x = new FloatMinMax(min, max);
+            y = new FloatMinMax(min, max);
+        }
 
         public Rect ToRect(float2 dpi)
         {

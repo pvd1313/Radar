@@ -5,7 +5,9 @@ using Unity.Jobs;
 namespace Beast.Radar.Terrain
 {
     [BurstCompile]
-    public struct CreateTextureBlocksJob : IJobParallelFor
+    public struct CreateTextureBlocksJob<TValue, TConverter> : IJobParallelFor 
+        where TValue : unmanaged
+        where TConverter : unmanaged, IShortTextureConverter<TValue>
     {
         [ReadOnly]
         public NativeArray<short> inputTexture;
@@ -13,12 +15,14 @@ namespace Beast.Radar.Terrain
         public int inputTextureSize;
         
         [WriteOnly, NativeDisableParallelForRestriction] 
-        public NativeArray<byte> outputTextureBlocks;
+        public NativeArray<TValue> outputTextureBlocks;
 
         public int outputBlockSize;
      
         public void Execute(int blockIndex)
         {
+            TConverter converter = default;
+            
             int blockCount = inputTextureSize / outputBlockSize;
             int outputOffset = blockIndex * outputBlockSize * outputBlockSize;
 
@@ -30,7 +34,7 @@ namespace Beast.Radar.Terrain
                 int x = inputX + pixel % outputBlockSize;
                 int y = inputY + pixel / outputBlockSize;
                 int inputOffset = y * inputTextureSize + x;
-                outputTextureBlocks[outputOffset + pixel] = (byte)inputTexture[inputOffset];
+                outputTextureBlocks[outputOffset + pixel] = converter.Convert(inputTexture[inputOffset]);
             }
         }
     }
