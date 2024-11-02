@@ -1,44 +1,79 @@
 ﻿using System.Diagnostics;
-using Beast.Claw.Debug;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Beast.Radar.Player.Path
 {
-    public class Pathfinding : MonoBehaviour
+    public class Pathfinding 
     {
         private const int MOVE_STRAIGHT_COST = 10;
         private const int MOVE_DIAGONAL_COST = 14;
 
-        private void Start()
+        private int _size;
+
+        public Pathfinding(int size)
         {
-            JobHandle jobHandle = new JobHandle();
+            _size = size;
+        }
+        
+        public NativeArray<int2> FindPathNative(int2 startPosition, int2 endPosition, out long elapsedMilliseconds)
+        {
+            return FindPath(startPosition, endPosition, true, out elapsedMilliseconds);
+        }
+
+        public int2[] FindPathArray(int2 startPosition, int2 endPosition, out long elapsedMilliseconds)
+        {
+            NativeArray<int2> pathNativeArray = FindPath(startPosition, endPosition, true, out elapsedMilliseconds);
+            int2[] result = new int2[pathNativeArray.Length];
+            pathNativeArray.CopyTo(result); 
+            pathNativeArray.Dispose();
+            return result;
+        }
+
+        private NativeArray<int2> FindPath(int2 startPosition, int2 endPosition, bool useNativeArray, out long elapsedMilliseconds)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            NativeList<int2> pathResultList = new NativeList<int2>(Allocator.TempJob);
+
             FindPathJob findPathJob = new FindPathJob
             {
-                startPosition = int2.zero,
-                endPosition = new int2(4095, 4095)
+                size = _size,
+                startPosition = startPosition,
+                endPosition = endPosition,
+                pathResultList = pathResultList
             };
-            findPathJob.Schedule();
 
+            JobHandle jobHandle = findPathJob.Schedule();
             jobHandle.Complete();
+
+            stopwatch.Stop();
+            elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            
+            NativeArray<int2> pathNativeArray = new NativeArray<int2>(pathResultList.Length, Allocator.Temp);
+            for (int i = 0; i < pathResultList.Length; i++)
+            {
+                pathNativeArray[i] = pathResultList[i];
+            }
+            pathResultList.Dispose();
+
+            return pathNativeArray;
         }
 
         [BurstCompatible]
         private struct FindPathJob : IJob
         {
+            public int size;
             public int2 startPosition;
             public int2 endPosition;
-            
+            public NativeList<int2> pathResultList;
+
             public void Execute()
             {
-                Stopwatch stopwatch = new();
-                stopwatch.Start();
-                int2 gridSize = new int2(4096, 4096);
-
+                int2 gridSize = new int2(size, size);
                 NativeArray<PathNode> pathNodeArray = new(gridSize.x * gridSize.y, Allocator.Temp);
-               
                 NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(new[]
                 {
                     new int2(-1, 0), new int2(1, 0), new int2(0, 1), new int2(0, -1),
@@ -90,18 +125,12 @@ namespace Beast.Radar.Player.Path
                     }
                 }
 
-                if (pathNodeArray[endNodeIndex].cameFromNodeIndex == -1)
-                {
-                    BDebug.LogWarning(this, "Did not find a path");
-                }
+                CalculatePath(pathNodeArray, pathNodeArray[endNodeIndex]);
 
                 pathNodeArray.Dispose();
                 neighbourOffsetArray.Dispose();
                 openList.Dispose();
                 closedList.Dispose();
-                stopwatch.Stop();
-                
-                BDebug.LogInfo(this, $"{stopwatch.ElapsedMilliseconds} ms");
             }
 
             private void InitializePathNodes(NativeArray<PathNode> pathNodeArray, int2 gridSize, int2 endPosition)
@@ -126,29 +155,30 @@ namespace Beast.Radar.Player.Path
                 }
             }
 
-            private NativeArray<int2> CalculatePath(NativeArray<PathNode> pathNodes, PathNode endNode)
+            private void CalculatePath(NativeArray<PathNode> pathNodes, PathNode endNode)
             {
-                if (endNode.cameFromNodeIndex == -1) return new NativeArray<int2>(0, Allocator.Temp);
-                NativeList<int2> path = new(Allocator.Temp);
+                if (endNode.cameFromNodeIndex == -1)
+                {
+                    return;
+                }
+
                 while (endNode.cameFromNodeIndex != -1)
                 {
-                    path.Add(new int2(endNode.x, endNode.y));
+                    pathResultList.Add(new int2(endNode.x, endNode.y));
                     endNode = pathNodes[endNode.cameFromNodeIndex];
                 }
-                return path.ToArray(Allocator.Temp);
             }
 
-            private void LogPath(NativeArray<int2> path)
+            private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize)
             {
-                foreach (var position in path) BDebug.LogInfo(this, position.ToString());
-                path.Dispose();
-                BDebug.LogInfo(this, "Found a path");
+                return gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < gridSize.x &&
+                       gridPosition.y < gridSize.y;
             }
 
-            private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize) =>
-                gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < gridSize.x && gridPosition.y < gridSize.y;
-
-            private int CalculateIndex(int x, int y, int gridWidth) => x + y * gridWidth;
+            private int CalculateIndex(int x, int y, int gridWidth)
+            {
+                return x + y * gridWidth;
+            }
 
             private int CalculateDistanceCost(int2 startPosition, int2 targetPosition)
             {
