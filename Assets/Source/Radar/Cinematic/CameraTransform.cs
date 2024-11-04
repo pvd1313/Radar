@@ -4,6 +4,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Serialization;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace Beast.Radar.Cinematic
         private readonly IScreen _screen;
         private readonly CameraTransformConfig _config;
         private readonly GameModel _game;
+        private readonly IWorldManager _worldManager;
 
         private float2x2 _rotation;
         private float2x2 _scale;
@@ -35,11 +37,12 @@ namespace Beast.Radar.Cinematic
         private float _zoomMax;
         private double2 _position;
         
-        public CameraTransform(IScreen screen, CameraConfig config, GameModel game)
+        public CameraTransform(IScreen screen, CameraConfig config, GameModel game, IWorldManager worldManager)
         {
             _screen = screen;
             _config = config.transform;
             _game = game;
+            _worldManager = worldManager;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -69,7 +72,7 @@ namespace Beast.Radar.Cinematic
             _position = _game.camera.position;
 
             _zoomMax = _config.enablePlanetMode ? 0.25f : _config.plainModeViewDistance01;
-            _maxViewDistance = _game.terrain.terrainSize * _zoomMax;
+            _maxViewDistance = _worldManager.GetCurrentWorld().terrain.terrainSize * _zoomMax;
 
             _setZoom(_game.camera.zoom01);
             

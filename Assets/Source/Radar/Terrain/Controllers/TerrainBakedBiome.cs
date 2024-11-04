@@ -4,6 +4,7 @@ using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -20,23 +21,23 @@ namespace Beast.Radar.Terrain
         public bool IsReady { get; private set; }
 
         private readonly ITerrainBakedFbm _bakedTerrain;
+        private readonly IWorldManager _worldManager;
         private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
         private readonly GraphicConfig _graphicConfig;
-        private readonly GameModel _game;
         private TextureWithBlocks<EBiomeName> _biomeWithBlocks;
         private AveragePixelCountTexture<EBiomeName> _biomePacked;
         private TerrainData _bakedForTerrain;
 
         public TerrainBakedBiome(
-            ITerrainBakedFbm bakedTerrain, 
+            ITerrainBakedFbm bakedTerrain,
+            IWorldManager worldManager,
             IRender<TerrainBiomeRenderTask> biomeRender,
-            GraphicConfig graphicConfig,
-            GameModel game)
+            GraphicConfig graphicConfig)
         {
             _bakedTerrain = bakedTerrain;
+            _worldManager = worldManager;
             _biomeRender = biomeRender;
             _graphicConfig = graphicConfig;
-            _game = game;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -47,7 +48,9 @@ namespace Beast.Radar.Terrain
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
-            if (_bakedForTerrain.IsSame(_game.terrain))
+            TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
+            
+            if (_bakedForTerrain.IsSame(terrain))
             {
                 IsReady = true;
                 
@@ -59,24 +62,24 @@ namespace Beast.Radar.Terrain
             Application.targetFrameRate = 60;
             
             Profiler.BeginSample("CreateTempRenderTexture");
-            RenderTextureData renderTextureData = _graphicConfig.terrain.biomeRenderTexture.WithSize(_game.terrain.terrainSize);
+            RenderTextureData renderTextureData = _graphicConfig.terrain.biomeRenderTexture.WithSize(terrain.terrainSize);
             RenderTexture biomeRenderTexture = BGraphic.CreateTempRenderTexture(this, renderTextureData);
             Profiler.EndSample();
             
             Profiler.BeginSample("_biomeRender.Render");
             _biomeRender.Render(new TerrainBiomeRenderTask
             {
-                screenSize = _game.terrain.terrainSize,
+                screenSize = terrain.terrainSize,
                 useDynamicConstraints = false,
-                renderPosition = _game.terrain.terrainSize * 0.5f,
+                renderPosition = terrain.terrainSize * 0.5f,
                 bakedTerrain = _bakedTerrain.Texture,
-                viewDistance = _game.terrain.terrainSize,
+                viewDistance = terrain.terrainSize,
                 outputBiomeTexture = biomeRenderTexture
             });
             Profiler.EndSample();
 
             Profiler.BeginSample("CreateTexture2D");
-            Texture2DParameters textureParams = _graphicConfig.terrain.biomeTexture2D.WithSize(_game.terrain.terrainSize);
+            Texture2DParameters textureParams = _graphicConfig.terrain.biomeTexture2D.WithSize(terrain.terrainSize);
             Texture2D biomeTexture2D = BGraphic.CreateTexture2D(this, textureParams);
             BGraphic.BlitRenderTextureTo2D(biomeRenderTexture, biomeTexture2D);
             Profiler.EndSample();
@@ -86,7 +89,7 @@ namespace Beast.Radar.Terrain
             Profiler.EndSample();
 
             Profiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
-            int cellSize = BMath.Clamp(_game.terrain.terrainSize / 256, 8, 16);
+            int cellSize = BMath.Clamp(terrain.terrainSize / 256, 8, 16);
             _biomePacked = AveragePixelCountTexture<EBiomeName>.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
             Profiler.EndSample();
             
@@ -95,7 +98,7 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(biomeTexture2D);
             Profiler.EndSample();
 
-            _bakedForTerrain = _game.terrain;
+            _bakedForTerrain = terrain;
 
             IsReady = true;
             

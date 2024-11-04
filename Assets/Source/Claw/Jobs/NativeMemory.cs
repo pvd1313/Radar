@@ -16,6 +16,12 @@ namespace Beast.Claw.Jobs
         {
             return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeList<T> CreatePermList<T>(int capacity) where T : unmanaged
+        {
+            return new NativeList<T>(capacity, Allocator.Persistent);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeReference<T> CreatePersistentReference<T>(T withValue) where T : unmanaged

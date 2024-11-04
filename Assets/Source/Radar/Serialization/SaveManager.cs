@@ -22,7 +22,7 @@ namespace Beast.Radar.Serialization
         private readonly IFileManager _fileManager;
 
         public SaveManager(
-            GameModel gameModel, 
+            GameModel gameModel,
             IGameCycle gameCycle,
             IFileManager fileManager)
         {

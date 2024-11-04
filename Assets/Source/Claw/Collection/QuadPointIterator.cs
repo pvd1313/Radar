@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace Beast.Radar.City
+namespace Beast.Claw.Collection
 {
     /// <summary>
     /// Returns 8 delta positions for quad points and middle centers. Counter - clockwise order.

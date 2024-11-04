@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace Beast.Radar.City
+namespace Beast.Claw.Collection
 {
     /// <summary>
     /// Returns delta positions with given radius for a quad perimeter. Counter - clockwise order.

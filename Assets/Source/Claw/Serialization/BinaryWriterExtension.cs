@@ -1,4 +1,7 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using System.Runtime.Serialization;
+using Beast.Claw.Collection;
+using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
 {
@@ -14,6 +17,36 @@ namespace Beast.Claw.Serialization
             where TData : struct, ISerializable
         {
             data.Serialize(stream);
+        }
+
+        public static void WriteArray<TData>(this IBinaryWriter stream, TData[] array)
+            where TData : ISerializable
+        {
+            if (array.IsNullOrEmpty())
+            {
+                stream.WriteInt32(0);
+                return;
+            }
+
+            stream.WriteInt32(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i].Serialize(stream);
+            }
+        }
+
+        public static void WriteGuid(this IBinaryWriter stream, Guid guid)
+        {
+            Span<byte> span = stackalloc byte[16];
+            if (!guid.TryWriteBytes(span))
+            {
+                throw new SerializationException("Failed guid.TryWriteBytes(span)");
+            }
+
+            for (int i = 0; i < 16; i++)
+            {
+                stream.WriteByte(span[i]);
+            }
         }
 
         public static void WriteQuaternion(this IBinaryWriter stream, quaternion quaternion)

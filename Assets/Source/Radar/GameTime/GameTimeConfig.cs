@@ -2,9 +2,9 @@
 using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.GameTime
 {
-    public class WorldTimeConfig : ScriptableConfig
+    public class GameTimeConfig : ScriptableConfig
     {
         public float secondMultiplier;
         [Range(0,1)] public float idleTimeScale;

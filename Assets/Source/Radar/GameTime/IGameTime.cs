@@ -1,9 +1,9 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.GameTime
 {
-    public interface IWorldTime
+    public interface IGameTime
     {
         event Action Changed;
         void SetPlayerStateMultiplier(bool onAction);

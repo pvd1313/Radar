@@ -8,13 +8,14 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.GameTime
 {
-    public class WorldTime : Controller, IWorldTime, IGameCycleListener
+    public class GameTimeController : Controller, IGameTime, IGameCycleListener
     {
         public event Action Changed;
         
         private readonly WorldTimeConfig _config;
+        private readonly GameTimeConfig _config;
         private readonly GameModel _gameModel;
 
         private float _playerStateMultiplier;
@@ -29,7 +30,7 @@ namespace Beast.Radar.World
             _gameModel = gameModel;
             _playerStateMultiplier = _config.idleTimeScale;
         }
-
+        
         public void Register(IGameCycleHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);

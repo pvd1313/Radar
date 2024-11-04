@@ -5,6 +5,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Core;
 using Beast.Radar.InputHandling;
+using Beast.Radar.NewGame;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;

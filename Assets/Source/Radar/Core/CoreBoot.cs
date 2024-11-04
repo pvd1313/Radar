@@ -3,6 +3,7 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -14,17 +15,20 @@ namespace Beast.Radar.Core
         private readonly ISaveManager _save;
         private readonly IntegratedSave _integratedSave;
         private readonly IGameCycle _gameCycle;
+        private readonly IWorldManager _worldManager;
 
         public CoreBoot(
             IWindowManager window, 
             ISaveManager save, 
             IntegratedSave integratedSave, 
-            IGameCycle gameCycle)
+            IGameCycle gameCycle, 
+            IWorldManager worldManager)
         {
             _window = window;
             _save = save;
             _integratedSave = integratedSave;
             _gameCycle = gameCycle;
+            _worldManager = worldManager;
         }
         
         public async UniTask Boot(IProgressTracker tracker)
@@ -51,8 +55,14 @@ namespace Beast.Radar.Core
             if (Application.isEditor)
             {
                 await tracker.Next("Loading integrated save");
+
+                Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
+                _integratedSave.worldData.guid = worldGuid;
+                _integratedSave.gameModel.world = worldGuid;
                 
-                await _save.LoadAsync(_integratedSave.model);
+                _worldManager.AddWorld(_integratedSave.worldData);
+                
+                await _save.LoadAsync(_integratedSave.gameModel);
             
                 await mainHUD.Open(default);
             

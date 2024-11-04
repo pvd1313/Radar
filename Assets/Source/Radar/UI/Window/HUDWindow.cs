@@ -1,7 +1,7 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Player;
-using Beast.Radar.World;
+using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
@@ -14,10 +14,13 @@ namespace Beast.Radar.UI
         private readonly UIConfig _config;
         private readonly IPlayerController _player;
         private readonly IWindowManager _windowManager;
-        private readonly IWorldTime _time;
+        private readonly IGameTime _gameTime;
+        private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
+        
+        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager, IGameTime gameTime)
         private IntToStringConverter _intToString;
 
         public HUDWindow(
@@ -26,14 +29,14 @@ namespace Beast.Radar.UI
             UIConfig config,
             IWindowManager windowManager,
             IPlayerController player,
-            IWorldTime time)
+            IGameTime gameTime)
         {
             _preferences = preferences;
             _library = library;
             _config = config;
             _windowManager = windowManager;
+            _gameTime = gameTime;
             _player = player;
-            _time = time;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -76,12 +79,12 @@ namespace Beast.Radar.UI
 
         private void _subscribe()
         {
-            _time.Changed += () =>
+            _gameTime.Changed += () =>
             {
                 string time = string.Concat(
-                    _intToString.ToString((int)_time.GetHours()),
+                    _intToString.ToString((int)_gameTime.GetHours()),
                     ":",
-                    _intToString.ToString((int)_time.GetMinutes()));
+                    _intToString.ToString((int)_gameTime.GetMinutes()));
                 _view.timeText.SetText(time);
             };
 

@@ -42,7 +42,7 @@ namespace Beast.Radar.Editor.Tile
             }
 
             List<TerrainTileData> tiles = _explorer.Window.SelectedAsset.data.tiles;
-            if (ListExtension.IsNullOrEmpty(tiles))
+            if (tiles.IsNullOrEmpty())
             {
                 return;
             }

@@ -41,8 +41,8 @@ namespace Beast.Radar.UI
         
         public UniTask Open(Empty data)
         {
-            _view.fpsToggle.SetValueWithoutNotify(_debugController.GetElementState(DebugElementID.FpsCounterID));
-            _view.logToggle.SetValueWithoutNotify(_debugController.GetElementState(DebugElementID.LogConsoleID));
+            _view.fpsToggle.SetValueWithoutNotify(_debugController.GetElementState(EDebugFeature.FpsCounterID));
+            _view.logToggle.SetValueWithoutNotify(_debugController.GetElementState(EDebugFeature.LogConsoleID));
 
             _selectablesController.Enable();
             _view.body.SetActive(true);
@@ -115,8 +115,8 @@ namespace Beast.Radar.UI
                 };
             }
 
-            _view.fpsToggle.Changed += on => _debugController.SetElementState(DebugElementID.FpsCounterID, on);
-            _view.logToggle.Changed += on => _debugController.SetElementState(DebugElementID.LogConsoleID, on);
+            _view.fpsToggle.Changed += on => _debugController.SetElementState(EDebugFeature.FpsCounterID, on);
+            _view.logToggle.Changed += on => _debugController.SetElementState(EDebugFeature.LogConsoleID, on);
         }
     }
 }
