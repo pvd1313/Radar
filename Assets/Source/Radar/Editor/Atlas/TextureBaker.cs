@@ -152,7 +152,7 @@ namespace Beast.Radar.Editor.Atlas
             _fillWithColor(resultTexture, Color.black);
 
             TerrainTileData[] tiles = atlas.tiles.Where(t => t.isBiomeTile).ToArray();
-            FloatBounds2D[] bounds = tiles.Select(t => t.SpawnRangeAsBounds()).ToArray();
+            FloatBounds2[] bounds = tiles.Select(t => t.SpawnRangeAsBounds()).ToArray();
             int[] indexes = tiles.Select(t => t.index).ToArray();
 
             const int EMPTY_SPACE_TEXEL = 32;

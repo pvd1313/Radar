@@ -209,7 +209,7 @@ namespace Beast.Radar.Editor.Tile
         {
             ui.RecordMultiple(_thisAndAtlas, "Atlas move item max left");
 
-            if (_atlas.data.tiles.TryMoveEditorOnly(_selectedIndex, 0))
+            if (_atlas.data.tiles.TryMove(_selectedIndex, 0))
             {
                 _selectedIndex = 0;
             }
@@ -219,7 +219,7 @@ namespace Beast.Radar.Editor.Tile
         {
             ui.RecordMultiple(_thisAndAtlas, "Atlas move item max right");
 
-            if (_atlas.data.tiles.TryMoveEditorOnly(_selectedIndex, _atlas.data.tiles.Count - 1))
+            if (_atlas.data.tiles.TryMove(_selectedIndex, _atlas.data.tiles.Count - 1))
             {
                 _selectedIndex = _atlas.data.tiles.Count - 1;
             }

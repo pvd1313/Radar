@@ -1,13 +1,13 @@
 ﻿using System;
 using Unity.Collections;
 
-namespace Beast.Radar.City
+namespace Beast.Claw.Collection
 {
     /// <summary>
     /// This array remembers only last N elements.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public struct ShiftArray<TValue> : IDisposable where TValue : struct
+    public struct NativeShiftArray<TValue> : IDisposable where TValue : struct
     {
         public int Count => _count;
 
@@ -15,7 +15,7 @@ namespace Beast.Radar.City
         private NativeArray<TValue> _array;
         private int _first;
         
-        public ShiftArray(int capacity, Allocator allocator)
+        public NativeShiftArray(int capacity, Allocator allocator)
         {
             _array = new NativeArray<TValue>(capacity, allocator);
             _count = 0;

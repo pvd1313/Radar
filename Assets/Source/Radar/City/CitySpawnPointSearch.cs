@@ -1,13 +1,15 @@
 ﻿using System;
+using Beast.Claw.Collection;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     public struct CitySpawnPointSearch
     {
+        private readonly int _radius;
+        
         private QuadPerimeterIterator _perimeterIterator;
         private QuadPointIterator _pointIterator;
-        private int _radius;
         
         public CitySpawnPointSearch(int radius)
         {
@@ -17,8 +19,17 @@ namespace Beast.Radar.City
             }
 
             _radius = radius;
-            _perimeterIterator = new QuadPerimeterIterator(_radius);
-            _pointIterator = new QuadPointIterator(_radius);
+
+            if (_radius < 5)
+            {
+                _perimeterIterator = new QuadPerimeterIterator(_radius);
+                _pointIterator = default;
+            }
+            else
+            {
+                _perimeterIterator = default;
+                _pointIterator = new QuadPointIterator(_radius);
+            }
         }
 
         public bool GotNext(out int2 delta)
@@ -28,7 +39,7 @@ namespace Beast.Radar.City
                 return _perimeterIterator.GotNext(out delta);
             }
 
-            return _perimeterIterator.GotNext(out delta);
+            return _pointIterator.GotNext(out delta);
         }
     }
 }

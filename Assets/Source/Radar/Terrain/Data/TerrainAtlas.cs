@@ -12,7 +12,7 @@ namespace Beast.Radar.Terrain
     public class TerrainAtlas : IValidatable
     {
         private static Dictionary<int, string> _indexToName;
-        private static Dictionary<int, FloatBounds2D> _indexToBounds;
+        private static Dictionary<int, FloatBounds2> _indexToBounds;
         
         public Texture2D mainTexture;
         public Texture2D colorTexture;
@@ -54,7 +54,7 @@ namespace Beast.Radar.Terrain
             if (tiles != null)
             {
                 _indexToName ??= new Dictionary<int, string>();
-                _indexToBounds ??= new Dictionary<int, FloatBounds2D>();
+                _indexToBounds ??= new Dictionary<int, FloatBounds2>();
                 _indexToName.Clear();
                 _indexToBounds.Clear();
                 
@@ -87,9 +87,9 @@ namespace Beast.Radar.Terrain
                         continue;
                     }
 
-                    FloatBounds2D bounds = tile.SpawnRangeAsBounds().Shrink(BMath.EPSILON);
+                    FloatBounds2 bounds = tile.SpawnRangeAsBounds().Shrink(BMath.EPSILON);
                     
-                    foreach ((int tileIndex, FloatBounds2D tileBounds) in _indexToBounds)
+                    foreach ((int tileIndex, FloatBounds2 tileBounds) in _indexToBounds)
                     {
                         if (!tileBounds.Intersects(bounds))
                         {
