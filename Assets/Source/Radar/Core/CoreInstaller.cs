@@ -7,7 +7,6 @@ using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
-using Beast.Radar.Test;
 using Beast.Radar.UI;
 using Beast.Radar.World;
 using Zenject;
@@ -60,8 +59,6 @@ namespace Beast.Radar.Core
             yield return typeof(PlayerController);
             yield return typeof(PlayerViewController);
             yield return typeof(WorldTimeStateController);
-
-          //  yield return typeof(TestClass);
         }
 
         protected override void BindCustom(DiContainer diContainer)

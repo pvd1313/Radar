@@ -126,7 +126,9 @@ namespace Beast.Radar.Player
             if (_pathfinding == null && _backedBiome.Terrain8kmCell.texture.Length > 0)
             {
                 int size = _backedBiome.Terrain8kmCell.cellCountX;
-                _pathfinding = new Pathfinding(size);
+                _pathfinding = new Pathfinding(size,
+                    _config.GetTileSpeedModifiers(),
+                    _backedBiome.Terrain8kmCell.texture);
                 BDebug.LogInfo(this, $"Create pathfinding {size}");
             }
 
@@ -221,7 +223,6 @@ namespace Beast.Radar.Player
             _path = _pathfinding.FindPathArray(
                 _worldToBlock(Position),
                 _worldToBlock(Target),
-                _backedBiome.Terrain8kmCell.texture,
                 out long time);
             
             BDebug.LogInfo(this, $"Find path {_path.Length} {time}ms");
