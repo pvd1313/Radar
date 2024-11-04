@@ -89,9 +89,7 @@ namespace Beast.Radar.Player
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
             Speed = _config.moveSpeed;
-
-            UniTask.WaitUntil(() => _backedBiome.Terrain8kmCell.texture.Length > 0);
-
+            
             return UniTask.CompletedTask;
         }
 
