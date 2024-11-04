@@ -8,10 +8,10 @@ namespace Beast.Radar.Terrain
     [BurstCompile]
     public struct CreateAveragePixelCountTextureJob : IJobParallelFor
     {
-        [ReadOnly] public TextureWithBlocks sourceTexture;
+        [ReadOnly] public TextureWithBlocks<EBiomeName> sourceTexture;
 
         [WriteOnly, NativeDisableParallelForRestriction] 
-        public NativeArray<byte> outputTexture;
+        public NativeArray<EBiomeName> outputTexture;
 
         public int outputCellSize;
         
@@ -47,7 +47,7 @@ namespace Beast.Radar.Terrain
 
                     int innerOffset = sourceTexture.GetInnerOffset(cellXYAbs + pixelXY);
                     
-                    byte pixelColor = sourceTexture.texture[blockOffset + innerOffset];
+                    byte pixelColor = (byte) sourceTexture.texture[blockOffset + innerOffset];
                     
                     byte count = pixelCount.GetByte(pixelColor);
 
@@ -81,7 +81,7 @@ namespace Beast.Radar.Terrain
                 int outputCellY = blockXY.y * cellsPerBlock + cellXY.y;
                 int outputOffset = outputCellY * (sourceTexture.blockCountX * cellsPerBlock) + outputCellX;
                 
-                outputTexture[outputOffset] = (byte)maxColorIndex;
+                outputTexture[outputOffset] = (EBiomeName) maxColorIndex;
             }
         }
     }

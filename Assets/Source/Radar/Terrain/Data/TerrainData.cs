@@ -2,7 +2,6 @@
 using Beast.Claw;
 using Beast.Claw.Mathematics;
 using Beast.Claw.Serialization;
-using Unity.Mathematics;
 
 namespace Beast.Radar.Terrain
 {
@@ -10,7 +9,7 @@ namespace Beast.Radar.Terrain
     public struct TerrainData : ISerializable, IValidatable
     {
         public int seed;
-        public int2 terrainSize;
+        public int terrainSize;
         public float biomeSize01;
         public float water01;
         public float forest01;
@@ -18,7 +17,7 @@ namespace Beast.Radar.Terrain
         public void Serialize(IBinaryWriter stream)
         {
             stream.WriteInt32(seed);
-            stream.WriteInt2(terrainSize);
+            stream.WriteInt32(terrainSize);
             stream.WriteFloat(biomeSize01);
             stream.WriteFloat(water01);
             stream.WriteFloat(forest01);
@@ -27,7 +26,7 @@ namespace Beast.Radar.Terrain
         public void Deserialize(IBinaryReader stream)
         {
             seed = stream.ReadInt32();
-            terrainSize = stream.ReadInt2();
+            terrainSize = stream.ReadInt32();
             biomeSize01 = stream.ReadFloat();
             water01 = stream.ReadFloat();
             forest01 = stream.ReadFloat();
@@ -36,8 +35,7 @@ namespace Beast.Radar.Terrain
         public bool IsSame(TerrainData other)
         {
             return seed == other.seed &&
-                   terrainSize.x == other.terrainSize.x &&
-                   terrainSize.y == other.terrainSize.y &&
+                   terrainSize == other.terrainSize &&
                    BMath.Approximately(biomeSize01, other.biomeSize01) &&
                    BMath.Approximately(water01, other.water01) &&
                    BMath.Approximately(forest01, other.forest01);
@@ -45,14 +43,14 @@ namespace Beast.Radar.Terrain
         
         public string Validate()
         {
-            if (terrainSize.x <= 0 || terrainSize.y <= 0 || terrainSize.y > 4096 || terrainSize.x > 4096)
+            if (terrainSize <= 0 || terrainSize > 4096)
             {
-                return "Invalid size: " + terrainSize;
+                return "Invalid terrain size: " + terrainSize;
             }
 
-            if (!BMath.IsPowerOf2(terrainSize.x) || !BMath.IsPowerOf2(terrainSize.y))
+            if (!BMath.IsPowerOf2(terrainSize))
             {
-                return "NPOT size: " + terrainSize;
+                return "NPOT terrain size: " + terrainSize;
             }
 
             if (biomeSize01 < 0 || biomeSize01 > 1)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.Cinematic;
+using Beast.Radar.City;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
@@ -51,6 +52,7 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainPreviewRender);
             yield return typeof(TerrainBakedBiome);
             yield return typeof(TerrainBiomeTest);
+            yield return typeof(CitySpawner);
             
             //Player
             yield return typeof(PlayerPreferencesController);

@@ -16,14 +16,13 @@ namespace Beast.Radar.Terrain
     /// <summary>
     /// This texture's array is packed into NxN blocks to improve CPU reading speed.
     /// </summary>
-    public struct TextureWithBlocks
+    public struct TextureWithBlocks<TValue> where TValue : unmanaged
     {
-        public NativeArray<byte> texture;
-        public bool isCreated;
+        public NativeArray<TValue> texture;
         public int blockSize;
         public int blockCountX;
         
-        public static TextureWithBlocks FromBiomeTexture(Texture2D biomeTexture, int blockSize)
+        public static TextureWithBlocks<EBiomeName> FromBiomeTexture(Texture2D biomeTexture, int blockSize)
         {
             biomeTexture.ValidateNotNullThrowException(nameof(biomeTexture));
             
@@ -41,10 +40,10 @@ namespace Beast.Radar.Terrain
             int blockCountX = biomeTexture.width / blockSize;
             
             Profiler.BeginSample("AllocateNativeArray");
-            NativeArray<byte> textureWithBlocks = NativeMemory.CreatePermArray<byte>(biomeTexture.width * biomeTexture.width);
+            NativeArray<EBiomeName> textureWithBlocks = NativeMemory.CreatePermArray<EBiomeName>(biomeTexture.width * biomeTexture.width);
             Profiler.EndSample();
             
-            CreateTextureBlocksJob job = new()
+            CreateTextureBlocksJob<EBiomeName, BiomeTextureConverter> job = new()
             {
                 inputTexture = biomeTexture.GetRawTextureData<short>(),
                 inputTextureSize = biomeTexture.width,
@@ -56,20 +55,19 @@ namespace Beast.Radar.Terrain
             job.Schedule(blockCountX * blockCountX, 32).Complete();
             Profiler.EndSample();
 
-            return new TextureWithBlocks
+            return new TextureWithBlocks<EBiomeName>
             {
-                isCreated = true,
                 texture = job.outputTextureBlocks,
                 blockSize = blockSize,
                 blockCountX = blockCountX
             };
         }
 
-        public byte GetPixelClamped(int2 worldPosition)
+        public TValue GetPixelClamped(int2 worldPosition)
         {
-            if (Build.IS_DEVELOPMENT && !isCreated)
+            if (Build.IS_DEVELOPMENT && !texture.IsCreated)
             {
-                throw new ObjectDisposedException(nameof(TextureWithBlocks));
+                throw new ObjectDisposedException("TextureWithBlocks");
             }
             
             worldPosition.x = BMath.Clamp(worldPosition.x, 0, blockSize * blockCountX - 1);
@@ -98,13 +96,12 @@ namespace Beast.Radar.Terrain
 
         public void Dispose()
         {
-            if (!isCreated)
+            if (!texture.IsCreated)
             {
                 return;
             }
             
             texture.Dispose();
-            isCreated = false;
         }
     }
 }

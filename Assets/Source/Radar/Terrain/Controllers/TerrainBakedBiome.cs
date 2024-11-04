@@ -14,8 +14,8 @@ namespace Beast.Radar.Terrain
     {
         private const int MAP_1KM_BLOCK_SIZE = 128;
 
-        public TextureWithBlocks Terrain1kmCell => _biomeWithBlocks;
-        public AveragePixelCountTexture Terrain8kmCell => _biomePacked;
+        public TextureWithBlocks<EBiomeName> Terrain1kmCell => _biomeWithBlocks;
+        public AveragePixelCountTexture<EBiomeName> Terrain8kmCell => _biomePacked;
         
         public bool IsReady { get; private set; }
 
@@ -23,8 +23,8 @@ namespace Beast.Radar.Terrain
         private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
         private readonly GraphicConfig _graphicConfig;
         private readonly GameModel _game;
-        private TextureWithBlocks _biomeWithBlocks;
-        private AveragePixelCountTexture _biomePacked;
+        private TextureWithBlocks<EBiomeName> _biomeWithBlocks;
+        private AveragePixelCountTexture<EBiomeName> _biomePacked;
         private TerrainData _bakedForTerrain;
 
         public TerrainBakedBiome(
@@ -68,9 +68,9 @@ namespace Beast.Radar.Terrain
             {
                 screenSize = _game.terrain.terrainSize,
                 useDynamicConstraints = false,
-                renderPosition = _game.terrain.terrainSize.Multiply(0.5f),
+                renderPosition = _game.terrain.terrainSize * 0.5f,
                 bakedTerrain = _bakedTerrain.Texture,
-                viewDistance = _game.terrain.terrainSize.y,
+                viewDistance = _game.terrain.terrainSize,
                 outputBiomeTexture = biomeRenderTexture
             });
             Profiler.EndSample();
@@ -82,18 +82,20 @@ namespace Beast.Radar.Terrain
             Profiler.EndSample();
 
             Profiler.BeginSample("TextureWithBlocks.FromBiomeTexture");
-            _biomeWithBlocks = TextureWithBlocks.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
+            _biomeWithBlocks = TextureWithBlocks<EBiomeName>.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
             Profiler.EndSample();
 
             Profiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
-            int cellSize = BMath.Clamp(_game.terrain.terrainSize.x / 256, 8, 16);
-            _biomePacked = AveragePixelCountTexture.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
+            int cellSize = BMath.Clamp(_game.terrain.terrainSize / 256, 8, 16);
+            _biomePacked = AveragePixelCountTexture<EBiomeName>.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
             Profiler.EndSample();
             
             Profiler.BeginSample("Dispose Textures");
             BGraphic.Dispose(biomeRenderTexture);
             BGraphic.Dispose(biomeTexture2D);
             Profiler.EndSample();
+
+            _bakedForTerrain = _game.terrain;
 
             IsReady = true;
             

@@ -87,6 +87,12 @@ namespace Beast.Claw.Mathematics
         {
             return math.max(x, y);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Max(uint x, uint y)
+        {
+            return math.max(x, y);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Max(int x, int y)
@@ -124,6 +130,12 @@ namespace Beast.Claw.Mathematics
         {
             return math.distance(a,b);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DistanceSq(float2 a,float2 b)
+        {
+            return math.distancesq(a,b);
+        }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Magnitude(this float2 a)
@@ -145,6 +157,12 @@ namespace Beast.Claw.Mathematics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(float min, float max, float t)
+        {
+            return math.lerp(min, max, t);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 Lerp(float2 min, float2 max, float t)
         {
             return math.lerp(min, max, t);
         }
@@ -263,6 +281,12 @@ namespace Beast.Claw.Mathematics
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Clamp(float2 value, float min, float max)
+        {
+            return math.clamp(value, min, max);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 Clamp(int2 value, int min, int max)
         {
             return math.clamp(value, min, max);
         }
