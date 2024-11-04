@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Beast.Claw.Collection;
+using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
@@ -19,10 +20,12 @@ namespace Beast.Claw.Serialization
             data.Serialize(stream);
         }
 
-        public static void WriteArray<TData>(this IBinaryWriter stream, TData[] array)
+        public static void WriteArrayAndLength<TData>(this IBinaryWriter stream, TData[] array)
             where TData : ISerializable
         {
-            if (array.IsNullOrEmpty())
+            array.ValidateNotNullThrowException(nameof(array));
+            
+            if (array.Length == 0)
             {
                 stream.WriteInt32(0);
                 return;
@@ -33,6 +36,24 @@ namespace Beast.Claw.Serialization
             {
                 array[i].Serialize(stream);
             }
+        }
+
+        public static void WriteNativeBytesAndLength(this IBinaryWriter stream, NativeArray<byte> bytes)
+        {
+            if (!bytes.IsCreated)
+            {
+                throw new ArgumentException("bytes is not created");
+            }
+
+            if (bytes.Length == 0)
+            {
+                stream.WriteInt32(bytes.Length);
+                return;
+            }
+            
+            stream.WriteInt32(bytes.Length);
+            
+            stream.WriteBytes(bytes.AsSpan());
         }
 
         public static void WriteGuid(this IBinaryWriter stream, Guid guid)

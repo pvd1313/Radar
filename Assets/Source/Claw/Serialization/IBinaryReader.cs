@@ -1,6 +1,8 @@
-﻿namespace Beast.Claw.Serialization
+﻿using System;
+
+namespace Beast.Claw.Serialization
 {
-    public interface IBinaryReader
+    public interface IBinaryReader : IDisposable
     {
         float ReadFloat();
         long ReadInt64();
@@ -14,5 +16,6 @@
         byte ReadByte();
         int ReadInt32();
         bool ReadBool();
+        int ReadBytes(Span<byte> buffer);
     }
 }

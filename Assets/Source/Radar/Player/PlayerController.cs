@@ -124,15 +124,15 @@ namespace Beast.Radar.Player
                 BDebug.Track(this, "8km index", _worldToBlock(mouseWorld));
             }
 
-            if (_pathfinding == null && _backedBiome.Terrain8kmCell.texture.Length > 0)
-            {
-                int size = _backedBiome.Terrain8kmCell.cellCountX;
-                _pathfinding = new Pathfinding(size,
-                    _config.GetTileSpeedModifiers(),
-                    _backedBiome.Terrain8kmCell.texture);
-             
-                //BDebug.LogInfo(this, $"Create pathfinding {size}");
-            }
+            // if (_pathfinding == null && _backedBiome.Terrain8kmCell.texture.Length > 0)
+            // {
+            //     int size = _backedBiome.Terrain8kmCell.cellCountX;
+            //     _pathfinding = new Pathfinding(size,
+            //         _config.GetTileSpeedModifiers(),
+            //         _backedBiome.Terrain8kmCell.texture);
+            //  
+            //     //BDebug.LogInfo(this, $"Create pathfinding {size}");
+            // }
 
             _followClick();
 
@@ -257,7 +257,7 @@ namespace Beast.Radar.Player
 
         private void _dispose(BlockingContext obj)
         {
-            _pathfinding.Dispose();    
+            _pathfinding?.Dispose();    
         }
         
         public Color GizmosColor { get; } = Color.magenta;

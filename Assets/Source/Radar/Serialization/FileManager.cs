@@ -40,6 +40,13 @@ namespace Beast.Radar.Serialization
             };
         }
 
+        public void DeleteFolder(string folderName)
+        {
+            string folderPath = Path.Combine(Application.persistentDataPath, folderName);
+            
+            Directory.Delete(folderPath, true);
+        }
+
         private static string _getOrCreateFilePath(string folderName, string fileName)
         {
             string folderPath = Path.Combine(Application.persistentDataPath, folderName);

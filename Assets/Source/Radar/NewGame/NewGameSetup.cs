@@ -28,7 +28,7 @@ namespace Beast.Radar.NewGame
             
             WorldData world = new ()
             {
-                guid = new Guid(),
+                guid = Guid.NewGuid(),
                 terrain = terrain
             };
             

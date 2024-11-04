@@ -1,6 +1,8 @@
-﻿namespace Beast.Claw.Serialization
+﻿using System;
+
+namespace Beast.Claw.Serialization
 {
-    public interface IBinaryWriter
+    public interface IBinaryWriter : IDisposable
     {
         void WriteBool(bool x);
         void WriteFloat(float x);
@@ -14,5 +16,6 @@
         void WriteInt16(short x);
         void WriteInt32(int x);
         void WriteInt64(long x);
+        void WriteBytes(Span<byte> buffer);
     }
 }

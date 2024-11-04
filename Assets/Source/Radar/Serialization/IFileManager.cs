@@ -7,5 +7,7 @@
         StreamData OpenToRead(string folderName, string fileName);
         
         StreamData OpenToWrite(string folderName, string fileName);
+
+        void DeleteFolder(string folderName);
     }
 }

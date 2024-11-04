@@ -88,7 +88,7 @@ namespace Beast.Radar.City
 
         private void _render(BlockingContext context)
         {
-            if (!_cities.IsCreated)
+            if (!_cities.IsCreated || !Application.isEditor)
             {
                 return;
             }

@@ -10,9 +10,6 @@ namespace Beast.Radar.Player
 {
     public class PlayerPreferencesController : Controller, IGameCycleListener
     {
-        private const string FOLDER_NAME = "preferences";
-        private const string FILE_NAME = "player";
-
         private readonly IFileManager _fileManager;
         private readonly PlayerPreferences _preferences;
 
@@ -30,13 +27,13 @@ namespace Beast.Radar.Player
 
         private UniTask _preferencesLoad(ConcurrentContext context)
         {
-            bool fileExists = _fileManager.Exists(FOLDER_NAME, FILE_NAME);
+            bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
             if (!fileExists)
             {
                 return UniTask.CompletedTask;
             }
 
-            using StreamData stream = _fileManager.OpenToRead(FOLDER_NAME, FILE_NAME);
+            using StreamData stream = _fileManager.OpenToRead(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
 
             try
             {
@@ -54,7 +51,7 @@ namespace Beast.Radar.Player
         
         private void _preferencesSave(BlockingContext context)
         {
-            using StreamData stream = _fileManager.OpenToWrite(FOLDER_NAME, FILE_NAME);
+            using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
 
             try
             {

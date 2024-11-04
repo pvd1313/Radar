@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
@@ -27,7 +29,7 @@ namespace Beast.Claw.Serialization
             data.Deserialize(stream);
         }
 
-        public static TData[] ReadArray<TData>(this IBinaryReader stream) 
+        public static TData[] ReadArrayAndLength<TData>(this IBinaryReader stream) 
             where TData : ISerializable, new()
         {
             int itemCount = stream.ReadInt32();
@@ -48,6 +50,27 @@ namespace Beast.Claw.Serialization
             }
 
             return array;
+        }
+
+        public static NativeArray<byte> ReadNativeBytesAndLength(this IBinaryReader stream, Allocator allocator)
+        {
+            int byteCount = stream.ReadInt32();
+            if (byteCount == 0)
+            {
+                return new NativeArray<byte>(0, allocator);
+            }
+
+            NativeArray<byte> buffer = new (byteCount, allocator);
+            
+            int readCount = stream.ReadBytes(buffer.AsSpan());
+            
+            if (readCount != byteCount)
+            {
+                string message = $"Read byte count ({readCount}) mismatches expected byte count ({byteCount})";
+                throw new SerializationException(message);
+            }
+
+            return buffer;
         }
 
         public static quaternion ReadQuaternion(this IBinaryReader stream)

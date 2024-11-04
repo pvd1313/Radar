@@ -57,7 +57,6 @@ namespace Beast.Radar.Core
             yield return typeof(CitySpawner);
             
             // Player
-       
             yield return typeof(PlayerPreferencesController);
             yield return typeof(GameTimeController);
             yield return typeof(PlayerController);
