@@ -13,3 +13,20 @@ MonoBehaviour:
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
   moveSpeed: 30
+  tileSpeedModifiers:
+  - biome: 0
+    speedMultiplier: 0.7
+  - biome: 1
+    speedMultiplier: 0.7
+  - biome: 2
+    speedMultiplier: 0.7
+  - biome: 6
+    speedMultiplier: 0.7
+  - biome: 3
+    speedMultiplier: 0.7
+  - biome: 4
+    speedMultiplier: 0.1
+  - biome: 5
+    speedMultiplier: 0.7
+  - biome: 7
+    speedMultiplier: 0.5
