@@ -72,6 +72,7 @@ namespace Beast.Radar.Player
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenBlocking(ActionID.TICK, _tick);
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
+            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
         public void SwitchMovement()
@@ -250,8 +251,12 @@ namespace Beast.Radar.Player
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
         }
 
+        private void _dispose(BlockingContext obj)
+        {
+            _pathfinding.Dispose();    
+        }
+        
         public Color GizmosColor { get; } = Color.magenta;
-
         public void Draw(GizmosHandle handle)
         {
             if (!IsReady)
