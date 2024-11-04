@@ -4,15 +4,17 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmos;
 using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
+
 using Random = Unity.Mathematics.Random;
+using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
@@ -20,7 +22,7 @@ namespace Beast.Radar.City
     {
         private readonly IGizmosManager _gizmosManager;
         private readonly ITerrainBackedBiome _biome;
-        private readonly GameModel _game;
+        private readonly IWorldManager _worldManager;
 
         private GizmosHandle _normalCityGizmo;
         private GizmosHandle _warningCityGizmo;
@@ -30,11 +32,11 @@ namespace Beast.Radar.City
         public CitySpawner(
             IGizmosManager gizmosManager, 
             ITerrainBackedBiome biome, 
-            GameModel game)
+            IWorldManager worldManager)
         {
             _gizmosManager = gizmosManager;
             _biome = biome;
-            _game = game;
+            _worldManager = worldManager;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -58,16 +60,18 @@ namespace Beast.Radar.City
         {
             _dispose(default);
 
-            float gridSize = _game.terrain.terrainSize / 8.0f;
-            int maxCityCount = BMath.CeilToInt(_game.terrain.terrainSize / gridSize);
+            TerrainData terrain = _worldManager.GetCurrentWorld().terrain; 
+
+            float gridSize = terrain.terrainSize / 8.0f;
+            int maxCityCount = BMath.CeilToInt(terrain.terrainSize / gridSize);
 
             CitySpawnJob job = new ()
             {
                 gridSize = gridSize,
                 collisionRadius = gridSize * 0.5f,
-                random = new Random(BMath.Max(1, (uint)_game.terrain.seed)),
+                random = new Random(BMath.Max(1, (uint)terrain.seed)),
                 maxCityCountX = maxCityCount,
-                mapBounds = new FloatBounds2(0, _game.terrain.terrainSize - 1),
+                mapBounds = new FloatBounds2(0, terrain.terrainSize - 1),
                 outputCities = NativeMemory.CreatePermList<CityInfo>(maxCityCount * maxCityCount),
                 terrain1km = _biome.Terrain1kmCell,
                 terrain8km = _biome.Terrain8kmCell
@@ -112,8 +116,6 @@ namespace Beast.Radar.City
                             
                             _warningCityGizmo.DrawScreenDot(pos);
                         }
-                        
-                        
                         break;
                 }
             }

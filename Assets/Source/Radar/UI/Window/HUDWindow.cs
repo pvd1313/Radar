@@ -1,6 +1,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.World;
+using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
@@ -10,17 +10,17 @@ namespace Beast.Radar.UI
     {
         private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
-        private readonly IWorldTime _worldTime;
+        private readonly IGameTime _gameTime;
         private readonly SelectablesController _selectablesController;
 
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
         
-        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager, IWorldTime worldTime)
+        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager, IGameTime gameTime)
         {
             _library = library;
             _windowManager = windowManager;
-            _worldTime = worldTime;
+            _gameTime = gameTime;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -64,7 +64,7 @@ namespace Beast.Radar.UI
         
         private void _tick(BlockingContext context)
         {
-            _view.timeText.SetText($"{(int)_worldTime.GetHours():D2}:{(int)_worldTime.GetMinutes():D2}");
+            _view.timeText.SetText($"{(int)_gameTime.GetHours():D2}:{(int)_gameTime.GetMinutes():D2}");
         }
     }
 }

@@ -1,19 +1,25 @@
-﻿using Beast.Claw.Serialization;
+﻿using System;
+using Beast.Claw.Serialization;
+using Beast.Radar.Terrain;
 
 namespace Beast.Radar.World
 {
-    public struct WorldData: ISerializable
+    [Serializable]
+    public struct WorldData : ISerializable
     {
-        public ulong minutes;
+        public Guid guid;
+        public TerrainData terrain;
         
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteUInt64(minutes);
+            stream.WriteGuid(guid);
+            stream.Write(terrain);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            minutes = stream.ReadUInt64();
+            guid = stream.ReadGuid();
+            stream.Read(ref terrain);
         }
     }
 }

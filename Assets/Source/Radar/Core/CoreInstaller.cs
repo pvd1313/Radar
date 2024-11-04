@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
+using Beast.Radar.GameTime;
 using Beast.Radar.InputHandling;
+using Beast.Radar.NewGame;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
@@ -27,6 +29,7 @@ namespace Beast.Radar.Core
             yield return typeof(SaveManager);
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
+            yield return typeof(WorldManager);
             
             // Input & Camera
             yield return typeof(InputSystem);
@@ -55,7 +58,7 @@ namespace Beast.Radar.Core
             
             // Player
             yield return typeof(PlayerState);
-            yield return typeof(WorldTime);
+            yield return typeof(GameTimeController);
             yield return typeof(PlayerMovement);
             yield return typeof(PlayerViewController);
         }

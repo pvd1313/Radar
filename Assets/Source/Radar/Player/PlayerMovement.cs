@@ -3,10 +3,10 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
+using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Serialization;
-using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
@@ -20,7 +20,7 @@ namespace Beast.Radar.Player
         public float Speed { get; private set; }
 
         private readonly IPlayerState _state;
-        private readonly IWorldTime _time;
+        private readonly IGameTime _time;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
         private readonly GameModel _gameModel;
@@ -36,7 +36,7 @@ namespace Beast.Radar.Player
 
         public PlayerMovement(
             IPlayerState state,
-            IWorldTime time,
+            IGameTime time,
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,

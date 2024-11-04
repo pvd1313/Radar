@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
@@ -46,11 +45,11 @@ namespace Beast.Radar.Debug
             return UniTask.CompletedTask;
         }
 
-        public void SetElementState(DebugElementID id, bool isActive)
+        public void SetElementState(EDebugFeature id, bool isActive)
         {
             switch (id)
             {
-                case DebugElementID.FpsCounterID:
+                case EDebugFeature.FpsCounter:
                     
                     _preferences.showFPSCounter = isActive;
                     
@@ -61,7 +60,7 @@ namespace Beast.Radar.Debug
                     
                     break;
                 
-                case DebugElementID.LogConsoleID:
+                case EDebugFeature.LogConsole:
                     
                     _preferences.showLogConsole = isActive;
                     
@@ -74,14 +73,14 @@ namespace Beast.Radar.Debug
             }
         }
         
-        public bool GetElementState(DebugElementID elementID)
+        public bool GetElementState(EDebugFeature feature)
         {
-            switch (elementID)
+            switch (feature)
             {
-                case DebugElementID.FpsCounterID:
+                case EDebugFeature.FpsCounter:
                     return _preferences.showFPSCounter;
                 
-                case DebugElementID.LogConsoleID:
+                case EDebugFeature.LogConsole:
                     return _preferences.showLogConsole;
             }
 

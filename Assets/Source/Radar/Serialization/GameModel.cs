@@ -3,32 +3,31 @@ using Beast.Claw.Serialization;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Terrain;
-using Beast.Radar.World;
 
 namespace Beast.Radar.Serialization
 {
     [Serializable]
     public class GameModel : ISerializable
     {
-        public TerrainData terrain;
+        public Guid world;
         public CameraState camera;
         public PlayerData player;
-        public WorldData world;
+        public ulong timeMinutes;
         
         public void Serialize(IBinaryWriter stream)
         {
-            stream.Write(terrain);
+            stream.WriteGuid(world);
             stream.Write(camera);
             stream.Write(player);
-            stream.Write(world);
+            stream.WriteUInt64(timeMinutes);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            stream.Read(ref terrain);
+            world = stream.ReadGuid();
             stream.Read(ref camera);
             stream.Read(ref player);
-            stream.Read(ref world);
+            timeMinutes = stream.ReadUInt64();
         }
     }
 }

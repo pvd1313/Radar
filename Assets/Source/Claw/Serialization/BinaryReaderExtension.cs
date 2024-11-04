@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
 {
@@ -26,6 +27,29 @@ namespace Beast.Claw.Serialization
             data.Deserialize(stream);
         }
 
+        public static TData[] ReadArray<TData>(this IBinaryReader stream) 
+            where TData : ISerializable, new()
+        {
+            int itemCount = stream.ReadInt32();
+            if (itemCount == 0)
+            {
+                return Array.Empty<TData>();
+            }
+
+            TData[] array = new TData[itemCount];
+
+            for (int i = 0; i < itemCount; i++)
+            {
+                TData data = new();
+                
+                data.Deserialize(stream);
+                
+                array[i] = data;
+            }
+
+            return array;
+        }
+
         public static quaternion ReadQuaternion(this IBinaryReader stream)
         {
             float x = stream.ReadFloat();
@@ -34,6 +58,17 @@ namespace Beast.Claw.Serialization
             float w = stream.ReadFloat();
 
             return new quaternion(x, y, z, w);
+        }
+
+        public static Guid ReadGuid(this IBinaryReader stream)
+        {
+            Span<byte> span = stackalloc byte[16];
+            for (int i = 0; i < 16; i++)
+            {
+                span[i] = stream.ReadByte();
+            }
+
+            return new Guid(span);
         }
         
         public static float2 ReadFloat2(this IBinaryReader stream)

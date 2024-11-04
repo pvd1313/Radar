@@ -12,15 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a66f73f00c3448e296dbebdc6f5bb6d3, type: 3}
   m_Name: IntegratedSave
   m_EditorClassIdentifier: 
-  model:
+  gameModel:
+    camera:
+      zoom01: 0.5
+      position:
+        x: 2048
+        y: 2018
+    timeMinutes: 0
+  worldData:
     terrain:
-      seed: 1
+      seed: 13
       terrainSize: 4096
       biomeSize01: 0.5
       water01: 0.5
       forest01: 0.5
-    camera:
-      zoom01: 0.5
-      position:
-        x: 1024
-        y: 1024
+  worldGuid: 01f8bfde-a8ab-4904-9804-3e5dbd9e3fe6

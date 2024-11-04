@@ -1,8 +1,8 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.GameTime
 {
-    public interface IWorldTime
+    public interface IGameTime
     {
         float GetHours();
         float GetTotalHours();

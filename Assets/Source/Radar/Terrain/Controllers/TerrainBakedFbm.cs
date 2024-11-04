@@ -3,6 +3,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
+using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -14,20 +15,20 @@ namespace Beast.Radar.Terrain
         public bool IsReady { get; private set; }
         public Texture Texture => _texture;
 
-        private readonly GameModel _game;
         private readonly ITerrainFbmRender _fbmRender;
         private readonly GraphicConfig _config;
+        private readonly IWorldManager _worldManager;
         private Texture2D _texture;
         private TerrainData _terrainData;
         
         public TerrainBakedFbm(
-            GameModel game, 
             ITerrainFbmRender fbmRender, 
-            GraphicConfig config)
+            GraphicConfig config,
+            IWorldManager worldManager)
         {
-            _game = game;
             _fbmRender = fbmRender;
             _config = config;
+            _worldManager = worldManager;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -38,7 +39,9 @@ namespace Beast.Radar.Terrain
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
-            if (_terrainData.IsSame(_game.terrain))
+            TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
+            
+            if (_terrainData.IsSame(terrain))
             {
                 IsReady = true;
                 return UniTask.CompletedTask;
@@ -46,7 +49,7 @@ namespace Beast.Radar.Terrain
             
             _dispose(default);
 
-            RenderTextureData tempData = _config.terrain.fbmRenderTexture.WithSize(_game.terrain.terrainSize);
+            RenderTextureData tempData = _config.terrain.fbmRenderTexture.WithSize(terrain.terrainSize);
             
             Profiler.BeginSample("CreateTempRenderTexture");
             RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, tempData);
@@ -55,13 +58,13 @@ namespace Beast.Radar.Terrain
             Profiler.BeginSample("fbmRender.Render");
             _fbmRender.Render(new TerrainFbmRenderTask
             {
-                terrain = _game.terrain,
+                terrain = terrain,
                 outputTexture = renderTexture,
                 quality01 = 1
             });
             Profiler.EndSample();
 
-            Texture2DParameters permData = _config.terrain.fbmTexture2D.WithSize(_game.terrain.terrainSize);
+            Texture2DParameters permData = _config.terrain.fbmTexture2D.WithSize(terrain.terrainSize);
             
             Profiler.BeginSample("CreateTexture2D");
             _texture = BGraphic.CreateTexture2D(this, permData);
@@ -73,7 +76,7 @@ namespace Beast.Radar.Terrain
             
             BGraphic.Dispose(renderTexture);
 
-            _terrainData = _game.terrain;
+            _terrainData = terrain;
 
             IsReady = true;
 

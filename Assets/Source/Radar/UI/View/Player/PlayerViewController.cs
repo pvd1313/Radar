@@ -2,8 +2,8 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
+using Beast.Radar.GameTime;
 using Beast.Radar.Player;
-using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
@@ -13,12 +13,12 @@ namespace Beast.Radar.UI
     {
         private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;
-        private readonly IWorldTime _time;
+        private readonly IGameTime _time;
         private readonly IPlayerMovement _player;
 
         private PlayerView _view;
 
-        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IWorldTime time, IPlayerMovement player)
+        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IGameTime time, IPlayerMovement player)
         {
             _library = library;
             _camera = camera;

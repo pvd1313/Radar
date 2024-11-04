@@ -7,17 +7,17 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Radar.World
+namespace Beast.Radar.GameTime
 {
-    public class WorldTime : Controller, IWorldTime, IGameCycleListener
+    public class GameTimeController : Controller, IGameTime, IGameCycleListener
     {
-        private readonly WorldTimeConfig _config;
+        private readonly GameTimeConfig _config;
         private readonly GameModel _gameModel;
 
         private ulong _minutes;
         private float _seconds;
 
-        public WorldTime(WorldTimeConfig config, GameModel gameModel)
+        public GameTimeController(GameTimeConfig config, GameModel gameModel)
         {
             _config = config;
             _gameModel = gameModel;
@@ -32,13 +32,13 @@ namespace Beast.Radar.World
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
-            _minutes = _gameModel.world.minutes;
+            _minutes = _gameModel.timeMinutes;
             return UniTask.CompletedTask;
         }
 
         private void _gameSave(BlockingContext context)
         {
-            _gameModel.world.minutes = _minutes;
+            _gameModel.timeMinutes = _minutes;
         }
 
         private void _tick(BlockingContext context)

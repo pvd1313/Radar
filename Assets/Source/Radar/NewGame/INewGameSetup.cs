@@ -1,6 +1,6 @@
 ﻿using Beast.Radar.Terrain;
 
-namespace Beast.Radar.Core
+namespace Beast.Radar.NewGame
 {
     public interface INewGameSetup
     {

@@ -10,7 +10,7 @@ namespace Beast.Claw.Serialization
         {
             _stream = new System.IO.BinaryWriter(stream);
         }
-
+        
         public void WriteFloat(float x)
         {
             _stream.Write(x);
