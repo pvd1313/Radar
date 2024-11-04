@@ -109,7 +109,7 @@ namespace Beast.Radar.Cinematic
             float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
             
             float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
-            float zoomValue = _inputSystem.GameInput.Scroll.Value * distanceFactor * _motion.zoomSpeed * Time.deltaTime;
+            float zoomValue = _inputSystem.GameInput.Scroll.Value * distanceFactor * _motion.zoomSpeed * 0.001f;
             _transform.AddZoom(-zoomValue);
             
             float2 worldPointAfterZoom = _transform.ScreenToWorld(screenPoint);

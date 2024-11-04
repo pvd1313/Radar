@@ -27,12 +27,18 @@ namespace Beast.Radar.Test
 
         public void Register(IGameCycleHandle handle)
         {
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.TICK, _tick);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
 
+        private UniTask _warmup(ConcurrentContext arg)
+        {
+            return UniTask.CompletedTask;
+        }
+
         private int2[] path;
-        private async void _tick(BlockingContext arg)
+        private  void _tick(BlockingContext arg)
         {
             if (_lenght > 0)
             {
@@ -52,7 +58,7 @@ namespace Beast.Radar.Test
                 {
                     var pathfinding = new Pathfinding(_square);
                  
-                    path = pathfinding.FindPathArray(int2.zero, new int2(15, 45), out long time);
+                   // path = pathfinding.FindPathArray(int2.zero, new int2(15, 45), _backedBiome.Terrain8kmCell.texture ,out long time);
                 }
                 
                 if (path != null && path.Length > 0)

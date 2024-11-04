@@ -61,7 +61,7 @@ namespace Beast.Radar.Core
             yield return typeof(PlayerViewController);
             yield return typeof(WorldTimeStateController);
 
-            yield return typeof(TestClass);
+          //  yield return typeof(TestClass);
         }
 
         protected override void BindCustom(DiContainer diContainer)

@@ -111,7 +111,10 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        public void DrawScreenDot(float2 center) => DrawScreenSquare(center, 6);
+        public void DrawScreenDot(float2 center)
+        {
+            DrawScreenSquare(center, 6);
+        }
 
         public void DrawScreenCircle(float2 center, float radius)
         {

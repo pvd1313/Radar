@@ -38,6 +38,16 @@ namespace Beast.Radar.Terrain
         {
             return BMath.FloorToInt(worldPosition.Div(cellSize)) * cellSize;
         }
+        
+        public int2 WorldPositionToCell(float2 worldPosition)
+        {
+            return BMath.FloorToInt(worldPosition / cellSize);
+        }
+        
+        public int2 CellToWorldPoint(int2 cell)
+        {
+            return BMath.FloorToInt(cell.Mul(cellSize));
+        }
 
         public static AveragePixelCountTexture<EBiomeName> FromTextureWithBlocks(TextureWithBlocks<EBiomeName> texture, int cellSize)
         {

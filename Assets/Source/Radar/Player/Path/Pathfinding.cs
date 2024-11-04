@@ -1,37 +1,34 @@
 ﻿using System.Diagnostics;
+using Beast.Claw.Debug;
+using Beast.Radar.Terrain;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Player.Path
 {
-    public class Pathfinding 
+    public class Pathfinding
     {
         private const int MOVE_STRAIGHT_COST = 10;
         private const int MOVE_DIAGONAL_COST = 14;
 
-        private int _size;
+        private readonly int _size;
 
         public Pathfinding(int size)
         {
             _size = size;
         }
-        
-        public NativeArray<int2> FindPathNative(int2 startPosition, int2 endPosition, out long elapsedMilliseconds)
-        {
-            return FindPath(startPosition, endPosition, true, out elapsedMilliseconds);
-        }
 
-        public int2[] FindPathArray(int2 startPosition, int2 endPosition, out long elapsedMilliseconds)
+        public int2[] FindPathArray(int2 startPosition, int2 endPosition, NativeArray<EBiomeName> texture, out long elapsedMilliseconds)
         {
-            NativeArray<int2> pathNativeArray = FindPath(startPosition, endPosition, true, out elapsedMilliseconds);
+            NativeArray<int2> pathNativeArray = FindPath(startPosition, endPosition, texture, out elapsedMilliseconds);
             int2[] result = new int2[pathNativeArray.Length];
-            pathNativeArray.CopyTo(result); 
+            pathNativeArray.CopyTo(result);
             pathNativeArray.Dispose();
             return result;
         }
 
-        private NativeArray<int2> FindPath(int2 startPosition, int2 endPosition, bool useNativeArray, out long elapsedMilliseconds)
+        private NativeArray<int2> FindPath(int2 startPosition, int2 endPosition, NativeArray<EBiomeName> texture, out long elapsedMilliseconds)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -43,7 +40,8 @@ namespace Beast.Radar.Player.Path
                 size = _size,
                 startPosition = startPosition,
                 endPosition = endPosition,
-                pathResultList = pathResultList
+                pathResultList = pathResultList,
+                texture = texture
             };
 
             JobHandle jobHandle = findPathJob.Schedule();
@@ -51,12 +49,13 @@ namespace Beast.Radar.Player.Path
 
             stopwatch.Stop();
             elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-            
+
             NativeArray<int2> pathNativeArray = new NativeArray<int2>(pathResultList.Length, Allocator.Temp);
             for (int i = 0; i < pathResultList.Length; i++)
             {
                 pathNativeArray[i] = pathResultList[i];
             }
+
             pathResultList.Dispose();
 
             return pathNativeArray;
@@ -69,48 +68,59 @@ namespace Beast.Radar.Player.Path
             public int2 startPosition;
             public int2 endPosition;
             public NativeList<int2> pathResultList;
+            public NativeArray<EBiomeName> texture;
 
             public void Execute()
             {
                 int2 gridSize = new int2(size, size);
-                NativeArray<PathNode> pathNodeArray = new(gridSize.x * gridSize.y, Allocator.Temp);
+                NativeList<PathNode> pathNodeList = new NativeList<PathNode>(Allocator.Temp);
+                NativeHashMap<int2, int> positionToIndexMap = new NativeHashMap<int2, int>(gridSize.x * gridSize.y, Allocator.Temp);
                 NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(new[]
                 {
                     new int2(-1, 0), new int2(1, 0), new int2(0, 1), new int2(0, -1),
                     new int2(-1, -1), new int2(-1, 1), new int2(1, -1), new int2(1, 1),
                 }, Allocator.Temp);
 
-                int endNodeIndex = CalculateIndex(endPosition.x, endPosition.y, gridSize.x);
-                InitializePathNodes(pathNodeArray, gridSize, endPosition);
+                int endNodeIndex = CreateOrGetPathNode(endPosition, ref pathNodeList, ref positionToIndexMap, gridSize);
 
-                PathNode startNode = pathNodeArray[CalculateIndex(startPosition.x, startPosition.y, gridSize.x)];
+                PathNode startNode = pathNodeList[CreateOrGetPathNode(startPosition, ref pathNodeList, ref positionToIndexMap, gridSize)];
                 startNode.gCost = 0;
                 startNode.CalculateFCost();
-                pathNodeArray[startNode.index] = startNode;
+                pathNodeList[startNode.index] = startNode;
 
-                NativeList<int> openList = new(Allocator.Temp);
-                NativeList<int> closedList = new(Allocator.Temp);
-                openList.Add(startNode.index);
+                NativeMinHeap openList = new NativeMinHeap(Allocator.Temp);
+                NativeList<int> closedList = new NativeList<int>(Allocator.Temp);
+                openList.Enqueue(startNode.index, startNode.fCost);
 
-                while (openList.Length > 0)
+                while (openList.Count > 0)
                 {
-                    int currentNodeIndex = GetLowestCostFNodeIndex(openList, pathNodeArray);
-                    PathNode currentNode = pathNodeArray[currentNodeIndex];
-                    if (currentNodeIndex == endNodeIndex) break;
+                    int currentNodeIndex = openList.Dequeue();
+                    PathNode currentNode = pathNodeList[currentNodeIndex];if (currentNodeIndex == endNodeIndex)
+                    {
+                        break;
+                    }
 
-                    openList.RemoveAtSwapBack(openList.IndexOf(currentNodeIndex));
                     closedList.Add(currentNodeIndex);
 
                     for (int i = 0; i < neighbourOffsetArray.Length; i++)
                     {
                         int2 neighbourPosition = new int2(currentNode.x, currentNode.y) + neighbourOffsetArray[i];
-                        if (!IsPositionInsideGrid(neighbourPosition, gridSize)) continue;
+                        if (!IsPositionInsideGrid(neighbourPosition, gridSize))
+                        {
+                            continue;
+                        }
 
-                        int neighbourNodeIndex = CalculateIndex(neighbourPosition.x, neighbourPosition.y, gridSize.x);
-                        if (closedList.Contains(neighbourNodeIndex)) continue;
+                        int neighbourNodeIndex = CreateOrGetPathNode(neighbourPosition, ref pathNodeList, ref positionToIndexMap, gridSize);
+                        if (closedList.Contains(neighbourNodeIndex))
+                        {
+                            continue;
+                        }
 
-                        PathNode neighbourNode = pathNodeArray[neighbourNodeIndex];
-                        if (!neighbourNode.isWalkable) continue;
+                        PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
+                        if (!neighbourNode.isWalkable)
+                        {
+                            continue;
+                        }
 
                         int tentativeGCost = currentNode.gCost + CalculateDistanceCost(new int2(currentNode.x, currentNode.y), neighbourPosition);
                         if (tentativeGCost < neighbourNode.gCost)
@@ -118,49 +128,52 @@ namespace Beast.Radar.Player.Path
                             neighbourNode.cameFromNodeIndex = currentNodeIndex;
                             neighbourNode.gCost = tentativeGCost;
                             neighbourNode.CalculateFCost();
-                            pathNodeArray[neighbourNodeIndex] = neighbourNode;
+                            pathNodeList[neighbourNodeIndex] = neighbourNode;
 
-                            if (!openList.Contains(neighbourNode.index)) openList.Add(neighbourNode.index);
+                            if (!openList.TryUpdate(neighbourNodeIndex, neighbourNode.fCost))
+                            {
+                                openList.Enqueue(neighbourNodeIndex, neighbourNode.fCost);
+                            }
                         }
                     }
                 }
 
-                CalculatePath(pathNodeArray, pathNodeArray[endNodeIndex]);
+                CalculatePath(pathNodeList, pathNodeList[endNodeIndex]);
 
-                pathNodeArray.Dispose();
+                pathNodeList.Dispose();
+                positionToIndexMap.Dispose();
                 neighbourOffsetArray.Dispose();
                 openList.Dispose();
                 closedList.Dispose();
             }
 
-            private void InitializePathNodes(NativeArray<PathNode> pathNodeArray, int2 gridSize, int2 endPosition)
+            private int CreateOrGetPathNode(int2 position, ref NativeList<PathNode> pathNodeList, ref NativeHashMap<int2, int> positionToIndexMap, int2 gridSize)
             {
-                for (int x = 0; x < gridSize.x; x++)
+                if (positionToIndexMap.TryGetValue(position, out int index))
+                    return index;
+
+                int newIndex = pathNodeList.Length;
+                positionToIndexMap[position] = newIndex;
+
+                pathNodeList.Add(new PathNode
+                    
                 {
-                    for (int y = 0; y < gridSize.y; y++)
-                    {
-                        int index = CalculateIndex(x, y, gridSize.x);
-                        pathNodeArray[index] = new PathNode
-                        {
-                            x = x,
-                            y = y,
-                            index = index,
-                            gCost = int.MaxValue,
-                            hCost = CalculateDistanceCost(new int2(x, y), endPosition),
-                            isWalkable = true,
-                            cameFromNodeIndex = -1
-                        };
-                        pathNodeArray[index].CalculateFCost();
-                    }
-                }
+                    x = position.x,
+                    y = position.y,
+                    index = newIndex,
+                    gCost = int.MaxValue,
+                    hCost = CalculateDistanceCost(position, endPosition),
+                    isWalkable = texture[CalculateIndex(position.x, position.y, gridSize.x)] != EBiomeName.Deep,
+                    cameFromNodeIndex = -1
+                });
+
+                pathNodeList[newIndex].CalculateFCost();
+                return newIndex;
             }
 
-            private void CalculatePath(NativeArray<PathNode> pathNodes, PathNode endNode)
+            private void CalculatePath(NativeList<PathNode> pathNodes, PathNode endNode)
             {
-                if (endNode.cameFromNodeIndex == -1)
-                {
-                    return;
-                }
+                if (endNode.cameFromNodeIndex == -1) return;
 
                 while (endNode.cameFromNodeIndex != -1)
                 {
@@ -171,38 +184,18 @@ namespace Beast.Radar.Player.Path
 
             private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize)
             {
-                return gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < gridSize.x &&
-                       gridPosition.y < gridSize.y;
+                return gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < gridSize.x && gridPosition.y < gridSize.y;
             }
 
             private int CalculateIndex(int x, int y, int gridWidth)
             {
                 return x + y * gridWidth;
-            }
-
-            private int CalculateDistanceCost(int2 startPosition, int2 targetPosition)
+            }private int CalculateDistanceCost(int2 startPosition, int2 targetPosition)
             {
                 int xDistance = math.abs(startPosition.x - targetPosition.x);
                 int yDistance = math.abs(startPosition.y - targetPosition.y);
                 int remaining = math.abs(xDistance - yDistance);
                 return MOVE_DIAGONAL_COST * math.min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
-            }
-
-            private int GetLowestCostFNodeIndex(NativeList<int> openList, NativeArray<PathNode> pathNodes)
-            {
-                int lowestCostIndex = openList[0];
-                int lowestCost = pathNodes[lowestCostIndex].fCost;
-                for (int i = 1; i < openList.Length; i++)
-                {
-                    int nodeIndex = openList[i];
-                    int nodeFCost = pathNodes[nodeIndex].fCost;
-                    if (nodeFCost < lowestCost)
-                    {
-                        lowestCost = nodeFCost;
-                        lowestCostIndex = nodeIndex;
-                    }
-                }
-                return lowestCostIndex;
             }
         }
 
@@ -220,6 +213,96 @@ namespace Beast.Radar.Player.Path
             public void CalculateFCost()
             {
                 fCost = gCost + hCost;
+            }
+        }
+
+        private struct NativeMinHeap : System.IDisposable
+        {
+            private NativeList<int> items;
+            private NativeList<int> priorities;
+
+            public NativeMinHeap(Allocator allocator)
+            {
+                items = new NativeList<int>(allocator);
+                priorities = new NativeList<int>(allocator);
+            }
+
+            public int Count => items.Length;
+
+            public void Enqueue(int item, int priority)
+            {
+                items.Add(item);
+                priorities.Add(priority);
+                HeapifyUp(items.Length - 1);
+            }
+
+            public bool TryUpdate(int item, int newPriority)
+            {
+                int index = items.IndexOf(item);
+                if (index >= 0)
+                {
+                    if (priorities[index] > newPriority)
+                    {
+                        priorities[index] = newPriority;
+                        HeapifyUp(index);
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+
+            public int Dequeue()
+            {
+                int item = items[0];
+                items[0] = items[items.Length - 1];
+                priorities[0] = priorities[priorities.Length - 1];
+                items.RemoveAt(items.Length - 1);
+                priorities.RemoveAt(priorities.Length - 1);
+                HeapifyDown(0);
+                return item;
+            }
+
+            private void HeapifyUp(int index)
+            {
+                while (index > 0)
+                {
+                    int parentIndex = (index - 1) / 2;
+                    if (priorities[parentIndex] <= priorities[index]) break;
+
+                    Swap(index, parentIndex);
+                    index = parentIndex;
+                }
+            }
+
+            private void HeapifyDown(int index)
+            {
+                while (index < items.Length)
+                {
+                    int smallest = index;
+                    int left = 2 * index + 1;
+                    int right = 2 * index + 2;
+
+                    if (left < items.Length && priorities[left] < priorities[smallest]) smallest = left;
+                    if (right < items.Length && priorities[right] < priorities[smallest]) smallest = right;
+
+                    if (smallest == index) break;
+
+                    Swap(index, smallest);
+                    index = smallest;
+                }
+            }
+
+            private void Swap(int indexA, int indexB)
+            {
+                (items[indexA], items[indexB]) = (items[indexB], items[indexA]);
+                (priorities[indexA], priorities[indexB]) = (priorities[indexB], priorities[indexA]);
+            }
+
+            public void Dispose()
+            {
+                items.Dispose();
+                priorities.Dispose();
             }
         }
     }
