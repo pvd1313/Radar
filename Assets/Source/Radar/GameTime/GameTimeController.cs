@@ -14,7 +14,6 @@ namespace Beast.Radar.GameTime
     {
         public event Action Changed;
         
-        private readonly WorldTimeConfig _config;
         private readonly GameTimeConfig _config;
         private readonly GameModel _gameModel;
 
@@ -24,7 +23,7 @@ namespace Beast.Radar.GameTime
         private ulong _minutes;
         private float _seconds;
 
-        public WorldTime(WorldTimeConfig config, GameModel gameModel)
+        public GameTimeController(GameTimeConfig config, GameModel gameModel)
         {
             _config = config;
             _gameModel = gameModel;
@@ -40,13 +39,13 @@ namespace Beast.Radar.GameTime
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
-            _minutes = _gameModel.world.minutes;
+            _minutes = _gameModel.timeMinutes;
             return UniTask.CompletedTask;
         }
 
         private void _gameSave(BlockingContext context)
         {
-            _gameModel.world.minutes = _minutes;
+            _gameModel.timeMinutes = _minutes;
         }
 
         private void _tick(BlockingContext context)

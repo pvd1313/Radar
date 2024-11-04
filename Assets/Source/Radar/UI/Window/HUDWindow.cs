@@ -20,7 +20,6 @@ namespace Beast.Radar.UI
         private HUDView _view;
         private IWindowHandle<Empty> _pauseMenu;
         
-        public HUDWindow(CorePrefabLibrary library, IWindowManager windowManager, IGameTime gameTime)
         private IntToStringConverter _intToString;
 
         public HUDWindow(

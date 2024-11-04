@@ -5,6 +5,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmos;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
+using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
 using Beast.Radar.InputHandling;
 using Beast.Radar.Player.Path;
@@ -31,7 +32,7 @@ namespace Beast.Radar.Player
         private const float MULTI_CLICK_DELAY = 0.3f;
 
         private float _clickTimer;
-        private readonly IWorldTime _time;
+        private readonly IGameTime _time;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _backedBiome;
@@ -49,7 +50,7 @@ namespace Beast.Radar.Player
         private int2[] _path;
 
         public PlayerController(
-            IWorldTime time,
+            IGameTime time,
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
@@ -129,7 +130,8 @@ namespace Beast.Radar.Player
                 _pathfinding = new Pathfinding(size,
                     _config.GetTileSpeedModifiers(),
                     _backedBiome.Terrain8kmCell.texture);
-                BDebug.LogInfo(this, $"Create pathfinding {size}");
+             
+                //BDebug.LogInfo(this, $"Create pathfinding {size}");
             }
 
             _followClick();
@@ -225,8 +227,9 @@ namespace Beast.Radar.Player
                 _worldToBlock(Target),
                 out long time);
             
-            BDebug.LogInfo(this, $"Find path {_path.Length} {time}ms");
-            /*
+           // BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
+
+           /*
            _currentPathCell = 0;
            ChangeTarget?.Invoke();*/
         }

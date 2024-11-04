@@ -42,7 +42,7 @@ namespace Beast.Radar.NewGame
                     zoom01 = 1
                 },
                 
-                player = new PlayerData
+                player = new PlayerGameData()
                 {
                     position = int2.zero
                 },

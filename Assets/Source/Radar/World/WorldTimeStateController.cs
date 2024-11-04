@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
+using Beast.Radar.GameTime;
 using Beast.Radar.Player;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
@@ -9,10 +10,10 @@ namespace Beast.Radar.World
     public class WorldTimeStateController : Controller, IGameCycleListener
     {
         private readonly IPlayerController _player;
-        private readonly IWorldTime _time;
+        private readonly IGameTime _time;
         private readonly IWindowManager _windowManager;
 
-        public WorldTimeStateController(IPlayerController player, IWorldTime time, IWindowManager windowManager)
+        public WorldTimeStateController(IPlayerController player, IGameTime time, IWindowManager windowManager)
         {
             _player = player;
             _time = time;
