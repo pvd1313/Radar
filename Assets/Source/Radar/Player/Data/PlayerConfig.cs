@@ -16,7 +16,7 @@ namespace Beast.Radar.Player
             yield break;
         }
         
-        public ByteArray16 GetTileSpeedModifiers()
+        public ByteArray16 TileSpeedModifiersToTileCost()
         {
             ByteArray16 byteArray = new();
             
@@ -26,7 +26,6 @@ namespace Beast.Radar.Player
             {
                 TileSlowdown modifier = tileSpeedModifiers[i];
                 byte speedValue = (byte)((1f - modifier.speedMultiplier) * 255);
-                BDebug.LogInfo(this, $"{modifier.biome}  (1 - {modifier.speedMultiplier}) * 255 = {speedValue}");
                 byteArray.SetByte((byte)modifier.biome, speedValue);
             }
 

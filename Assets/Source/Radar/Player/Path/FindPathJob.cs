@@ -18,14 +18,14 @@ namespace Beast.Radar.Player.Path
         public int2 startPosition;
         public int2 endPosition;
         public NativeArray<EBiomeName> texture;
-        public ByteArray16 tileSpeedModifiers;
-        
-        [ReadOnly] public NativeArray<int2> neighbourOffsets;
+        public ByteArray16 tileCosts;
         
         public NativeList<int2> outputPath;
 
         public void Execute()
         {
+            outputPath.Clear();
+            
             int2 gridSizeXY = new (textureSizeX, textureSizeX);
             NativeList<PathNode> pathNodeList = new(Allocator.Temp);
             NativeHashMap<int2, int> positionToIndexMap = new(gridSizeXY.x * gridSizeXY.y, Allocator.Temp);
@@ -59,8 +59,10 @@ namespace Beast.Radar.Player.Path
 
                 closedList.Add(currentNodeIndex);
 
-                foreach (int2 offset in neighbourOffsets)
+                for (int i = 0; i < NeighbourOffsets.COUNT; i++)
                 {
+                    int2 offset = NeighbourOffsets.Get(i);
+                    
                     PathNode currentNode = pathNodeList[currentNodeIndex];
                     int2 neighbourPosition = new int2(currentNode.x, currentNode.y) + offset;
                         
@@ -118,10 +120,10 @@ namespace Beast.Radar.Player.Path
             int2 neighbourPosition = new(pathNodeList[neighbourNodeIndex].x, pathNodeList[neighbourNodeIndex].y);
 
             int textureIndex = neighbourPosition.x + neighbourPosition.y * textureSizeX;
-            byte passability = tileSpeedModifiers.GetByte((byte)texture[textureIndex]);
+            int tileCost = tileCosts.GetByte((byte)texture[textureIndex]);
 
             int distanceCost = _calcDistanceCost(new int2(currentNode.x, currentNode.y), neighbourPosition);
-            int movementCost = passability * distanceCost;
+            int movementCost = tileCost * distanceCost;
               
             return currentNode.gCost + movementCost;
         }
@@ -159,21 +161,27 @@ namespace Beast.Radar.Player.Path
             });
 
             pathNodeList[newIndex].CalculateFCost();
+            
             return newIndex;
         }
 
         private int _calcDistanceCost(int2 start, int2 end)
         {
-            int xDistance = BMath.Abs(start.x - end.x);
-            int yDistance = BMath.Abs(start.y - end.y);
-            int remaining = BMath.Abs(xDistance - yDistance);
-            
-            return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+            return (int)BMath.DistanceSq(start, end);
+
+            // int xDistance = BMath.Abs(start.x - end.x);
+            // int yDistance = BMath.Abs(start.y - end.y);
+            // int remaining = BMath.Abs(xDistance - yDistance);
+            //
+            // return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
         }
 
         private void _calcPath(NativeList<PathNode> pathNodes, PathNode endNode)
         {
-            if (endNode.cameFromNodeIndex == -1) return;
+            if (endNode.cameFromNodeIndex == -1)
+            {
+                return;
+            }
 
             while (endNode.cameFromNodeIndex != -1)
             {

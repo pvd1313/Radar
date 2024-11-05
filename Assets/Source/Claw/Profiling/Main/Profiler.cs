@@ -96,7 +96,7 @@ namespace Beast.Claw.Profiling
             _buildTreeJobTimer.Stop();
             UnityEngine.Profiling.Profiler.EndSample();
 
-            float elapsedMS = _buildTreeJobTimer.ElapsedTicks / (float)Stopwatch.Frequency * 1000;
+            float elapsedMS = _buildTreeJobTimer.ElapsedMillisecondsFloat();
             BDebug.Track(this, "BuildTreeJobMS", elapsedMS);
 
             try

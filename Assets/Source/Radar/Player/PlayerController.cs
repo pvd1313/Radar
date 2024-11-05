@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmos;
 using Beast.Claw.Graphic;
+using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
@@ -12,6 +15,8 @@ using Beast.Radar.Player.Path;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -39,14 +44,14 @@ namespace Beast.Radar.Player
         private readonly PlayerPreferences _preferences;
         private readonly IInputSystem _input;
 
-        private PathFinder _pathFinder;
         private InputValueControl<float2> _clickInput;
         private float _halfTexelSize;
         private float2 _startPressPosition;
         private float _startPressTime;
         private float _lastRecordedHours;
         private bool _isCheckClick;
-        private int2[] _path;
+        private NativeList<int2> _path;
+        private Stopwatch _pathWatch;
 
         public PlayerController(
             IGameTime time,
@@ -89,13 +94,17 @@ namespace Beast.Radar.Player
 
             Speed = _config.moveSpeed;
 
-#if DEVELOPMENT
-            _input.DebugInput.TeleportButton.PressStarted += () =>
+            if (Build.IS_DEVELOPMENT)
             {
-                Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
-                Target = Position;
-            };
-#endif
+                _input.DebugInput.TeleportButton.PressStarted += () =>
+                {
+                    Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
+                    Target = Position;
+                };
+            }
+
+            _path = NativeMemory.CreatePermList<int2>(256);
+            _pathWatch = new Stopwatch();
             
             return UniTask.CompletedTask;
         }
@@ -108,18 +117,6 @@ namespace Beast.Radar.Player
 
             Target = Position;
             
-            int size = _biome.Terrain8kmCell.cellCountX;
-            ByteArray16 tieSpeedModifiers = _config.GetTileSpeedModifiers();
-
-            foreach (var value in _config.tileSpeedModifiers)
-            {
-                BDebug.LogInfo(this,$"{tieSpeedModifiers.GetByte((byte)value.biome)} {value.biome}");
-            }
-            
-            _pathFinder = new PathFinder(size,
-                tieSpeedModifiers,
-                _biome.Terrain8kmCell.texture);
-
             IsReady = true;
 
             return UniTask.CompletedTask;
@@ -217,14 +214,26 @@ namespace Beast.Radar.Player
         private void _setTarget(float2 worldTarget)
         {
             int2 index = _worldToIndex(worldTarget);
-            Target = _indexToWorld(index);
             
-            _path = _pathFinder.FindPathArray(
-                _worldToBlock(Position),
-                _worldToBlock(Target),
-                out long time);
+            Target = _indexToWorld(index);
 
-            BDebug.LogInfo(this, $"Find path | lenght = {_path.Length} | time = {time}ms |");
+            FindPathJob job = new ()
+            {
+                startPosition = _worldToBlock(Position),
+                endPosition = _worldToBlock(Target),
+                tileCosts = _config.TileSpeedModifiersToTileCost(),
+                textureSizeX = _biome.Terrain8kmCell.cellCountX,
+                texture = _biome.Terrain8kmCell.texture,
+                outputPath = _path
+            };
+            
+            _pathWatch.Restart();
+            
+            job.Schedule().Complete();
+
+            float elapsedMS = _pathWatch.ElapsedMillisecondsFloat();
+
+            BDebug.LogInfo(this, $"Found path (nodeCount = {_path.Length}; time = {elapsedMS:N2}ms)");
 
             /*
             _currentPathCell = 0;
@@ -252,11 +261,6 @@ namespace Beast.Radar.Player
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
         }
 
-        private void _dispose(BlockingContext obj)
-        {
-            _pathFinder?.Dispose();
-        }
-
         public Color GizmosColor { get; } = Color.magenta;
 
         public void Draw(GizmosHandle handle)
@@ -266,11 +270,13 @@ namespace Beast.Radar.Player
                 return;
             }
 
-            if (_path != null && _path.Length > 0)
+            if (_path.Length > 0)
             {
                 foreach (int2 point in _path)
                 {
-                   float2 position = (float2)_blockToWorld(point) + new float2((float)_biome.Terrain8kmCell.cellSize / 2, (float)_biome.Terrain8kmCell.cellSize / 2);
+                    float2 cellSizeHalf = _biome.Terrain8kmCell.cellSize * 0.5f;
+
+                    float2 position = _blockToWorld(point) + cellSizeHalf;
 
                     handle.DrawScreenDot(position);
                 }
@@ -280,6 +286,14 @@ namespace Beast.Radar.Player
             handle.DrawScreenDot(Position + new float2(_halfTexelSize, -_halfTexelSize));
             handle.DrawScreenDot(Position + new float2(-_halfTexelSize, -_halfTexelSize));
             handle.DrawScreenDot(Position + new float2(-_halfTexelSize, -_halfTexelSize));
+        }
+        
+        private void _dispose(BlockingContext obj)
+        {
+            if (_path.IsCreated)
+            {
+                _path.Dispose();
+            }
         }
     }
 }

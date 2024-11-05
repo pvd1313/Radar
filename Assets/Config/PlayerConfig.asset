@@ -15,18 +15,18 @@ MonoBehaviour:
   moveSpeed: 30
   tileSpeedModifiers:
   - biome: 0
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 1
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 2
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 6
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 3
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 4
-    speedMultiplier: 0.1
+    speedMultiplier: 0
   - biome: 5
-    speedMultiplier: 0.7
+    speedMultiplier: 1
   - biome: 7
-    speedMultiplier: 0.5
+    speedMultiplier: 1
