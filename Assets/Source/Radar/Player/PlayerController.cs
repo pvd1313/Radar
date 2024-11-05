@@ -11,7 +11,6 @@ using Beast.Radar.InputHandling;
 using Beast.Radar.Player.Path;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
-using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -101,17 +100,13 @@ namespace Beast.Radar.Player
 
             Target = Position;
 
-            
-            
+
             int size = _biome.Terrain8kmCell.cellCountX;
             ByteArray16 tieSpeedModifiers = _config.GetTileSpeedModifiers();
-            
+
             _pathfinding = new Pathfinding(size,
                 tieSpeedModifiers,
                 _biome.Terrain8kmCell.texture);
-
-            BDebug.LogInfo(this, $"Create pathfinding {size}");
-            BDebug.LogInfo(this, $"Test forest biome {tieSpeedModifiers.GetByte((byte)EBiomeName.Forest)}");
 
             IsReady = true;
 
@@ -127,23 +122,6 @@ namespace Beast.Radar.Player
 
         private void _tick(BlockingContext obj)
         {
-            if (_biome.Terrain8kmCell.texture.Length > 0)
-            {
-                float2 mouse = _input.GameInput.ScreenPoint.Value;
-                float2 mouseWorld = _camera.ScreenToWorld(mouse);
-                BDebug.Track(this, "8km index", _worldToBlock(mouseWorld));
-            }
-
-            // if (_pathfinding == null && _backedBiome.Terrain8kmCell.texture.Length > 0)
-            // {
-            //     int size = _backedBiome.Terrain8kmCell.cellCountX;
-            //     _pathfinding = new Pathfinding(size,
-            //         _config.GetTileSpeedModifiers(),
-            //         _backedBiome.Terrain8kmCell.texture);
-            //  
-            //     //BDebug.LogInfo(this, $"Create pathfinding {size}");
-            // }
-
             _followClick();
 
             /*if (IsMovement)
@@ -237,7 +215,7 @@ namespace Beast.Radar.Player
                 _worldToBlock(Target),
                 out long time);
 
-            BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
+            BDebug.LogInfo(this, $"Find path | lenght = {_path.Length} | time = {time}ms |");
 
             /*
             _currentPathCell = 0;
