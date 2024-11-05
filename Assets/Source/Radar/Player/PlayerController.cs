@@ -35,7 +35,7 @@ namespace Beast.Radar.Player
         private readonly IGameTime _time;
         private readonly PlayerConfig _config;
         private readonly ICameraTransform _camera;
-        private readonly ITerrainBackedBiome _backedBiome;
+        private readonly ITerrainBackedBiome _biome;
         private readonly GameModel _gameModel;
         private readonly PlayerPreferences _preferences;
         private readonly IInputSystem _input;
@@ -54,14 +54,14 @@ namespace Beast.Radar.Player
             IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
-            ITerrainBackedBiome backedBiome,
+            ITerrainBackedBiome biome,
             GameModel gameModel,
             PlayerPreferences preferences)
         {
             _time = time;
             _config = config;
             _camera = camera;
-            _backedBiome = backedBiome;
+            _biome = biome;
             _gameModel = gameModel;
             _preferences = preferences;
             _input = input;
@@ -89,7 +89,7 @@ namespace Beast.Radar.Player
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
             Speed = _config.moveSpeed;
-            
+
             return UniTask.CompletedTask;
         }
 
@@ -100,6 +100,13 @@ namespace Beast.Radar.Player
             TempPosition = Position;
 
             Target = Position;
+
+            int size = _biome.Terrain8kmCell.cellCountX;
+            _pathfinding = new Pathfinding(size,
+                _config.GetTileSpeedModifiers(),
+                _biome.Terrain8kmCell.texture);
+
+            BDebug.LogInfo(this, $"Create pathfinding {size}");
 
             IsReady = true;
 
@@ -115,7 +122,7 @@ namespace Beast.Radar.Player
 
         private void _tick(BlockingContext obj)
         {
-            if (_backedBiome.Terrain8kmCell.texture.Length > 0)
+            if (_biome.Terrain8kmCell.texture.Length > 0)
             {
                 float2 mouse = _input.GameInput.ScreenPoint.Value;
                 float2 mouseWorld = _camera.ScreenToWorld(mouse);
@@ -216,31 +223,31 @@ namespace Beast.Radar.Player
         {
             int2 index = _worldToIndex(worldTarget);
             Target = _indexToWorld(index);
-            
+
             BDebug.Track(this, $"8km target", _worldToBlock(Target));
             BDebug.Track(this, $"8km position", _worldToBlock(Position));
-            
+
             _path = _pathfinding.FindPathArray(
                 _worldToBlock(Position),
                 _worldToBlock(Target),
                 out long time);
-            
-           // BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
 
-           /*
-           _currentPathCell = 0;
-           ChangeTarget?.Invoke();*/
+            //BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
+
+            /*
+            _currentPathCell = 0;
+            ChangeTarget?.Invoke();*/
         }
 
 
         private int2 _blockToWorld(int2 block)
         {
-            return _backedBiome.Terrain8kmCell.CellToWorldPoint(block);
+            return _biome.Terrain8kmCell.CellToWorldPoint(block);
         }
 
         private int2 _worldToBlock(float2 worldPosition)
         {
-            return _backedBiome.Terrain8kmCell.WorldPositionToCell(worldPosition) ;
+            return _biome.Terrain8kmCell.WorldPositionToCell(worldPosition);
         }
 
         private float2 _indexToWorld(int2 index)
@@ -255,10 +262,11 @@ namespace Beast.Radar.Player
 
         private void _dispose(BlockingContext obj)
         {
-            _pathfinding?.Dispose();    
+            _pathfinding?.Dispose();
         }
-        
+
         public Color GizmosColor { get; } = Color.magenta;
+
         public void Draw(GizmosHandle handle)
         {
             if (!IsReady)

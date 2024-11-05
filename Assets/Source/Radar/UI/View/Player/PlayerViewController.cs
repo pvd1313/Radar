@@ -82,8 +82,7 @@ namespace Beast.Radar.UI
             string travelTime = _time.CalculateTravelTime(_player.Position, _player.Target, _player.Speed);
             
             float distance = BMath.Distance(_player.Position, _player.Target) * 1000;
-            UnityEngine.Debug.Log(distance);   
-   
+
             string distanceText;
 
             if (distance < 1000)
