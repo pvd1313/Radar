@@ -89,6 +89,14 @@ namespace Beast.Radar.Player
 
             Speed = _config.moveSpeed;
 
+#if DEVELOPMENT
+            _input.DebugInput.TeleportButton.PressStarted += () =>
+            {
+                Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
+                Target = Position;
+            };
+#endif
+            
             return UniTask.CompletedTask;
         }
 
@@ -99,11 +107,15 @@ namespace Beast.Radar.Player
             TempPosition = Position;
 
             Target = Position;
-
-
+            
             int size = _biome.Terrain8kmCell.cellCountX;
             ByteArray16 tieSpeedModifiers = _config.GetTileSpeedModifiers();
 
+            foreach (var value in _config.tileSpeedModifiers)
+            {
+                BDebug.LogInfo(this,$"{tieSpeedModifiers.GetByte((byte)value.biome)} {value.biome}");
+            }
+            
             _pathfinding = new Pathfinding(size,
                 tieSpeedModifiers,
                 _biome.Terrain8kmCell.texture);
@@ -206,10 +218,7 @@ namespace Beast.Radar.Player
         {
             int2 index = _worldToIndex(worldTarget);
             Target = _indexToWorld(index);
-
-            BDebug.Track(this, $"8km target", _worldToBlock(Target));
-            BDebug.Track(this, $"8km position", _worldToBlock(Position));
-
+            
             _path = _pathfinding.FindPathArray(
                 _worldToBlock(Position),
                 _worldToBlock(Target),
@@ -261,7 +270,9 @@ namespace Beast.Radar.Player
             {
                 foreach (int2 point in _path)
                 {
-                    handle.DrawScreenDot(_blockToWorld(point));
+                   float2 position = (float2)_blockToWorld(point) + new float2((float)_biome.Terrain8kmCell.cellSize / 2, (float)_biome.Terrain8kmCell.cellSize / 2);
+
+                    handle.DrawScreenDot(position);
                 }
             }
 

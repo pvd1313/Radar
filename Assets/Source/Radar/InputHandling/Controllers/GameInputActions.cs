@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Debug;
 using Beast.Claw.Mathematics;
 using Unity.Mathematics;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace Beast.Radar.InputHandling
         public InputValueControl<int> CurrentTouchCount { get; } = new();
         public InputValueControl<int> LastTouchCount { get; } = new();
         public InputValueControl<float> Scroll { get; } = new();
-        
+
         public bool IsPressMove { get; private set; }
 
         private readonly IInputSchemeObserver _inputSchemeObserver;

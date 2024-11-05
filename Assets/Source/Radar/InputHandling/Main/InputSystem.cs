@@ -10,6 +10,7 @@ namespace Beast.Radar.InputHandling
         public IInputSchemeObserver Scheme => _schemeObserver;
         public IGameInputActions GameInput => _gameInputActions;
         public IUIInputActions UIInput => _uiInputActions;
+        public IDebugInputActions DebugInput => _debugInputActions;
         public float ClickDuration => 0.1f;
 
         private readonly PlayerInputView _view;
@@ -17,6 +18,7 @@ namespace Beast.Radar.InputHandling
         private InputSchemeObserver _schemeObserver;
         private GameInputActions _gameInputActions;
         private UIInputActions _uiInputActions;
+        private DebugInputActions _debugInputActions;
         private InputActions _actions;
         
         public InputSystem(CorePrefabLibrary config)
@@ -46,6 +48,11 @@ namespace Beast.Radar.InputHandling
             _uiInputActions.Warmup();
             
             _gameInputActions = new GameInputActions(Scheme, _actions);
+
+#if DEVELOPMENT
+            _debugInputActions = new DebugInputActions(_actions);
+            _debugInputActions.Warmup();
+#endif
             
             return UniTask.CompletedTask;
         }

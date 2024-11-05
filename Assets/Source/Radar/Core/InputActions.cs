@@ -71,6 +71,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DebugButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""f48471c6-b1f1-4933-ba1d-9ac08573ba0b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -280,6 +289,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Touch"",
                     ""action"": ""SecondPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6ffccb51-8524-4a01-97c2-8248f38b94cc"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -739,7 +759,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b026216d-2b5e-4982-b999-ddb5afcaab4c"",
-                    ""path"": ""<Touchscreen>/Press"",
+                    ""path"": ""<Touchscreen>/touch*/press"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Touch"",
@@ -913,6 +933,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Game_Move = m_Game.FindAction("Move", throwIfNotFound: true);
         m_Game_Scroll = m_Game.FindAction("Scroll", throwIfNotFound: true);
         m_Game_Click = m_Game.FindAction("Click", throwIfNotFound: true);
+        m_Game_DebugButton = m_Game.FindAction("DebugButton", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
@@ -995,6 +1016,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Game_Move;
     private readonly InputAction m_Game_Scroll;
     private readonly InputAction m_Game_Click;
+    private readonly InputAction m_Game_DebugButton;
     public struct GameActions
     {
         private @InputActions m_Wrapper;
@@ -1004,6 +1026,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Game_Move;
         public InputAction @Scroll => m_Wrapper.m_Game_Scroll;
         public InputAction @Click => m_Wrapper.m_Game_Click;
+        public InputAction @DebugButton => m_Wrapper.m_Game_DebugButton;
         public InputActionMap Get() { return m_Wrapper.m_Game; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1028,6 +1051,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Click.started += instance.OnClick;
             @Click.performed += instance.OnClick;
             @Click.canceled += instance.OnClick;
+            @DebugButton.started += instance.OnDebugButton;
+            @DebugButton.performed += instance.OnDebugButton;
+            @DebugButton.canceled += instance.OnDebugButton;
         }
 
         private void UnregisterCallbacks(IGameActions instance)
@@ -1047,6 +1073,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Click.started -= instance.OnClick;
             @Click.performed -= instance.OnClick;
             @Click.canceled -= instance.OnClick;
+            @DebugButton.started -= instance.OnDebugButton;
+            @DebugButton.performed -= instance.OnDebugButton;
+            @DebugButton.canceled -= instance.OnDebugButton;
         }
 
         public void RemoveCallbacks(IGameActions instance)
@@ -1248,6 +1277,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnScroll(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
+        void OnDebugButton(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
