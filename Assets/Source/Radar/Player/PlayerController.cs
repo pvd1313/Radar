@@ -101,12 +101,17 @@ namespace Beast.Radar.Player
 
             Target = Position;
 
+            
+            
             int size = _biome.Terrain8kmCell.cellCountX;
+            ByteArray16 tieSpeedModifiers = _config.GetTileSpeedModifiers();
+            
             _pathfinding = new Pathfinding(size,
-                _config.GetTileSpeedModifiers(),
+                tieSpeedModifiers,
                 _biome.Terrain8kmCell.texture);
 
             BDebug.LogInfo(this, $"Create pathfinding {size}");
+            BDebug.LogInfo(this, $"Test forest biome {tieSpeedModifiers.GetByte((byte)EBiomeName.Forest)}");
 
             IsReady = true;
 
@@ -232,7 +237,7 @@ namespace Beast.Radar.Player
                 _worldToBlock(Target),
                 out long time);
 
-            //BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
+            BDebug.LogInfo(this, $"Find path: lenght = {_path.Length} time = {time}ms");
 
             /*
             _currentPathCell = 0;

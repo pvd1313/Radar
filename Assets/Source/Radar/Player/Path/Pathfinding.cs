@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using Beast.Radar.Terrain;
 using Unity.Collections;
 using Unity.Jobs;
@@ -131,6 +132,7 @@ namespace Beast.Radar.Player.Path
                             continue;
 
                         PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
+
                         if (!neighbourNode.isWalkable)
                             continue;
 
@@ -158,6 +160,20 @@ namespace Beast.Radar.Player.Path
                 closedList.Dispose();
             }
 
+            private void CalculatePath(NativeList<PathNode> pathNodes, PathNode endNode)
+            {
+                if (endNode.cameFromNodeIndex == -1) return;
+
+                while (endNode.cameFromNodeIndex != -1)
+                {
+                    pathResultList.Add(new int2(endNode.x, endNode.y));
+                    endNode = pathNodes[endNode.cameFromNodeIndex];
+                }
+
+                pathResultList.Add(new int2(endNode.x, endNode.y));
+    
+                pathResultList.Reverse();
+            }
             private int CreateOrGetPathNode(int2 position, ref NativeList<PathNode> pathNodeList,
                 ref NativeHashMap<int2, int> positionToIndexMap, int2 gridSize)
             {
@@ -180,17 +196,6 @@ namespace Beast.Radar.Player.Path
 
                 pathNodeList[newIndex].CalculateFCost();
                 return newIndex;
-            }
-
-            private void CalculatePath(NativeList<PathNode> pathNodes, PathNode endNode)
-            {
-                if (endNode.cameFromNodeIndex == -1) return;
-
-                while (endNode.cameFromNodeIndex != -1)
-                {
-                    pathResultList.Add(new int2(endNode.x, endNode.y));
-                    endNode = pathNodes[endNode.cameFromNodeIndex];
-                }
             }
 
             private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize)
@@ -231,24 +236,6 @@ namespace Beast.Radar.Player.Path
                 items.Add(item);
                 priorities.Add(priority);
                 HeapifyUp(items.Length - 1);
-            }
-
-            public bool TryUpdate(int item, int newPriority)
-            {
-                int index = items.IndexOf(item);
-                if (index >= 0)
-                {
-                    if (priorities[index] > newPriority)
-                    {
-                        priorities[index] = newPriority;
-                        HeapifyUp(index);
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                return false;
             }
 
             public int Dequeue()
