@@ -1,9 +1,10 @@
-﻿namespace Beast.Radar.Player.Path
+﻿using Unity.Mathematics;
+
+namespace Beast.Radar.Player.Path
 {
     public struct PathNode
     {
-        public int x;
-        public int y;
+        public int2 position;
         public int index;
         public int gCost;
         public int hCost;

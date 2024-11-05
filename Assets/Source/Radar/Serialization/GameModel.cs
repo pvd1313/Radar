@@ -2,8 +2,6 @@
 using Beast.Claw.Serialization;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
-using Beast.Radar.Terrain;
-using Beast.Radar.World;
 
 namespace Beast.Radar.Serialization
 {

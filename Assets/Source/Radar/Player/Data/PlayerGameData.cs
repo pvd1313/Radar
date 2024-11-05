@@ -1,8 +1,10 @@
-﻿using Beast.Claw.Serialization;
+﻿using System;
+using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
+    [Serializable]
     public struct PlayerGameData : ISerializable
     {
         public int2 position;

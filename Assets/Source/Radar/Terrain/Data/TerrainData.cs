@@ -40,7 +40,13 @@ namespace Beast.Radar.Terrain
                    BMath.Approximately(water01, other.water01) &&
                    BMath.Approximately(forest01, other.forest01);
         }
-        
+
+        public override string ToString()
+        {
+            return
+                $"(seed: {seed}; terrainSize: {terrainSize}; biomeSize: {biomeSize01}; water: {water01}; forest: {forest01})";
+        }
+
         public string Validate()
         {
             if (terrainSize <= 0 || terrainSize > 4096)

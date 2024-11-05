@@ -18,12 +18,16 @@ MonoBehaviour:
       position:
         x: 2048
         y: 2018
+    player:
+      position:
+        x: 1050
+        y: 2560
     timeMinutes: 0
   worldData:
     terrain:
-      seed: 13
+      seed: 123
       terrainSize: 4096
-      biomeSize01: 0.5
-      water01: 0.5
-      forest01: 0.5
+      biomeSize01: 0
+      water01: 0.7545174
+      forest01: 0.2171
   worldGuid: 01f8bfde-a8ab-4904-9804-3e5dbd9e3fe6

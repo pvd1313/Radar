@@ -64,7 +64,7 @@ namespace Beast.Radar.Player.Path
                     int2 offset = NeighbourOffsets.Get(i);
                     
                     PathNode currentNode = pathNodeList[currentNodeIndex];
-                    int2 neighbourPosition = new int2(currentNode.x, currentNode.y) + offset;
+                    int2 neighbourPosition = currentNode.position + offset;
                         
                     if (!_isPositionInsideGrid(neighbourPosition, gridSizeXY))
                     {
@@ -116,14 +116,14 @@ namespace Beast.Radar.Player.Path
             int currentNodeIndex,
             int neighbourNodeIndex)
         {
-            PathNode currentNode = pathNodeList[currentNodeIndex];
-            int2 neighbourPosition = new(pathNodeList[neighbourNodeIndex].x, pathNodeList[neighbourNodeIndex].y);
-
-            int textureIndex = neighbourPosition.x + neighbourPosition.y * textureSizeX;
+            PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
+            int textureIndex = neighbourNode.position.y * textureSizeX + neighbourNode.position.x;
             int tileCost = tileCosts.GetByte((byte)texture[textureIndex]);
+            tileCost <<= 1;
 
-            int distanceCost = _calcDistanceCost(new int2(currentNode.x, currentNode.y), neighbourPosition);
-            int movementCost = tileCost * distanceCost;
+            PathNode currentNode = pathNodeList[currentNodeIndex];
+            int distanceCost = _calcDistanceCost(currentNode.position, neighbourNode.position);
+            int movementCost = BMath.Max(1, tileCost) * distanceCost;
               
             return currentNode.gCost + movementCost;
         }
@@ -152,8 +152,7 @@ namespace Beast.Radar.Player.Path
 
             pathNodeList.Add(new PathNode
             {
-                x = position.x,
-                y = position.y,
+                position = position,
                 index = newIndex,
                 gCost = int.MaxValue,
                 hCost = _calcDistanceCost(position, endPosition),
@@ -167,13 +166,13 @@ namespace Beast.Radar.Player.Path
 
         private int _calcDistanceCost(int2 start, int2 end)
         {
-            return (int)BMath.DistanceSq(start, end);
+            //return (int)BMath.DistanceSq(start, end);
 
-            // int xDistance = BMath.Abs(start.x - end.x);
-            // int yDistance = BMath.Abs(start.y - end.y);
-            // int remaining = BMath.Abs(xDistance - yDistance);
-            //
-            // return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+            int xDistance = BMath.Abs(start.x - end.x);
+            int yDistance = BMath.Abs(start.y - end.y);
+            int remaining = BMath.Abs(xDistance - yDistance);
+            
+            return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
         }
 
         private void _calcPath(NativeList<PathNode> pathNodes, PathNode endNode)
@@ -185,11 +184,11 @@ namespace Beast.Radar.Player.Path
 
             while (endNode.cameFromNodeIndex != -1)
             {
-                outputPath.Add(new int2(endNode.x, endNode.y));
+                outputPath.Add(endNode.position);
                 endNode = pathNodes[endNode.cameFromNodeIndex];
             }
 
-            outputPath.Add(new int2(endNode.x, endNode.y));
+            outputPath.Add(endNode.position);
         }
     }
 }
