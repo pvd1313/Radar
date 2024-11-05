@@ -39,7 +39,7 @@ namespace Beast.Radar.Player
         private readonly PlayerPreferences _preferences;
         private readonly IInputSystem _input;
 
-        private Pathfinding _pathfinding;
+        private PathFinder _pathFinder;
         private InputValueControl<float2> _clickInput;
         private float _halfTexelSize;
         private float2 _startPressPosition;
@@ -116,7 +116,7 @@ namespace Beast.Radar.Player
                 BDebug.LogInfo(this,$"{tieSpeedModifiers.GetByte((byte)value.biome)} {value.biome}");
             }
             
-            _pathfinding = new Pathfinding(size,
+            _pathFinder = new PathFinder(size,
                 tieSpeedModifiers,
                 _biome.Terrain8kmCell.texture);
 
@@ -219,7 +219,7 @@ namespace Beast.Radar.Player
             int2 index = _worldToIndex(worldTarget);
             Target = _indexToWorld(index);
             
-            _path = _pathfinding.FindPathArray(
+            _path = _pathFinder.FindPathArray(
                 _worldToBlock(Position),
                 _worldToBlock(Target),
                 out long time);
@@ -254,7 +254,7 @@ namespace Beast.Radar.Player
 
         private void _dispose(BlockingContext obj)
         {
-            _pathfinding?.Dispose();
+            _pathFinder?.Dispose();
         }
 
         public Color GizmosColor { get; } = Color.magenta;
