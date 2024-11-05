@@ -1,11 +1,10 @@
-﻿using Unity.Mathematics;
+﻿using Beast.Claw.Mathematics;
 
 namespace Beast.Radar.City
 {
     public struct CityInfo
     {
-        public float2 correctedPosition;
-        public float2 originalPosition;
-        public ECityStatus status;
+        public short2 position;
+        public byte size;
     }
 }

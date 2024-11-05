@@ -21,7 +21,7 @@ namespace Beast.Radar.Terrain
         private readonly GraphicConfig _config;
         private readonly IWorldManager _worldManager;
         private Texture2D _texture;
-        private TerrainData _terrainData;
+        private TerrainData _bakedForTerrain;
         
         public TerrainBakedFbm(
             ITerrainFbmRender fbmRender, 
@@ -45,11 +45,13 @@ namespace Beast.Radar.Terrain
             WorldData world = _worldManager.GetCurrentWorld();
             TerrainData terrain = world.terrain;
             
-            if (_terrainData.IsSame(terrain))
+            if (_bakedForTerrain.IsSame(terrain))
             {
                 IsReady = true;
                 return UniTask.CompletedTask;
             }
+
+            _bakedForTerrain = terrain;
 
             IsReady = false;
 
@@ -115,8 +117,6 @@ namespace Beast.Radar.Terrain
                 
                 BGraphic.Dispose(renderTexture);
             }
-
-            _terrainData = terrain;
 
             IsReady = true;
 

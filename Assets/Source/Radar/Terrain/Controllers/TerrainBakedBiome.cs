@@ -59,8 +59,6 @@ namespace Beast.Radar.Terrain
             
             _dispose(default);
             
-            Application.targetFrameRate = 60;
-            
             Profiler.BeginSample("CreateTempRenderTexture");
             RenderTextureData renderTextureData = _graphicConfig.terrain.biomeRenderTexture.WithSize(terrain.terrainSize);
             RenderTexture biomeRenderTexture = BGraphic.CreateTempRenderTexture(this, renderTextureData);

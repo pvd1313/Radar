@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using Unity.Collections;
 
@@ -21,6 +22,24 @@ namespace Beast.Claw.Jobs
         public static NativeList<T> CreatePermList<T>(int capacity) where T : unmanaged
         {
             return new NativeList<T>(capacity, Allocator.Persistent);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeList<T> CreateTempList<T>(int capacity) where T : unmanaged
+        {
+            return new NativeList<T>(capacity, Allocator.TempJob);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeHashSet<T> CreateTempHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
+        {
+            return new NativeHashSet<T>(capacity, Allocator.TempJob);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeHashSet<T> CreatePermHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
+        {
+            return new NativeHashSet<T>(capacity, Allocator.Persistent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

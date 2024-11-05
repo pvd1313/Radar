@@ -17,12 +17,16 @@ namespace Beast.Radar.City
         public FloatBounds2 mapBounds;
         public AveragePixelCountTexture<EBiomeName> terrain8km;
         public TextureWithBlocks<EBiomeName> terrain1km;
+        public FloatMinMax citySizeRange;
+        public bool useCityPositionCorrection;
+        public NativeHashSet<short2> excludePositions;
         
         public NativeList<CityInfo> outputCities;
         
         public void Execute()
         {
             FloatBounds2 globalBounds = default;
+            bool hasExcludePositions = !excludePositions.IsEmpty;
 
             for (int y = 0; y < maxCityCountX; y++)
             {
@@ -30,29 +34,35 @@ namespace Beast.Radar.City
 
                 for (int x = 0; x < maxCityCountX; x++)
                 {
+                    float2 randomFloat2 = random.NextFloat2();
                     float2 cityCenter = new float2(x, y) * gridSize + new float2(gridSize * 0.5f);
-                    float2 randomXY =  random.NextFloat2() * 2.0f - 1.0f;
+                    float2 randomXY =  randomFloat2 * 2.0f - 1.0f;
                     cityCenter += randomXY * gridSize * 0.5f;
                     
-                    cityCenter = BMath.FloorToInt(cityCenter) + new float2(0.5f);
+                    int2 cityCenterInt = BMath.FloorToInt(cityCenter);
                     
                     if (localBounds.Contains(cityCenter) || globalBounds.Contains(cityCenter))
                     {
                         continue;
                     }
-                    
-                    float2 orgPosition = cityCenter;
 
-                    _correctCityCenter(ref cityCenter, out ECityStatus status);
+                    if (!_tryCorrectCityCenter(ref cityCenterInt))
+                    {
+                        continue;
+                    }
+                    
+                    if (hasExcludePositions && excludePositions.Contains((short2)cityCenterInt))
+                    {
+                        continue;
+                    }
 
                     localBounds.x.max = BMath.Max(cityCenter.x + collisionRadius, localBounds.x.max);
                     localBounds.y.max = BMath.Max(cityCenter.y + collisionRadius, localBounds.y.max);
                     
                     outputCities.Add(new CityInfo
                     {
-                        originalPosition = orgPosition,
-                        correctedPosition = cityCenter,
-                        status = status
+                        position = (short2) cityCenterInt,
+                        size = (byte) BMath.Round(BMath.Lerp(citySizeRange, randomFloat2.x))
                     });       
                 }
                 
@@ -61,12 +71,15 @@ namespace Beast.Radar.City
             }
         }
 
-        private void _correctCityCenter(ref float2 center, out ECityStatus status)
+        private bool _tryCorrectCityCenter(ref int2 center)
         {
-            int2 centerInt = BMath.FloorToInt(center);
-
-            if (_isValidBiomeForCity(terrain1km.GetPixelClamped(centerInt)))
+            if (_isValidBiomeForCity(terrain1km.GetPixelClamped(center)))
             {
+                if (!useCityPositionCorrection)
+                {
+                    return true;
+                }
+                
                 // Try to move city closer to the ocean
                 for (int radius = 0; radius < 15; radius++)
                 {
@@ -74,7 +87,7 @@ namespace Beast.Radar.City
 
                     while (iterator.GotNext(out int2 delta))
                     {
-                        int2 position = centerInt + delta * terrain8km.cellSize;
+                        int2 position = center + delta * terrain8km.cellSize;
                         if (!mapBounds.Contains(position) ||
                             terrain8km.GetPixel(position) != EBiomeName.Shallow ||
                             !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
@@ -82,14 +95,18 @@ namespace Beast.Radar.City
                             continue;
                         }
 
-                        center = newPosition + new float2(0.5f);
-                        status = ECityStatus.PlacedButCorrected;
-                        return;
+                        center = newPosition;
+                        
+                        return true;
                     }
                 }
 
-                status = ECityStatus.Placed;
-                return;
+                return true;
+            }
+
+            if (!useCityPositionCorrection)
+            {
+                return false;
             }
             
             // Try moving city from deep ocean to the nearest land.
@@ -99,7 +116,7 @@ namespace Beast.Radar.City
 
                 while (iterator.GotNext(out int2 delta))
                 {
-                    int2 position = centerInt + delta * terrain8km.cellSize;
+                    int2 position = center + delta * terrain8km.cellSize;
 
                     if (!mapBounds.Contains(position) || 
                         terrain8km.GetPixel(position) == EBiomeName.Deep ||
@@ -108,13 +125,13 @@ namespace Beast.Radar.City
                         continue;
                     }
                     
-                    center = newPosition + new float2(0.5f);
-                    status = ECityStatus.PlacedButCorrected;
-                    return;
+                    center = newPosition;
+                    
+                    return true;
                 }
             }
-            
-            status = ECityStatus.Failed;
+
+            return false;
         }
         
         private bool _tryFindValidPlaceInCell8km(int2 referencePosition, out int2 newPosition)

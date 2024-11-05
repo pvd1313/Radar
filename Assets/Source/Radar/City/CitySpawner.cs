@@ -24,10 +24,11 @@ namespace Beast.Radar.City
         private readonly ITerrainBackedBiome _biome;
         private readonly IWorldManager _worldManager;
 
-        private GizmosHandle _normalCityGizmo;
-        private GizmosHandle _warningCityGizmo;
-        private GizmosHandle _brokenCityGizmo;
+        private GizmosHandle _majorCityGizmo;
+        private GizmosHandle _minorCityGizmos;
         private NativeList<CityInfo> _cities;
+
+        private TerrainData _bakedForTerrain;
 
         public CitySpawner(
             IGizmosManager gizmosManager, 
@@ -49,39 +50,81 @@ namespace Beast.Radar.City
 
         private UniTask _warmup(ConcurrentContext context)
         {
-            _normalCityGizmo = _gizmosManager.GetHandle(this, "normal", Color.cyan);
-            _brokenCityGizmo = _gizmosManager.GetHandle(this, "broken", Color.magenta);
-            _warningCityGizmo = _gizmosManager.GetHandle(this, "warning", Color.yellow);
+            _majorCityGizmo = _gizmosManager.GetHandle(this, "normal", Color.cyan);
+            _minorCityGizmos = _gizmosManager.GetHandle(this, "broken", Color.white);
             
             return UniTask.CompletedTask;
         }
 
         private UniTask _gameLoad(ConcurrentContext context)
         {
+            TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
+
+            if (terrain.IsSame(_bakedForTerrain))
+            {
+                return UniTask.CompletedTask;
+            }
+
+            _bakedForTerrain = terrain;
+            
             _dispose(default);
 
-            TerrainData terrain = _worldManager.GetCurrentWorld().terrain; 
+            float majorGridSize = terrain.terrainSize / 8.0f;
+            int majorCityCountX = BMath.CeilToInt(terrain.terrainSize / majorGridSize);
+            
+            float minorGridSize = terrain.terrainSize / 32.0f;
+            int minorCityCountX = BMath.CeilToInt(terrain.terrainSize / minorGridSize);
 
-            float gridSize = terrain.terrainSize / 8.0f;
-            int maxCityCount = BMath.CeilToInt(terrain.terrainSize / gridSize);
+            int maxCityCount = majorCityCountX * majorCityCountX + minorCityCountX * minorCityCountX;
+            _cities = NativeMemory.CreatePermList<CityInfo>(maxCityCount);
 
-            CitySpawnJob job = new ()
+            NativeHashSet<short2> majorCities =
+                NativeMemory.CreateTempHashSet<short2>(majorCityCountX * majorCityCountX);
+
+            CitySpawnJob majorCitySpawnJob = new ()
             {
-                gridSize = gridSize,
-                collisionRadius = gridSize * 0.5f,
+                gridSize = majorGridSize,
+                collisionRadius = majorGridSize * 0.5f,
                 random = new Random(BMath.Max(1, (uint)terrain.seed)),
-                maxCityCountX = maxCityCount,
+                maxCityCountX = majorCityCountX,
                 mapBounds = new FloatBounds2(0, terrain.terrainSize - 1),
-                outputCities = NativeMemory.CreatePermList<CityInfo>(maxCityCount * maxCityCount),
+                outputCities = _cities,
                 terrain1km = _biome.Terrain1kmCell,
-                terrain8km = _biome.Terrain8kmCell
+                terrain8km = _biome.Terrain8kmCell,
+                citySizeRange = new FloatMinMax(4, 5),
+                useCityPositionCorrection = true,
+                excludePositions = majorCities
             };
             
-            Profiler.BeginSample("CitySpawnJob.Execute()");
-            job.Schedule().Complete();
+            Profiler.BeginSample("majorCitySpawnJob");
+            majorCitySpawnJob.Schedule().Complete();
+            Profiler.EndSample();
+            
+            for (int i = 0; i < _cities.Length; i++)
+            {
+                majorCities.Add(_cities[i].position);
+            }
+            
+            CitySpawnJob minorCitySpawnJob = new()
+            {
+                gridSize = minorGridSize,
+                collisionRadius = minorGridSize * 0.3f,
+                random = new Random(BMath.Max(1, (uint)terrain.seed + 1)),
+                maxCityCountX = minorCityCountX,
+                mapBounds = new FloatBounds2(0, terrain.terrainSize - 1),
+                outputCities = _cities,
+                terrain1km = _biome.Terrain1kmCell,
+                terrain8km = _biome.Terrain8kmCell,
+                citySizeRange = new FloatMinMax(0, 3),
+                useCityPositionCorrection = false,
+                excludePositions = majorCities
+            };
+            
+            Profiler.BeginSample("minorCitySpawnJob");
+            minorCitySpawnJob.Schedule().Complete();
             Profiler.EndSample();
 
-            _cities = job.outputCities;
+            majorCities.Dispose();
             
             return UniTask.CompletedTask;
         }
@@ -92,35 +135,31 @@ namespace Beast.Radar.City
             {
                 return;
             }
+
+            int majorCount = 0;
+            int minorCount = 0;
             
             foreach (CityInfo cityInfo in _cities)
             {
-                switch (cityInfo.status)
+                int size = cityInfo.size;
+                
+                float2 position = cityInfo.position + new float2(0.5f);
+
+                if (size >= 4)
                 {
-                    case ECityStatus.Failed:
-                        _brokenCityGizmo.DrawScreenDot(cityInfo.originalPosition);
-                        break;
-                    
-                    case ECityStatus.Placed:
-                        _normalCityGizmo.DrawScreenDot(cityInfo.originalPosition);
-                        break;
-                    
-                    case ECityStatus.PlacedButCorrected:
-                        _normalCityGizmo.DrawScreenDot(cityInfo.correctedPosition);
-
-                        _warningCityGizmo.DrawLine(cityInfo.originalPosition, cityInfo.correctedPosition);
-
-                        for (float t = 0; t < 1; t += 0.2f)
-                        {
-                            float2 pos = BMath.Lerp(cityInfo.originalPosition, cityInfo.correctedPosition, t);
-                            
-                            _warningCityGizmo.DrawScreenDot(pos);
-                        }
-                        break;
+                    majorCount++;
+                    _majorCityGizmo.DrawScreenSquare(position, 3 * size);
+                }
+                else
+                {
+                    minorCount++;
+                    _minorCityGizmos.DrawScreenSquare(position, 2f * (size + 2));
                 }
             }
 
-            BDebug.Track(this, "CityCount", _cities.Length);
+            BDebug.Track(this, "Total", _cities.Length);
+            BDebug.Track(this, "Major", majorCount);
+            BDebug.Track(this, "Minor", minorCount);
         }
         
         private void _dispose(BlockingContext obj)
