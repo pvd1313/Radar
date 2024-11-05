@@ -1,9 +1,10 @@
 ﻿using Beast.Radar.Terrain;
+using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.NewGame
 {
     public interface INewGameSetup
     {
-        void StartNewGame(TerrainData terrain);
+        UniTask StartNewGame(TerrainData terrain);
     }
 }

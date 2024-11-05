@@ -71,12 +71,12 @@ namespace Beast.Radar.Core
 
             Action nextAction;
 
-            bool saveExists = _save.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            bool saveExists = _save.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
                 
             if (saveExists)
             {
                 await tracker.Next("Loading game save");
-                ActionResult result = await _save.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                ActionResult result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
 
                 if (result.IsSuccess())
                 {

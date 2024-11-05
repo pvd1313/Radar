@@ -14,9 +14,6 @@ namespace Beast.Radar.Serialization
 {
     public class SaveManager : Controller, ISaveManager
     {
-        public const string DEFAULT_FILE = "default";
-        public const string DEFAULT_FOLDER = "default";
-        
         private readonly GameModel _gameModel;
         private readonly IGameCycle _gameCycle;
         private readonly IFileManager _fileManager;

@@ -53,7 +53,7 @@ namespace Beast.Radar.UI
             _view.gameObject.SetActive(true);
             _view.loadButton.SetInteractable(false);
 
-            bool saveExists = _saveManager.Exists(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+            bool saveExists = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             _view.loadButton.SetInteractable(saveExists);
 
             _view.fpsToggle.SetValueWithoutNotify(_playerPreferences.isMaxFps);
@@ -117,7 +117,7 @@ namespace Beast.Radar.UI
             _view.loadButton.Clicked += () =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-                _saveManager.LoadAsync(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
                 _mainHUD.Open(default);
             };
 
@@ -125,7 +125,7 @@ namespace Beast.Radar.UI
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
                 // Also should block UI during save
-                _saveManager.Save(SaveManager.DEFAULT_FOLDER, SaveManager.DEFAULT_FILE);
+                _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
                 _view.loadButton.SetInteractable(true);
             };
 

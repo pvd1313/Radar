@@ -4,5 +4,6 @@
     {
         public const string WORLD = "world";
         public const string PREFERENCES = "preferences";
+        public const string DEFAULT_SAVE = "default";
     }
 }

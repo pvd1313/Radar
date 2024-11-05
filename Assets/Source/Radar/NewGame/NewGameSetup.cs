@@ -1,10 +1,12 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.GameCycle;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace Beast.Radar.NewGame
@@ -20,7 +22,7 @@ namespace Beast.Radar.NewGame
             _worldManager = worldManager;
         }
         
-        public void StartNewGame(TerrainData terrain)
+        public async UniTask StartNewGame(TerrainData terrain)
         {
             terrain.ValidateThrowException(nameof(terrain));
             
@@ -42,7 +44,7 @@ namespace Beast.Radar.NewGame
                     zoom01 = 1
                 },
                 
-                player = new PlayerGameData()
+                player = new PlayerGameData
                 {
                     position = int2.zero
                 },
@@ -50,7 +52,17 @@ namespace Beast.Radar.NewGame
                 world = world.guid
             };
 
-            _saveManager.LoadAsync(model);
+            ActionResult result = await _saveManager.LoadAsync(model);
+
+            if (result.IsSuccess())
+            {
+                _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+            }
+            else
+            {
+                // TODO : https://risenbeast.youtrack.cloud/issue/R-89
+                //      : Move to the main menu if failed to start new game.
+            }
         }
     }
 }
