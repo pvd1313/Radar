@@ -80,7 +80,7 @@ MonoBehaviour:
         max: 0.3
       biomeForestRange:
         min: 0
-        max: 0.4
+        max: 1
       isBiomeTile: 1
       index: 3
     - texture: {fileID: 2800000, guid: c834847cf1fbd1c43b2b5bc5b4e0603b, type: 3}
@@ -103,7 +103,7 @@ MonoBehaviour:
       yBlendCenter: 0.2421875
       biomeWaterRange:
         min: 0
-        max: 0.3
+        max: 0.25
       biomeForestRange:
         min: 0.4
         max: 0.5
@@ -116,7 +116,7 @@ MonoBehaviour:
       yBlendCenter: 0.5
       biomeWaterRange:
         min: 0
-        max: 0.3
+        max: 0.25
       biomeForestRange:
         min: 0.5
         max: 1

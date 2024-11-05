@@ -48,11 +48,10 @@
                 return output;
             }
 
-            float fbm(float2 uv, float quality, float seed, float amount)
+            float fbm_amount(float fbm, float amount)
             {
                 amount = lerp(0.25f, 0.4f, amount + 0.3f);
                 
-                float fbm = beast_fbm(uv, 0.65f, quality, seed);
                 fbm = pow(amount, 1.5f) * fbm;
                 fbm += pow(amount, 0.75f) * (1 - fbm);
 
@@ -63,12 +62,21 @@
             {
                 float quality = lerp(7, 14, _Quality01);
 
-                float2 scaledUV = input.uv * lerp(1, 6, 1 - _BiomeSize01);
-                float r = fbm(scaledUV, quality, _Seed.x, _Amount.x);
-                float g = fbm(scaledUV, quality, _Seed.y, _Amount.y);
+                _Amount.x = lerp(0.5f, 1, _Amount.x);
+                _Amount.y = lerp(0.25f, 1, _Amount.y);
 
-                // Currenly simple border, in future we will have erosion.
+                float2 scaledUV = input.uv * lerp(2, 4, 1 - _BiomeSize01);
+                float fbm0 = beast_fbm(scaledUV, 0.65f, quality, _Seed.x);
+                float fbm1 = beast_fbm(scaledUV, 0.65f, quality, _Seed.y);
+                
+                float r = fbm_amount(fbm0, _Amount.x);
+                float g = fbm_amount(fbm1, _Amount.y);
+
+                // Water border.
+                float2 uvCentered = input.uv * 2.0f - 1.0f;
+                float falloff = pow(length(uvCentered), 4.0f + _Amount.x * 8);
                 r = beast_rect(input.uv, r, 1, 4.0f / _TextureSize);
+                r = saturate(r + falloff * (1 - fbm1) + falloff * 0.1f * (1 - fbm0));
 
                 return float4(r, g, 0, 0);
             }
