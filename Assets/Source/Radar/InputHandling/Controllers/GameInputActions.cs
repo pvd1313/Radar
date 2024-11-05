@@ -82,11 +82,13 @@ namespace Beast.Radar.InputHandling
                     {
                         case 0:
                             Scroll.UpdateValue(0);
+                            Click.UpdateValue(float2.zero);
                             break;
                     
                         case 1:
                             Scroll.UpdateValue(0);
                             ScreenPoint.UpdateValue((float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>());
+                            Click.UpdateValue(ScreenPoint.Value);
                             break;
                     
                         case 2:
@@ -115,7 +117,6 @@ namespace Beast.Radar.InputHandling
                     LastTouchCount.UpdateValue(_getTouchCount());
                     float2 mousePosition = _inputActions.Game.FirstPosition.ReadValue<Vector2>();
                     LastScreenPoint.UpdateValue(mousePosition);
-                    Click.UpdateValue(CurrentTouchCount.Value > 0 ? mousePosition : float2.zero);
                     break;
                 
                 case EInputScheme.Gamepad:

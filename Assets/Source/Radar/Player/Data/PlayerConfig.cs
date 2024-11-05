@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Terrain;
 using UnityEngine;
 
@@ -19,15 +21,14 @@ namespace Beast.Radar.Player
         {
             ByteArray16 byteArray = new ByteArray16();
             
-            byte[] values = new byte[tileSpeedModifiers.Length];
-
-            for (int i = 0; i < tileSpeedModifiers.Length; i++)
+            int count = BMath.Min(tileSpeedModifiers.Length, 16);
+            
+            for (int i = 0; i < count; i++)
             {
                 TileSlowdown modifier = tileSpeedModifiers[i];
                 int index = (int)modifier.biome;
                 byte speedValue = (byte)((1f - modifier.speedMultiplier) * 255);
-                values[index] = speedValue;
-                byteArray.SetByte(i, values[i]);
+                byteArray.SetByte(i, speedValue);
             }
 
             return byteArray;

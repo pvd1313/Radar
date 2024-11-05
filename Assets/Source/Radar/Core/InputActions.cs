@@ -739,7 +739,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b026216d-2b5e-4982-b999-ddb5afcaab4c"",
-                    ""path"": ""<Touchscreen>/touch*/press"",
+                    ""path"": ""<Touchscreen>/Press"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Touch"",
