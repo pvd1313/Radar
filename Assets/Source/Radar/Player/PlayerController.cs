@@ -27,7 +27,6 @@ namespace Beast.Radar.Player
         public event Action ChangeMovementState;
         public event Action ChangeTarget;
         public bool IsReady { get; private set; }
-        public float2 TempPosition { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
         public float Speed { get; private set; }
@@ -111,13 +110,15 @@ namespace Beast.Radar.Player
 
         private UniTask _gameLoad(ConcurrentContext arg)
         {
-            Position = _indexToWorld(_gameModel.player.position);
-
-            TempPosition = Position;
+            Position = _gameModel.player.position;
 
             Target = Position;
             
             IsReady = true;
+
+            BDebug.Track(this, "position", Position);
+            BDebug.Track(this, "target", Target);
+            BDebug.Track(this, "target cell", _worldToIndex(Target));
 
             return UniTask.CompletedTask;
         }
@@ -202,6 +203,7 @@ namespace Beast.Radar.Player
                         }
                     }
 
+                    BDebug.Track(this, "position", Position);
                     BDebug.Track(this, "target", Target);
                     BDebug.Track(this, "target cell", _worldToIndex(Target));
                 }

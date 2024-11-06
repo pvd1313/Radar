@@ -8,7 +8,6 @@ namespace Beast.Radar.Player
     {
         event Action ChangeMovementState;
         event Action ChangeTarget;
-        float2 TempPosition { get; }
         float2 Position { get; }
         float2 Target { get; }
         float Speed { get; }
