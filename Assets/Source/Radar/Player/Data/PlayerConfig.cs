@@ -9,6 +9,7 @@ namespace Beast.Radar.Player
     public class PlayerConfig : ScriptableConfig
     {
         public float moveSpeed;
+        public int maxNodeCount;
         public TileSlowdown[] tileSpeedModifiers;
         
         public override IEnumerable<IConfig> Bind()

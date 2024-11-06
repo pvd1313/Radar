@@ -33,6 +33,12 @@ namespace Beast.Radar.Player.Path
             return item;
         }
 
+        public void Clear()
+        {
+            _items.Clear();
+            _priorities.Clear();
+        }
+        
         private void _heapifyUp(int index)
         {
             while (index > 0)
