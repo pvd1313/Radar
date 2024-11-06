@@ -30,11 +30,6 @@ namespace Beast.Claw.GameCycle
             _gameCycle.ExecuteBlocking(this, ActionID.FIXED_UPDATE);
         }
 
-        private void OnDrawGizmos()
-        {
-            _gameCycle.ExecuteBlocking(this, ActionID.GIZMOS_DRAW);
-        }
-
         private void LateUpdate()
         {
             _gameCycle.ExecuteBlocking(this, ActionID.RENDER);

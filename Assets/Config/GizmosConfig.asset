@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7401442e69034e4e98cdf87125bef3c0, type: 3}
   m_Name: GizmosConfig
   m_EditorClassIdentifier: 
-  Shader: {fileID: 4800000, guid: 915ba2d50572446cbe22f892c9652771, type: 3}
-  WindowItemCount: 8
-  HandleNameConverter:
-    pattern: (.*)\.(.*$)
-    substitution: $2
+  blitShader: {fileID: 4800000, guid: fc04688436c9f6849a1a56b768cfbad9, type: 3}
+  vertexRender: {fileID: 4800000, guid: df92de417258424f8b71ede9e09bcfa8, type: 3}
+  quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}

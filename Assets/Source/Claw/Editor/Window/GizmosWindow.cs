@@ -28,7 +28,7 @@ namespace Beast.Claw.Editor.Window
         
         protected override void DrawUI()
         {
-            if (!GizmosStateStorage.IsInitialize)
+            if (!GizmosStateStorage.Initialized)
             {
                 return;
             }

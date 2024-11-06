@@ -4,7 +4,7 @@ using Unity.Collections;
 
 namespace Beast.Claw.Gizmos
 {
-    internal struct ShapeStorage<T> : IDisposable where T : unmanaged
+    public struct ShapeStorage<T> : IDisposable where T : unmanaged
     {
         private readonly int _allocationSize;
         

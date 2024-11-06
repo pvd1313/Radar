@@ -9,7 +9,7 @@ namespace Beast.Claw.Gizmos
     public static class GizmosStateStorage 
     {
         public static int HandleCount => _lastHandleId;
-        public static bool IsInitialize { get; private set; }
+        public static bool Initialized { get; private set; }
         private static int Version { get; set; }
 
         private static Dictionary<string, ushort> _handleToId = new();
@@ -25,7 +25,8 @@ namespace Beast.Claw.Gizmos
             _activityChunks = NativeMemory.CreatePermArray<int>(0);
             _colors = NativeMemory.CreatePermArray<Color>(0);
             _names = new List<string>();
-            IsInitialize = true;
+            
+            Initialized = true;
         }
         
         public static ushort GetOrCreateHandleId(string name, Color defaultColor)
@@ -130,7 +131,7 @@ namespace Beast.Claw.Gizmos
 
         public static void Dispose()
         {
-            IsInitialize = false;
+            Initialized = false;
             if (_activityChunks.IsCreated)
             {
                 _activityChunks.Dispose();

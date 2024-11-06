@@ -18,9 +18,7 @@ namespace Beast.Radar.Debug
         {
             if (Build.IS_DEVELOPMENT)
             {
-                yield return typeof(GizmosManager);
-                yield return typeof(GizmosDrawerManager);
-            
+                yield return typeof(GizmosRender);
                 yield return typeof(DebugController);
                 yield return typeof(DebugPreferencesController);
                 yield return typeof(DebugMenuWindow);

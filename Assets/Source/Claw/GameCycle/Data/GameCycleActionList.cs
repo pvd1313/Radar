@@ -83,15 +83,6 @@ namespace Beast.Claw.GameCycle
             },
             new ActionInfo
             {
-                id = ActionID.GIZMOS_DRAW,
-                order = EActionOrder.FromFirstToLastInjected,
-                flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128,
-                flushProfilerToConsole = false,
-            },
-            new ActionInfo
-            {
                 id = ActionID.FIXED_UPDATE,
                 order = EActionOrder.FromFirstToLastInjected,
                 flow = EActionFlowType.Blocking,

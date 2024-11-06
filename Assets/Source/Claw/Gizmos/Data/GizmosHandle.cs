@@ -9,13 +9,13 @@ namespace Beast.Claw.Gizmos
     public struct GizmosHandle
     {
         private readonly ushort _id;
-        private readonly GizmosManager _gizmos;
+        private readonly GizmosRender _gizmos;
 
         private int _cashVersion;
         private bool _enabled;
         private Color _color;
         
-        internal GizmosHandle(ushort id, GizmosManager gizmos)
+        internal GizmosHandle(ushort id, GizmosRender gizmos)
         {
             _id = id;
             _gizmos = gizmos;
@@ -24,7 +24,7 @@ namespace Beast.Claw.Gizmos
             _color = Color.clear;
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawLine(float2 start, float2 end)
         {
             UpdateCash();
@@ -41,7 +41,7 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawLine(float x0, float y0, float x1, float y1)
         {
             UpdateCash();
@@ -65,7 +65,7 @@ namespace Beast.Claw.Gizmos
             return _enabled;
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawWireRect(float2 center, float2 size, float angleRad)
         {
             UpdateCash();
@@ -83,7 +83,7 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawWireSquare(float2 center, float size)
         {
             UpdateCash();
@@ -100,7 +100,7 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawScreenSquare(float2 center, float size)
         {
             UpdateCash();
@@ -117,13 +117,13 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawScreenDot(float2 center)
         {
             DrawScreenSquare(center, 6);
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawScreenCircle(float2 center, float radius)
         {
             UpdateCash();
@@ -142,7 +142,7 @@ namespace Beast.Claw.Gizmos
             });
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("DEVELOPMENT")]
         public void DrawWirePolygon(float2 center, float radius, int topology)
         {
             UpdateCash();

@@ -58,7 +58,7 @@ namespace Beast.Claw.Gizmos
                 Square square = squares[i];
                 GL.Color(square.color);
                 float2 center = square.center;
-                float halfSize = square.size / 2f;
+                float halfSize = square.size * 0.5f;
                 float2 p0 = center + new float2(-halfSize, -halfSize);
                 float2 p1 = center + new float2(-halfSize, +halfSize);
                 float2 p2 = center + new float2(+halfSize, +halfSize);
