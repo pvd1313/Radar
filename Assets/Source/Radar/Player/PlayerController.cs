@@ -51,6 +51,7 @@ namespace Beast.Radar.Player
         private bool _isCheckClick;
         private NativeList<int2> _path;
         private Stopwatch _pathWatch;
+        private PathBuffer _buffer;
 
         public PlayerController(
             IGameTime time,
@@ -104,7 +105,17 @@ namespace Beast.Radar.Player
 
             _path = NativeMemory.CreatePermList<int2>(256);
             _pathWatch = new Stopwatch();
-            
+
+            _buffer = new PathBuffer()
+            {
+                openList = new PriorityQueue(Allocator.Persistent),
+                outputPath = new NativeList<int2>(Allocator.Persistent),
+                pathNodeList = new NativeList<PathNode>(_config.maxNodeCount, Allocator.Persistent),
+                positionToIndexMap = new NativeHashMap<int2, int>(_config.maxNodeCount, Allocator.Persistent),
+                closedList = new NativeHashSet<int>(_config.maxNodeCount, Allocator.Persistent),
+                openSet = new NativeHashSet<int>(_config.maxNodeCount, Allocator.Persistent),
+            };
+
             return UniTask.CompletedTask;
         }
 
@@ -226,7 +237,8 @@ namespace Beast.Radar.Player
                 tileCosts = _config.TileSpeedModifiersToTileCost(),
                 textureSizeX = _biome.Terrain8kmCell.cellCountX,
                 texture = _biome.Terrain8kmCell.texture,
-                outputPath = _path
+                outputPath = _path,
+                buffer = _buffer
             };
             
             _pathWatch.Restart();
@@ -296,6 +308,7 @@ namespace Beast.Radar.Player
             {
                 _path.Dispose();
             }
+            _buffer.Dispose();
         }
     }
 }

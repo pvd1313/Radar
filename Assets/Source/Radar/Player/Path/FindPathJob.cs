@@ -12,14 +12,14 @@ namespace Beast.Radar.Player.Path
     public struct FindPathJob : IJob
     {
         private const int MOVE_STRAIGHT_COST = 1;
-        private const int MOVE_DIAGONAL_COST = 1;
-        
+        private const int MOVE_DIAGONAL_COST = 2;
+
         public int textureSizeX;
         public int2 startPosition;
         public int2 endPosition;
         public NativeArray<EBiomeName> texture;
+        public PathBuffer buffer;
         public ByteArray16 tileCosts;
-        
         public NativeList<int2> outputPath;
 
         public void Execute()
@@ -27,43 +27,39 @@ namespace Beast.Radar.Player.Path
             outputPath.Clear();
             
             int2 gridSizeXY = new (textureSizeX, textureSizeX);
-            NativeList<PathNode> pathNodeList = new(Allocator.Temp);
-            NativeHashMap<int2, int> positionToIndexMap = new(gridSizeXY.x * gridSizeXY.y, Allocator.Temp);
-
-            int endNodeIndex = _createOrGetPathNode(endPosition, ref pathNodeList, ref positionToIndexMap);
+            
+            int endNodeIndex = _createOrGetPathNode(endPosition, ref buffer.pathNodeList, ref buffer.positionToIndexMap);
                 
-            PathNode startNode =
-                pathNodeList[_createOrGetPathNode(startPosition, ref pathNodeList, ref positionToIndexMap)];
+            PathNode startNode = buffer.pathNodeList[_createOrGetPathNode(
+                startPosition, 
+                ref buffer.pathNodeList, 
+                ref buffer.positionToIndexMap)];
                
             startNode.gCost = 0;
             startNode.CalculateFCost();
-            pathNodeList[startNode.index] = startNode;
+            buffer.pathNodeList[startNode.index] = startNode;
 
-            PriorityQueue openList = new(Allocator.Temp);
-            NativeHashSet<int> closedList = new(gridSizeXY.x * gridSizeXY.y, Allocator.Temp);
-            NativeHashSet<int> openSet = new(gridSizeXY.x * gridSizeXY.y, Allocator.Temp);
+            buffer.openList.Enqueue(startNode.index, startNode.fCost);
+            buffer.openSet.Add(startNode.index);
 
-            openList.Enqueue(startNode.index, startNode.fCost);
-            openSet.Add(startNode.index);
-
-            while (openList.Count > 0)
+            while (buffer.openList.Count > 0)
             {
-                int currentNodeIndex = openList.Dequeue();
+                int currentNodeIndex = buffer.openList.Dequeue();
                    
-                openSet.Remove(currentNodeIndex);
+                buffer.openSet.Remove(currentNodeIndex);
                     
                 if (currentNodeIndex == endNodeIndex)
                 {
                     break;
                 }
 
-                closedList.Add(currentNodeIndex);
+                buffer.closedList.Add(currentNodeIndex);
 
                 for (int i = 0; i < NeighbourOffsets.COUNT; i++)
                 {
                     int2 offset = NeighbourOffsets.Get(i);
                     
-                    PathNode currentNode = pathNodeList[currentNodeIndex];
+                    PathNode currentNode = buffer.pathNodeList[currentNodeIndex];
                     int2 neighbourPosition = currentNode.position + offset;
                         
                     if (!_isPositionInsideGrid(neighbourPosition, gridSizeXY))
@@ -73,17 +69,17 @@ namespace Beast.Radar.Player.Path
 
                     int neighbourNodeIndex = _createOrGetPathNode(
                         neighbourPosition, 
-                        ref pathNodeList,
-                        ref positionToIndexMap);
+                        ref buffer.pathNodeList,
+                        ref buffer.positionToIndexMap);
                     
-                    if (closedList.Contains(neighbourNodeIndex))
+                    if (buffer.closedList.Contains(neighbourNodeIndex))
                     {
                         continue;
                     }
 
-                    int tentativeGCost = _calculateTentativeGCost(pathNodeList, currentNodeIndex, neighbourNodeIndex);
+                    int tentativeGCost = _calculateTentativeGCost(buffer.pathNodeList, currentNodeIndex, neighbourNodeIndex);
                         
-                    PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
+                    PathNode neighbourNode = buffer.pathNodeList[neighbourNodeIndex];
 
                     if (tentativeGCost < neighbourNode.gCost)
                     {
@@ -91,24 +87,24 @@ namespace Beast.Radar.Player.Path
                         neighbourNode.gCost = tentativeGCost;
                         neighbourNode.CalculateFCost();
                         
-                        pathNodeList[neighbourNodeIndex] = neighbourNode;
+                        buffer.pathNodeList[neighbourNodeIndex] = neighbourNode;
 
-                        if (!openSet.Contains(neighbourNodeIndex))
+                        if (!buffer.openSet.Contains(neighbourNodeIndex))
                         {
-                            openList.Enqueue(neighbourNodeIndex, neighbourNode.fCost);
-                            openSet.Add(neighbourNodeIndex);
+                            buffer.openList.Enqueue(neighbourNodeIndex, neighbourNode.fCost);
+                            buffer.openSet.Add(neighbourNodeIndex);
                         }
                     }
                 }
             }
 
-            _calcPath(pathNodeList, pathNodeList[endNodeIndex]);
-
-            pathNodeList.Dispose();
-            positionToIndexMap.Dispose();
-            openList.Dispose();
-            closedList.Dispose();
-            openSet.Dispose(); 
+            _calcPath(buffer.pathNodeList, buffer.pathNodeList[endNodeIndex]);
+            
+            buffer.pathNodeList.Clear();
+            buffer.positionToIndexMap.Clear();
+            buffer.openList.Clear();
+            buffer.closedList.Clear();
+            buffer.openSet.Clear(); 
         }
 
         private int _calculateTentativeGCost(
