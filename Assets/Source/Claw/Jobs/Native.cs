@@ -1,10 +1,11 @@
 using System;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Mathematics;
 using Unity.Collections;
 
 namespace Beast.Claw.Jobs
 {
-    public static class NativeMemory
+    public static class Native
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeArray<T> CreateTempArray<T>(int length) where T : unmanaged
@@ -65,7 +66,7 @@ namespace Beast.Claw.Jobs
                 return;
             }
 
-            int newSize = 1 << (int) System.Math.Ceiling(System.Math.Log(requiredCapacity, 2));
+            int newSize = 1 << BMath.CeilToInt(BMath.Log2(requiredCapacity));
             NativeArray<T> newArray = CreatePermArray<T>(newSize);
             NativeArray<T>.Copy(permArray, newArray, permArray.Length);
             
@@ -84,7 +85,7 @@ namespace Beast.Claw.Jobs
             }
             
             int itemsPerAllocation = rule.itemPerAllocation;
-            int chunkBasedLength = (int) System.Math.Ceiling(requiredCapacity / (float) itemsPerAllocation) * itemsPerAllocation;
+            int chunkBasedLength = BMath.CeilToInt(requiredCapacity / (float) itemsPerAllocation) * itemsPerAllocation;
             NativeArray<T> newArray = CreatePermArray<T>(chunkBasedLength);
 
             if (rule.copyOnResize)

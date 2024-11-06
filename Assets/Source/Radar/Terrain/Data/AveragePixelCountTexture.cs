@@ -63,7 +63,7 @@ namespace Beast.Radar.Terrain
             {
                 outputCellSize = cellSize,
                 sourceTexture = texture,
-                outputTexture = NativeMemory.CreatePermArray<EBiomeName>(cellCountX * cellCountX)
+                outputTexture = Native.CreatePermArray<EBiomeName>(cellCountX * cellCountX)
             };
             Profiler.EndSample();
             

@@ -9,9 +9,9 @@ namespace Beast.Claw.Gizmos
     public class GizmosConfig : ScriptableConfig
     {
         public Shader blitShader;
-        public Shader vertexRender;
+        public Shader quadShader;
         public Mesh quad;
-
+        
         public override IEnumerable<IConfig> Bind()
         {
             yield break;

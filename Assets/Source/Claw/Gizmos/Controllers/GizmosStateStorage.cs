@@ -22,8 +22,8 @@ namespace Beast.Claw.Gizmos
         {
             _handleToId = new Dictionary<string, ushort>();
             _lastHandleId = 0;
-            _activityChunks = NativeMemory.CreatePermArray<int>(0);
-            _colors = NativeMemory.CreatePermArray<Color>(0);
+            _activityChunks = Native.CreatePermArray<int>(0);
+            _colors = Native.CreatePermArray<Color>(0);
             _names = new List<string>();
             
             Initialized = true;
@@ -55,8 +55,8 @@ namespace Beast.Claw.Gizmos
                 itemPerAllocation = 32,
                 requiredCapacity = _lastHandleId
             };
-            NativeMemory.MaintainPersistentArrayLength(ref _activityChunks, rule);
-            NativeMemory.MaintainPersistentArrayLength(ref _colors, rule);
+            Native.MaintainPersistentArrayLength(ref _activityChunks, rule);
+            Native.MaintainPersistentArrayLength(ref _colors, rule);
             bool enabled = PlayerPrefs.GetInt(name, 1) > 0;
             _setChunkActivityBit(handleId, enabled);
             _names.Add(name);

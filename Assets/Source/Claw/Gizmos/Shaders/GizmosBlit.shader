@@ -46,7 +46,7 @@ Shader "Beast/Claw/Gizmos/Blit"
             {
                 fixed4 color = tex2D(_Texture, input.uv);
 
-                clip(color.a - 1);
+                clip(color.a - 1.0f);
                 
                 return color;
             }

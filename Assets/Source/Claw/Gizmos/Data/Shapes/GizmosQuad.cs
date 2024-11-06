@@ -1,12 +1,11 @@
-using Unity.Mathematics;
-using UnityEngine;
+﻿using Unity.Mathematics;
 
 namespace Beast.Claw.Gizmos
 {
-    public struct Square
+    public struct GizmosQuad
     {
         public float2 center;
         public half size;
-        public Color color;
+        public half4 color;
     }
 }

@@ -49,10 +49,10 @@ namespace Beast.Claw.Profiling
             _samplesTimer.Start();
             _profilingTree = new ProfilerTree
             {
-                childs = NativeMemory.CreatePermArray<ushort>(1),
-                names = NativeMemory.CreatePermArray<ushort>(1),
-                siblings = NativeMemory.CreatePermArray<ushort>(1),
-                times = NativeMemory.CreatePermArray<float>(1),
+                childs = Native.CreatePermArray<ushort>(1),
+                names = Native.CreatePermArray<ushort>(1),
+                siblings = Native.CreatePermArray<ushort>(1),
+                times = Native.CreatePermArray<float>(1),
                 text = _namesActive,
                 nodeCount = 1
             };
@@ -79,15 +79,15 @@ namespace Beast.Claw.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = NativeMemory.CreatePermArray<ushort>(nodeCount),
-                outNames = NativeMemory.CreatePermArray<ushort>(nodeCount),
-                outSiblings = NativeMemory.CreatePermArray<ushort>(nodeCount),
-                outTimes = NativeMemory.CreatePermArray<float>(nodeCount),
-                outState = NativeMemory.CreateTempArray<TreeBuildState>(1),
-                parentStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
-                siblingStack = NativeMemory.CreateTempArray<ushort>(_config.stackSize),
-                timeStack = NativeMemory.CreateTempArray<int>(_config.stackSize),
-                nameHashStack = NativeMemory.CreateTempArray<int>(_config.stackSize)
+                outChilds = Native.CreatePermArray<ushort>(nodeCount),
+                outNames = Native.CreatePermArray<ushort>(nodeCount),
+                outSiblings = Native.CreatePermArray<ushort>(nodeCount),
+                outTimes = Native.CreatePermArray<float>(nodeCount),
+                outState = Native.CreateTempArray<TreeBuildState>(1),
+                parentStack = Native.CreateTempArray<ushort>(_config.stackSize),
+                siblingStack = Native.CreateTempArray<ushort>(_config.stackSize),
+                timeStack = Native.CreateTempArray<int>(_config.stackSize),
+                nameHashStack = Native.CreateTempArray<int>(_config.stackSize)
             };
             
             UnityEngine.Profiling.Profiler.BeginSample("ProfilingManager.BuildTreeJob");

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GizmosConfig
   m_EditorClassIdentifier: 
   blitShader: {fileID: 4800000, guid: fc04688436c9f6849a1a56b768cfbad9, type: 3}
-  vertexRender: {fileID: 4800000, guid: df92de417258424f8b71ede9e09bcfa8, type: 3}
+  quadShader: {fileID: 4800000, guid: 27ad613794a6e694c9f9c6fa499692a6, type: 3}
   quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}

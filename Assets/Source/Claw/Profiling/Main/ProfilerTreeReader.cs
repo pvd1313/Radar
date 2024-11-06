@@ -33,9 +33,9 @@ namespace Beast.Claw.Profiling
                 inSiblings = _tree.siblings,
                 inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
-                outNodeCount = NativeMemory.CreateTempArray<int>(1),
-                outTotalNodeCount = NativeMemory.CreateTempArray<int>(1),
-                outNodes = NativeMemory.CreateTempArray<NativeNode>(count)
+                outNodeCount = Native.CreateTempArray<int>(1),
+                outTotalNodeCount = Native.CreateTempArray<int>(1),
+                outNodes = Native.CreateTempArray<NativeNode>(count)
             };
             job.Run();
             

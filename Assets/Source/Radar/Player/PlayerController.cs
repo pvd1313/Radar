@@ -103,7 +103,7 @@ namespace Beast.Radar.Player
                 };
             }
 
-            _path = NativeMemory.CreatePermList<int2>(256);
+            _path = Native.CreatePermList<int2>(256);
             _pathWatch = new Stopwatch();
 
             _buffer = new PathBuffer()
@@ -292,14 +292,14 @@ namespace Beast.Radar.Player
 
                     float2 position = _blockToWorld(point) + cellSizeHalf;
 
-                    handle.DrawScreenDot(position);
+                    handle.DrawPoint(position);
                 }
             }
 
-            handle.DrawScreenDot(Position + new float2(_halfTexelSize, _halfTexelSize));
-            handle.DrawScreenDot(Position + new float2(_halfTexelSize, -_halfTexelSize));
-            handle.DrawScreenDot(Position + new float2(-_halfTexelSize, -_halfTexelSize));
-            handle.DrawScreenDot(Position + new float2(-_halfTexelSize, -_halfTexelSize));
+            handle.DrawPoint(Position + new float2(_halfTexelSize, _halfTexelSize));
+            handle.DrawPoint(Position + new float2(_halfTexelSize, -_halfTexelSize));
+            handle.DrawPoint(Position + new float2(-_halfTexelSize, -_halfTexelSize));
+            handle.DrawPoint(Position + new float2(-_halfTexelSize, -_halfTexelSize));
         }
         
         private void _dispose(BlockingContext obj)

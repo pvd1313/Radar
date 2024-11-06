@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Reflection;
+﻿using Beast.Claw.Common;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -6,9 +6,9 @@ namespace Beast.Claw.Graphic
 {
     partial class BGraphic
     {
-        public static CommandBuffer GetTempBuffer<TOwner>(TOwner owner)
+        public static CommandBuffer GetTempBuffer(IController owner)
         {
-            return CommandBufferPool.Get(TypeStorage<TOwner>.FULL_NAME);
+            return CommandBufferPool.Get(owner.Meta.name);
         }
 
         public static void ExecuteBuffer(CommandBuffer buffer)

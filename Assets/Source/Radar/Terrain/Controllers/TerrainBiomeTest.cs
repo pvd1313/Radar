@@ -58,10 +58,10 @@ namespace Beast.Radar.Terrain
             
             // 1 km
             int2 worldPoint1km = BMath.FloorToInt(worldPoint);
-            _cell1kmGizmos.DrawScreenDot(worldPoint1km);
-            _cell1kmGizmos.DrawScreenDot(worldPoint1km + new float2(0, 1));
-            _cell1kmGizmos.DrawScreenDot(worldPoint1km + new float2(1, 0));
-            _cell1kmGizmos.DrawScreenDot(worldPoint1km + new float2(1, 1));
+            _cell1kmGizmos.DrawPoint(worldPoint1km);
+            _cell1kmGizmos.DrawPoint(worldPoint1km + new float2(0, 1));
+            _cell1kmGizmos.DrawPoint(worldPoint1km + new float2(1, 0));
+            _cell1kmGizmos.DrawPoint(worldPoint1km + new float2(1, 1));
             
             BDebug.Track(this, "WorldPoint_1KM", worldPoint1km);
             
@@ -74,10 +74,10 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, "CellSize8km", cellSize);
 
             int2 worldPoint8km = BMath.FloorToInt(worldPoint / cellSize) * cellSize;
-            _cell8kmGizmos.DrawScreenDot(worldPoint8km);
-            _cell8kmGizmos.DrawScreenDot(worldPoint8km + new float2(0, cellSize));
-            _cell8kmGizmos.DrawScreenDot(worldPoint8km + new float2(cellSize, 0));
-            _cell8kmGizmos.DrawScreenDot(worldPoint8km + new float2(cellSize, cellSize));
+            _cell8kmGizmos.DrawPoint(worldPoint8km);
+            _cell8kmGizmos.DrawPoint(worldPoint8km + new float2(0, cellSize));
+            _cell8kmGizmos.DrawPoint(worldPoint8km + new float2(cellSize, 0));
+            _cell8kmGizmos.DrawPoint(worldPoint8km + new float2(cellSize, cellSize));
             
             BDebug.Track(this, "WorldPoint_8KM", worldPoint8km);
 
