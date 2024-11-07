@@ -2,7 +2,6 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.GameTime;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -13,16 +12,14 @@ namespace Beast.Radar.UI
     {
         private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;
-        private readonly IGameTime _time;
         private readonly IPlayerController _player;
 
         private PlayerView _view;
 
-        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IGameTime time, IPlayerController player)
+        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IPlayerController player)
         {
             _library = library;
             _camera = camera;
-            _time = time;
             _player = player;
         }
         
@@ -79,9 +76,9 @@ namespace Beast.Radar.UI
                 _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
             }
             
-            string travelTime = _time.CalculateTravelTime(_player.Position, _player.Target, _player.Speed);
+            //TODO: https://risenbeast.youtrack.cloud/issue/R-6 Set travel time 
             
-            float distance = BMath.Distance(_player.Position, _player.Target) * 1000;
+            /*float distance = BMath.Distance(_player.Position, _player.Target) * 1000;
 
             string distanceText;
 
@@ -95,7 +92,7 @@ namespace Beast.Radar.UI
                 distanceText = $"{distanceInKm:F1} км";
             }
 
-            _view.targetText.SetText($"{distanceText}\n{travelTime}");
+            _view.targetText.SetText($"{distanceText}\n{travelTime}");*/
         }
     }
 }

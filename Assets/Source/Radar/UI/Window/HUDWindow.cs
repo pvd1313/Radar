@@ -81,9 +81,9 @@ namespace Beast.Radar.UI
             _gameTime.Changed += () =>
             {
                 string time = string.Concat(
-                    _intToString.ToString((int)_gameTime.GetHours()),
+                    _intToString.ToString(_gameTime.GetTime().Hours),
                     ":",
-                    _intToString.ToString((int)_gameTime.GetMinutes()));
+                    _intToString.ToString(_gameTime.GetTime().Minutes));
                 _view.timeText.SetText(time);
             };
 
