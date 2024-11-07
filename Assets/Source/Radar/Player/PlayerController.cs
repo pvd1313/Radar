@@ -253,7 +253,17 @@ namespace Beast.Radar.Player
             float elapsedMS = _pathWatch.ElapsedMillisecondsFloat();
 
             BDebug.LogInfo(this, $"Found path (nodeCount = {_path.Length}; time = {elapsedMS:N2}ms)");
-            
+
+            _drawPathGizmo();
+
+            /*
+            _currentPathCell = 0;
+            ChangeTarget?.Invoke();*/
+        }
+
+        [Conditional("DEVELOPMENT")]
+        private void _drawPathGizmo()
+        {
             _gizmo.Clear();
             _gizmo.SetColor(Color.magenta);
             
@@ -268,12 +278,7 @@ namespace Beast.Radar.Player
                     _gizmo.AddPoint(position);
                 }
             }
-
-            /*
-            _currentPathCell = 0;
-            ChangeTarget?.Invoke();*/
         }
-
 
         private int2 _blockToWorld(int2 block)
         {

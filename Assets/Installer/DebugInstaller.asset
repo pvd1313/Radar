@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a11d71e8dc2d4d79a9b600c20b21d2dc, type: 3}
   m_Name: DebugInstaller
   m_EditorClassIdentifier: 
-  configs:
-  - {fileID: 11400000, guid: e5cfc40c9e44bcb45a019b233e558ff5, type: 2}
+  configs: []

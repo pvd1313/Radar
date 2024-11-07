@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Gizmo;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
@@ -30,6 +31,7 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
+            yield return typeof(GizmoRender);
             
             // Input & Camera
             yield return typeof(InputSystem);

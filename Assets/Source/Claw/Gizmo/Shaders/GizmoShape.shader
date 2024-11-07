@@ -60,7 +60,6 @@
                     float3 worldPos = float3(posXY.x, 0, posXY.y);
                     
                     output.positionCS = UnityWorldToClipPos(worldPos) + vertex;
-                    output.color = beast_float_to_rgba8(set1.x);
                 }
                 // World point, with world based size.
                 else if (shapeType == 1)
@@ -70,8 +69,9 @@
                     float3 worldPos = float3(posXY.x, 0, posXY.y);
                     
                     output.positionCS = UnityWorldToClipPos(worldPos + size);
-                    output.color = 1.0f;
                 }
+
+                output.color = beast_float_to_rgba8(set1.x);
 
                 return output;
             }

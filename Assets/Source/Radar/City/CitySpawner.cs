@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Diagnostics;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
@@ -126,12 +127,13 @@ namespace Beast.Radar.City
 
             majorCities.Dispose();
 
-            _updateGizmo();
+            _drawCityGizmo();
             
             return UniTask.CompletedTask;
         }
 
-        private void _updateGizmo()
+        [Conditional("DEVELOPMENT")]
+        private void _drawCityGizmo()
         {
             int minorCount = 0;
             int majorCount = 0;
