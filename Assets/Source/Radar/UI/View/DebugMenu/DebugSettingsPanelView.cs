@@ -8,7 +8,6 @@ namespace Beast.Radar.UI
     {
         public GameObject body;
         public UIButton[] timeScaleButtons;
-        public UIButton[] frameRateButtons;
         public UIToggle logToggle;
         public UIToggle fpsToggle;
     }

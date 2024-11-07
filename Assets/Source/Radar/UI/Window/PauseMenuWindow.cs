@@ -85,6 +85,8 @@ namespace Beast.Radar.UI
             _configureSelectables();
             _subscribeView();
 
+            _setFPS();
+            
             _selectablesController.Warmup();
 
             return UniTask.CompletedTask;
@@ -162,7 +164,6 @@ namespace Beast.Radar.UI
         {
             string mapMovementMode = _playerPreferences.isSingleTapMovement ? "single tap" : "double tap";
             _view.mapMovementText.SetText(mapMovementMode);
-            BDebug.LogInfo(this, $"set map movement value = {mapMovementMode}({_playerPreferences.isSingleTapMovement})");
         }
 
         private void _setFPS()

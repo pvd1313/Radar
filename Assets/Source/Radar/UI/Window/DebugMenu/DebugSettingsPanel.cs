@@ -34,7 +34,6 @@ namespace Beast.Radar.UI
 
         public void Warmup()
         {
-            _initializeFrameRates();
             _configureSelectables();
             _subscribeView();
         }
@@ -57,26 +56,16 @@ namespace Beast.Radar.UI
             
             return UniTask.CompletedTask;
         }
-
-        private void _initializeFrameRates()
-        {
-            RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
-            float screenRate = (float)refreshRate.numerator / refreshRate.denominator;
-            _frameRates = new[]
-            {
-                10, 30, 60, (int)screenRate, 999
-            };
-        }
-
+        
         private void _configureSelectables()
         {
             UISelectable[,] selectables =
             {
-                { _view.timeScaleButtons[0].Selectable, _view.frameRateButtons[0].Selectable, _view.logToggle.Selectable},
-                { _view.timeScaleButtons[1].Selectable, _view.frameRateButtons[1].Selectable, _view.fpsToggle.Selectable},
-                { _view.timeScaleButtons[2].Selectable, _view.frameRateButtons[2].Selectable, null},
-                { null,                                 _view.frameRateButtons[3].Selectable, null},
-                { null,                                 _view.frameRateButtons[4].Selectable, null},
+                { _view.timeScaleButtons[0].Selectable, _view.logToggle.Selectable},
+                { _view.timeScaleButtons[1].Selectable, _view.fpsToggle.Selectable},
+                { _view.timeScaleButtons[2].Selectable,  null},
+                { null,                                  null},
+                { null,                                  null},
             };
 
            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
@@ -104,17 +93,7 @@ namespace Beast.Radar.UI
                     BDebug.LogInfo(this, $"Time scale = {_timeScales[index]}");
                 };
             }
-
-            for (int i = 0; i < _view.frameRateButtons.Length; i++)
-            {
-                int index = i;
-                _view.frameRateButtons[i].Clicked += () =>
-                {
-                    Application.targetFrameRate = _frameRates[index];
-                    BDebug.LogInfo(this, $"Target frame rate = {_frameRates[index]}");
-                };
-            }
-
+            
             _view.fpsToggle.Changed += on => _debugController.SetElementState(EDebugFeature.FpsCounter, on);
             _view.logToggle.Changed += on => _debugController.SetElementState(EDebugFeature.LogConsole, on);
         }
