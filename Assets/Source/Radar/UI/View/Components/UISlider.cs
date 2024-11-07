@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
-    public class UISlider : UIView, IPointerUpHandler
+    public class UISlider : UIView
     {
         public event Action<float> EndedChange;
         public UISelectable Selectable => _selectable;
@@ -15,9 +15,9 @@ namespace Beast.Radar.UI
         [SerializeField] private Slider _slider;
         [SerializeField] private UISelectable _selectable;
 
-        public void OnPointerUp(PointerEventData eventData)
+        private void Start()
         {
-            EndedChange?.Invoke(_slider.value);
+            _slider.onValueChanged.AddListener(value => EndedChange?.Invoke(value));
         }
 
         public void AddValue(float value)
