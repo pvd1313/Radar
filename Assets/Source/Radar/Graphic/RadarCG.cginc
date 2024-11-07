@@ -78,6 +78,21 @@ inline float4 beast_tex2Dlod(sampler2D text, float2 uv, float lod)
     return tex2Dlod(text, uvLod);
 }
 
+inline float4 beast_float_to_rgba8(float encodedFloat)
+{
+    // Scale back to the 16-bit integer range
+    float value = encodedFloat * 65535.0f;
+
+    // Decode each 4-bit component
+    float4 rgba;
+    rgba.r = floor(value / 4096.0) / 15.0; // 2^12 = 4096
+    rgba.g = floor(fmod(value, 4096.0) / 256.0) / 15.0; // 2^8 = 256
+    rgba.b = floor(fmod(value, 256.0) / 16.0) / 15.0; // 2^4 = 16
+    rgba.a = fmod(value, 16.0) / 15.0; // No shift for alpha
+
+    return rgba;
+}
+
 inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     float2 output = 0;

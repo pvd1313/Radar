@@ -14,7 +14,7 @@ namespace Beast.Claw.Jobs
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeArray<T> CreatePermArray<T>(int length) where T : unmanaged
+        public static NativeArray<T> PermArray<T>(int length) where T : unmanaged
         {
             return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
@@ -67,7 +67,7 @@ namespace Beast.Claw.Jobs
             }
 
             int newSize = 1 << BMath.CeilToInt(BMath.Log2(requiredCapacity));
-            NativeArray<T> newArray = CreatePermArray<T>(newSize);
+            NativeArray<T> newArray = PermArray<T>(newSize);
             NativeArray<T>.Copy(permArray, newArray, permArray.Length);
             
             permArray.Dispose();
@@ -86,7 +86,7 @@ namespace Beast.Claw.Jobs
             
             int itemsPerAllocation = rule.itemPerAllocation;
             int chunkBasedLength = BMath.CeilToInt(requiredCapacity / (float) itemsPerAllocation) * itemsPerAllocation;
-            NativeArray<T> newArray = CreatePermArray<T>(chunkBasedLength);
+            NativeArray<T> newArray = PermArray<T>(chunkBasedLength);
 
             if (rule.copyOnResize)
             {

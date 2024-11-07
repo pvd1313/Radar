@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Gizmos;
+using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
@@ -22,7 +22,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : Controller, IPlayerController, IGameCycleListener, IGizmosDrawer
+    public class PlayerController : Controller, IPlayerController, IGameCycleListener
     {
         public event Action ChangeMovementState;
         public event Action ChangeTarget;
@@ -41,6 +41,7 @@ namespace Beast.Radar.Player
         private readonly ITerrainBackedBiome _biome;
         private readonly GameModel _gameModel;
         private readonly PlayerPreferences _preferences;
+        private readonly IGizmoManager _gizmoManager;
         private readonly IInputSystem _input;
 
         private InputValueControl<float2> _clickInput;
@@ -52,6 +53,7 @@ namespace Beast.Radar.Player
         private NativeList<int2> _path;
         private Stopwatch _pathWatch;
         private PathBuffer _buffer;
+        private IGizmoHandle _gizmo;
 
         public PlayerController(
             IGameTime time,
@@ -60,7 +62,8 @@ namespace Beast.Radar.Player
             ICameraTransform camera,
             ITerrainBackedBiome biome,
             GameModel gameModel,
-            PlayerPreferences preferences)
+            PlayerPreferences preferences,
+            IGizmoManager gizmoManager)
         {
             _time = time;
             _config = config;
@@ -68,6 +71,7 @@ namespace Beast.Radar.Player
             _biome = biome;
             _gameModel = gameModel;
             _preferences = preferences;
+            _gizmoManager = gizmoManager;
             _input = input;
         }
 
@@ -105,8 +109,9 @@ namespace Beast.Radar.Player
 
             _path = Native.CreatePermList<int2>(256);
             _pathWatch = new Stopwatch();
+            _gizmo = _gizmoManager.CreateHandle(this);
 
-            _buffer = new PathBuffer()
+            _buffer = new PathBuffer
             {
                 openList = new PriorityQueue(Allocator.Persistent),
                 outputPath = new NativeList<int2>(Allocator.Persistent),
@@ -248,6 +253,21 @@ namespace Beast.Radar.Player
             float elapsedMS = _pathWatch.ElapsedMillisecondsFloat();
 
             BDebug.LogInfo(this, $"Found path (nodeCount = {_path.Length}; time = {elapsedMS:N2}ms)");
+            
+            _gizmo.Clear();
+            _gizmo.SetColor(Color.magenta);
+            
+            if (_path.Length > 0)
+            {
+                foreach (int2 point in _path)
+                {
+                    float2 cellSizeHalf = _biome.Terrain8kmCell.cellSize * 0.5f;
+
+                    float2 position = _blockToWorld(point) + cellSizeHalf;
+
+                    _gizmo.AddPoint(position);
+                }
+            }
 
             /*
             _currentPathCell = 0;
@@ -274,33 +294,6 @@ namespace Beast.Radar.Player
         {
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
         }
-
-        public Color GizmosColor { get; } = Color.magenta;
-
-        public void Draw(GizmosHandle handle)
-        {
-            if (!IsReady)
-            {
-                return;
-            }
-
-            if (_path.Length > 0)
-            {
-                foreach (int2 point in _path)
-                {
-                    float2 cellSizeHalf = _biome.Terrain8kmCell.cellSize * 0.5f;
-
-                    float2 position = _blockToWorld(point) + cellSizeHalf;
-
-                    handle.DrawPoint(position);
-                }
-            }
-
-            handle.DrawPoint(Position + new float2(_halfTexelSize, _halfTexelSize));
-            handle.DrawPoint(Position + new float2(_halfTexelSize, -_halfTexelSize));
-            handle.DrawPoint(Position + new float2(-_halfTexelSize, -_halfTexelSize));
-            handle.DrawPoint(Position + new float2(-_halfTexelSize, -_halfTexelSize));
-        }
         
         private void _dispose(BlockingContext obj)
         {
@@ -308,7 +301,9 @@ namespace Beast.Radar.Player
             {
                 _path.Dispose();
             }
+            
             _buffer.Dispose();
+            _gizmo.Dispose();
         }
     }
 }

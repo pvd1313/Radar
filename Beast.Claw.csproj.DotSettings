@@ -20,6 +20,10 @@
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmos_005Cdata/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmos_005Cinterfaces/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmos_005Cshaders/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmo_005Ccontrollers/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmo_005Cdata/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmo_005Cinterfaces/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgizmo_005Cshaders/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgraphic_005Cbgraphic/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgraphic_005Cdata/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=assets_005Csource_005Cclaw_005Cgraphic_005Cextension/@EntryIndexedValue">True</s:Boolean>

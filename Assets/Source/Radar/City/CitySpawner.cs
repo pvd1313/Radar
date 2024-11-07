@@ -1,7 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Gizmos;
+using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Terrain;
@@ -20,22 +20,21 @@ namespace Beast.Radar.City
 {
     public class CitySpawner : Controller, IGameCycleListener
     {
-        private readonly IGizmosManager _gizmosManager;
+        private readonly IGizmoManager _gizmoManager;
         private readonly ITerrainBackedBiome _biome;
         private readonly IWorldManager _worldManager;
 
-        private GizmosHandle _majorCityGizmo;
-        private GizmosHandle _minorCityGizmos;
+        private IGizmoHandle _gizmo;
         private NativeList<CityInfo> _cities;
 
         private TerrainData _bakedForTerrain;
 
         public CitySpawner(
-            IGizmosManager gizmosManager, 
+            IGizmoManager gizmoManager, 
             ITerrainBackedBiome biome, 
             IWorldManager worldManager)
         {
-            _gizmosManager = gizmosManager;
+            _gizmoManager = gizmoManager;
             _biome = biome;
             _worldManager = worldManager;
         }
@@ -45,13 +44,11 @@ namespace Beast.Radar.City
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-            handle.ListenBlocking(ActionID.RENDER, _render);
         }
 
         private UniTask _warmup(ConcurrentContext context)
         {
-            _majorCityGizmo = _gizmosManager.GetHandle(this, "normal", Color.cyan);
-            _minorCityGizmos = _gizmosManager.GetHandle(this, "broken", Color.white);
+            _gizmo = _gizmoManager.CreateHandle(this);
             
             return UniTask.CompletedTask;
         }
@@ -66,8 +63,11 @@ namespace Beast.Radar.City
             }
 
             _bakedForTerrain = terrain;
-            
-            _dispose(default);
+
+            if (_cities.IsCreated)
+            {
+                _cities.Dispose();
+            }
 
             float majorGridSize = terrain.terrainSize / 8.0f;
             int majorCityCountX = BMath.CeilToInt(terrain.terrainSize / majorGridSize);
@@ -125,19 +125,18 @@ namespace Beast.Radar.City
             Profiler.EndSample();
 
             majorCities.Dispose();
+
+            _updateGizmo();
             
             return UniTask.CompletedTask;
         }
 
-        private void _render(BlockingContext context)
+        private void _updateGizmo()
         {
-            if (!_cities.IsCreated)
-            {
-                return;
-            }
-
-            int majorCount = 0;
             int minorCount = 0;
+            int majorCount = 0;
+            
+            _gizmo.Clear();
             
             foreach (CityInfo cityInfo in _cities)
             {
@@ -148,12 +147,14 @@ namespace Beast.Radar.City
                 if (size >= 4)
                 {
                     majorCount++;
-                    _majorCityGizmo.DrawPoint(position, 3 * size);
+                    _gizmo.SetColor(Color.cyan);
+                    _gizmo.AddPoint(position, 3 * size);
                 }
                 else
                 {
                     minorCount++;
-                    _minorCityGizmos.DrawPoint(position, 2f * (size + 2));
+                    _gizmo.SetColor(Color.gray);
+                    _gizmo.AddPoint(position, 2f * (size + 2));
                 }
             }
 
@@ -168,6 +169,8 @@ namespace Beast.Radar.City
             {
                 _cities.Dispose();
             }
+            
+            _gizmo.Dispose();
         }
     }
 }

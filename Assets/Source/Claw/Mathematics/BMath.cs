@@ -63,6 +63,12 @@ namespace Beast.Claw.Mathematics
 
             return Approximately(log, Floor(log));
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Dot(float4 a, float4 b)
+        {
+            return math.dot(a, b);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float2 a, float2 b)
@@ -215,6 +221,18 @@ namespace Beast.Claw.Mathematics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Floor(float2 vector)
+        {
+            return math.floor(vector);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float3 Floor(float3 vector)
+        {
+            return math.floor(vector);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float4 Floor(float4 vector)
         {
             return math.floor(vector);
         }

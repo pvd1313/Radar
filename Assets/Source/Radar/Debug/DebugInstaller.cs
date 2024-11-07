@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Gizmos;
+using Beast.Claw.Gizmo;
 using Beast.Radar.UI;
 using Zenject;
 
@@ -18,7 +18,7 @@ namespace Beast.Radar.Debug
         {
             if (Build.IS_DEVELOPMENT)
             {
-                yield return typeof(GizmosRender);
+                yield return typeof(GizmoRender);
                 yield return typeof(DebugController);
                 yield return typeof(DebugPreferencesController);
                 yield return typeof(DebugMenuWindow);

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Claw.Gizmos
+namespace Beast.Claw.Gizmo
 {
     [Serializable]
-    public class GizmosConfig : ScriptableConfig
+    public class GizmoConfig : ScriptableConfig
     {
-        public Shader blitShader;
-        public Shader quadShader;
-        public Mesh quad;
+        public Shader canvasShader;
+        public Shader shapeShader;
+        public Mesh quadMesh;
         
         public override IEnumerable<IConfig> Bind()
         {

@@ -1,4 +1,4 @@
-Shader "Beast/Claw/Gizmos/Blit"
+Shader "Beast/Claw/Gizmo/Canvas"
 {
     SubShader
     {
@@ -42,11 +42,11 @@ Shader "Beast/Claw/Gizmos/Blit"
 
             sampler2D _Texture;
             
-            fixed4 fragment (FragmenInput input) : SV_Target
+            float4 fragment (FragmenInput input) : SV_Target
             {
                 fixed4 color = tex2D(_Texture, input.uv);
 
-                clip(color.a - 1.0f);
+                clip(color.a - 1 / 32.0f);
                 
                 return color;
             }

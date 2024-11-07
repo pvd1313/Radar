@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
+using Beast.Claw.Mathematics;
 using Beast.Claw.Reflection;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 
@@ -144,6 +147,18 @@ namespace Beast.Claw.Graphic
             {
                 RenderTexture.active = renderTextureBak;
             }
+        }
+
+        public static float RGBA8ToFloat(Color color)
+        {
+            // 8 bit shift is not working on PC. Alpha is lost.
+            // 6 bit shift is not working on mobile.
+            uint r = ((uint)(color.r * 15.0f) & 15u) << 12;
+            uint g = ((uint)(color.g * 15.0f) & 15u) << 8;
+            uint b = ((uint)(color.b * 15.0f) & 15u) << 4;
+            uint a = ((uint)(color.a * 15.0f) & 15u) << 0;
+            
+            return (r | g | b | a) / 65535.0f;
         }
 
         public static void DrawTexture2DToRenderTexture(Texture2DToRenderTexture input)

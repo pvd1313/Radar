@@ -49,10 +49,10 @@ namespace Beast.Claw.Profiling
             _samplesTimer.Start();
             _profilingTree = new ProfilerTree
             {
-                childs = Native.CreatePermArray<ushort>(1),
-                names = Native.CreatePermArray<ushort>(1),
-                siblings = Native.CreatePermArray<ushort>(1),
-                times = Native.CreatePermArray<float>(1),
+                childs = Native.PermArray<ushort>(1),
+                names = Native.PermArray<ushort>(1),
+                siblings = Native.PermArray<ushort>(1),
+                times = Native.PermArray<float>(1),
                 text = _namesActive,
                 nodeCount = 1
             };
@@ -79,10 +79,10 @@ namespace Beast.Claw.Profiling
                 inRecords = _records,
                 inRecordCount = _recordCount,
                 inFrequency = Stopwatch.Frequency,
-                outChilds = Native.CreatePermArray<ushort>(nodeCount),
-                outNames = Native.CreatePermArray<ushort>(nodeCount),
-                outSiblings = Native.CreatePermArray<ushort>(nodeCount),
-                outTimes = Native.CreatePermArray<float>(nodeCount),
+                outChilds = Native.PermArray<ushort>(nodeCount),
+                outNames = Native.PermArray<ushort>(nodeCount),
+                outSiblings = Native.PermArray<ushort>(nodeCount),
+                outTimes = Native.PermArray<float>(nodeCount),
                 outState = Native.CreateTempArray<TreeBuildState>(1),
                 parentStack = Native.CreateTempArray<ushort>(_config.stackSize),
                 siblingStack = Native.CreateTempArray<ushort>(_config.stackSize),
