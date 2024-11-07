@@ -61,7 +61,10 @@ namespace Beast.Radar.InputHandling
             {
                 case EInputScheme.MouseAndKeyboard:
                     CurrentTouchCount.UpdateValue(_getTouchCount());
-                    Scroll.UpdateValue(_inputActions.Game.Scroll.ReadValue<float>());
+                    if (_isCursorInsideGameWindow())
+                    {
+                        Scroll.UpdateValue(_inputActions.Game.Scroll.ReadValue<float>());
+                    }
                     float2 mousePosition = _inputActions.Game.FirstPosition.ReadValue<Vector2>();
                     ScreenPoint.UpdateValue(mousePosition);
                     Click.UpdateValue(CurrentTouchCount.Value > 0 ? mousePosition : float2.zero);
@@ -172,6 +175,13 @@ namespace Beast.Radar.InputHandling
                     break;
             }
             return touchCount;
+        }
+        
+        private bool _isCursorInsideGameWindow()
+        {
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            return mousePosition.x >= 0 && mousePosition.y >= 0 &&
+                   mousePosition.x <= Screen.width && mousePosition.y <= Screen.height;
         }
     }
 }
