@@ -102,11 +102,8 @@ namespace Beast.Claw.Gizmo
             _shapeMaterial = BGraphic.CreateMaterial(this, _config.shapeShader);
             _commandBuffer = new CommandBuffer();
 
-            _canvas = _createCanvas(_screen.Size);
-            _canvasSize = _screen.Size;
-            _shapeMaterial.SetFloat2("_ScreenSize", _screen.Size);
-            _canvasMaterial.SetTexture("_Texture", _canvas);
-
+            _canvas = _setupCanvas(_screen.Size);
+            
             return UniTask.CompletedTask;
         }
 
@@ -116,10 +113,7 @@ namespace Beast.Claw.Gizmo
             {
                 BGraphic.Dispose(_canvas);
 
-                _canvas = _createCanvas(_screen.Size);
-                _canvasSize = _screen.Size;
-                _shapeMaterial.SetFloat2("_ScreenSize", _screen.Size);
-                _canvasMaterial.SetTexture("_Texture", _canvas);
+                _canvas = _setupCanvas(_screen.Size);
             }
 
             int shapeCount = 0;
@@ -172,12 +166,17 @@ namespace Beast.Claw.Gizmo
 
             if (_prevTexturePower != texturePower2)
             {
-                Profiler.BeginSample("SetShapeMaterialParams");
+                Profiler.BeginSample("SetShapeMaterialParams #2");
                 _shapeMaterial.SetTexture("_DataTexture", texture);
                 _shapeMaterial.SetFloat("_DataTextureSize", 1 << texturePower2);
                 _prevTexturePower = texturePower2;
                 Profiler.EndSample();
             }
+            
+            Profiler.BeginSample("SetShapeMaterialParams #1");
+            _shapeMaterial.SetFloat2("_RenderCenter", _camera.Position);
+            _shapeMaterial.SetFloat("_RenderDistance", _camera.ViewDistance);
+            Profiler.EndSample();
             
             Profiler.BeginSample("SetRenderTarget");
             Graphics.SetRenderTarget(_canvas);
@@ -185,30 +184,9 @@ namespace Beast.Claw.Gizmo
             
             GL.Clear(true, true, Color.clear);
             
-            Profiler.BeginSample("CreateMatrix");
-            float rollRad = _camera.RotationRad.roll;
-            quaternion rotation = new QuaternionEulerRad(BMath.PI * 0.5f - _camera.RotationRad.pitch, rollRad, 0);
-            
-            float4x4 viewMatrix = new Float4x4TRS
-            {
-                translation = _camera.Position.X0Y() + rotation.Mul(new float3(0, 0, _camera.ViewDistance)),
-                scale = 1,
-                rotation = rotation
-            };
-            
-            viewMatrix = math.inverse(viewMatrix);
-
-            float rollSin = BMath.Sin(rollRad);
-            float4x4 projectionMatrix = float4x4.Ortho(
-                _camera.ViewDistance * _screen.Aspect * rollSin,
-                _camera.ViewDistance * rollSin, 
-                0.01f, 
-                10000);
-            Profiler.EndSample();
-            
             Profiler.BeginSample("SetCommandBufferParams");
             _commandBuffer.Clear();
-            _commandBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+            _commandBuffer.SetViewProjectionMatrices(float4x4.identity, float4x4.identity);
             _commandBuffer.SetRenderTarget(_canvas);
             Profiler.EndSample();
             
@@ -230,16 +208,16 @@ namespace Beast.Claw.Gizmo
                 {
                     rotation = Quaternion.identity,
                     scale = new float3(_screen.Aspect, 1, 1),
-                    translation = new float3(0, 0, RenderOrderZ.Gizmos)
+                    translation = new float3(0, 0, RenderOrderZ.Gizmo)
                 },
                 mesh = _config.quadMesh
             });
             Profiler.EndSample();
         }
 
-        private RenderTexture _createCanvas(int2 screenSize)
+        private RenderTexture _setupCanvas(int2 screenSize)
         {
-            return BGraphic.CreatePermRenderTexture(this, new RenderTextureData
+            RenderTexture canvas = BGraphic.CreatePermRenderTexture(this, new RenderTextureData
             {
                 format = RenderTextureFormat.ARGB32,
                 texture = new PlanarTextureData
@@ -253,6 +231,22 @@ namespace Beast.Claw.Gizmo
                     antiAliasing = 1
                 }
             });
+            
+            _canvasSize = screenSize;
+            _shapeMaterial.SetFloat2("_ScreenSize", screenSize);
+            _canvasMaterial.SetTexture("_Texture", canvas);
+
+            float rollCos = BMath.Cos(_camera.RotationRad.roll);
+            float pitchCos = BMath.Cos(_camera.RotationRad.pitch);
+            
+            float2x2 rotation = float2x2.Rotate(_camera.RotationRad.roll * -1);
+            float2x2 scale = float2x2.Scale(1, pitchCos);
+            
+            _shapeMaterial.SetFloat2x2("_ViewMatrix0", rotation);
+            _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
+            _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
+
+            return canvas;
         }
         
         private void _dispose(BlockingContext context)

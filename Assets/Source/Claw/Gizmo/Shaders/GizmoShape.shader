@@ -25,11 +25,17 @@
                 float4 color : COLOR;
             };
 
+            float4 _ViewMatrix0;
+            float4 _ViewMatrix1;
+            float _ProjectionScale;
+            float2 _RenderCenter;
+            float _RenderDistance;
+
             sampler2D _DataTexture;
             float _DataTextureSize;
             float2 _ScreenSize;
 
-            inline void GetVector(uint index, out half h0, out half h1, out half h2, out half h3)
+            inline void get_vector(uint index, out half h0, out half h1, out half h2, out half h3)
             {
                 float texelSize = 1.0f / _DataTextureSize;
                 
@@ -45,14 +51,32 @@
                 h2 = color.b;
                 h3 = color.a;
             }
+
+            float4 world_to_clip_pos(float2 worldPos)
+            {
+                float aspect = _ScreenSize.x / _ScreenSize.y;
+
+                worldPos = worldPos - _RenderCenter;
+                
+                worldPos = mul(float2x2(_ViewMatrix0), worldPos);
+                worldPos = mul(float2x2(_ViewMatrix1), worldPos);
+                
+                worldPos /= _RenderDistance;
+                worldPos.x /= aspect;
+                worldPos *= _ProjectionScale;
+
+                worldPos.y *= _ProjectionParams.x;
+                
+                return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
+            }
             
             FragmentInput vertex(appdata_base input, uint instanceID : SV_InstanceID)
             {
                 FragmentInput output;
 
                 half v0, v1, v2, v3, v4, v5, v6, v7;
-                GetVector(instanceID * 2 + 0, v0, v1, v2, v3);
-                GetVector(instanceID * 2 + 1, v4, v5, v6, v7);
+                get_vector(instanceID * 2 + 0, v0, v1, v2, v3);
+                get_vector(instanceID * 2 + 1, v4, v5, v6, v7);
                 
                 // World point, with screen based size.
                 if (v0 == 0)
@@ -60,10 +84,10 @@
                     float posX = beast_half2_to_float(v4, v5);
                     float posY = beast_half2_to_float(v6, v7);
                     float2 size = input.vertex.xy * (v1 / _ScreenSize * 2);
-                    float4 vertex = float4(size.x, size.y, 0, 0);
-                    float3 worldPos = float3(posX, 0, posY);
+                    float4 screenSize = float4(size.x, size.y, 0, 0);
+                    float2 worldPos = float2(posX, posY);
                     
-                    output.positionCS = UnityWorldToClipPos(worldPos) + vertex;
+                    output.positionCS = world_to_clip_pos(worldPos) + screenSize;
                     output.color = beast_half2_to_rgba(v2, v3);
                 }
                 // World point, with world based size.
@@ -71,10 +95,10 @@
                 {
                     float posX = beast_half2_to_float(v4, v5);
                     float posY = beast_half2_to_float(v6, v7);
-                    float3 size = float3(input.vertex.x, 0, input.vertex.y) * v1;
-                    float3 worldPos = float3(posX, 0, posY);
+                    float2 size = float2(input.vertex.x, input.vertex.y) * v1;
+                    float2 worldPos = float2(posX, posY);
                     
-                    output.positionCS = UnityWorldToClipPos(worldPos + size);
+                    output.positionCS = world_to_clip_pos(worldPos + size);
                     output.color = beast_half2_to_rgba(v2, v3);
                 }
                 
@@ -84,7 +108,7 @@
             float4 fragment(FragmentInput input) : SV_Target
             {
                 clip(beast_dither_cs(input.positionCS, input.color.a));
-                
+
                 return input.color;
             }
             

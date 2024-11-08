@@ -4,7 +4,6 @@ using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -92,10 +91,6 @@ namespace Beast.Radar.Terrain
             renderMaterial.ValidateNotNullThrowException(nameof(renderMaterial));
             task.ValidateThrowException(nameof(task));
             
-            float yScale = BMath.Cos(task.cameraRotationRad.roll) * (task.cameraViewDistance / task.biomeViewDistance);
-            float2x2 rotation = float2x2.Rotate(task.cameraRotationRad.roll * -1.0f);
-            float2x2 scale = float2x2.Scale(1, BMath.Cos(task.cameraRotationRad.pitch));
-            
             renderMaterial.SetTexture("_TerrainBiomeTexture", task.biomeTexture);
             renderMaterial.SetFloat2("_TerrainBiomeTextureSize", task.biomeTexture.Size());
 
@@ -103,9 +98,12 @@ namespace Beast.Radar.Terrain
             renderMaterial.SetTexture("_TileAtlasColorTexture", atlas.colorTexture);
             renderMaterial.SetFloat2("_TileAtlasTileCount", atlas.tileCount);
             
+            float yScale = BMath.Cos(task.cameraRotationRad.roll) * (task.cameraViewDistance / task.biomeViewDistance);
+            float2x2 rotation = float2x2.Rotate(task.cameraRotationRad.roll);
+            float2x2 scale = float2x2.Scale(1, BMath.Cos(task.cameraRotationRad.pitch));
+            
             renderMaterial.SetFloat2x2("_UVMatrix0", scale.Inverse());
-            renderMaterial.SetFloat2x2("_UVMatrix1", rotation.Inverse());
-
+            renderMaterial.SetFloat2x2("_UVMatrix1", rotation);
             renderMaterial.SetFloat2("_OutputSize", task.screenSize.Mul(yScale));
 
             float2 outputCenter = task.biomeTextureUVOffset;

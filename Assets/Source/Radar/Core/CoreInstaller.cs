@@ -25,6 +25,11 @@ namespace Beast.Radar.Core
 
         protected override IEnumerable<Type> BindInterfaces()
         {
+            // Input & Camera
+            yield return typeof(InputSystem);
+            yield return typeof(CameraTransform);
+            yield return typeof(CameraController);
+            
             // Main
             yield return typeof(CoreBoot);
             yield return typeof(SaveManager);
@@ -32,11 +37,6 @@ namespace Beast.Radar.Core
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
             yield return typeof(GizmoRender);
-            
-            // Input & Camera
-            yield return typeof(InputSystem);
-            yield return typeof(CameraTransform);
-            yield return typeof(CameraController);
             
             // UI
             yield return typeof(InputBlocker);
