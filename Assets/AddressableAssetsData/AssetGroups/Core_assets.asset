@@ -10,20 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Prefab
+  m_Name: Core_assets
   m_EditorClassIdentifier: 
-  m_GroupName: Prefab
+  m_GroupName: Core_assets
   m_Data:
     m_SerializedData: []
-  m_GUID: 94d86104611456d46ba1cf1c371dbf1d
+  m_GUID: 3b281e30f811ca04aa003420574f0ee1
   m_SerializeEntries:
-  - m_GUID: 63fe3b6b5cb3b17499cccb9e46d347ab
-    m_Address: IngameDebugConsole
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ec09055262c4e754aa082930f5fd04ef
-    m_Address: GraphyFPSCounter
+  - m_GUID: 5ddebb1b31180f94d8f1457e3a62411a
+    m_Address: CoreInstaller
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -31,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 9a26f88a8ce9e45469b41440b941b49a, type: 2}
-    - {fileID: 11400000, guid: e6d26b53eebad48468e25299c39109cd, type: 2}
+    - {fileID: 11400000, guid: e64eeab59ce659b4a994ce3a39177df9, type: 2}
+    - {fileID: 11400000, guid: 2bd88686661da3b4aac6fc1b48d6f136, type: 2}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Gizmo;
 using Beast.Radar.UI;
 using Zenject;
 

@@ -13,7 +13,7 @@ namespace Beast.Radar.UI
 {
     public class DebugMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
     {
-        private readonly CorePrefabLibrary _library;
+        private readonly DebugPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISelectableZoneBuilder _zoneBuilder;
         private readonly IInputSystem _inputSystem;
@@ -31,7 +31,7 @@ namespace Beast.Radar.UI
         private bool _viewReady;
         
         public DebugMenuWindow(
-            CorePrefabLibrary library,
+            DebugPrefabLibrary library,
             IWindowManager windowManager,
             ISelectableZoneBuilder zoneBuilder,
             IInputSystem inputSystem,
@@ -84,13 +84,11 @@ namespace Beast.Radar.UI
             
             _viewBuildingTask = UniTask.Create(async () =>
             {
-                DebugPrefabLibrary debugLibrary = await _resources.LoadAsset(this, _library.debug);
-
-                _view = await BFactory.InstantiateMono(this, debugLibrary.debugMenu);
+                _view = await BFactory.InstantiateMono(this, _library.debugMenu);
                 _view.transform.SetSiblingIndex(2);
                 _view.transform.SetParent(_windowManager.CanvasTransform, false);
                 
-                _configurePanels(debugLibrary);
+                _configurePanels(_library);
                 
                 _configureSelectables();
                 

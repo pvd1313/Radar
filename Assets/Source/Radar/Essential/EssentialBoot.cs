@@ -2,6 +2,7 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Beast.Radar.Core;
+using Beast.Radar.Debug;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using Zenject;
@@ -62,10 +63,10 @@ namespace Beast.Radar.Essential
             tracker.Begin(3, 0.3f);
 
             await tracker.Next("Loading installers");
-            _coreInstallers = new ScriptableInstaller[_config.installers.Count];
+            _coreInstallers = new ScriptableInstaller[_config.coreInstallers.Count];
             for (int i = 0; i < _coreInstallers.Length; i++)
             {
-                _coreInstallers[i] = await _resources.LoadAsset(this, _config.installers[i]);
+                _coreInstallers[i] = await _resources.LoadAsset(this, _config.coreInstallers[i]);
             }
 
             await tracker.Next("Binding installers");
@@ -75,7 +76,20 @@ namespace Beast.Radar.Essential
                 
                 installer.InstallBindings();
             }
-
+            
+            if (Build.IS_DEVELOPMENT)
+            {
+                await tracker.Next("Load debug installer"); 
+                
+                ScriptableInstaller debugInstaller = await _resources.LoadAsset(this, _config.debugInstaller);
+                
+                await tracker.Next("Binding debug installer"); 
+                
+                _container.Inject(debugInstaller);
+                
+                debugInstaller.InstallBindings();
+            }
+            
             await tracker.Next("Booting core");
             await _container.Resolve<ICoreBoot>().Boot(tracker);
         }

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: DebugSprites
+  m_Name: Debug
   m_EditorClassIdentifier: 
-  m_GroupName: DebugSprites
+  m_GroupName: Debug
   m_Data:
     m_SerializedData: []
-  m_GUID: 413111e844db77e48b1af08471a8bfbf
+  m_GUID: 4332230e0a96bd345a2672e83e32edf8
   m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: eaa8073caaab8064fb4dfa610d5de365, type: 2}
-    - {fileID: 11400000, guid: 35de2b2d20108294f89884eb03ddb8fc, type: 2}
+    - {fileID: 11400000, guid: 0a6f1d5c3e0bf8e4fbfcb0a118ae09bf, type: 2}
+    - {fileID: 11400000, guid: e4ba0254b36dc1a4e84c88564fcced72, type: 2}
