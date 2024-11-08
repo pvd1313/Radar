@@ -16,13 +16,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3f423c598d102204eb3d91246f02940d, type: 2}
   - {fileID: 11400000, guid: f397dc389a78d0e4d8a71ca4a2d8c28c, type: 2}
   _essentialConfig:
-    installers:
+    coreInstallers:
     - _reference:
         m_AssetGUID: 5ddebb1b31180f94d8f1457e3a62411a
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
-    - _reference:
+    debugInstaller:
+      _reference:
         m_AssetGUID: 7ce29ab08b76fc0449f4a492a9b0d179
         m_SubObjectName: 
         m_SubObjectType: 

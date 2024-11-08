@@ -8,14 +8,14 @@ namespace Beast.Radar.Debug
 {
     public class DebugController : Controller, IDebugController, IGameCycleListener
     {
-        private readonly CorePrefabLibrary _library;
+        private readonly DebugPrefabLibrary _library;
         private readonly DebugPreferences _preferences;
         private readonly IResourceManager _resources;
 
         private GameObject _logConsole;
         private GameObject _fpsCounter;
 
-        public DebugController(CorePrefabLibrary library, DebugPreferences preferences, IResourceManager resources)
+        public DebugController(DebugPrefabLibrary library, DebugPreferences preferences, IResourceManager resources)
         {
             _library = library;
             _preferences = preferences;
@@ -31,13 +31,11 @@ namespace Beast.Radar.Debug
         {
             UniTask.Create(async () =>
             {
-                DebugPrefabLibrary debug = await _resources.LoadAsset(this, _library.debug);
-
-                GameObject logConsolePrefab = await _resources.LoadGameObject(this, debug.logConsole);
+                GameObject logConsolePrefab = await _resources.LoadGameObject(this, _library.logConsole);
                 _logConsole = await BFactory.InstantiateGameObject(this, logConsolePrefab);
                 _logConsole.SetActive(_preferences.showLogConsole);
 
-                GameObject fpsCounterPrefab = await _resources.LoadGameObject(this, debug.fpsCounter);
+                GameObject fpsCounterPrefab = await _resources.LoadGameObject(this, _library.fpsCounter);
                 _fpsCounter = await BFactory.InstantiateGameObject(this, fpsCounterPrefab);
                 _fpsCounter.SetActive(_preferences.showFPSCounter);
             });
