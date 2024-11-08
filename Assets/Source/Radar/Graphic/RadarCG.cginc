@@ -80,15 +80,14 @@ inline float4 beast_tex2Dlod(sampler2D text, float2 uv, float lod)
 
 float4 beast_half2_to_rgba(half half0, half half1)
 {
-    uint u0 = f32tof16(half0);
-    uint u1 = f32tof16(half1);
+    float u0 = (float)f32tof16(half0);
+    float u1 = (float)f32tof16(half1);
     
-    float r = (u0 >> 8) & 0xFF;
-    float g = u0 & 0xFF;
-    float b = (u1 >> 8) & 0xFF;
-    float a = u1 & 0xFF;
-
-    return float4(r, g, b, a) / 255.0;
+    float r = floor(u0 / 128.0);
+    float g = u0 - (r * 128.0);
+    float b = floor(u1 / 128.0);
+    float a = u1 - (b * 128.0);
+    return float4(r, g, b, a) / 127.0;
 }
 
 float beast_half2_to_float(half half0, half half1)
