@@ -27,14 +27,14 @@ Shader "Beast/Claw/Gizmo/Canvas"
             struct FragmenInput
             {
                 half2 uv : TEXCOORD0;
-                float4 vertexCS : SV_POSITION;
+                float4 positionCS : SV_POSITION;
             };
 
             FragmenInput vertex (VertexInput input)
             {
                 FragmenInput output;
                 
-                output.vertexCS = UnityObjectToClipPos(input.vertexOS);
+                output.positionCS = UnityObjectToClipPos(input.vertexOS);
                 output.uv = input.uv;
                 
                 return output;
@@ -46,7 +46,7 @@ Shader "Beast/Claw/Gizmo/Canvas"
             {
                 fixed4 color = tex2D(_Texture, input.uv);
 
-                clip(color.a - 1 / 32.0f);
+                clip(color.a - 1.0f / 255.0f);
                 
                 return color;
             }
