@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: TMP
+  m_EditorClassIdentifier: 
+  m_GroupName: TMP
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 084fe385a3225ef4cb23295d5d34e130
+  m_SerializeEntries:
+  - m_GUID: 68e6db2ebdc24f95958faec2be5558d6
+    m_Address: Assets/Plugin/TextMesh Pro/Shaders/TMP_SDF.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b4c0a12b25e12f49b5919395d876a04
+    m_Address: Assets/Plugin/TextMesh Pro/Fonts/Inconsolata.ttf
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe393ace9b354375a9cb14cdbbc28be4
+    m_Address: Assets/Plugin/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1809508043913bc469fb42037965776a, type: 2}
+    - {fileID: 11400000, guid: 9557d0e7b67ad1040bfeb15995e2b81b, type: 2}
