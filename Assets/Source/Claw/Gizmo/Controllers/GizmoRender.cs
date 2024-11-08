@@ -35,7 +35,7 @@ namespace Beast.Claw.Gizmo
         private Material _shapeMaterial;
 
         private Texture2D[] _texturePool;
-        private NativeArray<float> _floatBuffer;
+        private NativeArray<ushort> _floatBuffer;
 
         private CommandBuffer _commandBuffer;
 
@@ -78,7 +78,7 @@ namespace Beast.Claw.Gizmo
             Texture2DParameters textureData = new()
             {
                 createInitialized = false,
-                format = TextureFormat.RGBAFloat,
+                format = TextureFormat.RGBAHalf,
                 isLinear = true,
                 mipChain = false,
                 texture = new PlanarTextureData
@@ -95,9 +95,9 @@ namespace Beast.Claw.Gizmo
             {
                 _texturePool[i] = BGraphic.CreateTexture2D(this, textureData.WithSize(1 << i));
             }
-
+            
             _handles = new List<HandleInfo>(64);
-
+            
             _canvasMaterial = BGraphic.CreateMaterial(this, _config.canvasShader);
             _shapeMaterial = BGraphic.CreateMaterial(this, _config.shapeShader);
             _commandBuffer = new CommandBuffer();
@@ -253,25 +253,6 @@ namespace Beast.Claw.Gizmo
                     antiAliasing = 1
                 }
             });
-        }
-        
-        private static float4x4 _сreateViewMatrix(float3 cameraPosition, quaternion cameraRotation)
-        {
-            float3 forward = math.mul(cameraRotation, new float3(0, 0, -1)); 
-            float3 right = math.mul(cameraRotation, new float3(1, 0, 0));  
-            float3 up = math.mul(cameraRotation, new float3(0, 1, 0));
-
-            float4x4 viewMatrix = new (
-                new float4(right, 0),
-                new float4(up, 0),
-                new float4(-forward, 0),
-                new float4(-math.dot(right, cameraPosition),
-                    -math.dot(up, cameraPosition),
-                    math.dot(forward, cameraPosition),
-                    1)
-            );
-
-            return viewMatrix;
         }
         
         private void _dispose(BlockingContext context)

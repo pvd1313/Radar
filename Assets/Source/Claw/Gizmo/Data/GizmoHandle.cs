@@ -14,20 +14,22 @@ namespace Beast.Claw.Gizmo
         
         public bool IsDisposed { get; private set; }
         
-        public NativeArray<float> buffer;
+        public NativeArray<ushort> buffer;
         public int shapeCount;
 
-        private float _color;
+        private ushort _colorX;
+        private ushort _colorY;
 
         public GizmoHandle()
         {
             _ensureCapacity(128);
-            _color = BGraphic.RGBA8ToFloat(Color.white);
+            
+            BConvert.ColorToHalf2(Color.white, out _colorX, out _colorY);
         }
 
         public void SetColor(Color color)
         {
-            _color = BGraphic.RGBA8ToFloat(color);
+            BConvert.ColorToHalf2(color, out _colorX, out _colorY);
         }
 
         public void Clear()
@@ -37,16 +39,7 @@ namespace Beast.Claw.Gizmo
 
         public void AddPoint(float2 position)
         {
-            _ensureCapacity(shapeCount + 1);
-
-            int offset = shapeCount * GizmoUtil.FLOAT_PER_SHAPE;
-            buffer[offset + 0] = 0;
-            buffer[offset + 1] = position.x / 65535;
-            buffer[offset + 2] = position.y / 65535;
-            buffer[offset + 3] = POINT_PIXEL_SIZE / 255f;
-            buffer[offset + 4] = _color;
-
-            shapeCount++;
+            AddPoint(position, POINT_PIXEL_SIZE);
         }
         
         public void AddPoint(float2 position, float pixelSize)
@@ -54,11 +47,37 @@ namespace Beast.Claw.Gizmo
             _ensureCapacity(shapeCount + 1);
             
             int offset = shapeCount * GizmoUtil.FLOAT_PER_SHAPE;
-            buffer[offset + 0] = 0;
-            buffer[offset + 1] = position.x / 65535;
-            buffer[offset + 2] = position.y / 65535;
-            buffer[offset + 3] = pixelSize / 255f;
-            buffer[offset + 4] = _color;
+            BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
+            BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
+            
+            buffer[offset + 0] = BConvert.FloatToHalf(0);
+            buffer[offset + 1] = BConvert.FloatToHalf(pixelSize);
+            buffer[offset + 2] = _colorX;
+            buffer[offset + 3] = _colorY;
+            buffer[offset + 4] = px0;
+            buffer[offset + 5] = px1;
+            buffer[offset + 6] = py0;
+            buffer[offset + 7] = py1;
+
+            shapeCount++;
+        }
+
+        public void AddQuad(float2 position, float worldSize)
+        {
+            _ensureCapacity(shapeCount + 1);
+            
+            int offset = shapeCount * GizmoUtil.FLOAT_PER_SHAPE;
+            BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
+            BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
+            
+            buffer[offset + 0] = BConvert.FloatToHalf(1);
+            buffer[offset + 1] = BConvert.FloatToHalf(worldSize);
+            buffer[offset + 2] = _colorX;
+            buffer[offset + 3] = _colorY;
+            buffer[offset + 4] = px0;
+            buffer[offset + 5] = px1;
+            buffer[offset + 6] = py0;
+            buffer[offset + 7] = py1;
 
             shapeCount++;
         }
@@ -71,7 +90,7 @@ namespace Beast.Claw.Gizmo
             }
 
             int newCapacity = BMath.CeilToInt(targetCapacity * GizmoUtil.FLOAT_PER_SHAPE / 128.0f) * 128;
-            NativeArray<float> newBuffer = Native.PermArray<float>(newCapacity);
+            NativeArray<ushort> newBuffer = Native.PermArray<ushort>(newCapacity);
 
             if (buffer.IsCreated)
             {

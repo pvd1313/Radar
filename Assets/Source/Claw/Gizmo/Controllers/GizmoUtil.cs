@@ -11,7 +11,7 @@ namespace Beast.Claw.Gizmo
         public const int FLOAT_PER_SHAPE = 8;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EnsureCapacity(ref NativeArray<float> array, int targetCapacity)
+        public static void EnsureCapacity(ref NativeArray<ushort> array, int targetCapacity)
         {
             if (array.IsCreated && array.Length > targetCapacity * FLOAT_PER_SHAPE)
             {
@@ -19,7 +19,7 @@ namespace Beast.Claw.Gizmo
             }
 
             int newBufferLength = _shapeCountToBufferSize(targetCapacity);
-            NativeArray<float> newBuffer = Native.PermArray<float>(newBufferLength);
+            NativeArray<ushort> newBuffer = Native.PermArray<ushort>(newBufferLength);
 
             if (array.IsCreated)
             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -265,17 +264,18 @@ namespace Beast.Radar.Player
         private void _drawPathGizmo()
         {
             _gizmo.Clear();
-            _gizmo.SetColor(Color.magenta);
+            _gizmo.SetColor(Color.magenta.WithAlpha(0.4f));
+            
+            float cellSize = _biome.Terrain8kmCell.cellSize;
+            float2 cellSizeHalf = cellSize * 0.5f;
             
             if (_path.Length > 0)
             {
                 foreach (int2 point in _path)
                 {
-                    float2 cellSizeHalf = _biome.Terrain8kmCell.cellSize * 0.5f;
-
                     float2 position = _blockToWorld(point) + cellSizeHalf;
 
-                    _gizmo.AddPoint(position);
+                    _gizmo.AddQuad(position, cellSize);
                 }
             }
         }
