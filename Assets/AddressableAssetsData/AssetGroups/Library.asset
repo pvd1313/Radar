@@ -23,7 +23,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: be645ba6ccc29364abfb4eece3432deb
-    m_Address: DebugUILibrary
+    m_Address: DebugPrefabILibrary
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
