@@ -8,13 +8,13 @@ namespace Beast.Claw.Mathematics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ColorToHalf2(Color color, out ushort half0, out ushort half1)
         {
-            byte r = (byte)(color.r * 255.0f);
-            byte g = (byte)(color.g * 255.0f);
-            byte b = (byte)(color.b * 255.0f);
-            byte a = (byte)(color.a * 255.0f);
+            byte r = (byte)(color.r * 127.0f);
+            byte g = (byte)(color.g * 127.0f);
+            byte b = (byte)(color.b * 127.0f);
+            byte a = (byte)(color.a * 127.0f);
             
-            half0 = (ushort)((r << 8) | g);
-            half1 = (ushort)((b << 8) | a);
+            half0 = (ushort)((r << 7) | g);
+            half1 = (ushort)((b << 7) | a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
