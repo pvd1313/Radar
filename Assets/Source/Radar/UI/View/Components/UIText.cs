@@ -11,5 +11,10 @@ namespace Beast.Radar.UI
         {
             _text.SetText(text);
         }
+
+        public void SetTime(int hours, int minutes)
+        {
+            _text.SetText("{0:00}:{1:00}", hours, minutes);
+        }
     }
 }

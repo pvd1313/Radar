@@ -1,3 +1,4 @@
+using System;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Radar.Player;
@@ -80,11 +81,8 @@ namespace Beast.Radar.UI
         {
             _gameTime.Changed += () =>
             {
-                string time = string.Concat(
-                    _intToString.ToString(_gameTime.GetTime().Hours),
-                    ":",
-                    _intToString.ToString(_gameTime.GetTime().Minutes));
-                _view.timeText.SetText(time);
+                TimeSpan time = _gameTime.GetTime();
+                _view.timeText.SetTime(time.Hours, time.Minutes);
             };
 
             _player.ChangeMovementState += () =>
