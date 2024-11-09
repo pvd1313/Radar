@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Color: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _image: {fileID: 5148874259244630750}
   _selectShade: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+  _blend: 0.5
 --- !u!114 &189493135128596569
 MonoBehaviour:
   m_ObjectHideFlags: 0

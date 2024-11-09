@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Color: {r: 0.6509434, g: 0.53426486, b: 0.53426486, a: 0.5882353}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Color: {r: 0.4009434, g: 0.4009434, b: 0.4009434, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -232,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _image: {fileID: 5306946386086805809}
   _selectShade: {r: 1, g: 1, b: 1, a: 1}
+  _blend: 0.5
 --- !u!114 &1883369800143888722
 MonoBehaviour:
   m_ObjectHideFlags: 0

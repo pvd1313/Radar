@@ -358,7 +358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -876,7 +876,7 @@ MonoBehaviour:
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -949,7 +949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -1844,7 +1844,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_text
-      value: <b>name</b>
+      value: name
       objectReference: {fileID: 0}
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_fontSize
@@ -2524,7 +2524,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_text
-      value: "<b>time \nscale</b>"
+      value: "time \nscale"
       objectReference: {fileID: 0}
     - target: {fileID: 44006146010360689, guid: 6f6095646387a5640a9f12b108ac72f1, type: 3}
       propertyPath: m_fontSize
