@@ -79,11 +79,7 @@ namespace Beast.Radar.Essential
             
             if (Build.IS_DEVELOPMENT)
             {
-                await tracker.Next("Load debug installer"); 
-                
                 ScriptableInstaller debugInstaller = await _resources.LoadAsset(this, _config.debugInstaller);
-                
-                await tracker.Next("Binding debug installer"); 
                 
                 _container.Inject(debugInstaller);
                 
