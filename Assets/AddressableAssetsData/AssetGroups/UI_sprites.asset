@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Core_assets
+  m_Name: UI_sprites
   m_EditorClassIdentifier: 
-  m_GroupName: Core_assets
+  m_GroupName: UI
   m_Data:
     m_SerializedData: []
-  m_GUID: 3b281e30f811ca04aa003420574f0ee1
+  m_GUID: 2b9204bc5e6181740a3be6e5556a8367
   m_SerializeEntries:
-  - m_GUID: 5ddebb1b31180f94d8f1457e3a62411a
-    m_Address: CoreInstaller
+  - m_GUID: c6398df57fef2df4e977caf5b6802402
+    m_Address: Square
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: e64eeab59ce659b4a994ce3a39177df9, type: 2}
-    - {fileID: 11400000, guid: 2bd88686661da3b4aac6fc1b48d6f136, type: 2}
+    - {fileID: 11400000, guid: 7a61b0a31dcbffc49b45a29552688656, type: 2}
+    - {fileID: 11400000, guid: ca92a98eabf97fe4aba83c806f3c9974, type: 2}
