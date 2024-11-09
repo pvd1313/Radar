@@ -16,7 +16,22 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 4332230e0a96bd345a2672e83e32edf8
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 63fe3b6b5cb3b17499cccb9e46d347ab
+    m_Address: IngameDebugConsole
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ce29ab08b76fc0449f4a492a9b0d179
+    m_Address: DebugInstaller
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec09055262c4e754aa082930f5fd04ef
+    m_Address: GraphyFPSCounter
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:

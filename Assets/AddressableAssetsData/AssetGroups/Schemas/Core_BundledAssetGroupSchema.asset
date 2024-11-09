@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5d17a21594effb4e9591490b009e7aa, type: 3}
-  m_Name: Debug_sprites_BundledAssetGroupSchema
+  m_Name: Core_BundledAssetGroupSchema
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 11400000, guid: 4e2e4fd24d8be1e4bbfd65c7a343b025, type: 2}
+  m_Group: {fileID: 11400000, guid: b6b89b7dce2a09a4f9db6c20ebff6b02, type: 2}
   m_InternalBundleIdMode: 1
   m_Compression: 1
   m_IncludeAddressInCatalog: 1

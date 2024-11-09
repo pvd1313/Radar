@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
-  m_Name: Library_ContentUpdateGroupSchema
+  m_Name: ConsoleLog_sprites_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 11400000, guid: 630c1789e5b18284a80d9c6c7037cd7f, type: 2}
-  m_StaticContent: 0
+  m_Group: {fileID: 11400000, guid: 4e2e4fd24d8be1e4bbfd65c7a343b025, type: 2}
+  m_StaticContent: 1
