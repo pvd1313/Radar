@@ -40,6 +40,7 @@ namespace Beast.Claw.Gizmo
         private CommandBuffer _commandBuffer;
 
         private int _prevTexturePower;
+        private int _prevShapeCount;
 
         public GizmoRender(
             ICameraTransform camera, 
@@ -183,16 +184,16 @@ namespace Beast.Claw.Gizmo
             Profiler.EndSample();
             
             GL.Clear(true, true, Color.clear);
-            
-            Profiler.BeginSample("SetCommandBufferParams");
-            _commandBuffer.Clear();
-            _commandBuffer.SetViewProjectionMatrices(float4x4.identity, float4x4.identity);
-            _commandBuffer.SetRenderTarget(_canvas);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("_commandBuffer.DrawMeshInstancedProcedural");
-            _commandBuffer.DrawMeshInstancedProcedural(_config.quadMesh, 0, _shapeMaterial, 0, shapeCount);
-            Profiler.EndSample();
+
+            if (_prevShapeCount != shapeCount)
+            {
+                Profiler.BeginSample("SetCommandBufferParams");
+                _commandBuffer.Clear();
+                _commandBuffer.SetRenderTarget(_canvas);
+                _commandBuffer.DrawMeshInstancedProcedural(_config.quadMesh, 0, _shapeMaterial, 0, shapeCount);
+                Profiler.EndSample();
+                _prevShapeCount = shapeCount;
+            }
 
             Profiler.BeginSample("ExecuteCommandBuffer");
             BGraphic.ExecuteBuffer(_commandBuffer);
@@ -244,6 +245,7 @@ namespace Beast.Claw.Gizmo
             
             _shapeMaterial.SetFloat2x2("_ViewMatrix0", rotation);
             _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
+            
             _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
 
             return canvas;

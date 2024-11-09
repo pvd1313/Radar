@@ -118,7 +118,7 @@ namespace Beast.Radar.Cinematic
 
         public float2 ViewportToWorld(float2 viewport)
         {
-            float viewDistance = _viewDistance * BMath.Cos(_rotationRad.roll);
+            float viewDistance = _viewDistance * _yScaleRollCos;
             
             float2 bottomLeft = (float2)_position - _localToWorld(new float2(_screen.Aspect, 1) * viewDistance * 0.5f);
             float2 screen = bottomLeft + _localToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
