@@ -79,13 +79,7 @@ namespace Beast.Radar.InputHandling
                     break;
                 
                 case EInputScheme.Touch:
-                    float2 firstTouch = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
-                    float2 secondTouch = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
-                    
-                    int touchCount = firstTouch.Equals(float2.zero) ? 0 : 1;
-                    touchCount += secondTouch.Equals(float2.zero) ? 0 : 1;
-                    
-                    CurrentTouchCount.UpdateValue(touchCount);
+                    CurrentTouchCount.UpdateValue(_getTouchCount());
                     switch (CurrentTouchCount.Value)
                     {
                         case 0:
@@ -100,10 +94,12 @@ namespace Beast.Radar.InputHandling
                             break;
                     
                         case 2:
+                            float2 t0 = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                            float2 t1 = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
                             Scroll.UpdateValue(_lastZoomDistance == 0f 
                                 ? 0 
-                                : BMath.Distance(firstTouch, secondTouch) - _lastZoomDistance);
-                            ScreenPoint.UpdateValue((firstTouch + secondTouch) * 0.5f);
+                                : BMath.Distance(t0, t1) - _lastZoomDistance);
+                            ScreenPoint.UpdateValue((t0 + t1) * 0.5f);
                             break;
                     }
                     break;
@@ -132,15 +128,7 @@ namespace Beast.Radar.InputHandling
                     break;
                 
                 case EInputScheme.Touch:
-                    float2 firstTouch = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
-                    float2 secondTouch = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
-                    
-                    int touchCount = firstTouch.Equals(float2.zero) ? 0 : 1;
-                    touchCount += secondTouch.Equals(float2.zero) ? 0 : 1;
-                    
-                    LastTouchCount.UpdateValue(touchCount);
-                        //LastTouchCount.UpdateValue(_getTouchCount());
-                    
+                    LastTouchCount.UpdateValue(_getTouchCount());
                     switch (LastTouchCount.Value)
                     {
                         case 0:
@@ -149,12 +137,14 @@ namespace Beast.Radar.InputHandling
                         
                         case 1:
                             _lastZoomDistance = 0f;
-                            LastScreenPoint.UpdateValue(firstTouch); 
+                            LastScreenPoint.UpdateValue((float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>()); 
                             break;
                         
                         case 2:
-                            _lastZoomDistance = BMath.Distance(firstTouch, secondTouch);
-                            LastScreenPoint.UpdateValue((firstTouch + secondTouch) * 0.5f);
+                            float2 t0 = (float2)_inputActions.Game.FirstPosition.ReadValue<Vector2>();
+                            float2 t1 = (float2)_inputActions.Game.SecondPosition.ReadValue<Vector2>();
+                            _lastZoomDistance = BMath.Distance(t0, t1);
+                            LastScreenPoint.UpdateValue((t0 + t1) * 0.5f);
                             break;
                     }
 
