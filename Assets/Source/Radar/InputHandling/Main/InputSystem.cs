@@ -2,6 +2,7 @@
 using Beast.Claw.GameCycle;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine.Profiling;
 
 namespace Beast.Radar.InputHandling
 {
@@ -59,8 +60,17 @@ namespace Beast.Radar.InputHandling
 
         private void _tick(BlockingContext context)
         {
+            Profiler.BeginSample("UnityEngine.InputSystem.Update()");
+            UnityEngine.InputSystem.InputSystem.Update();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("_gameInputActions.Update();");
             _gameInputActions.Update();
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("_uiInputActions.Update();");
             _uiInputActions.Update();
+            Profiler.EndSample();
         }
 
         private void _dispose(BlockingContext context)
