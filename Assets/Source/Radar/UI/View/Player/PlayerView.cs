@@ -1,7 +1,6 @@
-﻿using Beast.Radar.UI;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Beast.Radar.Player
+namespace Beast.Radar.UI
 {
     public class PlayerView : Claw.Common.Mono
     {

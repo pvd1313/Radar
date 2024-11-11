@@ -3,6 +3,7 @@ using Beast.Claw.Common;
 using Beast.Claw.Resources;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
+using Beast.Radar.Input;
 using Beast.Radar.UI;
 using UnityEngine;
 using Zenject;
@@ -24,6 +25,7 @@ namespace Beast.Radar.Essential
             yield return typeof(CameraSpawner);
             yield return typeof(DeviceScreen);
             yield return typeof(WindowManager);
+            yield return Application.isMobilePlatform ? typeof(TouchDevice) : typeof(MouseDevice);
             yield return typeof(LoadingScreenWindow);
             yield return typeof(EssentialBoot);
         }

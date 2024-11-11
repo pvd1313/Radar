@@ -55,12 +55,12 @@ namespace Beast.Radar.Terrain
             
             _gizmo.Clear();
 
-            if (_input.drag.status == EInputStatus.Inactive)
+            if (_input.Drag.status == EInputStatus.Inactive)
             {
                 return;
             }
             
-            float2 worldPoint = _camera.ViewportToWorld(_input.drag.position);
+            float2 worldPoint = _camera.ViewportToWorld(_input.Drag.position);
             
             // 1 km
             int2 worldPoint1km = BMath.FloorToInt(worldPoint);

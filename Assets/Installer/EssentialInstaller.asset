@@ -15,6 +15,7 @@ MonoBehaviour:
   configs:
   - {fileID: 11400000, guid: 3f423c598d102204eb3d91246f02940d, type: 2}
   - {fileID: 11400000, guid: f397dc389a78d0e4d8a71ca4a2d8c28c, type: 2}
+  - {fileID: 11400000, guid: 939482905a145e74fbc4956c81f29d58, type: 2}
   _essentialConfig:
     coreInstallers:
     - _reference:

@@ -2,6 +2,7 @@
 {
     public interface IInputDevice
     {
-        DragInput drag { get; }
+        DragInput Drag { get; }
+        ZoomInput Zoom { get; }
     }
 }

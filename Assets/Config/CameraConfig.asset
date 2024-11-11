@@ -19,13 +19,4 @@ MonoBehaviour:
     minViewDistance: 0.05
     plainModeViewDistance01: 1
     enablePlanetMode: 0
-  motion:
-  - schemes: 01000000
-    zoomSpeed: 2.7
-    motionSpeed: 0.0025
-  - schemes: 03000000
-    zoomSpeed: 0.01
-    motionSpeed: 1
-  - schemes: 02000000
-    zoomSpeed: 0.25
-    motionSpeed: 0.0025
+  zoomSpeed: 2

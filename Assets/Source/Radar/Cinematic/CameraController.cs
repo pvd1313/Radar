@@ -1,14 +1,19 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
+using Beast.Claw.Mathematics;
 using Beast.Radar.Input;
 using Unity.Mathematics;
+using UnityEngine;
+
+using Time = UnityEngine.Time;
 
 namespace Beast.Radar.Cinematic
 {
     public class CameraController : Controller, IGameCycleListener
     {
-        private readonly CameraConfig _cameraConfig;
+        private readonly CameraConfig _config;
         private readonly ICameraTransform _transform;
         private readonly IScreen _screen;
         private readonly IInputDevice _input;
@@ -16,12 +21,12 @@ namespace Beast.Radar.Cinematic
         private float2 _dragCameraPosition;
 
         public CameraController(
-            CameraConfig cameraConfig,
+            CameraConfig config,
             ICameraTransform transform,
             IScreen screen,
             IInputDevice input)
         {
-            _cameraConfig = cameraConfig;
+            _config = config;
 
             _transform = transform;
             _screen = screen;
@@ -46,15 +51,17 @@ namespace Beast.Radar.Cinematic
 
         private void _move()
         {
-            if (_input.drag.status == EInputStatus.Starting)
+            DragInput dragInput = _input.Drag;
+            
+            if (dragInput.status == EInputStatus.Starting)
             {
                 _dragCameraPosition = _transform.Position;
             }
 
-            if (_input.drag.status != EInputStatus.Inactive)
+            if (dragInput.status != EInputStatus.Inactive)
             {
-                float2 delta = _transform.ViewportToWorld(_input.drag.startPosition) - 
-                               _transform.ViewportToWorld(_input.drag.position);
+                float2 delta = _transform.ViewportToWorld(dragInput.startPosition) - 
+                               _transform.ViewportToWorld(dragInput.position);
 
                 _transform.SetPosition(_dragCameraPosition + delta);
             }
@@ -62,24 +69,21 @@ namespace Beast.Radar.Cinematic
 
         private void _zoom()
         {
-            // TODO: #R-93 Restore.
-            // if (_inputSystem.GameInput.Scroll.State == EButtonState.Default)
-            // {
-            //     return;
-            // }
-            //
-            // float2 screenPoint = _inputSystem.GameInput.ScreenPoint.Value;
-            // float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
-            //
-            // float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
-            // float zoomValue = _inputSystem.GameInput.Scroll.Value * distanceFactor * _motion.zoomSpeed 
-            //                   * Time.smoothDeltaTime;
-            // _transform.AddZoom(-zoomValue);
-            //
-            // float2 worldPointAfterZoom = _transform.ScreenToWorld(screenPoint);
-            // float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-            //
-            // _transform.AddPosition(pointDelta, Space.World);
+            ZoomInput zoomInput = _input.Zoom;
+            
+            if (!zoomInput.isActive)
+            {
+                return;
+            }
+
+            float2 beforeZoom = _transform.ViewportToWorld(zoomInput.position);
+            
+            float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
+            float zoomValue = zoomInput.delta * factor * Time.smoothDeltaTime;
+            _transform.AddZoom(zoomValue);
+            
+            float2 afterZoom = _transform.ViewportToWorld(zoomInput.position);
+            _transform.AddPosition(beforeZoom - afterZoom, Space.World);
         }
     }
 }

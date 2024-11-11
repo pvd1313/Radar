@@ -5,7 +5,6 @@
         Invalid,
         Starting,
         Working,
-        Stopping,
         Inactive,
     }
 }

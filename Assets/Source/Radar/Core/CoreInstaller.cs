@@ -26,8 +26,6 @@ namespace Beast.Radar.Core
 
         protected override IEnumerable<Type> BindInterfaces()
         {
-            //yield return typeof(TouchInput);
-            yield return Application.isMobilePlatform ? typeof(TouchScreenDevice) : typeof(MouseDevice);
             yield return typeof(CameraTransform);
             yield return typeof(CameraController);
             

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Radar.Terrain
+namespace Beast.Radar.UI
 {
     [Serializable]
     public struct MapGenerationSeed
