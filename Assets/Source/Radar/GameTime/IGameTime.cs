@@ -4,7 +4,7 @@ namespace Beast.Radar.GameTime
 {
     public interface IGameTime
     {
-        event Action Changed;
+        event Action MinuteChanged;
         void SetPlayerStateMultiplier(bool onAction);
         void Stop();
         void Start();

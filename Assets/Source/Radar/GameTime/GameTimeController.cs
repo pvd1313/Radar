@@ -10,7 +10,7 @@ namespace Beast.Radar.GameTime
 {
     public class GameTimeController : Controller, IGameTime, IGameCycleListener
     {
-        public event Action Changed;
+        public event Action MinuteChanged;
         
         private readonly GameTimeConfig _config;
         private readonly GameModel _gameModel;
@@ -19,6 +19,7 @@ namespace Beast.Radar.GameTime
 
         private TimeSpan _gameTimeSpan;
         private bool _isPause;
+        private int _lastMinute;
 
         public GameTimeController(GameTimeConfig config, GameModel gameModel)
         {
@@ -53,10 +54,12 @@ namespace Beast.Radar.GameTime
             }
             
             _gameTimeSpan += TimeSpan.FromSeconds(Time.deltaTime * _config.secondMultiplier * _playerStateMultiplier);
+            int currentMinute = (int)_gameTimeSpan.TotalMinutes;
 
-            if (_gameTimeSpan.TotalSeconds >= 60)
+            if (currentMinute != _lastMinute)
             {
-                Changed?.Invoke();
+                _lastMinute = currentMinute;
+                MinuteChanged?.Invoke();
             }
         }
 

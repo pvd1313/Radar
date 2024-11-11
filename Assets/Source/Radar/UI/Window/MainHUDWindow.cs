@@ -74,7 +74,7 @@ namespace Beast.Radar.UI
 
         private void _subscribe()
         {
-            _gameTime.Changed += () =>
+            _gameTime.MinuteChanged += () =>
             {
                 _view.timeText.gameObject.SetActive(false);
                 
