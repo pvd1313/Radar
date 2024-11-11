@@ -11,7 +11,6 @@ namespace Beast.Radar
         public DebugMenuView debugMenu;
         public DebugItemButton debugItemButton;
         public DebugItemTypeButton debugItemTypeButton;
-        public InputIconDisplay inputIconDisplay;
 
         public Address<GameObject> logConsole;
         public Address<GameObject> fpsCounter;

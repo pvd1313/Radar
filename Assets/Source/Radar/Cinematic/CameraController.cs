@@ -1,65 +1,40 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
-using Beast.Radar.InputHandling;
-using Cysharp.Threading.Tasks;
+using Beast.Radar.Input;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
     public class CameraController : Controller, IGameCycleListener
     {
         private readonly CameraConfig _cameraConfig;
-        private readonly IInputSystem _inputSystem;
         private readonly ICameraTransform _transform;
         private readonly IScreen _screen;
+        private readonly IInputDevice _input;
 
-        private CameraMotionParameters _motion;
-        private float _maxViewDistance;
+        private float2 _dragCameraPosition;
 
         public CameraController(
             CameraConfig cameraConfig,
-            IInputSystem inputSystem,
             ICameraTransform transform,
-            IScreen screen)
+            IScreen screen,
+            IInputDevice input)
         {
             _cameraConfig = cameraConfig;
-            _inputSystem = inputSystem;
 
             _transform = transform;
             _screen = screen;
+            _input = input;
         }
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            handle.ListenBlocking(ActionID.TICK, _tick);
         }
-
-        private UniTask _warmup(ConcurrentContext context)
+        
+        private void _tick(BlockingContext context)
         {
-            _motion = _cameraConfig.GetMotionParameters(_inputSystem.Scheme.Current);
-
-            _inputSystem.GameInput.ChangedEarlyValues += _processCamera;
-            _inputSystem.Scheme.Changed += _onChangedInputActionsScheme;
-
-            return UniTask.CompletedTask;
-        }
-
-        private void _onChangedInputActionsScheme(EInputScheme scheme)
-        {
-            _motion = _cameraConfig.GetMotionParameters(scheme);
-        }
-
-        private void _processCamera()
-        {
-            if (_inputSystem.GameInput.LastTouchCount.Value != _inputSystem.GameInput.CurrentTouchCount.Value)
-            {
-                return;
-            }
-
             if (!_transform.IsReady)
             {
                 return;
@@ -71,52 +46,40 @@ namespace Beast.Radar.Cinematic
 
         private void _move()
         {
-            if (!_inputSystem.GameInput.IsPressMove)
+            if (_input.drag.status == EInputStatus.Starting)
             {
-                return;
+                _dragCameraPosition = _transform.Position;
             }
-            
-            float zoomDistance = _transform.ViewDistance * BMath.Cos(_transform.RotationRad.roll);
-            
-            if (_inputSystem.GameInput.MoveDelta.State == EButtonState.Default)
-            {
-                float2 a = _transform.ScreenToWorld(_inputSystem.GameInput.ScreenPoint.Value);
-                float2 b = _transform.ScreenToWorld(_inputSystem.GameInput.LastScreenPoint.Value);
-                float2 moveDelta = b - a;
-                _transform.AddPosition(moveDelta, Space.World);
 
-                float2 viewport = _inputSystem.GameInput.ScreenPoint.Value / (float2)_screen.Size;
-
-                BDebug.Track(this, "viewportPoint", viewport);
-                BDebug.Track(this, "screenPoint", _inputSystem.GameInput.ScreenPoint.Value);
-                BDebug.Track(this, "worldPoint", a);
-            }
-            else
+            if (_input.drag.status != EInputStatus.Inactive)
             {
-                float2 moveDelta = _inputSystem.GameInput.MoveDelta.Value * _motion.motionSpeed * zoomDistance * -1;
-                _transform.AddPosition(moveDelta, Space.Self);
+                float2 delta = _transform.ViewportToWorld(_input.drag.startPosition) - 
+                               _transform.ViewportToWorld(_input.drag.position);
+
+                _transform.SetPosition(_dragCameraPosition + delta);
             }
         }
 
         private void _zoom()
         {
-            if (_inputSystem.GameInput.Scroll.State == EButtonState.Default)
-            {
-                return;
-            }
-
-            float2 screenPoint = _inputSystem.GameInput.ScreenPoint.Value;
-            float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
-
-            float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
-            float zoomValue = _inputSystem.GameInput.Scroll.Value * distanceFactor * _motion.zoomSpeed 
-                              * Time.smoothDeltaTime;
-            _transform.AddZoom(-zoomValue);
-            
-            float2 worldPointAfterZoom = _transform.ScreenToWorld(screenPoint);
-            float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
-
-            _transform.AddPosition(pointDelta, Space.World);
+            // TODO: #R-93 Restore.
+            // if (_inputSystem.GameInput.Scroll.State == EButtonState.Default)
+            // {
+            //     return;
+            // }
+            //
+            // float2 screenPoint = _inputSystem.GameInput.ScreenPoint.Value;
+            // float2 worldPointBeforeZoom = _transform.ScreenToWorld(screenPoint);
+            //
+            // float distanceFactor = BMath.Lerp(0.0001f, 15f, _transform.Zoom01);
+            // float zoomValue = _inputSystem.GameInput.Scroll.Value * distanceFactor * _motion.zoomSpeed 
+            //                   * Time.smoothDeltaTime;
+            // _transform.AddZoom(-zoomValue);
+            //
+            // float2 worldPointAfterZoom = _transform.ScreenToWorld(screenPoint);
+            // float2 pointDelta = worldPointBeforeZoom - worldPointAfterZoom;
+            //
+            // _transform.AddPosition(pointDelta, Space.World);
         }
     }
 }

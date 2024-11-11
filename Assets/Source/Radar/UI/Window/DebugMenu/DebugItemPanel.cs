@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
@@ -18,15 +16,11 @@ namespace Beast.Radar.UI
         private readonly DebugPrefabLibrary _library;
         private readonly DebugItemPanelView _view;
         private readonly ItemData[] _itemsData;
-        private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IInputSystem _inputSystem;
 
         private UIPool<DebugItemButton> _itemsPool;
         private ButtonRadioGroup<DebugItemButton> _itemGroup;
         private UIPool<DebugItemTypeButton> _itemTypePool;
         private ButtonRadioGroup<DebugItemTypeButton> _itemTypeGroup;
-        private SelectablesController _selectablesController;
-        private InputIconsController _inputIconsController;
 
         private ItemData[] _currentItemsData;
         private int _currentPage = 1;
@@ -34,14 +28,10 @@ namespace Beast.Radar.UI
         public DebugItemPanel(
             DebugPrefabLibrary library,
             DebugItemPanelView view,
-            ISelectableZoneBuilder zoneBuilder,
-            IInputSystem inputSystem,
             ItemData[] itemsData)
         {
             _library = library;
             _view = view;
-            _zoneBuilder = zoneBuilder;
-            _inputSystem = inputSystem;
             _itemsData = itemsData;
             _maxItemsCount = ItemGridSize.x * ItemGridSize.y;
         }
@@ -50,23 +40,18 @@ namespace Beast.Radar.UI
         {
             _configureItemTypeButtons();
             _configureItemButtons();
-            _configureSelectables();
-            _configureInputIcons();
             _subscribe();
         }
 
         public void Dispose()
         {
             _unsubscribe();
-            _selectablesController.Dispose();
-            _inputIconsController.Dispose();
             _itemTypeGroup.Dispose();
             _itemGroup.Dispose();
         }
 
         public UniTask Open(Empty data)
         {
-            _selectablesController.Enable();
             _view.body.SetActive(true);
             
             return UniTask.CompletedTask;
@@ -75,7 +60,6 @@ namespace Beast.Radar.UI
         public UniTask Close()
         {
             _view.body.SetActive(false);
-            _selectablesController.Disable();
             
             return UniTask.CompletedTask;
         }
@@ -96,11 +80,6 @@ namespace Beast.Radar.UI
 
         private void _configureItemTypeButtons()
         {
-            InputIconDisplay leftShoulderIcon = BScene.InstantiateMono(this, _library.inputIconDisplay, float3.zero, quaternion.identity);
-            leftShoulderIcon.SetKey(EInputButton.LeftShoulder);
-            leftShoulderIcon.transform.SetParent(_view.itemTypeRoot);
-            _view.inputIcons.Add(leftShoulderIcon);
-
             _itemTypePool = new UIPool<DebugItemTypeButton>(_library.debugItemTypeButton, _view.itemTypeRoot);
 
             foreach (EItemType type in Enum.GetValues(typeof(EItemType)).Cast<EItemType>().ToArray())
@@ -109,57 +88,8 @@ namespace Beast.Radar.UI
                 typeButton.SetType(type);
             }
 
-            InputIconDisplay rightShoulderIcon = BScene.InstantiateMono(this, _library.inputIconDisplay, float3.zero, quaternion.identity);
-            rightShoulderIcon.SetKey(EInputButton.RightShoulder);
-            rightShoulderIcon.transform.SetParent(_view.itemTypeRoot);
-            _view.inputIcons.Add(rightShoulderIcon);
-
             _itemTypeGroup = new ButtonRadioGroup<DebugItemTypeButton>(_itemTypePool.GetAllEnabled().ToArray());
             _itemTypeGroup.Warmup();
-        }
-
-        private void _configureSelectables()
-        {
-            Tuple<ESelectionZone, SelectableGridData> shoulderGrid = _zoneBuilder.Build(
-                ESelectionZone.Shoulder,
-                _itemTypePool.GetAllEnabled().Select(i => i.Selectable).ToArray(),
-                isFillHorizontally: true,
-                isLooping: true);
-
-            Tuple<ESelectionZone, SelectableGridData> south = _zoneBuilder.Build(
-                ESelectionZone.FirstOptionButton, _view.itemGrantButtons[0].Selectable);
-
-            Tuple<ESelectionZone, SelectableGridData> west = _zoneBuilder.Build(
-                ESelectionZone.SecondOptionButton, _view.itemGrantButtons[1].Selectable);
-
-            Tuple<ESelectionZone, SelectableGridData> north = _zoneBuilder.Build(
-                ESelectionZone.ThirdOptionButton, _view.itemGrantButtons[2].Selectable);
-
-            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.Navigate,
-                selectables: dpadSelectables,
-                cols: ItemGridSize.x, rows: ItemGridSize.y,
-                isFillHorizontally: false,
-                isLooping: false);
-
-            _selectablesController = new SelectablesController(_inputSystem,
-                new Dictionary<ESelectionZone, SelectableGridData>
-                {
-                    { dpadGrid.Item1, dpadGrid.Item2 },
-                    { shoulderGrid.Item1, shoulderGrid.Item2 },
-                    { north.Item1, north.Item2 },
-                    { west.Item1, west.Item2 },
-                    { south.Item1, south.Item2 },
-                });
-
-            _selectablesController.Warmup();
-        }
-
-        private void _configureInputIcons()
-        {
-            _inputIconsController = new InputIconsController(_inputSystem.Scheme, _view.inputIcons);
-            _inputIconsController.Warmup();
         }
         
         private void _subscribe()
@@ -174,7 +104,6 @@ namespace Beast.Radar.UI
             _itemGroup.Selected += _onItemSelected;
             _view.nextItems.Clicked += _onNextItemsPressed;
             _view.previousItems.Clicked += _onPreviousItemsPressed;
-            _selectablesController.TryWentBeyond += _onSelectablesTryWentBeyond;
         }
 
         private void _unsubscribe()
@@ -183,7 +112,6 @@ namespace Beast.Radar.UI
             _itemGroup.Selected -= _onItemSelected;
             _view.nextItems.Clicked -= _onNextItemsPressed;
             _view.previousItems.Clicked -= _onPreviousItemsPressed;
-            _selectablesController.TryWentBeyond -= _onSelectablesTryWentBeyond;
         }
 
         private void _onNextItemsPressed()
@@ -258,16 +186,7 @@ namespace Beast.Radar.UI
                 itemButton.SetItemData(itemData);
             }
 
-            UISelectable[] dpadSelectables = _itemsPool.GetAllEnabled().Select(b => b.Selectable).ToArray();
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.Navigate,
-                selectables: dpadSelectables,
-                cols: ItemGridSize.x, rows: ItemGridSize.y,
-                isFillHorizontally: false,
-                isLooping: false);
-          
             _itemGroup?.SetOtherGroup(_itemsPool.GetAllEnabled().ToArray());
-            _selectablesController?.RefreshGrid(dpadGrid.Item1, dpadGrid.Item2, reverseColumnIndex);
             
             _view.nextItems.SetInteractable(limit < _currentItemsData.Length);
             _view.previousItems.SetInteractable(_currentPage > 1);

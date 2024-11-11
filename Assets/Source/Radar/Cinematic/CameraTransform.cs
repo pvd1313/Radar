@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System.Diagnostics;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
@@ -101,6 +102,13 @@ namespace Beast.Radar.Cinematic
             _debugTrack();
         }
 
+        public void SetPosition(float2 position)
+        {
+            _position = position;
+            
+            _debugTrack();
+        }
+
         public void AddZoom(float zoomDelta)
         {
             _setZoom(_zoom01 + zoomDelta);
@@ -154,6 +162,7 @@ namespace Beast.Radar.Cinematic
             _debugTrack();
         }
 
+        [Conditional("DEVELOPMENT")]
         private void _debugTrack()
         {
             BDebug.Track(this, nameof(_position), (float2)_position);

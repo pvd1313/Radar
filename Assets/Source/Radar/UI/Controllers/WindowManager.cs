@@ -5,6 +5,7 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
+using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,23 +15,24 @@ namespace Beast.Radar.UI
     public partial class WindowManager : Controller, IWindowManager, IGameCycleListener
     {
         public event Action<string> WindowChanged;
-        public event Action<bool> MouseOverUI;
 
         public Transform CanvasTransform => _canvas.transform;
+
         public string CurrentWindow => _currentWindow;
         
         private readonly EssentialPrefabLibrary _library;
-        
+        private readonly ICamera _camera;
+
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
         private CanvasView _canvas;
         
         private string _currentWindow = WindowID.None;
         
-        public WindowManager(EssentialPrefabLibrary library /*, IInputSystem inputSystem*/)
+        public WindowManager(EssentialPrefabLibrary library, ICamera camera)
         {
             _library = library;
-            // _inputSystem = inputSystem;
+            _camera = camera;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -55,6 +57,11 @@ namespace Beast.Radar.UI
             }
             
             return new Handle<TData>(this, windowID);
+        }
+
+        public bool IsOverUI(float2 viewportPosition)
+        {
+            return _camera.IsPointInsideUI(viewportPosition);
         }
         
         public void Register<TData>(IWindow<TData> window, string windowID) where TData : struct
@@ -89,8 +96,6 @@ namespace Beast.Radar.UI
             }
 
             _canvas = BScene.InstantiateMono(this, _library.canvas, float3.zero, quaternion.identity);
-            
-            _canvas.MouseOverUI += _onMouseOverUI;
 
             return UniTask.CompletedTask;
         }
@@ -141,11 +146,6 @@ namespace Beast.Radar.UI
 
             await UniTask.NextFrame();
         }
-
-        private void _onMouseOverUI(bool isMouseOverUI)
-        {
-            MouseOverUI?.Invoke(isMouseOverUI);       
-        }
         
         private void _dispose(BlockingContext context)
         {
@@ -190,20 +190,5 @@ namespace Beast.Radar.UI
                 }
             }
         }
-
-        // private void _onOptionButtonsPressStarted(EInputOptionButton button)
-        // {
-        //     if (button == EInputOptionButton.Fourth)
-        //     {
-        //         if (_currentWindowID != WindowID.MainHUD)
-        //         {
-        //             Show(WindowID.MainHUD);
-        //         }
-        //     }
-        //     else if(button == EInputOptionButton.Start)
-        //     {
-        //         Show(_currentWindow is not HUDWindow ? WindowID.MainHUD : WindowID.Pause);
-        //     }
-        // }
     }
 }

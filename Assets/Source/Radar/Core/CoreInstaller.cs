@@ -5,13 +5,14 @@ using Beast.Claw.Gizmo;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
-using Beast.Radar.InputHandling;
+using Beast.Radar.Input;
 using Beast.Radar.NewGame;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
 using Beast.Radar.World;
+using UnityEngine;
 using Zenject;
 
 namespace Beast.Radar.Core
@@ -25,8 +26,8 @@ namespace Beast.Radar.Core
 
         protected override IEnumerable<Type> BindInterfaces()
         {
-            // Input & Camera
-            yield return typeof(InputSystem);
+            //yield return typeof(TouchInput);
+            yield return Application.isMobilePlatform ? typeof(TouchScreenDevice) : typeof(MouseDevice);
             yield return typeof(CameraTransform);
             yield return typeof(CameraController);
             
@@ -38,12 +39,8 @@ namespace Beast.Radar.Core
             yield return typeof(WorldManager);
             yield return typeof(GizmoRender);
             
-            // UI
-            yield return typeof(InputBlocker);
-            yield return typeof(SelectableZoneBuilder);
-
             // UI Windows
-            yield return typeof(HUDWindow);
+            yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
             
@@ -62,7 +59,7 @@ namespace Beast.Radar.Core
             yield return typeof(PlayerPreferencesController);
             yield return typeof(GameTimeController);
             yield return typeof(PlayerController);
-            yield return typeof(PlayerViewController);
+            // yield return typeof(PlayerViewController);
             yield return typeof(WorldTimeStateController);
         }
 

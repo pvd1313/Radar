@@ -2,7 +2,6 @@
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Beast.Radar.Core;
-using Beast.Radar.Debug;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 using Zenject;

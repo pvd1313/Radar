@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Resources;
 using Beast.Radar.Debug;
-using Beast.Radar.InputHandling;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -15,15 +11,11 @@ namespace Beast.Radar.UI
     {
         private readonly DebugPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
-        private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IInputSystem _inputSystem;
         private readonly IDebugController _debugController;
         private readonly IResourceManager _resources;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
-        private SelectablesController _selectablesController;
-        private InputIconsController _inputIconsController;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _debugWindow;
 
@@ -33,15 +25,11 @@ namespace Beast.Radar.UI
         public DebugMenuWindow(
             DebugPrefabLibrary library,
             IWindowManager windowManager,
-            ISelectableZoneBuilder zoneBuilder,
-            IInputSystem inputSystem,
             IDebugController debugController,
             IResourceManager resources)
         {
             _library = library;
             _windowManager = windowManager;
-            _zoneBuilder = zoneBuilder;
-            _inputSystem = inputSystem;
             _debugController = debugController;
             _resources = resources;
         }
@@ -60,7 +48,6 @@ namespace Beast.Radar.UI
             }
             
             _panelsController.Enable();
-            _selectablesController.Enable();
             _view.screen.SetActive(true);
         }
 
@@ -73,7 +60,6 @@ namespace Beast.Radar.UI
             
             _hideView();
             _panelsController.Disable();
-            _selectablesController.Disable();
         }
 
         private UniTask _warmup(ConcurrentContext context)
@@ -89,10 +75,6 @@ namespace Beast.Radar.UI
                 _view.transform.SetParent(_windowManager.CanvasTransform, false);
                 
                 _configurePanels(_library);
-                
-                _configureSelectables();
-                
-                _configureInputIcons();
                 
                 _subscribeView();
                 
@@ -111,33 +93,10 @@ namespace Beast.Radar.UI
             _panelsController = new PanelsController(_view.panelButtons, new IPanel[]
             {
                 //TODO: https://risenbeast.youtrack.cloud/issue/R-50/Sync-JSON-items-with-debug-inventory
-                new DebugItemPanel(library, _view.itemView, _zoneBuilder, _inputSystem, _getTestItems()),
-                new DebugSettingsPanel(_view.settingsView, _zoneBuilder, _inputSystem, _debugController),
+                new DebugItemPanel(library, _view.itemView, _getTestItems()),
+                new DebugSettingsPanel(_view.settingsView, _debugController),
             });
             _panelsController.Warmup();
-        }
-
-        private void _configureSelectables()
-        {
-            Tuple<ESelectionZone, SelectableGridData> triggerGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.Trigger,
-                selectables: _view.panelButtons.Select(b => b.Selectable).ToArray(),
-                isFillHorizontally: true,
-                isLooping: false);
-            
-            Dictionary<ESelectionZone, SelectableGridData> grids = new() 
-            {
-                { triggerGrid.Item1, triggerGrid.Item2 }
-            };
-            
-            _selectablesController = new SelectablesController(_inputSystem, grids);
-            _selectablesController.Warmup();
-        }
-
-        private void _configureInputIcons()
-        {
-            _inputIconsController = new InputIconsController(_inputSystem.Scheme, _view.inputIcons);
-            _inputIconsController.Warmup();
         }
 
         private void _subscribeView()
@@ -154,55 +113,16 @@ namespace Beast.Radar.UI
 
         private void _subscribeInput()
         {
-            _inputSystem.Scheme.Changed += _onInputActionsSchemeChanged;
-            _inputSystem.UIInput.OptionButtons.PressStarted += _onOpenButtonClicked;
         }
 
         private void _unsubscribeInput()
         {
-            _inputSystem.Scheme.Changed -= _onInputActionsSchemeChanged;
-            _inputSystem.UIInput.OptionButtons.PressStarted -= _onOpenButtonClicked;
-        }
-
-        private void _onInputActionsSchemeChanged(EInputScheme scheme)
-        {
-            foreach (InputIconDisplay icon in _view.inputIcons)
-            {
-                icon.Refresh(scheme);
-            }
-        }
-
-        private void _onOpenButtonClicked(EInputOptionButton button)
-        {
-            if (button == EInputOptionButton.Back)
-            {
-                if (_isOpened())
-                {
-                    _mainHUD.Open(default);
-                }
-                else
-                {
-                    _debugWindow.Open(default);
-                }
-            }
-            else if(button == EInputOptionButton.Fourth && _isOpened())
-            {
-                _mainHUD.Open(default);
-            }
-        }
-
-        private bool _isOpened()
-        {
-            return _view.screen.activeSelf;
         }
 
         private void _dispose(BlockingContext context)
         {
             _unsubscribeView();
             _unsubscribeInput();
-            
-            _selectablesController.Dispose();
-            _inputIconsController.Dispose();
         }
 
         private void _closeWindow()

@@ -5,7 +5,6 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace Beast.Radar.Core
 {
@@ -52,7 +51,7 @@ namespace Beast.Radar.Core
                 .AddComponent<GameCycleMono>()
                 .Initialize(_gameCycle);
 
-            if (Application.isEditor)
+            if (true)
             {
                 await tracker.Next("Loading integrated save");
 

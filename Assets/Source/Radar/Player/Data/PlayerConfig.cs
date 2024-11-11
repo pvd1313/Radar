@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Terrain;
 

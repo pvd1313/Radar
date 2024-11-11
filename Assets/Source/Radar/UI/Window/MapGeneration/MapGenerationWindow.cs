@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
-using Beast.Radar.Core;
-using Beast.Radar.InputHandling;
 using Beast.Radar.NewGame;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
@@ -19,12 +16,9 @@ namespace Beast.Radar.UI
         private readonly MapGenerationWindowConfig _generationConfig;
         private readonly ITerrainPreviewRender _previewRender;
         private readonly INewGameSetup _newGameSetup;
-        private readonly IInputSystem _inputSystem;
         private readonly CorePrefabLibrary _library;
-        private readonly ISelectableZoneBuilder _selectableBuilder;
 
         private MapGenerationView _menuView;
-        private SelectablesController _selectablesController;
         private ButtonRadioGroup<RadioButton> _sizeButtonsGroup;
         private Dictionary<RadioButton, int> _buttonSizes;
         
@@ -36,18 +30,14 @@ namespace Beast.Radar.UI
         public MapGenerationWindow(
             MapGenerationWindowConfig generationConfig,
             IWindowManager windowManager,
-            ISelectableZoneBuilder selectableBuilder,
             ITerrainPreviewRender previewRender,
             INewGameSetup newGameSetup,
-            IInputSystem inputSystem,
             CorePrefabLibrary library)
         {
             _generationConfig = generationConfig;
             _windowManager = windowManager;
-            _selectableBuilder = selectableBuilder;
             _previewRender = previewRender;
             _newGameSetup = newGameSetup;
-            _inputSystem = inputSystem;
             _library = library;
         }
 
@@ -59,7 +49,6 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            _selectablesController.Enable();
             _configureView();
             _drawTexture();
             _menuView.gameObject.SetActive(true);
@@ -70,7 +59,6 @@ namespace Beast.Radar.UI
         public UniTask Close()
         {
             _hideView();
-            _selectablesController.Disable();
             _terrainTexture.Dispose();
             _terrainTexture = null;
 
@@ -97,7 +85,6 @@ namespace Beast.Radar.UI
             _sizeButtonsGroup = new ButtonRadioGroup<RadioButton>(_menuView.sizeButtons);
             _sizeButtonsGroup.Warmup();
             
-            _configureSelectables();
             _subscribeView();
             
             return UniTask.CompletedTask;
@@ -127,35 +114,6 @@ namespace Beast.Radar.UI
             _menuView.forestSlider.SetValueWithoutNotify(_terrainData.forest01);
             _menuView.seedResult.SetText(seed.name);
             _sizeButtonsGroup.Select(startSizeButton);
-        }
-
-        private void _configureSelectables()
-        {
-            UISelectable[,] selectablesGrid =
-            {
-                { _menuView.seedButtons.Decrement.Selectable, _menuView.seedButtons.Increment.Selectable, null, null },
-                {
-                    _menuView.sizeButtons[0].Selectable, _menuView.sizeButtons[1].Selectable,
-                    _menuView.sizeButtons[2].Selectable, _menuView.sizeButtons[3].Selectable
-                },
-                { _menuView.forestSlider.Selectable, null, null, null },
-                { _menuView.waterSlider.Selectable, null, null, null },
-                { _menuView.biomeSlider.Selectable, null, null, null },
-                { _menuView.createMapButton.Selectable, null, null, null }
-            };
-
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _selectableBuilder.Build(
-                zone: ESelectionZone.Navigate,
-                selectableGrid: selectablesGrid,
-                isLooping: true);
-
-            Dictionary<ESelectionZone, SelectableGridData> grids = new()
-            {
-                { dpadGrid.Item1, dpadGrid.Item2 }
-            };
-
-            _selectablesController = new SelectablesController(_inputSystem, grids);
-            _selectablesController.Warmup();
         }
 
         private void _subscribeView()
@@ -259,7 +217,6 @@ namespace Beast.Radar.UI
         {
             _unsubscribeView();
 
-            _selectablesController.Dispose();
             _sizeButtonsGroup.Dispose();
         }
     }

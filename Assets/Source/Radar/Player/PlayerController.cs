@@ -9,7 +9,6 @@ using Beast.Claw.Jobs;
 using Beast.Claw.Mathematics;
 using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
-using Beast.Radar.InputHandling;
 using Beast.Radar.Player.Path;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
@@ -41,9 +40,7 @@ namespace Beast.Radar.Player
         private readonly GameModel _gameModel;
         private readonly PlayerPreferences _preferences;
         private readonly IGizmoManager _gizmoManager;
-        private readonly IInputSystem _input;
 
-        private InputValueControl<float2> _clickInput;
         private float _halfTexelSize;
         private float2 _startPressPosition;
         private float _startPressTime;
@@ -56,7 +53,6 @@ namespace Beast.Radar.Player
 
         public PlayerController(
             IGameTime time,
-            IInputSystem input,
             PlayerConfig config,
             ICameraTransform camera,
             ITerrainBackedBiome biome,
@@ -71,7 +67,6 @@ namespace Beast.Radar.Player
             _gameModel = gameModel;
             _preferences = preferences;
             _gizmoManager = gizmoManager;
-            _input = input;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -91,19 +86,18 @@ namespace Beast.Radar.Player
 
         private UniTask _warmup(ConcurrentContext arg)
         {
-            _clickInput = _input.GameInput.Click;
-
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
             Speed = _config.moveSpeed;
 
             if (Build.IS_DEVELOPMENT)
             {
-                _input.DebugInput.TeleportButton.PressStarted += () =>
-                {
-                    Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
-                    Target = Position;
-                };
+                // TODO: #R-93 Restore.
+                // _input.DebugInput.TeleportButton.PressStarted += () =>
+                // {
+                //     Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
+                //     Target = Position;
+                // };
             }
 
             _path = Native.CreatePermList<int2>(256);
@@ -182,50 +176,51 @@ namespace Beast.Radar.Player
                 _clickTimer += Time.deltaTime;
             }
 
-            if (_clickInput.State == EButtonState.Pressed && !_isCheckClick)
-            {
-                _startPressPosition = _clickInput.Value;
-                _isCheckClick = true;
-            }
+            // TODO: #R-93 Restore.
+            // if (_clickInput.State == EButtonState.Pressed && !_isCheckClick)
+            // {
+            //     _startPressPosition = _clickInput.Value;
+            //     _isCheckClick = true;
+            // }
+            //
+            // if (_isCheckClick && _clickInput.State == EButtonState.Default)
+            // {
+            //     if (BMath.Distance(_startPressPosition, _clickInput.LastValue) < 0.1f)
+            //     {
+            //         if (!_preferences.isSingleTapMovement)
+            //         {
+            //             if (_clickInput.TapCount == 1)
+            //             {
+            //                 _setTarget(_camera.ScreenToWorld(_startPressPosition));
+            //
+            //                 if (IsMovement)
+            //                 {
+            //                     SwitchMovement();
+            //                 }
+            //             }
+            //             else if (_clickTimer < MULTI_CLICK_DELAY && _clickInput.TapCount == 2 && !IsMovement)
+            //             {
+            //                 SwitchMovement();
+            //             }
+            //         }
+            //         else if (_clickInput.TapCount == 1)
+            //         {
+            //             _setTarget(_camera.ScreenToWorld(_startPressPosition));
+            //
+            //             if (!IsMovement)
+            //             {
+            //                 SwitchMovement();
+            //             }
+            //         }
+            //
+            //         BDebug.Track(this, "position", Position);
+            //         BDebug.Track(this, "target", Target);
+            //         BDebug.Track(this, "target cell", _worldToIndex(Target));
+            //     }
 
-            if (_isCheckClick && _clickInput.State == EButtonState.Default)
-            {
-                if (BMath.Distance(_startPressPosition, _clickInput.LastValue) < 0.1f)
-                {
-                    if (!_preferences.isSingleTapMovement)
-                    {
-                        if (_clickInput.TapCount == 1)
-                        {
-                            _setTarget(_camera.ScreenToWorld(_startPressPosition));
-
-                            if (IsMovement)
-                            {
-                                SwitchMovement();
-                            }
-                        }
-                        else if (_clickTimer < MULTI_CLICK_DELAY && _clickInput.TapCount == 2 && !IsMovement)
-                        {
-                            SwitchMovement();
-                        }
-                    }
-                    else if (_clickInput.TapCount == 1)
-                    {
-                        _setTarget(_camera.ScreenToWorld(_startPressPosition));
-
-                        if (!IsMovement)
-                        {
-                            SwitchMovement();
-                        }
-                    }
-
-                    BDebug.Track(this, "position", Position);
-                    BDebug.Track(this, "target", Target);
-                    BDebug.Track(this, "target cell", _worldToIndex(Target));
-                }
-
-                _clickTimer = 0;
-                _isCheckClick = false;
-            }
+            //     _clickTimer = 0;
+            //     _isCheckClick = false;
+            // }
         }
 
         private void _setTarget(float2 worldTarget)

@@ -17,5 +17,6 @@ namespace Beast.Claw.Graphic
         public float2 WorldToScreen(float2 worldPoint);
         void AddPosition(float2 delta, Space space);
         void AddZoom(float zoomDelta);
+        void SetPosition(float2 position);
     }
 }

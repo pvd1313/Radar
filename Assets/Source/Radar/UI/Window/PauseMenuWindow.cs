@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Beast.Claw.Common;
-using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Radar.InputHandling;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
@@ -17,12 +13,9 @@ namespace Beast.Radar.UI
         private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
-        private readonly ISelectableZoneBuilder _zoneBuilder;
-        private readonly IInputSystem _inputSystem;
         private readonly PlayerPreferences _playerPreferences;
         
         private PauseMenuView _view;
-        private SelectablesController _selectablesController;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
         
@@ -30,15 +23,11 @@ namespace Beast.Radar.UI
             CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
-            ISelectableZoneBuilder zoneBuilder,
-            IInputSystem inputSystem,
             PlayerPreferences playerPreferences)
         {
             _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
-            _zoneBuilder = zoneBuilder;
-            _inputSystem = inputSystem;
             _playerPreferences = playerPreferences;
         }
 
@@ -49,7 +38,6 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            _selectablesController.Enable();
             _view.gameObject.SetActive(true);
             _view.loadButton.SetInteractable(false);
 
@@ -67,8 +55,6 @@ namespace Beast.Radar.UI
         {
             _view.gameObject.SetActive(false);
 
-            _selectablesController.Disable();
-
             return UniTask.CompletedTask;
         }
 
@@ -82,34 +68,11 @@ namespace Beast.Radar.UI
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
             _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MapGeneration);
 
-            _configureSelectables();
             _subscribeView();
 
             _setFPS();
             
-            _selectablesController.Warmup();
-
             return UniTask.CompletedTask;
-        }
-        
-        private void _configureSelectables()
-        {
-            Tuple<ESelectionZone, SelectableGridData> dpadGrid = _zoneBuilder.Build(
-                zone: ESelectionZone.Navigate,
-                selectables: new[]
-                {
-                    _view.newGameButton.Selectable,
-                    _view.saveButton.Selectable,
-                    _view.loadButton.Selectable,
-                },
-                isFillHorizontally: false,
-                isLooping: true);
-
-            _selectablesController = new SelectablesController(_inputSystem,
-                new Dictionary<ESelectionZone, SelectableGridData>
-                {
-                    { dpadGrid.Item1, dpadGrid.Item2 }
-                });
         }
 
         private void _subscribeView()

@@ -23,7 +23,7 @@ namespace Beast.Radar.UI
         
         private void OnEnable()
         {
-            if (_ШsSelected() && _selectableVisual != null)
+            if (_IsSelected() && _selectableVisual != null)
             {
                 _selectableVisual.SetSelectedMode();
             }
@@ -84,7 +84,7 @@ namespace Beast.Radar.UI
 
         public void Deselect()
         {
-            if (_ШsSelected())
+            if (_IsSelected())
             {
                 EventSystem.current.SetSelectedGameObject(null);
             }
@@ -100,7 +100,7 @@ namespace Beast.Radar.UI
             return $"{_zone} {_index}";
         }
         
-        private bool _ШsSelected()
+        private bool _IsSelected()
         {
             return EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject;
         }

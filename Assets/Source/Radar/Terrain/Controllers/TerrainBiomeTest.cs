@@ -4,7 +4,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
-using Beast.Radar.InputHandling;
+using Beast.Radar.Input;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,23 +13,23 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainBiomeTest : Controller, IGameCycleListener
     {
-        private readonly IInputSystem _input;
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _biome;
         private readonly IGizmoManager _gizmoManager;
-        
+        private readonly IInputDevice _input;
+
         private IGizmoHandle _gizmo;
 
         public TerrainBiomeTest(
-            IInputSystem input, 
             ICameraTransform camera, 
             ITerrainBackedBiome biome, 
-            IGizmoManager gizmoManager)
+            IGizmoManager gizmoManager,
+            IInputDevice input)
         {
-            _input = input;
             _camera = camera;
             _biome = biome;
             _gizmoManager = gizmoManager;
+            _input = input;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -54,8 +54,13 @@ namespace Beast.Radar.Terrain
             }
             
             _gizmo.Clear();
+
+            if (_input.drag.status == EInputStatus.Inactive)
+            {
+                return;
+            }
             
-            float2 worldPoint = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
+            float2 worldPoint = _camera.ViewportToWorld(_input.drag.position);
             
             // 1 km
             int2 worldPoint1km = BMath.FloorToInt(worldPoint);
@@ -74,7 +79,7 @@ namespace Beast.Radar.Terrain
             // 8-16 km
             int cellSize = _biome.Terrain8kmCell.cellSize;
             BDebug.Track(this, "CellSize8km", cellSize);
-
+            
             int2 worldPoint8km = BMath.FloorToInt(worldPoint / cellSize) * cellSize;
             _gizmo.SetColor(Color.green);
             _gizmo.AddPoint(worldPoint8km);
@@ -83,7 +88,7 @@ namespace Beast.Radar.Terrain
             _gizmo.AddPoint(worldPoint8km + new float2(cellSize, cellSize));
             
             BDebug.Track(this, "WorldPoint_8KM", worldPoint8km);
-
+            
             biomeIndex = _biome.Terrain8kmCell.GetPixelClamped(worldPoint1km);
             
             BDebug.Track(this, "Biome_8KM", biomeIndex.ToString());

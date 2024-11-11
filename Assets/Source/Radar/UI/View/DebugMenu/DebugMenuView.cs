@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Beast.Radar.UI
@@ -11,7 +10,6 @@ namespace Beast.Radar.UI
         public UIButton openButton;
         public UIButton closeButton;
         public UIButton[] panelButtons;
-        public List<InputIconDisplay> inputIcons;
         public DebugItemPanelView itemView;
         public DebugSettingsPanelView settingsView;
     }
