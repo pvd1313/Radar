@@ -76,12 +76,8 @@ namespace Beast.Radar.UI
         {
             _gameTime.MinuteChanged += () =>
             {
-                _view.timeText.gameObject.SetActive(false);
-                
                 TimeSpan time = _gameTime.GetTime();
                 _view.timeText.SetTime(time.Hours, time.Minutes);
-                
-                _view.timeText.gameObject.SetActive(true);
             };
 
             _player.ChangeMovementState += () =>
