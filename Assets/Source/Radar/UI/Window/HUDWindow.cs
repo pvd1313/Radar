@@ -79,7 +79,7 @@ namespace Beast.Radar.UI
 
         private void _subscribe()
         {
-            _gameTime.Changed += () =>
+            _gameTime.MinuteChanged += () =>
             {
                 TimeSpan time = _gameTime.GetTime();
                 _view.timeText.SetTime(time.Hours, time.Minutes);
