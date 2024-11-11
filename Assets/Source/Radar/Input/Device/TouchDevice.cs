@@ -3,6 +3,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.UI;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UInput = UnityEngine.Input;
@@ -32,7 +33,18 @@ namespace Beast.Radar.Input
 
         public void Register(IGameCycleHandle handle)
         {
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.TICK, _tick);
+        }
+
+        private UniTask _warmup(ConcurrentContext context)
+        {
+            UInput.gyro.enabled = false;
+            UInput.compass.enabled = false;
+            UInput.compensateSensors = false;
+            UInput.simulateMouseWithTouches = false;
+            
+            return UniTask.CompletedTask;
         }
 
         private void _tick(BlockingContext obj)
