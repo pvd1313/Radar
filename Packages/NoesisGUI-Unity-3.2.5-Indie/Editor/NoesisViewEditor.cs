@@ -57,29 +57,6 @@ public class NoesisViewEditor : Editor
         return 0;
     }
 
-    private static readonly string[] ActionNames =
-    {
-        "Up",
-        "Down",
-        "Left",
-        "Right",
-        "Next",
-        "Prev",
-        "Accept",
-        "Cancel",
-        "Menu",
-        "View",
-        "PageLeft",
-        "PageRight",
-        "PageUp",
-        "PageDown",
-        "Scroll",
-        "TrackedPosition",
-        "TrackedRotation",
-        "TrackedTrigger"
-    };
-
-    private bool _showMatchedActions = false;
     private GUIStyle _matchedActionStyle;
     private GUIStyle _unmatchedActionStyle;
 
@@ -195,64 +172,7 @@ public class NoesisViewEditor : Editor
 
         EditorGUILayout.Space();
 
-        view.EnableActions = EditorGUILayout.Toggle(new GUIContent("Enable Actions",
-            "Indicates if input system actions are processed by this view"), view.EnableActions);
-
-        EditorGUI.BeginDisabledGroup(!view.EnableActions);
-
-        view.XRTrackingOrigin = (UnityEngine.Transform)EditorGUILayout.ObjectField(new GUIContent("XR Tracking Origin",
-            "Transform representing the real world origin for tracking devices."),
-            view.XRTrackingOrigin, typeof(UnityEngine.Transform), true);
-
-        view.ActionsRepeatDelay = (float)EditorGUILayout.FloatField(new GUIContent("Actions Repeat Delay",
-            "The initial delay (in seconds) between an initial button action and a repeated action"), view.ActionsRepeatDelay);
-        view.ActionsRepeatRate = (float)EditorGUILayout.FloatField(new GUIContent("Actions Repeat Rate",
-            "The speed (in seconds) that the button action repeats itself once repeating"), view.ActionsRepeatRate);
-        view.Actions = (UnityEngine.InputSystem.InputActionAsset)EditorGUILayout.ObjectField(new GUIContent("Actions Asset",
-            "Asset that contains action maps"), view.Actions, typeof(UnityEngine.InputSystem.InputActionAsset), false);
-
-        var actionMaps = view.Actions ? view.Actions.actionMaps.Select(x => x.name).ToArray() : new string[0];
-        var actionMapIndex = EditorGUILayout.Popup(new GUIContent("Action Map",
-            "Set of actions being used by this view and enabled by default"), Array.IndexOf(actionMaps, view.ActionMap), actionMaps);
-        actionMapIndex = Math.Max(actionMapIndex, actionMaps.Length > 0 ? 0 : - 1);
-        view.ActionMap = actionMapIndex != -1 ? actionMaps[actionMapIndex] : view.ActionMap;
-
-        _showMatchedActions = EditorGUILayout.BeginFoldoutHeaderGroup(_showMatchedActions, "Matched Actions");
-
-        if (_showMatchedActions)
-        {
-            _matchedActionStyle = _matchedActionStyle ?? new GUIStyle(EditorStyles.textField);
-            _unmatchedActionStyle = _unmatchedActionStyle ?? new GUIStyle(EditorStyles.textField);
-            _unmatchedActionStyle.normal.textColor = Color.red;
-
-            foreach (var name in ActionNames)
-            {
-                string actionName = view.ActionMap + "/" + name;
-                var action = view.Actions?.FindAction(actionName);
-
-                if (action != null)
-                {
-                    EditorGUILayout.LabelField(name, $"{action.actionMap?.name}/{action.name}", _matchedActionStyle);
-                }
-                else
-                {
-                    EditorGUILayout.LabelField(name, "None", _unmatchedActionStyle);
-                }
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
-        }
-
-        EditorGUI.EndDisabledGroup();
-
         EditorGUILayout.Space();
-
-      #if !ENABLE_INPUT_SYSTEM
-        if (view.EnableActions)
-        {
-            EditorGUILayout.HelpBox("Actions requires 'Active Input Handling' set to " +
-                "'Input System Package (New)' or 'Both' in Player Settings", MessageType.Warning);
-        }
-      #endif
     }
 
     public override bool HasPreviewGUI()

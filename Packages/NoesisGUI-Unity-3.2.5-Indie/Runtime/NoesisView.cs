@@ -2,21 +2,12 @@
 
 using UnityEngine;
 using Noesis;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine.Rendering;
 using UnityEngine.Profiling;
 using UnityEngine.XR;
-
-#if ENABLE_URP_PACKAGE
-using UnityEngine.Rendering.Universal;
-#endif
-
-#if ENABLE_HDRP_PACKAGE
-using UnityEngine.Rendering.HighDefinition;
-#endif
 
 using LoadAction = UnityEngine.Rendering.RenderBufferLoadAction;
 using StoreAction = UnityEngine.Rendering.RenderBufferStoreAction;
@@ -34,8 +25,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public NoesisXaml Xaml
     {
-        set { this._xaml = value; }
-        get { return this._xaml; }
+        set { _xaml = value; }
+        get { return _xaml; }
     }
 
     /// <summary>
@@ -43,8 +34,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public RenderTexture Texture
     {
-        set { this._texture = value; }
-        get { return this._texture; }
+        set { _texture = value; }
+        get { return _texture; }
     }
 
     /// <summary>
@@ -60,7 +51,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 _uiView.SetTessellationMaxPixelError(value);
             }
 
-            this._tessellationMaxPixelError = value;
+            _tessellationMaxPixelError = value;
         }
 
         get
@@ -70,7 +61,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 return _uiView.GetTessellationMaxPixelError().Error;
             }
 
-            return this._tessellationMaxPixelError; 
+            return _tessellationMaxPixelError; 
         }
     }
 
@@ -86,7 +77,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 _uiView.SetFlags(value);
             }
 
-            this._renderFlags = value;
+            _renderFlags = value;
         }
         get
         {
@@ -95,7 +86,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 return _uiView.GetFlags();
             }
 
-            return this._renderFlags;
+            return _renderFlags;
         }
     }
 
@@ -115,8 +106,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public float StereoOffscreenScaleFactor
     {
-        set { this._stereoScale = value; }
-        get { return this._stereoScale; }
+        set { _stereoScale = value; }
+        get { return _stereoScale; }
     }
 
     /// <summary>
@@ -124,8 +115,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool DPIScale
     {
-        set { this._dpiScale = value; }
-        get { return this._dpiScale; }
+        set { _dpiScale = value; }
+        get { return _dpiScale; }
     }
 
     /// <summary>
@@ -135,8 +126,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool ContinuousRendering
     {
-        set { this._continuousRendering = value; }
-        get { return this._continuousRendering; }
+        set { _continuousRendering = value; }
+        get { return _continuousRendering; }
     }
 
     /// <summary>
@@ -145,8 +136,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool EnableExternalUpdate
     {
-        set { this._enableExternalUpdate = value; }
-        get { return this._enableExternalUpdate; }
+        set { _enableExternalUpdate = value; }
+        get { return _enableExternalUpdate; }
     }
 
     /// <summary>
@@ -155,8 +146,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool NeedsRendering
     {
-        set { this._needsRendering = value; }
-        get { return this._needsRendering; }
+        set { _needsRendering = value; }
+        get { return _needsRendering; }
     }
 
     /// <summary>
@@ -164,8 +155,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool EnableKeyboard
     {
-        set { this._enableKeyboard = value; }
-        get { return this._enableKeyboard; }
+        set { _enableKeyboard = value; }
+        get { return _enableKeyboard; }
     }
 
     /// <summary>
@@ -173,8 +164,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool EnableMouse
     {
-        set { this._enableMouse = value; }
-        get { return this._enableMouse; }
+        set { _enableMouse = value; }
+        get { return _enableMouse; }
     }
 
     /// <summary>
@@ -182,40 +173,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool EnableTouch
     {
-        set { this._enableTouch = value; }
-        get { return this._enableTouch; }
-    }
-
-    /// <summary>
-    /// Enables actions input management.
-    /// </summary>
-    public bool EnableActions
-    {
-        get { return _enableActions; }
-        set
-        {
-            if (_enableActions != value)
-            {
-                _enableActions = value;
-                ReloadActions(_actions, _actionMap, _actionsBound);
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// Set of actions being used by this view and enabled by default.
-    /// </summary>
-    public string ActionMap
-    {
-        get { return _actionMap; }
-        set
-        {
-            if (_actionMap != value)
-            {
-                ReloadActions(_actions, value, _actionsBound);
-            }
-        }
+        set { _enableTouch = value; }
+        get { return _enableTouch; }
     }
 
     /// <summary>
@@ -223,8 +182,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public float ActionsRepeatDelay
     {
-        set { this._actionsRepeatDelay = value; }
-        get { return this._actionsRepeatDelay; }
+        set { _actionsRepeatDelay = value; }
+        get { return _actionsRepeatDelay; }
     }
 
     /// <summary>
@@ -232,8 +191,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public float ActionsRepeatRate
     {
-        set { this._actionsRepeatRate = value; }
-        get { return this._actionsRepeatRate; }
+        set { _actionsRepeatRate = value; }
+        get { return _actionsRepeatRate; }
     }
 
     /// <summary>
@@ -241,20 +200,9 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public UnityEngine.Transform XRTrackingOrigin
     {
-        set { this._xrTrackingOrigin = value; }
-        get { return this._xrTrackingOrigin; }
+        set { _xrTrackingOrigin = value; }
+        get { return _xrTrackingOrigin; }
     }
-
-  #if ENABLE_URP_PACKAGE
-    /// <summary>
-    /// Controls when the UI render pass executes
-    /// </summary>
-    public RenderPassEvent RenderPassEvent
-    {
-        set { this._renderPassEvent = value; }
-        get { return this._renderPassEvent; }
-    }
-  #endif
 
     /// <summary>
     /// Emulate touch input with mouse.
@@ -268,9 +216,9 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 _uiView.SetEmulateTouch(value);
             }
 
-            this._emulateTouch = value;
+            _emulateTouch = value;
         }
-        get { return this._emulateTouch; }
+        get { return _emulateTouch; }
     }
 
     /// <summary>
@@ -278,8 +226,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool UseRealTimeClock
     {
-        set { this._useRealTimeClock = value; }
-        get { return this._useRealTimeClock; }
+        set { _useRealTimeClock = value; }
+        get { return _useRealTimeClock; }
     }
 
     /// <summary>
@@ -287,8 +235,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// </summary>
     public bool ClearStencil
     {
-        set { this._clearStencil = value; }
-        get { return this._clearStencil; }
+        set { _clearStencil = value; }
+        get { return _clearStencil; }
     }
 
     /// <summary>
@@ -311,9 +259,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
     #endregion
 
-    #region Public events
-
-    #region Render
     public event RenderingEventHandler Rendering
     {
         add
@@ -341,14 +286,13 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
         return new ViewStats();
     }
-    #endregion
 
     #region Keyboard input events
     /// <summary>
     /// Notifies Renderer that a key was pressed.
     /// </summary>
     /// <param name="key">Key identifier.</param>
-    public bool KeyDown(Noesis.Key key)
+    public bool KeyDown(Key key)
     {
         if (_uiView != null)
         {
@@ -362,7 +306,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// Notifies Renderer that a key was released.
     /// </summary>
     /// <param name="key">Key identifier.</param>
-    public bool KeyUp(Noesis.Key key)
+    public bool KeyUp(Key key)
     {
         if (_uiView != null)
         {
@@ -411,7 +355,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// <param name="x">Mouse x-coordinate.</param>
     /// <param name="y">Mouse y-coordinate.</param>
     /// <param name="button">Indicates which button was pressed.</param>
-    public bool MouseButtonDown(int x, int y, Noesis.MouseButton button)
+    public bool MouseButtonDown(int x, int y, MouseButton button)
     {
         if (_uiView != null)
         {
@@ -427,7 +371,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// <param name="x">Mouse x-coordinate.</param>
     /// <param name="y">Mouse y-coordinate.</param>
     /// <param name="button">Indicates which button was released.</param>
-    public bool MouseButtonUp(int x, int y, Noesis.MouseButton button)
+    public bool MouseButtonUp(int x, int y, MouseButton button)
     {
         if (_uiView != null)
         {
@@ -444,7 +388,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     /// <param name="x">Mouse x-coordinate.</param>
     /// <param name="y">Mouse y-coordinate.</param>
     /// <param name="button">Indicates which button was pressed.</param>
-    public bool MouseDoubleClick(int x, int y, Noesis.MouseButton button)
+    public bool MouseDoubleClick(int x, int y, MouseButton button)
     {
         if (_uiView != null)
         {
@@ -525,10 +469,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     }
     #endregion
 
-    #endregion
-
-    #region Public methods
-
     /// <summary>
     /// Loads the user interface specified in the XAML property
     /// </summary>
@@ -559,12 +499,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    #endregion
-
-    #region Private members
-
-    #region MonoBehavior component messages
-
     /// <summary>
     /// Called once when component is attached to GameObject for the first time
     /// </summary>
@@ -583,12 +517,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         _emulateTouch = false;
         _useRealTimeClock = false;
         _clearStencil = false;
-        _actionMap = "Gamepad";
         _actionsRepeatDelay = 0.5f;
         _actionsRepeatRate = 0.1f;
-      #if ENABLE_URP_PACKAGE
-        _renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-      #endif
     }
 
     void Start()
@@ -604,100 +534,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
             _enableActions = false;
         }
       #endif
-    }
-
-    private void ReloadActions(UnityEngine.InputSystem.InputActionAsset actions, string actionMap,
-        bool actionsBound)
-    {
-        if (actionsBound)
-        {
-            UnbindActions();
-        }
-
-        _actions = actions;
-        _actionMap = actionMap;
-
-        if (actionsBound)
-        {
-            BindActions();
-        }
-    }
-
-    private bool _actionMapEnabled = false;
-    private bool _actionsBound = false;
-
-    private void BindActions()
-    {
-        var actionMap = _actions?.FindActionMap(_actionMap ?? "");
-
-        if (actionMap != null)
-        {
-            if (_enableActions && !actionMap.enabled)
-            {
-                actionMap.Enable();
-                _actionMapEnabled = true;
-            }
-
-            _upAction = actionMap.FindAction("Up");
-            _downAction = actionMap.FindAction("Down");
-            _leftAction = actionMap.FindAction("Left");
-            _rightAction = actionMap.FindAction("Right");
-
-            _acceptAction = actionMap.FindAction("Accept");
-            _cancelAction = actionMap.FindAction("Cancel");
-
-            _menuAction = actionMap.FindAction("Menu");
-            _viewAction = actionMap.FindAction("View");
-
-            _pageLeftAction = actionMap.FindAction("PageLeft");
-            _pageRightAction = actionMap.FindAction("PageRight");
-            _pageUpAction = actionMap.FindAction("PageUp");
-            _pageDownAction = actionMap.FindAction("PageDown");
-            _scrollAction = actionMap.FindAction("Scroll");
-
-            _trackedPositionAction = actionMap.FindAction("TrackedPosition");
-            _trackedRotationAction = actionMap.FindAction("TrackedRotation");
-            _trackedTriggerAction = actionMap.FindAction("TrackedTrigger");
-        }
-
-        _actionsBound = true;
-    }
-
-    private void UnbindActions()
-    {
-        var actionMap = _actions?.FindActionMap(_actionMap ?? "");
-
-        if (actionMap != null)
-        {
-            if (_actionMapEnabled)
-            {
-                actionMap.Disable();
-                _actionMapEnabled = false;
-            }
-
-            _upAction = default;
-            _downAction = default;
-            _leftAction = default;
-            _rightAction = default;
-
-            _acceptAction = default;
-            _cancelAction = default;
-
-            _menuAction = default;
-            _viewAction = default;
-
-            _pageLeftAction = default;
-            _pageRightAction = default;
-            _pageUpAction = default;
-            _pageDownAction = default;
-            _scrollAction = default;
-
-            _trackedPositionAction = default;
-            _trackedRotationAction = default;
-            _trackedTriggerAction = default;
-        }
-
-        _actionsBound = false;
     }
 
     private CommandBuffer _commands;
@@ -722,45 +558,14 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         EnsureCommandBuffer();
         TryGetComponent<Camera>(out _camera);
 
-      #if !ENABLE_LEGACY_INPUT_MANAGER
-        if (UnityEngine.InputSystem.Touchscreen.current != null)
-        {
-            UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
-        }
-      #endif
-
-        BindActions();
         LoadXaml(false);
 
         Camera.onPreRender += PreRender;
-
-      #if ENABLE_URP_PACKAGE || ENABLE_HDRP_PACKAGE
-        RenderPipelineManager.beginCameraRendering += BeginCameraRendering;
-        RenderPipelineManager.endCameraRendering += EndCameraRendering;
-
-        #if ENABLE_URP_PACKAGE
-          _scriptableRenderPass = new NoesisScriptableRenderPass(this);
-        #endif
-      #endif
     }
 
     void OnDisable()
     {
-      #if !ENABLE_LEGACY_INPUT_MANAGER
-        if (UnityEngine.InputSystem.Touchscreen.current != null)
-        {
-            UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Disable();
-        }
-      #endif
-
-        UnbindActions();
-
         Camera.onPreRender -= PreRender;
-
-      #if ENABLE_URP_PACKAGE || ENABLE_HDRP_PACKAGE
-        RenderPipelineManager.beginCameraRendering -= BeginCameraRendering;
-        RenderPipelineManager.endCameraRendering -= EndCameraRendering;
-      #endif
     }
 
     private static class Profiling
@@ -775,209 +580,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         public static readonly string RenderTexture = "Noesis.RenderTexture";
     }
 
-#region Universal Render Pipeline
-#if ENABLE_URP_PACKAGE
-    private class NoesisScriptableRenderPass: ScriptableRenderPass
-    {
-        public NoesisScriptableRenderPass(NoesisView view)
-        {
-            _view = view;
-        }
-
-        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-        {
-            if (_view._uiView != null && _view._visible)
-            {
-                bool flipY = !IsGL() && !IsBackbuffer(_view._camera);
-                _view._commands.name = Profiling.RenderOnScreen;
-
-              #if ENABLE_VR && ENABLE_XR_MODULE
-                if (renderingData.cameraData.xrRendering)
-                {
-                    var cameraData = renderingData.cameraData;
-                    var camera = _view._camera;
-                    var width = camera.pixelWidth;
-                    var height = camera.pixelHeight;
-
-                  #if ENABLE_URP_PACKAGE_VR
-                    // CameraData.xr available in URP 14.0+
-                    if (cameraData.xr.singlePassEnabled)
-                  #else
-                    // https://forum.unity.com/threads/detect-single-pass-stereo-on-android-at-runtime.509304/
-                    if (XRSettings.eyeTextureDesc.vrUsage == VRTextureUsage.TwoEyes)
-                  #endif
-                    {
-                        Matrix4x4 viewMatrix0 = cameraData.GetViewMatrix(0);
-                        Matrix4x4 projectionMatrix0 = cameraData.GetProjectionMatrix(0);
-                        Noesis.Matrix4 viewProj0 = NoesisMatrix(viewMatrix0, projectionMatrix0, width, height);
-
-                        Matrix4x4 viewMatrix1 = cameraData.GetViewMatrix(1);
-                        Matrix4x4 projectionMatrix1 = cameraData.GetProjectionMatrix(1);
-                        Noesis.Matrix4 viewProj1 = NoesisMatrix(viewMatrix1, projectionMatrix1, width, height);
-
-                        NoesisRenderer.RenderOnscreen(_view._uiView, CameraMatrix(camera), viewProj0, viewProj1,
-                            flipY, _view._commands, true, _view._clearStencil);
-                    }
-                    else
-                    {
-                        Matrix4x4 viewMatrix = cameraData.GetViewMatrix(0);
-                        Matrix4x4 projectionMatrix = cameraData.GetProjectionMatrix(0);
-                        Noesis.Matrix4 viewProj = NoesisMatrix(viewMatrix, projectionMatrix, width, height);
-                        NoesisRenderer.RenderOnscreen(_view._uiView, viewProj, flipY, _view._commands, true, _view._clearStencil);
-                    }
-                }
-                else
-              #endif
-                {
-                    NoesisRenderer.RenderOnscreen(_view._uiView, flipY, _view._commands, true, _view._clearStencil);
-                }
-
-                context.ExecuteCommandBuffer(_view._commands);
-                _view._commands.Clear();
-            }
-        }
-
-        private bool IsBackbuffer(Camera camera)
-        {
-            var scriptableRenderer = camera.GetUniversalAdditionalCameraData().scriptableRenderer;
-
-            #if UNITY_2022_1_OR_NEWER
-                return camera.targetTexture == null && scriptableRenderer.cameraColorTargetHandle.rt == null;
-            #else
-                return camera.targetTexture == null && scriptableRenderer.cameraColorTarget == BuiltinRenderTextureType.CameraTarget;
-            #endif
-        }
-
-        NoesisView _view;
-    }
-
-    private NoesisScriptableRenderPass _scriptableRenderPass;
-
-    private void RenderOffscreenUniversal(ScriptableRenderContext context)
-    {
-        if (_uiView != null && _visible)
-        {
-            _commands.name = Profiling.RenderOffScreen;
-            NoesisRenderer.RenderOffscreen(_uiView, _commands, true);
-            context.ExecuteCommandBuffer(_commands);
-            _commands.Clear();
-        }
-    }
-
-    private void BeginCameraRendering(ScriptableRenderContext context, Camera camera)
-    {
-        var cameraData = camera.GetUniversalAdditionalCameraData();
-
-        // To avoid inefficient changes of render target, stacked cameras must render
-        // their offscreen phase before the base camera is started
-        if (cameraData.renderType == CameraRenderType.Base)
-        {
-            if (_camera == camera)
-            {
-                RenderOffscreenUniversal(context);
-            }
-            else
-            {
-                foreach (var stackedCamera in cameraData.cameraStack)
-                {
-                    if (_camera == stackedCamera)
-                    {
-                        RenderOffscreenUniversal(context);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (_camera == camera)
-        {
-            _scriptableRenderPass.renderPassEvent = _renderPassEvent;
-            cameraData.scriptableRenderer.EnqueuePass(_scriptableRenderPass);
-        }
-    }
-
-    private void EndCameraRendering(ScriptableRenderContext context, Camera camera) {}
-#endif
-#endregion
-
-#region High Definition Render Pipeline
-#if ENABLE_HDRP_PACKAGE
-    // With a CustomPass we can control when the UI is rendered (for example before or after post process)
-    // For using this class:
-    //  1. Attach a 'Custom Pass Volume' to the camera
-    //  2. Set 'Mode' to 'Camera'
-    //  3. Set 'Target Camera' to the same camera
-    //  4. Select 'Injection Point' (only 'Before Post Process' or 'After Post Process' makes sense)
-    //  5. Add a Custom Pass of type 'NoesisCustomPass'
-    //  6. Set 'Clear Flags' to 'Stencil'
-    private class NoesisCustomPass: CustomPass
-    {
-        protected override bool executeInSceneView { get { return false; } }
-
-        protected override void Execute(CustomPassContext ctx)
-        {
-            if (ctx.hdCamera.camera.TryGetComponent(out NoesisView view))
-            {
-                view.OnExecuteCustomPass(ctx.cmd);
-            }
-        }
-    }
-
-    private bool _usingCustomPass;
-
-    private void BeginCameraRendering(ScriptableRenderContext context, Camera camera)
-    {
-        if (_camera == camera)
-        {
-            if (_uiView != null && _visible)
-            {
-                _commands.name = Profiling.RenderOffScreen;
-                NoesisRenderer.RenderOffscreen(_uiView, _commands, true);
-
-                context.ExecuteCommandBuffer(_commands);
-                _commands.Clear();
-
-                _usingCustomPass = false;
-            }
-        }
-    }
-
-    private void OnExecuteCustomPass(CommandBuffer commands)
-    {
-        if (!_usingCustomPass)
-        {
-            if (_uiView != null && _visible)
-            {
-                // This is always rendering to an intermediate texture
-                bool flipY = !IsGL();
-
-                commands.BeginSample(Profiling.RenderOnScreenSampler);
-                NoesisRenderer.RenderOnscreen(_uiView, flipY, commands, true, _clearStencil);
-                commands.EndSample(Profiling.RenderOnScreenSampler);
-            }
-
-            // EndCameraRendering is skipped
-            _usingCustomPass = true;
-        }
-    }
-
-    private void EndCameraRendering(ScriptableRenderContext context, Camera camera)
-    {
-        if (_camera == camera && !_usingCustomPass)
-        {
-            if (_uiView != null && _visible)
-            {
-                _commands.name = Profiling.RenderOnScreen;
-                NoesisRenderer.RenderOnscreen(_uiView, FlipRender(), _commands, true, _clearStencil);
-
-                context.ExecuteCommandBuffer(_commands);
-                _commands.Clear();
-            }
-        }
-    }
-#endif
-#endregion
-
     void OnDestroy()
     {
         DestroyView();
@@ -987,11 +589,11 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     UnityEngine.EventSystems.PointerEventData _pointerData;
 #endif
 
-    private UnityEngine.Vector2 ProjectPointer(float x, float y)
+    private Vector2 ProjectPointer(float x, float y)
     {
         if (_camera != null)
         {
-            return new UnityEngine.Vector2(x, UnityEngine.Screen.height - y);
+            return new Vector2(x, Screen.height - y);
         }
         else if (_texture != null)
         {
@@ -1003,7 +605,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
             if (eventSystem != null && eventSystem.IsPointerOverGameObject())
             {
-                UnityEngine.Vector2 pos = new UnityEngine.Vector2(x, y);
+                Vector2 pos = new Vector2(x, y);
 
                 if (_pointerData == null)
                 {
@@ -1026,7 +628,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                     if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect,
                         _pointerData.position, _pointerData.pressEventCamera, out pos))
                     {
-                        UnityEngine.Vector2 pivot = new UnityEngine.Vector2(
+                        Vector2 pivot = new Vector2(
                             rect.pivot.x * rect.rect.width,
                             rect.pivot.y * rect.rect.height);
 
@@ -1035,7 +637,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
                         float localX = _texture.width * texCoordX;
                         float localY = _texture.height * (1.0f - texCoordY);
-                        return new UnityEngine.Vector2(localX, localY);
+                        return new Vector2(localX, localY);
                     }
                 }
             }
@@ -1044,35 +646,31 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
             // NOTE: A MeshCollider must be attached to the target to obtain valid
             // texture coordinates, otherwise Hit Testing won't work
 
-            UnityEngine.Ray ray = UnityEngine.Camera.main.ScreenPointToRay(new UnityEngine.Vector3(x, y, 0));
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(x, y, 0));
 
-            UnityEngine.RaycastHit hit;
-            if (UnityEngine.Physics.Raycast(ray, out hit))
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider.gameObject == gameObject)
                 {
                     float localX = _texture.width * hit.textureCoord.x;
                     float localY = _texture.height * (1.0f - hit.textureCoord.y);
-                    return new UnityEngine.Vector2(localX, localY);
+                    return new Vector2(localX, localY);
                 }
             }
 
-            return new UnityEngine.Vector2(-1, -1);
+            return new Vector2(-1, -1);
         }
 
         return Vector2.zero;
     }
 
-    private UnityEngine.Vector3 _mousePos;
+    private Vector3 _mousePos;
     private int _activeDisplay = 0;
 
     private static bool HasMouse()
     {
-      #if ENABLE_LEGACY_INPUT_MANAGER
         return Input.mousePresent;
-      #else
-        return UnityEngine.InputSystem.Mouse.current != null;
-      #endif
     }
 
     private static bool IsCursorVisible()
@@ -1082,11 +680,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
     private Vector3 MousePosition()
     {
-      #if ENABLE_LEGACY_INPUT_MANAGER
-        Vector3 mousePosition = UnityEngine.Input.mousePosition;
-      #else
-        Vector3 mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-      #endif
+        Vector3 mousePosition = Input.mousePosition;
 
         Vector3 p = Display.RelativeMouseAt(mousePosition);
 
@@ -1110,7 +704,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
             {
                 _mousePos = mousePos;
 
-                UnityEngine.Vector2 mouse = ProjectPointer(_mousePos.x, _mousePos.y);
+                Vector2 mouse = ProjectPointer(_mousePos.x, _mousePos.y);
                 _uiView.MouseMove((int)mouse.x, (int)mouse.y);
             }
         }
@@ -1118,18 +712,17 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
     private void UpdateTouch()
     {
-      #if ENABLE_LEGACY_INPUT_MANAGER
-        for (int i = 0; i < UnityEngine.Input.touchCount; i++) 
+        for (int i = 0; i < Input.touchCount; i++) 
         {
-            UnityEngine.Touch touch = UnityEngine.Input.GetTouch(i);
-            UnityEngine.Vector2 pos = ProjectPointer(touch.position.x, touch.position.y);
-            UnityEngine.TouchPhase phase = touch.phase;
+            Touch touch = Input.GetTouch(i);
+            Vector2 pos = ProjectPointer(touch.position.x, touch.position.y);
+            TouchPhase phase = touch.phase;
 
-            if (phase == UnityEngine.TouchPhase.Began)
+            if (phase == TouchPhase.Began)
             {
                 _uiView.TouchDown((int)pos.x, (int)pos.y, (uint)touch.fingerId);
             }
-            else if (phase == UnityEngine.TouchPhase.Moved || phase == UnityEngine.TouchPhase.Stationary)
+            else if (phase == TouchPhase.Moved || phase == TouchPhase.Stationary)
             {
                 _uiView.TouchMove((int)pos.x, (int)pos.y, (uint)touch.fingerId);
             }
@@ -1138,204 +731,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 _uiView.TouchUp((int)pos.x, (int)pos.y, (uint)touch.fingerId);
             }
         }
-      #else
-        if (UnityEngine.InputSystem.Touchscreen.current != null)
-        {
-            foreach (var touch in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
-            {
-                UnityEngine.Vector2 pos = ProjectPointer(touch.screenPosition.x, touch.screenPosition.y);
-
-                if (touch.began)
-                {
-                    _uiView.TouchDown((int)pos.x, (int)pos.y, (uint)touch.touchId);
-                }
-                else if (touch.ended)
-                {
-                    _uiView.TouchUp((int)pos.x, (int)pos.y, (uint)touch.touchId);
-                }
-                else
-                {
-                    _uiView.TouchMove((int)pos.x, (int)pos.y, (uint)touch.touchId);
-                }
-            }
-        }
-      #endif
-    }
-
-    [FlagsAttribute]
-    enum ActionButtons
-    {
-         Up = 1,
-         Down = 2,
-         Left = 4,
-         Right = 8,
-         Accept = 16,
-         Cancel = 32,
-         Menu = 64,
-         View = 128,
-         PageUp = 256,
-         PageDown = 512,
-         PageLeft = 1024,
-         PageRight = 2048
-    }
-
-    private struct ButtonState
-    {
-        public ActionButtons button;
-        public Noesis.Key key;
-        public float t;
-    }
-
-    private ButtonState[] _buttonStates = new ButtonState[]
-    {
-        new ButtonState { button = ActionButtons.Up, key = Key.GamepadUp },
-        new ButtonState { button = ActionButtons.Down, key = Key.GamepadDown },
-        new ButtonState { button = ActionButtons.Left, key = Key.GamepadLeft },
-        new ButtonState { button = ActionButtons.Right, key = Key.GamepadRight },
-        new ButtonState { button = ActionButtons.Accept, key = Key.GamepadAccept },
-        new ButtonState { button = ActionButtons.Cancel, key = Key.GamepadCancel },
-        new ButtonState { button = ActionButtons.Menu, key = Key.GamepadMenu},
-        new ButtonState { button = ActionButtons.View, key = Key.GamepadView },
-        new ButtonState { button = ActionButtons.PageUp, key = Key.GamepadPageUp },
-        new ButtonState { button = ActionButtons.PageDown, key = Key.GamepadPageDown },
-        new ButtonState { button = ActionButtons.PageLeft, key = Key.GamepadPageLeft },
-        new ButtonState { button = ActionButtons.PageRight, key = Key.GamepadPageRight },
-    };
-
-    private ActionButtons _actionButtons = 0;
-
-    private void UpdateActions(float t)
-    {
-        int x = int.MaxValue;
-        int y = int.MaxValue;
-        bool trackedPos = false;
-
-        if (_trackedPositionAction?.activeControl != null && _trackedRotationAction?.activeControl != null)
-        {
-            Vector3 pos_ = _trackedPositionAction.ReadValue<Vector3>();
-            Vector3 dir_ = _trackedRotationAction.ReadValue<Quaternion>() * Vector3.forward;
-
-            if (_xrTrackingOrigin != null)
-            {
-                pos_ = _xrTrackingOrigin.TransformPoint(pos_);
-                dir_ = _xrTrackingOrigin.TransformVector(dir_);
-            }
-
-            Point3D pos = new Point3D(pos_.x, pos_.y, pos_.z);
-            Vector3D dir = new Vector3D(dir_.x, dir_.y, dir_.z);
-
-            var captured = Content.Mouse.Captured;
-            if (captured != null)
-            {
-                // Visuals capturing the mouse must always utilize its 3D plane for hit testing
-                // https://www.noesisengine.com/bugs/view.php?id=2837
-                if (VisualTreeHelper.IntersectPlane(captured, pos, dir, out Point3D worldPos))
-                {
-                    Noesis.Matrix4 mtx = CameraMatrix(_camera);
-                    Noesis.Vector4 cameraPos = new Noesis.Vector4(worldPos.X, worldPos.Y, worldPos.Z, 1.0f) * mtx;
-
-                    x = (int)(cameraPos.X / cameraPos.W);
-                    y = (int)(cameraPos.Y / cameraPos.W);
-
-                    trackedPos = true;
-                }
-            }
-            else
-            {
-                Visual root = (Visual)VisualTreeHelper.GetRoot(_uiView.Content);
-                var hit = VisualTreeHelper.HitTest3D(root, pos, dir);
-
-                if (hit.VisualHit != null)
-                {
-                    Noesis.Matrix4 mtx = CameraMatrix(_camera);
-                    Noesis.Vector4 cameraPos = new Noesis.Vector4(hit.WorldPos.X, hit.WorldPos.Y, hit.WorldPos.Z, 1.0f) * mtx;
-
-                    x = (int)(cameraPos.X / cameraPos.W);
-                    y = (int)(cameraPos.Y / cameraPos.W);
-
-                    trackedPos = true;
-                }
-            }
-
-            MouseMove(x, y);
-        }
-
-        if (_trackedTriggerAction != null)
-        {
-            if (_trackedTriggerAction.WasPressedThisFrame())
-            {
-                MouseButtonDown(x, y, Noesis.MouseButton.Left);
-            }
-
-            if (_trackedTriggerAction.WasReleasedThisFrame())
-            {
-                MouseButtonUp(x, y, Noesis.MouseButton.Left);
-            }
-        }
-
-        if (_scrollAction != null)
-        {
-            Vector2 v = _scrollAction.ReadValue<Vector2>();
-
-            if (trackedPos)
-            {
-                if (v.y != 0.0f) _uiView.Scroll(x, y, v.y);
-                if (v.x != 0.0f) _uiView.HScroll(x, y, v.x);
-            }
-            else
-            {
-                if (v.y != 0.0f) _uiView.Scroll(v.y);
-                if (v.x != 0.0f) _uiView.HScroll(v.x);
-            }
-        }
-
-        ActionButtons actionButtons = 0;
-
-        if (_upAction != null && _upAction.IsPressed()) actionButtons |= ActionButtons.Up;
-        if (_downAction != null && _downAction.IsPressed()) actionButtons |= ActionButtons.Down;
-        if (_leftAction != null && _leftAction.IsPressed()) actionButtons |= ActionButtons.Left;
-        if (_rightAction != null && _rightAction.IsPressed()) actionButtons |= ActionButtons.Right;
-
-        if (_acceptAction != null && _acceptAction.IsPressed()) actionButtons |= ActionButtons.Accept;
-        if (_cancelAction != null && _cancelAction.IsPressed()) actionButtons |= ActionButtons.Cancel;
-
-        if (_menuAction != null && _menuAction.IsPressed()) actionButtons |= ActionButtons.Menu;
-        if (_viewAction != null && _viewAction.IsPressed()) actionButtons |= ActionButtons.View;
-
-        if (_pageUpAction != null && _pageUpAction.IsPressed()) actionButtons |= ActionButtons.PageUp;
-        if (_pageDownAction != null && _pageDownAction.IsPressed()) actionButtons |= ActionButtons.PageDown;
-        if (_pageLeftAction != null && _pageLeftAction.IsPressed()) actionButtons |= ActionButtons.PageLeft;
-        if (_pageRightAction != null && _pageRightAction.IsPressed()) actionButtons |= ActionButtons.PageRight;
-
-        ActionButtons delta = actionButtons ^ _actionButtons;
-        if (delta != 0 || actionButtons != 0)
-        {
-            for (int i = 0; i < _buttonStates.Length; i++)
-            {
-                if ((delta & _buttonStates[i].button) > 0)
-                {
-                    if ((actionButtons & _buttonStates[i].button) > 0)
-                    {
-                        _uiView.KeyDown(_buttonStates[i].key);
-                        _buttonStates[i].t = t + _actionsRepeatDelay;
-                    }
-                    else
-                    {
-                        _uiView.KeyUp(_buttonStates[i].key);
-                    }
-                }
-                else if ((actionButtons & _buttonStates[i].button) > 0)
-                {
-                    if (t >= _buttonStates[i].t)
-                    {
-                        _uiView.KeyDown(_buttonStates[i].key);
-                        _buttonStates[i].t = t + _actionsRepeatRate;
-                    }
-                }
-            }
-        }
-
-         _actionButtons = actionButtons;
     }
 
     private void UpdateInputs(float t)
@@ -1348,11 +743,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         if (_enableTouch)
         {
             UpdateTouch();
-        }
-
-        if (_enableActions)
-        {
-            UpdateActions(t);
         }
     }
 
@@ -1415,7 +805,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         UpdateInternal();
     }
 
-    private static Noesis.Matrix4 NoesisMatrix(Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix, float w, float h)
+    private static Matrix4 NoesisMatrix(Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix, float w, float h)
     {
         float hw = 0.5f * w;
         float hh = 0.5f * h;
@@ -1454,7 +844,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         );
     }
 
-    private static Noesis.Matrix4 CameraMatrix(Camera camera)
+    private static Matrix4 CameraMatrix(Camera camera)
     {
         return NoesisMatrix(camera.worldToCameraMatrix, camera.projectionMatrix, camera.pixelWidth, camera.pixelHeight);
     }
@@ -1669,9 +1059,9 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    private UnityEngine.EventModifiers _modifiers = 0;
+    private EventModifiers _modifiers = 0;
 
-    private void ProcessModifierKey(EventModifiers modifiers, EventModifiers delta, EventModifiers flag, Noesis.Key key)
+    private void ProcessModifierKey(EventModifiers modifiers, EventModifiers delta, EventModifiers flag, Key key)
     {
         if ((delta & flag) > 0)
         {
@@ -1705,18 +1095,11 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 #endif
 
     private bool MouseEmulated()
-    {
-      #if ENABLE_LEGACY_INPUT_MANAGER
+    { 
         return Input.simulateMouseWithTouches && Input.touchCount > 0;
-      #else
-        // Unfortunately, in the new InputSystem when the emulated mousedown is sent, the number of 
-        // touches is zero. So for now, the only workaround is checking if there is any touch screen device.
-        // In system when both mouse and touch are available, simulateMouseWithTouches must be disabled
-        return Input.simulateMouseWithTouches && UnityEngine.InputSystem.Touchscreen.current != null;
-      #endif
     }
 
-    private void ProcessEvent(UnityEngine.Event ev, bool enableKeyboard, bool enableMouse)
+    private void ProcessEvent(Event ev, bool enableKeyboard, bool enableMouse)
     {
         // Process keyboard modifiers
         if (enableKeyboard)
@@ -1735,11 +1118,11 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
         switch (ev.type)
         {
-            case UnityEngine.EventType.MouseDown:
+            case EventType.MouseDown:
             {
                 if (enableMouse && IsCursorVisible())
                 {
-                    UnityEngine.Vector2 mouse = ProjectPointer(ev.mousePosition.x, UnityEngine.Screen.height - ev.mousePosition.y);
+                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
 
                     if (HitTest(mouse.x, mouse.y))
                     {
@@ -1750,21 +1133,21 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                     {
                         if (ev.clickCount == 1)
                         {
-                            _uiView.MouseButtonDown((int)mouse.x, (int)mouse.y, (Noesis.MouseButton)ev.button);
+                            _uiView.MouseButtonDown((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
                         }
                         else
                         {
-                            _uiView.MouseDoubleClick((int)mouse.x, (int)mouse.y, (Noesis.MouseButton)ev.button);
+                            _uiView.MouseDoubleClick((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
                         }
                     }
                 }
                 break;
             }
-            case UnityEngine.EventType.MouseUp:
+            case EventType.MouseUp:
             {
                 if (enableMouse && IsCursorVisible())
                 {
-                    UnityEngine.Vector2 mouse = ProjectPointer(ev.mousePosition.x, UnityEngine.Screen.height - ev.mousePosition.y);
+                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
 
                     if (HitTest(mouse.x, mouse.y))
                     {
@@ -1773,16 +1156,16 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
                     if (!MouseEmulated())
                     {
-                        _uiView.MouseButtonUp((int)mouse.x, (int)mouse.y, (Noesis.MouseButton)ev.button);
+                        _uiView.MouseButtonUp((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
                     }
                 }
                 break;
             }
-            case UnityEngine.EventType.ScrollWheel:
+            case EventType.ScrollWheel:
             {
                 if (enableMouse && IsCursorVisible())
                 {
-                    UnityEngine.Vector2 mouse = ProjectPointer(ev.mousePosition.x, UnityEngine.Screen.height - ev.mousePosition.y);
+                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
 
                     if (ev.delta.y != 0.0f)
                     {
@@ -1796,15 +1179,15 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 }
                 break;
             }
-            case UnityEngine.EventType.KeyDown:
+            case EventType.KeyDown:
             {
                 if (enableKeyboard)
                 {
                     // Don't process key when IME composition is being used
                     if (ev.keyCode != KeyCode.None && NoesisUnity.IME.compositionString == "")
                     {
-                        Noesis.Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
-                        if (noesisKeyCode != Noesis.Key.None)
+                        Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
+                        if (noesisKeyCode != Key.None)
                         {
                           #if !UNITY_EDITOR && UNITY_STANDALONE_OSX
                             // In OSX Standalone, CMD + key always sends two KeyDown events for the key.
@@ -1842,15 +1225,15 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 }
                 break;
             }
-            case UnityEngine.EventType.KeyUp:
+            case EventType.KeyUp:
             {
                 // Don't process key when IME composition is being used
                 if (enableKeyboard)
                 {
                     if (ev.keyCode != KeyCode.None && NoesisUnity.IME.compositionString == "")
                     {
-                        Noesis.Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
-                        if (noesisKeyCode != Noesis.Key.None)
+                        Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
+                        if (noesisKeyCode != Key.None)
                         {
                             _uiView.KeyUp(noesisKeyCode);
                         }
@@ -1870,7 +1253,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
                 UnityEngine.GUI.depth = -(int)_camera.depth;
             }
 
-            ProcessEvent(UnityEngine.Event.current, _enableKeyboard, _enableMouse);
+            ProcessEvent(Event.current, _enableKeyboard, _enableMouse);
         }
     }
 
@@ -1891,7 +1274,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
             }
         }
     }
-#endregion
 
     private void CreateView(FrameworkElement content)
     {
@@ -1904,7 +1286,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
             _viewSizeY = 0;
             _viewScale = 1.0f;
 
-            _uiView = new Noesis.View(content);
+            _uiView = new View(content);
             _uiView.SetTessellationMaxPixelError(_tessellationMaxPixelError);
             _uiView.SetEmulateTouch(_emulateTouch);
             _uiView.SetFlags(_renderFlags);
@@ -1945,11 +1327,10 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    private Noesis.View _uiView;
+    private View _uiView;
     private bool _needsRendering = false;
     private float _stereoScale = 1.0f;
 
-#region Serialized properties
     [SerializeField] private NoesisXaml _xaml;
     [SerializeField] private RenderTexture _texture;
 
@@ -1968,9 +1349,6 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
     [SerializeField] private bool _useRealTimeClock = false;
     [SerializeField] private bool _clearStencil = false;
 
-    [SerializeField] private UnityEngine.InputSystem.InputActionAsset _actions;
-    [SerializeField] private string _actionMap = "Gamepad";
-
     [UnityEngine.Serialization.FormerlySerializedAs("_gamepadRepeatDelay")]
     [SerializeField] private float _actionsRepeatDelay = 0.5f;
 
@@ -1979,39 +1357,9 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
     [SerializeField] private UnityEngine.Transform _xrTrackingOrigin;
 
-  #if ENABLE_URP_PACKAGE
-    [SerializeField] private RenderPassEvent _renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-  #endif
-
-    private UnityEngine.InputSystem.InputAction _upAction;
-    private UnityEngine.InputSystem.InputAction _downAction;
-    private UnityEngine.InputSystem.InputAction _leftAction;
-    private UnityEngine.InputSystem.InputAction _rightAction;
-
-    private UnityEngine.InputSystem.InputAction _acceptAction;
-    private UnityEngine.InputSystem.InputAction _cancelAction;
-
-    private UnityEngine.InputSystem.InputAction _menuAction;
-    private UnityEngine.InputSystem.InputAction _viewAction;
-
-    private UnityEngine.InputSystem.InputAction _pageLeftAction;
-    private UnityEngine.InputSystem.InputAction _pageRightAction;
-    private UnityEngine.InputSystem.InputAction _pageUpAction;
-    private UnityEngine.InputSystem.InputAction _pageDownAction;
-    private UnityEngine.InputSystem.InputAction _scrollAction;
-
-    private UnityEngine.InputSystem.InputAction _trackedPositionAction;
-    private UnityEngine.InputSystem.InputAction _trackedRotationAction;
-    private UnityEngine.InputSystem.InputAction _trackedTriggerAction;
-#endregion
-
-#region Imports
     [DllImport(Library.Name)]
     private static extern void Noesis_UnityUpdate();
 
     [DllImport(Library.Name)]
     private static extern bool Noesis_UnityHitTest(HandleRef root, ref Point point);
-#endregion
-
-#endregion
 }
