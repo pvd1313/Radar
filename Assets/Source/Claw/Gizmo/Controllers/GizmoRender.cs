@@ -165,13 +165,18 @@ namespace Beast.Claw.Gizmo
             texture.Apply();
             Profiler.EndSample();
 
-            if (_prevTexturePower != texturePower2)
+            if (Build.IS_EDITOR || _prevTexturePower != texturePower2)
             {
                 Profiler.BeginSample("SetShapeMaterialParams #2");
                 _shapeMaterial.SetTexture("_DataTexture", texture);
                 _shapeMaterial.SetFloat("_DataTextureSize", 1 << texturePower2);
                 _prevTexturePower = texturePower2;
                 Profiler.EndSample();
+            }
+
+            if (Build.IS_EDITOR)
+            {
+                _setupMaterialsRare();
             }
             
             Profiler.BeginSample("SetShapeMaterialParams #1");
@@ -234,8 +239,16 @@ namespace Beast.Claw.Gizmo
             });
             
             _canvasSize = screenSize;
-            _shapeMaterial.SetFloat2("_ScreenSize", screenSize);
-            _canvasMaterial.SetTexture("_Texture", canvas);
+            
+            _setupMaterialsRare();
+
+            return canvas;
+        }
+
+        private void _setupMaterialsRare()
+        {
+            _shapeMaterial.SetFloat2("_ScreenSize", _canvasSize);
+            _canvasMaterial.SetTexture("_Texture", _canvas);
 
             float rollCos = BMath.Cos(_camera.RotationRad.roll);
             float pitchCos = BMath.Cos(_camera.RotationRad.pitch);
@@ -247,8 +260,6 @@ namespace Beast.Claw.Gizmo
             _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
             
             _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
-
-            return canvas;
         }
         
         private void _dispose(BlockingContext context)
