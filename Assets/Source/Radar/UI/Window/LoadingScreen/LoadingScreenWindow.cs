@@ -98,7 +98,7 @@ namespace Beast.Radar.UI
         {
             if (_loadingTasksPool.GetEnabledCount() == MAX_TASK_COUNT)
             {
-                _loadingTasksPool.Disable(_loadingTasksPool.GetByIndex(0));
+                _loadingTasksPool.Disable(_loadingTasksPool.GetEnabledByIndex(0));
             }
 
             _lastLoadingTask = _loadingTasksPool.GetNext();

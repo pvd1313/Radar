@@ -70,12 +70,12 @@ namespace Beast.Radar.Cinematic
             float2 beforeZoom = _transform.ViewportToWorld(zoomInput.position);
             
             float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
-            float zoomValue = zoomInput.delta * factor * (1f / 60f);
+            float zoomValue = zoomInput.delta * factor;
 
             float smoothValue = BMath.Lerp(
                 _transform.Zoom01, 
                 _transform.Zoom01 + zoomValue, 
-                _cameraConfig.zoomSmoothSpeed) - _transform.Zoom01;
+                _cameraConfig.zoomSmoothSpeed * (1f / 60f)) - _transform.Zoom01;
             
             _transform.AddZoom(smoothValue);
             

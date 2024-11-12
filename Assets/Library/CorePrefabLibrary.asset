@@ -12,20 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc684d3e0d624c38a9ed5c2711908367, type: 3}
   m_Name: CorePrefabLibrary
   m_EditorClassIdentifier: 
-  playerInput: {fileID: 4224351025066411129, guid: 1ac131d24ff3f1d4ea677835b9ba7cc6, type: 3}
-  playerView: {fileID: -1277675084398546024, guid: 4d04b7825d838b64da1a038da4ccdef1, type: 3}
+  worldView: {fileID: -1277675084398546024, guid: 4d04b7825d838b64da1a038da4ccdef1, type: 3}
+  city: {fileID: 5710242157538740328, guid: b0a3d4bb89bbe8b4698e740f3718865a, type: 3}
   hud: {fileID: 5485325825281228348, guid: 5da1960b4cd3178449baf6ed05dfb6c1, type: 3}
   mapGeneration: {fileID: 8042904576330020168, guid: ee2e1f39d664940468d1bd98676f200f, type: 3}
   pauseMenu: {fileID: 6800508196268221077, guid: 64fc3679d0ea4de4abadc7f1ead60faa, type: 3}
-  settingMenu:
-    _reference:
-      m_AssetGUID: 79e0bb58680cbab45b292daf4a7772c5
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 0
-  debug:
-    _reference:
-      m_AssetGUID: be645ba6ccc29364abfb4eece3432deb
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 0

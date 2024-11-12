@@ -19,8 +19,10 @@ using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class CitySpawner : Controller, IGameCycleListener
+    public class CitySpawner : Controller, ICitySpawner, IGameCycleListener
     {
+        public NativeList<CityInfo> Cities => _cities;
+        
         private readonly IGizmoManager _gizmoManager;
         private readonly ITerrainBackedBiome _biome;
         private readonly IWorldManager _worldManager;
@@ -174,5 +176,6 @@ namespace Beast.Radar.City
             
             _gizmo.Dispose();
         }
+
     }
 }

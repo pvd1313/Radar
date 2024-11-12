@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offMoveButtonSprite: {fileID: 21300000, guid: f481f01439fd3f54d8232d69c577f34f, type: 3}
   onMoveButtonSprite: {fileID: 21300000, guid: d4cb4ef52bfa7794eac265983214dc34, type: 3}
+  citySprites:
+  - {fileID: 1422727143, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
+  - {fileID: 1339346022, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
+  - {fileID: -1869692996, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
+  - {fileID: 98644457, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
+  - {fileID: -1727334037, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
+  - {fileID: 1491376405, guid: 70baae9b5aa22354c840849d8f9b4d5b, type: 3}
