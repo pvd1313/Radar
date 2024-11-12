@@ -28,6 +28,9 @@
 # Visual Studio cache directory
 .vs/
 
+# Noesis GUI
+/[Bb]lend/
+
 # Gradle cache directory
 .gradle/
 
@@ -66,10 +69,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-# Packed Addressables
-/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
-
 # Addressables
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml.meta
 
