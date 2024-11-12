@@ -2,9 +2,6 @@
     "name": "Noesis.NoesisGUI",
     "rootNamespace": "",
     "references": [
-        "Unity.InputSystem",
-        "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.HighDefinition.Runtime",
         "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [],

@@ -11,9 +11,12 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraSpawner : Controller, IGameCycleListener, ICamera
     {
+        public Camera Camera => _camera;
+        
         private readonly EssentialPrefabLibrary _library;
 
         private CameraView _view;
+        private Camera _camera;
         private int _uiMask;
 
         public CameraSpawner(EssentialPrefabLibrary library)
@@ -51,6 +54,8 @@ namespace Beast.Radar.Cinematic
                 new float3(0, 0, -1),
                 quaternion.identity
             );
+
+            _camera = _view.camera;
 
             return UniTask.CompletedTask;
         }

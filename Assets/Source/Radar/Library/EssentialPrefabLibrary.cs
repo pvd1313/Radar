@@ -11,6 +11,8 @@ namespace Beast.Radar
         public CanvasView canvas;
         public LoadingScreenView loadingScreen;
         public LoadingTaskText loadingTaskText;
+        public NoesisView noesisView;
+        public NoesisXaml canvasXaml;
         
         public override IEnumerable<IConfig> Bind()
         {

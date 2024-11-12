@@ -141,7 +141,7 @@ PlayerSettings:
   tvOSBundleVersion: 1.0
   bundleVersion: v.1
   preloadedAssets:
-  - {fileID: 11400000, guid: 0a69f3c3b5cd5324da8c2389e93bf6c6, type: 2}
+  - {fileID: 0}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -803,7 +803,7 @@ PlayerSettings:
   il2cppCodeGeneration:
     Android: 1
   managedStrippingLevel:
-    Android: 3
+    Android: 1
     EmbeddedLinux: 3
     GameCoreScarlett: 3
     GameCoreXboxOne: 3
