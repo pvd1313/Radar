@@ -7,6 +7,15 @@
       "dependencies": {},
       "hash": "f7b3c2fbe1628518a12340576e779fd80837480e"
     },
+    "com.noesis.noesisgui": {
+      "version": "file:NoesisGUI-Unity-3.2.5-Indie",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.video": "1.0.0"
+      }
+    },
     "com.singularitygroup.hotreload": {
       "version": "file:com.singularitygroup.hotreload",
       "depth": 0,
