@@ -14,11 +14,11 @@ namespace Beast.Claw.Common
         }
         
         public static TMono InstantiateMono<TOwner, TMono>
-            (TOwner owner, TMono prefab, float3 position, quaternion rotation) where TMono : Mono
+            (TOwner owner, TMono prefab, float3 position, quaternion rotation) where TMono : MonoBehaviour
         {
             TMono mono = Object.Instantiate(prefab, position, rotation);
 
-            mono.gameObject.name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(prefab.name);
+            mono.gameObject.name = TypeStorage<TOwner>.FullNameWithPrefixOrFullName(prefab.name);
             
             return mono;
         }
@@ -28,7 +28,7 @@ namespace Beast.Claw.Common
         {
             GameObject gameObject = Object.Instantiate(prefab, position, rotation);
 
-            gameObject.name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(prefab.name);
+            gameObject.name = TypeStorage<TOwner>.FullNameWithPrefixOrFullName(prefab.name);
 
             return gameObject;
         }

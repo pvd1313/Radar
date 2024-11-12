@@ -11,6 +11,7 @@ namespace Beast.Claw.Reflection
         public static readonly string FULL_NAME = typeof(T).FullName;
 
         private static readonly Dictionary<string, string> FULL_NAME_WITH_POSTFIX;
+        private static readonly Dictionary<string, string> FULL_NAME_WITH_PREFIX;
         private static readonly Dictionary<Type, bool> ATTRIBUTE_CHECKS;
             
         static TypeStorage()
@@ -19,6 +20,7 @@ namespace Beast.Claw.Reflection
             {
                 FULL_NAME = typeof(T).FullName;
                 FULL_NAME_WITH_POSTFIX = new Dictionary<string, string>();
+                FULL_NAME_WITH_PREFIX = new Dictionary<string, string>();
                 ATTRIBUTE_CHECKS = new Dictionary<Type, bool>();
             }
             catch (Exception e)
@@ -58,6 +60,25 @@ namespace Beast.Claw.Reflection
             text = FULL_NAME + "_" + postfix;
 
             FULL_NAME_WITH_POSTFIX[postfix] = text;
+
+            return text;
+        }
+
+        public static string FullNameWithPrefixOrFullName(string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix))
+            {
+                return FULL_NAME;
+            }
+
+            if (FULL_NAME_WITH_PREFIX.TryGetValue(prefix, out string text))
+            {
+                return text;
+            }
+
+            text = prefix + "_" + FULL_NAME;
+
+            FULL_NAME_WITH_PREFIX[text] = FULL_NAME;
 
             return text;
         }
