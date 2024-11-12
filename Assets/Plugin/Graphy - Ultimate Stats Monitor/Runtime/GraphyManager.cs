@@ -20,10 +20,6 @@ using Tayx.Graphy.Utils;
 using Tayx.Graphy.Advanced;
 using Tayx.Graphy.Utils.NumString;
 
-#if GRAPHY_NEW_INPUT
-using UnityEngine.InputSystem;
-#endif
-
 namespace Tayx.Graphy
 {
     /// <summary>
@@ -108,24 +104,6 @@ namespace Tayx.Graphy
         [SerializeField] private bool m_background = true;
         [SerializeField] private Color m_backgroundColor = new Color( 0, 0, 0, 0.3f );
 
-        [SerializeField] private bool m_enableHotkeys = true;
-
-#if GRAPHY_NEW_INPUT
-        [SerializeField] private Key m_toggleModeKeyCode = Key.G;
-#else
-        [SerializeField] private KeyCode m_toggleModeKeyCode = KeyCode.G;
-#endif
-        [SerializeField] private bool m_toggleModeCtrl = true;
-        [SerializeField] private bool m_toggleModeAlt = false;
-
-#if GRAPHY_NEW_INPUT
-        [SerializeField] private Key m_toggleActiveKeyCode = Key.H;
-#else
-        [SerializeField] private KeyCode m_toggleActiveKeyCode = KeyCode.H;
-#endif
-        [SerializeField] private bool m_toggleActiveCtrl = true;
-        [SerializeField] private bool m_toggleActiveAlt = false;
-
         [SerializeField] private ModulePosition m_graphModulePosition = ModulePosition.TOP_RIGHT;
         [SerializeField] private Vector2 m_graphModuleOffset = new Vector2( 0, 0 );
 
@@ -188,8 +166,6 @@ namespace Tayx.Graphy
 
         #endregion
 
-        #region Variables -> Private
-
         private bool m_initialized = false;
         private bool m_active = true;
         private bool m_focused = true;
@@ -204,10 +180,6 @@ namespace Tayx.Graphy
         private G_AudioMonitor m_audioMonitor = null;
 
         private ModulePreset m_modulePresetState = ModulePreset.FPS_BASIC_ADVANCED_FULL;
-
-        #endregion
-
-        #region Properties -> Public
 
         public Mode GraphyMode
         {
@@ -538,10 +510,6 @@ namespace Tayx.Graphy
             }
         }
 
-        #endregion
-
-        #region Methods -> Unity Callbacks
-
         private void Start()
         {
             Init();
@@ -553,14 +521,6 @@ namespace Tayx.Graphy
             G_FloatString.Dispose();
         }
 
-        private void Update()
-        {
-            if( m_focused && m_enableHotkeys )
-            {
-                CheckForHotkeyPresses();
-            }
-        }
-
         private void OnApplicationFocus( bool isFocused )
         {
             m_focused = isFocused;
@@ -570,8 +530,6 @@ namespace Tayx.Graphy
                 RefreshAllParameters();
             }
         }
-
-        #endregion
 
         #region Methods -> Public
 
@@ -774,8 +732,6 @@ namespace Tayx.Graphy
 
         #endregion
 
-        #region Methods -> Private
-
         private void Init()
         {
             if( m_keepAlive )
@@ -829,227 +785,7 @@ namespace Tayx.Graphy
                 m_advancedData.SetState( m_advancedModuleState );
             }
         }
-
-        private void CheckForHotkeyPresses()
-        {
-#if GRAPHY_NEW_INPUT
-            // Toggle Mode ---------------------------------------
-            if (m_toggleModeKeyCode != Key.None)
-            {
-                if( m_toggleModeCtrl && m_toggleModeAlt )
-                {
-                    if( CheckFor3KeyPress( m_toggleModeKeyCode, Key.LeftCtrl, Key.LeftAlt )
-                        || CheckFor3KeyPress( m_toggleModeKeyCode, Key.RightCtrl, Key.LeftAlt )
-                        || CheckFor3KeyPress( m_toggleModeKeyCode, Key.RightCtrl, Key.RightAlt )
-                        || CheckFor3KeyPress( m_toggleModeKeyCode, Key.LeftCtrl, Key.RightAlt ) )
-                    {
-                        ToggleModes();
-                    }
-                }
-                else if( m_toggleModeCtrl )
-                {
-                    if( CheckFor2KeyPress( m_toggleModeKeyCode, Key.LeftCtrl )
-                        || CheckFor2KeyPress( m_toggleModeKeyCode, Key.RightCtrl ) )
-                    {
-                        ToggleModes();
-                    }
-                }
-                else if( m_toggleModeAlt )
-                {
-                    if( CheckFor2KeyPress( m_toggleModeKeyCode, Key.LeftAlt )
-                        || CheckFor2KeyPress( m_toggleModeKeyCode, Key.RightAlt ) )
-                    {
-                        ToggleModes();
-                    }
-                }
-                else
-                {
-                    if( CheckFor1KeyPress( m_toggleModeKeyCode ) )
-                    {
-                        ToggleModes();
-                    }
-                }
-            }
-
-            // Toggle Active -------------------------------------
-            if (m_toggleActiveKeyCode != Key.None)
-            {
-                if( m_toggleActiveCtrl && m_toggleActiveAlt )
-                {
-                    if( CheckFor3KeyPress( m_toggleActiveKeyCode, Key.LeftCtrl, Key.LeftAlt )
-                        || CheckFor3KeyPress( m_toggleActiveKeyCode, Key.RightCtrl, Key.LeftAlt )
-                        || CheckFor3KeyPress( m_toggleActiveKeyCode, Key.RightCtrl, Key.RightAlt )
-                        || CheckFor3KeyPress( m_toggleActiveKeyCode, Key.LeftCtrl, Key.RightAlt ) )
-                    {
-                        ToggleActive();
-                    }
-                }
-
-                else if( m_toggleActiveCtrl )
-                {
-                    if( CheckFor2KeyPress( m_toggleActiveKeyCode, Key.LeftCtrl )
-                        || CheckFor2KeyPress( m_toggleActiveKeyCode, Key.RightCtrl ) )
-                    {
-                        ToggleActive();
-                    }
-                }
-                else if( m_toggleActiveAlt )
-                {
-                    if( CheckFor2KeyPress( m_toggleActiveKeyCode, Key.LeftAlt )
-                        || CheckFor2KeyPress( m_toggleActiveKeyCode, Key.RightAlt ) )
-                    {
-                        ToggleActive();
-                    }
-                }
-                else
-                {
-                    if( CheckFor1KeyPress( m_toggleActiveKeyCode ) )
-                    {
-                        ToggleActive();
-                    }
-                }
-            }
-#else
-            // Toggle Mode ---------------------------------------
-            if (m_toggleModeKeyCode != KeyCode.None)
-            {
-                if (m_toggleModeCtrl && m_toggleModeAlt)
-                {
-                    if (   CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl, KeyCode.LeftAlt)
-                        || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.RightControl, KeyCode.LeftAlt)
-                        || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.RightControl, KeyCode.RightAlt)
-                        || CheckFor3KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl, KeyCode.RightAlt))
-                    {
-                        ToggleModes();
-                    }
-                }
-                else if (m_toggleModeCtrl)
-                {
-                    if (    CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.LeftControl)
-                        ||  CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.RightControl))
-                    {
-                        ToggleModes();
-                    }
-                }
-                else if (m_toggleModeAlt)
-                {
-                    if (    CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.LeftAlt)
-                        ||  CheckFor2KeyPress(m_toggleModeKeyCode, KeyCode.RightAlt))
-                    {
-                        ToggleModes();
-                    }
-                }
-                else
-                {
-                    if (CheckFor1KeyPress(m_toggleModeKeyCode))
-                    {
-                        ToggleModes();
-                    }
-                }
-            }
-
-            // Toggle Active -------------------------------------
-            if (m_toggleActiveKeyCode != KeyCode.None)
-            {
-                if (m_toggleActiveCtrl && m_toggleActiveAlt)
-                {
-                    if (    CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl, KeyCode.LeftAlt)
-                        ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl, KeyCode.LeftAlt)
-                        ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl, KeyCode.RightAlt)
-                        ||  CheckFor3KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl, KeyCode.RightAlt))
-                    {
-                        ToggleActive();
-                    }
-                }
-                
-                else if (m_toggleActiveCtrl)
-                {
-                    if (    CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.LeftControl)
-                        ||  CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.RightControl))
-                    {
-                        ToggleActive();
-                    }
-                }
-                else if (m_toggleActiveAlt)
-                {
-                    if (    CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.LeftAlt)
-                        ||  CheckFor2KeyPress(m_toggleActiveKeyCode, KeyCode.RightAlt))
-                    {
-                        ToggleActive();
-                    }
-                }
-                else
-                {
-                    if (CheckFor1KeyPress(m_toggleActiveKeyCode))
-                    {
-                        ToggleActive();
-                    }
-                }
-            }
-#endif
-        }
-
-#if GRAPHY_NEW_INPUT
-        private bool CheckFor1KeyPress( Key key )
-        {
-            Keyboard currentKeyboard = Keyboard.current;
-
-            if( currentKeyboard != null )
-            {
-                return Keyboard.current[ key ].wasPressedThisFrame;
-            }
-
-            return false;
-        }
-
-        private bool CheckFor2KeyPress( Key key1, Key key2 )
-        {
-            Keyboard currentKeyboard = Keyboard.current;
-
-            if( currentKeyboard != null )
-            {
-                return Keyboard.current[ key1 ].wasPressedThisFrame && Keyboard.current[ key2 ].isPressed
-                       || Keyboard.current[ key2 ].wasPressedThisFrame && Keyboard.current[ key1 ].isPressed;
-            }
-
-            return false;
-        }
-
-        private bool CheckFor3KeyPress( Key key1, Key key2, Key key3 )
-        {
-            Keyboard currentKeyboard = Keyboard.current;
-
-            if( currentKeyboard != null )
-            {
-                return Keyboard.current[ key1 ].wasPressedThisFrame && Keyboard.current[ key2 ].isPressed &&
-                       Keyboard.current[ key3 ].isPressed
-                       || Keyboard.current[ key2 ].wasPressedThisFrame && Keyboard.current[ key1 ].isPressed &&
-                       Keyboard.current[ key3 ].isPressed
-                       || Keyboard.current[ key3 ].wasPressedThisFrame && Keyboard.current[ key1 ].isPressed &&
-                       Keyboard.current[ key2 ].isPressed;
-            }
-
-            return false;
-        }
-#else
-        private bool CheckFor1KeyPress(KeyCode key)
-        {
-            return Input.GetKeyDown(key);
-        }
-
-        private bool CheckFor2KeyPress(KeyCode key1, KeyCode key2)
-        {
-            return Input.GetKeyDown(key1) && Input.GetKey(key2)
-                || Input.GetKeyDown(key2) && Input.GetKey(key1);
-        }
-
-        private bool CheckFor3KeyPress(KeyCode key1, KeyCode key2, KeyCode key3)
-        {
-            return Input.GetKeyDown(key1) && Input.GetKey(key2) && Input.GetKey(key3)
-                || Input.GetKeyDown(key2) && Input.GetKey(key1) && Input.GetKey(key3)
-                || Input.GetKeyDown(key3) && Input.GetKey(key1) && Input.GetKey(key2);
-        }
-#endif
+        
         private void UpdateAllParameters()
         {
             m_fpsManager.UpdateParameters();
@@ -1065,7 +801,5 @@ namespace Tayx.Graphy
             m_audioManager.RefreshParameters();
             m_advancedData.RefreshParameters();
         }
-
-        #endregion
     }
 }
