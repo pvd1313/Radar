@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
@@ -12,13 +13,15 @@ namespace Beast.Radar.Cinematic
     {
         private readonly ICameraTransform _transform;
         private readonly IInputDevice _input;
+        private readonly CameraConfig _cameraConfig;
 
         private float2 _dragCameraPosition;
 
-        public CameraController(ICameraTransform transform, IInputDevice input)
+        public CameraController(ICameraTransform transform, IInputDevice input, CameraConfig cameraConfig)
         {
             _transform = transform;
             _input = input;
+            _cameraConfig = cameraConfig;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -68,7 +71,13 @@ namespace Beast.Radar.Cinematic
             
             float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
             float zoomValue = zoomInput.delta * factor * (1f / 60f);
-            _transform.AddZoom(zoomValue);
+
+            float smoothValue = BMath.Lerp(
+                _transform.Zoom01, 
+                _transform.Zoom01 + zoomValue, 
+                _cameraConfig.zoomSmoothSpeed) - _transform.Zoom01;
+            
+            _transform.AddZoom(smoothValue);
             
             float2 afterZoom = _transform.ViewportToWorld(zoomInput.position);
             _transform.AddPosition(beforeZoom - afterZoom, Space.World);

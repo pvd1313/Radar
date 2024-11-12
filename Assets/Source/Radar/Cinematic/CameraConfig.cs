@@ -6,7 +6,8 @@ namespace Beast.Radar.Cinematic
     public class CameraConfig : ScriptableConfig
     {
         public CameraTransformConfig transform;
-
+        public float zoomSmoothSpeed;
+        
         public override IEnumerable<IConfig> Bind()
         {
             yield break;
