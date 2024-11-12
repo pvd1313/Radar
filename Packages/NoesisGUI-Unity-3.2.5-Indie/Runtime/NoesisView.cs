@@ -370,8 +370,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         
         useGUILayout = false;
         
-        Camera.onPreRender += OnPreRender;
-        Camera.onPostRender += OnPostRender;
+        Camera.onPreRender += _onPreRender;
+        Camera.onPostRender += _onPostRender;
 
         return _loadXaml(xaml);
     }
@@ -726,7 +726,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    private void OnPreRender(Camera cam)
+    private void _onPreRender(Camera cam)
     {
         if (_camera != null)
         {
@@ -795,7 +795,7 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
         return false;
     }
 
-    private void OnPostRender(Camera cam)
+    private void _onPostRender(Camera cam)
     {
         if (_uiView != null && _visible)
         {
@@ -1049,8 +1049,8 @@ public class NoesisView: MonoBehaviour, ISerializationCallbackReceiver
 
     private void _destroyView()
     {
-        Camera.onPreRender -= OnPreRender;
-        Camera.onPostRender -= OnPostRender;
+        Camera.onPreRender -= _onPreRender;
+        Camera.onPostRender -= _onPostRender;
         
         if (_uiView != null)
         {
