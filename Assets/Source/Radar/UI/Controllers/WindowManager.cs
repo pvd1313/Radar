@@ -25,7 +25,7 @@ namespace Beast.Radar.UI
 
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
-        private CanvasView _canvas;
+        private LegacyCanvasView _canvas;
         
         private string _currentWindow = WindowID.None;
         

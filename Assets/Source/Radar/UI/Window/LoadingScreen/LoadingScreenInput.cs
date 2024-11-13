@@ -8,6 +8,6 @@ namespace Beast.Radar.UI
         public IProgressTracker progressTracker;
         public float currentProgress;
         public bool clearLastProgress;
-        public Action continueButtonAction;
+        public Action nextAction;
     }
 }

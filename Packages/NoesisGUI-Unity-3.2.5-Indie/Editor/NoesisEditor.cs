@@ -122,15 +122,15 @@ public class NoesisEditor
 
     private static void AddViewToObject(NoesisXaml xaml, GameObject obj)
     {
-        if (obj.TryGetComponent(out NoesisView view))
+        if (obj.TryGetComponent(out NoesisMonoRender view))
         {
             Undo.RecordObject(view, "Changed XAML");
             view.Xaml = xaml;
         }
         else
         {
-            Undo.AddComponent<NoesisView>(obj);
-            obj.GetComponent<NoesisView>().Xaml = xaml;
+            Undo.AddComponent<NoesisMonoRender>(obj);
+            obj.GetComponent<NoesisMonoRender>().Xaml = xaml;
         }
     }
 }

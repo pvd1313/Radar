@@ -8,15 +8,15 @@ using Noesis;
 public class NoesisWorldUI : MonoBehaviour
 {
     [SerializeField]
-    private NoesisView _view;
-    public NoesisView View
+    private NoesisMonoRender _monoRender;
+    public NoesisMonoRender MonoRender
     {
-        get => _view;
+        get => _monoRender;
         set
         {
-            if (_view != value)
+            if (_monoRender != value)
             {
-                _view = value;
+                _monoRender = value;
 
                 RemoveContent();
                 FindContainer();
@@ -93,7 +93,7 @@ public class NoesisWorldUI : MonoBehaviour
         _transform = null;
         _containerPanel = null;
         _camera = null;
-        _view = null;
+        _monoRender = null;
         _xaml = null;
     }
 
@@ -141,10 +141,10 @@ public class NoesisWorldUI : MonoBehaviour
         _containerPanel = null;
         _camera = null;
 
-        if (View != null && !string.IsNullOrEmpty(Container))
+        if (MonoRender != null && !string.IsNullOrEmpty(Container))
         {
-            _containerPanel = View.Content?.FindName(Container) as Panel;
-            _camera = View.GetComponent<Camera>();
+            _containerPanel = MonoRender.Content?.FindName(Container) as Panel;
+            _camera = MonoRender.GetComponent<Camera>();
         }
     }
 

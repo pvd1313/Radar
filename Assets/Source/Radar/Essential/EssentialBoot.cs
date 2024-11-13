@@ -56,7 +56,7 @@ namespace Beast.Radar.Essential
                     progressTracker = tracker,
                     clearLastProgress = true,
                     currentProgress = 0,
-                    continueButtonAction = null
+                    nextAction = null
                 });
 
             tracker.Begin(3, 0.3f);

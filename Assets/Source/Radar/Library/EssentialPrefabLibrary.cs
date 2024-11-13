@@ -8,10 +8,8 @@ namespace Beast.Radar
     public class EssentialPrefabLibrary : ScriptableConfig
     {
         public CameraView camera;
-        public CanvasView canvas;
-        public LoadingScreenView loadingScreen;
-        public LoadingTaskText loadingTaskText;
-        public NoesisView noesisView;
+        public LegacyCanvasView canvas;
+        public NoesisMonoRender noesisRender;
         public NoesisXaml canvasXaml;
         
         public override IEnumerable<IConfig> Bind()

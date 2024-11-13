@@ -2,7 +2,8 @@
 {
     public struct ProgressTrackerInfo
     {
-        public string currentStep;
+        public string currentStepName;
         public float progress01;
+        public bool updateDisplay;
     }
 }

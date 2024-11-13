@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 #endif
 
-[CustomEditor(typeof(NoesisView))]
+[CustomEditor(typeof(NoesisMonoRender))]
 public class NoesisViewEditor : Editor
 {
     enum RenderMode
@@ -62,24 +62,24 @@ public class NoesisViewEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        NoesisView view = target as NoesisView;
-        Noesis.RenderFlags renderFlags = view.RenderFlags;
+        NoesisMonoRender monoRender = target as NoesisMonoRender;
+        Noesis.RenderFlags renderFlags = monoRender.RenderFlags;
 
         // Register changes in the component so scene can be saved, and Undo is also enabled
-        Undo.RecordObject(view, "Noesis View");
+        Undo.RecordObject(monoRender, "Noesis View");
 
         EditorGUILayout.LabelField(new GUIContent("Render Mode", "Views attached to camera objects work in 'Camera Overlay' mode. 'Render Texture' mode is enabled in all other cases"),
-            new GUIContent(view.IsRenderToTexture() ? "Render Texture" : "Camera Overlay"), EditorStyles.popup);
+            new GUIContent(monoRender.IsRenderToTexture() ? "Render Texture" : "Camera Overlay"), EditorStyles.popup);
 
-        if (view.IsRenderToTexture())
+        if (monoRender.IsRenderToTexture())
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel(new GUIContent("Target Texture", "The texture to render this View into"));
-            view.Texture = (RenderTexture)EditorGUILayout.ObjectField(view.Texture, typeof(RenderTexture), false);
+            monoRender.Texture = (RenderTexture)EditorGUILayout.ObjectField(monoRender.Texture, typeof(RenderTexture), false);
             EditorGUILayout.EndHorizontal();
-            view.ContinuousRendering = EditorGUILayout.Toggle(new GUIContent("Continuous Rendering", "When continuous rendering is disabled, rendering only happens when UI changes." +
+            monoRender.ContinuousRendering = EditorGUILayout.Toggle(new GUIContent("Continuous Rendering", "When continuous rendering is disabled, rendering only happens when UI changes." +
                 " For performance purposes and to save battery this is the default mode when rendering to texture.\n\nThis flag is not available in 'Camera Overlay' mode and instead the property " +
-                "NoesisView.NeedsRendering must be used with a manually repainted camera."), view.ContinuousRendering);
+                "NoesisView.NeedsRendering must be used with a manually repainted camera."), monoRender.ContinuousRendering);
         }
         else
         {
@@ -95,18 +95,18 @@ public class NoesisViewEditor : Editor
         }
 
         EditorGUILayout.Space();
-        view.Xaml = (NoesisXaml)EditorGUILayout.ObjectField(new GUIContent("XAML", "User interface definition XAML"), view.Xaml, typeof(NoesisXaml), false);
+        monoRender.Xaml = (NoesisXaml)EditorGUILayout.ObjectField(new GUIContent("XAML", "User interface definition XAML"), monoRender.Xaml, typeof(NoesisXaml), false);
 
         EditorGUILayout.BeginHorizontal();
         GUIContent[] options = { new GUIContent("Low Quality"), new GUIContent("Medium Quality"), new GUIContent("High Quality"), new GUIContent("Custom Quality") };
         int[] values = { 0, 1, 2, 3};
-        float inMaxError = view.TessellationMaxPixelError;
+        float inMaxError = monoRender.TessellationMaxPixelError;
         int value = inMaxError == 0.7f ? 0 : inMaxError == 0.4f ? 1 : inMaxError == 0.2f ? 2 : 3;
         value = EditorGUILayout.IntPopup(new GUIContent("Tessellation Pixel Error", "Tessellation curve tolerance in screen space. " + 
             "'Medium Quality' is usually fine for PPAA (non-multisampled) while 'High Quality' is the recommended pixel error if you are rendering to a 8x multisampled surface"),
             value, options, values);
         float outMaxError = value == 0 ? 0.7f : value == 1 ? 0.4f : value == 2 ? 0.2f: inMaxError;
-        view.TessellationMaxPixelError = Math.Max(0.01f, EditorGUILayout.FloatField(outMaxError, GUILayout.Width(64)));
+        monoRender.TessellationMaxPixelError = Math.Max(0.01f, EditorGUILayout.FloatField(outMaxError, GUILayout.Width(64)));
         EditorGUILayout.EndHorizontal();
 
         RenderMode renderMode = (RenderMode)EditorGUILayout.EnumPopup(new GUIContent("Debug Render Flags",
@@ -131,44 +131,44 @@ public class NoesisViewEditor : Editor
             (renderFlags & Noesis.RenderFlags.LCD) > 0);
         renderFlags = (renderFlags & ~Noesis.RenderFlags.LCD) | (lcd ? Noesis.RenderFlags.LCD : 0);
 
-        view.RenderFlags = renderFlags;
+        monoRender.RenderFlags = renderFlags;
 
-        view.DPIScale = EditorGUILayout.Toggle(new GUIContent("DPI Scale",
+        monoRender.DPIScale = EditorGUILayout.Toggle(new GUIContent("DPI Scale",
             "When enabled, the view is scaled by the actual DPI of the screen or physical device running the application"),
-            view.DPIScale);
+            monoRender.DPIScale);
 
-        view.ClearStencil = EditorGUILayout.Toggle(new GUIContent("Clear Stencil Buffer",
+        monoRender.ClearStencil = EditorGUILayout.Toggle(new GUIContent("Clear Stencil Buffer",
             "(Experimental)\nNoesis requires the stencil buffer to be cleared to zero at the start of each frame. " +
             "If Unity is using the stencil buffer somewhere else, you must enable this option to force a clear. " +
             "Note that enabling this can have a minor performance impact, so it should be left disabled if not necessary."),
-            view.ClearStencil);
+            monoRender.ClearStencil);
 
         EditorGUILayout.Space();
 
-        view.EnableExternalUpdate = EditorGUILayout.Toggle(new GUIContent("External Update",
+        monoRender.EnableExternalUpdate = EditorGUILayout.Toggle(new GUIContent("External Update",
             "When enabled, the view must be explicitly updated by calling 'ExternalUpdate()'. " +
             "By default, the view is automatically updated during LateUpdate"
-            ), view.EnableExternalUpdate);
-        view.UseRealTimeClock = EditorGUILayout.Toggle(new GUIContent("Real Time Clock",
-            "Indicates if 'Time.realtimeSinceStartup' is used instead of 'Time.time' for animations"), view.UseRealTimeClock);
+            ), monoRender.EnableExternalUpdate);
+        monoRender.UseRealTimeClock = EditorGUILayout.Toggle(new GUIContent("Real Time Clock",
+            "Indicates if 'Time.realtimeSinceStartup' is used instead of 'Time.time' for animations"), monoRender.UseRealTimeClock);
 
         EditorGUILayout.Space();
 
-        view.EnableKeyboard = EditorGUILayout.Toggle(new GUIContent("Enable Keyboard",
-            "Indicates if keyboard input events are processed by this view"), view.EnableKeyboard);
+        monoRender.EnableKeyboard = EditorGUILayout.Toggle(new GUIContent("Enable Keyboard",
+            "Indicates if keyboard input events are processed by this view"), monoRender.EnableKeyboard);
 
-        view.EnableMouse = EditorGUILayout.Toggle(new GUIContent("Enable Mouse",
-            "Indicates if mouse input events are processed by this view"), view.EnableMouse);
+        monoRender.EnableMouse = EditorGUILayout.Toggle(new GUIContent("Enable Mouse",
+            "Indicates if mouse input events are processed by this view"), monoRender.EnableMouse);
 
-        EditorGUI.BeginDisabledGroup(!view.EnableMouse);
+        EditorGUI.BeginDisabledGroup(!monoRender.EnableMouse);
         EditorGUI.indentLevel++;
-        view.EmulateTouch = EditorGUILayout.Toggle(new GUIContent("Emulate Touch",
-            "Indicates if touch input events are emulated by the Mouse"), view.EmulateTouch);
+        monoRender.EmulateTouch = EditorGUILayout.Toggle(new GUIContent("Emulate Touch",
+            "Indicates if touch input events are emulated by the Mouse"), monoRender.EmulateTouch);
         EditorGUI.indentLevel--;
         EditorGUI.EndDisabledGroup();
 
-        view.EnableTouch = EditorGUILayout.Toggle(new GUIContent("Enable Touch",
-            "Indicates if touch input events are processed by this view"), view.EnableTouch);
+        monoRender.EnableTouch = EditorGUILayout.Toggle(new GUIContent("Enable Touch",
+            "Indicates if touch input events are processed by this view"), monoRender.EnableTouch);
 
         EditorGUILayout.Space();
 
@@ -190,8 +190,8 @@ public class NoesisViewEditor : Editor
 
     public override void OnPreviewGUI(Rect rect_, GUIStyle background)
     {
-        NoesisView view = target as NoesisView;
-        Noesis.ViewStats stats = view.GetStats();
+        NoesisMonoRender monoRender = target as NoesisMonoRender;
+        Noesis.ViewStats stats = monoRender.GetStats();
 
         if (_previewHeaderStyle == null)
         {
@@ -218,7 +218,7 @@ public class NoesisViewEditor : Editor
             };
         }
 
-        string uri = view.Xaml != null ? view.Xaml.uri : "No XAML selected";
+        string uri = monoRender.Xaml != null ? monoRender.Xaml.uri : "No XAML selected";
         GUI.Label(new Rect(rect_.x + 5, rect_.y + 5, rect_.width, rect_.height), uri, _previewHeaderStyle);
 
         StringBuilder left = new StringBuilder();

@@ -1,14 +1,15 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Common
 {
     public interface IProgressTracker
     {
-        event Action<ProgressTrackerInfo> Updated;
+        float Progress { get; }
         
         void Begin(int stepCount, float overallProgressDelta);
+
+        void SetListener(IProgressTrackerListener listener);
+        
         UniTask Next(string stepName);
-        float Progress { get; }
     }
 }

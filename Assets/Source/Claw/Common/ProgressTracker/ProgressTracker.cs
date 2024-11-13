@@ -9,8 +9,6 @@ namespace Beast.Claw.Common
     {
         private const int FRAME_UPDATE_TRIGGER_MS = 16;
 
-        public event Action<ProgressTrackerInfo> Updated;
-
         public float Progress => _progressMax;
 
         private readonly Stopwatch _timer;
@@ -20,6 +18,7 @@ namespace Beast.Claw.Common
         private int _stageStepCount;
         private int _currentStep;
         private string _currentStepName;
+        private IProgressTrackerListener _listener;
 
         public ProgressTracker()
         {
@@ -36,19 +35,32 @@ namespace Beast.Claw.Common
             _timer.Restart();
         }
 
+        public void SetListener(IProgressTrackerListener listener)
+        {
+            _listener = listener;
+        }
+
         public async UniTask Next(string stepName)
         {
-            Updated?.Invoke(new ProgressTrackerInfo
-            {
-                currentStep = stepName,
-                progress01 = BMath.Lerp(_progressMin, _progressMax, _currentStep / (float)_stageStepCount)
-            });
-
+            bool delayFrame = false;
+            
             if (_timer.ElapsedMilliseconds > FRAME_UPDATE_TRIGGER_MS || _currentStep == 0)
             {
-                await UniTask.DelayFrame(1);
+                delayFrame = true;
                 
                 _timer.Restart();
+            }
+            
+            _listener?.UpdateProgress(new ProgressTrackerInfo
+            {
+                currentStepName = stepName,
+                progress01 = BMath.Lerp(_progressMin, _progressMax, _currentStep / (float)_stageStepCount),
+                updateDisplay = delayFrame
+            });
+
+            if (delayFrame)
+            {
+                await UniTask.DelayFrame(1);
             }
             
             _currentStep++;

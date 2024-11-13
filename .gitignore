@@ -29,7 +29,8 @@
 .vs/
 
 # Noesis GUI
-/[Bb]lend/
+/[Bb]lend/[Bb]in/
+/[Bb]lend/[Oo]bj/
 
 # Gradle cache directory
 .gradle/

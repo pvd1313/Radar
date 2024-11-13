@@ -5,7 +5,6 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace Beast.Radar.Core
 {
@@ -52,10 +51,10 @@ namespace Beast.Radar.Core
                 .AddComponent<GameCycleMono>()
                 .Initialize(_gameCycle);
 
-            if (Application.isEditor)
+            if (Build.IS_EDITOR)
             {
                 await tracker.Next("Loading integrated save");
-
+            
                 Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
                 _integratedSave.worldData.guid = worldGuid;
                 _integratedSave.gameModel.world = worldGuid;
@@ -99,7 +98,7 @@ namespace Beast.Radar.Core
                 clearLastProgress = false,
                 currentProgress = 1,
                 progressTracker = null,
-                continueButtonAction = nextAction
+                nextAction = nextAction
             });
         }
     }

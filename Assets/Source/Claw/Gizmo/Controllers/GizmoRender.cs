@@ -7,7 +7,6 @@ using Beast.Claw.Mathematics;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
@@ -165,7 +164,7 @@ namespace Beast.Claw.Gizmo
             texture.Apply();
             Profiler.EndSample();
 
-            if (Build.IS_EDITOR || _prevTexturePower != texturePower2)
+            if (_prevTexturePower != texturePower2)
             {
                 Profiler.BeginSample("SetShapeMaterialParams #2");
                 _shapeMaterial.SetTexture("_DataTexture", texture);
@@ -174,10 +173,7 @@ namespace Beast.Claw.Gizmo
                 Profiler.EndSample();
             }
 
-            if (Build.IS_EDITOR)
-            {
-                _setupMaterialsRare();
-            }
+            _setupMaterialsRare();
             
             Profiler.BeginSample("SetShapeMaterialParams #1");
             _shapeMaterial.SetFloat2("_RenderCenter", _camera.Position);
@@ -247,6 +243,8 @@ namespace Beast.Claw.Gizmo
 
         private void _setupMaterialsRare()
         {
+            Profiler.BeginSample("_setupMaterialsRare");
+            
             _shapeMaterial.SetFloat2("_ScreenSize", _canvasSize);
             _canvasMaterial.SetTexture("_Texture", _canvas);
 
@@ -260,6 +258,8 @@ namespace Beast.Claw.Gizmo
             _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
             
             _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
+            
+            Profiler.EndSample();
         }
         
         private void _dispose(BlockingContext context)

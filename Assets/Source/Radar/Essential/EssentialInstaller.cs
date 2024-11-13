@@ -5,7 +5,6 @@ using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Beast.Radar.Input;
 using Beast.Radar.UI;
-using Beast.Radar.UI.Xaml;
 using UnityEngine;
 using Zenject;
 

@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
   canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}
-  loadingScreen: {fileID: 5222784808474298362, guid: 1f62dcdb84059fe4d9e629c148507415, type: 3}
-  loadingTaskText: {fileID: 3985179231620626817, guid: ccf78dd6822b91d4e81934dc623cbb5e, type: 3}
-  noesisView: {fileID: 435211694034652127, guid: e6b734d32865c6e4f8ca253f74b6094f, type: 3}
-  canvasXaml: {fileID: -8414808784256213763, guid: f5a0a79f63cbe3840ab4540d7bbbbc16, type: 3}
+  noesisRender: {fileID: 435211694034652127, guid: e6b734d32865c6e4f8ca253f74b6094f, type: 3}
+  canvasXaml: {fileID: -8414808784256213763, guid: cfd3929de113a6246a7e49dbbca2e0ae, type: 3}

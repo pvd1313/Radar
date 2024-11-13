@@ -14,9 +14,9 @@ public class NoesisWorldUIEditor : Editor
         bool enabled = UnityEngine.GUI.enabled;
         UnityEngine.GUI.enabled = true;
 
-        ui.View = (NoesisView)EditorGUILayout.ObjectField(
+        ui.MonoRender = (NoesisMonoRender)EditorGUILayout.ObjectField(
             new GUIContent("View", "The View used to render the specified XAML"),
-            ui.View, typeof(NoesisView), true);
+            ui.MonoRender, typeof(NoesisMonoRender), true);
 
         ui.Container = EditorGUILayout.TextField(
             new GUIContent("Container", "The name of the Panel container where the specified XAML will be inserted"),
