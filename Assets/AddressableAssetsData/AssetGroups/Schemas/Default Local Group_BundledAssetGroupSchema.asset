@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5d17a21594effb4e9591490b009e7aa, type: 3}
-  m_Name: TMP_shaders_BundledAssetGroupSchema
+  m_Name: Default Local Group_BundledAssetGroupSchema
   m_EditorClassIdentifier: 
-  m_Group: {fileID: 11400000, guid: fa35175d59629b34e9d57fb12a0b0133, type: 2}
+  m_Group: {fileID: 11400000, guid: f046b235aa2c90843837f601fa42cb39, type: 2}
   m_InternalBundleIdMode: 1
   m_Compression: 1
   m_IncludeAddressInCatalog: 1
@@ -34,9 +34,9 @@ MonoBehaviour:
   m_RedirectLimit: -1
   m_RetryCount: 0
   m_BuildPath:
-    m_Id: deab9fc2bae6f48459880443a762b3fb
+    m_Id: 9dd4f95c3fb3ca945953bbc08e1685a5
   m_LoadPath:
-    m_Id: cf71c79b4f12b6140bf02f1910f62ab8
+    m_Id: b429ed40f4903af428473e4a3aad5841
   m_BundleMode: 0
   m_AssetBundleProviderType:
     m_AssemblyName: Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

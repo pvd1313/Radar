@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Texture
+  m_Name: Textures
   m_EditorClassIdentifier: 
-  m_GroupName: Texture
+  m_GroupName: Textures
   m_Data:
     m_SerializedData: []
-  m_GUID: 6f9e1b46b1f54ab4fa7bf64ba486b08d
+  m_GUID: 8c5e2eee1b861934aa685fb011c420e0
   m_SerializeEntries:
   - m_GUID: 58b335f725136d34f87e526fd13b0d9f
-    m_Address: Assets/Scene/NoManSky/BackedTexture.png
+    m_Address: BackedTexture
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: bc8a3be8f5982b94a8fa91d6497ebac0, type: 2}
-    - {fileID: 11400000, guid: 85df5d7c055f46849834d8e845cc7815, type: 2}
+    - {fileID: 11400000, guid: c27407212c9514b4c81d1ce41dd244aa, type: 2}
+    - {fileID: 11400000, guid: b34f3c0ad034cf7409b1319c4a40abb9, type: 2}

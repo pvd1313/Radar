@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: TMP_fonts
   m_Data:
     m_SerializedData: []
-  m_GUID: 084fe385a3225ef4cb23295d5d34e130
+  m_GUID: 35d656539f4a85a46b7c82a0b4c94893
   m_SerializeEntries:
   - m_GUID: 5b6a9905f230d4249bc2a53c309f01d2
     m_Address: Fonts
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 1809508043913bc469fb42037965776a, type: 2}
-    - {fileID: 11400000, guid: 9557d0e7b67ad1040bfeb15995e2b81b, type: 2}
+    - {fileID: 11400000, guid: 4e343b3720b273f4fb650f4940f5c98a, type: 2}
+    - {fileID: 11400000, guid: bd17e20e68ebaac42953633ed60010c0, type: 2}
