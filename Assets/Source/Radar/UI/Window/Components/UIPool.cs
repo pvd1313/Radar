@@ -52,6 +52,27 @@ namespace Beast.Radar.UI
             entity.Disable();
         }
 
+        public void Enable(TPoolable entity)
+        {
+            _enabled.Add(entity);
+            entity.Enable();
+        }
+
+        public TPoolable GetEnabledByIndex(int index)
+        {
+            return _enabled[index];
+        }
+
+        public TPoolable GetByIndex(int index)
+        {
+            if (index >= _all.Count)
+            {
+                return null;
+            }
+
+            return _all[index];
+        }
+
         private TPoolable _getDisabledEntity()
         {
             return _all.FirstOrDefault(entity => entity != null && !entity.gameObject.activeSelf);
@@ -63,11 +84,6 @@ namespace Beast.Radar.UI
             entity.transform.SetParent(_root, false);
             _all.Add(entity);
             return entity;
-        }
-
-        public TPoolable GetByIndex(int index)
-        {
-            return _enabled[index];
         }
     }
 }

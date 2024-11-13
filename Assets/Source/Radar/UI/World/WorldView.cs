@@ -2,10 +2,11 @@
 
 namespace Beast.Radar.UI
 {
-    public class PlayerView : Claw.Common.Mono
+    public class WorldView : Claw.Common.Mono
     {
-        public Transform body;
+        public Transform player;
         public Transform target;
         public UIText targetText;
+        public Transform cityRoot;
     }
 }

@@ -182,6 +182,37 @@ MonoBehaviour:
   m_EffectColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 0
+--- !u!1 &5069002343875907321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5279117449837343161}
+  m_Layer: 0
+  m_Name: cities
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5279117449837343161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5069002343875907321}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7422322293059221568}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5258479703107463295
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +226,7 @@ GameObject:
   - component: {fileID: 8455167855984160588}
   - component: {fileID: -1277675084398546024}
   m_Layer: 5
-  m_Name: player_canvas
+  m_Name: world_canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -213,6 +244,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5279117449837343161}
   - {fileID: 22079931160699191}
   - {fileID: 5753815053415863348}
   m_Father: {fileID: 0}
@@ -280,9 +312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3933ecaf8e4e8cba5dd19aab2ca8f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 22079931160699191}
+  player: {fileID: 22079931160699191}
   target: {fileID: 5753815053415863348}
   targetText: {fileID: 1971214410748076862}
+  cityRoot: {fileID: 5279117449837343161}
 --- !u!1 &7116160315523214273
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +329,7 @@ GameObject:
   - component: {fileID: 7195170084812489287}
   - component: {fileID: 8044016143076854605}
   m_Layer: 5
-  m_Name: body
+  m_Name: player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

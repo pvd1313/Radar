@@ -7,30 +7,21 @@ using Beast.Radar.Input;
 using Unity.Mathematics;
 using UnityEngine;
 
-using Time = UnityEngine.Time;
-
 namespace Beast.Radar.Cinematic
 {
     public class CameraController : Controller, IGameCycleListener
     {
-        private readonly CameraConfig _config;
         private readonly ICameraTransform _transform;
-        private readonly IScreen _screen;
         private readonly IInputDevice _input;
+        private readonly CameraConfig _cameraConfig;
 
         private float2 _dragCameraPosition;
 
-        public CameraController(
-            CameraConfig config,
-            ICameraTransform transform,
-            IScreen screen,
-            IInputDevice input)
+        public CameraController(ICameraTransform transform, IInputDevice input, CameraConfig cameraConfig)
         {
-            _config = config;
-
             _transform = transform;
-            _screen = screen;
             _input = input;
+            _cameraConfig = cameraConfig;
         }
         
         public void Register(IGameCycleHandle handle)
@@ -79,8 +70,14 @@ namespace Beast.Radar.Cinematic
             float2 beforeZoom = _transform.ViewportToWorld(zoomInput.position);
             
             float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
-            float zoomValue = zoomInput.delta * factor * Time.smoothDeltaTime;
-            _transform.AddZoom(zoomValue);
+            float zoomValue = zoomInput.delta * factor;
+
+            float smoothValue = BMath.Lerp(
+                _transform.Zoom01, 
+                _transform.Zoom01 + zoomValue, 
+                _cameraConfig.zoomSmoothSpeed * (1f / 60f)) - _transform.Zoom01;
+            
+            _transform.AddZoom(smoothValue);
             
             float2 afterZoom = _transform.ViewportToWorld(zoomInput.position);
             _transform.AddPosition(beforeZoom - afterZoom, Space.World);

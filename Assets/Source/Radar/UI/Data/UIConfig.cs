@@ -8,6 +8,8 @@ namespace Beast.Radar.UI
     {
         public Sprite offMoveButtonSprite;
         public Sprite onMoveButtonSprite;
+
+        public Sprite[] citySprites;
         
         public override IEnumerable<IConfig> Bind()
         {

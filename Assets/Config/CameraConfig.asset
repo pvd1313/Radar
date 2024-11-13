@@ -19,4 +19,4 @@ MonoBehaviour:
     minViewDistance: 0.05
     plainModeViewDistance01: 1
     enablePlanetMode: 0
-  zoomSpeed: 2
+  zoomSmoothSpeed: 0.3

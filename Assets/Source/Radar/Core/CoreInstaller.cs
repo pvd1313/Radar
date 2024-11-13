@@ -57,8 +57,11 @@ namespace Beast.Radar.Core
             yield return typeof(PlayerPreferencesController);
             yield return typeof(GameTimeController);
             yield return typeof(PlayerController);
-            // yield return typeof(PlayerViewController);
-            yield return typeof(WorldTimeStateController);
+            yield return typeof(GameTimeStateController);
+
+            yield return typeof(WorldViewInstance);
+            yield return typeof(PlayerViewController);
+            yield return typeof(CityViewController);
         }
 
         protected override void BindCustom(DiContainer diContainer)

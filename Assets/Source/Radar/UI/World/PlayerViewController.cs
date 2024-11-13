@@ -4,21 +4,18 @@ using Beast.Claw.Graphic;
 using Beast.Claw.Mathematics;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
     public class PlayerViewController : Controller, IGameCycleListener 
     {
-        private readonly CorePrefabLibrary _library;
         private readonly ICameraTransform _camera;
         private readonly IPlayerController _player;
+        private readonly IWorldViewInstance _view;
 
-        private PlayerView _view;
-
-        public PlayerViewController(CorePrefabLibrary library, ICameraTransform camera, IPlayerController player)
+        public PlayerViewController(IWorldViewInstance worldView, ICameraTransform camera, IPlayerController player)
         {
-            _library = library;
+            _view = worldView;
             _camera = camera;
             _player = player;
         }
@@ -31,9 +28,7 @@ namespace Beast.Radar.UI
         
         private UniTask _warmup(ConcurrentContext arg)
         {
-            _view = BScene.InstantiateMono(this, _library.playerView, float3.zero, quaternion.identity);
-
-            _view.target.gameObject.SetActive(false);
+            _view.Instance.target.gameObject.SetActive(false);
             
             _player.ChangeTarget += () =>
             {
@@ -41,14 +36,13 @@ namespace Beast.Radar.UI
                 
                 if (_player.Target.y > _player.Position.y)
                 {
-                    _view.target.SetAsFirstSibling();
+                    _view.Instance.target.SetAsFirstSibling();
                 }
                 else
                 {
-                    _view.target.SetAsLastSibling();
+                    _view.Instance.target.SetAsLastSibling();
                 }
             };
-            
             
             return UniTask.CompletedTask;
         }
@@ -57,8 +51,8 @@ namespace Beast.Radar.UI
         {
             if (_player.IsReady)
             {
-                _view.body.position = _camera.WorldToScreen(_player.Position).XY0();
-                _view.target.position = _camera.WorldToScreen(_player.Target).XY0();
+                _view.Instance.player.position = _camera.WorldToScreen(_player.Position).XY0();
+                _view.Instance.target.position = _camera.WorldToScreen(_player.Target).XY0();
                 
                 if (_player.IsMovement)
                 {
@@ -71,9 +65,9 @@ namespace Beast.Radar.UI
         {
             bool isNear = _player.Position.Equals(_player.Target);
          
-            if (_view.target.gameObject.activeSelf == isNear)
+            if (_view.Instance.target.gameObject.activeSelf == isNear)
             {
-                _view.target.gameObject.SetActive(!_view.target.gameObject.activeSelf);
+                _view.Instance.target.gameObject.SetActive(!_view.Instance.target.gameObject.activeSelf);
             }
             
             //TODO: https://risenbeast.youtrack.cloud/issue/R-6 Set travel time 
