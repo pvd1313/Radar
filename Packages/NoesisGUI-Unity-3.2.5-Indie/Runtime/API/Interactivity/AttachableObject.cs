@@ -55,7 +55,7 @@ namespace NoesisApp
 
                 associatedObject.Destroyed += OnAssociatedObjectDestroyed;
                 _associatedObject = GetPtr(associatedObject);
-                _view = GetPtr(View.Find(this));
+                _view = GetPtr(NoesisView.Find(this));
 
                 InitObject();
 
@@ -91,9 +91,9 @@ namespace NoesisApp
         /// <summary>
         /// Gets the View where this object is connected to
         /// </summary>
-        public View View
+        public NoesisView View
         {
-            get { return (View)GetProxy(_view); }
+            get { return (NoesisView)GetProxy(_view); }
         }
 
         private void OnAssociatedObjectDestroyed(IntPtr d)

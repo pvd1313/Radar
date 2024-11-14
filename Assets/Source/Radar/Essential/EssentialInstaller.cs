@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
+using Beast.Claw.Input;
+using Beast.Claw.Reflection;
 using Beast.Claw.Resources;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
-using Beast.Radar.Input;
 using Beast.Radar.UI;
+using UnityEditor;
 using UnityEngine;
 using Zenject;
 
@@ -22,12 +25,29 @@ namespace Beast.Radar.Essential
         protected override IEnumerable<System.Type> BindInterfaces()
         {
             yield return typeof(ResourceManager);
-            yield return typeof(CameraSpawner);
+            
+            // Camera
             yield return typeof(DeviceScreen);
+            yield return typeof(CameraSpawner);
+            
+            // Input
+            yield return typeof(InputManager);
+            
+            if (Application.isMobilePlatform || UnityEditorSimulatorWindow.HasFocus())
+            {
+                yield return typeof(TouchDevice);
+            }
+            else
+            {
+                yield return typeof(MouseDevice);
+            }
+            
+            // UI
             yield return typeof(WindowManager);
             yield return typeof(NoesisWindowManager);
-            yield return Application.isMobilePlatform ? typeof(TouchDevice) : typeof(MouseDevice);
-            yield return typeof(LoadingScreenWindow);
+            
+            yield return typeof(LoadingWindow);
+            
             yield return typeof(EssentialBoot);
         }
 

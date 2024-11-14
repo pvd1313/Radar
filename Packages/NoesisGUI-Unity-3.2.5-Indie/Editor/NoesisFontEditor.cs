@@ -21,8 +21,8 @@ public class NoesisFontEditor: Editor
 
     private List<Face> _faces = new List<Face>();
     private int _index;
-    private Noesis.View _view;
-    private Noesis.View _viewIcon;
+    private Noesis.NoesisView _view;
+    private Noesis.NoesisView _viewIcon;
     private UnityEngine.Rendering.CommandBuffer _commands;
 
     private static bool IsGL()
@@ -344,7 +344,7 @@ public class NoesisFontEditor: Editor
         return null;
     }
 
-    private RenderTexture RenderPreview(Noesis.View view, int width, int height)
+    private RenderTexture RenderPreview(Noesis.NoesisView view, int width, int height)
     {
         try
         {

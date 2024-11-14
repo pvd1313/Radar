@@ -62,11 +62,11 @@ namespace Beast.Radar.UI
         {
             _view = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);
-            _windowManager.Register(this, WindowID.Pause);
+            _windowManager.Register(this, WindowID.PAUSE);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
 
-            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
-            _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MapGeneration);
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
+            _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
 
             _subscribeView();
 

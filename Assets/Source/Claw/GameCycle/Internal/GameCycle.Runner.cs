@@ -30,8 +30,8 @@ namespace Beast.Claw.GameCycle
             private readonly Dictionary<object, int> _blockingLogicCounters;
             private readonly HashSet<object> _blockingBrokenLogic;
 
-            private ItemBuffer<Listener> _listeners;
-            private ItemBuffer<Listener> _lastToFirstTempBuffer;
+            private ManagedFixedList<Listener> _listeners;
+            private ManagedFixedList<Listener> _lastToFirstTempBuffer;
             private bool _blockingLogicAllBroken;
             private ProfilerTreeStringBuilder _treeBuilder;
             private Profiler _profiler;
@@ -55,12 +55,12 @@ namespace Beast.Claw.GameCycle
                     _blockingBrokenLogic = new HashSet<object>(_operation.bufferCapacity);
                 }
 
-                if (operationInfo.order == EActionOrder.FromLastToFirstInjected)
+                if (operationInfo.order == EActionOrder.FromLastToFirstBinded)
                 {
-                    _lastToFirstTempBuffer = new ItemBuffer<Listener>(_operation.bufferCapacity);
+                    _lastToFirstTempBuffer = new ManagedFixedList<Listener>(_operation.bufferCapacity);
                 }
                 
-                _listeners = new ItemBuffer<Listener>(_operation.bufferCapacity);
+                _listeners = new ManagedFixedList<Listener>(_operation.bufferCapacity);
 
                 if (Build.IS_DEVELOPMENT)
                 {
@@ -90,7 +90,7 @@ namespace Beast.Claw.GameCycle
                         break;
                 }
 
-                if (_operation.order == EActionOrder.FromFirstToLastInjected)
+                if (_operation.order == EActionOrder.FromFirstToLastBinded)
                 {
                     if (Build.IS_DEVELOPMENT && _listeners.Count >= _operation.bufferCapacity)
                     {
@@ -173,7 +173,7 @@ namespace Beast.Claw.GameCycle
 
             private void _maintainListenersList()
             {
-                if (_operation.order == EActionOrder.FromLastToFirstInjected && 
+                if (_operation.order == EActionOrder.FromLastToFirstBinded && 
                     _lastToFirstTempBuffer.Count > 0)
                 {
                     _listeners.InsertItemsAtZeroInReverseOrder(_lastToFirstTempBuffer);

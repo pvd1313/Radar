@@ -82,7 +82,7 @@ public class NoesisLangServer
 
             Border root = new Border();
             root.Child = content;
-            View view = Noesis.GUI.CreateView(root);
+            NoesisView view = Noesis.GUI.CreateView(root);
             view.SetFlags(IsGL() ? 0 : RenderFlags.FlipY);
             view.SetTessellationMaxPixelError(Noesis.TessellationMaxPixelError.HighQuality.Error);
             view.SetSize(width, height);

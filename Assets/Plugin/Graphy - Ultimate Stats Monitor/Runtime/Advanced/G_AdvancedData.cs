@@ -109,13 +109,13 @@ namespace Tayx.Graphy.Advanced
                     .Append( m_windowStrings[ 1 ] ).Append( Screen.height.ToStringNonAlloc() )
                     .Append( m_windowStrings[ 2 ] ).Append(
 #if UNITY_2022_2_OR_NEWER
-                        ((int)Screen.currentResolution.refreshRateRatio.value).ToStringNonAlloc()
+                        Screen.currentResolution.refreshRateRatio.value.ToIntStringNonAlloc()
 #else
                         Screen.currentResolution.refreshRate.ToStringNonAlloc()
 #endif
                         )
                     .Append( m_windowStrings[ 3 ] )
-                    .Append( m_windowStrings[ 4 ] ).Append( ((int) Screen.dpi).ToStringNonAlloc() )
+                    .Append( m_windowStrings[ 4 ] ).Append(Screen.dpi.ToIntStringNonAlloc())
                     .Append( m_windowStrings[ 5 ] );
 
                 m_gameWindowResolutionText.text = m_sb.ToString();
@@ -140,7 +140,7 @@ namespace Tayx.Graphy.Advanced
 
                     m_sb.Append( m_vrStrings[ 0 ] ).Append( XRSettings.eyeTextureWidth.ToStringNonAlloc() )
                         .Append( m_vrStrings[ 1 ] ).Append( XRSettings.eyeTextureHeight.ToStringNonAlloc() )
-                        .Append( m_vrStrings[ 2 ] ).Append( Mathf.RoundToInt( refreshRate ).ToStringNonAlloc() )
+                        .Append( m_vrStrings[ 2 ] ).Append(refreshRate.ToIntStringNonAlloc())
                         .Append( m_vrStrings[ 3 ] );
 
                     m_gameVRResolutionText.text = m_sb.ToString();
@@ -289,7 +289,7 @@ namespace Tayx.Graphy.Advanced
 
         private void Init()
         {
-            G_IntString.Init( 0, 7680 );
+            G_IntString.EnsureRange(0, 7680);
 
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 
@@ -334,7 +334,7 @@ namespace Tayx.Graphy.Advanced
                   + res.height
                   + "@"
 #if UNITY_2022_2_OR_NEWER
-                  + ((int)Screen.currentResolution.refreshRateRatio.value).ToStringNonAlloc()
+                  + Screen.currentResolution.refreshRateRatio.value.ToIntStringNonAlloc()
 #else
                   + res.refreshRate
 #endif

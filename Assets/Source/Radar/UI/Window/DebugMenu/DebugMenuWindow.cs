@@ -64,9 +64,9 @@ namespace Beast.Radar.UI
 
         private UniTask _warmup(ConcurrentContext context)
         {
-            _windowManager.Register(this, WindowID.Debug);
-            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
-            _debugWindow = _windowManager.GetHandle<Empty>(this, WindowID.Debug);
+            _windowManager.Register(this, WindowID.DEBUG);
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
+            _debugWindow = _windowManager.GetHandle<Empty>(this, WindowID.DEBUG);
             
             _viewBuildingTask = UniTask.Create(async () =>
             {

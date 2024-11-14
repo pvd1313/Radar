@@ -71,7 +71,7 @@ namespace Tayx.Graphy.Fps
                 m_ms = m_deltaTime / m_frameCount * 1000f;
 
                 // Update fps
-                m_fpsText.text = Mathf.RoundToInt( m_fps ).ToStringNonAlloc();
+                m_fpsText.text = m_fps.ToIntStringNonAlloc();
                 SetFpsRelatedTextColor( m_fpsText, m_fps );
 
                 // Update ms
@@ -87,7 +87,7 @@ namespace Tayx.Graphy.Fps
                 // SetFpsRelatedTextColor( m_zero1PercentFpsText, m_fpsMonitor.Zero1PercentFps );
 
                 // Update avg fps
-                m_avgFpsText.text = ((int) (m_fpsMonitor.AverageFPS)).ToStringNonAlloc();
+                m_avgFpsText.text = m_fpsMonitor.AverageFPS.ToStringNonAlloc();
                 SetFpsRelatedTextColor( m_avgFpsText, m_fpsMonitor.AverageFPS );
 
                 // Reset variables
@@ -141,7 +141,7 @@ namespace Tayx.Graphy.Fps
 
         private void Init()
         {
-            G_IntString.Init( 0, 2000 ); // Max fps expected
+            G_IntString.EnsureRange( 0, 2000 ); // Max fps expected
             G_FloatString.Init( 0, 100 ); // Max ms expected per frame
 
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();

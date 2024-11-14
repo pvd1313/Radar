@@ -53,9 +53,9 @@ namespace Tayx.Graphy.Ram
             if( m_deltaTime > 1f / m_updateRate )
             {
                 // Update allocated, mono and reserved memory
-                m_allocatedSystemMemorySizeText.text = ((int) m_ramMonitor.AllocatedRam).ToStringNonAlloc();
-                m_reservedSystemMemorySizeText.text = ((int) m_ramMonitor.ReservedRam).ToStringNonAlloc();
-                m_monoSystemMemorySizeText.text = ((int) m_ramMonitor.MonoRam).ToStringNonAlloc();
+                m_allocatedSystemMemorySizeText.text = m_ramMonitor.AllocatedRam.ToIntStringNonAlloc();
+                m_reservedSystemMemorySizeText.text = m_ramMonitor.ReservedRam.ToIntStringNonAlloc();
+                m_monoSystemMemorySizeText.text = m_ramMonitor.MonoRam.ToIntStringNonAlloc();
 
                 m_deltaTime = 0f;
             }
@@ -82,7 +82,7 @@ namespace Tayx.Graphy.Ram
         {
             // We assume no game will consume more than 16GB of RAM.
             // If it does, who cares about some minuscule garbage allocation lol.
-            G_IntString.Init( 0, 16386 );
+            G_IntString.EnsureRange( 0, 16386 );
 
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 

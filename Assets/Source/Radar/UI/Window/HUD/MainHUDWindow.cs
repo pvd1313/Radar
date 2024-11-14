@@ -59,13 +59,13 @@ namespace Beast.Radar.UI
 
         private UniTask _warmup(ConcurrentContext context)
         {
-            _windowManager.Register(this, WindowID.MainHUD);
+            _windowManager.Register(this, WindowID.HUD);
 
             _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
             _view.gameObject.SetActive(false);
 
-            _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.Pause);
+            _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.PAUSE);
 
             _subscribe();
 

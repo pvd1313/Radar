@@ -73,10 +73,6 @@ public class NoesisViewEditor : Editor
 
         if (monoRender.IsRenderToTexture())
         {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel(new GUIContent("Target Texture", "The texture to render this View into"));
-            monoRender.Texture = (RenderTexture)EditorGUILayout.ObjectField(monoRender.Texture, typeof(RenderTexture), false);
-            EditorGUILayout.EndHorizontal();
             monoRender.ContinuousRendering = EditorGUILayout.Toggle(new GUIContent("Continuous Rendering", "When continuous rendering is disabled, rendering only happens when UI changes." +
                 " For performance purposes and to save battery this is the default mode when rendering to texture.\n\nThis flag is not available in 'Camera Overlay' mode and instead the property " +
                 "NoesisView.NeedsRendering must be used with a manually repainted camera."), monoRender.ContinuousRendering);
@@ -95,7 +91,6 @@ public class NoesisViewEditor : Editor
         }
 
         EditorGUILayout.Space();
-        monoRender.Xaml = (NoesisXaml)EditorGUILayout.ObjectField(new GUIContent("XAML", "User interface definition XAML"), monoRender.Xaml, typeof(NoesisXaml), false);
 
         EditorGUILayout.BeginHorizontal();
         GUIContent[] options = { new GUIContent("Low Quality"), new GUIContent("Medium Quality"), new GUIContent("High Quality"), new GUIContent("Custom Quality") };
@@ -157,16 +152,6 @@ public class NoesisViewEditor : Editor
         monoRender.EnableKeyboard = EditorGUILayout.Toggle(new GUIContent("Enable Keyboard",
             "Indicates if keyboard input events are processed by this view"), monoRender.EnableKeyboard);
 
-        monoRender.EnableMouse = EditorGUILayout.Toggle(new GUIContent("Enable Mouse",
-            "Indicates if mouse input events are processed by this view"), monoRender.EnableMouse);
-
-        EditorGUI.BeginDisabledGroup(!monoRender.EnableMouse);
-        EditorGUI.indentLevel++;
-        monoRender.EmulateTouch = EditorGUILayout.Toggle(new GUIContent("Emulate Touch",
-            "Indicates if touch input events are emulated by the Mouse"), monoRender.EmulateTouch);
-        EditorGUI.indentLevel--;
-        EditorGUI.EndDisabledGroup();
-
         monoRender.EnableTouch = EditorGUILayout.Toggle(new GUIContent("Enable Touch",
             "Indicates if touch input events are processed by this view"), monoRender.EnableTouch);
 
@@ -195,31 +180,21 @@ public class NoesisViewEditor : Editor
 
         if (_previewHeaderStyle == null)
         {
-#if UNITY_2020_1_OR_NEWER
             _previewHeaderStyle = new GUIStyle(EditorStyles.largeLabel)
-#else
-            _previewHeaderStyle = new GUIStyle(EditorStyles.whiteLargeLabel)
-#endif
             {
                 alignment = TextAnchor.UpperLeft,
                 fontStyle = FontStyle.Bold
             };
         }
+        
         if (_previewTextStyle == null)
         {
-#if UNITY_2020_1_OR_NEWER
             _previewTextStyle = new GUIStyle(EditorStyles.label)
-#else
-            _previewTextStyle = new GUIStyle(EditorStyles.whiteLabel)
-#endif
             {
                 richText = true,
                 fontStyle = FontStyle.Normal
             };
         }
-
-        string uri = monoRender.Xaml != null ? monoRender.Xaml.uri : "No XAML selected";
-        GUI.Label(new Rect(rect_.x + 5, rect_.y + 5, rect_.width, rect_.height), uri, _previewHeaderStyle);
 
         StringBuilder left = new StringBuilder();
         left.AppendLine("\n\nFrame Time (ms)");

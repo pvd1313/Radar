@@ -76,7 +76,7 @@ namespace Tayx.Graphy.Audio
 
         private void Init()
         {
-            G_IntString.Init( -80, 0 ); // dB range
+            G_IntString.EnsureRange( -80, 0 ); // dB range
 
             m_graphyManager = transform.root.GetComponentInChildren<GraphyManager>();
 

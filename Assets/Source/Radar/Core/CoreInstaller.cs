@@ -5,14 +5,12 @@ using Beast.Claw.Gizmo;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
-using Beast.Radar.Input;
 using Beast.Radar.NewGame;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
 using Beast.Radar.World;
-using UnityEngine;
 using Zenject;
 
 namespace Beast.Radar.Core
@@ -26,6 +24,7 @@ namespace Beast.Radar.Core
 
         protected override IEnumerable<Type> BindInterfaces()
         {
+            // Camera
             yield return typeof(CameraTransform);
             yield return typeof(CameraController);
             
@@ -37,7 +36,7 @@ namespace Beast.Radar.Core
             yield return typeof(WorldManager);
             yield return typeof(GizmoRender);
             
-            // UI Windows
+            // Windows
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
@@ -59,6 +58,7 @@ namespace Beast.Radar.Core
             yield return typeof(PlayerController);
             yield return typeof(GameTimeStateController);
 
+            // O_o
             yield return typeof(WorldViewInstance);
             yield return typeof(PlayerViewController);
             yield return typeof(CityViewController);

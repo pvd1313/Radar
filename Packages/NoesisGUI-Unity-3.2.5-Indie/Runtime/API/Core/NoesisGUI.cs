@@ -9,7 +9,7 @@ namespace Noesis
     public delegate void SoftwareKeyboardCallback(UIElement focused, bool open);
 
     /// <summary> Called when View requires to update its cursor </summary>
-    public delegate void UpdateCursorCallback(View view, Cursor cursor);
+    public delegate void UpdateCursorCallback(NoesisView view, Cursor cursor);
 
     /// <summary> Called when an element requires to open an URL </summary>
     public delegate void OpenUrlCallback(string url);
@@ -362,9 +362,9 @@ namespace Noesis
         /// </summary>
         /// <param name="content">Root of the UI tree.</param>
         /// <returns>A new View for the specified content.</returns>
-        public static View CreateView(FrameworkElement content)
+        public static NoesisView CreateView(FrameworkElement content)
         {
-            return new View(content);
+            return new NoesisView(content);
         }
 
         /// <summary>
@@ -411,7 +411,7 @@ namespace Noesis
             {
                 if (_initialized)
                 {
-                    View view = (View)Extend.GetProxy(cPtrView, false);
+                    NoesisView view = (NoesisView)Extend.GetProxy(cPtrView, false);
                     Cursor cursor = (Cursor)Extend.GetProxy(cursorPtr, false);
                     _updateCursorCallback(view, cursor);
                 }

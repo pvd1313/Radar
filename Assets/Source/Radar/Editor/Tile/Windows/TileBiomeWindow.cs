@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Editor;
 using Beast.Claw.Editor.Window;
 using Beast.Claw.Mathematics;

@@ -3,7 +3,7 @@
     public enum EActionOrder
     {
         Invalid,
-        FromFirstToLastInjected,
-        FromLastToFirstInjected
+        FromFirstToLastBinded,
+        FromLastToFirstBinded
     }
 }

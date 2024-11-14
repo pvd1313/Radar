@@ -15,7 +15,7 @@ public class NoesisRenderer
     /// <summary>
     /// Registers a view in the render thread
     /// </summary>
-    public static void RegisterView(Noesis.View view, UnityEngine.Rendering.CommandBuffer commands)
+    public static void RegisterView(Noesis.NoesisView view, UnityEngine.Rendering.CommandBuffer commands)
     {
         commands.IssuePluginEventAndData(_renderRegisterCallback, (int)EventId.NoRender, view.Renderer.CPtr.Handle);
     }
@@ -23,7 +23,7 @@ public class NoesisRenderer
     /// <summary>
     /// Sends render tree update commands to native code
     /// </summary>
-    public static void UpdateRenderTree(Noesis.View view, UnityEngine.Rendering.CommandBuffer commands)
+    public static void UpdateRenderTree(Noesis.NoesisView view, UnityEngine.Rendering.CommandBuffer commands)
     {
         // Send information about requested textures to C++ texture provider
         NoesisTextureProvider.instance.UpdateTextures();
@@ -34,7 +34,7 @@ public class NoesisRenderer
     /// <summary>
     /// Sends offscreen render commands to native code
     /// </summary>
-    public static void RenderOffscreen(Noesis.View view, UnityEngine.Rendering.CommandBuffer commands, bool invalidate)
+    public static void RenderOffscreen(Noesis.NoesisView view, UnityEngine.Rendering.CommandBuffer commands, bool invalidate)
     {
         // This a way to force Unity to close the current MTL command encoder
         // We need to activate a new encoder in the current command buffer for our Offscreen phase
@@ -76,7 +76,7 @@ public class NoesisRenderer
     /// <summary>
     /// Sends render commands to native code
     /// </summary>
-    public static void RenderOnscreen(Noesis.View view, bool flipY, UnityEngine.Rendering.CommandBuffer commands,
+    public static void RenderOnscreen(Noesis.NoesisView view, bool flipY, UnityEngine.Rendering.CommandBuffer commands,
         bool invalidate, bool clearStencil)
     {
         FixCommandBuffer(commands);
@@ -105,7 +105,7 @@ public class NoesisRenderer
         public Noesis.Matrix4 projection;
     };
 
-    public static void RenderOnscreen(Noesis.View view_, Noesis.Matrix4 projection_, bool flipY,
+    public static void RenderOnscreen(Noesis.NoesisView view_, Noesis.Matrix4 projection_, bool flipY,
         UnityEngine.Rendering.CommandBuffer commands, bool invalidate, bool clearStencil)
     {
         FixCommandBuffer(commands);
@@ -140,7 +140,7 @@ public class NoesisRenderer
         public Noesis.Matrix4 rightEyeProjection;
     };
 
-    public static void RenderOnscreen(Noesis.View view_, Noesis.Matrix4 projection_, Noesis.Matrix4 leftEyeProjection_,
+    public static void RenderOnscreen(Noesis.NoesisView view_, Noesis.Matrix4 projection_, Noesis.Matrix4 leftEyeProjection_,
         Noesis.Matrix4 rightEyeProjection_, bool flipY, UnityEngine.Rendering.CommandBuffer commands, bool invalidate,
         bool clearStencil)
     {
@@ -275,7 +275,7 @@ public class NoesisRenderer
     /// <summary>
     /// Unregisters given renderer
     /// </summary>
-    public static void UnregisterView(Noesis.View view, UnityEngine.Rendering.CommandBuffer commands)
+    public static void UnregisterView(Noesis.NoesisView view, UnityEngine.Rendering.CommandBuffer commands)
     {
         commands.IssuePluginEventAndData(_renderUnregisterCallback, (int)EventId.NoRender, view.Renderer.CPtr.Handle);
     }

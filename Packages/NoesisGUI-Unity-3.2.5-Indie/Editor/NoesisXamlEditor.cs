@@ -9,8 +9,8 @@ using UnityEngine.Video;
 [CustomEditor(typeof(NoesisXaml))]
 public class NoesisXamlEditor: Editor
 {
-    private Noesis.View _viewPreview;
-    private Noesis.View _viewPreviewGUI;
+    private Noesis.NoesisView _viewPreview;
+    private Noesis.NoesisView _viewPreviewGUI;
     private UnityEngine.Rendering.CommandBuffer _commands;
 
     private static bool IsGL()
@@ -353,7 +353,7 @@ public class NoesisXamlEditor: Editor
         return null;
     }
 
-    private RenderTexture RenderPreview(Noesis.View view, int width, int height, double time)
+    private RenderTexture RenderPreview(Noesis.NoesisView view, int width, int height, double time)
     {
         try
         {

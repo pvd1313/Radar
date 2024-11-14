@@ -2,11 +2,11 @@
 {
     public static class WindowID
     {
-        public static readonly string None = "none";
-        public static readonly string MainHUD = "hud_window";
-        public static readonly string Debug = "debug_window";
-        public static readonly string Pause = "pause_window";
-        public static readonly string MapGeneration = "map_generation_window";
-        public static readonly string LoadingScreen = "loading_window";
+        public const string NONE = "none";
+        public const string HUD = "hud_window";
+        public const string DEBUG = "debug_window";
+        public const string PAUSE = "pause_window";
+        public const string MAP_GENERATION = "map_generation_window";
+        public const string LOADING = "loading_window";
     }
 }

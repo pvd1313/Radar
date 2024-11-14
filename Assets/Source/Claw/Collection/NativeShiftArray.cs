@@ -7,7 +7,7 @@ namespace Beast.Claw.Collection
     /// This array remembers only last N elements.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public struct NativeShiftArray<TValue> : IDisposable where TValue : struct
+    public struct NativeShiftArray<TValue> : IDisposable where TValue : unmanaged
     {
         public int Count => _count;
 

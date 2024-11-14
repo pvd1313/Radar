@@ -3,6 +3,7 @@
 using UnityEngine;
 using Noesis;
 using System.Runtime.InteropServices;
+using Unity.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Profiling;
 
@@ -24,18 +25,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         public static readonly string RenderOffScreen = "Noesis.RenderOffscreen";
         public static readonly string RenderOnScreen = "Noesis.RenderOnscreen";
         public static readonly string RenderTexture = "Noesis.RenderTexture";
-    }
-    
-    public NoesisXaml Xaml
-    {
-        set { _xaml = value; }
-        get { return _xaml; }
-    }
-
-    public RenderTexture Texture
-    {
-        set { _texture = value; }
-        get { return _texture; }
     }
 
     public float TessellationMaxPixelError
@@ -117,12 +106,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         set { _enableKeyboard = value; }
         get { return _enableKeyboard; }
     }
-    
-    public bool EnableMouse
-    {
-        set { _enableMouse = value; }
-        get { return _enableMouse; }
-    }
 
     public bool EnableTouch
     {
@@ -184,9 +167,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
     
-    [SerializeField] private NoesisXaml _xaml;
-    [SerializeField] private RenderTexture _texture;
-
     [SerializeField] private bool _isPPAAEnabled = true;
     [SerializeField] private float _tessellationMaxPixelError = Noesis.TessellationMaxPixelError.MediumQuality.Error;
     [SerializeField] private RenderFlags _renderFlags = 0;
@@ -194,7 +174,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
     [SerializeField] private bool _continuousRendering = true;
     [SerializeField] private bool _enableExternalUpdate = false;
     [SerializeField] private bool _enableKeyboard = true;
-    [SerializeField] private bool _enableMouse = true;
     [SerializeField] private bool _enableTouch = true;
     [UnityEngine.Serialization.FormerlySerializedAs("_enableGamepad")]
     [SerializeField] private bool _emulateTouch = false;
@@ -202,11 +181,10 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
     [SerializeField] private bool _clearStencil = false;
     [SerializeField] private UnityEngine.Transform _xrTrackingOrigin;
     
-    private View _uiView;
+    private NoesisView _uiView;
     private bool _needsRendering = false;
     private float _stereoScale = 1.0f;
     
-    private EventModifiers _modifiers = 0;
     private bool _updatePending = true;
     private bool _visible = true;
     private int _viewSizeX;
@@ -236,116 +214,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
 
         return new ViewStats();
     }
-    
-    public bool KeyDown(Key key)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.KeyDown(key);
-        }
-
-        return false;
-    }
-
-    public bool KeyUp(Key key)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.KeyUp(key);
-        }
-
-        return false;
-    }
-
-    public bool Char(uint ch)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.Char(ch);
-        }
-
-        return false;
-    }
-    
-    public bool MouseMove(int x, int y)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.MouseMove(x, y);
-        }
-
-        return false;
-    }
-
-    public bool MouseButtonDown(int x, int y, MouseButton button)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.MouseButtonDown(x, y, button);
-        }
-
-        return false;
-    }
-    
-    public bool MouseButtonUp(int x, int y, MouseButton button)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.MouseButtonUp(x, y, button);
-        }
-
-        return false;
-    }
-    
-    public bool MouseDoubleClick(int x, int y, MouseButton button)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.MouseDoubleClick(x, y, button);
-        }
-
-        return false;
-    }
-
-    public bool MouseWheel(int x, int y, int wheelRotation)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.MouseWheel(x, y, wheelRotation);
-        }
-
-        return false;
-    }
-
-    public bool TouchMove(int x, int y, uint touchId)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.TouchMove(x, y, touchId);
-        }
-
-        return false;
-    }
-
-    public bool TouchDown(int x, int y, uint touchId)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.TouchDown(x, y, touchId);
-        }
-
-        return false;
-    }
-    
-    public bool TouchUp(int x, int y, uint touchId)
-    {
-        if (_uiView != null)
-        {
-            return _uiView.TouchUp(x, y, touchId);
-        }
-
-        return false;
-    }
 
     private void Reset()
     {
@@ -355,24 +223,25 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         _dpiScale = true;
         _enableExternalUpdate = false;
         _enableKeyboard = true;
-        _enableMouse = true;
         _enableTouch = true;
         _emulateTouch = false;
         _useRealTimeClock = false;
         _clearStencil = false;
     }
 
-    public void Setup(Camera camera, FrameworkElement element)
+    public NoesisView Initialize(Camera camera, FrameworkElement element)
     {
         _commandBuffer = new CommandBuffer();
         _camera = camera;
         
         useGUILayout = false;
         
-        _createView(element);
-        
         Camera.onPreRender += _onPreRender;
         Camera.onPostRender += _onPostRender;
+        
+        _createView(element);
+
+        return _uiView;
     }
 
     private void OnDestroy()
@@ -380,175 +249,10 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         _destroyView();
     }
 
-    private Vector2 ProjectPointer(float x, float y)
-    {
-        if (_camera != null)
-        {
-            return new Vector2(x, Screen.height - y);
-        }
-        else if (_texture != null)
-        {
-            // Project using texture coordinates
-
-          #if ENABLE_UGUI_PACKAGE
-            // First try with Unity UI RawImage objects
-            UnityEngine.EventSystems.EventSystem eventSystem = UnityEngine.EventSystems.EventSystem.current;
-
-            if (eventSystem != null && eventSystem.IsPointerOverGameObject())
-            {
-                Vector2 pos = new Vector2(x, y);
-
-                if (_pointerData == null)
-                {
-                    _pointerData = new UnityEngine.EventSystems.PointerEventData(eventSystem)
-                    {
-                        pointerId = 0,
-                        position = pos
-                    };
-                }
-                else
-                {
-                    _pointerData.Reset();
-                }
-
-                _pointerData.delta = pos - _pointerData.position;
-                _pointerData.position = pos;
-
-                if (TryGetComponent(out RectTransform rect))
-                {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect,
-                        _pointerData.position, _pointerData.pressEventCamera, out pos))
-                    {
-                        Vector2 pivot = new Vector2(
-                            rect.pivot.x * rect.rect.width,
-                            rect.pivot.y * rect.rect.height);
-
-                        float texCoordX = (pos.x + pivot.x) / rect.rect.width;
-                        float texCoordY = (pos.y + pivot.y) / rect.rect.height;
-
-                        float localX = _texture.width * texCoordX;
-                        float localY = _texture.height * (1.0f - texCoordY);
-                        return new Vector2(localX, localY);
-                    }
-                }
-            }
-          #endif
-
-            // NOTE: A MeshCollider must be attached to the target to obtain valid
-            // texture coordinates, otherwise Hit Testing won't work
-
-            Ray ray = Camera.main.ScreenPointToRay(new Vector3(x, y, 0));
-
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider.gameObject == gameObject)
-                {
-                    float localX = _texture.width * hit.textureCoord.x;
-                    float localY = _texture.height * (1.0f - hit.textureCoord.y);
-                    return new Vector2(localX, localY);
-                }
-            }
-
-            return new Vector2(-1, -1);
-        }
-
-        return Vector2.zero;
-    }
-
-    private static bool HasMouse()
-    {
-        return Input.mousePresent;
-    }
-
-    private static bool IsCursorVisible()
-    {
-        return UnityEngine.Cursor.visible && UnityEngine.Cursor.lockState != CursorLockMode.Locked;
-    }
-
-    private Vector3 MousePosition()
-    {
-        Vector3 mousePosition = Input.mousePosition;
-
-        Vector3 p = Display.RelativeMouseAt(mousePosition);
-
-        if (p == Vector3.zero)
-        {
-            return mousePosition;
-        }
-
-        _activeDisplay = (int)p.z;
-        return p;
-    }
-
-    private void UpdateMouse()
-    {
-        if (HasMouse() && IsCursorVisible())
-        {
-            Vector3 mousePos = MousePosition();
-
-            // mouse move
-            if ((_camera == null || _activeDisplay == _camera.targetDisplay) && _mousePos != mousePos)
-            {
-                _mousePos = mousePos;
-
-                Vector2 mouse = ProjectPointer(_mousePos.x, _mousePos.y);
-                _uiView.MouseMove((int)mouse.x, (int)mouse.y);
-            }
-        }
-    }
-
-    private void UpdateTouch()
-    {
-        for (int i = 0; i < Input.touchCount; i++) 
-        {
-            Touch touch = Input.GetTouch(i);
-            Vector2 pos = ProjectPointer(touch.position.x, touch.position.y);
-            TouchPhase phase = touch.phase;
-
-            if (phase == TouchPhase.Began)
-            {
-                _uiView.TouchDown((int)pos.x, (int)pos.y, (uint)touch.fingerId);
-            }
-            else if (phase == TouchPhase.Moved || phase == TouchPhase.Stationary)
-            {
-                _uiView.TouchMove((int)pos.x, (int)pos.y, (uint)touch.fingerId);
-            }
-            else
-            {
-                _uiView.TouchUp((int)pos.x, (int)pos.y, (uint)touch.fingerId);
-            }
-        }
-    }
-
-    private void UpdateInputs(float t)
-    {
-        if (_enableMouse)
-        {
-            UpdateMouse();
-        }
-
-        if (_enableTouch)
-        {
-            UpdateTouch();
-        }
-    }
-
     private void UpdateSize()
     {
-        int sizeX = 0;
-        int sizeY = 0;
-
-        if (_camera != null)
-        {
-            sizeX = _camera.pixelWidth;
-            sizeY = _camera.pixelHeight;
-        }
-        else if (_texture != null)
-        {
-            sizeX = _texture.width;
-            sizeY = _texture.height;
-        }
+        int sizeX = _camera.pixelWidth;
+        int sizeY = _camera.pixelHeight;
 
         if (sizeX != _viewSizeX || sizeY != _viewSizeY)
         {
@@ -646,7 +350,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
             float t = Time.realtimeSinceStartup;
 
             UpdateSize();
-            UpdateInputs(t);
 
             NoesisUnity.IME.Update(_uiView);
             NoesisUnity.TouchKeyboard.Update();
@@ -664,40 +367,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
                 Graphics.ExecuteCommandBuffer(_commandBuffer);
                 _commandBuffer.Clear();
             }
-
-            if (_camera == null && _texture != null)
-            {
-                if (_continuousRendering || _needsRendering)
-                {
-                    _commandBuffer.name = Profiling.RenderTexture;
-                    NoesisRenderer.RenderOffscreen(_uiView, _commandBuffer, false);
-                    _commandBuffer.SetRenderTarget(_texture, LoadAction.DontCare, StoreAction.Store, LoadAction.DontCare, StoreAction.DontCare);
-                    _commandBuffer.ClearRenderTarget(true, true, UnityEngine.Color.clear, 0.0f);
-                    NoesisRenderer.RenderOnscreen(_uiView, !IsGL(), _commandBuffer, false, _clearStencil);
-
-                    Graphics.ExecuteCommandBuffer(_commandBuffer);
-                    _commandBuffer.Clear();
-
-                    GL.InvalidateState();
-                    _texture.DiscardContents(false, true);
-                }
-            }
-        }
-    }
-
-    private void OnBecameInvisible()
-    {
-        if (_uiView != null && _texture != null)
-        {
-            _visible = false;
-        }
-    }
-
-    private void OnBecameVisible()
-    {
-        if (_uiView != null && _texture != null)
-        {
-            _visible = true;
         }
     }
 
@@ -786,184 +455,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    private void ProcessModifierKey(EventModifiers modifiers, EventModifiers delta, EventModifiers flag, Key key)
-    {
-        if ((delta & flag) > 0)
-        {
-            if ((modifiers & flag) > 0)
-            {
-                _uiView.KeyDown(key);
-            }
-            else
-            {
-                _uiView.KeyUp(key);
-            }
-        }
-    }
-
-    private bool HitTest(float x, float y)
-    {
-        Visual root = (Visual)VisualTreeHelper.GetRoot(_uiView.Content);
-        Point p = root.PointFromScreen(new Point(x, y));
-
-        // Comment this define at the top of the file if you want to use the old behavior
-      #if IGNORE_ISHITTESTVISIBLE_FALSE_ELEMENTS
-        return Noesis_UnityHitTest(BaseComponent.getCPtr(root), ref p);
-      #else
-        return VisualTreeHelper.HitTest(root, p).VisualHit != null;
-      #endif
-    }
-
-    private bool MouseEmulated()
-    { 
-        return Input.simulateMouseWithTouches && Input.touchCount > 0;
-    }
-
-    private void ProcessEvent(Event ev, bool enableKeyboard, bool enableMouse)
-    {
-        // Process keyboard modifiers
-        if (enableKeyboard)
-        {
-            EventModifiers delta = ev.modifiers ^ _modifiers;
-            if (delta > 0)
-            {
-                _modifiers = ev.modifiers;
-
-                ProcessModifierKey(ev.modifiers, delta, EventModifiers.Shift, Key.LeftShift);
-                ProcessModifierKey(ev.modifiers, delta, EventModifiers.Control, Key.LeftCtrl);
-                ProcessModifierKey(ev.modifiers, delta, EventModifiers.Command, Key.LeftCtrl);
-                ProcessModifierKey(ev.modifiers, delta, EventModifiers.Alt, Key.LeftAlt);
-            }
-        }
-
-        switch (ev.type)
-        {
-            case EventType.MouseDown:
-            {
-                if (enableMouse && IsCursorVisible())
-                {
-                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
-
-                    if (HitTest(mouse.x, mouse.y))
-                    {
-                        ev.Use();
-                    }
-
-                    if (!MouseEmulated())
-                    {
-                        if (ev.clickCount == 1)
-                        {
-                            _uiView.MouseButtonDown((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
-                        }
-                        else
-                        {
-                            _uiView.MouseDoubleClick((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
-                        }
-                    }
-                }
-                break;
-            }
-            case EventType.MouseUp:
-            {
-                if (enableMouse && IsCursorVisible())
-                {
-                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
-
-                    if (HitTest(mouse.x, mouse.y))
-                    {
-                        ev.Use();
-                    }
-
-                    if (!MouseEmulated())
-                    {
-                        _uiView.MouseButtonUp((int)mouse.x, (int)mouse.y, (MouseButton)ev.button);
-                    }
-                }
-                break;
-            }
-            case EventType.ScrollWheel:
-            {
-                if (enableMouse && IsCursorVisible())
-                {
-                    Vector2 mouse = ProjectPointer(ev.mousePosition.x, Screen.height - ev.mousePosition.y);
-
-                    if (ev.delta.y != 0.0f)
-                    {
-                        _uiView.MouseWheel((int)mouse.x, (int)mouse.y, -(int)(ev.delta.y * 40.0f));
-                    }
-
-                    if (ev.delta.x != 0.0f)
-                    {
-                        _uiView.MouseHWheel((int)mouse.x, (int)mouse.y, (int)(ev.delta.x * 40.0f));
-                    }
-                }
-                break;
-            }
-            case EventType.KeyDown:
-            {
-                if (enableKeyboard)
-                {
-                    // Don't process key when IME composition is being used
-                    if (ev.keyCode != KeyCode.None && NoesisUnity.IME.compositionString == "")
-                    {
-                        Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
-                        if (noesisKeyCode != Key.None)
-                        {
-                          #if !UNITY_EDITOR && UNITY_STANDALONE_OSX
-                            // In OSX Standalone, CMD + key always sends two KeyDown events for the key.
-                            // This seems to be a bug in Unity. 
-                            if (!ev.command || lastFrame != Time.frameCount || lastKeyDown != noesisKeyCode)
-                            {
-                                lastFrame = Time.frameCount;
-                                lastKeyDown = noesisKeyCode;
-                          #endif
-                                _uiView.KeyDown(noesisKeyCode);
-                          #if !UNITY_EDITOR && UNITY_STANDALONE_OSX
-                            }
-                          #endif
-                        }
-                    }
-
-                    if (ev.character != 0)
-                    {
-                        // Filter out character events when CTRL is down
-                        bool isControl = (_modifiers & EventModifiers.Control) != 0 || (_modifiers & EventModifiers.Command) != 0;
-                        bool isAlt = (_modifiers & EventModifiers.Alt) != 0;
-                        bool filter = isControl && !isAlt;
-
-                        if (!filter)
-                        {
-                          #if !UNITY_EDITOR && UNITY_STANDALONE_LINUX
-                            // It seems that linux is sending KeySyms instead of Unicode points
-                            // https://github.com/substack/node-keysym/blob/master/data/keysyms.txt
-                            ev.character = NoesisKeyCodes.KeySymToUnicode(ev.character);
-                          #endif
-                            _uiView.Char((uint)ev.character);
-                        }
-                    }
-
-                }
-                break;
-            }
-            case EventType.KeyUp:
-            {
-                // Don't process key when IME composition is being used
-                if (enableKeyboard)
-                {
-                    if (ev.keyCode != KeyCode.None && NoesisUnity.IME.compositionString == "")
-                    {
-                        Key noesisKeyCode = NoesisKeyCodes.Convert(ev.keyCode);
-                        if (noesisKeyCode != Key.None)
-                        {
-                            _uiView.KeyUp(noesisKeyCode);
-                        }
-                    }
-                }
-                break;
-            }
-        }
-    }
-
     private void OnGUI()
     {
         if (_uiView != null && (_camera == null || _activeDisplay == _camera.targetDisplay))
@@ -973,7 +464,7 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
                 UnityEngine.GUI.depth = -(int)_camera.depth;
             }
 
-            ProcessEvent(Event.current, _enableKeyboard, _enableMouse);
+            // ProcessEvent(Event.current, _enableKeyboard, false);
         }
     }
 
@@ -1006,7 +497,7 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
             _viewSizeY = 0;
             _viewScale = 1.0f;
 
-            _uiView = new View(content);
+            _uiView = new NoesisView(content);
             _uiView.SetTessellationMaxPixelError(_tessellationMaxPixelError);
             _uiView.SetEmulateTouch(_emulateTouch);
             _uiView.SetFlags(_renderFlags);
@@ -1015,10 +506,6 @@ public class NoesisMonoRender: MonoBehaviour, ISerializationCallbackReceiver
             NoesisRenderer.RegisterView(_uiView, _commandBuffer);
             Graphics.ExecuteCommandBuffer(_commandBuffer);
             _commandBuffer.Clear();
-
-          #if UNITY_EDITOR
-            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += _destroyView;
-          #endif
         }
     }
 

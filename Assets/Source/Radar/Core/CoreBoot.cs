@@ -32,9 +32,9 @@ namespace Beast.Radar.Core
         
         public async UniTask Boot(IProgressTracker tracker)
         {
-            IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.MainHUD);
-            IWindowHandle<Empty> mapGeneration = _window.GetHandle<Empty>(this, WindowID.MapGeneration);
-            IWindowHandle<LoadingScreenInput> loadingScreen = _window.GetHandle<LoadingScreenInput>(this, WindowID.LoadingScreen);
+            IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.HUD);
+            IWindowHandle<Empty> mapGeneration = _window.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
+            IWindowHandle<LoadingWindowInput> loadingScreen = _window.GetHandle<LoadingWindowInput>(this, WindowID.LOADING);
 
             tracker.Begin(4, 1 - tracker.Progress);
 
@@ -51,22 +51,22 @@ namespace Beast.Radar.Core
                 .AddComponent<GameCycleMono>()
                 .Initialize(_gameCycle);
 
-            if (Build.IS_EDITOR)
-            {
-                await tracker.Next("Loading integrated save");
-            
-                Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
-                _integratedSave.worldData.guid = worldGuid;
-                _integratedSave.gameModel.world = worldGuid;
-                
-                _worldManager.AddWorld(_integratedSave.worldData);
-                
-                await _save.LoadAsync(_integratedSave.gameModel);
-            
-                await mainHUD.Open(default);
-            
-                return;
-            }
+            // if (Build.IS_EDITOR)
+            // {
+            //     await tracker.Next("Loading integrated save");
+            //
+            //     Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
+            //     _integratedSave.worldData.guid = worldGuid;
+            //     _integratedSave.gameModel.world = worldGuid;
+            //     
+            //     _worldManager.AddWorld(_integratedSave.worldData);
+            //     
+            //     await _save.LoadAsync(_integratedSave.gameModel);
+            //
+            //     await mainHUD.Open(default);
+            //
+            //     return;
+            // }
 
             Action nextAction;
 
@@ -93,7 +93,7 @@ namespace Beast.Radar.Core
 
             await tracker.Next("Waiting for player input");
 
-            await loadingScreen.Open(new LoadingScreenInput
+            await loadingScreen.Open(new LoadingWindowInput
             {
                 clearLastProgress = false,
                 currentProgress = 1,

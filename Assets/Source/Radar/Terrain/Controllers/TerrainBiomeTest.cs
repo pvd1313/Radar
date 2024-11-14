@@ -3,8 +3,8 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
+using Beast.Claw.Input;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Input;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -55,7 +55,7 @@ namespace Beast.Radar.Terrain
             
             _gizmo.Clear();
 
-            if (_input.Drag.status == EInputStatus.Inactive)
+            if (_input.Drag.status == EAxisStatus.Inactive)
             {
                 return;
             }

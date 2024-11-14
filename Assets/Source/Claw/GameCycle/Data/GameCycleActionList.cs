@@ -9,7 +9,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.WARMUP,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.OncePerObjectLife,
                 bufferCapacity = 128,
@@ -18,7 +18,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.DISPOSE,
-                order = EActionOrder.FromLastToFirstInjected,
+                order = EActionOrder.FromLastToFirstBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.OncePerObjectLife,
                 bufferCapacity = 128,
@@ -28,7 +28,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.GAME_LOAD,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 32,
@@ -37,7 +37,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.GAME_SAVE,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 32,
@@ -47,7 +47,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.PREFERENCES_LOAD,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 16,
@@ -56,7 +56,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.PREFERENCES_SAVE,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 16,
@@ -66,7 +66,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.TICK,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 128,
@@ -75,7 +75,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.RENDER,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 128,
@@ -84,7 +84,7 @@ namespace Beast.Claw.GameCycle
             new ActionInfo
             {
                 id = ActionID.FIXED_UPDATE,
-                order = EActionOrder.FromFirstToLastInjected,
+                order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
                 frequency = EActionFrequency.EveryTimeEventFired,
                 bufferCapacity = 128,

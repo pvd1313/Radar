@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Reflection;
 
 namespace Beast.Claw.Collection
@@ -13,7 +14,7 @@ namespace Beast.Claw.Collection
         
         public ObjectPoolStructType(int capacity)
         {
-            if (capacity < 0 || capacity > TempConfig.SAFE_CAPACITY)
+            if (capacity < 0 || capacity > Build.SMALL_ARRAY_SAFE_CAPACITY)
             {
                 throw new ArgumentException("Invalid capacity " + capacity);
             }

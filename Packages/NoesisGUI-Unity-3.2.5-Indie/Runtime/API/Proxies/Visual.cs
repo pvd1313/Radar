@@ -30,10 +30,10 @@ public class Visual : DependencyObject {
   protected Visual() {
   }
 
-  public View View {
+  public NoesisView View {
     get {
       IntPtr view = GetViewHelper();
-      return (View)Noesis.Extend.GetProxy(view, false);
+      return (NoesisView)Noesis.Extend.GetProxy(view, false);
     }
   }
 

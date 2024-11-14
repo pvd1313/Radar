@@ -436,7 +436,7 @@ namespace Noesis
             Popup.ResetEvents();
             Timeline.ResetEvents();
             VisualStateGroup.ResetEvents();
-            View.ResetEvents();
+            NoesisView.ResetEvents();
         }
 
         private static void OnElementDestroyed(IntPtr d)

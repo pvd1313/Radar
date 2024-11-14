@@ -1,86 +1,90 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Graphic;
+using Beast.Claw.Input;
 using Beast.Claw.Mathematics;
-using Beast.Radar.Input;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraController : Controller, IGameCycleListener
+    public class CameraController : Controller, IGameCycleListener, IInputConsumer
     {
+        private const EInputAxis INPUT_FLAGS = EInputAxis.Drag | EInputAxis.Zoom;
+        
         private readonly ICameraTransform _transform;
-        private readonly IInputDevice _input;
         private readonly CameraConfig _cameraConfig;
+        private readonly IInputManager _inputManager;
 
         private float2 _dragCameraPosition;
 
-        public CameraController(ICameraTransform transform, IInputDevice input, CameraConfig cameraConfig)
+        public CameraController(
+            ICameraTransform transform, 
+            CameraConfig cameraConfig, 
+            IInputManager inputManager)
         {
             _transform = transform;
-            _input = input;
             _cameraConfig = cameraConfig;
+            _inputManager = inputManager;
         }
         
         public void Register(IGameCycleHandle handle)
         {
-            handle.ListenBlocking(ActionID.TICK, _tick);
+            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
         
-        private void _tick(BlockingContext context)
+        public bool TryCaptureDevice(IInputDevice device, Int32Mask axisMask)
         {
-            if (!_transform.IsReady)
-            {
-                return;
-            }
-
-            _move();
-            _zoom();
+            return _transform.IsReady && axisMask.Intersects((int)INPUT_FLAGS);
         }
 
-        private void _move()
+        public void UpdateInput(IInputDevice device, Int32Mask axisMask)
         {
-            DragInput dragInput = _input.Drag;
-            
-            if (dragInput.status == EInputStatus.Starting)
+            if (axisMask.Intersects((int)EInputAxis.Drag))
             {
-                _dragCameraPosition = _transform.Position;
+                DragAxis drag = device.Drag;
+
+                if (drag.status == EAxisStatus.Starting)
+                {
+                    _dragCameraPosition = _transform.Position;
+                }
+
+                if (drag.status != EAxisStatus.Inactive)
+                {
+                    float2 delta = _transform.ViewportToWorld(drag.startPosition) - 
+                                   _transform.ViewportToWorld(drag.position);
+
+                    _transform.SetPosition(_dragCameraPosition + delta);
+                }
             }
 
-            if (dragInput.status != EInputStatus.Inactive)
+            if (axisMask.Intersects((int)EInputAxis.Zoom))
             {
-                float2 delta = _transform.ViewportToWorld(dragInput.startPosition) - 
-                               _transform.ViewportToWorld(dragInput.position);
+                ZoomAxis zoom = device.Zoom;
+                
+                float2 beforeZoom = _transform.ViewportToWorld(zoom.position);
+            
+                float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
+                float zoomValue = zoom.delta * factor;
 
-                _transform.SetPosition(_dragCameraPosition + delta);
+                float smoothValue = BMath.Lerp(
+                    _transform.Zoom01, 
+                    _transform.Zoom01 + zoomValue, 
+                    _cameraConfig.zoomSmoothSpeed * (1f / 60f)) - _transform.Zoom01;
+            
+                _transform.AddZoom(smoothValue);
+            
+                float2 afterZoom = _transform.ViewportToWorld(zoom.position);
+                _transform.AddPosition(beforeZoom - afterZoom, Space.World);
             }
         }
 
-        private void _zoom()
+        private UniTask _warmup(ConcurrentContext context)
         {
-            ZoomInput zoomInput = _input.Zoom;
+            _inputManager.RegisterConsumer(this, INPUT_FLAGS, InputConsumerPriority.WORLD_MAP);
             
-            if (!zoomInput.isActive)
-            {
-                return;
-            }
-
-            float2 beforeZoom = _transform.ViewportToWorld(zoomInput.position);
-            
-            float factor = BMath.Lerp(1e-4f, 15f, _transform.Zoom01);
-            float zoomValue = zoomInput.delta * factor;
-
-            float smoothValue = BMath.Lerp(
-                _transform.Zoom01, 
-                _transform.Zoom01 + zoomValue, 
-                _cameraConfig.zoomSmoothSpeed * (1f / 60f)) - _transform.Zoom01;
-            
-            _transform.AddZoom(smoothValue);
-            
-            float2 afterZoom = _transform.ViewportToWorld(zoomInput.position);
-            _transform.AddPosition(beforeZoom - afterZoom, Space.World);
+            return UniTask.CompletedTask;
         }
     }
 }

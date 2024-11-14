@@ -10,8 +10,8 @@ using System.Collections.Generic;
 [CustomEditor(typeof(NoesisRive))]
 public class NoesisRiveEditor: Editor
 {
-    private Noesis.View _view;
-    private Noesis.View _viewIcon;
+    private Noesis.NoesisView _view;
+    private Noesis.NoesisView _viewIcon;
     private UnityEngine.Rendering.CommandBuffer _commands;
 
     private static bool IsGL()
@@ -38,12 +38,12 @@ public class NoesisRiveEditor: Editor
         };
     }
 
-    private View CreateView(NoesisRive rive)
+    private NoesisView CreateView(NoesisRive rive)
     {
         try
         {
             FrameworkElement root = GetRoot(rive);
-            View view = Noesis.GUI.CreateView(root);
+            NoesisView view = Noesis.GUI.CreateView(root);
             view.SetFlags(IsGL() ? 0 : RenderFlags.FlipY);
 
             NoesisRenderer.RegisterView(view, _commands);
@@ -65,7 +65,7 @@ public class NoesisRiveEditor: Editor
         {
             Source = new System.Uri(uri, System.UriKind.RelativeOrAbsolute)
         };
-        View view = Noesis.GUI.CreateView(control);
+        NoesisView view = Noesis.GUI.CreateView(control);
 
         _sourceInputs.Clear();
         for (uint i = 0; i < control.GetSourceInputCount(); i++)
@@ -373,7 +373,7 @@ public class NoesisRiveEditor: Editor
         return null;
     }
 
-    private RenderTexture RenderPreview(Noesis.View view, int width, int height)
+    private RenderTexture RenderPreview(Noesis.NoesisView view, int width, int height)
     {
         try
         {

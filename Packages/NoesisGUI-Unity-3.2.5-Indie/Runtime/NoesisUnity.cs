@@ -408,7 +408,7 @@ public class NoesisUnity
             Input.imeCompositionMode = IMECompositionMode.Off;
         }
 
-        static public void Update(Noesis.View view)
+        static public void Update(NoesisView view)
         {
             if (focused != null)
             {
@@ -607,7 +607,7 @@ public class NoesisUnity
     #endregion
 
     #region Cursor management
-    private static void UpdateCursor(View view, Noesis.Cursor cursor)
+    private static void UpdateCursor(NoesisView view, Noesis.Cursor cursor)
     {
         NoesisSettings settings = NoesisSettings.Get();
 

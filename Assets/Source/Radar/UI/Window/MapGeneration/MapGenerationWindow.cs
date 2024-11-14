@@ -69,11 +69,11 @@ namespace Beast.Radar.UI
         {
             _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
-            _windowManager.Register(this, WindowID.MapGeneration);
+            _windowManager.Register(this, WindowID.MAP_GENERATION);
 
             _menuView.transform.SetParent(_windowManager.CanvasTransform, false);
 
-            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.MainHUD);
+            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
 
             _buttonSizes = new()
             {

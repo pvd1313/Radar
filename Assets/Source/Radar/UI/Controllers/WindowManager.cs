@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
         private List<Record> _debugHandleRecords;
         private LegacyCanvasView _canvas;
         
-        private string _currentWindow = WindowID.None;
+        private string _currentWindow = WindowID.NONE;
         
         public WindowManager(EssentialPrefabLibrary library, ICamera camera)
         {
@@ -57,11 +57,6 @@ namespace Beast.Radar.UI
             }
             
             return new Handle<TData>(this, windowID);
-        }
-
-        public bool IsOverUI(float2 viewportPosition)
-        {
-            return _camera.IsPointInsideUI(viewportPosition);
         }
         
         public void Register<TData>(IWindow<TData> window, string windowID) where TData : struct
@@ -114,7 +109,7 @@ namespace Beast.Radar.UI
                 throw new InvalidOperationException(message);
             }
 
-            if (_currentWindow != WindowID.None)
+            if (_currentWindow != WindowID.NONE)
             {
                 try
                 {
@@ -125,7 +120,7 @@ namespace Beast.Radar.UI
                     BDebug.LogException(e);    
                 }
                 
-                _currentWindow = WindowID.None;
+                _currentWindow = WindowID.NONE;
             }
 
             DataContainer<TData> dataContainer = (DataContainer<TData>)windowData.dataContainer;

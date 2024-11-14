@@ -13,7 +13,7 @@ namespace Beast.Claw.GameCycle
         {
             public IController owner;
             public HashSet<object> brokenObjects;
-            public ItemBuffer<Runner.Listener> listeners;
+            public ManagedFixedList<Runner.Listener> listeners;
             public Dictionary<object, int> objectErrorCount;
             public string operationID;
             public int exceptionThreshold;

@@ -11,107 +11,101 @@
  * Attribution is not required, but it is always welcomed!
  * -------------------------------------*/
 
+using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Tayx.Graphy.Utils.NumString
 {
     public static class G_IntString
     {
-        #region Variables -> Private
+        private static string[] _negativeBuffer = Array.Empty<string>();
+        private static string[] _positiveBuffer = Array.Empty<string>();
 
-        /// <summary>
-        /// List of negative ints casted to strings.
-        /// </summary>
-        private static string[] m_negativeBuffer = new string[0];
+        private static bool _allocationReported;
 
-        /// <summary>
-        /// List of positive ints casted to strings.
-        /// </summary>
-        private static string[] m_positiveBuffer = new string[0];
-
-        #endregion
-
-        #region Properties -> Public
-
-        /// <summary>
-        /// The lowest int value of the existing number buffer.
-        /// </summary>
-        public static int MinValue => -(m_negativeBuffer.Length - 1);
-
-        /// <summary>
-        /// The highest int value of the existing number buffer.
-        /// </summary>
-        public static int MaxValue => m_positiveBuffer.Length;
-
-        #endregion
-
-        #region Methods -> Public
-
-        /// <summary>
-        /// Initialize the buffers.
-        /// </summary>
-        /// <param name="minNegativeValue">
-        /// Lowest negative value allowed.
-        /// </param>
-        /// <param name="maxPositiveValue">
-        /// Highest positive value allowed.
-        /// </param>
-        public static void Init( int minNegativeValue, int maxPositiveValue )
+        public static void EnsureRange(int minNegativeValue, int maxPositiveValue)
         {
-            if( MinValue > minNegativeValue && minNegativeValue <= 0 )
+            if (_getMinValue() > minNegativeValue && minNegativeValue <= 0)
             {
-                int length = Mathf.Abs( minNegativeValue );
+                int length = Mathf.Abs(minNegativeValue);
 
-                m_negativeBuffer = new string[length];
+                _negativeBuffer = new string[length];
 
-                for( int i = 0; i < length; i++ )
+                for (int i = 0; i < length; i++)
                 {
-                    m_negativeBuffer[ i ] = (-i - 1).ToString();
+                    _negativeBuffer[i] = (-i - 1).ToString();
                 }
             }
 
-            if( MaxValue < maxPositiveValue && maxPositiveValue >= 0 )
+            if (_positiveBuffer.Length < maxPositiveValue)
             {
-                m_positiveBuffer = new string[maxPositiveValue + 1];
+                _positiveBuffer = new string[maxPositiveValue + 1];
 
-                for( int i = 0; i < maxPositiveValue + 1; i++ )
+                for (int i = 0; i < maxPositiveValue + 1; i++)
                 {
-                    m_positiveBuffer[ i ] = i.ToString();
+                    _positiveBuffer[i] = i.ToString();
                 }
             }
+        }
+
+        private static int _getMinValue()
+        {
+            return -(_negativeBuffer.Length - 1);
         }
 
         public static void Dispose()
         {
-            m_negativeBuffer = new string[0];
-            m_positiveBuffer = new string[0];
+            _negativeBuffer = Array.Empty<string>();
+            _positiveBuffer = Array.Empty<string>();
         }
 
-        /// <summary>
-        /// Returns this int as a cached string.
-        /// </summary>
-        /// <param name="value">
-        /// The required int.
-        /// </param>
-        /// <returns>
-        /// A cached number string if within the buffer ranges.
-        /// </returns>
-        public static string ToStringNonAlloc( this int value )
+        public static string ToIntStringNonAlloc(this float value)
         {
-            if( value < 0 && -value <= m_negativeBuffer.Length )
+            if (float.IsNaN(value))
             {
-                return m_negativeBuffer[ -value - 1 ];
+                return "NaN";
             }
 
-            if( value >= 0 && value < m_positiveBuffer.Length )
+            return ToStringNonAlloc((int)value);
+        }
+        
+        public static string ToIntStringNonAlloc(this double value)
+        {
+            if (double.IsNaN(value))
             {
-                return m_positiveBuffer[ value ];
+                return "NaN";
             }
 
-            // If the value is not within the buffer ranges, just do a normal .ToString()
+            return ToStringNonAlloc((int)value);
+        }
+        
+        public static string ToStringNonAlloc(this short value)
+        {
+            return ToIntStringNonAlloc(value);
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static string ToStringNonAlloc(this int value)
+        {
+            if (value < 0 && -value <= _negativeBuffer.Length)
+            {
+                return _negativeBuffer[value * -1 - 1];
+            }
+
+            if (value >= 0 && value < _positiveBuffer.Length)
+            {
+                return _positiveBuffer[ value];
+            }
+
+            if (!_allocationReported)
+            {
+                _allocationReported = true;
+                
+                Debug.LogError("ToStringNonAlloc() Failed. Not withing range: " + value);
+            }
+            
             return value.ToString();
         }
-
-        #endregion
     }
 }

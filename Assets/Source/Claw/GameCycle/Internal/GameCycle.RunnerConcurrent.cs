@@ -15,7 +15,7 @@ namespace Beast.Claw.GameCycle
             public IController owner;
             public HashSet<object> singleFiredObjects;
             public EActionFrequency frequency;
-            public ItemBuffer<Runner.Listener> listeners;
+            public ManagedFixedList<Runner.Listener> listeners;
             public string operationID;
             public Profiler profiler;
             public ProfilerTreeStringBuilder treeStringBuilder;

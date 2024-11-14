@@ -28,7 +28,7 @@ namespace Beast.Radar.GameTime
         {
             _windowManager.WindowChanged += windowID =>
             {
-                if (windowID == WindowID.MainHUD)
+                if (windowID == WindowID.HUD)
                 {
                     _time.Start();
                 }

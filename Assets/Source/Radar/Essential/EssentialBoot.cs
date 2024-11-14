@@ -50,8 +50,8 @@ namespace Beast.Radar.Essential
         {
             ProgressTracker tracker = new ();
 
-            await _windows.GetHandle<LoadingScreenInput>(this, WindowID.LoadingScreen)
-                .Open(new LoadingScreenInput
+            await _windows.GetHandle<LoadingWindowInput>(this, WindowID.LOADING)
+                .Open(new LoadingWindowInput
                 {
                     progressTracker = tracker,
                     clearLastProgress = true,

@@ -21,6 +21,8 @@ namespace Beast.Claw.Editor
         
         static GameViewScaleSelfResetFix()
         {
+            // Bug seems to be not reproducing anymore. So disabled for now. 
+            
             // try
             // {
             //     CASH = new GameViewReflection();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEditor;

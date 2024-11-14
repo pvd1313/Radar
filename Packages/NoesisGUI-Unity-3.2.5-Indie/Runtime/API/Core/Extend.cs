@@ -752,7 +752,7 @@ namespace Noesis
             AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(PropertyMetadata), PropertyMetadata.CreateProxy));
             AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(Expression), Expression.CreateProxy));
 
-            AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(View), View.CreateProxy));
+            AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(NoesisView), NoesisView.CreateProxy));
             AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(Renderer), Renderer.CreateProxy));
 
             AddNativeType(types[i++], new NativeTypeComponentInfo(NativeTypeKind.Component, typeof(Adorner), Adorner.CreateProxy));
