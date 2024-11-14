@@ -64,7 +64,6 @@ namespace Beast.Radar.UI
                 CityView view = _cityPool.GetNext();
                 view._image.SetSprite(_uiConfig.citySprites[city.size]);
                 view.transform.position = _camera.WorldToScreen(city.position).XY0();
-                view.Enable();
             }
 
             IsReady = true;
