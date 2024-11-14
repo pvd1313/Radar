@@ -10,21 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: TMP_shaders
+  m_Name: Default Local Group
   m_EditorClassIdentifier: 
-  m_GroupName: TMP_shaders
+  m_GroupName: Default Local Group
   m_Data:
     m_SerializedData: []
-  m_GUID: fd948da0e32b44247ae6978b643ffc52
-  m_SerializeEntries:
-  - m_GUID: e9f693669af91aa45ad615fc681ed29f
-    m_Address: Assets/Plugin/TextMesh Pro/Assets/Shaders
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_GUID: eabc7425a1c2fc54abbc54d78f31a2c9
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 9f3e302b835aa37418be16582ae84967, type: 2}
-    - {fileID: 11400000, guid: c17af02bde95ba74faaa0eceeeab7365, type: 2}
+    - {fileID: 11400000, guid: 369bcdb353468b745919425a67513044, type: 2}
+    - {fileID: 11400000, guid: 4ebdeb64c14aeb84884fd27ae48ce720, type: 2}

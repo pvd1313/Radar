@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: TMP_settings
   m_Data:
     m_SerializedData: []
-  m_GUID: 53dc871dc0d38e242a76c935535abfeb
+  m_GUID: d75656d375676094d886037d5a7cc925
   m_SerializeEntries:
   - m_GUID: 5cf1099bb91666241a671c041f359e71
     m_Address: TMP Settings
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 2bc4f977fdc0d254ebe6223d05341f18, type: 2}
-    - {fileID: 11400000, guid: 5f34c6135331c1a4c8485d30e3f30a58, type: 2}
+    - {fileID: 11400000, guid: 0b6533d9c4f48d04282514411fa098fe, type: 2}
+    - {fileID: 11400000, guid: a0d5bbdef79ca2f45abe966c2aa6009b, type: 2}

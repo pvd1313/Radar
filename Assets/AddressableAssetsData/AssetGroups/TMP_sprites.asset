@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: TMP_sprites
   m_Data:
     m_SerializedData: []
-  m_GUID: f946da60d7df08f45a4d78e35026328f
+  m_GUID: 44f567beb1bacb94d8c3435cea054793
   m_SerializeEntries:
   - m_GUID: 26b3ba3ee164bea409fd062705b77d75
     m_Address: Sprites
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 191a95b844a85a34886f4925fed48f56, type: 2}
-    - {fileID: 11400000, guid: d20169c7733e4ae4fa353dd1398820de, type: 2}
+    - {fileID: 11400000, guid: d133a6c423632584cb47748707101fca, type: 2}
+    - {fileID: 11400000, guid: 15d31e5804283ee43a7ebf28be66b45e, type: 2}

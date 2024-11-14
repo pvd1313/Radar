@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Core
   m_Data:
     m_SerializedData: []
-  m_GUID: 3b281e30f811ca04aa003420574f0ee1
+  m_GUID: d7f38c1a48429804bb97b02dc9322a03
   m_SerializeEntries:
   - m_GUID: 5ddebb1b31180f94d8f1457e3a62411a
     m_Address: CoreInstaller
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: e64eeab59ce659b4a994ce3a39177df9, type: 2}
-    - {fileID: 11400000, guid: 2bd88686661da3b4aac6fc1b48d6f136, type: 2}
+    - {fileID: 11400000, guid: d78eaf00176942247a4ee6d102ca5faf, type: 2}
+    - {fileID: 11400000, guid: f2e60430bb83ca842aa295e8d1f0481c, type: 2}
