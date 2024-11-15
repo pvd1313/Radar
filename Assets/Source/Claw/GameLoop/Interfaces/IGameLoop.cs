@@ -15,7 +15,7 @@ namespace Beast.Claw.GameLoop
         
         public IProfiler TryGetProfiler(string operationName);
 
-        UniTask<ActionResult> ExecuteConcurrent(IController owner, string eventID);
+        UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID);
 
         public void ExecuteBlocking(IController owner, string eventID);
 

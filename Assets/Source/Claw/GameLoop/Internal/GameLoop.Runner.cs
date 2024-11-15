@@ -119,7 +119,7 @@ namespace Beast.Claw.GameLoop
                 }
             }
 
-            public async UniTask<ActionResult> ExecuteConcurrent(IController owner)
+            public async UniTask<EActionStatus> ExecuteConcurrent(IController owner)
             {
                 owner.ValidateNotNullThrowException(nameof(owner));
                 
@@ -133,7 +133,7 @@ namespace Beast.Claw.GameLoop
 
                 _maintainListenersList();
 
-                ActionResult result = await new RunnerConcurrent
+                EActionStatus result = await new RunnerConcurrent
                 {
                     owner = owner,
                     profiler = _setupProfiler(),

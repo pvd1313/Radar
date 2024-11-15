@@ -75,9 +75,9 @@ namespace Beast.Radar.Core
             if (saveExists)
             {
                 await tracker.Next("Loading game save");
-                ActionResult result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+                EActionStatus result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
 
-                if (result.IsSuccess())
+                if (result == EActionStatus.Success)
                 {
                     nextAction = () => mainHUD.Open(default);
                 }

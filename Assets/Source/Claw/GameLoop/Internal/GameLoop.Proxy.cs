@@ -43,7 +43,7 @@ namespace Beast.Claw.GameLoop
                 _gameLoop._executeBlocking(owner, eventID);
             }
 
-            public async UniTask<ActionResult> ExecuteConcurrent(IController owner, string eventID)
+            public async UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID)
             {
                 return await _gameLoop._executeConcurrent(owner, eventID);
             }

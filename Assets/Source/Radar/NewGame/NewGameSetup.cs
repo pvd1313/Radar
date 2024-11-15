@@ -52,9 +52,9 @@ namespace Beast.Radar.NewGame
                 world = world.guid
             };
 
-            ActionResult result = await _saveManager.LoadAsync(model);
+            EActionStatus result = await _saveManager.LoadAsync(model);
 
-            if (result.IsSuccess())
+            if (result == EActionStatus.Success)
             {
                 _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             }

@@ -22,9 +22,9 @@ namespace Beast.Claw.GameLoop
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
             
-            public async UniTask<ActionResult> Run()
+            public async UniTask<EActionStatus> Run()
             {
-                ActionResult result = ActionResult.Success();
+                EActionStatus result = EActionStatus.Success;
 
                 bool hasProfiler = profiler != null;
                 
@@ -57,7 +57,7 @@ namespace Beast.Claw.GameLoop
                     {
                         BDebug.LogException(e);
 
-                        return ActionResult.Failed();
+                        return EActionStatus.Failed;
                     }
                     finally
                     {

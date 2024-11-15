@@ -33,7 +33,7 @@ namespace Beast.Radar.Serialization
             return _fileManager.Exists(folderName, fileName);
         }
 
-        public async UniTask<ActionResult> LoadAsync(GameModel model)
+        public async UniTask<EActionStatus> LoadAsync(GameModel model)
         {
             model.ValidateNotNullThrowException(nameof(model));
             
@@ -56,11 +56,11 @@ namespace Beast.Radar.Serialization
             {
                 BDebug.LogException(e);
                 
-                return ActionResult.Failed();
+                return EActionStatus.Failed;
             }
         }
 
-        public async UniTask<ActionResult> LoadAsync(string folderName, string fileName)
+        public async UniTask<EActionStatus> LoadAsync(string folderName, string fileName)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Beast.Radar.Serialization
 
                 binaryReader.Read(_gameModel);
 
-                ActionResult result = await _gameLoop.ExecuteConcurrent(this, ActionID.GAME_LOAD);
+                EActionStatus result = await _gameLoop.ExecuteConcurrent(this, ActionID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
@@ -80,7 +80,7 @@ namespace Beast.Radar.Serialization
             {
                 BDebug.LogException(e);
                 
-                return ActionResult.Failed();
+                return EActionStatus.Failed;
             }
         }
 

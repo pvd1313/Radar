@@ -88,7 +88,7 @@ namespace Beast.Claw.GameLoop
             _isRegisteringListeners = false;
         }
 
-        private async UniTask<ActionResult> _executeConcurrent(IController owner, string eventID) 
+        private async UniTask<EActionStatus> _executeConcurrent(IController owner, string eventID) 
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
