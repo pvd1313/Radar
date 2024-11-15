@@ -51,22 +51,22 @@ namespace Beast.Radar.Core
                 .AddComponent<GameLoopMono>()
                 .Initialize(_gameLoop);
 
-            // if (Build.IS_EDITOR)
-            // {
-            //     await tracker.Next("Loading integrated save");
-            //
-            //     Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
-            //     _integratedSave.worldData.guid = worldGuid;
-            //     _integratedSave.gameModel.world = worldGuid;
-            //     
-            //     _worldManager.AddWorld(_integratedSave.worldData);
-            //     
-            //     await _save.LoadAsync(_integratedSave.gameModel);
-            //
-            //     await mainHUD.Open(default);
-            //
-            //     return;
-            // }
+            if (Build.IS_EDITOR)
+            {
+                await tracker.Next("Loading integrated save");
+            
+                Guid worldGuid = Guid.Parse(_integratedSave.worldGuid);
+                _integratedSave.worldData.guid = worldGuid;
+                _integratedSave.gameModel.world = worldGuid;
+                
+                _worldManager.AddWorld(_integratedSave.worldData);
+                
+                await _save.LoadAsync(_integratedSave.gameModel);
+            
+                await mainHUD.Open(default);
+            
+                return;
+            }
 
             Action nextAction;
 
