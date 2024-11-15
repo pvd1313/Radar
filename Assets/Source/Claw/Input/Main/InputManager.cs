@@ -7,17 +7,12 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input
 {
-    public class InputManager : Controller, IInputManager, IGameLoopListener
+    public class InputManager : Actor, IInputManager
     {
         private List<ConsumerInfo> _consumers;
         private Int32Mask _validFlags;
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
 
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _consumers = new List<ConsumerInfo>(8);
             

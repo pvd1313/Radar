@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class PlayerViewController : Controller, IGameLoopListener 
+    public class PlayerViewController : Actor
     {
         private readonly ICameraTransform _camera;
         private readonly IPlayerController _player;
@@ -19,14 +19,8 @@ namespace Beast.Radar.UI
             _camera = camera;
             _player = player;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenBlocking(ActionID.TICK, _tick);
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
-        
-        private UniTask _warmup(ConcurrentContext arg)
+
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _view.Instance.target.gameObject.SetActive(false);
             
@@ -47,7 +41,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private void _tick(BlockingContext blockingContext)
+        protected override void _tick(BlockingContext blockingContext)
         {
             if (_player.IsReady)
             {

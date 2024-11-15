@@ -4,6 +4,7 @@ using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
+using Unity.Collections;
 
 namespace Beast.Claw.GameLoop
 {
@@ -12,54 +13,55 @@ namespace Beast.Claw.GameLoop
         private struct RunnerBlocking
         {
             public IController owner;
-            public HashSet<object> brokenObjects;
-            public ManagedFixedList<Runner.Listener> listeners;
-            public Dictionary<object, int> objectErrorCount;
+            public ManagedFixedList<Runner.Actor> allActors;
+            public NativeHashMap<int, int> actorErrorCounters;
             public string operationID;
             public int exceptionThreshold;
             public bool exceptionStopsExecution;
-            public bool allLogicIsBroken;
             public Profiler profiler;
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
             public ProfilerTreeStringBuilder treeStringBuilder;
+            public NativeFixedList<short> passedActors;
             
             public void Run()
             {
-                bool hasBrokenLogic = brokenObjects.Count > 0;
+                passedActors.ResetCount();
 
                 bool hasProfiler = profiler != null;
                 string listenerName = null;
                 Profiler.Handle handle = default;
 
-                for (int i = 0; i < listeners.Count; i++)
+                for (int actorIndex = 0; actorIndex < allActors.Count; actorIndex++)
                 {
-                    Runner.Listener listener = listeners[i];
-                    
-                    if (hasBrokenLogic && brokenObjects.Contains(listener.target))
-                    {
-                        continue;
-                    }
+                    Runner.Actor actor = allActors[actorIndex];
                     
                     if (hasProfiler)
                     {
-                        handle = profiler.GetHandle(listener.target);
-                        listenerName = listener.target.Meta.name;
+                        handle = profiler.GetHandle(actor.target);
+                        listenerName = actor.target.Meta.name;
                         handle.BeginSample(listenerName);
                     }
 
                     try
                     {
                         BlockingContext context = default;
-                        listener.blocking.Invoke(context);
+
+                        actor.blocking.Invoke(context);
+
+                        passedActors.Add((short)actorIndex);
+                    }
+                    catch (SubscriptionCancelledException)
+                    {
+                        
                     }
                     catch (Exception e)
                     {
-                        ProcessException(e, listener, out bool canContinue);
+                        ProcessException(e, actor, actorIndex, out bool canContinue);
 
                         if (!canContinue)
                         {
-                            allLogicIsBroken = true;
+                            passedActors.ResetCount();
 
                             break;
                         }
@@ -87,26 +89,36 @@ namespace Beast.Claw.GameLoop
                 }
             }
             
-            private void ProcessException(Exception e, Runner.Listener listener, out bool canContinueExecution)
+            private void ProcessException(
+                Exception e, 
+                Runner.Actor actor,
+                int actorIndex,
+                out bool allIsBroken)
             {
                 BDebug.LogException(e);
-            
-                objectErrorCount.TryGetValue(listener.target, out int errorCount);
+
+                int actorGuid = actor.target.Meta.guid;
+                
+                actorErrorCounters.TryGetValue(actorGuid, out int errorCount);
                 errorCount++;
-                objectErrorCount[listener.target] = errorCount;
-            
-                if (errorCount > exceptionThreshold)
+                actorErrorCounters[actor.target.Meta.guid] = errorCount;
+
+                if (errorCount <= exceptionThreshold)
                 {
-                    brokenObjects.Add(listener.target);
-                }
-            
-                if (exceptionStopsExecution)
-                {
-                    canContinueExecution = false;
+                    passedActors.Add((short)actorIndex);
                 }
                 else
                 {
-                    canContinueExecution = true;
+                    actorErrorCounters.Remove(actorGuid);
+                }
+
+                if (exceptionStopsExecution)
+                {
+                    allIsBroken = false;
+                }
+                else
+                {
+                    allIsBroken = true;
                 }
             }
         }

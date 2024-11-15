@@ -9,7 +9,7 @@ using Random = System.Random;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainFbmRender : Controller, ITerrainFbmRender, IGameLoopListener
+    public class TerrainFbmRender : Actor, ITerrainFbmRender
     {
         private readonly GraphicLibrary _graphicLibrary;
 
@@ -19,14 +19,8 @@ namespace Beast.Radar.Terrain
         {
             _graphicLibrary = graphicLibrary;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
-        
-        private UniTask _warmup(ConcurrentContext context)
+
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _material = BGraphic.CreateMaterial(this, _graphicLibrary.terrain.fbmRender);
             
@@ -56,8 +50,8 @@ namespace Beast.Radar.Terrain
                 shaderPass = 0
             });
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             BGraphic.TryDispose(ref _material);
         }

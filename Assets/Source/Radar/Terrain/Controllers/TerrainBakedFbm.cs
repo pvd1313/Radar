@@ -12,7 +12,7 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedFbm : Controller, ITerrainBakedFbm, IGameLoopListener
+    public class TerrainBakedFbm : Actor, ITerrainBakedFbm
     {
         public bool IsReady { get; private set; }
         public Texture Texture => _texture;
@@ -32,15 +32,8 @@ namespace Beast.Radar.Terrain
             _config = config;
             _worldManager = worldManager;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
 
-        private UniTask _gameLoad(ConcurrentContext context)
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             WorldData world = _worldManager.GetCurrentWorld();
             TerrainData terrain = world.terrain;
@@ -122,8 +115,8 @@ namespace Beast.Radar.Terrain
 
             return UniTask.CompletedTask;
         }
-        
-        private void _gameSave(BlockingContext context)
+
+        protected override void _gameSave(BlockingContext context)
         {
             WorldData world = _worldManager.GetCurrentWorld();
 
@@ -137,7 +130,7 @@ namespace Beast.Radar.Terrain
             writer.WriteNativeBytesAndLength(_texture.GetPixelData<byte>(0));
         }
 
-        private void _dispose(BlockingContext context)
+        protected override void _dispose(BlockingContext context)
         {
             IsReady = false;
 

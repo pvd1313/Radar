@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransformController : Controller, IGameLoopListener, IInputConsumer
+    public class CameraTransformController : Actor, IInputConsumer
     {
         public EInputAxis SupportedAxis => EInputAxis.Drag | EInputAxis.Zoom;
         
@@ -29,9 +29,11 @@ namespace Beast.Radar.Cinematic
             _inputManager = inputManager;
         }
         
-        public void Register(IGameLoopHandle handle)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
+            _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP);
+            
+            return UniTask.CompletedTask;
         }
         
         public bool TryCaptureAxis(PackedAxis axis)
@@ -78,13 +80,6 @@ namespace Beast.Radar.Cinematic
                 float2 afterZoom = _transform.ViewportToWorld(zoom.position);
                 _transform.AddPosition(beforeZoom - afterZoom, Space.World);
             }
-        }
-
-        private UniTask _warmup(ConcurrentContext context)
-        {
-            _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP);
-            
-            return UniTask.CompletedTask;
         }
     }
 }

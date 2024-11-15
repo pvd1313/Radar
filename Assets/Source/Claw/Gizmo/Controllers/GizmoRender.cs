@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Claw.Gizmo
 {
-    public class GizmoRender : Controller, IGizmoManager, IGameLoopListener
+    public class GizmoRender : Actor, IGizmoManager
     {
         private struct HandleInfo
         {
@@ -51,13 +51,6 @@ namespace Beast.Claw.Gizmo
             _config = config;
         }
         
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.RENDER, _render);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
-        
         public IGizmoHandle CreateHandle(IController owner)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
@@ -72,8 +65,8 @@ namespace Beast.Claw.Gizmo
 
             return info.handle;
         }
-        
-        private UniTask _warmup(ConcurrentContext context)
+
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             Texture2DParameters textureData = new()
             {
@@ -107,7 +100,7 @@ namespace Beast.Claw.Gizmo
             return UniTask.CompletedTask;
         }
 
-        private void _render(BlockingContext context)
+        protected override void _render(BlockingContext context)
         {
             if (!_canvasSize.Equals(_screen.Size))
             {
@@ -261,8 +254,8 @@ namespace Beast.Claw.Gizmo
             
             Profiler.EndSample();
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             BGraphic.Dispose(_canvas);
 

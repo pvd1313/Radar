@@ -24,6 +24,8 @@ namespace Beast.Claw.Collection
 
         public void Add(TValue value)
         {
+            _array.ValidateIsCreated();
+            
             if (_count >= _array.Length)
             {
                 _array[_first] = value;
@@ -39,10 +41,8 @@ namespace Beast.Claw.Collection
         {
             get
             {
-                if (index < 0 || index >= _count)
-                {
-                    throw new IndexOutOfRangeException();
-                }
+                index.ValidateArrayIndex(_count);
+                _array.ValidateIsCreated();
                 
                 index = (_first + index) % _array.Length;
 

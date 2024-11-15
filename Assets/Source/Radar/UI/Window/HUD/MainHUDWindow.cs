@@ -8,7 +8,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class MainHUDWindow : Controller, IWindow<Empty>, IGameLoopListener
+    public class MainHUDWindow : Actor, IWindow<Empty>
     {
         private readonly PlayerPreferences _preferences;
         private readonly CorePrefabLibrary _library;
@@ -36,11 +36,6 @@ namespace Beast.Radar.UI
             _player = player;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
-
         public UniTask Open(Empty data)
         {
             _view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
@@ -57,7 +52,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _windowManager.Register(this, WindowID.HUD);
 

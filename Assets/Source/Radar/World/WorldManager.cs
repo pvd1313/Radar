@@ -13,7 +13,7 @@ using Profiler = UnityEngine.Profiling.Profiler;
 
 namespace Beast.Radar.World
 {
-    public class WorldManager : Controller, IWorldManager, IGameLoopListener
+    public class WorldManager : Actor, IWorldManager
     {
         private const string ROOT_FILE_NAME = "all";
         private const string POSTFIX = ".";
@@ -31,12 +31,6 @@ namespace Beast.Radar.World
         {
             _fileManager = fileManager;
             _game = game;
-        }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
         }
 
         public void Clean()
@@ -91,7 +85,7 @@ namespace Beast.Radar.World
             return world;
         }
 
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _worlds = new Dictionary<Guid, WorldData>();
             _guidToStringDictionary = new Dictionary<Guid, string>();
@@ -148,8 +142,8 @@ namespace Beast.Radar.World
 
             return text;
         }
-        
-        private void _gameSave(BlockingContext context)
+
+        protected override void _gameSave(BlockingContext context)
         {
             if (!_isDirty)
             {

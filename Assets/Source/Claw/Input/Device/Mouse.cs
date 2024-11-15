@@ -213,7 +213,7 @@ namespace Beast.Claw.Input
         
         public void Dispose(BlockingContext context)
         {
-            _rawTouches.Dispose();
+            _rawTouches.SafeDispose();
         }
     }
 }

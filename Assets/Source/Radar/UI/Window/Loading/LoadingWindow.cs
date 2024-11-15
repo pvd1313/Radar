@@ -9,7 +9,7 @@ using Noesis;
 
 namespace Beast.Radar.UI
 {
-    public class LoadingWindow : Controller, IWindow<LoadingWindowInput>, IGameLoopListener, IProgressTrackerListener
+    public class LoadingWindow : Actor, IWindow<LoadingWindowInput>, IProgressTrackerListener
     {
         private readonly EssentialPrefabLibrary _library;
         private readonly LoadingWindowConfig _config;
@@ -32,11 +32,6 @@ namespace Beast.Radar.UI
             _config = config;
             _windows = windows;
             _legacy = legacy;
-        }
-
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
         
         public UniTask Open(LoadingWindowInput input)
@@ -89,8 +84,8 @@ namespace Beast.Radar.UI
 
             _view.textLog.Text = _stringBuilder.ToString();
         }
-        
-        private UniTask _warmup(ConcurrentContext context)
+
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _intToString = new IntToStringConverter(99);
             _stringBuilder = new StringBuilder();

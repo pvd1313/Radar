@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Debug
 {
-    public class DebugController : Controller, IDebugController, IGameLoopListener
+    public class DebugController : Actor, IDebugController
     {
         private readonly DebugPrefabLibrary _library;
         private readonly DebugPreferences _preferences;
@@ -21,13 +21,8 @@ namespace Beast.Radar.Debug
             _preferences = preferences;
             _resources = resources;
         }
-    
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             UniTask.Create(async () =>
             {

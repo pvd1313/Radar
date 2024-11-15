@@ -11,15 +11,9 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
-    public class ResourceManager : Controller, IResourceManager, IGameLoopListener
+    public class ResourceManager : Actor, IResourceManager
     {
         private List<AssetReference> _loadedAssets;
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
 
         public async UniTask<TObject> LoadAsset<TObject>(IController owner, IAddress<TObject> address)
             where TObject : Object
@@ -124,15 +118,15 @@ namespace Beast.Claw.Resources
 
             return handle.Task.Result;
         }
-        
-        private UniTask _warmup(ConcurrentContext context)
+
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _loadedAssets = new List<AssetReference>(256);
 
             return UniTask.CompletedTask;
         }
 
-        private void _dispose(BlockingContext context)
+        protected override void _dispose(BlockingContext context)
         {
             // Technically this is required only for Editor.
             // Without it some assets may can junked upon load (DebugLogConsole).

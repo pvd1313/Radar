@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.GameTime
 {
-    public class GameTimeStateController : Controller, IGameLoopListener
+    public class GameTimeStateController : Actor
     {
         private readonly IPlayerController _player;
         private readonly IGameTime _time;
@@ -19,12 +19,7 @@ namespace Beast.Radar.GameTime
             _windowManager = windowManager;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);   
-        }
-
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _windowManager.WindowChanged += windowID =>
             {

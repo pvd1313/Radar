@@ -4,95 +4,97 @@ namespace Beast.Claw.GameLoop
 {
     public class GameLoopActionList
     {
-        public List<ActionInfo> All { get; } = new()
+        private const int BUFFER_CAPACITY = 128;
+        
+        public List<ActionProperties> All { get; } = new()
         {
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.WARMUP,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
-                frequency = EActionFrequency.OncePerObjectLife,
-                bufferCapacity = 128,
+                frequency = EActionFrequency.OncePerActorLife,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true,
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.DISPOSE,
                 order = EActionOrder.FromLastToFirstBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.OncePerObjectLife,
-                bufferCapacity = 128,
+                frequency = EActionFrequency.OncePerActorLife,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.GAME_LOAD,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 32,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.GAME_SAVE,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 32,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.PREFERENCES_LOAD,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Concurrent,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 16,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true,
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.PREFERENCES_SAVE,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 16,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = true
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.TICK,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = false
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.RENDER,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = false
             },
             
-            new ActionInfo
+            new ActionProperties
             {
                 id = ActionID.FIXED_UPDATE,
                 order = EActionOrder.FromFirstToLastBinded,
                 flow = EActionFlowType.Blocking,
-                frequency = EActionFrequency.EveryTimeEventFired,
-                bufferCapacity = 128,
+                frequency = EActionFrequency.EachTimeEventFired,
+                bufferCapacity = BUFFER_CAPACITY,
                 flushProfilerToConsole = false,
             }
         };

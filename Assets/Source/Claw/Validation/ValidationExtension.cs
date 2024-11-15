@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Claw
@@ -41,6 +43,16 @@ namespace Beast.Claw
 
         [Conditional("DEVELOPMENT")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateArrayIndex(this int arrayIndex, int maxItemCount)
+        {
+            if (arrayIndex < 0 || arrayIndex >= maxItemCount)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        [Conditional("DEVELOPMENT")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ValidateNotEmptyOrNullThrowException(this string text, string argumentName)
         {
             if (string.IsNullOrEmpty(text))
@@ -48,15 +60,14 @@ namespace Beast.Claw
                 throw new ValidationException($"'{argumentName}' can not be null or empty.");
             }
         }
-        
+
         [Conditional("DEVELOPMENT")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidateComponentsBiggerThanZeroThrowException(this int2 vector, string argumentName)
+        public static void ValidateIsCreated<T>(this NativeArray<T> array) where T : unmanaged
         {
-            if (vector.x <= 0 || vector.y <= 0)
+            if (!array.IsCreated)
             {
-                string message = $"'{argumentName}' components must be bigger than zero, but was: {vector}.";
-                throw new ValidationException(message);
+                throw new ValidationException("Array is disposed or was not created");
             }
         }
 

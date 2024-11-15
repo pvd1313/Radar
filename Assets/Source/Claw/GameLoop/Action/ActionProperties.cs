@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.GameLoop
 {
-    public struct ActionInfo : IValidatable
+    public struct ActionProperties : IValidatable
     {
         public EActionFlowType flow;
         public EActionFrequency frequency;

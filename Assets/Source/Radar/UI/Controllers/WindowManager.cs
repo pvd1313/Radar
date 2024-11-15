@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public partial class WindowManager : Controller, IWindowManager, IGameLoopListener
+    public partial class WindowManager : Actor, IWindowManager
     {
         public event Action<string> WindowChanged;
 
@@ -33,12 +33,6 @@ namespace Beast.Radar.UI
         {
             _library = library;
             _camera = camera;
-        }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
         }
         
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
@@ -83,8 +77,8 @@ namespace Beast.Radar.UI
                 windowID = windowID
             };
         }
-        
-        private UniTask _warmup(ConcurrentContext context)
+
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _idToWindow = new Dictionary<string, WindowData>(64);
 
@@ -146,8 +140,8 @@ namespace Beast.Radar.UI
 
             await UniTask.NextFrame();
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             if (Build.IS_DEVELOPMENT)
             {

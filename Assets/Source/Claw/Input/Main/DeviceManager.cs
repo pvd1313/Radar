@@ -9,7 +9,7 @@ using UnityInput = UnityEngine.Input;
 
 namespace Beast.Claw.Input
 {
-    public class DeviceManager : Controller, IDeviceManager, IGameLoopListener
+    public class DeviceManager : Actor, IDeviceManager
     {
         public IInputDevice ActiveDevice => _activeDevice;
 
@@ -34,15 +34,8 @@ namespace Beast.Claw.Input
             _inputManager = inputManager;
             _runtime = runtime;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.TICK, _tick);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
 
-        private async UniTask _warmup(ConcurrentContext context)
+        protected override async UniTask _warmup(ConcurrentContext context)
         {
             UnityInput.gyro.enabled = false;
             UnityInput.compass.enabled = false;
@@ -64,8 +57,8 @@ namespace Beast.Claw.Input
 
             _deviceSwitchLogic();
         }
-        
-        private void _tick(BlockingContext context)
+
+        protected override void _tick(BlockingContext context)
         {
             _deviceSwitchLogic();
 
@@ -109,8 +102,8 @@ namespace Beast.Claw.Input
                 _activeDevice.Activate();
             }
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             _mouse.Dispose(context);
             _touchScreen.Dispose(context);

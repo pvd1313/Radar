@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainColorRender : Controller, IGameLoopListener, ITerrainColorRender
+    public class TerrainColorRender : Actor, ITerrainColorRender
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
@@ -30,13 +30,6 @@ namespace Beast.Radar.Terrain
             _library = library;
             _biomeRender = biomeRender;
             _camera = camera;
-        }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-            handle.ListenBlocking(ActionID.RENDER, _render);
         }
         
         public void Render(TerrainColorRenderTask task)
@@ -60,14 +53,14 @@ namespace Beast.Radar.Terrain
             BGraphic.Dispose(material);
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _materialForCamera = BGraphic.CreateMaterial(this, _library.terrain.colorRender);
             
             return UniTask.CompletedTask;
         }
-        
-        private void _render(BlockingContext context)
+
+        protected override void _render(BlockingContext context)
         {
             if (!_biomeRender.IsReady || !_camera.IsReady)
             {
@@ -147,8 +140,8 @@ namespace Beast.Radar.Terrain
                 BGraphic.DisposeTempBuffer(commandBuffer);
             }
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             BGraphic.TryDispose(ref _materialForCamera);
         }

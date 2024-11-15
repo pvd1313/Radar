@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainTileRender : Controller, IGameLoopListener
+    public class TerrainTileRender : Actor
     {
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
@@ -44,15 +44,8 @@ namespace Beast.Radar.Terrain
             _config = config;
             _atlas = _library.terrain.atlas.data;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-            handle.ListenBlocking(ActionID.RENDER, _render);
-        }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _tileRenderMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileRender);
             _tileSolverMaterial = BGraphic.CreateMaterial(this, _library.terrain.tileSolver);
@@ -63,8 +56,8 @@ namespace Beast.Radar.Terrain
 
             return UniTask.CompletedTask;
         }
-        
-        private void _render(BlockingContext context)
+
+        protected override void _render(BlockingContext context)
         {
             if (!_terrainBiome.IsReady)
             {
@@ -210,6 +203,14 @@ namespace Beast.Radar.Terrain
         {
             return gridSize.x * gridSize.y + (gridSize.x - 1) * (gridSize.y - 1);
         }
+
+        protected override void _dispose(BlockingContext context)
+        {
+            BGraphic.TryDispose(ref _tileBlitMaterial);
+            BGraphic.TryDispose(ref _tileSolverMaterial);
+            BGraphic.TryDispose(ref _tileRenderMaterial);
+            BGraphic.TryDispose(ref _tileToScreenBuffer);
+        }
         
         private void _debugTrack()
         {
@@ -218,14 +219,6 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_gridSize), _gridSize);
             BDebug.Track(this, nameof(_blitTextureAlpha01), _blitTextureAlpha01);
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
-        }
-
-        private void _dispose(BlockingContext context)
-        {
-            BGraphic.TryDispose(ref _tileBlitMaterial);
-            BGraphic.TryDispose(ref _tileSolverMaterial);
-            BGraphic.TryDispose(ref _tileRenderMaterial);
-            BGraphic.TryDispose(ref _tileToScreenBuffer);
         }
     }
 }

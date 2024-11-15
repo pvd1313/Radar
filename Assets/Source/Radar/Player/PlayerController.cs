@@ -20,10 +20,11 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : Controller, IPlayerController, IGameLoopListener
+    public class PlayerController : Actor, IPlayerController
     {
         public event Action ChangeMovementState;
         public event Action ChangeTarget;
+        
         public bool IsReady { get; private set; }
         public float2 Position { get; private set; }
         public float2 Target { get; private set; }
@@ -69,22 +70,13 @@ namespace Beast.Radar.Player
             _gizmoManager = gizmoManager;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.TICK, _tick);
-            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
-
         public void SwitchMovement()
         {
             IsMovement = !IsMovement;
             ChangeMovementState?.Invoke();
         }
 
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _halfTexelSize = 1f / WorldTransform.CellTileCount / 2.0f;
 
@@ -117,7 +109,7 @@ namespace Beast.Radar.Player
             return UniTask.CompletedTask;
         }
 
-        private UniTask _gameLoad(ConcurrentContext arg)
+        protected override UniTask _gameLoad(ConcurrentContext arg)
         {
             Position = _gameModel.player.position;
 
@@ -132,14 +124,14 @@ namespace Beast.Radar.Player
             return UniTask.CompletedTask;
         }
 
-        private void _gameSave(BlockingContext obj)
+        protected override void _gameSave(BlockingContext obj)
         {
             _gameModel.player.position = _worldToIndex(Position);
         }
 
         private int _currentPathCell;
 
-        private void _tick(BlockingContext obj)
+        protected override void _tick(BlockingContext obj)
         {
             _followClick();
 
@@ -294,8 +286,8 @@ namespace Beast.Radar.Player
         {
             return (int2)BMath.Floor(worldPosition * WorldTransform.CellTileCount);
         }
-        
-        private void _dispose(BlockingContext obj)
+
+        protected override void _dispose(BlockingContext obj)
         {
             if (_path.IsCreated)
             {

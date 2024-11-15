@@ -10,14 +10,14 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class NoesisWindowManager : Controller, INoesisWindowManager, IGameLoopListener
+    public class NoesisWindowManager : Actor, INoesisWindowManager
     {
         private readonly EssentialPrefabLibrary _library;
         private readonly ICamera _camera;
         private readonly IScreen _screen;
         private readonly IInputManager _inputManager;
 
-        private NoesisMonoRender _render;
+        private NoesisMonoRender _noesisRender;
         private CanvasView _canvas;
         private Grid _grid;
         private NoesisInputConsumer _inputConsumer;
@@ -33,13 +33,8 @@ namespace Beast.Radar.UI
             _screen = screen;
             _inputManager = inputManager;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
-        
-        private UniTask _warmup(ConcurrentContext arg)
+
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _library.canvasXaml.Instantiate(out _canvas);
             _grid = _canvas.grid;

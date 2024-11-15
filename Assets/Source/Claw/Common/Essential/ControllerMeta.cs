@@ -5,7 +5,7 @@
         private static int _nextID;
         
         public string name;
-        public int id;
+        public int guid;
 
         public static ControllerMeta Create(object owner)
         {
@@ -14,14 +14,14 @@
                 return new ControllerMeta
                 {
                     name = owner.GetType().FullName,
-                    id = _nextID++
+                    guid = _nextID++
                 };
             }
 
             return new ControllerMeta
             {
                 name = "Controller",
-                id = _nextID++
+                guid = _nextID++
             };
         }
     }

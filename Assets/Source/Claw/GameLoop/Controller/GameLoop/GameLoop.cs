@@ -41,7 +41,7 @@ namespace Beast.Claw.GameLoop
             _runners = new Dictionary<string, Runner>();
             _operationIds = new List<string>(input.actions.Count);
 
-            foreach (ActionInfo operation in input.actions)
+            foreach (ActionProperties operation in input.actions)
             {
                 _runners[operation.id] = new Runner(_config, operation);
                 _operationIds.Add(operation.id);
@@ -54,7 +54,7 @@ namespace Beast.Claw.GameLoop
             
             Handle handle = new (this);
             
-            List<IGameLoopListener> listeners = _container.TryResolve<List<IGameLoopListener>>();
+            List<IGameLoopActor> listeners = _container.TryResolve<List<IGameLoopActor>>();
             
             if (listeners == null)
             {
@@ -68,7 +68,7 @@ namespace Beast.Claw.GameLoop
 
             for (int i = _listenerCount; i < listeners.Count; i++)
             {
-                IGameLoopListener subscriber = listeners[i];
+                IGameLoopActor subscriber = listeners[i];
                 
                 try
                 {

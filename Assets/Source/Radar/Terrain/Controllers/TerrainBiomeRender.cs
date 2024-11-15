@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBiomeRender : Controller, ITerrainBiomeRender, IGameLoopListener
+    public class TerrainBiomeRender : Actor, ITerrainBiomeRender
     {
         private struct RenderResult
         {
@@ -57,14 +57,6 @@ namespace Beast.Radar.Terrain
             _camera = camera;
             _config = config;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.RENDER, _render);
-        }
 
         public void Render(TerrainBiomeRenderTask task)
         {
@@ -80,7 +72,7 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.biomeRender);
 
@@ -99,15 +91,15 @@ namespace Beast.Radar.Terrain
 
             return UniTask.CompletedTask;
         }
-        
-        private UniTask _gameLoad(ConcurrentContext context)
+
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             _renderResult.renderPosition = new float2(float.MaxValue, float.MaxValue);
 
             return UniTask.CompletedTask;
         }
 
-        private void _render(BlockingContext context)
+        protected override void _render(BlockingContext context)
         {
             if (!_bakedTerrain.IsReady || !_camera.IsReady)
             {
@@ -222,8 +214,8 @@ namespace Beast.Radar.Terrain
             material.SetKeyword("NOISE_SAMPLER_LOD_1", lodInt == 1);
             material.SetFloat("_NoiseSamplerLOD", lod);
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             _isReady = false;
 

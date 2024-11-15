@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.GameLoop
 {
-    public interface IGameLoopListener : IController
+    public interface IGameLoopActor : IController
     {
         void Register(IGameLoopHandle handle);
     }

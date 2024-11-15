@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class WorldViewInstance : Controller, IWorldViewInstance, IGameLoopListener
+    public class WorldViewInstance : Actor, IWorldViewInstance
     {
         public WorldView Instance { get; private set; }
         
@@ -16,12 +16,7 @@ namespace Beast.Radar.UI
             _prefabLibrary = prefabLibrary;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);    
-        }
-
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             Instance = BScene.InstantiateMono(this, _prefabLibrary.worldView, float3.zero, quaternion.identity);
 

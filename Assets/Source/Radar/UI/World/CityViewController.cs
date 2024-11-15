@@ -10,7 +10,7 @@ using UnityEngine.Device;
 
 namespace Beast.Radar.UI
 {
-    public class CityViewController : Controller, IGameLoopListener, IReady
+    public class CityViewController : Actor, IReady
     {
         public bool IsReady { get; private set; }
 
@@ -41,14 +41,7 @@ namespace Beast.Radar.UI
             _uiConfig = uiConfig;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.TICK, _tick);
-        }
-
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _screenSize = new int2(Screen.width, Screen.height);
 
@@ -57,7 +50,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask _gameLoad(ConcurrentContext arg)
+        protected override UniTask _gameLoad(ConcurrentContext arg)
         {
             foreach (CityInfo city in _citySpawner.Cities)
             {
@@ -70,7 +63,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private void _tick(BlockingContext obj)
+        protected override void _tick(BlockingContext obj)
         {
             if (!IsReady)
             {

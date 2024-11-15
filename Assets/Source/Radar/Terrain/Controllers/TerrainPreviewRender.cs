@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
@@ -30,8 +31,16 @@ namespace Beast.Radar.Terrain
             where TOwner: class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
-            pixelSize.ValidateComponentsBiggerThanZeroThrowException(nameof(pixelSize));
 
+            if (Build.IS_DEVELOPMENT)
+            {
+                if (pixelSize.x <= 0 || pixelSize.y <= 0)
+                {
+                    string message = $"'{nameof(pixelSize)}' components must be bigger than zero, but was: {pixelSize}.";
+                    throw new ValidationException(message);
+                }
+            }
+            
             RenderTextureData bakerData = _config.terrain.fbmRenderTexture.WithSize(pixelSize);
             RenderTextureData biomeData = _config.terrain.biomeRenderTexture.WithSize(pixelSize);
             RenderTextureData colorData = _config.terrain.colorTexture.WithSize(pixelSize);

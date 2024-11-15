@@ -268,7 +268,7 @@ namespace Beast.Claw.Input
         private void _fetchRawTouches()
         {
             _touchCount = UnityInput.touchCount;
-            _rawTouches.Clear();
+            _rawTouches.ResetCount();
 
             for (int i = 0; i < _touchCount && i < MAX_TOUCH_COUNT; i++)
             {
@@ -302,7 +302,7 @@ namespace Beast.Claw.Input
         
         public void Dispose(BlockingContext context)
         {
-            _rawTouches.Dispose();
+            _rawTouches.SafeDispose();
         }
     }
 }

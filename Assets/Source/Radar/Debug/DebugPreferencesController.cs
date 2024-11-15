@@ -8,7 +8,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Debug
 {
-    public class DebugPreferencesController : Controller, IGameLoopListener
+    public class DebugPreferencesController : Actor
     {
         private readonly IFileManager _fileManager;
         private readonly DebugPreferences _preferences;
@@ -18,14 +18,8 @@ namespace Beast.Radar.Debug
             _fileManager = fileManager;
             _preferences = preferences;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.PREFERENCES_LOAD, _preferencesLoad);
-            handle.ListenBlocking(ActionID.PREFERENCES_SAVE, _preferencesSave);
-        }
 
-        private UniTask _preferencesLoad(ConcurrentContext context)
+        protected override UniTask _preferencesLoad(ConcurrentContext context)
         {
             bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
             if (!fileExists)
@@ -48,8 +42,8 @@ namespace Beast.Radar.Debug
 
             return UniTask.CompletedTask;
         }
-        
-        private void _preferencesSave(BlockingContext context)
+
+        protected override void _preferencesSave(BlockingContext context)
         {
             using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
 

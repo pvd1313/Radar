@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Common
 {
-    public class Runtime : Controller, IGameLoopListener, IRuntime
+    public class Runtime : Actor, IRuntime
     {
         private const float SIMULATOR_FETCH_RATE_SEC = 1;
         
@@ -16,20 +16,14 @@ namespace Beast.Claw.Common
 
         private DateTime _simulatorWindowLastFetchTime;
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.TICK, _tick);
-        }
-        
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _simulatorWindow = new UnityEditorSimulatorWindow();
             
             return UniTask.CompletedTask;
         }
 
-        private void _tick(BlockingContext obj)
+        protected override void _tick(BlockingContext obj)
         {
             _simulatorWindowFetch();
         }

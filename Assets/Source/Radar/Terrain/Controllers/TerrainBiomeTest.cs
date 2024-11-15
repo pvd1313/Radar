@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBiomeTest : Controller, IGameLoopListener
+    public class TerrainBiomeTest : Actor
     {
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _biome;
@@ -33,21 +33,14 @@ namespace Beast.Radar.Terrain
             _deviceManager = deviceManager;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenBlocking(ActionID.RENDER, _render);
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
-
-        private UniTask _warmup(ConcurrentContext arg)
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
             _gizmo = _gizmoManager.CreateHandle(this);
             
             return UniTask.CompletedTask;
         }
 
-        private void _render(BlockingContext context)
+        protected override void _render(BlockingContext context)
         {
             if (!_biome.IsReady)
             {
@@ -98,8 +91,8 @@ namespace Beast.Radar.Terrain
             
             BDebug.Track(this, "Biome_8KM", biomeIndex.ToString());
         }
-        
-        private void _dispose(BlockingContext context)
+
+        protected override void _dispose(BlockingContext context)
         {
             _gizmo.Dispose();
         }

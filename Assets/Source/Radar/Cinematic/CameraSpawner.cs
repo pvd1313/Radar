@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraSpawner : Controller, IGameLoopListener, ICamera
+    public class CameraSpawner : Actor, ICamera
     {
         public Camera Camera => _camera;
         
@@ -20,13 +20,8 @@ namespace Beast.Radar.Cinematic
         {
             _library = library;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-        }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono
             (

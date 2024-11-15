@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class DebugMenuWindow : Controller, IWindow<Empty>, IGameLoopListener
+    public class DebugMenuWindow : Actor, IWindow<Empty>
     {
         private readonly DebugPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
@@ -33,12 +33,6 @@ namespace Beast.Radar.UI
             _debugController = debugController;
             _resources = resources;
         }
-
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
         
         public async UniTask Open(Empty data)
         {
@@ -62,7 +56,7 @@ namespace Beast.Radar.UI
             _panelsController.Disable();
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _windowManager.Register(this, WindowID.DEBUG);
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
@@ -117,12 +111,6 @@ namespace Beast.Radar.UI
 
         private void _unsubscribeInput()
         {
-        }
-
-        private void _dispose(BlockingContext context)
-        {
-            _unsubscribeView();
-            _unsubscribeInput();
         }
 
         private void _closeWindow()
@@ -217,6 +205,12 @@ namespace Beast.Radar.UI
                 new() { type = EItemType.Eat, name = "corn", weight = 0.4f },
                 new() { type = EItemType.Eat, name = "grapes", weight = 0.3f }
             };
+        }
+        
+        protected override void _dispose(BlockingContext context)
+        {
+            _unsubscribeView();
+            _unsubscribeInput();
         }
     }
 }

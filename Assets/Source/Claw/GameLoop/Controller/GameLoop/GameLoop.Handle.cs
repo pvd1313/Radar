@@ -45,7 +45,7 @@ namespace Beast.Claw.GameLoop
                     }
                 }
                 
-                runner.AddListener(new Runner.Listener
+                runner.AddActor(new Runner.Actor
                 {
                     target = currentListener,
                     concurrent = action
@@ -80,7 +80,7 @@ namespace Beast.Claw.GameLoop
                     }
                 }
                 
-                runner.AddListener(new Runner.Listener
+                runner.AddActor(new Runner.Actor
                 {
                     target = currentListener,
                     blocking = action

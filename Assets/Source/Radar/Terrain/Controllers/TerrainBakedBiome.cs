@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedBiome : Controller, ITerrainBackedBiome, IGameLoopListener
+    public class TerrainBakedBiome : Actor, ITerrainBackedBiome
     {
         private const int MAP_1KM_BLOCK_SIZE = 128;
 
@@ -38,14 +38,8 @@ namespace Beast.Radar.Terrain
             _biomeRender = biomeRender;
             _graphicConfig = graphicConfig;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
 
-        private UniTask _gameLoad(ConcurrentContext context)
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
             
@@ -101,8 +95,8 @@ namespace Beast.Radar.Terrain
             
             return UniTask.CompletedTask;
         }
-        
-        private void _dispose(BlockingContext obj)
+
+        protected override void _dispose(BlockingContext obj)
         {
             IsReady = false;
             

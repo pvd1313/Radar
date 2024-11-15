@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class PauseMenuWindow : Controller, IWindow<Empty>, IGameLoopListener
+    public class PauseMenuWindow : Actor, IWindow<Empty>
     {
         private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
@@ -29,11 +29,6 @@ namespace Beast.Radar.UI
             _windowManager = windowManager;
             _saveManager = saveManager;
             _playerPreferences = playerPreferences;
-        }
-
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }
 
         public UniTask Open(Empty data)
@@ -58,7 +53,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _view = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
             _view.gameObject.SetActive(false);

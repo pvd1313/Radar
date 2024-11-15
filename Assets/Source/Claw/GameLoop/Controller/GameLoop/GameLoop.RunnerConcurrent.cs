@@ -15,35 +15,39 @@ namespace Beast.Claw.GameLoop
             public IController owner;
             public HashSet<object> singleFiredObjects;
             public EActionFrequency frequency;
-            public ManagedFixedList<Runner.Listener> listeners;
+            public ManagedFixedList<Runner.Actor> allActors;
             public string operationID;
             public Profiler profiler;
             public ProfilerTreeStringBuilder treeStringBuilder;
+            public NativeFixedList<short> passedActors;
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
             
             public async UniTask<EActionStatus> Run()
             {
                 EActionStatus result = EActionStatus.Success;
+                
+                passedActors.ResetCount();
 
                 bool hasProfiler = profiler != null;
                 
                 Profiler.Handle handle = default;
                 string listenerName = null;
 
-                for (int i = 0; i < listeners.Count; i++)
+                for (int actorIndex = 0; actorIndex < allActors.Count; actorIndex++)
                 {
-                    Runner.Listener listener = listeners[i];
-                    if (frequency == EActionFrequency.OncePerObjectLife &&
-                        !singleFiredObjects.Add(listener.target))
+                    Runner.Actor actor = allActors[actorIndex];
+                    
+                    if (frequency == EActionFrequency.OncePerActorLife &&
+                        !singleFiredObjects.Add(actor.target))
                     {
                         continue;
                     }
 
                     if (hasProfiler)
                     {
-                        handle = profiler.GetHandle(listener.target);
-                        listenerName = listener.target.Meta.name;
+                        handle = profiler.GetHandle(actor.target);
+                        listenerName = actor.target.Meta.name;
                         handle.BeginSample(listenerName);
                     }
 
@@ -51,7 +55,13 @@ namespace Beast.Claw.GameLoop
                     {
                         ConcurrentContext context = default;
 
-                        await listener.concurrent.Invoke(context);
+                        await actor.concurrent.Invoke(context);
+
+                        passedActors.Add((short)actorIndex);
+                    }
+                    catch (SubscriptionCancelledException)
+                    {
+                        
                     }
                     catch (Exception e)
                     {

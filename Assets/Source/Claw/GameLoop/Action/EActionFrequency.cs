@@ -3,7 +3,7 @@
     public enum EActionFrequency
     {
         Invalid,
-        EveryTimeEventFired,
-        OncePerObjectLife
+        EachTimeEventFired,
+        OncePerActorLife
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Beast.Radar.GameTime
 {
-    public class GameTimeController : Controller, IGameTime, IGameLoopListener
+    public class GameTimeController : Actor, IGameTime
     {
         public event Action MinuteChanged;
         
@@ -27,26 +27,19 @@ namespace Beast.Radar.GameTime
             _gameModel = gameModel;
             _playerStateMultiplier = _config.idleTimeScale;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.TICK, _tick);
-            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
-        }
 
-        private UniTask _gameLoad(ConcurrentContext context)
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             _gameTimeSpan = TimeSpan.FromMinutes(_gameModel.timeMinutes);
             return UniTask.CompletedTask;
         }
 
-        private void _gameSave(BlockingContext context)
+        protected override void _gameSave(BlockingContext context)
         {
             _gameModel.timeMinutes = (ulong)BMath.Floor(_gameTimeSpan.TotalMinutes);
         }
 
-        private void _tick(BlockingContext context)
+        protected override void _tick(BlockingContext context)
         {
             if (_isPause)
             {

@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransform : Controller, IGameLoopListener, ICameraTransform
+    public class CameraTransform : Actor, ICameraTransform
     {
         public bool IsReady { get; private set; }
         public float2 Position => (float2)_position;
@@ -45,15 +45,8 @@ namespace Beast.Radar.Cinematic
             _game = game;
             _worldManager = worldManager;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);
-        }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;
             
@@ -68,7 +61,7 @@ namespace Beast.Radar.Cinematic
             return UniTask.CompletedTask;
         }
 
-        private UniTask _gameLoad(ConcurrentContext context)
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             _position = _game.camera.position;
 
@@ -81,8 +74,8 @@ namespace Beast.Radar.Cinematic
 
             return UniTask.CompletedTask;
         }
-        
-        private void _gameSave(BlockingContext context)
+
+        protected override void _gameSave(BlockingContext context)
         {
             _game.camera.position = (float2)_position;
             _game.camera.zoom01 = _zoom01;

@@ -67,13 +67,7 @@ namespace Beast.Radar.Terrain
 
         public TValue GetPixelClamped(int2 worldPosition)
         {
-            if (Build.IS_DEVELOPMENT)
-            {
-                if (!texture.IsCreated)
-                {
-                    throw new ObjectDisposedException("TextureWithBlocks");
-                }
-            }
+            texture.ValidateIsCreated();
             
             worldPosition.x = BMath.Clamp(worldPosition.x, 0, blockSize * blockCountX - 1);
             worldPosition.y = BMath.Clamp(worldPosition.y, 0, blockSize * blockCountX - 1);
@@ -101,12 +95,10 @@ namespace Beast.Radar.Terrain
 
         public void Dispose()
         {
-            if (!texture.IsCreated)
+            if (texture.IsCreated)
             {
-                return;
+                texture.Dispose();
             }
-            
-            texture.Dispose();
         }
     }
 }

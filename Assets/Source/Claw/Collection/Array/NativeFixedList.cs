@@ -7,8 +7,9 @@ namespace Beast.Claw.Collection
     /// <summary>
     /// Native list with fixed buffer size.
     /// </summary>
-    public struct NativeFixedList<T> : IDisposable where T : unmanaged
+    public struct NativeFixedList<T> where T : unmanaged
     {
+        public bool IsCreated => _array.IsCreated;
         public int Count => _count;
         
         private NativeArray<T> _array;
@@ -34,39 +35,26 @@ namespace Beast.Claw.Collection
         {
             get
             {
-                if (Build.IS_DEVELOPMENT)
-                {
-                    if (index < 0 || index > _count)
-                    {
-                        throw new IndexOutOfRangeException(GetType().FullName);
-                    }
-                }
+                index.ValidateArrayIndex(_count);
+                _array.ValidateIsCreated();
                 
                 return _array[index];
             }
             set
             {
-                if (Build.IS_DEVELOPMENT)
-                {
-                    if (index < 0 || index > _count)
-                    {
-                        throw new IndexOutOfRangeException(GetType().FullName);
-                    }
-                }
-
+                index.ValidateArrayIndex(_count);
+                _array.ValidateIsCreated();
+                
                 _array[index] = value;
             }
         }
 
         public void Add(T value)
         {
+            _array.ValidateIsCreated();
+            
             if (Build.IS_DEVELOPMENT)
             {
-                if (!_array.IsCreated)
-                {
-                    throw new ObjectDisposedException(GetType().FullName);
-                }
-                
                 if (_count >= _array.Length)
                 {
                     throw new OutOfMemoryException(GetType().FullName);
@@ -78,7 +66,7 @@ namespace Beast.Claw.Collection
             _count++;
         }
 
-        public void Clear()
+        public void ResetCount()
         {
             _count = 0;
         }
@@ -88,7 +76,7 @@ namespace Beast.Claw.Collection
             return _array.Slice(0, _count);
         }
 
-        public void Dispose()
+        public void SafeDispose()
         {
             if (_array.IsCreated)
             {

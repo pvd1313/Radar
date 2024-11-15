@@ -19,7 +19,7 @@ using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class CitySpawner : Controller, ICitySpawner, IGameLoopListener
+    public class CitySpawner : Actor, ICitySpawner
     {
         public NativeList<CityInfo> Cities => _cities;
         
@@ -41,22 +41,15 @@ namespace Beast.Radar.City
             _biome = biome;
             _worldManager = worldManager;
         }
-        
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _gizmo = _gizmoManager.CreateHandle(this);
             
             return UniTask.CompletedTask;
         }
 
-        private UniTask _gameLoad(ConcurrentContext context)
+        protected override UniTask _gameLoad(ConcurrentContext context)
         {
             TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
 
@@ -166,8 +159,8 @@ namespace Beast.Radar.City
             BDebug.Track(this, "Major", majorCount);
             BDebug.Track(this, "Minor", minorCount);
         }
-        
-        private void _dispose(BlockingContext obj)
+
+        protected override void _dispose(BlockingContext context)
         {
             if (_cities.IsCreated)
             {

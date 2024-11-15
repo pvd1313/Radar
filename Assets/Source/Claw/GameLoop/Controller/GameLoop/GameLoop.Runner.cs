@@ -4,6 +4,7 @@ using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
+using Unity.Collections;
 
 namespace Beast.Claw.GameLoop
 {
@@ -11,7 +12,7 @@ namespace Beast.Claw.GameLoop
     {
         private class Runner
         {
-            public struct Listener
+            public struct Actor
             {
                 public Action<BlockingContext> blocking;
                 public Func<ConcurrentContext, UniTask> concurrent;
@@ -20,76 +21,73 @@ namespace Beast.Claw.GameLoop
 
             public Profiler Profiler => _profiler;
 
-            public ActionInfo Operation => _operation;
+            public ActionProperties Operation => _operation;
             
             private readonly GameLoopConfig _config;
+            private readonly ActionProperties _operation;
 
-            private readonly HashSet<object> _singleFireObjects;
-            private readonly HashSet<object> _duplicateSubscriptionListeners;
-            private readonly ActionInfo _operation;
-            private readonly Dictionary<object, int> _blockingLogicCounters;
-            private readonly HashSet<object> _blockingBrokenLogic;
-
-            private ManagedFixedList<Listener> _listeners;
-            private ManagedFixedList<Listener> _lastToFirstTempBuffer;
-            private bool _blockingLogicAllBroken;
+            private HashSet<object> _singleFireActors;
+            private HashSet<object> _duplicateSubscriptionActors;
+            private NativeHashMap<int, int> _errorCounters;
+            private ManagedFixedList<Actor> _allActors;
+            private ManagedFixedList<Actor> _lastToFirstBuffer;
+            private NativeFixedList<short> _passedActorBuffer;
             private ProfilerTreeStringBuilder _treeBuilder;
             private Profiler _profiler;
 
-            public Runner(GameLoopConfig config, ActionInfo operationInfo)
+            public Runner(GameLoopConfig config, ActionProperties operationProperties)
             {
                 config.ValidateNotNullThrowException(nameof(config));
-                operationInfo.ValidateThrowException(nameof(operationInfo));
+                operationProperties.ValidateThrowException(nameof(operationProperties));
                 
                 _config = config;
-                _operation = operationInfo;
+                _operation = operationProperties;
 
-                if (_operation.frequency == EActionFrequency.OncePerObjectLife)
+                if (_operation.frequency == EActionFrequency.OncePerActorLife)
                 {
-                    _singleFireObjects = new HashSet<object>(_operation.bufferCapacity);
+                    _singleFireActors = new HashSet<object>(_operation.bufferCapacity);
                 }
 
                 if (_operation.flow == EActionFlowType.Blocking)
                 {
-                    _blockingLogicCounters = new Dictionary<object, int>(_operation.bufferCapacity);
-                    _blockingBrokenLogic = new HashSet<object>(_operation.bufferCapacity);
+                    _errorCounters = new NativeHashMap<int, int>(_operation.bufferCapacity, Allocator.Persistent);
                 }
 
-                if (operationInfo.order == EActionOrder.FromLastToFirstBinded)
+                if (operationProperties.order == EActionOrder.FromLastToFirstBinded)
                 {
-                    _lastToFirstTempBuffer = new ManagedFixedList<Listener>(_operation.bufferCapacity);
+                    _lastToFirstBuffer = new ManagedFixedList<Actor>(_operation.bufferCapacity);
                 }
                 
-                _listeners = new ManagedFixedList<Listener>(_operation.bufferCapacity);
+                _allActors = new ManagedFixedList<Actor>(_operation.bufferCapacity);
+                _passedActorBuffer = new NativeFixedList<short>(_operation.bufferCapacity, Allocator.Persistent);
 
                 if (Build.IS_DEVELOPMENT)
                 {
-                    _duplicateSubscriptionListeners = new HashSet<object>(_operation.bufferCapacity);
+                    _duplicateSubscriptionActors = new HashSet<object>(_operation.bufferCapacity);
                 }
             }
 
-            public void AddListener(Listener listener)
+            public void AddActor(Actor actor)
             {
-                listener.target.ValidateNotNullThrowException("listener.target");
+                actor.target.ValidateNotNullThrowException("actor.target");
 
                 if (Build.IS_DEVELOPMENT)
                 {
-                    if (!_duplicateSubscriptionListeners.Add(listener.target))
+                    if (!_duplicateSubscriptionActors.Add(actor.target))
                     {
-                        string message =
-                            $"'{listener.target.GetType().FullName}' is already listening to '{_operation.id}'";
-                        throw new InvalidOperationException(message);
+                        throw new InvalidOperationException($"'{actor.target.Meta.name}' " +
+                                                            $"is already listening to '{_operation.id}'");
                     }
                 }
 
                 switch (_operation.flow)
                 {
                     case EActionFlowType.Blocking:
-                        listener.blocking.ValidateNotNullThrowException("listener.blocking");
+                        actor.blocking.ValidateNotNullThrowException("actor.blocking");
                         break;
                         
                     case EActionFlowType.Concurrent:
-                        listener.concurrent.ValidateNotNullThrowException("listener.concurrent");
+                        actor.concurrent.ValidateNotNullThrowException("actor.concurrent");
                         break;
                 }
 
@@ -97,25 +95,25 @@ namespace Beast.Claw.GameLoop
                 {
                     if (Build.IS_DEVELOPMENT)
                     {
-                        if (_listeners.Count >= _operation.bufferCapacity)
+                        if (_allActors.Count >= _operation.bufferCapacity)
                         {
-                            throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                            throw new OutOfMemoryException("Not enough capacity to store all actors");
                         }
                     }
                     
-                    _listeners.Add(listener);
+                    _allActors.Add(actor);
                 }
                 else
                 {
                     if (Build.IS_DEVELOPMENT)
                     {
-                        if (_listeners.Count + _lastToFirstTempBuffer.Count >= _operation.bufferCapacity)
+                        if (_allActors.Count + _lastToFirstBuffer.Count >= _operation.bufferCapacity)
                         {
-                            throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                            throw new OutOfMemoryException("Not enough capacity to store all actors");
                         }
                     }
 
-                    _lastToFirstTempBuffer.Add(listener);
+                    _lastToFirstBuffer.Add(actor);
                 }
             }
 
@@ -131,20 +129,26 @@ namespace Beast.Claw.GameLoop
                     }
                 }
 
-                _maintainListenersList();
+                _maintainActorMainList();
 
-                EActionStatus result = await new RunnerConcurrent
+                RunnerConcurrent runner = new ()
                 {
                     owner = owner,
                     profiler = _setupProfiler(),
                     treeStringBuilder = _treeBuilder,
-                    singleFiredObjects = _singleFireObjects,
+                    singleFiredObjects = _singleFireActors,
                     operationID = _operation.id,
-                    listeners = _listeners,
+                    allActors = _allActors,
                     frequency = _operation.frequency,
                     flushProfilerToConsole = _operation.flushProfilerToConsole,
-                    enableClawProfiling = _config.profiler.customProfilingEnabled
-                }.Run();
+                    enableClawProfiling = _config.profiler.customProfilingEnabled,
+                    passedActors = _passedActorBuffer
+                };
+
+                EActionStatus result = await runner.Run();
+
+                _passedActorBuffer = runner.passedActors;
+                _checkoutPassedActors();
 
                 return result;
             }
@@ -159,40 +163,57 @@ namespace Beast.Claw.GameLoop
                     }
                 }
 
-                if (_blockingLogicAllBroken)
-                {
-                    return;
-                }
-
-                _maintainListenersList();
+                _maintainActorMainList();
 
                 RunnerBlocking runner = new()
                 {
                     profiler = _setupProfiler(),
-                    listeners = _listeners,
+                    allActors = _allActors,
                     exceptionStopsExecution = _config.exceptionStopsUpdates,
                     exceptionThreshold = _config.updateExceptionThreshold,
                     operationID = _operation.id,
-                    brokenObjects = _blockingBrokenLogic,
-                    objectErrorCount = _blockingLogicCounters,
+                    actorErrorCounters = _errorCounters,
                     enableClawProfiling = _config.profiler.customProfilingEnabled,
                     flushProfilerToConsole = _operation.flushProfilerToConsole, 
                     treeStringBuilder = _treeBuilder,
-                    owner = owner
+                    passedActors = _passedActorBuffer,
+                    owner = owner,
                 };
                 
                 runner.Run();
 
-                _blockingLogicAllBroken = runner.allLogicIsBroken;
+                _passedActorBuffer = runner.passedActors;
+                _checkoutPassedActors();
+            }
+            
+            private void _checkoutPassedActors()
+            {
+                if (_allActors.Count == _passedActorBuffer.Count)
+                {
+                    return;
+                }
+
+                ManagedFixedList<Actor> newBuffer = new(_operation.bufferCapacity);
+
+                for (int i = 0; i < _passedActorBuffer.Count; i++)
+                {
+                    int oldIndex = _passedActorBuffer[i];
+                    
+                    newBuffer.Add(_allActors[oldIndex]);
+                }
+
+                _allActors = newBuffer;
+                
+                _passedActorBuffer.ResetCount();
             }
 
-            private void _maintainListenersList()
+            private void _maintainActorMainList()
             {
                 if (_operation.order == EActionOrder.FromLastToFirstBinded && 
-                    _lastToFirstTempBuffer.Count > 0)
+                    _lastToFirstBuffer.Count > 0)
                 {
-                    _listeners.InsertItemsAtZeroInReverseOrder(_lastToFirstTempBuffer);
-                    _lastToFirstTempBuffer.Clear();
+                    _allActors.InsertItemsAtZeroInReverseOrder(_lastToFirstBuffer);
+                    _lastToFirstBuffer.ResetCount();
                 }
             }
 
@@ -221,18 +242,21 @@ namespace Beast.Claw.GameLoop
             
             public void Dispose()
             {
-                if (_lastToFirstTempBuffer.IsInitialized)
-                {
-                    _lastToFirstTempBuffer = default;
-                }
+                _lastToFirstBuffer = default;
+                _allActors = default;
 
-                if (_listeners.IsInitialized)
+                _passedActorBuffer.SafeDispose();
+
+                if (_errorCounters.IsCreated)
                 {
-                    _listeners = default;
+                    _errorCounters.Dispose();
                 }
                 
                 _profiler?.Dispose();
                 _profiler = null;
+
+                _singleFireActors = null;
+                _duplicateSubscriptionActors = null;
             }
         }
     }

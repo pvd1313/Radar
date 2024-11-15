@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
-    public class MapGenerationWindow : Controller, IWindow<Empty>, IGameLoopListener
+    public class MapGenerationWindow : Actor, IWindow<Empty>
     {
         private readonly IWindowManager _windowManager;
         private readonly MapGenerationWindowConfig _generationConfig;
@@ -41,12 +41,6 @@ namespace Beast.Radar.UI
             _library = library;
         }
 
-        public void Register(IGameLoopHandle handle)
-        {
-            handle.ListenConcurrent(ActionID.WARMUP, _warmup);
-            handle.ListenBlocking(ActionID.DISPOSE, _dispose);
-        }
-
         public UniTask Open(Empty data)
         {
             _configureView();
@@ -65,7 +59,7 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
-        private UniTask _warmup(ConcurrentContext context)
+        protected override UniTask _warmup(ConcurrentContext context)
         {
             _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
             _hideView();
@@ -213,7 +207,7 @@ namespace Beast.Radar.UI
             _menuView.mapImage.texture = _terrainTexture.color;
         }
 
-        private void _dispose(BlockingContext context)
+        protected override void _dispose(BlockingContext context)
         {
             _unsubscribeView();
 

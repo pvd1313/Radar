@@ -6,7 +6,7 @@ namespace Beast.Claw.GameLoop
     {
         private static readonly HashSet<string> ACTION_NAMES = new();
         
-        public List<ActionInfo> actions;
+        public List<ActionProperties> actions;
         
         public string Validate()
         {
@@ -19,16 +19,16 @@ namespace Beast.Claw.GameLoop
 
             for (int i = 0; i < actions.Count; i++)
             {
-                ActionInfo operationInfo = actions[i];
+                ActionProperties operationProperties = actions[i];
                 
-                if (!operationInfo.IsValid(out string error))
+                if (!operationProperties.IsValid(out string error))
                 {
                     return $"Invalid operation at index {i}: " + error;
                 }
 
-                if (!ACTION_NAMES.Add(operationInfo.id))
+                if (!ACTION_NAMES.Add(operationProperties.id))
                 {
-                    return $"Duplicated operation id '{operationInfo.id}'";
+                    return $"Duplicated operation id '{operationProperties.id}'";
                 }
             }
 
