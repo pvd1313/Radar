@@ -1,8 +1,6 @@
-﻿using Beast.Claw.Collection;
-using Beast.Claw.Common;
-using Beast.Claw.Graphic;
+﻿using Beast.Claw.Common;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -43,6 +41,8 @@ namespace Beast.Claw.Gizmo
             AddPoint(position, POINT_PIXEL_SIZE);
         }
         
+        // In the future we will probably create NativeBinaryStream,
+        // so we will have to forget about this byte boilerplate.
         public void AddPoint(float2 position, float pixelSize)
         {
             _ensureCapacity(shapeCount + 1);

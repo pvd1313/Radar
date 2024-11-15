@@ -1,8 +1,7 @@
 ﻿using System;
 using Beast.Claw.Attributes;
 using Beast.Claw.Attributes.Annotation;
-using Beast.Claw.Mathematics;
-using Unity.Mathematics;
+using Beast.Claw.Math;
 using UnityEditor;
 using UnityEngine;
 

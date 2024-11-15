@@ -72,11 +72,14 @@ namespace Beast.Claw.GameCycle
             {
                 listener.target.ValidateNotNullThrowException("listener.target");
 
-                if (Build.IS_DEVELOPMENT && !_duplicateSubscriptionListeners.Add(listener.target))
+                if (Build.IS_DEVELOPMENT)
                 {
-                    string message =
-                        $"'{listener.target.GetType().FullName}' is already listening to '{_operation.id}'";
-                    throw new InvalidOperationException(message);
+                    if (!_duplicateSubscriptionListeners.Add(listener.target))
+                    {
+                        string message =
+                            $"'{listener.target.GetType().FullName}' is already listening to '{_operation.id}'";
+                        throw new InvalidOperationException(message);
+                    }
                 }
 
                 switch (_operation.flow)
@@ -92,18 +95,24 @@ namespace Beast.Claw.GameCycle
 
                 if (_operation.order == EActionOrder.FromFirstToLastBinded)
                 {
-                    if (Build.IS_DEVELOPMENT && _listeners.Count >= _operation.bufferCapacity)
+                    if (Build.IS_DEVELOPMENT)
                     {
-                        throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                        if (_listeners.Count >= _operation.bufferCapacity)
+                        {
+                            throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                        }
                     }
                     
                     _listeners.Add(listener);
                 }
                 else
                 {
-                    if (Build.IS_DEVELOPMENT && _listeners.Count + _lastToFirstTempBuffer.Count >= _operation.bufferCapacity)
+                    if (Build.IS_DEVELOPMENT)
                     {
-                        throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                        if (_listeners.Count + _lastToFirstTempBuffer.Count >= _operation.bufferCapacity)
+                        {
+                            throw new OutOfMemoryException("Not enough capacity to store all listeners");
+                        }
                     }
 
                     _lastToFirstTempBuffer.Add(listener);
@@ -114,9 +123,12 @@ namespace Beast.Claw.GameCycle
             {
                 owner.ValidateNotNullThrowException(nameof(owner));
                 
-                if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Concurrent)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    throw new InvalidOperationException("Invalid flow type");
+                    if (_operation.flow != EActionFlowType.Concurrent)
+                    {
+                        throw new InvalidOperationException("Invalid flow type");
+                    }
                 }
 
                 _maintainListenersList();
@@ -139,9 +151,12 @@ namespace Beast.Claw.GameCycle
 
             public void ExecuteBlocking(IController owner)
             {
-                if (Build.IS_DEVELOPMENT && _operation.flow != EActionFlowType.Blocking)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    throw new InvalidOperationException("Invalid flow type");
+                    if (_operation.flow != EActionFlowType.Blocking)
+                    {
+                        throw new InvalidOperationException("Invalid flow type");
+                    }
                 }
 
                 if (_blockingLogicAllBroken)

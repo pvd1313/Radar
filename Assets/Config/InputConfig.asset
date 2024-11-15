@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b941cd9dec954a259d1d16326b318895, type: 3}
   m_Name: InputConfig
   m_EditorClassIdentifier: 
-  touch:
+  touchScreen:
     discreteZoomMultiplier: 20
     continuousZoomMultiplier: 1
-    useDiscreteZoom: 0
+    useDiscreteZoom: 1
   mouse:
     zoomMultiplier: 2

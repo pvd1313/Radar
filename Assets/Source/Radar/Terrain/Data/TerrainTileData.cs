@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain

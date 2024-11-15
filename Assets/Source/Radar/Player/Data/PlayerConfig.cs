@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 
 namespace Beast.Radar.Player

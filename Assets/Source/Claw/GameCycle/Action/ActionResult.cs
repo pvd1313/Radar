@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-
-namespace Beast.Claw.GameCycle
+﻿namespace Beast.Claw.GameCycle
 {
     public struct ActionResult
     {

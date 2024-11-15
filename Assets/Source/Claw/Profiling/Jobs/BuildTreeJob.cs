@@ -1,5 +1,5 @@
-using System;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -48,7 +48,7 @@ namespace Beast.Claw.Profiling
                 code = ETreeBuildCode.Unknown
             };
             _code = ETreeBuildCode.Unknown;
-            _stackMax = Math.Min(parentStack.Length, siblingStack.Length);
+            _stackMax = BMath.Min(parentStack.Length, siblingStack.Length);
             
             for (int i = 0; i < inRecordCount; i++)
             {

@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Editor.Drawers;
 using Beast.Claw.Editor.Fields;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Editor

@@ -64,9 +64,12 @@ namespace Beast.Radar.UI
             window.ValidateNotNullThrowException(nameof(window));
             windowID.ValidateNotEmptyOrNullThrowException(nameof(windowID));
 
-            if (Build.IS_DEVELOPMENT && _idToWindow.ContainsKey(windowID))
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new InvalidOperationException($"Window with '{windowID}' is already registered");
+                if (_idToWindow.ContainsKey(windowID))
+                {
+                    throw new InvalidOperationException($"Window with '{windowID}' is already registered");
+                }
             }
 
             DataContainer<TData> dataContainer = new ();
@@ -102,11 +105,13 @@ namespace Beast.Radar.UI
                 throw new InvalidOperationException($"Window with id '{windowID}' was not found.");
             }
 
-            if (Build.IS_DEVELOPMENT && typeof(TData) != windowData.dataType)
+            if (Build.IS_DEVELOPMENT)
             {
-                string message = $"Expected '{windowData.dataType.FullName}' data type to open '{windowID}', " +
-                                 $"but got '{typeof(TData).FullName}'";
-                throw new InvalidOperationException(message);
+                if (typeof(TData) != windowData.dataType)
+                {
+                    throw new InvalidOperationException($"Expected '{windowData.dataType.FullName}' data type to " +
+                                                        $"open '{windowID}', but got '{{typeof(TData).FullName}}'");
+                }
             }
 
             if (_currentWindow != WindowID.NONE)

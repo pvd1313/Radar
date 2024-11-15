@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using UnityEngine.Profiling;
 
 namespace Beast.Claw.Serialization

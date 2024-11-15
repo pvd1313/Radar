@@ -9,34 +9,34 @@ namespace Beast.Claw.Editor
     {
         private const BindingFlags INSTANCE_PRIVATE = BindingFlags.Instance | BindingFlags.NonPublic; 
 
-        private Type _type_PlayModeWindow;
-        private Type _type_ZoomableArea;
-        private EditorWindow _window_PlayModeWindow;
-        private FieldInfo _field_PlayModeWindow_zoomArea;
-        private FieldInfo _field_ZoomableArea_Scale;
+        private Type _playModeWindowType;
+        private Type _zoomableAreaType;
+        private EditorWindow _playModeWindow;
+        private FieldInfo _playModeWindowZoomAreaType;
+        private FieldInfo _zoomableAreaScale;
 
         public FieldInfo GetField_ZoomableArea_Scale()
         {
-            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.ZoomableArea", ref _type_ZoomableArea);
-            ReflectionCash.GetField(_type_ZoomableArea, "m_Scale", INSTANCE_PRIVATE, ref _field_ZoomableArea_Scale);
+            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.ZoomableArea", ref _zoomableAreaType);
+            ReflectionCash.GetField(_zoomableAreaType, "m_Scale", INSTANCE_PRIVATE, ref _zoomableAreaScale);
 
-            return _field_ZoomableArea_Scale;
+            return _zoomableAreaScale;
         }
         
         public FieldInfo GetField_PlayModeWindow_ZoomArea()
         {
-            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _type_PlayModeWindow);
-            ReflectionCash.GetField(_type_PlayModeWindow, "m_ZoomArea", INSTANCE_PRIVATE, ref _field_PlayModeWindow_zoomArea);
+            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
+            ReflectionCash.GetField(_playModeWindowType, "m_ZoomArea", INSTANCE_PRIVATE, ref _playModeWindowZoomAreaType);
 
-            return _field_PlayModeWindow_zoomArea;
+            return _playModeWindowZoomAreaType;
         }
         
         public EditorWindow Get_PlayModeWindow()
         {
-            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _type_PlayModeWindow);
-            ReflectionCash.GetUnityEditorWindow(_type_PlayModeWindow, ref _window_PlayModeWindow);
+            ReflectionCash.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
+            ReflectionCash.FindInternalUnityEditorWindow(_playModeWindowType, ref _playModeWindow);
 
-            return _window_PlayModeWindow;
+            return _playModeWindow;
         }
     }
 }

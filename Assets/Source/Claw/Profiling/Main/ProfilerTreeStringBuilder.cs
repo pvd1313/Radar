@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Beast.Claw.Common;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 
 namespace Beast.Claw.Profiling
 {

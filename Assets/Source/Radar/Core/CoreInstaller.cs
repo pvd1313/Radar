@@ -26,7 +26,7 @@ namespace Beast.Radar.Core
         {
             // Camera
             yield return typeof(CameraTransform);
-            yield return typeof(CameraController);
+            yield return typeof(CameraTransformController);
             
             // Main
             yield return typeof(CoreBoot);

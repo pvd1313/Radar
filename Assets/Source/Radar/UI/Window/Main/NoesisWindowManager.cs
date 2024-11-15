@@ -53,7 +53,7 @@ namespace Beast.Radar.UI
             NoesisView view = render.Initialize(_camera.Camera, _canvas);
 
             _inputConsumer = new NoesisInputConsumer(view, _screen);
-            _inputManager.RegisterConsumer(_inputConsumer, EInputAxis.RawTouch, InputConsumerPriority.UI);
+            _inputManager.RegisterConsumer(_inputConsumer, InputConsumerPriority.UI);
             
             return UniTask.CompletedTask;
         }

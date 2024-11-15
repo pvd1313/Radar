@@ -5,12 +5,12 @@ namespace Beast.Claw.Input
 {
     public class InputConfig : ScriptableConfig
     {
-        public TouchInputConfig touch;
-        public MouseInputConfig mouse;
+        public TouchScreenConfig touchScreen;
+        public MouseConfig mouse;
         
         public override IEnumerable<IConfig> Bind()
         {
-            yield return touch;
+            yield return touchScreen;
             yield return mouse;
         }
     }

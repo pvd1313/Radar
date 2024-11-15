@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Editor;
 using Beast.Claw.Editor.Drawers;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using UnityEngine;
 
 namespace Beast.Radar.Editor.Tile

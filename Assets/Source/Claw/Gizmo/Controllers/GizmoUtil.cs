@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Collections;
 
 namespace Beast.Claw.Gizmo

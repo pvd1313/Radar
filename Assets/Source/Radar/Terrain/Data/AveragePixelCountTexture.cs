@@ -1,7 +1,7 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -51,9 +51,12 @@ namespace Beast.Radar.Terrain
 
         public static AveragePixelCountTexture<EBiomeName> FromTextureWithBlocks(TextureWithBlocks<EBiomeName> texture, int cellSize)
         {
-            if (Build.IS_DEVELOPMENT && (cellSize <= 1 || !BMath.IsPowerOf2(cellSize)) || cellSize > 16)
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new ArgumentException("Invalid cellSize: " + cellSize);
+                if ((cellSize <= 1) || (!BMath.IsPowerOf2(cellSize)) || (cellSize > 16))
+                {
+                    throw new ArgumentException("Invalid cellSize: " + cellSize);
+                }
             }
 
             int cellCountX = texture.blockCountX * (texture.blockSize / cellSize);

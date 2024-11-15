@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
-using Beast.Claw.Mathematics;
 using Beast.Claw.Reflection;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 

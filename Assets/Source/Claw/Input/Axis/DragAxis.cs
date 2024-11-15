@@ -8,14 +8,14 @@ namespace Beast.Claw.Input
         {
             startPosition = float2.zero,
             position = float2.zero,
-            status = EAxisStatus.Inactive
+            status = EAxisStatus.Disabled
         };
         
         public float2 startPosition;
         public float2 position;
         public EAxisStatus status;
 
-        public static DragAxis CreateStarting(float2 position)
+        public static DragAxis StartingAt(float2 position)
         {
             return new DragAxis
             {

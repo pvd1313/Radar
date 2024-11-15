@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Collections;
 
 namespace Beast.Claw.Jobs

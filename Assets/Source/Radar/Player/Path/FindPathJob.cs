@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Burst;
 using Unity.Collections;

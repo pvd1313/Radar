@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;

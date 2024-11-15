@@ -4,7 +4,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -16,6 +16,7 @@ namespace Beast.Radar.Terrain
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _biome;
         private readonly IGizmoManager _gizmoManager;
+        private readonly IDeviceManager _deviceManager;
         private readonly IInputDevice _input;
 
         private IGizmoHandle _gizmo;
@@ -24,12 +25,12 @@ namespace Beast.Radar.Terrain
             ICameraTransform camera, 
             ITerrainBackedBiome biome, 
             IGizmoManager gizmoManager,
-            IInputDevice input)
+            IDeviceManager deviceManager)
         {
             _camera = camera;
             _biome = biome;
             _gizmoManager = gizmoManager;
-            _input = input;
+            _deviceManager = deviceManager;
         }
 
         public void Register(IGameCycleHandle handle)
@@ -55,12 +56,16 @@ namespace Beast.Radar.Terrain
             
             _gizmo.Clear();
 
-            if (_input.Drag.status == EAxisStatus.Inactive)
+            PackedAxis activeAxis = _deviceManager.ActiveDevice.GetActiveAxis();
+
+            if (activeAxis.GetAxisType() != EInputAxis.Drag)
             {
                 return;
             }
             
-            float2 worldPoint = _camera.ViewportToWorld(_input.Drag.position);
+            activeAxis.Unpack(out DragAxis drag);
+            
+            float2 worldPoint = _camera.ViewportToWorld(drag.position);
             
             // 1 km
             int2 worldPoint1km = BMath.FloorToInt(worldPoint);

@@ -1,10 +1,9 @@
 ﻿namespace Beast.Claw.Input
 {
-    public enum EAxisStatus
+    public enum EAxisStatus : byte
     {
-        Invalid,
+        Disabled,
         Starting,
         Working,
-        Inactive,
     }
 }

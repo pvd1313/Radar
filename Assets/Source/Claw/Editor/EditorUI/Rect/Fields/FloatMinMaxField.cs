@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Editor.Drawers;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 
 namespace Beast.Claw.Editor.Fields
 {

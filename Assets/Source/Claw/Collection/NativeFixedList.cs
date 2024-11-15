@@ -9,6 +9,8 @@ namespace Beast.Claw.Collection
     /// </summary>
     public struct NativeFixedList<T> : IDisposable where T : unmanaged
     {
+        public int Count => _count;
+        
         private NativeArray<T> _array;
         private int _count;
         
@@ -32,12 +34,27 @@ namespace Beast.Claw.Collection
         {
             get
             {
-                if (Build.IS_DEVELOPMENT && index < 0 || index > _count)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    throw new IndexOutOfRangeException(GetType().FullName);
+                    if (index < 0 || index > _count)
+                    {
+                        throw new IndexOutOfRangeException(GetType().FullName);
+                    }
                 }
                 
                 return _array[index];
+            }
+            set
+            {
+                if (Build.IS_DEVELOPMENT)
+                {
+                    if (index < 0 || index > _count)
+                    {
+                        throw new IndexOutOfRangeException(GetType().FullName);
+                    }
+                }
+
+                _array[index] = value;
             }
         }
 

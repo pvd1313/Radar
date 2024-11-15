@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;

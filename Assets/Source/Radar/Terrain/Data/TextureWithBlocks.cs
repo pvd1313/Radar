@@ -4,7 +4,7 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -26,15 +26,17 @@ namespace Beast.Radar.Terrain
         {
             biomeTexture.ValidateNotNullThrowException(nameof(biomeTexture));
             
-            if (Build.IS_DEVELOPMENT && blockSize <= 0 || !BMath.IsPowerOf2(blockSize))
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new ArgumentException("Invalid block size: " + blockSize);
-            }
-
-            if (Build.IS_DEVELOPMENT &&
-                (biomeTexture.width != biomeTexture.height || !BMath.IsPowerOf2(biomeTexture.width)))
-            {
-                throw new AggregateException($"Invalid texture size: {biomeTexture.Size()}");
+                if (blockSize <= 0 || !BMath.IsPowerOf2(blockSize))
+                {
+                    throw new ArgumentException("Invalid block size: " + blockSize);
+                }
+                
+                if ((biomeTexture.width != biomeTexture.height || !BMath.IsPowerOf2(biomeTexture.width)))
+                {
+                    throw new AggregateException($"Invalid texture size: {biomeTexture.Size()}");
+                }
             }
 
             int blockCountX = biomeTexture.width / blockSize;
@@ -65,9 +67,12 @@ namespace Beast.Radar.Terrain
 
         public TValue GetPixelClamped(int2 worldPosition)
         {
-            if (Build.IS_DEVELOPMENT && !texture.IsCreated)
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new ObjectDisposedException("TextureWithBlocks");
+                if (!texture.IsCreated)
+                {
+                    throw new ObjectDisposedException("TextureWithBlocks");
+                }
             }
             
             worldPosition.x = BMath.Clamp(worldPosition.x, 0, blockSize * blockCountX - 1);

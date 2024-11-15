@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Beast.Claw.Debug;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
 {
@@ -23,21 +25,50 @@ namespace Beast.Claw.Reflection
         }
 
 #if UNITY_EDITOR
-        public static void GetUnityEditorWindow(Type windowType, ref UnityEditor.EditorWindow cash)
+        /// <summary>Editor only. Will not open window, it must be created to be found.</summary>
+        /// <remarks>Uses UnityEngine.Resources.FindObjectsOfTypeAll()</remarks>
+        /// <exception cref="Exception"></exception>
+        public static void FindInternalUnityEditorWindow(Type windowType, ref UnityEditor.EditorWindow cash)
         {
+            if (!TryFindInternalUnityEditorWindow(windowType, ref cash))
+            {
+                throw new Exception($"Failed to find window: {windowType.FullName}");
+            };
+        }
+        
+        /// <summary>Editor only. Will not open window, it must be created to be found.</summary>
+        /// <remarks>Uses UnityEngine.Resources.FindObjectsOfTypeAll()</remarks>
+        /// <exception cref="Exception"></exception>
+        public static bool TryFindInternalUnityEditorWindow(Type windowType, ref UnityEditor.EditorWindow cash)
+        {
+            BDebug.SignalPerformanceCriticalContext();
+            
             if (cash != null)
             {
-                return;
+                return true;
             }
 
-            UnityEditor.EditorWindow window = UnityEditor.EditorWindow.GetWindow(windowType);
-            
-            if (window == null)
+            Object[] windows = UnityEngine.Resources.FindObjectsOfTypeAll(windowType);
+
+            if (windows.Length == 0)
             {
-                throw new Exception($"Failed: EditorWindow.GetWindow({windowType.FullName})");
+                return false;
             }
 
-            cash = window;
+            if (windows.Length > 1)
+            {
+                throw new Exception($"Found too much windows ({windows.Length}): {windowType.FullName}");
+            }
+
+            if (windows[0] is not UnityEditor.EditorWindow targetWindow)
+            {
+                throw new Exception(
+                    $"Failed to cast window ({windows[0].GetType().FullName} -> UnityEditor.EditorWindow)");
+            }
+
+            cash = targetWindow;
+
+            return true;
         }
 
 #endif

@@ -5,11 +5,11 @@ namespace Beast.Claw.Input
 {
     public struct RawTouchAxis
     {
-        public static RawTouchAxis Inactive { get; } = new()
+        public static RawTouchAxis Disabled { get; } = new()
         {
             fingerId = -1,
             position = float2.zero,
-            status = EAxisStatus.Inactive
+            status = EAxisStatus.Disabled
         };
         
         public float2 position;
@@ -22,31 +22,17 @@ namespace Beast.Claw.Input
             this.status = status;
             this.fingerId = fingerId;
         }
-        
-        public static bool ContainsActiveAxis(NativeSlice<RawTouchAxis> touches)
+
+        public static void DeactivateAll(NativeSlice<RawTouchAxis> touches)
         {
             for (int i = 0; i < touches.Length; i++)
             {
-                if (touches[i].status != EAxisStatus.Inactive)
-                {
-                    return true;
-                }
-            }
+                RawTouchAxis axis = touches[i];
+                
+                axis.status = EAxisStatus.Disabled;
 
-            return false;
-        }
-        
-        public static bool ContainsAxisWithStatus(NativeSlice<RawTouchAxis> touches, EAxisStatus status)
-        {
-            for (int i = 0; i < touches.Length; i++)
-            {
-                if (touches[i].status == status)
-                {
-                    return true;
-                }
+                touches[i] = axis;
             }
-
-            return false;
         }
     }
 }

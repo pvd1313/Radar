@@ -4,8 +4,8 @@ namespace Beast.Claw.Input
 {
     public interface IInputManager : IController
     {
-        void RegisterConsumer(IInputConsumer consumer, EInputAxis modes, int priority);
+        void RegisterConsumer(IInputConsumer consumer, int priority);
         
-        bool TryFindConsumer(IInputDevice device, EInputAxis axis, out ConsumerInfo info);
+        bool TryFindConsumer(PackedAxis axis, out ConsumerInfo info);
     }
 }

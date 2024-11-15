@@ -22,11 +22,14 @@ namespace Beast.Claw.GameCycle
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));
                 
-                if (Build.IS_DEVELOPMENT && currentListener != action.Target)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
-                                     $"that is implemented not inside '{currentListener.GetType().FullName}'";
-                    throw new InvalidOperationException(message);
+                    if (currentListener != action.Target)
+                    {
+                        string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                         $"that is implemented not inside '{currentListener.GetType().FullName}'";
+                        throw new InvalidOperationException(message);
+                    }
                 }
 
                 if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
@@ -34,9 +37,12 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }
 
-                if (Build.IS_DEVELOPMENT && runner.Operation.flow != EActionFlowType.Concurrent)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    throw new InvalidOperationException("Wrong event type for subscription");
+                    if (runner.Operation.flow != EActionFlowType.Concurrent)
+                    {
+                        throw new InvalidOperationException("Wrong event type for subscription");
+                    }
                 }
                 
                 runner.AddListener(new Runner.Listener
@@ -51,11 +57,14 @@ namespace Beast.Claw.GameCycle
                 eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
                 action.ValidateNotNullThrowException(nameof(action));
                 
-                if (Build.IS_DEVELOPMENT && currentListener != action.Target)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
-                                     $"that is implemented not inside '{currentListener.GetType().FullName}'";
-                    throw new InvalidOperationException(message);
+                    if (currentListener != action.Target)
+                    {
+                        string message = $"'{currentListener.GetType().FullName}' ({eventID}) tried to subscribe a method " +
+                                         $"that is implemented not inside '{currentListener.GetType().FullName}'";
+                        throw new InvalidOperationException(message);
+                    }
                 }
                 
                 if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
@@ -63,9 +72,12 @@ namespace Beast.Claw.GameCycle
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }
                 
-                if (Build.IS_DEVELOPMENT && runner.Operation.flow != EActionFlowType.Blocking)
+                if (Build.IS_DEVELOPMENT)
                 {
-                    throw new InvalidOperationException("Wrong event type for subscription");
+                    if (runner.Operation.flow != EActionFlowType.Blocking)
+                    {
+                        throw new InvalidOperationException("Wrong event type for subscription");
+                    }
                 }
                 
                 runner.AddListener(new Runner.Listener

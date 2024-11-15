@@ -2,7 +2,7 @@
 using System.Text;
 using Beast.Claw.Common;
 using Beast.Claw.GameCycle;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Claw.UI;
 using Cysharp.Threading.Tasks;
 using Noesis;

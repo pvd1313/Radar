@@ -9,6 +9,8 @@ namespace Beast.Radar.UI
 {
     public class NoesisInputConsumer : Controller, IInputConsumer
     {
+        public EInputAxis SupportedAxis => EInputAxis.RawTouch;
+        
         private readonly NoesisView _view;
         private readonly Visual _viewRoot;
         private readonly IScreen _screen;
@@ -20,18 +22,20 @@ namespace Beast.Radar.UI
             
             _viewRoot = (Visual)VisualTreeHelper.GetRoot(view.Content);
         }
-        
-        public bool TryCaptureDevice(IInputDevice device, Int32Mask axisMask)
+
+        public bool TryCaptureAxis(PackedAxis axis)
         {
-            if (axisMask.Intersects((int)EInputAxis.RawTouch))
+            if (axis.GetAxisType() == EInputAxis.RawTouch)
             {
-                NativeSlice<RawTouchAxis> touches = device.RawTouch;
+                axis.Unpack(out NativeSlice<RawTouchAxis> touches);
                 
                 foreach (RawTouchAxis touch in touches)
                 {
                     float2 proj = _projectPosition(touch.position);
 
-                    // Maybe there should be more complex logic. For example check if control can capture.
+                    // Maybe in future there be more complex logic.
+                    // For example check if control can capture (transparent panel, debug stats panel, etc.)
+                    
                     if (_hitTest(proj))
                     {
                         return true;
@@ -42,14 +46,15 @@ namespace Beast.Radar.UI
             return false;
         }
 
-        public void UpdateInput(IInputDevice device, Int32Mask axisMask)
+        public void UpdateAxis(PackedAxis axis)
         {
-            NativeSlice<RawTouchAxis> touches = device.RawTouch;
-
+            axis.Unpack(out NativeSlice<RawTouchAxis> touches);
+            
             foreach (RawTouchAxis touch in touches)
             {
                 float2 proj = _projectPosition(touch.position);
 
+                // Probably in distance future we will use our axis to control all elements.
                 switch (touch.status)
                 {
                     case EAxisStatus.Starting:
@@ -69,9 +74,15 @@ namespace Beast.Radar.UI
         
         private bool _hitTest(float2 position)
         {
+            UnityEngine.Profiling.Profiler.BeginSample("NoesisInputConsumer._hitTest()");
+            
             Point p = _viewRoot.PointFromScreen(new Point(position.x, position.y));
+            
+            bool result = VisualTreeHelper.HitTest(_viewRoot, p).VisualHit != null;
+            
+            UnityEngine.Profiling.Profiler.EndSample();
 
-            return VisualTreeHelper.HitTest(_viewRoot, p).VisualHit != null;
+            return result;
         }
         
         private float2 _projectPosition(float2 position)

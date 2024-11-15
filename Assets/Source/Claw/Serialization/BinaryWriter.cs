@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Beast.Claw.Mathematics;
-
+using Beast.Claw.Math;
 using Profiler = UnityEngine.Profiling.Profiler;
 
 namespace Beast.Claw.Serialization

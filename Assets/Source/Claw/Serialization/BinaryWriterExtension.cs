@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Beast.Claw.Collection;
 using Unity.Collections;
 using Unity.Mathematics;
 

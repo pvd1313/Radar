@@ -1,6 +1,4 @@
 ﻿using Beast.Claw.Editor;
-using Beast.Claw.Mathematics;
-using Sirenix.Utilities;
 using Unity.Mathematics;
 using UnityEngine;
 

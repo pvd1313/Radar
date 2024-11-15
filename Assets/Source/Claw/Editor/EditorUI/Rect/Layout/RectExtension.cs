@@ -1,15 +1,10 @@
-﻿using Beast.Claw.Mathematics;
-using Sirenix.Utilities;
-using Unity.Mathematics;
-using Unity.Plastic.Newtonsoft.Json;
+﻿using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Editor
 {
     public static class RectExtension
     {
-        
-        
         public static Rect2 SliceToColumns(this Rect rect, float w0, float w1)
         {
             RectSlice slice = new(stackalloc Rect[2]);

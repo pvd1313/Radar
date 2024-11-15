@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Mathematics;
+﻿using Beast.Claw.Math;
 using Unity.Mathematics;
 using UnityEngine;
 

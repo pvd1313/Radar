@@ -4,7 +4,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;

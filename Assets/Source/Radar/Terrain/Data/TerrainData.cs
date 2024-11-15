@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Claw.Serialization;
 
 namespace Beast.Radar.Terrain

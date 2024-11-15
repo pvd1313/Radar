@@ -1,12 +1,22 @@
 ﻿using Beast.Claw.Common;
-using Unity.Collections;
+using Beast.Claw.GameCycle;
+using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input
 {
     public interface IInputDevice : IController
     {
-        public DragAxis Drag { get; }
-        public ZoomAxis Zoom { get; }
-        public NativeSlice<RawTouchAxis> RawTouch { get; }
+        public string FriendlyName { get; }
+        
+        public UniTask Warmup(ConcurrentContext context);
+
+        public void Deactivate();
+
+        public PackedAxis GetActiveAxis();
+
+        public void Tick(BlockingContext context);
+        
+        public void Dispose(BlockingContext context);
+        void Activate();
     }
 }

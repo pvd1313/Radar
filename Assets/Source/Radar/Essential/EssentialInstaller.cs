@@ -24,6 +24,7 @@ namespace Beast.Radar.Essential
 
         protected override IEnumerable<System.Type> BindInterfaces()
         {
+            yield return typeof(Runtime);
             yield return typeof(ResourceManager);
             
             // Camera
@@ -32,15 +33,7 @@ namespace Beast.Radar.Essential
             
             // Input
             yield return typeof(InputManager);
-            
-            if (Application.isMobilePlatform || UnityEditorSimulatorWindow.HasFocus())
-            {
-                yield return typeof(TouchDevice);
-            }
-            else
-            {
-                yield return typeof(MouseDevice);
-            }
+            yield return typeof(DeviceManager);
             
             // UI
             yield return typeof(WindowManager);

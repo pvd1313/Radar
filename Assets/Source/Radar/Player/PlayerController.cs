@@ -6,7 +6,7 @@ using Beast.Claw.GameCycle;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
-using Beast.Claw.Mathematics;
+using Beast.Claw.Math;
 using Beast.Radar.GameTime;
 using Beast.Radar.Graphic;
 using Beast.Radar.Player.Path;
