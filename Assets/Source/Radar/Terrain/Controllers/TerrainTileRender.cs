@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainTileRender : Controller, IGameCycleListener
+    public class TerrainTileRender : Controller, IGameLoopListener
     {
         private readonly ICameraTransform _camera;
         private readonly GraphicLibrary _library;
@@ -45,7 +45,7 @@ namespace Beast.Radar.Terrain
             _atlas = _library.terrain.atlas.data;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

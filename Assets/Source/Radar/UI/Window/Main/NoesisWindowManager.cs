@@ -1,6 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.UI;
@@ -10,7 +10,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class NoesisWindowManager : Controller, INoesisWindowManager, IGameCycleListener
+    public class NoesisWindowManager : Controller, INoesisWindowManager, IGameLoopListener
     {
         private readonly EssentialPrefabLibrary _library;
         private readonly ICamera _camera;
@@ -34,7 +34,7 @@ namespace Beast.Radar.UI
             _inputManager = inputManager;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

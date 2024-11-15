@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Input;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Common
 {
-    public class Runtime : Controller, IGameCycleListener, IRuntime
+    public class Runtime : Controller, IGameLoopListener, IRuntime
     {
         private const float SIMULATOR_FETCH_RATE_SEC = 1;
         
@@ -16,7 +16,7 @@ namespace Beast.Claw.Common
 
         private DateTime _simulatorWindowLastFetchTime;
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.TICK, _tick);

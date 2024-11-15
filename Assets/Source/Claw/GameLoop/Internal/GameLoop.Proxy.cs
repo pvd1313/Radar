@@ -3,34 +3,34 @@ using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    partial class GameCycle
+    partial class GameLoop
     {
-        public class Proxy : IGameCycle
+        public class Proxy : IGameLoop
         {
-            public IReadOnlyList<string> AllOperations => _gameCycle._operationIds;
+            public IReadOnlyList<string> AllOperations => _gameLoop._operationIds;
 
-            private GameCycle _gameCycle;
+            private GameLoop _gameLoop;
 
-            public void Inject(GameCycle gameCycle)
+            public void Inject(GameLoop gameLoop)
             {
-                _gameCycle = gameCycle;
+                _gameLoop = gameLoop;
             }
 
-            public void Initialize(GameCycleInitialization input)
+            public void Initialize(GameLoopSetup input)
             {
-                _gameCycle._initialize(input);
+                _gameLoop._initialize(input);
             }
 
             public void RegisterListeners()
             {
-                _gameCycle._registerListeners();
+                _gameLoop._registerListeners();
             }
 
             public IProfiler TryGetProfiler(string operationName)
             {
-                if (!_gameCycle._runners.TryGetValue(operationName, out Runner runner))
+                if (!_gameLoop._runners.TryGetValue(operationName, out Runner runner))
                 {
                     return null;
                 }
@@ -40,17 +40,17 @@ namespace Beast.Claw.GameCycle
 
             public void ExecuteBlocking(IController owner, string eventID)
             {
-                _gameCycle._executeBlocking(owner, eventID);
+                _gameLoop._executeBlocking(owner, eventID);
             }
 
             public async UniTask<ActionResult> ExecuteConcurrent(IController owner, string eventID)
             {
-                return await _gameCycle._executeConcurrent(owner, eventID);
+                return await _gameLoop._executeConcurrent(owner, eventID);
             }
 
             public void Dispose()
             {
-                _gameCycle?._dispose();
+                _gameLoop?._dispose();
             }
         }
     }

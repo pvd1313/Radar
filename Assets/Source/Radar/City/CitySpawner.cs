@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
@@ -19,7 +19,7 @@ using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class CitySpawner : Controller, ICitySpawner, IGameCycleListener
+    public class CitySpawner : Controller, ICitySpawner, IGameLoopListener
     {
         public NativeList<CityInfo> Cities => _cities;
         
@@ -42,7 +42,7 @@ namespace Beast.Radar.City
             _worldManager = worldManager;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);

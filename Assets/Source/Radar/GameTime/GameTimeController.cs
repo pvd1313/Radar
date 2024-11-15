@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Common;
 using System;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Beast.Radar.GameTime
 {
-    public class GameTimeController : Controller, IGameTime, IGameCycleListener
+    public class GameTimeController : Controller, IGameTime, IGameLoopListener
     {
         public event Action MinuteChanged;
         
@@ -28,7 +28,7 @@ namespace Beast.Radar.GameTime
             _playerStateMultiplier = _config.idleTimeScale;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenBlocking(ActionID.TICK, _tick);

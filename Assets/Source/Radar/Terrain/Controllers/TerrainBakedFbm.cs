@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Serialization;
 using Beast.Radar.Graphic;
@@ -12,7 +12,7 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedFbm : Controller, ITerrainBakedFbm, IGameCycleListener
+    public class TerrainBakedFbm : Controller, ITerrainBakedFbm, IGameLoopListener
     {
         public bool IsReady { get; private set; }
         public Texture Texture => _texture;
@@ -33,7 +33,7 @@ namespace Beast.Radar.Terrain
             _worldManager = worldManager;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);

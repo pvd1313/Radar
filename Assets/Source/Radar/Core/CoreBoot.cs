@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;
@@ -13,20 +13,20 @@ namespace Beast.Radar.Core
         private readonly IWindowManager _window;
         private readonly ISaveManager _save;
         private readonly IntegratedSave _integratedSave;
-        private readonly IGameCycle _gameCycle;
+        private readonly IGameLoop _gameLoop;
         private readonly IWorldManager _worldManager;
 
         public CoreBoot(
             IWindowManager window, 
             ISaveManager save, 
             IntegratedSave integratedSave, 
-            IGameCycle gameCycle, 
+            IGameLoop gameLoop, 
             IWorldManager worldManager)
         {
             _window = window;
             _save = save;
             _integratedSave = integratedSave;
-            _gameCycle = gameCycle;
+            _gameLoop = gameLoop;
             _worldManager = worldManager;
         }
         
@@ -39,17 +39,17 @@ namespace Beast.Radar.Core
             tracker.Begin(4, 1 - tracker.Progress);
 
             await tracker.Next("Core: Registering GameCycle listeners");
-            _gameCycle.RegisterListeners();
+            _gameLoop.RegisterListeners();
 
             await tracker.Next("Core: Loading preferences");
-            await _gameCycle.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);
 
             await tracker.Next("Core: Warmup");
-            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP);
 
             BScene.CreateGameObject(this)
-                .AddComponent<GameCycleMono>()
-                .Initialize(_gameCycle);
+                .AddComponent<GameLoopMono>()
+                .Initialize(_gameLoop);
 
             // if (Build.IS_EDITOR)
             // {

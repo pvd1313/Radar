@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBiomeTest : Controller, IGameCycleListener
+    public class TerrainBiomeTest : Controller, IGameLoopListener
     {
         private readonly ICameraTransform _camera;
         private readonly ITerrainBackedBiome _biome;
@@ -33,7 +33,7 @@ namespace Beast.Radar.Terrain
             _deviceManager = deviceManager;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenBlocking(ActionID.RENDER, _render);
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);

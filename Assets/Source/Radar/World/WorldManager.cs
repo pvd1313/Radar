@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
@@ -13,7 +13,7 @@ using Profiler = UnityEngine.Profiling.Profiler;
 
 namespace Beast.Radar.World
 {
-    public class WorldManager : Controller, IWorldManager, IGameCycleListener
+    public class WorldManager : Controller, IWorldManager, IGameLoopListener
     {
         private const string ROOT_FILE_NAME = "all";
         private const string POSTFIX = ".";
@@ -33,7 +33,7 @@ namespace Beast.Radar.World
             _game = game;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.GAME_SAVE, _gameSave);

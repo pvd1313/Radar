@@ -1,5 +1,5 @@
 ﻿
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
     public struct ConcurrentContext
     {

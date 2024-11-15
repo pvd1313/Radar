@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Beast.Claw.Collection;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Profiling;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace Beast.Claw.Editor.Window.Profiler
         private Style _buttonStyleNormal;
         private Style _labelStyle;
         private Style _buttonStyleSelected;
-        private InjectionReference<IGameCycle> _gameCycle;
+        private InjectionReference<IGameLoop> _gameCycle;
         private ProfilerTreeGUI _treeView;
         private List<ProfilerNode> _nodesBuffer;
 
@@ -37,7 +37,7 @@ namespace Beast.Claw.Editor.Window.Profiler
         
         protected override void Warmup()
         {
-            _gameCycle = new InjectionReference<IGameCycle>();
+            _gameCycle = new InjectionReference<IGameLoop>();
             _treeView = new ProfilerTreeGUI();
             _buttonStyleNormal = _rectUI.Style.Button;
             _labelStyle = _rectUI.Style.Label;

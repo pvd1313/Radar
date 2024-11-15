@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input

@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 
@@ -9,7 +9,7 @@ using UnityInput = UnityEngine.Input;
 
 namespace Beast.Claw.Input
 {
-    public class DeviceManager : Controller, IDeviceManager, IGameCycleListener
+    public class DeviceManager : Controller, IDeviceManager, IGameLoopListener
     {
         public IInputDevice ActiveDevice => _activeDevice;
 
@@ -35,7 +35,7 @@ namespace Beast.Claw.Input
             _runtime = runtime;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.TICK, _tick);

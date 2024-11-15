@@ -4,43 +4,42 @@ using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
+using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public partial class GameCycle
+    public partial class GameLoop
     {
-        private struct RunnerBlocking
+        private struct RunnerConcurrent
         {
             public IController owner;
-            public HashSet<object> brokenObjects;
+            public HashSet<object> singleFiredObjects;
+            public EActionFrequency frequency;
             public ManagedFixedList<Runner.Listener> listeners;
-            public Dictionary<object, int> objectErrorCount;
             public string operationID;
-            public int exceptionThreshold;
-            public bool exceptionStopsExecution;
-            public bool allLogicIsBroken;
             public Profiler profiler;
+            public ProfilerTreeStringBuilder treeStringBuilder;
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
-            public ProfilerTreeStringBuilder treeStringBuilder;
             
-            public void Run()
+            public async UniTask<ActionResult> Run()
             {
-                bool hasBrokenLogic = brokenObjects.Count > 0;
+                ActionResult result = ActionResult.Success();
 
                 bool hasProfiler = profiler != null;
-                string listenerName = null;
+                
                 Profiler.Handle handle = default;
+                string listenerName = null;
 
                 for (int i = 0; i < listeners.Count; i++)
                 {
                     Runner.Listener listener = listeners[i];
-                    
-                    if (hasBrokenLogic && brokenObjects.Contains(listener.target))
+                    if (frequency == EActionFrequency.OncePerObjectLife &&
+                        !singleFiredObjects.Add(listener.target))
                     {
                         continue;
                     }
-                    
+
                     if (hasProfiler)
                     {
                         handle = profiler.GetHandle(listener.target);
@@ -50,19 +49,15 @@ namespace Beast.Claw.GameCycle
 
                     try
                     {
-                        BlockingContext context = default;
-                        listener.blocking.Invoke(context);
+                        ConcurrentContext context = default;
+
+                        await listener.concurrent.Invoke(context);
                     }
                     catch (Exception e)
                     {
-                        ProcessException(e, listener, out bool canContinue);
+                        BDebug.LogException(e);
 
-                        if (!canContinue)
-                        {
-                            allLogicIsBroken = true;
-
-                            break;
-                        }
+                        return ActionResult.Failed();
                     }
                     finally
                     {
@@ -72,11 +67,11 @@ namespace Beast.Claw.GameCycle
                         }
                     }
                 }
-                
+
                 if (hasProfiler && enableClawProfiling)
                 {
                     profiler.RebuildTree();
-                    
+
                     if (flushProfilerToConsole)
                     {
                         string title = owner.Meta.name + ": " + operationID;
@@ -85,29 +80,8 @@ namespace Beast.Claw.GameCycle
                         BDebug.StaticLogInfo(info);
                     }
                 }
-            }
-            
-            private void ProcessException(Exception e, Runner.Listener listener, out bool canContinueExecution)
-            {
-                BDebug.LogException(e);
-            
-                objectErrorCount.TryGetValue(listener.target, out int errorCount);
-                errorCount++;
-                objectErrorCount[listener.target] = errorCount;
-            
-                if (errorCount > exceptionThreshold)
-                {
-                    brokenObjects.Add(listener.target);
-                }
-            
-                if (exceptionStopsExecution)
-                {
-                    canContinueExecution = false;
-                }
-                else
-                {
-                    canContinueExecution = true;
-                }
+
+                return result;
             }
         }
     }

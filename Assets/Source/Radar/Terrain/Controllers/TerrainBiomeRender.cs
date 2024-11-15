@@ -1,7 +1,7 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBiomeRender : Controller, ITerrainBiomeRender, IGameCycleListener
+    public class TerrainBiomeRender : Controller, ITerrainBiomeRender, IGameLoopListener
     {
         private struct RenderResult
         {
@@ -58,7 +58,7 @@ namespace Beast.Radar.Terrain
             _config = config;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using Beast.Claw.UI;
 using Cysharp.Threading.Tasks;
@@ -9,7 +9,7 @@ using Noesis;
 
 namespace Beast.Radar.UI
 {
-    public class LoadingWindow : Controller, IWindow<LoadingWindowInput>, IGameCycleListener, IProgressTrackerListener
+    public class LoadingWindow : Controller, IWindow<LoadingWindowInput>, IGameLoopListener, IProgressTrackerListener
     {
         private readonly EssentialPrefabLibrary _library;
         private readonly LoadingWindowConfig _config;
@@ -34,7 +34,7 @@ namespace Beast.Radar.UI
             _legacy = legacy;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

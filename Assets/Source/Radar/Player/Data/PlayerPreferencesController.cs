@@ -1,14 +1,14 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerPreferencesController : Controller, IGameCycleListener
+    public class PlayerPreferencesController : Controller, IGameLoopListener
     {
         private readonly IFileManager _fileManager;
         private readonly PlayerPreferences _preferences;
@@ -19,7 +19,7 @@ namespace Beast.Radar.Player
             _preferences = preferences;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.PREFERENCES_LOAD, _preferencesLoad);
             handle.ListenBlocking(ActionID.PREFERENCES_SAVE, _preferencesSave);

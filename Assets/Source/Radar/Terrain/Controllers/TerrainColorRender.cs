@@ -1,7 +1,7 @@
 ﻿using System;
 using Beast.Claw;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainColorRender : Controller, IGameCycleListener, ITerrainColorRender
+    public class TerrainColorRender : Controller, IGameLoopListener, ITerrainColorRender
     {
         private readonly IScreen _screen;
         private readonly GraphicLibrary _library;
@@ -32,7 +32,7 @@ namespace Beast.Radar.Terrain
             _camera = camera;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

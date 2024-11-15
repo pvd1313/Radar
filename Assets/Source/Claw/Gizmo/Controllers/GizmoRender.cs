@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Claw.Gizmo
 {
-    public class GizmoRender : Controller, IGizmoManager, IGameCycleListener
+    public class GizmoRender : Controller, IGizmoManager, IGameLoopListener
     {
         private struct HandleInfo
         {
@@ -51,7 +51,7 @@ namespace Beast.Claw.Gizmo
             _config = config;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.RENDER, _render);

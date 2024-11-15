@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -11,11 +11,11 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Resources
 {
-    public class ResourceManager : Controller, IResourceManager, IGameCycleListener
+    public class ResourceManager : Controller, IResourceManager, IGameLoopListener
     {
         private List<AssetReference> _loadedAssets;
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

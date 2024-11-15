@@ -2,19 +2,19 @@
 using Beast.Claw.Common;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    partial class GameCycle
+    partial class GameLoop
     {
-        private class Handle : IGameCycleHandle
+        private class Handle : IGameLoopHandle
         {
             public IController currentListener;
         
-            private readonly GameCycle _gameCycle;
+            private readonly GameLoop _gameLoop;
 
-            public Handle(GameCycle gameCycle)
+            public Handle(GameLoop gameLoop)
             {
-                _gameCycle = gameCycle;
+                _gameLoop = gameLoop;
             }
         
             public void ListenConcurrent(string eventID, Func<ConcurrentContext, UniTask> action)
@@ -32,7 +32,7 @@ namespace Beast.Claw.GameCycle
                     }
                 }
 
-                if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
+                if (!_gameLoop._runners.TryGetValue(eventID, out Runner runner))
                 {
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }
@@ -67,7 +67,7 @@ namespace Beast.Claw.GameCycle
                     }
                 }
                 
-                if (!_gameCycle._runners.TryGetValue(eventID, out Runner runner))
+                if (!_gameLoop._runners.TryGetValue(eventID, out Runner runner))
                 {
                     throw new InvalidOperationException($"Unknown event '{eventID}'");
                 }

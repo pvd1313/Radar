@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraSpawner : Controller, IGameCycleListener, ICamera
+    public class CameraSpawner : Controller, IGameLoopListener, ICamera
     {
         public Camera Camera => _camera;
         
@@ -21,7 +21,7 @@ namespace Beast.Radar.Cinematic
             _library = library;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

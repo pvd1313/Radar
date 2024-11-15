@@ -1,6 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -9,7 +9,7 @@ using Random = System.Random;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainFbmRender : Controller, ITerrainFbmRender, IGameCycleListener
+    public class TerrainFbmRender : Controller, ITerrainFbmRender, IGameLoopListener
     {
         private readonly GraphicLibrary _graphicLibrary;
 
@@ -20,7 +20,7 @@ namespace Beast.Radar.Terrain
             _graphicLibrary = graphicLibrary;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

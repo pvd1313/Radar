@@ -1,6 +1,6 @@
 using System;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
@@ -8,7 +8,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class MainHUDWindow : Controller, IWindow<Empty>, IGameCycleListener
+    public class MainHUDWindow : Controller, IWindow<Empty>, IGameLoopListener
     {
         private readonly PlayerPreferences _preferences;
         private readonly CorePrefabLibrary _library;
@@ -36,7 +36,7 @@ namespace Beast.Radar.UI
             _player = player;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

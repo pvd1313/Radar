@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Beast.Radar.Debug;
 using Cysharp.Threading.Tasks;
@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class DebugMenuWindow : Controller, IWindow<Empty>, IGameCycleListener
+    public class DebugMenuWindow : Controller, IWindow<Empty>, IGameLoopListener
     {
         private readonly DebugPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
@@ -34,7 +34,7 @@ namespace Beast.Radar.UI
             _resources = resources;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

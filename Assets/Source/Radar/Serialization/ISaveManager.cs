@@ -1,4 +1,4 @@
-﻿using Beast.Claw.GameCycle;
+﻿using Beast.Claw.GameLoop;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Serialization

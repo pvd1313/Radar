@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 
-
-
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public struct GameCycleInitialization : IValidatable
+    public struct GameLoopSetup : IValidatable
     {
         private static readonly HashSet<string> ACTION_NAMES = new();
         

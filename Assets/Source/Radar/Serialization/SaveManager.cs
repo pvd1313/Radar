@@ -3,7 +3,7 @@ using System.IO;
 using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
 using Cysharp.Threading.Tasks;
 
@@ -15,16 +15,16 @@ namespace Beast.Radar.Serialization
     public class SaveManager : Controller, ISaveManager
     {
         private readonly GameModel _gameModel;
-        private readonly IGameCycle _gameCycle;
+        private readonly IGameLoop _gameLoop;
         private readonly IFileManager _fileManager;
 
         public SaveManager(
             GameModel gameModel,
-            IGameCycle gameCycle,
+            IGameLoop gameLoop,
             IFileManager fileManager)
         {
             _gameModel = gameModel;
-            _gameCycle = gameCycle;
+            _gameLoop = gameLoop;
             _fileManager = fileManager;
         }
         
@@ -50,7 +50,7 @@ namespace Beast.Radar.Serialization
 
                 await memory.DisposeAsync();
                 
-                return await _gameCycle.ExecuteConcurrent(this, ActionID.GAME_LOAD);
+                return await _gameLoop.ExecuteConcurrent(this, ActionID.GAME_LOAD);
             }
             catch (Exception e)
             {
@@ -70,7 +70,7 @@ namespace Beast.Radar.Serialization
 
                 binaryReader.Read(_gameModel);
 
-                ActionResult result = await _gameCycle.ExecuteConcurrent(this, ActionID.GAME_LOAD);
+                ActionResult result = await _gameLoop.ExecuteConcurrent(this, ActionID.GAME_LOAD);
                 
                 BDebug.LogInfo(this, $"Loaded game state from '{streamData.path}'");
 
@@ -90,7 +90,7 @@ namespace Beast.Radar.Serialization
             {
                 try
                 {
-                    _gameCycle.ExecuteBlocking(this, ActionID.GAME_SAVE);
+                    _gameLoop.ExecuteBlocking(this, ActionID.GAME_SAVE);
                 }
                 catch (Exception e)
                 {

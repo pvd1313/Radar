@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Player
 {
-    public class PlayerController : Controller, IPlayerController, IGameCycleListener
+    public class PlayerController : Controller, IPlayerController, IGameLoopListener
     {
         public event Action ChangeMovementState;
         public event Action ChangeTarget;
@@ -69,7 +69,7 @@ namespace Beast.Radar.Player
             _gizmoManager = gizmoManager;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);

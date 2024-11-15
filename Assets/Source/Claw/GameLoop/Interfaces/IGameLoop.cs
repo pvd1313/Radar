@@ -3,13 +3,13 @@ using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public interface IGameCycle
+    public interface IGameLoop
     {
         public IReadOnlyList<string> AllOperations { get; }
         
-        public void Initialize(GameCycleInitialization input);
+        public void Initialize(GameLoopSetup input);
 
         public void RegisterListeners();
         

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public class GameCycleActionList
+    public class GameLoopActionList
     {
         public List<ActionInfo> All { get; } = new()
         {
@@ -15,6 +15,7 @@ namespace Beast.Claw.GameCycle
                 bufferCapacity = 128,
                 flushProfilerToConsole = true,
             },
+            
             new ActionInfo
             {
                 id = ActionID.DISPOSE,
@@ -34,6 +35,7 @@ namespace Beast.Claw.GameCycle
                 bufferCapacity = 32,
                 flushProfilerToConsole = true
             },
+            
             new ActionInfo
             {
                 id = ActionID.GAME_SAVE,
@@ -53,6 +55,7 @@ namespace Beast.Claw.GameCycle
                 bufferCapacity = 16,
                 flushProfilerToConsole = true,
             },
+            
             new ActionInfo
             {
                 id = ActionID.PREFERENCES_SAVE,
@@ -72,6 +75,7 @@ namespace Beast.Claw.GameCycle
                 bufferCapacity = 128,
                 flushProfilerToConsole = false
             },
+            
             new ActionInfo
             {
                 id = ActionID.RENDER,
@@ -81,6 +85,7 @@ namespace Beast.Claw.GameCycle
                 bufferCapacity = 128,
                 flushProfilerToConsole = false
             },
+            
             new ActionInfo
             {
                 id = ActionID.FIXED_UPDATE,

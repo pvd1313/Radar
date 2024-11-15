@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Radar.NewGame;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
-    public class MapGenerationWindow : Controller, IWindow<Empty>, IGameCycleListener
+    public class MapGenerationWindow : Controller, IWindow<Empty>, IGameLoopListener
     {
         private readonly IWindowManager _windowManager;
         private readonly MapGenerationWindowConfig _generationConfig;
@@ -41,7 +41,7 @@ namespace Beast.Radar.UI
             _library = library;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

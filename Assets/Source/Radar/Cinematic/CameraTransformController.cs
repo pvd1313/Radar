@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.Math;
@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransformController : Controller, IGameCycleListener, IInputConsumer
+    public class CameraTransformController : Controller, IGameLoopListener, IInputConsumer
     {
         public EInputAxis SupportedAxis => EInputAxis.Drag | EInputAxis.Zoom;
         
@@ -29,7 +29,7 @@ namespace Beast.Radar.Cinematic
             _inputManager = inputManager;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

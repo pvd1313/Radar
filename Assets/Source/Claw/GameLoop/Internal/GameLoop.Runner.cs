@@ -5,9 +5,9 @@ using Beast.Claw.Common;
 using Beast.Claw.Profiling;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public partial class GameCycle
+    public partial class GameLoop
     {
         private class Runner
         {
@@ -22,7 +22,7 @@ namespace Beast.Claw.GameCycle
 
             public ActionInfo Operation => _operation;
             
-            private readonly GameCycleConfig _config;
+            private readonly GameLoopConfig _config;
 
             private readonly HashSet<object> _singleFireObjects;
             private readonly HashSet<object> _duplicateSubscriptionListeners;
@@ -36,7 +36,7 @@ namespace Beast.Claw.GameCycle
             private ProfilerTreeStringBuilder _treeBuilder;
             private Profiler _profiler;
 
-            public Runner(GameCycleConfig config, ActionInfo operationInfo)
+            public Runner(GameLoopConfig config, ActionInfo operationInfo)
             {
                 config.ValidateNotNullThrowException(nameof(config));
                 operationInfo.ValidateThrowException(nameof(operationInfo));

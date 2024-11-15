@@ -5,11 +5,11 @@ using Beast.Claw.Debug;
 using Cysharp.Threading.Tasks;
 using Zenject;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public partial class GameCycle
+    public partial class GameLoop
     {
-        private readonly GameCycleConfig _config;
+        private readonly GameLoopConfig _config;
         private readonly DiContainer _container;
 
         private Dictionary<string, Runner> _runners;
@@ -19,7 +19,7 @@ namespace Beast.Claw.GameCycle
         private bool _isRegisteringListeners;
         private int _listenerCount;
 
-        public GameCycle(Proxy proxy, GameCycleConfig config, DiContainer container)
+        public GameLoop(Proxy proxy, GameLoopConfig config, DiContainer container)
         {
             _config = config;
             _container = container;
@@ -27,7 +27,7 @@ namespace Beast.Claw.GameCycle
             proxy.Inject(this);
         }
         
-        private void _initialize(GameCycleInitialization input)
+        private void _initialize(GameLoopSetup input)
         {
             if (_initialized)
             {
@@ -54,7 +54,7 @@ namespace Beast.Claw.GameCycle
             
             Handle handle = new (this);
             
-            List<IGameCycleListener> listeners = _container.TryResolve<List<IGameCycleListener>>();
+            List<IGameLoopListener> listeners = _container.TryResolve<List<IGameLoopListener>>();
             
             if (listeners == null)
             {
@@ -68,7 +68,7 @@ namespace Beast.Claw.GameCycle
 
             for (int i = _listenerCount; i < listeners.Count; i++)
             {
-                IGameCycleListener subscriber = listeners[i];
+                IGameLoopListener subscriber = listeners[i];
                 
                 try
                 {

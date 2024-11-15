@@ -1,12 +1,12 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Beast.Radar.Debug
 {
-    public class DebugController : Controller, IDebugController, IGameCycleListener
+    public class DebugController : Controller, IDebugController, IGameLoopListener
     {
         private readonly DebugPrefabLibrary _library;
         private readonly DebugPreferences _preferences;
@@ -22,7 +22,7 @@ namespace Beast.Radar.Debug
             _resources = resources;
         }
     
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Beast.Radar.Core;
 using Beast.Radar.UI;
@@ -12,7 +12,7 @@ namespace Beast.Radar.Essential
     {
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
-        private readonly IGameCycle _gameCycle;
+        private readonly IGameLoop _gameLoop;
         private readonly DiContainer _container;
         private readonly IResourceManager _resources;
 
@@ -21,27 +21,27 @@ namespace Beast.Radar.Essential
         public EssentialBoot(
             EssentialConfig config, 
             IWindowManager windows, 
-            IGameCycle gameCycle,
+            IGameLoop gameLoop,
             DiContainer container,
             IResourceManager resources)
         {
             _config = config;
             _windows = windows;
-            _gameCycle = gameCycle;
+            _gameLoop = gameLoop;
             _container = container;
             _resources = resources;
         }
         
         public async void Initialize()
         {
-            _gameCycle.Initialize(new GameCycleInitialization
+            _gameLoop.Initialize(new GameLoopSetup
             {
-                actions = new GameCycleActionList().All
+                actions = new GameLoopActionList().All
             });
             
-            _gameCycle.RegisterListeners();
+            _gameLoop.RegisterListeners();
 
-            await _gameCycle.ExecuteConcurrent(this, ActionID.WARMUP);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP);
 
             await _startupCore();
         }

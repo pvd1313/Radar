@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainBakedBiome : Controller, ITerrainBackedBiome, IGameCycleListener
+    public class TerrainBakedBiome : Controller, ITerrainBackedBiome, IGameLoopListener
     {
         private const int MAP_1KM_BLOCK_SIZE = 128;
 
@@ -39,7 +39,7 @@ namespace Beast.Radar.Terrain
             _graphicConfig = graphicConfig;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

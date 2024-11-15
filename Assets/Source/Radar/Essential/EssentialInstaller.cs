@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Input;
 using Beast.Claw.Reflection;
 using Beast.Claw.Resources;
@@ -46,8 +47,8 @@ namespace Beast.Radar.Essential
 
         protected override void BindCustom(DiContainer diContainer)
         {
-            diContainer.Bind<Claw.GameCycle.GameCycle>().FromNew().AsSingle().NonLazy();
-            diContainer.BindInterfacesAndSelfTo<Claw.GameCycle.GameCycle.Proxy>().FromNew().AsSingle().NonLazy();
+            diContainer.Bind<GameLoop>().FromNew().AsSingle().NonLazy();
+            diContainer.BindInterfacesAndSelfTo<GameLoop.Proxy>().FromNew().AsSingle().NonLazy();
         }
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input
 {
-    public class InputManager : Controller, IInputManager, IGameCycleListener
+    public class InputManager : Controller, IInputManager, IGameLoopListener
     {
         private List<ConsumerInfo> _consumers;
         private Int32Mask _validFlags;
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
         }

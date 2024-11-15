@@ -1,13 +1,13 @@
 ﻿using Beast.Claw.Common;
 using UnityEngine;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public class GameCycleMono : MonoBehaviour, IController
+    public class GameLoopMono : MonoBehaviour, IController
     {
         public ControllerMeta Meta { get; private set; }
         
-        private IGameCycle _gameCycle;
+        private IGameLoop _gameLoop;
         private bool _savedPreferences;
 
         private void Awake()
@@ -15,40 +15,40 @@ namespace Beast.Claw.GameCycle
             Meta = ControllerMeta.Create(this);
         }
 
-        public void Initialize(IGameCycle gameCycle)
+        public void Initialize(IGameLoop gameLoop)
         {
-            _gameCycle = gameCycle;
+            _gameLoop = gameLoop;
         }
 
         private void Update()
         {
-            _gameCycle.ExecuteBlocking(this, ActionID.TICK);
+            _gameLoop.ExecuteBlocking(this, ActionID.TICK);
         }
 
         private void FixedUpdate()
         {
-            _gameCycle.ExecuteBlocking(this, ActionID.FIXED_UPDATE);
+            _gameLoop.ExecuteBlocking(this, ActionID.FIXED_UPDATE);
         }
 
         private void LateUpdate()
         {
-            _gameCycle.ExecuteBlocking(this, ActionID.RENDER);
+            _gameLoop.ExecuteBlocking(this, ActionID.RENDER);
         }
 
         private void OnDestroy()
         {
-            _gameCycle.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
+            _gameLoop.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
             
-            _gameCycle.ExecuteBlocking(this, ActionID.DISPOSE);
+            _gameLoop.ExecuteBlocking(this, ActionID.DISPOSE);
             
-            _gameCycle.Dispose();
+            _gameLoop.Dispose();
         }
 
         private void OnApplicationPause(bool isPaused)
         {
             if (isPaused)
             {
-                _gameCycle.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
+                _gameLoop.ExecuteBlocking(this, ActionID.PREFERENCES_SAVE);
             }
         }
     }

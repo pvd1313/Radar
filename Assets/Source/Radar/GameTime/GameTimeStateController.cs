@@ -1,12 +1,12 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.GameTime
 {
-    public class GameTimeStateController : Controller, IGameCycleListener
+    public class GameTimeStateController : Controller, IGameLoopListener
     {
         private readonly IPlayerController _player;
         private readonly IGameTime _time;
@@ -19,7 +19,7 @@ namespace Beast.Radar.GameTime
             _windowManager = windowManager;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);   
         }

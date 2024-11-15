@@ -4,7 +4,7 @@ using System.Text;
 using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public partial class WindowManager : Controller, IWindowManager, IGameCycleListener
+    public partial class WindowManager : Controller, IWindowManager, IGameLoopListener
     {
         public event Action<string> WindowChanged;
 
@@ -35,7 +35,7 @@ namespace Beast.Radar.UI
             _camera = camera;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenBlocking(ActionID.DISPOSE, _dispose);

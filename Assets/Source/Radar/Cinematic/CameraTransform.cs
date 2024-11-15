@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Serialization;
@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Cinematic
 {
-    public class CameraTransform : Controller, IGameCycleListener, ICameraTransform
+    public class CameraTransform : Controller, IGameLoopListener, ICameraTransform
     {
         public bool IsReady { get; private set; }
         public float2 Position => (float2)_position;
@@ -46,7 +46,7 @@ namespace Beast.Radar.Cinematic
             _worldManager = worldManager;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);

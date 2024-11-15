@@ -1,6 +1,6 @@
 ﻿using System;
 using Beast.Claw;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;

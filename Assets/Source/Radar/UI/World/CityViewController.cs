@@ -1,6 +1,6 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.City;
@@ -10,7 +10,7 @@ using UnityEngine.Device;
 
 namespace Beast.Radar.UI
 {
-    public class CityViewController : Controller, IGameCycleListener, IReady
+    public class CityViewController : Controller, IGameLoopListener, IReady
     {
         public bool IsReady { get; private set; }
 
@@ -41,7 +41,7 @@ namespace Beast.Radar.UI
             _uiConfig = uiConfig;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);
             handle.ListenConcurrent(ActionID.GAME_LOAD, _gameLoad);

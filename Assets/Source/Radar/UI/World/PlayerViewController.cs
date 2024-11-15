@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Player;
@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.UI
 {
-    public class PlayerViewController : Controller, IGameCycleListener 
+    public class PlayerViewController : Controller, IGameLoopListener 
     {
         private readonly ICameraTransform _camera;
         private readonly IPlayerController _player;
@@ -20,7 +20,7 @@ namespace Beast.Radar.UI
             _player = player;
         }
         
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenBlocking(ActionID.TICK, _tick);
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);

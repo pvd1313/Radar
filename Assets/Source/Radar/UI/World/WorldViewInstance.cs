@@ -1,11 +1,11 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.GameCycle;
+using Beast.Claw.GameLoop;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
-    public class WorldViewInstance : Controller, IWorldViewInstance, IGameCycleListener
+    public class WorldViewInstance : Controller, IWorldViewInstance, IGameLoopListener
     {
         public WorldView Instance { get; private set; }
         
@@ -16,7 +16,7 @@ namespace Beast.Radar.UI
             _prefabLibrary = prefabLibrary;
         }
 
-        public void Register(IGameCycleHandle handle)
+        public void Register(IGameLoopHandle handle)
         {
             handle.ListenConcurrent(ActionID.WARMUP, _warmup);    
         }

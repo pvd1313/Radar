@@ -1,9 +1,9 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.GameCycle
+namespace Beast.Claw.GameLoop
 {
-    public interface IGameCycleHandle
+    public interface IGameLoopHandle
     {
         void ListenConcurrent(string eventID, Func<ConcurrentContext, UniTask> action);
 
