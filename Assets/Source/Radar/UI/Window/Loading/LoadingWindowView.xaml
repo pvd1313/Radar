@@ -10,9 +10,9 @@
         <ResourceDictionary Source = "..\Resources.xaml" />
     </UserControl.Resources>
 
-        <Grid 
-            x:Name = "grid" 
-            Background = "White">
+    <Grid 
+        x:Name = "grid" 
+        Background = "{StaticResource LoadingScreenBackground_1}">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width = "*" />

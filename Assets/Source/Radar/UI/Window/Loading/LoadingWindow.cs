@@ -43,11 +43,11 @@ namespace Beast.Radar.UI
             _config.view.Instantiate(out _view);
             
             _view.Visibility = Visibility.Collapsed;
-
-            ImageBrush brush = new (new TextureSource(_config.backgroundTexture));
-            brush.Stretch = Stretch.UniformToFill;
             
-            _view.grid.Background = brush;
+            // Crashes Vulkan. Waiting for fix.
+            // ImageBrush brush = new (new TextureSource(_config.backgroundTexture));
+            // brush.Stretch = Stretch.UniformToFill;
+            // _view.grid.Background = brush;
             
             _view.TouchDown += (_, _) =>
             {
