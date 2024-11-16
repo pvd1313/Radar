@@ -1,6 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Beast.Claw.Common;
+using Cysharp.Threading.Tasks;
 
-namespace Beast.Claw.Common
+namespace Beast.Claw.ProgressTracker
 {
     public interface IProgressTracker
     {

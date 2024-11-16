@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.ProgressTracker;
 
 namespace Beast.Radar.UI
 {

@@ -1,13 +1,12 @@
-﻿
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameLoop
 {
     public struct ConcurrentContext
     {
-        public UniTask CancelEmptyMethod()
+        public UniTask Abort(EActionAbortReason reason)
         {
-            throw SubscriptionCancelledException.EmptyMethod;
+            throw ActionAbortedException.FromReason(reason);
         }
     }
 }

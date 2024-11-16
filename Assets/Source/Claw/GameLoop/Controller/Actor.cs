@@ -23,51 +23,51 @@ namespace Beast.Claw.GameLoop
         // Rare concurrent.
         protected virtual UniTask _warmup(ConcurrentContext context)
         {
-            // Called once. No need to discard.
+            // Called once. No need to abort.
             return UniTask.CompletedTask;
         }
         
         protected virtual UniTask _preferencesLoad(ConcurrentContext context)
         {
-            // Called once. No need to discard. Probably redundant method.
+            // Called once. No need to abort.
             return UniTask.CompletedTask;
         }
         
         protected virtual UniTask _gameLoad(ConcurrentContext context)
         {
-            return context.CancelEmptyMethod();
+            return context.Abort(EActionAbortReason.EmptyMethod);
         }
         
         // Regular blocking.
         protected virtual void _tick(BlockingContext context)
         {
-            context.CancelEmptyMethod();
+            context.Abort(EActionAbortReason.EmptyMethod);
         }
         
         protected virtual void _fixed(BlockingContext context)
         {
-            context.CancelEmptyMethod();
+            context.Abort(EActionAbortReason.EmptyMethod);
         }
         
         protected virtual void _render(BlockingContext context)
         {
-            context.CancelEmptyMethod();
+            context.Abort(EActionAbortReason.EmptyMethod);
         }
         
         // Rare blocking.
         protected virtual void _gameSave(BlockingContext context)
         {
-            context.CancelEmptyMethod();
+            context.Abort(EActionAbortReason.EmptyMethod);
         }
         
         protected virtual void _preferencesSave(BlockingContext context)
         {
-            context.CancelEmptyMethod(); 
+            context.Abort(EActionAbortReason.EmptyMethod); 
         }
         
         protected virtual void _dispose(BlockingContext obj)
         {
-            // Called once. No need to discard.
+            // Called once. No need to abort.
         }
     }
 }

@@ -140,12 +140,6 @@ public class NoesisWorldUI : MonoBehaviour
     {
         _containerPanel = null;
         _camera = null;
-
-        if (MonoRender != null && !string.IsNullOrEmpty(Container))
-        {
-            _containerPanel = MonoRender.Content?.FindName(Container) as Panel;
-            _camera = MonoRender.GetComponent<Camera>();
-        }
     }
 
     void EnsureContent()

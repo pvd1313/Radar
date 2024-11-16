@@ -1,6 +1,7 @@
 ﻿using System;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
+using Beast.Claw.ProgressTracker;
 using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;

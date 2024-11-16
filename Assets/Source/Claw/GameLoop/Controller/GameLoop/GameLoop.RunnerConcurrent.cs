@@ -59,7 +59,7 @@ namespace Beast.Claw.GameLoop
 
                         passedActors.Add((short)actorIndex);
                     }
-                    catch (SubscriptionCancelledException)
+                    catch (ActionAbortedException)
                     {
                         
                     }

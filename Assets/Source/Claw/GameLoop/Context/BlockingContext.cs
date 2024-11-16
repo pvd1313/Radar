@@ -2,9 +2,9 @@
 {
     public struct BlockingContext
     {
-        public void CancelEmptyMethod()
+        public void Abort(EActionAbortReason reason)
         {
-            throw SubscriptionCancelledException.EmptyMethod;
+            throw ActionAbortedException.FromReason(reason);
         }
     }
 }

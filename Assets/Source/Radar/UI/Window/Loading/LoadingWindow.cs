@@ -3,6 +3,7 @@ using System.Text;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
+using Beast.Claw.ProgressTracker;
 using Beast.Claw.UI;
 using Cysharp.Threading.Tasks;
 using Noesis;
@@ -32,6 +33,35 @@ namespace Beast.Radar.UI
             _config = config;
             _windows = windows;
             _legacy = legacy;
+        }
+        
+        protected override UniTask _warmup(ConcurrentContext context)
+        {
+            _intToString = new IntToStringConverter(99);
+            _stringBuilder = new StringBuilder();
+            
+            _config.view.Instantiate(out _view);
+            
+            _view.Visibility = Visibility.Collapsed;
+
+            ImageBrush brush = new (new TextureSource(_config.backgroundTexture));
+            brush.Stretch = Stretch.UniformToFill;
+            
+            _view.grid.Background = brush;
+            
+            _view.TouchDown += (_, _) =>
+            {
+                if (_canInvokeNextAction)
+                {
+                    _nextAction?.Invoke();
+                }
+            };
+            
+            _windows.Attach(_view);
+            
+            _legacy.Register(this, WindowID.LOADING);
+            
+            return UniTask.CompletedTask;
         }
         
         public UniTask Open(LoadingWindowInput input)
@@ -83,31 +113,6 @@ namespace Beast.Radar.UI
             _view.progressText.Text = progress100 < 100 ? _intToString.Convert(progress100) : "TAP";
 
             _view.textLog.Text = _stringBuilder.ToString();
-        }
-
-        protected override UniTask _warmup(ConcurrentContext context)
-        {
-            _intToString = new IntToStringConverter(99);
-            _stringBuilder = new StringBuilder();
-            
-            _config.view.Instantiate(out _view);
-            
-            _view.Visibility = Visibility.Collapsed;
-            _view.grid.Background = new ImageBrush(new TextureSource(_config.backgroundTexture));
-            
-            _view.TouchDown += (_, _) =>
-            {
-                if (_canInvokeNextAction)
-                {
-                    _nextAction?.Invoke();
-                }
-            };
-            
-            _windows.Attach(_view);
-            
-            _legacy.Register(this, WindowID.LOADING);
-            
-            return UniTask.CompletedTask;
         }
     }
 }

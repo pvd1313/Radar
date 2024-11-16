@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Beast.Claw.Math;
+using Beast.Claw.ProgressTracker;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Common
