@@ -72,16 +72,16 @@ namespace Beast.Claw.Common
         [Conditional("DEVELOPMENT")]
         private void ValidateConfigTypeAndReference(IConfig config)
         {
+            if (config == null)
+            {
+                string message = $"Tried to bind null into container. Installer: {GetType().FullName}";
+                throw new InvalidOperationException(message);
+            }
+            
             Type childType = config.GetType();
             if (!childType.IsClass)
             {
                 string message = "Tried to bind not reference type into container. Config: " + config.GetType().FullName;
-                throw new InvalidOperationException(message);
-            }
-                    
-            if (config == null)
-            {
-                string message = "Tried to bind null into container. Config: " + config.GetType().FullName;
                 throw new InvalidOperationException(message);
             }
         }
