@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 
 namespace Beast.Claw.Collection
 {

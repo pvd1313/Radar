@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Beast.Claw.DataValidation
+namespace Beast.Claw.Editor.Validation
 {
     internal struct ValidationMethod
     {

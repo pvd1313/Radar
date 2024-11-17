@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Unity.Collections;
 
 namespace Beast.Claw.Collection
@@ -7,7 +8,7 @@ namespace Beast.Claw.Collection
     /// This array remembers only last N elements.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public struct NativeShiftArray<TValue> : IDisposable where TValue : unmanaged
+    public struct NativeRingArray<TValue> : IDisposable where TValue : unmanaged
     {
         public int Count => _count;
 
@@ -15,7 +16,7 @@ namespace Beast.Claw.Collection
         private NativeArray<TValue> _array;
         private int _first;
         
-        public NativeShiftArray(int capacity, Allocator allocator)
+        public NativeRingArray(int capacity, Allocator allocator)
         {
             _array = new NativeArray<TValue>(capacity, allocator);
             _count = 0;

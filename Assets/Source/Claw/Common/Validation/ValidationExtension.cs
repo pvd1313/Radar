@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Unity.Collections;
-using Unity.Mathematics;
 
-namespace Beast.Claw
+namespace Beast.Claw.Common
 {
     public static class ValidationExtension
     {

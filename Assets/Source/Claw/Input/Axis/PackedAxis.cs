@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Common;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;

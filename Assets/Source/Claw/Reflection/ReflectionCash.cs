@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Beast.Claw.Debug;
+
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
@@ -57,7 +58,7 @@ namespace Beast.Claw.Reflection
 
             if (windows.Length > 1)
             {
-                throw new Exception($"Found too much windows ({windows.Length}): {windowType.FullName}");
+                throw new Exception($"Found too many windows ({windows.Length}): {windowType.FullName}");
             }
 
             if (windows[0] is not UnityEditor.EditorWindow targetWindow)
@@ -70,7 +71,6 @@ namespace Beast.Claw.Reflection
 
             return true;
         }
-
 #endif
         
         public static void TypeFromAssembly<TAssembly>(string name, ref Type cash)

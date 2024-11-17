@@ -20,7 +20,7 @@ namespace Beast.Claw.Editor
 
         private readonly UIStyleGroup _style = UIStyleGroup.Default();
 
-        private ObjectPoolStructType<UIAction> _indentPool = new(POOL_CAPACITY);
+        private ManagedRingPool<UIAction> _indentPool = new(POOL_CAPACITY);
         
         private object _currentDrawTask;
         private Rect _currentScreen;
@@ -40,9 +40,9 @@ namespace Beast.Claw.Editor
                 string message = $"Task '{taskType.FullName}' is already binded to '{existingDrawer.FullName}'";
                 throw new InvalidOperationException(message);
             }
-
+            
             _rectTaskToDrawer[taskType] = drawerType;
-            _rectTaskToPool[taskType] = new ObjectPoolClassType<TDrawTask>(POOL_CAPACITY);
+            _rectTaskToPool[taskType] = new ManagedRingPool<TDrawTask>(POOL_CAPACITY);
             
             TDrawer drawer = new();
             drawer.Warmup(this, _style);
@@ -95,7 +95,7 @@ namespace Beast.Claw.Editor
                 throw new InvalidOperationException(message);
             }
 
-            ObjectPoolClassType<TDrawTask> generic = (ObjectPoolClassType<TDrawTask>)pool;
+            ManagedRingPool<TDrawTask> generic = (ManagedRingPool<TDrawTask>)pool;
             task = generic.Next();
             task.SetStyle(_style);
         }

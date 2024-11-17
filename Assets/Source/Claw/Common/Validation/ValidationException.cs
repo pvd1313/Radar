@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw
+namespace Beast.Claw.Common
 {
     public class ValidationException : Exception
     {

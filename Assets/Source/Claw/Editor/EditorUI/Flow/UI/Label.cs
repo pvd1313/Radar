@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Unity.Mathematics;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace Beast.Claw.Editor
     {
         public static Label NoLabel => new(GUIContent.none, false);
 
-        private static ObjectPoolStructType<GUIContent> _pool;
+        private static ManagedRingPool<GUIContent> _pool;
         
         public bool hasLabel;
         public GUIContent content;
@@ -19,7 +20,7 @@ namespace Beast.Claw.Editor
         {
             try
             {
-                _pool = new ObjectPoolStructType<GUIContent>(32);
+                _pool = new ManagedRingPool<GUIContent>(32);
             }
             catch (Exception e)
             {

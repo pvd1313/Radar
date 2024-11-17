@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
 

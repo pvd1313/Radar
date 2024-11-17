@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Unity.Mathematics;

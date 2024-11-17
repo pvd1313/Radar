@@ -1,17 +1,16 @@
 using System;
-using System.Text.RegularExpressions;
 
-namespace Beast.Claw.DataValidation
+namespace Beast.Claw.Common
 {
-    public static class ValidationUtil
+    public static class Validate
     {
-        public static bool RegexIsValid(string propertyName, string regex, out string message)
+        public static bool Regex(string propertyName, string regex, out string message)
         {
             message = string.Empty;
             
             try
             {
-                Regex.IsMatch("", regex);
+                System.Text.RegularExpressions.Regex.IsMatch("", regex);
             }
             catch (Exception e)
             {

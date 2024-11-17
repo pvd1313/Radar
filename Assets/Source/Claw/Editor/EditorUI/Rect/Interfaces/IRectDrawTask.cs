@@ -1,4 +1,6 @@
-﻿namespace Beast.Claw.Editor
+﻿using Beast.Claw.Common;
+
+namespace Beast.Claw.Editor
 {
     public interface IRectDrawTask : IValidatable
     {

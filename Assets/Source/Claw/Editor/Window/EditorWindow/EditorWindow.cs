@@ -161,7 +161,9 @@ namespace Beast.Claw.Editor.Window
             {
                 _criticalFault = true;
 
-                string message = $"{this.TypeName()}.Warmup(). Drawing is disabled. Reload domain to continue.";
+                string message = $"{GetType().FullName}.Warmup(). Drawing is disabled. Reload domain to continue.";
+
+                BDebug.LogError(this, message);
                 
                 BDebug.LogException(e);
             }

@@ -4,20 +4,21 @@ using System.Linq;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Fancy.Data;
+using Beast.Claw.Reflection;
 
 namespace Beast.Claw.Editor.Fancy.Tools
 {
     internal static class TypeScanner
     {
-        private static readonly Dictionary<Type, List<FancyTypeInfo>> Cash;
-        private static readonly List<Type> AllTypes;
+        private static readonly Dictionary<Type, List<FancyTypeInfo>> CASH;
+        private static readonly List<Type> ALL_TYPES;
 
         static TypeScanner()
         {
             try
             {
-                Cash = new Dictionary<Type, List<FancyTypeInfo>>();
-                AllTypes = 
+                CASH = new Dictionary<Type, List<FancyTypeInfo>>();
+                ALL_TYPES = 
                     AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly => assembly.GetTypes())
                     .Where(type => type.IsDefined(typeof(FancyAssetAttribute), true))
@@ -44,14 +45,14 @@ namespace Beast.Claw.Editor.Fancy.Tools
 
         private static IEnumerable<FancyTypeInfo> GetCash(Type baseType, params Type[] excludeTypes)
         {
-            if (Cash.TryGetValue(baseType, out List<FancyTypeInfo> result))
+            if (CASH.TryGetValue(baseType, out List<FancyTypeInfo> result))
             {
                 return result;
             }
             
-            IEnumerable<Type> derivedTypes = AllTypes
-                .Where(baseType.IsAssignableFrom)
-                .Where(type => !excludeTypes.Any(excludeType => excludeType.IsAssignableFrom(type)));
+            IEnumerable<Type> derivedTypes = ALL_TYPES
+                .Where(type => baseType.Implements(type))
+                .Where(type => !excludeTypes.Any(excludeType => excludeType.Implements(type)));
             
             result = new List<FancyTypeInfo>();
             
@@ -68,7 +69,7 @@ namespace Beast.Claw.Editor.Fancy.Tools
                 result.Add(info);
             }
             
-            Cash[baseType] = result;
+            CASH[baseType] = result;
             
             return result;
         }

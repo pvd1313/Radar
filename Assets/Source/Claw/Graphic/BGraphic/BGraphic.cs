@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
 using UnityEngine;

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
 using Unity.Collections;

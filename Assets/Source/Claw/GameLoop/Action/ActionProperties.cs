@@ -1,4 +1,6 @@
-﻿namespace Beast.Claw.GameLoop
+﻿using Beast.Claw.Common;
+
+namespace Beast.Claw.GameLoop
 {
     public struct ActionProperties : IValidatable
     {

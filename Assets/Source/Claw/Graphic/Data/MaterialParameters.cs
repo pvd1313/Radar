@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Common;
+using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {

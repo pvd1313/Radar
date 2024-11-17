@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Common;
 
 namespace Beast.Claw.GameLoop
 {

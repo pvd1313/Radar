@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using UnityEngine;
 

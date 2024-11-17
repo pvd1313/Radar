@@ -37,7 +37,7 @@ namespace Beast.Claw.Collection
             {
                 if (!_isInitialized)
                 {
-                    throw new InvalidCastException($"{this.TypeName()} was not initialized");
+                    throw new InvalidCastException($"{GetType().FullName.Q()} was not initialized");
                 }
             
                 if (arrayLength < 0 || arrayLength > _capacity)

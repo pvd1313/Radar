@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.Jobs;
 using Unity.Jobs;
 using Unity.Mathematics;

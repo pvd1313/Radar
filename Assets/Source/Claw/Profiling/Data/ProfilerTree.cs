@@ -1,4 +1,5 @@
 using System;
+using Beast.Claw.Common;
 using Unity.Collections;
 
 namespace Beast.Claw.Profiling
