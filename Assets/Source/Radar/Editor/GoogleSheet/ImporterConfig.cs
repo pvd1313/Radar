@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Beast.Radar.Editor.GoogleSheet
@@ -11,7 +10,9 @@ namespace Beast.Radar.Editor.GoogleSheet
         public string outputPath;
         public List<string> sheets;
 
-        [Button]
+        #if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.Button]
+        #endif
         private void Import()
         {
             string path = Path.Combine(Application.dataPath, outputPath);
