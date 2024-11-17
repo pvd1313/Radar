@@ -28,6 +28,12 @@ namespace Beast.Claw.Profiling
         public int maxRecordCount;
         public int stackSize;
 
+        // For Validator.
+        private ProfilerConfig()
+        {
+            
+        }
+
         public ProfilerConfig(bool customProfilingEnabled, int maxRecordCount, int stackSize)
         {
             this.customProfilingEnabled = customProfilingEnabled;

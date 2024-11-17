@@ -1,11 +1,16 @@
 ﻿using System;
 using Beast.Claw.Common;
-using Beast.Claw.Reflection;
+using Beast.Claw.Common.Text;
 
 namespace Beast.Claw.Collection
 {
-    public class ManagedRingPool<TValue> where TValue : class, new()
+    /// <summary>
+    /// Uses System.Array as buffer.
+    /// </summary>
+    public class RingPool<TValue>
     {
+        public int Capacity => _capacity;
+        
         private readonly TValue[] _pool;
         private readonly int _capacity;
         private readonly bool _isInitialized;
@@ -14,12 +19,17 @@ namespace Beast.Claw.Collection
         
         private int _index;
         
-        public ManagedRingPool(int capacity)
+        public RingPool(int capacity, Func<TValue> factory)
         {
-            if (capacity < 0 || capacity > Build.SMALL_ARRAY_SAFE_CAPACITY)
+            if (Build.IS_DEVELOPMENT)
             {
-                throw new ArgumentException("Invalid capacity " + capacity);
+                if (capacity < 0 || capacity > Build.SMALL_ARRAY_SAFE_CAPACITY)
+                {
+                    throw new ArgumentException("Invalid capacity " + capacity);
+                }
             }
+            
+            factory.ValidateNotNullThrowException(nameof(factory));
 
             _lock = new object();
             _capacity = capacity;
@@ -28,7 +38,7 @@ namespace Beast.Claw.Collection
             
             for (int i = 0; i < _capacity; i++)
             {
-                _pool[i] = new TValue();
+                _pool[i] = factory.Invoke();
             }
 
             _index = 0;

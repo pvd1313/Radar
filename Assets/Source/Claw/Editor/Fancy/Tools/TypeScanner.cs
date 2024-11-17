@@ -51,8 +51,8 @@ namespace Beast.Claw.Editor.Fancy.Tools
             }
             
             IEnumerable<Type> derivedTypes = ALL_TYPES
-                .Where(type => baseType.Implements(type))
-                .Where(type => !excludeTypes.Any(excludeType => excludeType.Implements(type)));
+                .Where(type => type.Implements(baseType))
+                .Where(type => !excludeTypes.Any(excludeType => type.Implements(excludeType)));
             
             result = new List<FancyTypeInfo>();
             

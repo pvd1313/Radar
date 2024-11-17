@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Beast.Claw.Common;
+using Beast.Claw.Common.Text;
 using UnityEditor;
 using UnityEngine;
 

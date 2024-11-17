@@ -22,13 +22,13 @@ MonoBehaviour:
     ProfileAsset: {fileID: 0}
   OnBuild: 1
   OnBuildIfWarnings: 0
-  OnBuildIfErrors: 3
+  OnBuildIfErrors: 0
   OnBuildAlwaysCompleteValidationFully: 1
   OnBuildFlashScreen: 0
   OnBuildSetup:
     Profile: 0
     ProfileAsset: {fileID: 11400000, guid: 0ee280486d82c814384dc28425ad48f5, type: 2}
-  OnProjectStartup: 1
+  OnProjectStartup: 0
   OnProjectStartupIfWarnings: 0
   OnProjectStartupIfErrors: 1
   OnProjectStartupAlwaysCompleteValidationFully: 1

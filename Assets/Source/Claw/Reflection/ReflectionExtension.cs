@@ -9,7 +9,7 @@ namespace Beast.Claw.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Implements(this Type type, Type baseType)
         {
-            return type.IsAssignableFrom(baseType);
+            return baseType.IsAssignableFrom(type);
         }
     }
 }

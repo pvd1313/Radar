@@ -20,7 +20,7 @@ namespace Beast.Claw.Editor
 
         private readonly UIStyleGroup _style = UIStyleGroup.Default();
 
-        private ManagedRingPool<UIAction> _indentPool = new(POOL_CAPACITY);
+        private RingPool<UIAction> _indentPool = new(POOL_CAPACITY, () => new UIAction());
         
         private object _currentDrawTask;
         private Rect _currentScreen;
@@ -42,7 +42,7 @@ namespace Beast.Claw.Editor
             }
             
             _rectTaskToDrawer[taskType] = drawerType;
-            _rectTaskToPool[taskType] = new ManagedRingPool<TDrawTask>(POOL_CAPACITY);
+            _rectTaskToPool[taskType] = new RingPool<TDrawTask>(POOL_CAPACITY, () => new TDrawTask());
             
             TDrawer drawer = new();
             drawer.Warmup(this, _style);
@@ -95,7 +95,7 @@ namespace Beast.Claw.Editor
                 throw new InvalidOperationException(message);
             }
 
-            ManagedRingPool<TDrawTask> generic = (ManagedRingPool<TDrawTask>)pool;
+            RingPool<TDrawTask> generic = (RingPool<TDrawTask>)pool;
             task = generic.Next();
             task.SetStyle(_style);
         }

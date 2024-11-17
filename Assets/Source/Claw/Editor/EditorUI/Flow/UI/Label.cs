@@ -11,7 +11,7 @@ namespace Beast.Claw.Editor
     {
         public static Label NoLabel => new(GUIContent.none, false);
 
-        private static ManagedRingPool<GUIContent> _pool;
+        private static readonly RingPool<GUIContent> _pool;
         
         public bool hasLabel;
         public GUIContent content;
@@ -20,7 +20,7 @@ namespace Beast.Claw.Editor
         {
             try
             {
-                _pool = new ManagedRingPool<GUIContent>(32);
+                _pool = new RingPool<GUIContent>(32, () => new GUIContent());
             }
             catch (Exception e)
             {

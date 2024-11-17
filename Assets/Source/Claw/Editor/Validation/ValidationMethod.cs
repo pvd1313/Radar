@@ -4,7 +4,7 @@ namespace Beast.Claw.Editor.Validation
 {
     internal struct ValidationMethod
     {
-        public MethodInfo method;
-        public object validator;
+        public MethodInfo info;
+        public string name;
     }
 }

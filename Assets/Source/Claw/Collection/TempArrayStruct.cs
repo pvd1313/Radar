@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Common.Text;
 using Beast.Claw.Reflection;
 
 namespace Beast.Claw.Collection
