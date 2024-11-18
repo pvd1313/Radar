@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Jobs;
+using Beast.Claw.Validation;
 using Unity.Jobs;
 using Unity.Mathematics;
 

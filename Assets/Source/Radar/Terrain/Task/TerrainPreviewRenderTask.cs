@@ -1,5 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Common;
+using Beast.Claw.Validation;
 
 namespace Beast.Radar.Terrain
 {

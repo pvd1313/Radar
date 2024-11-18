@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Beast.Claw.Collection;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -35,8 +36,18 @@ namespace Beast.Claw.Reflection
         {
             return ATTRIBUTES.GetOrFactory(type, _getAttributes);
         }
+
+        /// <summary>
+        /// Used to get method names.
+        /// </summary>
+        /// <returns>default</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetDummy<T>(out T result)
+        {
+            result = default;
+        }
         
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidCastException"></exception>
         public static long UnboxAsLong(object value, TypeCode code)
         {
             return code switch
@@ -49,7 +60,7 @@ namespace Beast.Claw.Reflection
                 TypeCode.UInt32 => (uint)value,
                 TypeCode.Int64 => (long)value,
                 TypeCode.UInt64 => (long)(ulong)value,
-                _ => throw new InvalidOperationException($"Invalid underlying type: {code}")
+                _ => throw new InvalidCastException($"Invalid underlying type: {code}")
             };
         }
 
@@ -103,7 +114,7 @@ namespace Beast.Claw.Reflection
         /// <exception cref="Exception"></exception>
         public static bool TryFindInternalUnityEditorWindow(Type windowType, ref UnityEditor.EditorWindow cash)
         {
-            BDebug.SignalPerformanceCriticalContext();
+            BDebug.NotifyPerformanceCriticalContext();
             
             if (cash != null)
             {

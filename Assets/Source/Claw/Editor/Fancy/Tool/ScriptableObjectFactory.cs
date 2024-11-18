@@ -1,0 +1,52 @@
+﻿using System;
+using System.IO;
+using Beast.Claw.Debug;
+using UnityEditor;
+using UnityEngine;
+
+namespace Beast.Claw.Editor.Fancy
+{
+    internal static class ScriptableObjectFactory
+    {
+        private const int MAX_ASSET_NAME_GENERATION_ITERATIONS = 1024;
+        
+        public static UnityEngine.Object CreateAsset(string directory, Type type)
+        {
+            string path = Path.Combine(directory, type.Name + ".asset");
+
+            if (CheckAssetExists(path))
+            {
+                path = Path.Combine(directory, type.Name + " - new.asset");
+            }
+
+            for (int i = 0; CheckAssetExists(path); i++)
+            {
+                if (i >= MAX_ASSET_NAME_GENERATION_ITERATIONS)
+                {
+                    BDebug.StaticLogError($"Failed to create asset '{type}' at '{directory}'. All names are occupied");
+                    return null;
+                }
+                
+                path = Path.Combine(directory, type.Name + " - new (" + i + ").asset");
+            }
+
+            try
+            {
+                ScriptableObject asset = ScriptableObject.CreateInstance(type);
+                AssetDatabase.CreateAsset(asset, path);
+                return asset;
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(e);
+            }
+
+            return null;
+        }
+        
+        private static bool CheckAssetExists(string path)
+        {
+            return !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(path));
+        }
+    }
+}

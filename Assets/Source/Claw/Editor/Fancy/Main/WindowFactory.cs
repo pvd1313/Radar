@@ -1,14 +1,11 @@
 ﻿using System.Text.RegularExpressions;
-using Beast.Claw.Editor.Fancy.Data;
-using Beast.Claw.Editor.Fancy.Tools;
-using Beast.Claw.Editor.Fancy.Views;
 using UnityEditor;
 
-namespace Beast.Claw.Editor.Fancy.Main
+namespace Beast.Claw.Editor.Fancy
 {
     internal class WindowFactory : EditorWindow
     {
-        private const string NameRegex = "(Window$)|([A-Z][a-z0-9]+)";
+        private const string NAME_REGEX = "(Window$)|([A-Z][a-z0-9]+)";
 
         private readonly TypeScannerWindow _scannerWindow;
         private readonly RepaintEventsView _repaintEvents;
@@ -21,7 +18,7 @@ namespace Beast.Claw.Editor.Fancy.Main
 
         public WindowFactory()
         {
-            _scannerWindow = new TypeScannerWindow(new []{typeof(EditorWindow)});
+            _scannerWindow = new TypeScannerWindow(new[] { typeof(EditorWindow) });
             _repaintEvents = new RepaintEventsView(this);
         }
 
@@ -36,7 +33,7 @@ namespace Beast.Claw.Editor.Fancy.Main
                 return;
             }
 
-            string windowTitle = Regex.Replace(selectedType.nameShort, NameRegex, "$2 ").Trim();
+            string windowTitle = Regex.Replace(selectedType.nameShort, NAME_REGEX, "$2 ").Trim();
             
             GetWindow(selectedType.type, false, windowTitle);
             

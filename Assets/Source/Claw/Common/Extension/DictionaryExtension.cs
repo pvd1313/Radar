@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Attributes;
+using Beast.Claw.Validation;
 
 namespace Beast.Claw.Common
 {

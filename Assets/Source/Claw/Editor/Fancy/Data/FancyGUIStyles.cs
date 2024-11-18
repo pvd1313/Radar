@@ -1,9 +1,9 @@
-﻿namespace Beast.Claw.Editor.Fancy.Data
+﻿namespace Beast.Claw.Editor.Fancy
 {
     internal static class FancyGUIStyles
     {
-        public const string SearchField = "SearchTextField";
-        public const string ListItemNormal = "textfield";
-        public const string ListItemSelected = "CN CountBadge";
+        public const string SEARCH_FIELD = "SearchTextField";
+        public const string LIST_ITEM_NORMAL = "textfield";
+        public const string LIST_ITEM_SELECTED = "CN CountBadge";
     }
 }

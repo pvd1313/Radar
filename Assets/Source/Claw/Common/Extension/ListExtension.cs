@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beast.Claw.Validation;
 
 namespace Beast.Claw.Common
 {
@@ -8,6 +9,8 @@ namespace Beast.Claw.Common
     {
         public static TValue PopOrNull<TValue>(this IList<TValue> list) where TValue : class
         {
+            list.ValidateNotNullThrowException(nameof(list));
+            
             if (list.Count == 0)
             {
                 return null;
@@ -22,6 +25,8 @@ namespace Beast.Claw.Common
 
         public static bool IsNullOrEmpty<TValue>(this IList<TValue> list)
         {
+            list.ValidateNotNullThrowException(nameof(list));
+            
             return list == null || list.Count == 0;
         }
 

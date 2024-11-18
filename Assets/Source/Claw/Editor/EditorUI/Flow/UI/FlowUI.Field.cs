@@ -2,6 +2,7 @@
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collection;
 using Beast.Claw.Common;
+using Beast.Claw.Validation;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;

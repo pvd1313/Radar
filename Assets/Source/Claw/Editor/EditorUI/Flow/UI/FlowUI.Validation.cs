@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Validation;
 using UnityEditor;
 
 namespace Beast.Claw.Editor

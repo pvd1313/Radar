@@ -5,6 +5,7 @@ using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;

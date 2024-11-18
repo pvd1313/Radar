@@ -2,6 +2,7 @@
 using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
+using Beast.Claw.Validation;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;

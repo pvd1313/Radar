@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Beast.Claw.Editor.Fancy.Main
+namespace Beast.Claw.Editor.Fancy
 {
     [InitializeOnLoad]
     public static class ProjectBrowserTitle

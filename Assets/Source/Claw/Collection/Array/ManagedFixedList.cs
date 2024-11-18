@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Common;
+using Beast.Claw.Validation;
 
 namespace Beast.Claw.Collection
 {

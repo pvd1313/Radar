@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Beast.Claw.Common;
+using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Mathematics;
 

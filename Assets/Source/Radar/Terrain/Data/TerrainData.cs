@@ -3,6 +3,7 @@ using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Math;
 using Beast.Claw.Serialization;
+using Beast.Claw.Validation;
 
 namespace Beast.Radar.Terrain
 {

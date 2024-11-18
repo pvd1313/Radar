@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
+using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input

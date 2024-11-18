@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Editor.Fancy.Data
+namespace Beast.Claw.Editor.Fancy
 {
     internal struct FancyTypeInfo
     {

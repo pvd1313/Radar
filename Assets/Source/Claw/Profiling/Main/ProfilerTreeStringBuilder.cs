@@ -2,6 +2,7 @@
 using System.Text;
 using Beast.Claw.Common;
 using Beast.Claw.Math;
+using Beast.Claw.Validation;
 
 namespace Beast.Claw.Profiling
 {

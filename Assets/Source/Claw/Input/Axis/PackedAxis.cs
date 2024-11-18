@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Common;
 using Beast.Claw.Math;
+using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Mathematics;
 

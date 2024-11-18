@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using Beast.Claw.Common;
-using Beast.Claw.Common.Text;
+using Beast.Claw.Text;
+using Beast.Claw.Validation;
 using UnityEditor;
 using UnityEngine;
 

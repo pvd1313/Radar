@@ -6,6 +6,7 @@ using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
+using Beast.Claw.Validation;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 

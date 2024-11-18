@@ -1,12 +1,9 @@
 ﻿using System.IO;
 using Beast.Claw.Common;
-using Beast.Claw.Editor.Fancy.Data;
-using Beast.Claw.Editor.Fancy.Tools;
-using Beast.Claw.Editor.Fancy.Views;
 using UnityEditor;
 using UnityEngine;
 
-namespace Beast.Claw.Editor.Fancy.Main
+namespace Beast.Claw.Editor.Fancy
 {
     internal class AssetFactory : EditorWindow
     {

@@ -3,10 +3,10 @@
 using System;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Collection;
-using Beast.Claw.Common.Text;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Validation;
 using Beast.Claw.Reflection;
+using Beast.Claw.Text;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Validation;
 
@@ -130,7 +130,7 @@ namespace Beast.Claw.Editor.Validation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool _validateFromFactory(ValidationResult result, object value, Type itemType)
         {
-            if (!ValidationMethodStorage.TryFindValidator(itemType, out ValidationMethod method))
+            if (!ValidationManager.TryFindValidator(itemType, out ValidationMethod method))
             {
                 return true;
             }
@@ -144,7 +144,7 @@ namespace Beast.Claw.Editor.Validation
                     result.ResultType = ValidationResultType.Error;
                     result.Message = invokeResult;
 
-                    _addValidationMethodName(result, method.name);
+                    _addValidationMethodName(result, method.fullNameWithMethod);
 
                     return false;
                 }
@@ -152,9 +152,9 @@ namespace Beast.Claw.Editor.Validation
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"Exception during validation via {method.name.Q()}");
+                UnityEngine.Debug.LogError($"Exception during validation via {method.fullNameWithMethod.Q()}");
 
-                ValidationMethodStorage.Forget(itemType);
+                ValidationManager.Forget(itemType);
                 
                 UnityEngine.Debug.LogException(e);
             }
@@ -176,7 +176,10 @@ namespace Beast.Claw.Editor.Validation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void _addValidationMethodName(ValidationResult result, string methodName)
         {
-            result.Add(new ResultItem(methodName, ValidationResultType.Warning));
+            if (ValidationPreference.MethodDisplayEnabled)
+            {
+                result.Add(new ResultItem(methodName, ValidationResultType.Warning));
+            }
         }
     }
 }

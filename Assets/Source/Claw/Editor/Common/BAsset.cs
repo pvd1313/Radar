@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
+using Beast.Claw.Validation;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -102,6 +104,24 @@ namespace Beast.Claw.Editor
             asset.ValidateNotNullThrowException(nameof(asset));
             
             AssetDatabase.SaveAssetIfDirty(asset);
+        }
+
+        /// <summary>
+        /// Uses UnityEngine.Resources.FindObjectsOfTypeAll();
+        /// </summary>
+        public static void RepaintEditorWindows()
+        {
+            BDebug.NotifyPerformanceCriticalContext();
+            
+            EditorWindow[] windows = UnityEngine.Resources.FindObjectsOfTypeAll<EditorWindow>();
+
+            foreach (EditorWindow window in windows)
+            {
+                if (window.hasFocus)
+                {
+                    window.Repaint();
+                }
+            }
         }
 
         public static int DuplicateArrayElement<TAsset>(TAsset asset, string arrayPath, int sourceElementIndex)

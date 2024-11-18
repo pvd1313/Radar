@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
+using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Jobs;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Validation;
 using Noesis;
 
 namespace Beast.Claw.UI
