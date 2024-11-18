@@ -97,18 +97,12 @@ namespace Beast.Radar.Editor.Atlas
 
             RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, new RenderTextureData
                 {
-                    texture = new PlanarTextureData
-                    {
-                        size = texture.Size(),
-                        filterMode = FilterMode.Point,
-                        wrapMode = TextureWrapMode.Clamp
-                    },
-                    temp = new TempRenderTextureData
-                    {
-                        antiAliasing = 1,
-                        readWrite = RenderTextureReadWrite.Linear
-                    },
+                    size = texture.Size(),
+                    filterMode = FilterMode.Point,
+                    wrapMode = TextureWrapMode.Clamp,
                     format = RenderTextureFormat.ARGB32,
+                    antiAliasing = 1,
+                    readWrite = RenderTextureReadWrite.Linear,
                 });
             
             BGraphic.Blit(new BlitParameters
@@ -123,13 +117,10 @@ namespace Beast.Radar.Editor.Atlas
 
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
-                texture = new PlanarTextureData
-                {
-                    size = texture.Size(),
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp,
-                    name = "TempToGetHeight",
-                },
+                size = texture.Size(),
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
+                name = "TempToGetHeight",
                 format = TextureFormat.RGBA32,
                 isLinear = true,
                 mipChain = false,

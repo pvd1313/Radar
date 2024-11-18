@@ -9,6 +9,7 @@ namespace Beast.Claw.Graphic
         public RenderTexture targetTexture;
         public Texture2D sourceTexture;
         public float2 targetTexturePixelOffset;
+        
         public string Validate()
         {
             if (targetTexture == null)

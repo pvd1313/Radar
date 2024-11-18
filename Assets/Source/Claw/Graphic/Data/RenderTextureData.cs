@@ -8,40 +8,43 @@ namespace Beast.Claw.Graphic
     [Serializable]
     public struct RenderTextureData : IValidatable
     {
-        public PlanarTextureData texture;
-        
+        public string name;
+        public int2 size;
         public RenderTextureFormat format;
+        public TextureWrapMode wrapMode;
+        public FilterMode filterMode;
         public int depth;
-        
         public int mipCount;
-
-        public TempRenderTextureData temp;
+        public int antiAliasing;
+        public RenderTextureReadWrite readWrite;
+        public RenderTextureMemoryless memoryless;
+        public VRTextureUsage vrUsage;
         
         public string Validate()
         {
+            if (size.x <= 0 || size.y <= 0)
+            {
+                return "Invalid size: " + size;
+            }
+            
             if (depth < 0)
             {
                 return "Invalid depth: " + depth;
             }
-
-            string result = temp.Validate();
-
-            if (result != null)
-            {
-                return result;
-            }
             
-            return texture.Validate();
+            if (antiAliasing < 1)
+            {
+                return "Invalid antiAliasing: " + antiAliasing;
+            }
+
+            return null;
         }
 
         public static RenderTextureData Default()
         {
             return new RenderTextureData
             {
-                temp = new TempRenderTextureData
-                {
-                    antiAliasing = 1
-                }
+                antiAliasing = 1,
             };
         }
 
@@ -49,7 +52,7 @@ namespace Beast.Claw.Graphic
         {
             RenderTextureData data = this;
             
-            data.texture.size = size;
+            data.size = size;
 
             return data;
         }
@@ -69,7 +72,7 @@ namespace Beast.Claw.Graphic
 
             RenderTextureData data = this;
 
-            data.texture.size = getSizeFromTexture.Size();
+            data.size = getSizeFromTexture.Size();
 
             return data;
         }

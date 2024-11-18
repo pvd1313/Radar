@@ -74,11 +74,8 @@ namespace Beast.Claw.Gizmo
                 format = TextureFormat.RGBAHalf,
                 isLinear = true,
                 mipChain = false,
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp
-                }
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
             };
             
             int maxTexturePower = BMath.CeilToInt(BMath.Log2(MAX_TEXTURE_SIZE));
@@ -214,17 +211,11 @@ namespace Beast.Claw.Gizmo
         {
             RenderTexture canvas = BGraphic.CreatePermRenderTexture(this, new RenderTextureData
             {
+                size = screenSize,
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
                 format = RenderTextureFormat.ARGB32,
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp,
-                    size = screenSize
-                },
-                temp = new TempRenderTextureData
-                {
-                    antiAliasing = 1
-                }
+                antiAliasing = 1,
             });
             
             _canvasSize = screenSize;

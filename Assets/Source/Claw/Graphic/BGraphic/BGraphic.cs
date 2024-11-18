@@ -45,15 +45,15 @@ namespace Beast.Claw.Graphic
             input.ValidateThrowException(nameof(input));
             
             RenderTexture texture = new (
-                input.texture.size.x,
-                input.texture.size.y,
+                input.size.x,
+                input.size.y,
                 input.depth,
                 input.format,
                 input.mipCount)
             {
-                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.texture.name),
-                filterMode = input.texture.filterMode,
-                wrapMode = input.texture.wrapMode
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+                filterMode = input.filterMode,
+                wrapMode = input.wrapMode
             };
 
             PERMANENT_TEXTURES.Add(texture);
@@ -66,17 +66,17 @@ namespace Beast.Claw.Graphic
             input.ValidateThrowException(nameof(input));
             
             RenderTexture texture = RenderTexture.GetTemporary(
-                input.texture.size.x,
-                input.texture.size.y,
+                input.size.x,
+                input.size.y,
                 input.depth,
                 input.format,
-                input.temp.readWrite,
-                input.temp.antiAliasing,
-                input.temp.memoryless,
-                input.temp.vrUsage);
+                input.readWrite,
+                input.antiAliasing,
+                input.memoryless,
+                input.vrUsage);
 
-            texture.filterMode = input.texture.filterMode;
-            texture.wrapMode = input.texture.wrapMode;
+            texture.filterMode = input.filterMode;
+            texture.wrapMode = input.wrapMode;
 
             TEMPORARY_TEXTURES.Add(texture);
 
@@ -112,16 +112,16 @@ namespace Beast.Claw.Graphic
             input.ValidateThrowException(nameof(input));
 
             return new Texture2D(
-                input.texture.size.x,
-                input.texture.size.y,
+                input.size.x,
+                input.size.y,
                 input.format,
                 input.mipChain,
                 input.isLinear,
                 input.createInitialized)
             {
-                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.texture.name),
-                filterMode = input.texture.filterMode,
-                wrapMode = input.texture.wrapMode
+                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+                filterMode = input.filterMode,
+                wrapMode = input.wrapMode
             };
         }
 

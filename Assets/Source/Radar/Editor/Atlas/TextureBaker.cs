@@ -22,17 +22,11 @@ namespace Beast.Radar.Editor.Atlas
             
             RenderTexture renderTexture = BGraphic.CreateTempRenderTexture(this, new RenderTextureData
             {
-                texture = new PlanarTextureData
-                {
-                    size = textureSize,
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp
-                },
-                temp = new TempRenderTextureData
-                {
-                    antiAliasing = 1,
-                    readWrite = RenderTextureReadWrite.Linear
-                },
+                size = textureSize,
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
+                antiAliasing = 1,
+                readWrite = RenderTextureReadWrite.Linear,
                 format = RenderTextureFormat.ARGB32,
             });
 
@@ -51,12 +45,9 @@ namespace Beast.Radar.Editor.Atlas
 
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    size = textureSize,
-                    wrapMode = TextureWrapMode.Clamp
-                },
+                filterMode = FilterMode.Point,
+                size = textureSize,
+                wrapMode = TextureWrapMode.Clamp,
                 isLinear = true,
                 mipChain = false,
                 createInitialized = false,
@@ -74,12 +65,9 @@ namespace Beast.Radar.Editor.Atlas
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    wrapMode = TextureWrapMode.Clamp,
-                    size = atlas.tileCount
-                },
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp,
+                size = atlas.tileCount,
                 format = TextureFormat.RGB24,
                 isLinear = true,
                 mipChain = false,
@@ -104,12 +92,9 @@ namespace Beast.Radar.Editor.Atlas
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    size = atlas.tileCount,
-                    wrapMode = TextureWrapMode.Clamp
-                },
+                filterMode = FilterMode.Point,
+                size = atlas.tileCount,
+                wrapMode = TextureWrapMode.Clamp,
                 isLinear = true,
                 format = TextureFormat.RG16,
                 createInitialized = false,
@@ -137,12 +122,9 @@ namespace Beast.Radar.Editor.Atlas
         {
             Texture2D resultTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
-                texture = new PlanarTextureData
-                {
-                    filterMode = FilterMode.Point,
-                    size = INDEX_MAP_SIZE,
-                    wrapMode = TextureWrapMode.Clamp
-                },
+                filterMode = FilterMode.Point,
+                size = INDEX_MAP_SIZE,
+                wrapMode = TextureWrapMode.Clamp,
                 isLinear = true,
                 format = TextureFormat.RHalf,
                 createInitialized = false,

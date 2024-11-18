@@ -1,5 +1,6 @@
 ﻿using Beast.Claw;
 using Beast.Claw.Common;
+using Beast.Claw.Common.Text;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
@@ -36,15 +37,15 @@ namespace Beast.Radar.Terrain
             {
                 if (pixelSize.x <= 0 || pixelSize.y <= 0)
                 {
-                    string message = $"'{nameof(pixelSize)}' components must be bigger than zero, but was: {pixelSize}.";
+                    string message = $"{nameof(pixelSize).Q()} components must be bigger than zero, but was: {pixelSize}.";
                     throw new ValidationException(message);
                 }
             }
             
             RenderTextureData bakerData = _config.terrain.fbmRenderTexture.WithSize(pixelSize);
             RenderTextureData biomeData = _config.terrain.biomeRenderTexture.WithSize(pixelSize);
-            RenderTextureData colorData = _config.terrain.colorTexture.WithSize(pixelSize);
-            colorData.texture.filterMode = FilterMode.Bilinear;
+            RenderTextureData colorData = _config.terrain.colorRenderTexture.WithSize(pixelSize);
+            colorData.filterMode = FilterMode.Bilinear;
 
             return new TerrainPreviewTexture
             {

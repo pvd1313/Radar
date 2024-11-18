@@ -108,12 +108,9 @@ namespace Beast.Claw.Editor.Window
             
                 _bakedTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
                 {
-                    texture = new PlanarTextureData
-                    {
-                        size = renderTextureBig.Size(),
-                        filterMode = renderTextureBig.filterMode,
-                        wrapMode = renderTextureBig.wrapMode
-                    },
+                    size = renderTextureBig.Size(),
+                    filterMode = renderTextureBig.filterMode,
+                    wrapMode = renderTextureBig.wrapMode,
                     format = _outputTextureFormat,
                     isLinear = true,
                     mipChain = false,
@@ -129,12 +126,9 @@ namespace Beast.Claw.Editor.Window
             
                 _previewTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
                 {
-                    texture = new PlanarTextureData
-                    {
-                        size = renderTextureSmall.Size(),
-                        filterMode = FilterMode.Point,
-                        wrapMode = renderTextureSmall.wrapMode
-                    },
+                    size = renderTextureSmall.Size(),
+                    filterMode = FilterMode.Point,
+                    wrapMode = renderTextureSmall.wrapMode,
                     format = TextureFormat.RGBA32,
                     isLinear = true,
                     mipChain = false,

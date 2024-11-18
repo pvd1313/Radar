@@ -16,77 +16,69 @@ MonoBehaviour:
     noiseSamplerLOD1: 4
     noiseSamplerLOD0: 16
     fbmRenderTexture:
-      texture:
-        name: terrain_fbm_RT
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 1
+      name: terrain_fbm_RT
+      size:
+        x: 1
+        y: 1
+      wrapMode: 1
+      filterMode: 1
       format: 25
       depth: 0
       mipCount: 0
-      temp:
-        antiAliasing: 1
-        readWrite: 1
-        memoryless: 0
-        vrUsage: 0
+      antiAliasing: 1
+      readWrite: 1
+      memoryless: 0
+      vrUsage: 0
     fbmTexture2D:
-      texture:
-        name: terrain_fbm_texture2D
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 1
+      size:
+        x: 1
+        y: 1
+      name: terrain_biome_Texture2D
+      wrapMode: 1
+      filterMode: 1
       format: 62
       mipChain: 0
       isLinear: 1
       createInitialized: 0
     biomeRenderTexture:
-      texture:
-        name: terrain_biome_RT
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 0
+      name: terrain_biome_RT
+      size:
+        x: 1
+        y: 1
+      wrapMode: 1
+      filterMode: 0
       format: 15
       depth: 0
       mipCount: 0
-      temp:
-        antiAliasing: 1
-        readWrite: 1
-        memoryless: 0
-        vrUsage: 0
+      antiAliasing: 1
+      readWrite: 1
+      memoryless: 0
+      vrUsage: 0
     biomeTexture2D:
-      texture:
-        name: terrain_biome_texture2D
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 0
+      size:
+        x: 1
+        y: 1
+      name: terrain_biome_Texture2D
+      wrapMode: 1
+      filterMode: 0
       format: 15
       mipChain: 0
       isLinear: 1
       createInitialized: 0
-    colorTexture:
-      texture:
-        name: terrain_color_RT
-        size:
-          x: 0
-          y: 0
-        wrapMode: 0
-        filterMode: 0
+    colorRenderTexture:
+      name: color_RT
+      size:
+        x: 1
+        y: 1
+      wrapMode: 1
+      filterMode: 0
       format: 0
       depth: 0
       mipCount: 0
-      temp:
-        antiAliasing: 1
-        readWrite: 1
-        memoryless: 0
-        vrUsage: 0
+      antiAliasing: 1
+      readWrite: 1
+      memoryless: 0
+      vrUsage: 0
   tile:
     fadeInPixelSize: 8
     minPixelSize: 4
@@ -94,34 +86,30 @@ MonoBehaviour:
     fadeInCount: 50000
     denoiseScale: 6
     renderTexture:
-      texture:
-        name: tile_render_texture
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 0
+      name: tile_render_RT
+      size:
+        x: 1
+        y: 1
+      wrapMode: 1
+      filterMode: 0
       format: 0
       depth: 0
       mipCount: 0
-      temp:
-        antiAliasing: 1
-        readWrite: 1
-        memoryless: 0
-        vrUsage: 0
+      antiAliasing: 1
+      readWrite: 1
+      memoryless: 0
+      vrUsage: 0
     solverTexture:
-      texture:
-        name: tile_solver_texture
-        size:
-          x: 0
-          y: 0
-        wrapMode: 1
-        filterMode: 0
+      name: tile_solver_RT
+      size:
+        x: 1
+        y: 1
+      wrapMode: 1
+      filterMode: 0
       format: 2
       depth: 0
       mipCount: 0
-      temp:
-        antiAliasing: 1
-        readWrite: 1
-        memoryless: 0
-        vrUsage: 0
+      antiAliasing: 1
+      readWrite: 1
+      memoryless: 0
+      vrUsage: 0
