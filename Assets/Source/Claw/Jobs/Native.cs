@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Math;
 using Unity.Collections;
@@ -17,6 +18,18 @@ namespace Beast.Claw.Jobs
         public static NativeArray<T> PermArray<T>(int length) where T : unmanaged
         {
             return new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void PermArray<T>(int length, out NativeArray<T> array) where T : unmanaged
+        {
+            array = new NativeArray<T>(length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void PermHashSet<T>(int capacity, out NativeHashSet<T> array) where T : unmanaged, IEquatable<T>
+        {
+            array = new NativeHashSet<T>(capacity, Allocator.Persistent);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

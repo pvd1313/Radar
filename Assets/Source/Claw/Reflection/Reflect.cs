@@ -1,13 +1,74 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Reflection;
+using Beast.Claw.Collection;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
 {
-    public static class ReflectionCash
+    public static class Reflect
     {
+        private static readonly ConcurrentDictionary<Type, AttributeData[]> ATTRIBUTES;
+        private static readonly RingPool<List<AttributeData>> ATTRIBUTE_POOL;
+
+        static Reflect()
+        {
+            try
+            {
+                ATTRIBUTES = new ConcurrentDictionary<Type, AttributeData[]>();
+                ATTRIBUTE_POOL = new RingPool<List<AttributeData>>(16, () => new List<AttributeData>());
+            }
+            catch (Exception e)
+            {
+                BDebug.LogException(e);
+            }
+        }
+        
+        /// <summary>
+        /// Cashed version of System.Type.GetCustomAttributes(). inherit = true.
+        /// </summary>
+        public static IReadOnlyList<AttributeData> GetCustomAttributes(Type type)
+        {
+            return ATTRIBUTES.GetOrFactory(type, _getAttributes);
+        }
+        
+        /// <exception cref="InvalidOperationException"></exception>
+        public static long UnboxAsLong(object value, TypeCode code)
+        {
+            return code switch
+            {
+                TypeCode.SByte => (sbyte)value,
+                TypeCode.Byte => (byte) value,
+                TypeCode.Int16 => (short)value,
+                TypeCode.UInt16 => (ushort)value,
+                TypeCode.Int32 => (int)value,
+                TypeCode.UInt32 => (uint)value,
+                TypeCode.Int64 => (long)value,
+                TypeCode.UInt64 => (long)(ulong)value,
+                _ => throw new InvalidOperationException($"Invalid underlying type: {code}")
+            };
+        }
+
+        private static AttributeData[] _getAttributes(Type type)
+        {
+            List<AttributeData> list = ATTRIBUTE_POOL.Next();
+
+            foreach (Attribute attribute in type.GetCustomAttributes())
+            {
+                list.Add(new AttributeData
+                {
+                    attribute = attribute,
+                    type = attribute.GetType()
+                });
+            }
+
+            return list.ToArray();
+        }
+        
         public static void GetField(Type owner, string fieldName, BindingFlags flags, ref FieldInfo cash)
         {
             if (cash != null)

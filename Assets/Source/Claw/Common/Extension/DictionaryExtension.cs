@@ -1,19 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Attributes;
 
 namespace Beast.Claw.Common
 {
     public static class DictionaryExtension
     {
-        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue GetOrNew<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
             where TValue : new()
         {
+            dictionary.ValidateNotNullThrowException(nameof(dictionary));
+            
             if (dictionary.TryGetValue(key, out TValue value))
             {
                 return value;
             }
 
             value = new TValue();
+
+            dictionary[key] = value;
+
+            return value;
+        }
+
+        public static TValue GetOrFactory<TKey, TValue>(
+            this IDictionary<TKey, TValue> dictionary,
+            TKey key,
+            Func<TKey, TValue> factory)
+        {
+            factory.ValidateNotNullThrowException(nameof(factory));
+            dictionary.ValidateNotNullThrowException(nameof(dictionary));
+            
+            if (dictionary.TryGetValue(key, out TValue value))
+            {
+                return value;
+            }
+
+            value = factory.Invoke(key);
 
             dictionary[key] = value;
 

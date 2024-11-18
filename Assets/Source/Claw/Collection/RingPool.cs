@@ -18,7 +18,7 @@ namespace Beast.Claw.Collection
         private readonly object _lock;
         
         private int _index;
-        
+
         public RingPool(int capacity, Func<TValue> factory)
         {
             if (Build.IS_DEVELOPMENT)

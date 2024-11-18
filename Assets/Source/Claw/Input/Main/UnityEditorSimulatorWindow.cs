@@ -21,7 +21,7 @@ namespace Beast.Claw.Input
         {
             try
             {
-                ReflectionCash.TypeFromAssembly
+                Reflect.TypeFromAssembly
                     <UnityEditor.DeviceSimulation.DeviceSimulator>(SIMULATOR_WINDOW, ref _windowType);
             }
             catch (Exception e)
@@ -43,7 +43,7 @@ namespace Beast.Claw.Input
 
             try
             {
-                if (ReflectionCash.TryFindInternalUnityEditorWindow(_windowType, ref _simulatorWindow))
+                if (Reflect.TryFindInternalUnityEditorWindow(_windowType, ref _simulatorWindow))
                 {
                     return _simulatorWindow.hasFocus;
                 }

@@ -6,6 +6,7 @@ using Beast.Claw.Collection;
 using Beast.Claw.Common.Text;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Validation;
+using Beast.Claw.Reflection;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector.Editor.Validation;
 
@@ -17,16 +18,16 @@ namespace Beast.Claw.Editor.Validation
     {
         // Odin creates OdinValidator per each validation.
         private static readonly RingPool<StringBuilder> BUILDER_POOL;
-        private static readonly string THIS_METHOD_NAME;
+        private static readonly string VALIDATE_ENUM;
+        private static readonly string VALIDATE_NULL_REFERENCE;
         
         static OdinValidator()
         {
             try
             {
                 BUILDER_POOL = new RingPool<StringBuilder>(16, () => new StringBuilder(256));
-
-                OdinValidator _;
-                THIS_METHOD_NAME = typeof(OdinValidator).FullName + "." + nameof(_.Validate) + "()";
+                VALIDATE_ENUM = typeof(OdinValidator).FullName + "." + nameof(_validateEnum) + "()";
+                VALIDATE_NULL_REFERENCE = typeof(OdinValidator).FullName + "." + nameof(_validateNullReference) + "()";
             }
             catch (Exception e)
             {
@@ -63,7 +64,7 @@ namespace Beast.Claw.Editor.Validation
 
                 StringBuilder builder = BUILDER_POOL.Next().Clear();
 
-                if (_isArrayIndex(Property.NiceName))
+                if (_tryParseArrayIndex(Property.NiceName))
                 {
                     builder += "Element at index (" + Property.NiceName + ") is null";
                 }
@@ -74,7 +75,7 @@ namespace Beast.Claw.Editor.Validation
                 
                 result.Message = builder.ToString();
                 
-                _addValidationMethodName(result, THIS_METHOD_NAME);
+                _addValidationMethodName(result, VALIDATE_NULL_REFERENCE);
                 
                 return false;
             }
@@ -85,31 +86,45 @@ namespace Beast.Claw.Editor.Validation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool _validateEnum(ValidationResult result, object value, Type itemType)
         {
-            if (itemType.IsEnum && !Enum.IsDefined(itemType, value))
+            if (!BEnum.TryGetEnumData(itemType, out EnumData enumData))
             {
-                result.ResultType = ValidationResultType.Error;
-                
-                StringBuilder builder = BUILDER_POOL.Next().Clear();
-
-                if (_isArrayIndex(Property.NiceName))
-                {
-                    builder += "Element at index (" + Property.NiceName + ") equals " + value.Q();
-                    builder += " which is invalid " + itemType.Q();
-                }
-                else
-                {
-                    builder += "Property " + Property.NiceName.Q() + " equals " + 
-                               value.Q() + "which is invalid " + itemType.Q();
-                }
-                
-                result.Message = builder.ToString();
-                
-                _addValidationMethodName(result, THIS_METHOD_NAME);
-                
-                return false;
+                return true;
             }
 
-            return true;
+            long valueLong = Reflect.UnboxAsLong(value, enumData.typeCode);
+
+            if (enumData.isFlags)
+            {
+                if (valueLong == 0 || (enumData.flagsMask & valueLong) != 0)
+                {
+                    return true;
+                }
+            }
+            
+            if (!enumData.isFlags && enumData.allValues.Contains(valueLong))
+            {
+                return true;
+            }
+            
+            StringBuilder builder = BUILDER_POOL.Next().Clear();
+
+            if (_tryParseArrayIndex(Property.NiceName))
+            {
+                builder += "Element at index (" + Property.NiceName + ") equals " + value.Q();
+                builder += " which is invalid " + itemType.Q();
+            }
+            else
+            {
+                builder += "Property " + Property.NiceName.Q() + " equals " + 
+                           value.Q() + " which is invalid " + itemType.Q();
+            }
+
+            result.ResultType = ValidationResultType.Error;
+            result.Message = builder.ToString();
+                
+            _addValidationMethodName(result, VALIDATE_ENUM);
+                
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -148,7 +163,7 @@ namespace Beast.Claw.Editor.Validation
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool _isArrayIndex(string propertyNiceName)
+        private static bool _tryParseArrayIndex(string propertyNiceName)
         {
             if (int.TryParse(propertyNiceName, out _))
             {
