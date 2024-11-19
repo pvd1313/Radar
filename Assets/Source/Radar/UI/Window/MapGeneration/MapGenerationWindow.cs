@@ -61,7 +61,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _menuView = BScene.InstantiateMono(this, _library.mapGeneration, float3.zero, quaternion.identity);
+            _menuView = BScene.InstantiateMono(this, _library.mapGeneration);
             _hideView();
             _windowManager.Register(this, WindowID.MAP_GENERATION);
 

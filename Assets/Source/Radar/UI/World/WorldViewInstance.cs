@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
-            Instance = BScene.InstantiateMono(this, _prefabLibrary.worldView, float3.zero, quaternion.identity);
+            Instance = BScene.InstantiateMono(this, _prefabLibrary.worldView);
 
             return UniTask.CompletedTask;
         }

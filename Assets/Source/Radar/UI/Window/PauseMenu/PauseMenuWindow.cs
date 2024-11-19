@@ -55,7 +55,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _view = BScene.InstantiateMono(this, _library.pauseMenu, float3.zero, quaternion.identity);
+            _view = BScene.InstantiateMono(this, _library.pauseMenu);
             _view.gameObject.SetActive(false);
             _windowManager.Register(this, WindowID.PAUSE);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);

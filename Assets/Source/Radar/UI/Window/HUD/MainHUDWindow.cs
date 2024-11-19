@@ -56,7 +56,7 @@ namespace Beast.Radar.UI
         {
             _windowManager.Register(this, WindowID.HUD);
 
-            _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
+            _view = BScene.InstantiateMono(this, _library.hud);
             _view.transform.SetParent(_windowManager.CanvasTransform, false);
             _view.gameObject.SetActive(false);
 

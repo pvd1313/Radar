@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Beast.Claw.Common;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class UIPool<TPoolable> where TPoolable : UIView, IUIPoolable
+    public class UIPool<TPoolable> : IController 
+        where TPoolable : UIView, IUIPoolable
     {
+        public ControllerMeta Meta { get; }
+        
         private readonly Transform _root;
         private readonly TPoolable _prefab;
         private readonly List<TPoolable> _all = new();
@@ -17,6 +19,8 @@ namespace Beast.Radar.UI
         {
             _root = root;
             _prefab = prefab;
+
+            Meta = ControllerMeta.Create(this);
         }
 
         public TPoolable GetNext()
@@ -80,7 +84,7 @@ namespace Beast.Radar.UI
 
         private TPoolable _addNewEntity()
         {
-            TPoolable entity = BScene.InstantiateMono(this, _prefab, float3.zero, quaternion.identity);
+            TPoolable entity = BScene.InstantiateMono(this, _prefab);
             entity.transform.SetParent(_root, false);
             _all.Add(entity);
             return entity;

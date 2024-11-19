@@ -9,9 +9,9 @@ namespace Beast.Claw.Resources
         UniTask<TObject> LoadAsset<TObject>(IController owner, IAddress<TObject> address)
             where TObject : Object;
 
-        UniTask<TMono> LoadMono<TMono>(IController owner, IAddress<TMono> address)
+        UniTask<TMono> InstantiateMono<TMono>(IController owner, IAddress<TMono> address)
             where TMono : MonoBehaviour;
 
-        UniTask<GameObject> LoadGameObject(IController owner, IAddress<GameObject> address);
+        UniTask<GameObject> InstantiateGameObject(IController owner, IAddress<GameObject> address);
     }
 }

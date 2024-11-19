@@ -12,48 +12,36 @@ namespace Beast.Radar.UI
         private readonly DebugPrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly IDebugController _debugController;
-        private readonly IResourceManager _resources;
 
         private DebugMenuView _view;
         private PanelsController _panelsController;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _debugWindow;
 
-        private UniTask _viewBuildingTask;
-        private bool _viewReady;
-        
         public DebugMenuWindow(
             DebugPrefabLibrary library,
             IWindowManager windowManager,
-            IDebugController debugController,
-            IResourceManager resources)
+            IDebugController debugController)
         {
             _library = library;
             _windowManager = windowManager;
             _debugController = debugController;
-            _resources = resources;
         }
         
-        public async UniTask Open(Empty data)
+        public UniTask Open(Empty data)
         {
-            if (!_viewReady)
-            {
-                await _viewBuildingTask;
-            }
-            
             _panelsController.Enable();
             _view.screen.SetActive(true);
+            
+            return UniTask.CompletedTask;
         }
 
-        public async UniTask Close()
+        public UniTask Close()
         {
-            if (!_viewReady)
-            {
-                await _viewBuildingTask;
-            }
-            
             _hideView();
             _panelsController.Disable();
+            
+            return UniTask.CompletedTask;
         }
 
         protected override UniTask _warmup(ConcurrentContext context)
@@ -61,24 +49,20 @@ namespace Beast.Radar.UI
             _windowManager.Register(this, WindowID.DEBUG);
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
             _debugWindow = _windowManager.GetHandle<Empty>(this, WindowID.DEBUG);
-            
-            _viewBuildingTask = UniTask.Create(async () =>
-            {
-                _view = await BFactory.InstantiateMono(this, _library.debugMenu);
-                _view.transform.SetSiblingIndex(2);
-                _view.transform.SetParent(_windowManager.CanvasTransform, false);
-                
-                _configurePanels(_library);
-                
-                _subscribeView();
-                
-                _subscribeInput();
-                
-                _view.buildVersionText.SetText(Application.version);
 
-                _viewReady = true;
-            });
+            _view = BScene.InstantiateMono(this, _library.debugMenu);
             
+            _view.transform.SetSiblingIndex(2);
+            _view.transform.SetParent(_windowManager.CanvasTransform, false);
+                
+            _configurePanels(_library);
+                
+            _subscribeView();
+                
+            _subscribeInput();
+                
+            _view.buildVersionText.SetText(Application.version);
+
             return UniTask.CompletedTask;
         }
 

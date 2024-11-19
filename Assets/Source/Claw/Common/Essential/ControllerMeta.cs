@@ -1,5 +1,8 @@
-﻿namespace Beast.Claw.Common
+﻿using System;
+
+namespace Beast.Claw.Common
 {
+    [Serializable]
     public struct ControllerMeta
     {
         private static int _nextID;

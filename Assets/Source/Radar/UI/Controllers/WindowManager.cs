@@ -88,7 +88,7 @@ namespace Beast.Radar.UI
                 _debugHandleRecords = new List<Record>(256);
             }
 
-            _canvas = BScene.InstantiateMono(this, _library.canvas, float3.zero, quaternion.identity);
+            _canvas = BScene.InstantiateMono(this, _library.canvas);
 
             return UniTask.CompletedTask;
         }

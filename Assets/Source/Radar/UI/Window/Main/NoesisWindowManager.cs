@@ -40,11 +40,7 @@ namespace Beast.Radar.UI
             _library.canvasXaml.Instantiate(out _canvas);
             _grid = _canvas.grid;
             
-            NoesisMonoRender render = BScene.InstantiateMono(
-                this, 
-                _library.noesisRender, 
-                float3.zero, 
-                quaternion.identity);
+            NoesisMonoRender render = BScene.InstantiateMono(this, _library.noesisRender);
 
             NoesisView view = render.Initialize(_camera.Camera, _canvas);
 

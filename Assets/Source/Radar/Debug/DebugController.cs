@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.GameLoop;
+﻿using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -15,7 +14,10 @@ namespace Beast.Radar.Debug
         private GameObject _logConsole;
         private GameObject _fpsCounter;
 
-        public DebugController(DebugPrefabLibrary library, DebugPreferences preferences, IResourceManager resources)
+        public DebugController(
+            DebugPrefabLibrary library, 
+            DebugPreferences preferences, 
+            IResourceManager resources)
         {
             _library = library;
             _preferences = preferences;
@@ -26,12 +28,10 @@ namespace Beast.Radar.Debug
         {
             UniTask.Create(async () =>
             {
-                GameObject logConsolePrefab = await _resources.LoadGameObject(this, _library.logConsole);
-                _logConsole = await BFactory.InstantiateGameObject(this, logConsolePrefab);
+                _logConsole = await _resources.InstantiateGameObject(this, _library.logConsole);
                 _logConsole.SetActive(_preferences.showLogConsole);
 
-                GameObject fpsCounterPrefab = await _resources.LoadGameObject(this, _library.fpsCounter);
-                _fpsCounter = await BFactory.InstantiateGameObject(this, fpsCounterPrefab);
+                _fpsCounter = await _resources.InstantiateGameObject(this, _library.fpsCounter);
                 _fpsCounter.SetActive(_preferences.showFPSCounter);
             });
 
