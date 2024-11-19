@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Beast.Claw.Debug;
+using Beast.Claw.Editor.Serialization;
 using Beast.Claw.Reflection;
 using Beast.Claw.Text;
 using Beast.Claw.Validation;
@@ -21,17 +22,26 @@ namespace Beast.Claw.Editor.Validation
 
         public static IReadOnlyCollection<ValidationMethod> AllMethods => METHODS.Values;
 
-        private static readonly Stopwatch WATCH;
+        private static readonly Stopwatch STOP_WATCH;
         private static readonly Dictionary<Type, ValidationMethod> METHODS;
+        private static readonly ValidationConfig CONFIG;
+        private static readonly bool HAS_CONFIG;
         
         static ValidationManager()
         {
             try
             {
-                WATCH = new Stopwatch();
+                STOP_WATCH = new Stopwatch();
                 
                 Type[][] typeArrays = _getAllTypes(ASSEMBLY_FILTER);
                 METHODS = _createValidationMethods(typeArrays);
+                HAS_CONFIG = ConfigManager.FindConfig(out CONFIG);
+
+                if (!HAS_CONFIG)
+                {
+                    string message = ConfigManager.MissingConfigMessage<ValidationConfig>();
+                    BDebug.StaticLogWarning(message);
+                }
             }
             catch (Exception e)
             {
@@ -41,7 +51,7 @@ namespace Beast.Claw.Editor.Validation
         
         private static Type[][] _getAllTypes(string assemblyNameRegex)
         {
-            WATCH.Restart();
+            STOP_WATCH.Restart();
             
             Assembly[] allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Assembly> filteredAssemblies = new (allAssemblies.Length);
@@ -67,11 +77,11 @@ namespace Beast.Claw.Editor.Validation
                 typeCount += types.Length;
             }
             
-            WATCH.Stop();
+            STOP_WATCH.Stop();
 
             if (LOG_STATS)
             {
-                BDebug.StaticLogInfo($"_getAllTypes: {typeCount} types, {WATCH.ElapsedMillisecondsFloat()}ms");
+                BDebug.StaticLogInfo($"_getAllTypes: {typeCount} types, {STOP_WATCH.ElapsedMillisecondsFloat()}ms");
             }
 
             return typeArrays;
@@ -82,7 +92,7 @@ namespace Beast.Claw.Editor.Validation
             Type validatable = typeof(IValidatable);
             StringBuilder builder = new (256);
             
-            WATCH.Restart();
+            STOP_WATCH.Restart();
 
             Dictionary<Type, ValidationMethod> resultDictionary = new(BUFFER_CAPACITY);
 
@@ -128,12 +138,12 @@ namespace Beast.Claw.Editor.Validation
                 };
             }
             
-            WATCH.Stop();
+            STOP_WATCH.Stop();
 
             if (LOG_STATS)
             {
                 BDebug.StaticLogInfo($"_createValidationMethods: {resultDictionary.Count} methods, " +
-                                     $"{WATCH.ElapsedMillisecondsFloat()}ms");
+                                     $"{STOP_WATCH.ElapsedMillisecondsFloat()}ms");
             }
 
             if (BUFFER_CAPACITY < resultDictionary.Count)

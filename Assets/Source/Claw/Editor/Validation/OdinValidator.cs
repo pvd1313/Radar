@@ -70,7 +70,7 @@ namespace Beast.Claw.Editor.Validation
                 }
                 else
                 {
-                    builder += "Property " + Property.NiceName.Q() + " is null";
+                    builder += "Property '" + Property.NiceName + "' is null";
                 }
                 
                 result.Message = builder.ToString();

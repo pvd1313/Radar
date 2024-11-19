@@ -14,14 +14,14 @@ namespace Beast.Claw.Reflection
     public static class Reflect
     {
         private static readonly ConcurrentDictionary<Type, AttributeData[]> ATTRIBUTES;
-        private static readonly RingPool<List<AttributeData>> ATTRIBUTE_POOL;
+        private static readonly RingPoolList<AttributeData> ATTRIBUTE_POOL;
 
         static Reflect()
         {
             try
             {
                 ATTRIBUTES = new ConcurrentDictionary<Type, AttributeData[]>();
-                ATTRIBUTE_POOL = new RingPool<List<AttributeData>>(16, () => new List<AttributeData>());
+                ATTRIBUTE_POOL = new RingPoolList<AttributeData>(16, () => new List<AttributeData>());
             }
             catch (Exception e)
             {

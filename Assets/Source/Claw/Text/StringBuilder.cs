@@ -50,6 +50,15 @@ namespace Beast.Claw.Text
             return this;
         }
 
+        public StringBuilder Tab()
+        {
+            _ensureCreated();
+
+            _builder.Append(' ', 4);
+
+            return this;
+        }
+
         public override string ToString()
         {
             return _builder.ToString();

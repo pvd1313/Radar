@@ -19,10 +19,12 @@ namespace Beast.Claw.Editor.Fancy
             {
                 CASH = new Dictionary<Type, List<FancyTypeInfo>>();
 
+                Type fancyAttributeType = typeof(FancyAssetAttribute);
+
                 ALL_TYPES = 
                     AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly => assembly.GetTypes())
-                    .Where(type => type.IsDefined(typeof(FancyAssetAttribute), true))
+                    .Where(type => type.HasAttribute(fancyAttributeType))
                     .Where(type => !type.IsAbstract)
                     .ToList();
             }

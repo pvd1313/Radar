@@ -14,6 +14,7 @@ namespace Beast.Claw.Editor
         public const int SIZE_ONE_CHAR = 20;
         public const int SIZE_TWO_CHAR = 25;
         public const int SIZE_MINOR_SPACE = 8;
+        public const int SIZE_ASSET_FIELD = 140;
         
         public const string ICON_CSHARP_SCRIPT = "d_cs Script Icon";
         public const string ICON_CONSOLE_INFO = "console.infoicon";

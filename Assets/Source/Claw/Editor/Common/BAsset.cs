@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -104,6 +105,32 @@ namespace Beast.Claw.Editor
             asset.ValidateNotNullThrowException(nameof(asset));
             
             AssetDatabase.SaveAssetIfDirty(asset);
+        }
+
+        public static void FindAssets<TAsset>(List<AssetInfo> result) where TAsset : Object
+        {
+            BDebug.NotifyPerformanceCriticalContext();
+            
+            result.ValidateNotNullThrowException(nameof(result));
+            result.Clear();
+            
+            string[] guids = AssetDatabase.FindAssets($"t:{typeof(TAsset).Name}");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                TAsset asset = AssetDatabase.LoadAssetAtPath<TAsset>(path);
+                
+                if (asset != null)
+                {
+                    result.Add(new AssetInfo
+                    {
+                        asset = asset,
+                        guid = guid,
+                        path = path
+                    });
+                }
+            }
         }
 
         /// <summary>
