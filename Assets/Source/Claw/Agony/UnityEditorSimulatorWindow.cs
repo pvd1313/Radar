@@ -2,7 +2,7 @@
 using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
 
-namespace Beast.Claw.Input
+namespace Beast.Claw.Agony
 {
     public class UnityEditorSimulatorWindow
 #if UNITY_EDITOR
