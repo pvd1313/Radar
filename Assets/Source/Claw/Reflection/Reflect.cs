@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Attributes.Annotation;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 

@@ -2,7 +2,6 @@
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
-using Beast.Radar.Editor.Tile;
 using Beast.Radar.Terrain;
 using UnityEngine;
 using EditorWindow = Beast.Claw.Editor.Window.EditorWindow;

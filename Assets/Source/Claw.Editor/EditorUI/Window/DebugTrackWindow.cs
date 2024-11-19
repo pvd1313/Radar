@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Unity.Mathematics;

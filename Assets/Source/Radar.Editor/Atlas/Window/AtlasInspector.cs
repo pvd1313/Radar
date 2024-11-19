@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Beast.Claw;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;

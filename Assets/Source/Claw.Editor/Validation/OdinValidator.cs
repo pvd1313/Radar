@@ -2,7 +2,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Validation;
 using Beast.Claw.Reflection;

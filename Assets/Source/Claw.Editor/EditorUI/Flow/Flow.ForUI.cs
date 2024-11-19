@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Collection;
+﻿using Beast.Claw.Collections;
 using UnityEngine;
 
 namespace Beast.Claw.Editor

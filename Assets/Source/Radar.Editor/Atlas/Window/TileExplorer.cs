@@ -2,7 +2,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
 using Beast.Claw.Math;
-using Beast.Radar.Editor.Tile;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;

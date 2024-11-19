@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Profiling;
 using Unity.Mathematics;

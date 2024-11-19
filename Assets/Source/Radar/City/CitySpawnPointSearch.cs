@@ -1,5 +1,5 @@
 ﻿using System;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City

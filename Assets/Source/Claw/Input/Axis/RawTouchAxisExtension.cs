@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using Beast.Claw.Collection;
+using Beast.Claw.Collections;
 using Unity.Collections;
 
 namespace Beast.Claw.Input

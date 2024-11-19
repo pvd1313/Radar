@@ -1,4 +1,4 @@
-﻿using Beast.Claw.Collection;
+﻿using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
