@@ -21,7 +21,7 @@ namespace Beast.Claw.Editor.Fancy
             _scrollViewLayoutOptions = scrollViewLayoutOptions;
         }
         
-        public int OnGUI(int selectedIndex, List<T> items)
+        public int OnGUI(int selectedIndex, IReadOnlyList<T> items)
         {
             if (!_initialized)
             {

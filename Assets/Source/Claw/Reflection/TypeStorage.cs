@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Debug;
 
-using Attribute = System.Attribute;
-
 namespace Beast.Claw.Reflection
 {
     public static class TypeStorage<T>
@@ -12,7 +10,6 @@ namespace Beast.Claw.Reflection
 
         private static readonly Dictionary<string, string> FULL_NAME_WITH_POSTFIX;
         private static readonly Dictionary<string, string> FULL_NAME_WITH_PREFIX;
-        private static readonly Dictionary<Type, bool> ATTRIBUTE_CHECKS;
             
         static TypeStorage()
         {
@@ -21,28 +18,11 @@ namespace Beast.Claw.Reflection
                 FULL_NAME = typeof(T).FullName;
                 FULL_NAME_WITH_POSTFIX = new Dictionary<string, string>();
                 FULL_NAME_WITH_PREFIX = new Dictionary<string, string>();
-                ATTRIBUTE_CHECKS = new Dictionary<Type, bool>();
             }
             catch (Exception e)
             {
                 BDebug.LogException(e);
             }
-        }
-
-        public static bool HasAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            Type attributeType = typeof(TAttribute);
-
-            if (ATTRIBUTE_CHECKS.TryGetValue(attributeType, out bool result))
-            {
-                return result;
-            }
-
-            result = typeof(T).GetCustomAttributes(typeof(TAttribute), true).Length > 0;
-
-            ATTRIBUTE_CHECKS[attributeType] = result;
-
-            return result;
         }
 
         public static string FullNameWithPostfixOrFullName(string postfix)

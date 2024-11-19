@@ -1,5 +1,8 @@
 ﻿using System.Text.RegularExpressions;
+using Beast.Claw.Attributes;
+using Beast.Claw.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace Beast.Claw.Editor.Fancy
 {
@@ -18,7 +21,16 @@ namespace Beast.Claw.Editor.Fancy
 
         public WindowFactory()
         {
-            _scannerWindow = new TypeScannerWindow(new[] { typeof(EditorWindow) });
+            TypeScanner typeScanner = new (new TypeScannerRule
+            {
+                assemblyRule = _ => true,
+
+                typeRule = type => !type.IsAbstract &&
+                                   type.Implements(typeof(EditorWindow)) &&
+                                   type.HasAttribute(typeof(FancyAssetAttribute))
+            });
+            
+            _scannerWindow = new TypeScannerWindow(typeScanner);
             _repaintEvents = new RepaintEventsView(this);
         }
 
@@ -28,7 +40,7 @@ namespace Beast.Claw.Editor.Fancy
             
             WindowUtil.InitializeWindowPosition(this);
 
-            if (!_scannerWindow.OnGUI(out FancyTypeInfo selectedType))
+            if (!_scannerWindow.OnGUI(out TypeData selectedType))
             {
                 return;
             }

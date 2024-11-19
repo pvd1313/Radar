@@ -1,5 +1,6 @@
 ﻿using System.IO;
-using Beast.Claw.Common;
+using Beast.Claw.Attributes;
+using Beast.Claw.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,7 +21,17 @@ namespace Beast.Claw.Editor.Fancy
 
         public AssetFactory()
         {
-            _scannerWindow = new TypeScannerWindow(new[] { typeof(ScriptableObject) }, typeof(EditorWindow));
+            TypeScanner scanner = new (new TypeScannerRule
+            {
+                assemblyRule = (_) => true,
+                
+                typeRule = type => !type.IsAbstract &&
+                                   type.Implements(typeof(ScriptableObject)) &&
+                                   !type.Implements(typeof(EditorWindow)) &&
+                                   type.HasAttribute(typeof(FancyAssetAttribute))
+            });
+            
+            _scannerWindow = new TypeScannerWindow(scanner);
             _repaintEvents = new RepaintEventsView(this);
         }
 
@@ -40,7 +51,7 @@ namespace Beast.Claw.Editor.Fancy
             
             WindowUtil.InitializeWindowPosition(this);
 
-            if (!_scannerWindow.OnGUI(out FancyTypeInfo selectedType))
+            if (!_scannerWindow.OnGUI(out TypeData selectedType))
             {
                 return;
             }

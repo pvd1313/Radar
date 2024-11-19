@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Beast.Claw.Reflection;
 using Beast.Claw.Text;
 using UnityEditor;
 using UnityEngine;
@@ -8,50 +8,48 @@ namespace Beast.Claw.Editor.Fancy
 {
     internal class TypeScannerWindow
     {
-        private const string FILTER_FOCUS_CONTROL_NAME = "FilterFocusControlName";
+        private const string FILTER_FOCUS_CONTROL = "f258c81-c73e-47d8-9df1-9cd35b4f9513";
         
-        private readonly SelectableListView<FancyTypeInfo> _listView;
-        private readonly Type[] _targetTypes;
-        private readonly Type[] _excludeTypes;
-        private readonly List<FancyTypeInfo> _filteredTypes;
-        private readonly StringWithFormat _filterLowerCase;
+        private readonly TypeScanner _scanner;
+        private readonly SelectableListView<TypeData> _listView;
+        private readonly StringWithFormat _filterTextLowerCase;
         
         private bool _focusedOnce;
-        private string _filter;
+        private string _filterText;
 
-        public TypeScannerWindow(Type[] targetTypes, params Type[] excludeTypes)
+        public TypeScannerWindow(TypeScanner scanner)
         {
-            _targetTypes = targetTypes;
-            _filteredTypes = new List<FancyTypeInfo>();
-            _excludeTypes = excludeTypes;
-            _listView = new SelectableListView<FancyTypeInfo>(t => t.nameShort);
-            _filter = string.Empty;
-            _filterLowerCase = new StringWithFormat(_filter, EStringFormat.LowerCase);
+            _scanner = scanner;
+            _listView = new SelectableListView<TypeData>(t => t.nameShort);
+            _filterText = string.Empty;
+            _filterTextLowerCase = new StringWithFormat(_filterText, EStringFormat.LowerCase);
         }
 
-        public bool OnGUI(out FancyTypeInfo selectedFancyType)
+        public bool OnGUI(out TypeData selectedFancyType)
         {
             selectedFancyType = default;
 
             GUIStyle searchTextStyle = new (FancyGUIStyles.SEARCH_FIELD);
-            GUI.SetNextControlName(FILTER_FOCUS_CONTROL_NAME);
-            _filter = EditorGUILayout.TextField(_filter, searchTextStyle);
+            GUI.SetNextControlName(FILTER_FOCUS_CONTROL);
+            _filterText = EditorGUILayout.TextField(_filterText, searchTextStyle);
 
-            _filterLowerCase.Update(_filter);
+            _filterTextLowerCase.Update(_filterText);
 
-            TypeScanner.SearchTypes(_targetTypes, _filterLowerCase, _filteredTypes, _excludeTypes);
+            IReadOnlyList<TypeData> types = _scanner.Filter(_filterTextLowerCase);
 
-            int selectedIndex = _listView.OnGUI(-1, _filteredTypes);
+            int selectedIndex = _listView.OnGUI(-1, types);
+            
             if (selectedIndex >= 0)
             {
-                selectedFancyType = _filteredTypes[selectedIndex];
+                selectedFancyType = types[selectedIndex];
                 return true;
             }
 
             if (!_focusedOnce)
             {
                 _focusedOnce = true;
-                GUI.FocusControl(FILTER_FOCUS_CONTROL_NAME);
+                
+                GUI.FocusControl(FILTER_FOCUS_CONTROL);
             }
             
             return false;
