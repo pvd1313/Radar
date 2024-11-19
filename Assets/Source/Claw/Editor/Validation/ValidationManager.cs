@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Serialization;
@@ -27,6 +28,10 @@ namespace Beast.Claw.Editor.Validation
         private static readonly ValidationConfig CONFIG;
         private static readonly bool HAS_CONFIG;
         
+        private static int _configVersion;
+
+        private static readonly HashSet<Type> EXCLUDE_ASSET_TYPE;
+        
         static ValidationManager()
         {
             try
@@ -36,6 +41,9 @@ namespace Beast.Claw.Editor.Validation
                 Type[][] typeArrays = _getAllTypes(ASSEMBLY_FILTER);
                 METHODS = _createValidationMethods(typeArrays);
                 HAS_CONFIG = ConfigManager.FindConfig(out CONFIG);
+                _configVersion = -1;
+
+                EXCLUDE_ASSET_TYPE = new HashSet<Type>();
 
                 if (!HAS_CONFIG)
                 {
@@ -158,6 +166,36 @@ namespace Beast.Claw.Editor.Validation
         public static bool TryFindValidator(Type type, out ValidationMethod validator)
         {
             return METHODS.TryGetValue(type, out validator);
+        }
+
+        public static bool CheckAssetTypeIsExcluded(Type assetType)
+        {
+            _fetchConfigRules();
+
+            return EXCLUDE_ASSET_TYPE.Contains(assetType);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void _fetchConfigRules()
+        {
+            if (!HAS_CONFIG || CONFIG.SerializationVersion == _configVersion)
+            {
+                return;
+            }
+
+            _configVersion = CONFIG.SerializationVersion;
+            
+            EXCLUDE_ASSET_TYPE.Clear();
+            
+            foreach (TypeAddress address in CONFIG.excludeAssetType)
+            {
+                Type type = address.TryGetType();
+                
+                if (type != null)
+                {
+                    EXCLUDE_ASSET_TYPE.Add(type);
+                }
+            }
         }
 
         public static void Forget(Type type)

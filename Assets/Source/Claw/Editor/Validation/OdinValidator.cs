@@ -37,6 +37,11 @@ namespace Beast.Claw.Editor.Validation
         
         protected override void Validate(ValidationResult result)
         {
+            if (ValidationManager.CheckAssetTypeIsExcluded(ValueEntry.ParentType))
+            {
+                return;
+            }
+            
             if (!_validateNullReference(result))
             {
                 return;
@@ -106,21 +111,21 @@ namespace Beast.Claw.Editor.Validation
                 return true;
             }
             
-            StringBuilder builder = BUILDER_POOL.Next().Clear();
+            StringBuilder str = BUILDER_POOL.Next().Clear();
 
             if (_tryParseArrayIndex(Property.NiceName))
             {
-                builder += "Element at index (" + Property.NiceName + ") equals " + value.Q();
-                builder += " which is invalid " + itemType.Q();
+                str = str + "Element at index (" + Property.NiceName + ") equals " + value.Q();
+                str = str + " which is invalid " + itemType.Q();
             }
             else
             {
-                builder += "Property " + Property.NiceName.Q() + " equals " + 
-                           value.Q() + " which is invalid " + itemType.Q();
+                str = str + "Property '" + Property.NiceName + "' equals " +
+                      value.Q() + " which is invalid " + itemType.Q();
             }
 
             result.ResultType = ValidationResultType.Error;
-            result.Message = builder.ToString();
+            result.Message = str.ToString();
                 
             _addValidationMethodName(result, VALIDATE_ENUM);
                 

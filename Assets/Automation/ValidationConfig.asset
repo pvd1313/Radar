@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5e88268b7a441492bbdef06de283b7, type: 3}
   m_Name: ValidationConfig
   m_EditorClassIdentifier: 
+  excludeAssetType:
+  - assembly: Unity.Addressables.Editor
+    type: UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema
+  - assembly: Unity.Addressables.Editor
+    type: UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema
+  - assembly: Sirenix.OdinInspector.Editor
+    type: Sirenix.OdinInspector.Editor.GeneralDrawerConfig
+  - assembly: Sirenix.OdinValidator.Editor
+    type: Sirenix.OdinValidator.Editor.AutomationConfig+ValidationSetup

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Collection;
 using Beast.Claw.Debug;
-using Beast.Claw.Editor.Validation;
 using Beast.Claw.Text;
-using UnityEditor;
-using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor.Serialization
 {
@@ -31,17 +28,17 @@ namespace Beast.Claw.Editor.Serialization
 
         public static string MissingConfigMessage<TConfig>()
         {
-            StringBuilder builder = BUILDER_POOL.Next().Clear();
+            StringBuilder str = BUILDER_POOL.Next().Clear();
 
             Type configType = typeof(TConfig);
 
-            builder += "'" + configType.FullName + "' was not found. ";
-            builder.Line().Tab();
-            builder += "Please, create one and reload domain.";
-            builder.Line().Tab().Tab();
-            builder += "Asset > Create > Fancy > " + configType.Name;
+            str = str + "'" + configType.FullName + "' was not found. ";
+            str.Line().Tab();
+            str = str + "Please, create one and reload domain.";
+            str.Line().Tab().Tab();
+            str = str + "Asset > Create > Fancy > " + configType.Name;
 
-            return builder.ToString();
+            return str.ToString();
         }
 
         public static bool FindConfig<TConfig>(out TConfig config) where TConfig : ScriptableConfig
@@ -66,18 +63,18 @@ namespace Beast.Claw.Editor.Serialization
             
             if (assetList.Count > 1)
             {
-                StringBuilder builder = BUILDER_POOL.Next().Clear();
+                StringBuilder str = BUILDER_POOL.Next().Clear();
 
-                builder += "ConfigManager: Found more than one config of type '" + configType.FullName + "'";
-                builder.Line();
+                str = str + "ConfigManager: Found more than one config of type '" + configType.FullName + "'";
+                str.Line();
                 
                 foreach (AssetInfo asset in assetList)
                 {
-                    builder += asset.guid + " '" + asset.path + "'";
-                    builder.Line();
+                    str = str + asset.guid + " '" + asset.path + "'";
+                    str.Line();
                 }
                 
-                BDebug.StaticLogWarning(builder.ToString());
+                BDebug.StaticLogWarning(str.ToString());
             }
             
             if (assetList.Count > 0)

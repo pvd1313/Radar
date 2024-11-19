@@ -3,6 +3,9 @@ using System.Diagnostics;
 
 namespace Beast.Claw.Text
 {
+    /// <summary>
+    /// Don't use +=
+    /// </summary>
     public readonly struct StringBuilder
     {
         private readonly System.Text.StringBuilder _builder;
@@ -73,6 +76,9 @@ namespace Beast.Claw.Text
             }
         }
 
+        /// <summary>
+        /// Don't use +=
+        /// </summary>
         public static StringBuilder operator +(StringBuilder a, string text)
         {
             a.Add(text);
