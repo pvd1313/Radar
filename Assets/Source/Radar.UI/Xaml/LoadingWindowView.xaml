@@ -42,7 +42,7 @@
                         FontSize = "16"
                         Margin = "5 3 0 0"
                         Text = "Lorem ipsum"
-                        TextBlock.Foreground = "{StaticResource PanelText}"/>
+                        TextBlock.Foreground = "{StaticResource TextColor}"/>
                 </Border>
             </Grid>
 
@@ -66,7 +66,7 @@
            Width = "100"
            Margin = "{StaticResource MarginBottomRight}"
            TextAlignment = "Center"
-           TextBlock.Foreground = "{StaticResource PanelText}"/>
+           TextBlock.Foreground = "{StaticResource TextColor}"/>
     </Grid>
     
 </UserControl>

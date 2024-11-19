@@ -40,7 +40,7 @@ namespace Beast.Radar.UI
             _intToString = new IntToStringConverter(99);
             _stringBuilder = new StringBuilder();
             
-            _config.view.Instantiate(out _view);
+            _config.asset.Instantiate(out _view);
             
             _view.Visibility = Visibility.Collapsed;
             

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8523486fa744649bcd563ed074140e1, type: 3}
   m_Name: LoadingScreenConfig
   m_EditorClassIdentifier: 
-  backgroundTexture: {fileID: 2800000, guid: 7fa2523a592770046860c66fc1e71a86, type: 3}
-  view: {fileID: -8414808784256213763, guid: 262316ce30d78a24682627aa22e79071, type: 3}
+  asset:
+    asset: {fileID: -8414808784256213763, guid: 262316ce30d78a24682627aa22e79071, type: 3}

@@ -1,5 +1,4 @@
-﻿using Beast.Claw;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
@@ -59,6 +58,13 @@ namespace Beast.Radar.UI
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
             _grid.Children.Add(uiElement);
+        }
+
+        public void Attach(UIElement uiElement, int index)
+        {
+            uiElement.ValidateNotNullThrowException(nameof(uiElement));
+
+            _grid.Children.Insert(index, uiElement);
         }
     }
 }

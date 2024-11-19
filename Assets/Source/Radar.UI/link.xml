@@ -1,0 +1,3 @@
+<linker>
+    <assembly fullname = "Beast.Radar.UI" preserve = "all" />
+</linker>

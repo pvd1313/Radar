@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0d8bface6647928bf222f6d8f673c7, type: 3}
   m_Name: UIConfig
   m_EditorClassIdentifier: 
+  HUDAsset:
+    asset: {fileID: -8414808784256213763, guid: 83614fcc75489c0428556f67ba0785a0, type: 3}
   offMoveButtonSprite: {fileID: 21300000, guid: f481f01439fd3f54d8232d69c577f34f, type: 3}
   onMoveButtonSprite: {fileID: 21300000, guid: d4cb4ef52bfa7794eac265983214dc34, type: 3}
   citySprites:

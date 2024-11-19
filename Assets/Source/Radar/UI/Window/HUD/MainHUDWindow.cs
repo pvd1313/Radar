@@ -1,9 +1,12 @@
 using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
+using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
+using Noesis;
 using Unity.Mathematics;
 
 namespace Beast.Radar.UI
@@ -13,17 +16,21 @@ namespace Beast.Radar.UI
         private readonly PlayerPreferences _preferences;
         private readonly CorePrefabLibrary _library;
         private readonly UIConfig _config;
+        private readonly INoesisWindowManager _noesisWindow;
         private readonly IPlayerController _player;
         private readonly IWindowManager _windowManager;
         private readonly IGameTime _gameTime;
 
-        private HUDView _view;
+
+        private IntToStringConverter _intToString;
         private IWindowHandle<Empty> _pauseMenu;
+        private MainHUDView _view;
 
         public MainHUDWindow(
             PlayerPreferences preferences,
             CorePrefabLibrary library,
             UIConfig config,
+            INoesisWindowManager noesisWindow,
             IWindowManager windowManager,
             IPlayerController player,
             IGameTime gameTime)
@@ -31,6 +38,7 @@ namespace Beast.Radar.UI
             _preferences = preferences;
             _library = library;
             _config = config;
+            _noesisWindow = noesisWindow;
             _windowManager = windowManager;
             _gameTime = gameTime;
             _player = player;
@@ -38,27 +46,31 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            _view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
+            //_view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
 
-            _view.gameObject.SetActive(true);
+            _view.Visibility = Visibility.Visible;
 
             return UniTask.CompletedTask;
         }
 
         public UniTask Close()
         {
-            _view.gameObject.SetActive(false);
+            _view.Visibility = Visibility.Hidden;
 
             return UniTask.CompletedTask;
         }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
+            _intToString = new IntToStringConverter(59,"D2");
+            
             _windowManager.Register(this, WindowID.HUD);
+            
+            _config.HUDAsset.Instantiate(out _view);
+            
+            _noesisWindow.Attach(_view, 0);
 
-            _view = BScene.InstantiateMono(this, _library.hud, float3.zero, quaternion.identity);
-            _view.transform.SetParent(_windowManager.CanvasTransform, false);
-            _view.gameObject.SetActive(false);
+            _view.Visibility = Visibility.Visible;
 
             _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.PAUSE);
 
@@ -72,9 +84,17 @@ namespace Beast.Radar.UI
             _gameTime.MinuteChanged += () =>
             {
                 TimeSpan time = _gameTime.GetTime();
-                _view.timeText.SetTime(time.Hours, time.Minutes);
+                _view.textTime.Text = $"{_intToString.Convert(time.Hours)}:{_intToString.Convert(time.Minutes)}";
             };
-
+            
+            
+            _view.buttonSettings.Click += (sender, args) =>
+            {
+                BDebug.LogInfo(this, "click");
+                _pauseMenu.Open(default);
+            };
+            
+            /*
             _player.ChangeMovementState += () =>
             {
                 _view.moveImage.SetSprite(_player.IsMovement
@@ -87,13 +107,14 @@ namespace Beast.Radar.UI
                 _player.SwitchMovement();
             };
 
-            _view.pauseButton.Clicked += () => { _pauseMenu.Open(default); };
 
             _view.pathfindingButton.Clicked += () =>
             {
                 _preferences.isAutoPathfinding = !_preferences.isAutoPathfinding;
                 _view.pathfindingImage.SetAlpha(_preferences.isAutoPathfinding ? 0.5f : 0.2f);
             };
+        
+            */
         }
     }
 }

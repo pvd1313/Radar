@@ -1,0 +1,17 @@
+{
+    "name": "Beast.Radar.UI",
+    "rootNamespace": "Beast",
+    "references": [
+        "GUID:9191dbb2e27df304f93697312d879fb1",
+        "GUID:899ebf5c138a7e1459bd0bb08e309740"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
