@@ -5,7 +5,7 @@ using Beast.Claw.Debug;
 using UnityEditor;
 using UnityEngine;
 
-namespace Beast.Claw.Editor
+namespace Beast.Claw.Editor.Agony.Bugfixes
 {
     /// <summary>
     /// Unity 2022.3.45
@@ -17,7 +17,7 @@ namespace Beast.Claw.Editor
         private const string PREFS_KEY_X = nameof(GameViewScaleSelfResetFix) + "_AAUO4ggU0JiK5i";
         private const string PREFS_KEY_Y = nameof(GameViewScaleSelfResetFix) + "_9iGSn8r4uhU0Am";
 
-        private static readonly GameViewReflection CASH;
+        private static readonly GameViewScaleSelfResetFixCash CASH;
         
         static GameViewScaleSelfResetFix()
         {

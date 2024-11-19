@@ -1,0 +1,17 @@
+{
+    "name": "Beast.Claw.Editor.Agony",
+    "rootNamespace": "Beast.Claw.Editor.Agony",
+    "references": [
+        "GUID:9191dbb2e27df304f93697312d879fb1",
+        "GUID:3ca8674318e44f34db196a44ad18d7f8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

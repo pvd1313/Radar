@@ -3,9 +3,9 @@ using System.Reflection;
 using Beast.Claw.Reflection;
 using UnityEditor;
 
-namespace Beast.Claw.Editor
+namespace Beast.Claw.Editor.Agony.Bugfixes
 {
-    public class GameViewReflection
+    public class GameViewScaleSelfResetFixCash
     {
         private const BindingFlags INSTANCE_PRIVATE = BindingFlags.Instance | BindingFlags.NonPublic; 
 
