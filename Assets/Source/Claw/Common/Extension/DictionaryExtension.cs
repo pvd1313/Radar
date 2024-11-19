@@ -24,7 +24,7 @@ namespace Beast.Claw.Common
             return value;
         }
 
-        public static TValue GetOrFactory<TKey, TValue>(
+        public static TValue GetOrCreateWithFactory<TKey, TValue>(
             this IDictionary<TKey, TValue> dictionary,
             TKey key,
             Func<TKey, TValue> factory)

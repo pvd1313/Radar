@@ -37,7 +37,7 @@ namespace Beast.Claw.Editor.Validation
                 return false;
             }
 
-            enumData = ENUMS.GetOrFactory(type, _parseEnum);
+            enumData = ENUMS.GetOrCreateWithFactory(type, _parseEnum);
 
             return true;
         }
@@ -46,7 +46,7 @@ namespace Beast.Claw.Editor.Validation
         {
             bool isFlags = false;
 
-            foreach (AttributeData attribute in Reflect.GetCustomAttributes(type))
+            foreach (AttributeData attribute in BReflect.GetCustomAttributes(type))
             {
                 if (attribute.type.Implements(FLAGS_ATTRIBUTE_TYPE))
                 {
@@ -65,7 +65,7 @@ namespace Beast.Claw.Editor.Validation
 
                 for (int i = 0; i < values.Length; i++)
                 {
-                    mask |= Reflect.UnboxAsLong(values.GetValue(i), typeCode);
+                    mask |= BReflect.UnboxAsLong(values.GetValue(i), typeCode);
                 }
 
                 return new EnumData
@@ -82,7 +82,7 @@ namespace Beast.Claw.Editor.Validation
             {
                 object value = values.GetValue(i);
 
-                long asLong = Reflect.UnboxAsLong(value, typeCode);
+                long asLong = BReflect.UnboxAsLong(value, typeCode);
                 
                 allValues.Add(asLong);
             }

@@ -21,7 +21,7 @@ namespace Beast.Claw.Agony
         {
             try
             {
-                Reflect.TypeFromAssembly
+                BReflect.TypeFromAssembly
                     <UnityEditor.DeviceSimulation.DeviceSimulator>(SIMULATOR_WINDOW, ref _windowType);
             }
             catch (Exception e)
@@ -43,7 +43,7 @@ namespace Beast.Claw.Agony
 
             try
             {
-                if (Reflect.TryFindInternalUnityEditorWindow(_windowType, ref _simulatorWindow))
+                if (BReflect.TryFindInternalUnityEditorWindow(_windowType, ref _simulatorWindow))
                 {
                     return _simulatorWindow.hasFocus;
                 }

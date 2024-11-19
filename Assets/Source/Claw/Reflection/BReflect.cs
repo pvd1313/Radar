@@ -7,17 +7,17 @@ using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-
+using Beast.Claw.Text;
 using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
 {
-    public static class Reflect
+    public static class BReflect
     {
         private static readonly ConcurrentDictionary<Type, AttributeData[]> ATTRIBUTES;
         private static readonly RingPoolList<AttributeData> ATTRIBUTE_POOL;
 
-        static Reflect()
+        static BReflect()
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Beast.Claw.Reflection
         /// </summary>
         public static IReadOnlyList<AttributeData> GetCustomAttributes(Type type)
         {
-            return ATTRIBUTES.GetOrFactory(type, _getAttributes);
+            return ATTRIBUTES.GetOrCreateWithFactory(type, _getAttributes);
         }
 
         /// <summary>
@@ -81,6 +81,7 @@ namespace Beast.Claw.Reflection
             return list.ToArray();
         }
         
+        /// <exception cref="Exception"></exception>
         public static void GetField(Type owner, string fieldName, BindingFlags flags, ref FieldInfo cash)
         {
             if (cash != null)
@@ -145,6 +146,7 @@ namespace Beast.Claw.Reflection
         }
 #endif
         
+        /// <exception cref="Exception"></exception>
         public static void TypeFromAssembly<TAssembly>(string name, ref Type cash)
         {
             if (cash != null)
@@ -153,6 +155,38 @@ namespace Beast.Claw.Reflection
             }
 
             cash = typeof(TAssembly).Assembly.GetType(name, true);
+        }
+        
+        /// <exception cref="Exception"></exception>
+        public static Type TypeFromAssembly<TAssembly>(string name)
+        {
+            return typeof(TAssembly).Assembly.GetType(name, true);
+        }
+        
+        /// <exception cref="Exception"></exception>
+        public static MethodInfo MethodFromType(Type type, string name, BindingFlags flags, ref MethodInfo cash)
+        {
+            if (cash != null)
+            {
+                return cash;
+            }
+
+            cash = MethodFromType(type, name, flags);
+
+            return cash;
+        }
+
+        /// <exception cref="Exception"></exception>
+        public static MethodInfo MethodFromType(Type type, string name, BindingFlags flags)
+        {
+            MethodInfo methodInfo = type.GetMethod(name, flags);
+            
+            if (methodInfo == null)
+            {
+                throw new Exception($"Method {name.Q()} was not found in {type.FullName.Q()}");
+            }
+
+            return methodInfo;
         }
     }
 }

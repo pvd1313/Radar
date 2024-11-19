@@ -17,24 +17,24 @@ namespace Beast.Claw.Editor.Agony.Bugfixes
 
         public FieldInfo GetField_ZoomableArea_Scale()
         {
-            Reflect.TypeFromAssembly<EditorApplication>("UnityEditor.ZoomableArea", ref _zoomableAreaType);
-            Reflect.GetField(_zoomableAreaType, "m_Scale", INSTANCE_PRIVATE, ref _zoomableAreaScale);
+            BReflect.TypeFromAssembly<EditorApplication>("UnityEditor.ZoomableArea", ref _zoomableAreaType);
+            BReflect.GetField(_zoomableAreaType, "m_Scale", INSTANCE_PRIVATE, ref _zoomableAreaScale);
 
             return _zoomableAreaScale;
         }
         
         public FieldInfo GetField_PlayModeWindow_ZoomArea()
         {
-            Reflect.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
-            Reflect.GetField(_playModeWindowType, "m_ZoomArea", INSTANCE_PRIVATE, ref _playModeWindowZoomAreaType);
+            BReflect.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
+            BReflect.GetField(_playModeWindowType, "m_ZoomArea", INSTANCE_PRIVATE, ref _playModeWindowZoomAreaType);
 
             return _playModeWindowZoomAreaType;
         }
         
         public EditorWindow Get_PlayModeWindow()
         {
-            Reflect.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
-            Reflect.FindInternalUnityEditorWindow(_playModeWindowType, ref _playModeWindow);
+            BReflect.TypeFromAssembly<EditorApplication>("UnityEditor.GameView", ref _playModeWindowType);
+            BReflect.FindInternalUnityEditorWindow(_playModeWindowType, ref _playModeWindow);
 
             return _playModeWindow;
         }
