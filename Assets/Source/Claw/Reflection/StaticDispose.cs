@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Beast.Claw.Debug;
 using Beast.Claw.Validation;
-using UnityEditor;
 
 namespace Beast.Claw.Reflection
 {
@@ -15,8 +14,10 @@ namespace Beast.Claw.Reflection
             try
             {
                 ACTIONS = new List<Action>(64);
-
-                AssemblyReloadEvents.beforeAssemblyReload += _dispose;
+                
+#if UNITY_EDITOR
+                UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += _dispose;
+#endif
             }
             catch (Exception e)
             {
