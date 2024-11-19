@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.Debug;
 using Beast.Claw.Validation;
 
-namespace Beast.Claw.Reflection
+namespace Beast.Claw.Editor.Validation
 {
     public static class StaticDispose
     {
@@ -15,9 +15,7 @@ namespace Beast.Claw.Reflection
             {
                 ACTIONS = new List<Action>(64);
                 
-#if UNITY_EDITOR
                 UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += _dispose;
-#endif
             }
             catch (Exception e)
             {

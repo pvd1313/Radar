@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
+using Beast.Claw.Reflection;
 using Unity.Collections;
 
-namespace Beast.Claw.Reflection
+namespace Beast.Claw.Editor.Validation
 {
     public static class BEnum
     {
