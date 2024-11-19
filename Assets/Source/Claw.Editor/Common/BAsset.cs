@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Beast.Claw.Common;
-using Beast.Claw.Debug;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 using UnityEditor;
 using UnityEngine;
@@ -107,10 +106,9 @@ namespace Beast.Claw.Editor
             AssetDatabase.SaveAssetIfDirty(asset);
         }
 
+        [PerformanceCritical]
         public static void FindAssets<TAsset>(List<AssetInfo> result) where TAsset : Object
         {
-            BDebug.NotifyPerformanceCriticalContext();
-            
             result.ValidateNotNullThrowException(nameof(result));
             result.Clear();
             
@@ -136,10 +134,9 @@ namespace Beast.Claw.Editor
         /// <summary>
         /// Uses UnityEngine.Resources.FindObjectsOfTypeAll();
         /// </summary>
+        [PerformanceCritical]
         public static void RepaintEditorWindows()
         {
-            BDebug.NotifyPerformanceCriticalContext();
-            
             EditorWindow[] windows = UnityEngine.Resources.FindObjectsOfTypeAll<EditorWindow>();
 
             foreach (EditorWindow window in windows)

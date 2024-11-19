@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Attributes.Annotation;
 
 namespace Beast.Claw.Editor
 {
     public static class ListExtension
     {
+        [PerformanceCritical]
         public static bool TryMove<TValue>(this IList<TValue> list, int sourceIndex, int targetIndex)
         {
             if (list.Count <= 1)
