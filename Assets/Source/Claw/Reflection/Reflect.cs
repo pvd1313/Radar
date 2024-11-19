@@ -3,7 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Beast.Claw.Collection;
+using Beast.Claw.Attributes.Annotation;
+using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 
@@ -112,10 +113,9 @@ namespace Beast.Claw.Reflection
         /// <summary>Editor only. Will not open window, it must be created to be found.</summary>
         /// <remarks>Uses UnityEngine.Resources.FindObjectsOfTypeAll()</remarks>
         /// <exception cref="Exception"></exception>
+        [PerformanceCritical]
         public static bool TryFindInternalUnityEditorWindow(Type windowType, ref UnityEditor.EditorWindow cash)
         {
-            BDebug.NotifyPerformanceCriticalContext();
-            
             if (cash != null)
             {
                 return true;
