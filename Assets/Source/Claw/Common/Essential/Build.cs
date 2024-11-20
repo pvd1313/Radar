@@ -18,5 +18,11 @@ namespace Beast.Claw.Common
 #else
         public const bool IS_EDITOR = false;
 #endif
+
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+        public static readonly bool IS_MOBILE_PLATFORM = true;
+#else
+        public static readonly bool IS_MOBILE_PLATFORM = false;
+#endif
     }
 }

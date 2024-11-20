@@ -7,6 +7,8 @@ namespace Beast.Claw.Input
     {
         public TouchScreenConfig touchScreen;
         public MouseConfig mouse;
+
+        public float holdBeginThresholdSeconds;
         
         public override IEnumerable<IConfig> Bind()
         {
