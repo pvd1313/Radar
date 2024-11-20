@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -27,7 +28,7 @@ namespace Beast.Claw.Input
         private RawTouchAxis _mouseAxis;
         
         private ConsumerInfo _consumer;
-        private EInputAxis _activeAxis;
+        private AxisType _activeAxis;
         
         public Mouse(IScreen screen, IInputManager manager, MouseConfig config)
         {
@@ -41,6 +42,8 @@ namespace Beast.Claw.Input
             _rawTouches = new NativeFixedList<RawTouchAxis>(1, Allocator.Persistent);
             _rawTouches.Add(RawTouchAxis.Disabled);
             
+            _setActiveAxisAndConsumerToDefault();
+            
             return UniTask.CompletedTask;
         }
 
@@ -51,21 +54,19 @@ namespace Beast.Claw.Input
 
         public void Deactivate()
         {
-            switch (_activeAxis)
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
-                case EInputAxis.RawTouch:
-                    RawTouchAxis.DeactivateAll(_rawTouches);
-                    _consumer.UpdateAxis(new PackedAxis(_rawTouches));
-                    break;
-                
-                case EInputAxis.Drag:
-                    _drag.status = EAxisStatus.Disabled;
-                    _consumer.UpdateAxis(new PackedAxis(_drag));
-                    break;
-                
-                case EInputAxis.Zoom:
-                    // No need to reset zoom.
-                    break;
+                RawTouchAxis.DeactivateAll(_rawTouches);
+                _consumer.UpdateAxis(new PackedAxis(_rawTouches));
+            }
+            else if (_activeAxis == AxisType.DRAG)
+            {
+                _drag.status = EAxisStatus.Disabled;
+                _consumer.UpdateAxis(new PackedAxis(_drag));
+            }
+            else if (_activeAxis == AxisType.ZOOM)
+            {
+                // No need to reset zoom.
             }
             
             _setActiveAxisAndConsumerToDefault();
@@ -73,13 +74,22 @@ namespace Beast.Claw.Input
         
         public PackedAxis GetActiveAxis()
         {
-            return _activeAxis switch
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
-                EInputAxis.RawTouch => new PackedAxis(_rawTouches),
-                EInputAxis.Drag => new PackedAxis(_drag),
-                EInputAxis.Zoom => new PackedAxis(_zoom),
-                _ => PackedAxis.None
-            };
+                return new PackedAxis(_rawTouches);
+            }
+            
+            if (_activeAxis == AxisType.DRAG)
+            {
+                return new PackedAxis(_drag);
+            }
+
+            if (_activeAxis == AxisType.ZOOM)
+            {
+                return new PackedAxis(_zoom);
+            }
+            
+            return PackedAxis.None;
         }
 
         public void Tick(BlockingContext context)
@@ -103,7 +113,7 @@ namespace Beast.Claw.Input
 
         private void _processRawTouch()
         {
-            if (_activeAxis == EInputAxis.RawTouch)
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
                 _consumer.UpdateAxis(new PackedAxis(_rawTouches));
 
@@ -115,14 +125,14 @@ namespace Beast.Claw.Input
                 }
             }
 
-            if (_activeAxis == EInputAxis.None &&
+            if (_activeAxis == AxisType.NONE &&
                 _mouseAxis.status == EAxisStatus.Starting)
             {
                 PackedAxis packedAxis = new(_rawTouches);
 
                 if (_manager.TryFindConsumer(packedAxis, out _consumer))
                 {
-                    _activeAxis = EInputAxis.RawTouch;
+                    _activeAxis = AxisType.RAW_TOUCH;
                     _consumer.UpdateAxis(packedAxis);
                 }
             }
@@ -130,7 +140,7 @@ namespace Beast.Claw.Input
         
         private void _processDrag()
         {
-            if (_activeAxis == EInputAxis.Drag)
+            if (_activeAxis == AxisType.DRAG)
             {
                 _drag.position = _mouseAxis.position;
                 _drag.status = _mouseAxis.status;
@@ -144,7 +154,7 @@ namespace Beast.Claw.Input
                 return;
             }
 
-            if (_activeAxis == EInputAxis.None &&
+            if (_activeAxis == AxisType.NONE &&
                 _mouseAxis.status == EAxisStatus.Starting)
             {
                 _drag = DragAxis.StartingAt(_mouseAxis.position);
@@ -153,7 +163,7 @@ namespace Beast.Claw.Input
 
                 if (_manager.TryFindConsumer(packedAxis, out _consumer))
                 {
-                    _activeAxis = EInputAxis.Drag;
+                    _activeAxis = AxisType.DRAG;
                     _consumer.UpdateAxis(packedAxis);
                 }
                 else
@@ -165,7 +175,7 @@ namespace Beast.Claw.Input
 
         private void _processZoom()
         {
-            if (_activeAxis != EInputAxis.None)
+            if (_activeAxis != AxisType.NONE)
             {
                 return;
             }
@@ -207,7 +217,7 @@ namespace Beast.Claw.Input
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _setActiveAxisAndConsumerToDefault()
         {
-            _activeAxis = EInputAxis.None;
+            _activeAxis = AxisType.NONE;
             _consumer = default;
         }
         

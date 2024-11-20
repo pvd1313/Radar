@@ -1,10 +1,11 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Math;
 
 namespace Beast.Claw.Input
 {
     public interface IInputConsumer : IController
     {
-        public EInputAxis SupportedAxis { get; }
+        public Int32Mask SupportedAxis { get; }
         
         bool TryCaptureAxis(PackedAxis axis);
 

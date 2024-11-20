@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -23,7 +22,7 @@ namespace Beast.Claw.Input
         // so we will have to forget about this byte boilerplate.
         public PackedAxis(ZoomAxis zoom)
         {
-            _b0 = _axisToByte(EInputAxis.Zoom);
+            _b0 = _axisToByte(AxisType.ZOOM);
             _b1 = 0;
             _f0 = zoom.position.x;
             _f1 = zoom.position.y;
@@ -34,7 +33,7 @@ namespace Beast.Claw.Input
 
         public void Unpack(out ZoomAxis zoom)
         {
-            _axisUnpackTypeValidation(EInputAxis.Zoom);
+            _axisUnpackTypeValidation(AxisType.ZOOM);
 
             zoom = new ZoomAxis
             {
@@ -45,7 +44,7 @@ namespace Beast.Claw.Input
 
         public PackedAxis(NativeSlice<RawTouchAxis> rawTouch)
         {
-            _b0 = _axisToByte(EInputAxis.RawTouch);
+            _b0 = _axisToByte(AxisType.RAW_TOUCH);
             _b1 = 0;
             _f0 = 0;
             _f1 = 0;
@@ -56,14 +55,14 @@ namespace Beast.Claw.Input
 
         public void Unpack(out NativeSlice<RawTouchAxis> rawTouch)
         {
-            _axisUnpackTypeValidation(EInputAxis.RawTouch);
+            _axisUnpackTypeValidation(AxisType.RAW_TOUCH);
 
             rawTouch = _rawTouch;
         }
 
         public PackedAxis(DragAxis drag)
         {
-            _b0 = _axisToByte(EInputAxis.Drag);
+            _b0 = _axisToByte(AxisType.DRAG);
             _b1 = (byte)drag.status;
             _f0 = drag.startPosition.x;
             _f1 = drag.startPosition.y;
@@ -74,7 +73,7 @@ namespace Beast.Claw.Input
 
         public void Unpack(out DragAxis drag)
         {
-            _axisUnpackTypeValidation(EInputAxis.Drag);
+            _axisUnpackTypeValidation(AxisType.DRAG);
 
             drag = new DragAxis
             {
@@ -84,15 +83,15 @@ namespace Beast.Claw.Input
             };
         }
 
-        public EInputAxis GetAxisType()
+        public AxisType GetAxisType()
         {
-            return _byteToAxis(_b0);
+            return AxisType.Parse(_b0);
         }
 
         [Conditional("DEVELOPMENT")]
-        private void _axisUnpackTypeValidation(EInputAxis targetAxis)
+        private void _axisUnpackTypeValidation(AxisType targetAxis)
         {
-            EInputAxis currentAxis = GetAxisType();
+            AxisType currentAxis = GetAxisType();
             
             if (targetAxis != currentAxis)
             {
@@ -102,15 +101,9 @@ namespace Beast.Claw.Input
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte _axisToByte(EInputAxis axis)
+        private static byte _axisToByte(AxisType axis)
         {
-            return (byte)BMath.IntFloorLog2((int)axis);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static EInputAxis _byteToAxis(byte value)
-        {
-            return (EInputAxis) (1 << value);
+            return (byte)axis.id;
         }
     }
 }

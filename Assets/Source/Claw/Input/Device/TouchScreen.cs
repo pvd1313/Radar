@@ -28,7 +28,7 @@ namespace Beast.Claw.Input
         private NativeFixedList<RawTouchAxis> _rawTouches;
 
         private ConsumerInfo _consumer;
-        private EInputAxis _activeAxis;
+        private AxisType _activeAxis;
 
         private float _startZoomDistance;
         private int _touchCount;
@@ -43,7 +43,9 @@ namespace Beast.Claw.Input
         public UniTask Warmup(ConcurrentContext context)
         {
             _rawTouches = new NativeFixedList<RawTouchAxis>(MAX_TOUCH_COUNT, Allocator.Persistent);
-
+            
+            _setActiveAxisAndConsumerToDefault();
+            
             return UniTask.CompletedTask;
         }
 
@@ -54,21 +56,19 @@ namespace Beast.Claw.Input
 
         public void Deactivate()
         {
-            switch (_activeAxis)
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
-                case EInputAxis.RawTouch:
-                    RawTouchAxis.DeactivateAll(_rawTouches);
-                    _consumer.UpdateAxis(new PackedAxis(_rawTouches));
-                    break;
-                
-                case EInputAxis.Drag:
-                    _drag.status = EAxisStatus.Disabled;
-                    _consumer.UpdateAxis(new PackedAxis(_drag));
-                    break;
-                
-                case EInputAxis.Zoom:
-                    // No need to reset zoom.
-                    break;
+                RawTouchAxis.DeactivateAll(_rawTouches);
+                _consumer.UpdateAxis(new PackedAxis(_rawTouches));
+            }
+            else if (_activeAxis == AxisType.DRAG)
+            {
+                _drag.status = EAxisStatus.Disabled;
+                _consumer.UpdateAxis(new PackedAxis(_drag));
+            }
+            else if (_activeAxis == AxisType.ZOOM)
+            {
+                // No need to reset zoom.
             }
 
             _setActiveAxisAndConsumerToDefault();
@@ -76,13 +76,22 @@ namespace Beast.Claw.Input
 
         public PackedAxis GetActiveAxis()
         {
-            return _activeAxis switch
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
-                EInputAxis.RawTouch => new PackedAxis(_rawTouches),
-                EInputAxis.Drag => new PackedAxis(_drag),
-                EInputAxis.Zoom => new PackedAxis(_zoom),
-                _ => PackedAxis.None
-            };
+                return new PackedAxis(_rawTouches);
+            }
+
+            if (_activeAxis == AxisType.DRAG)
+            {
+                return new PackedAxis(_drag);
+            }
+
+            if (_activeAxis == AxisType.ZOOM)
+            {
+                return new PackedAxis(_zoom);
+            }
+            
+            return PackedAxis.None;
         }
 
         public void Tick(BlockingContext obj)
@@ -103,7 +112,7 @@ namespace Beast.Claw.Input
 
         private void _processRawTouch()
         {
-            if (_activeAxis == EInputAxis.RawTouch)
+            if (_activeAxis == AxisType.RAW_TOUCH)
             {
                 _consumer.UpdateAxis(new PackedAxis(_rawTouches));
                 
@@ -115,14 +124,14 @@ namespace Beast.Claw.Input
                 return;
             }
 
-            if (_activeAxis == EInputAxis.None &&
+            if (_activeAxis == AxisType.NONE &&
                 _rawTouches.ContainsStartingTouch())
             {
                 PackedAxis packedAxis = new (_rawTouches);
 
                 if (_manager.TryFindConsumer(packedAxis, out _consumer))
                 {
-                    _activeAxis = EInputAxis.RawTouch;
+                    _activeAxis = AxisType.RAW_TOUCH;
                     _consumer.UpdateAxis(packedAxis);
                 }
             }
@@ -130,12 +139,12 @@ namespace Beast.Claw.Input
 
         private void _processDrag(RawTouchAxis touch0, RawTouchAxis touch1)
         {
-            if (_activeAxis == EInputAxis.Drag)
+            if (_activeAxis == AxisType.DRAG)
             {
                 // Switch Drag -> Zoom
                 if (_touchCount == 2 &&
                     _rawTouches.ContainsStartingTouch() &&
-                    _consumer.axisMask.Intersects((int)EInputAxis.Zoom))
+                    AxisType.ZOOM.Intersects(_consumer.axisMask))
                 {
                     // Disable drag.
                     _drag.status = EAxisStatus.Disabled;
@@ -143,7 +152,7 @@ namespace Beast.Claw.Input
 
                     // Zoom will be updated in the next frame. No need to pass zero delta.
                     _zoom = _beginZoom(touch0.position, touch1.position);
-                    _activeAxis = EInputAxis.Zoom;
+                    _activeAxis = AxisType.ZOOM;
 
                     return;
                 }
@@ -159,7 +168,7 @@ namespace Beast.Claw.Input
                 }
             }
 
-            if (_activeAxis == EInputAxis.None &&
+            if (_activeAxis == AxisType.NONE &&
                 _touchCount == 1 &&
                 touch0.status == EAxisStatus.Starting)
             {
@@ -169,7 +178,7 @@ namespace Beast.Claw.Input
 
                 if (_manager.TryFindConsumer(packedDrag, out _consumer))
                 {
-                    _activeAxis = EInputAxis.Drag;
+                    _activeAxis = AxisType.DRAG;
                     _consumer.UpdateAxis(packedDrag);
                     return;
                 }
@@ -180,11 +189,11 @@ namespace Beast.Claw.Input
 
         private void _processZoom(RawTouchAxis touch0, RawTouchAxis touch1)
         {
-            if (_activeAxis == EInputAxis.Zoom)
+            if (_activeAxis == AxisType.ZOOM)
             {
                 bool a = _touchCount == 1 && touch0.status != EAxisStatus.Disabled;
                 bool b = _touchCount == 2 && _rawTouches.ContainsDisabledTouch();
-                bool c = _consumer.axisMask.Intersects((int)EInputAxis.Drag);
+                bool c = AxisType.DRAG.Intersects(_consumer.axisMask);
                 
                 // Switch Zoom -> Drag
                 if ((a || b) && c)
@@ -195,7 +204,7 @@ namespace Beast.Claw.Input
                     
                     _drag = DragAxis.StartingAt(pos);
                     
-                    _activeAxis = EInputAxis.Drag;
+                    _activeAxis = AxisType.DRAG;
                     
                     _consumer.UpdateAxis(new PackedAxis(_drag));
                     
@@ -218,7 +227,7 @@ namespace Beast.Claw.Input
                 _consumer.UpdateAxis(new PackedAxis(_zoom));
             }
 
-            if (_activeAxis == EInputAxis.None &&
+            if (_activeAxis == AxisType.NONE &&
                 _touchCount == 2 &&
                 _rawTouches.ContainsStartingTouch())
             {
@@ -227,7 +236,7 @@ namespace Beast.Claw.Input
                 if (_manager.TryFindConsumer(new PackedAxis(_zoom), out _consumer))
                 {
                     // Zoom will be updated in the next frame. No need to pass zero delta.
-                    _activeAxis = EInputAxis.Zoom;
+                    _activeAxis = AxisType.ZOOM;
                 }
                 else
                 {
@@ -296,7 +305,7 @@ namespace Beast.Claw.Input
 
         private void _setActiveAxisAndConsumerToDefault()
         {
-            _activeAxis = EInputAxis.None;
+            _activeAxis = AxisType.NONE;
             _consumer = default;
         }
         

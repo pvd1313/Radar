@@ -1,6 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
+using Beast.Claw.Math;
 using Noesis;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -9,7 +10,7 @@ namespace Beast.Radar.UI
 {
     public class NoesisInputConsumer : Controller, IInputConsumer
     {
-        public EInputAxis SupportedAxis => EInputAxis.RawTouch;
+        public Int32Mask SupportedAxis => AxisType.RAW_TOUCH.AsMask();
         
         private readonly NoesisView _view;
         private readonly Visual _viewRoot;
@@ -25,7 +26,7 @@ namespace Beast.Radar.UI
 
         public bool TryCaptureAxis(PackedAxis axis)
         {
-            if (axis.GetAxisType() == EInputAxis.RawTouch)
+            if (axis.GetAxisType() == AxisType.RAW_TOUCH)
             {
                 axis.Unpack(out NativeSlice<RawTouchAxis> touches);
                 

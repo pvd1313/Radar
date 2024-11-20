@@ -11,10 +11,15 @@ namespace Beast.Claw.Math
         {
             this.value = value;
         }
-
-        public static implicit operator Int32Mask(EInputAxis axisType)
+        
+        public static Int32Mask operator |(Int32Mask a, Int32Mask b)
         {
-            return new Int32Mask((int)axisType);
+            return new Int32Mask(a.value | b.value);
+        }
+
+        public static implicit operator Int32Mask(AxisType axisType)
+        {
+            return new Int32Mask(1 << axisType.id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

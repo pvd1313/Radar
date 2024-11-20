@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.GameLoop;
+﻿using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.Math;
@@ -11,7 +10,7 @@ namespace Beast.Radar.Cinematic
 {
     public class CameraTransformController : Actor, IInputConsumer
     {
-        public EInputAxis SupportedAxis => EInputAxis.Drag | EInputAxis.Zoom;
+        public Int32Mask SupportedAxis { get; } = AxisType.DRAG.AsMask() | AxisType.ZOOM.AsMask();
         
         private readonly ICameraTransform _transform;
         private readonly CameraConfig _cameraConfig;
@@ -43,7 +42,7 @@ namespace Beast.Radar.Cinematic
 
         public void UpdateAxis(PackedAxis axis)
         {
-            if (axis.GetAxisType() == EInputAxis.Drag)
+            if (axis.GetAxisType() == AxisType.DRAG)
             {
                 axis.Unpack(out DragAxis drag);
 
@@ -61,7 +60,7 @@ namespace Beast.Radar.Cinematic
                 }
             }
 
-            if (axis.GetAxisType() == EInputAxis.Zoom)
+            if (axis.GetAxisType() == AxisType.ZOOM)
             {
                 axis.Unpack(out ZoomAxis zoom);
                 
