@@ -22,27 +22,6 @@
     <Thickness x:Key="MarginLeftBottomTop">10 10 0 10</Thickness>
     <Thickness x:Key="MarginLeftBottomTopBottom">10 10 10 10</Thickness>
 
-    <Style TargetType="Button" x:Key="HUDButtonStyle">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid>
-                        <Rectangle Fill="{TemplateBinding Background}" x:Name="BackgroundElement" />
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Opacity" TargetName="BackgroundElement" Value="0.7" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Fill" TargetName="BackgroundElement" Value="LightGray" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <ImageBrush
         ImageSource="..\..\Texture\LoadingScreen\loading_screen_background_1.png"
         Stretch="UniformToFill"
