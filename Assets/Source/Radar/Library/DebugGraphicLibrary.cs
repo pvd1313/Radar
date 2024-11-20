@@ -6,7 +6,6 @@ namespace Beast.Radar
 {
     public class DebugGraphicLibrary : ScriptableConfig
     {
-        public Texture2D bakedTerrain;
         public Texture2D terrainGrid;
 
         public Shader unlitTextureShader;
