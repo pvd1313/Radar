@@ -11,7 +11,7 @@ namespace Beast.Claw.Editor.Agony.Bugfixes
     /// Unity 2022.3.45
     /// Fixes Game View Editor Window scale reset after domain reloaded.
     /// </summary>
-    [DomainInitialize]
+    [InitializedWithDomain]
     public static class GameViewScaleSelfResetFix
     {
         private const string PREFS_KEY_X = nameof(GameViewScaleSelfResetFix) + "_AAUO4ggU0JiK5i";

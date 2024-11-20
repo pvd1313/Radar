@@ -3,7 +3,7 @@
 namespace Beast.Claw.Attributes.Annotation
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class LabelMustBeSetAttribute : Attribute
+    public sealed class LabelMustBeSetAttribute : AnnotationAttribute
     {
     }
 }

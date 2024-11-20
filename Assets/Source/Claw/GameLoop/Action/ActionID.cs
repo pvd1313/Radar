@@ -1,5 +1,8 @@
-﻿namespace Beast.Claw.GameLoop
+﻿using Beast.Claw.Attributes.Annotation;
+
+namespace Beast.Claw.GameLoop
 {
+    [ConstantGroup]
     public static class ActionID
     {
         public const string PREFERENCES_LOAD = "preferences_load";

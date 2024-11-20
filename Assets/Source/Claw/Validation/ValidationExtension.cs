@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using Unity.Collections;
 
 namespace Beast.Claw.Validation
 {
+    [ExtensionClass]
     public static class ValidationExtension
     {
         [Conditional("DEVELOPMENT")]

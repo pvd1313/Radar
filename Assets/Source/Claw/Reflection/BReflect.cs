@@ -12,6 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
 {
+    [StaticUtility]
     public static class BReflect
     {
         private static readonly ConcurrentDictionary<Type, AttributeData[]> ATTRIBUTES;

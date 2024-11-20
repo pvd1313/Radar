@@ -32,7 +32,7 @@ namespace Beast.Claw.Editor.Serialization
                     {
                         _value = value;
 
-                        Preference.WriteBool(_key, value);
+                        BPref.WriteBool(_key, value);
                     }
                 }
             }
@@ -54,7 +54,7 @@ namespace Beast.Claw.Editor.Serialization
             
             _key = key;
             
-            Preference.ReadBool(key, out _value, defaultValue);
+            BPref.ReadBool(key, out _value, defaultValue);
 
             _isCreated = true;
         }

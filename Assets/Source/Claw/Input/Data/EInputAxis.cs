@@ -8,6 +8,6 @@ namespace Beast.Claw.Input
         None = 0,
         RawTouch = 1,
         Drag = 2,
-        Zoom = 4
+        Zoom = 4,
     }
 }

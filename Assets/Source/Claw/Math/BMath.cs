@@ -1,9 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Math
 {
+    [StaticUtility]
     public static class BMath
     {
         public const float DEG2_RAD = 0.017453292f;

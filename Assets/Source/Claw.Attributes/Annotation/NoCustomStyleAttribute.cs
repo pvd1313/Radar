@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Beast.Claw.Attributes
+namespace Beast.Claw.Attributes.Annotation
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class NoCustomStyleAttribute : Attribute
+    public sealed class NoCustomStyleAttribute : AnnotationAttribute
     {
         
     }

@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using UnityEngine;
 
 namespace Beast.Claw.Math
 {
+    [StaticUtility]
     public static class BConvert
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

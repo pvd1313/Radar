@@ -1,9 +1,10 @@
 ﻿using System;
-using Beast.Claw.Common;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 
 namespace Beast.Claw.UI
 {
+    [ExtensionClass]
     public static class NoesisExtension
     {
         public static void Instantiate<T>(this NoesisXaml xaml, out T control) where T : BeastControl

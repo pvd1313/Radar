@@ -47,7 +47,7 @@ namespace Beast.Claw.Gizmo
         {
             _ensureCapacity(shapeCount + 1);
             
-            int offset = shapeCount * GizmoUtil.FLOAT_PER_SHAPE;
+            int offset = shapeCount * BGizmo.FLOAT_PER_SHAPE;
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
             
@@ -67,7 +67,7 @@ namespace Beast.Claw.Gizmo
         {
             _ensureCapacity(shapeCount + 1);
             
-            int offset = shapeCount * GizmoUtil.FLOAT_PER_SHAPE;
+            int offset = shapeCount * BGizmo.FLOAT_PER_SHAPE;
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
             
@@ -85,13 +85,13 @@ namespace Beast.Claw.Gizmo
 
         private void _ensureCapacity(int targetCapacity)
         {
-            if (buffer.IsCreated && buffer.Length > targetCapacity * GizmoUtil.FLOAT_PER_SHAPE)
+            if (buffer.IsCreated && buffer.Length > targetCapacity * BGizmo.FLOAT_PER_SHAPE)
             {
                 return;
             }
 
-            int newCapacity = BMath.CeilToInt(targetCapacity * GizmoUtil.FLOAT_PER_SHAPE / 128.0f) * 128;
-            NativeArray<ushort> newBuffer = Native.PermArray<ushort>(newCapacity);
+            int newCapacity = BMath.CeilToInt(targetCapacity * BGizmo.FLOAT_PER_SHAPE / 128.0f) * 128;
+            NativeArray<ushort> newBuffer = BNative.PermArray<ushort>(newCapacity);
 
             if (buffer.IsCreated)
             {

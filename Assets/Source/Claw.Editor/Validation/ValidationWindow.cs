@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Editor.Serialization;
-using Beast.Claw.Editor.Window;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Beast.Claw.Text;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Beast.Claw.Editor.Validation
         [SerializeField] private string _searchPattern;
 
         private StringWithFormat _searchPatternLowerCase;
-        private CSButtonView _csButton;
+        private CsButtonView _csButton;
         private bool _hasConfig;
         private ValidationConfig _config;
         private string _missingConfigMessage;
@@ -21,7 +22,7 @@ namespace Beast.Claw.Editor.Validation
         protected override void Warmup()
         {
             _searchPatternLowerCase = new StringWithFormat(_searchPattern ?? string.Empty, EStringFormat.LowerCase);
-            _csButton = new CSButtonView(_flow);
+            _csButton = new CsButtonView(_flow);
             _hasConfig = ConfigManager.FindConfig(out _config);
             _missingConfigMessage = ConfigManager.MissingConfigMessage<ValidationConfig>();
         }

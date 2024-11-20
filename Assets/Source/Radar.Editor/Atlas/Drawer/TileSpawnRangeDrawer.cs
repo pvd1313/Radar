@@ -1,5 +1,6 @@
 ﻿using Beast.Claw.Editor;
-using Beast.Claw.Editor.Drawers;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Beast.Claw.Math;
 using UnityEngine;
 

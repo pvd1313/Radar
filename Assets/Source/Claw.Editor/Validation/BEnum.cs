@@ -76,7 +76,7 @@ namespace Beast.Claw.Editor.Validation
                 };
             }
 
-            Native.PermHashSet(values.Length, out NativeHashSet<long> allValues);
+            BNative.PermHashSet(values.Length, out NativeHashSet<long> allValues);
             
             for (int i = 0; i < values.Length; i++)
             {

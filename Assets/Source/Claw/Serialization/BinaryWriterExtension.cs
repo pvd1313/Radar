@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Beast.Claw.Common;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
 {
+    [ExtensionClass]
     public static class BinaryWriterExtension
     {
         public static void Write<TData>(this IBinaryWriter stream, TData data) 

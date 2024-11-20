@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;

@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using Beast.Claw.Attributes.Annotation;
 
 namespace Beast.Claw.Reflection
 {
+    [ConstantGroup]
     public static class Binding
     {
         public const BindingFlags PUBLIC = BindingFlags.Public;

@@ -1,8 +1,9 @@
 ﻿using System;
+using Beast.Claw.Editor.UI;
 using UnityEditor;
 using UnityEngine;
 
-using EditorWindow = Beast.Claw.Editor.Window.EditorWindow;
+using EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
 
 namespace Beast.Claw.Editor
 {

@@ -1,10 +1,13 @@
-﻿namespace Beast.Claw.Graphic
+﻿using Beast.Claw.Attributes.Annotation;
+
+namespace Beast.Claw.Graphic
 {
+    [ConstantGroup]
     public static class RenderOrderZ
     {
-        public static readonly float Max = -0.99f;
-        public static readonly float Gizmo = -0.9f;
-        public static readonly float TerrainTileRender = -0.2f;
-        public static readonly float TerrainColorRender = -0.1f;
+        public const float MAX = -0.99f;
+        public const float GIZMO = -0.9f;
+        public const float TERRAIN_TILE_RENDER = -0.2f;
+        public const float TERRAIN_COLOR_RENDER = -0.1f;
     }
 }

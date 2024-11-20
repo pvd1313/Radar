@@ -6,7 +6,7 @@ namespace Beast.Claw.Attributes.Annotation
     /// Method is slow and should not be used in main loop. Game loop, editor draw loop, etc.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class PerformanceCriticalAttribute : Attribute
+    public class PerformanceCriticalAttribute : AnnotationAttribute
     {
         
     }

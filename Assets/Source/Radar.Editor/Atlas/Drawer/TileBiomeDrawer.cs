@@ -1,4 +1,6 @@
 ﻿using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Unity.Mathematics;
 using UnityEngine;
 

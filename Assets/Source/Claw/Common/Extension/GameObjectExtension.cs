@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using UnityEngine;
 
 namespace Beast.Claw.Common
 {
+    [ExtensionClass]
     public static class GameObjectExtension
     {
         /// <returns>gameObject != null</returns>

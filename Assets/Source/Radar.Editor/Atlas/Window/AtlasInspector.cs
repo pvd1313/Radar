@@ -2,14 +2,17 @@
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Beast.Claw.Validation;
 using Beast.Radar.Terrain;
 using UnityEditor;
 using UnityEngine;
+using EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
 
 namespace Beast.Radar.Editor.Atlas
 {
-    public class AtlasInspector : Beast.Claw.Editor.Window.EditorWindow
+    public class AtlasInspector : EditorWindow
     {
         private const string MAIN_POSTFIX = "_main.png";
         private const string COLOR_POSTFIX = "_color.png";

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Beast.Claw.Common;
 using Beast.Claw.Math;
-using Beast.Claw.Validation;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -100,15 +98,6 @@ namespace Beast.Claw.Input
             {
                 throw new InvalidOperationException($"Axis was of type {currentAxis}, " +
                                                     $"but was tried to be unpacked as {targetAxis}");
-            }
-        }
-        
-        [Conditional("DEVELOPMENT")]
-        public void ValidateIsOfTypeThrowException(EInputAxis axis)
-        {
-            if (GetAxisType() != axis)
-            {
-                throw new ValidationException($"Axis expected to be {axis}, but was {GetAxisType()}");
             }
         }
 

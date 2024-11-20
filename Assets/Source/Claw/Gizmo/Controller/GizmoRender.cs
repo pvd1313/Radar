@@ -126,10 +126,10 @@ namespace Beast.Claw.Gizmo
                     continue;
                 }
                 
-                GizmoUtil.EnsureCapacity(ref _floatBuffer, shapeCount + handleShapeCount);
+                BGizmo.EnsureCapacity(ref _floatBuffer, shapeCount + handleShapeCount);
                 
-                _floatBuffer.Slice(shapeCount * GizmoUtil.FLOAT_PER_SHAPE, handleShapeCount * GizmoUtil.FLOAT_PER_SHAPE)
-                    .CopyFrom(handle.handle.buffer.Slice(0, handleShapeCount * GizmoUtil.FLOAT_PER_SHAPE));
+                _floatBuffer.Slice(shapeCount * BGizmo.FLOAT_PER_SHAPE, handleShapeCount * BGizmo.FLOAT_PER_SHAPE)
+                    .CopyFrom(handle.handle.buffer.Slice(0, handleShapeCount * BGizmo.FLOAT_PER_SHAPE));
 
                 shapeCount += handleShapeCount;
             }
@@ -201,7 +201,7 @@ namespace Beast.Claw.Gizmo
                 {
                     rotation = Quaternion.identity,
                     scale = new float3(_screen.Aspect, 1, 1),
-                    translation = new float3(0, 0, RenderOrderZ.Gizmo)
+                    translation = new float3(0, 0, RenderOrderZ.GIZMO)
                 },
                 mesh = _config.quadMesh
             });
