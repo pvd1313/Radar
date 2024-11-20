@@ -7,8 +7,6 @@ namespace Beast.Claw.Agony
     public class UnityEditorSimulatorWindow
 #if UNITY_EDITOR
     {
-        private const string SIMULATOR_WINDOW = "UnityEditor.DeviceSimulation.SimulatorWindow";
-
         public bool CanFocus => !_isBroken;
         
         private readonly Type _windowType;
@@ -21,8 +19,8 @@ namespace Beast.Claw.Agony
         {
             try
             {
-                BReflect.TypeFromAssembly
-                    <UnityEditor.DeviceSimulation.DeviceSimulator>(SIMULATOR_WINDOW, ref _windowType);
+                _windowType = "UnityEditor.DeviceSimulation.SimulatorWindow"
+                    .TypeFromAssembly<UnityEditor.DeviceSimulation.DeviceSimulator>();
             }
             catch (Exception e)
             {
