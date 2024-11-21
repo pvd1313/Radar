@@ -50,9 +50,12 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.csproj 
+*.sln    
 
-#*.csproj
-#*.sln
+# Noesis blend
+!Radar-blend.csproj
+!Radar-blend.sln
 
 # Unity3D generated meta files
 *.pidb.meta
