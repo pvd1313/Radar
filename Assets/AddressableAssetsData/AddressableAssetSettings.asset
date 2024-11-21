@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: eabc7425a1c2fc54abbc54d78f31a2c9
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: 687e43452b7c12ddcc202c4fc8133206
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -94,6 +94,7 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - Noesis
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: ddf99bc3b62bdcf479af5204451a86fc, type: 2}
