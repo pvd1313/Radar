@@ -432,8 +432,8 @@
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\ControllableStoryboardAction.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\UserControl.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Interactivity\PlaySoundAction.cs" />
-    <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\QuarticEase.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Interactivity\Interaction.cs" />
+    <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\QuarticEase.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\StretchDirection.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\StringAnimationUsingKeyFrames.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\MediaElement\MediaElement.cs" />
@@ -712,8 +712,8 @@
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Interactivity\EventTrigger.Interactivity.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\OverflowMode.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\Brushes.cs" />
-    <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\ColumnDefinitionCollection.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\TriggerCollection.cs" />
+    <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\ColumnDefinitionCollection.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Interactivity\ConditionBehavior.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\Thumb.cs" />
     <Compile Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Runtime\API\Proxies\StringKeyFrame.cs" />
