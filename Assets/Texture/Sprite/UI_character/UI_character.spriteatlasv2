@@ -11,6 +11,6 @@ SpriteAtlasAsset:
   m_MasterAtlas: {fileID: 0}
   m_ImporterData:
     packables:
-    - {fileID: 2800000, guid: 5a768eff89b608746a9e30007b3152eb, type: 3}
+    - {fileID: 2800000, guid: 3d640d873ae004b4ea5be4ae98882e52, type: 3}
     - {fileID: 2800000, guid: 895c5c3a8e09ce94492500b5559e74d9, type: 3}
   m_IsVariant: 0

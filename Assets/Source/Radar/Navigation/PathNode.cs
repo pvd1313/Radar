@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Beast.Radar.Player.Path
+namespace Beast.Radar.Navigation
 {
     public struct PathNode
     {

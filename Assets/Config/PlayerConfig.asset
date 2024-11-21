@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4642a106bbc49c78681d3237820b694, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  moveSpeed: 30
-  maxNodeCount: 65536
+  movementSpeedKilometresPerHour: 30
+  maxNodeCount: 1024
   tileSpeedModifiers:
   - biome: 0
     speedMultiplier: 1

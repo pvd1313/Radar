@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
@@ -13,20 +14,23 @@ namespace Beast.Radar.UI
         private readonly PlayerPreferences _preferences;
         private readonly UIConfig _config;
         private readonly INoesisWindowManager _noesisWindow;
-        private readonly IPlayerController _player;
+        private readonly IPlayer _player;
         private readonly IWindowManager _windowManager;
         private readonly IGameTime _gameTime;
         
         private IntToStringConverter _intToString;
         private IWindowHandle<Empty> _pauseMenu;
         private MainHUDView _view;
+
+        private bool _isOpened;
+        private DateTime _displayedDate;
         
         public MainHUDWindow(
             PlayerPreferences preferences,
             UIConfig config,
             INoesisWindowManager noesisWindow,
             IWindowManager windowManager,
-            IPlayerController player,
+            IPlayer player,
             IGameTime gameTime)
         {
             _preferences = preferences;
@@ -39,9 +43,13 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            _view.ChangePathfindingState(_preferences.isAutoPathfinding);
+            _fetchView();
+            
+            _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
 
             _view.Visibility = Visibility.Visible;
+
+            _isOpened = true;
 
             return UniTask.CompletedTask;
         }
@@ -50,13 +58,13 @@ namespace Beast.Radar.UI
         {
             _view.Visibility = Visibility.Hidden;
 
+            _isOpened = false;
+
             return UniTask.CompletedTask;
         }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _intToString = new IntToStringConverter(59, "D2");
-
             _windowManager.Register(this, WindowID.HUD);
 
             _config.HUDAsset.Instantiate(out _view);
@@ -72,35 +80,50 @@ namespace Beast.Radar.UI
             return UniTask.CompletedTask;
         }
 
+        protected override void _tick(BlockingContext context)
+        {
+            if (_isOpened)
+            {
+                _fetchView();
+            }
+        }
+
+        private void _fetchView()
+        {
+            DateTime now = _gameTime.Now;
+            
+            bool hoursDiffer = _displayedDate.Hour != now.Hour;
+            bool minutesDiffer = _displayedDate.Minute != now.Minute;
+
+            if (hoursDiffer || minutesDiffer)
+            {
+                _displayedDate = now;
+
+                _view.textTime.Text = now.ToString("t", CultureInfo.InvariantCulture);
+            }
+            
+            _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
+
+            _view.SetPlayerMovementState(_player.HasTarget, _player.IsMoving);
+        }
+
         private void _subscribe()
         {
-            _gameTime.MinuteChanged += () =>
-            {
-                TimeSpan time = _gameTime.GetTime();
-                
-                _view.textTime.Text = $"{_intToString.Convert(time.Hours)}:{_intToString.Convert(time.Minutes)}";
-            };
-
-            _view.buttonSettings.Click += (sender, args) =>
+            _view.buttonSettings.Click += (_, _) =>
             {
                 _pauseMenu.Open(default);
             };
 
-            _view.buttonPath.Click += (sender, args) =>
+            _view.autoPathFindingButton.Click += (_, _) =>
             {
                 _preferences.isAutoPathfinding = !_preferences.isAutoPathfinding;
                 
-                _view.ChangePathfindingState(_preferences.isAutoPathfinding);
-            };
-            
-            _player.ChangeMovementState += () =>
-            {
-                _view.ChangeMoveState(_player.IsMovement);
+                _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
             };
        
-            _view.buttonMove.Click += (sender, args) =>
+            _view.buttonMove.Click += (_, _) =>
             {
-                _player.SwitchMovement();
+                _player.ToggleMovementState();
             };
         }
     }

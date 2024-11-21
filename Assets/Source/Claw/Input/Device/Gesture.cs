@@ -79,7 +79,7 @@ namespace Beast.Claw.Input
         {
             if (_activeAxis == AxisType.TAP)
             {
-                _tapTimer += _time.DeltaTimeFloat;
+                _tapTimer += _time.Delta;
 
                 if (_rawTouches.Count > 1)
                 {

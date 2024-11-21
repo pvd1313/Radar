@@ -2,6 +2,6 @@
 {
     public interface IWorldViewInstance
     {
-        public WorldView Instance { get; }
+        public WorldView View { get; }
     }
 }

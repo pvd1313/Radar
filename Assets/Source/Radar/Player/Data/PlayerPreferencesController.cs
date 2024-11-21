@@ -1,5 +1,4 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;

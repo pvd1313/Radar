@@ -5,7 +5,7 @@ using Unity.Collections;
 namespace Beast.Claw.Common
 {
     [ExtensionClass]
-    public static class NativeArrayExtension
+    public static class NativeCollectionExtension
     {
         public static void CopyFromDifferenceSize<T>(this NativeArray<T> target, NativeArray<T> source) where T : unmanaged
         {

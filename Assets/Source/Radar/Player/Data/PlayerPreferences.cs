@@ -6,20 +6,20 @@ namespace Beast.Radar.Player
     {
         public bool isMaxFps;
         public bool isAutoPathfinding;
-        public bool isSingleTapMovement;
+        public bool beginMovementOnSingleTap;
         
         public void Serialize(IBinaryWriter stream)
         {
             stream.WriteBool(isMaxFps);
             stream.WriteBool(isAutoPathfinding);
-            stream.WriteBool(isSingleTapMovement);
+            stream.WriteBool(beginMovementOnSingleTap);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
             isMaxFps = stream.ReadBool();
             isAutoPathfinding = stream.ReadBool();
-            isSingleTapMovement = stream.ReadBool();
+            beginMovementOnSingleTap = stream.ReadBool();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Beast.Radar.UI
 {
     public class WorldViewInstance : Actor, IWorldViewInstance
     {
-        public WorldView Instance { get; private set; }
+        public WorldView View { get; private set; }
         
         private readonly CorePrefabLibrary _prefabLibrary;
         
@@ -18,7 +18,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
-            Instance = BScene.InstantiateMono(this, _prefabLibrary.worldView);
+            View = BScene.InstantiateMono(this, _prefabLibrary.worldView);
 
             return UniTask.CompletedTask;
         }

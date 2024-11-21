@@ -107,20 +107,20 @@ namespace Beast.Radar.UI
             
             _view.mapMovementButtons.Increment.Clicked += () =>
             {
-                _playerPreferences.isSingleTapMovement = !_playerPreferences.isSingleTapMovement;
+                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
             
             _view.mapMovementButtons.Decrement.Clicked += () =>
             {
-                _playerPreferences.isSingleTapMovement = !_playerPreferences.isSingleTapMovement;
+                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
         }
 
         private void _refreshMapMovementText()
         {
-            string mapMovementMode = _playerPreferences.isSingleTapMovement ? "single tap" : "double tap";
+            string mapMovementMode = _playerPreferences.beginMovementOnSingleTap ? "single tap" : "double tap";
             _view.mapMovementText.SetText(mapMovementMode);
         }
 

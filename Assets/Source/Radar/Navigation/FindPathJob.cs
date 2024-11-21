@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace Beast.Radar.Player.Path
+namespace Beast.Radar.Navigation
 {
     [BurstCompile]
     public struct FindPathJob : IJob

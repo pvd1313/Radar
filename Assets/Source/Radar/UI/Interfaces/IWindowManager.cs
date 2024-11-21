@@ -10,7 +10,7 @@ namespace Beast.Radar.UI
         event Action<string> WindowChanged; 
 
         public Transform CanvasTransform { get; }
-        public string CurrentWindow { get; }
+        public string WindowID { get; }
         
         void Register<TData>(IWindow<TData> window, string windowID) where TData : struct;
         

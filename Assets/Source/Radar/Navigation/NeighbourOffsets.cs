@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace Beast.Radar.Player.Path
+namespace Beast.Radar.Navigation
 {
     public static class NeighbourOffsets
     {

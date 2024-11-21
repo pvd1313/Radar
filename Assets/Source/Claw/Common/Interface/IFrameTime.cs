@@ -2,6 +2,6 @@
 {
     public interface IFrameTime
     {
-        public float DeltaTimeFloat { get; }
+        public float Delta { get; }
     }
 }

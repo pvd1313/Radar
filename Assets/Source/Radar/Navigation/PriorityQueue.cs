@@ -1,8 +1,8 @@
 ﻿using Unity.Collections;
 
-namespace Beast.Radar.Player.Path
+namespace Beast.Radar.Navigation
 {
-    public struct PriorityQueue : System.IDisposable
+    public struct PriorityQueue
     {
         public int Count => _items.Length;
             

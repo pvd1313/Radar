@@ -10,10 +10,10 @@ namespace Beast.Radar.UI
     public class PlayerViewController : Actor
     {
         private readonly ICameraTransform _camera;
-        private readonly IPlayerController _player;
+        private readonly IPlayer _player;
         private readonly IWorldViewInstance _view;
 
-        public PlayerViewController(IWorldViewInstance worldView, ICameraTransform camera, IPlayerController player)
+        public PlayerViewController(IWorldViewInstance worldView, ICameraTransform camera, IPlayer player)
         {
             _view = worldView;
             _camera = camera;
@@ -22,21 +22,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
-            _view.Instance.target.gameObject.SetActive(false);
-            
-            _player.ChangeTarget += () =>
-            {
-                _refreshTargetView();
-                
-                if (_player.Target.y > _player.Position.y)
-                {
-                    _view.Instance.target.SetAsFirstSibling();
-                }
-                else
-                {
-                    _view.Instance.target.SetAsLastSibling();
-                }
-            };
+            _view.View.target.gameObject.SetActive(false);
             
             return UniTask.CompletedTask;
         }
@@ -45,25 +31,15 @@ namespace Beast.Radar.UI
         {
             if (_player.IsReady)
             {
-                _view.Instance.player.position = _camera.WorldToScreen(_player.Position).XY0();
-                _view.Instance.target.position = _camera.WorldToScreen(_player.Target).XY0();
+                _view.View.player.position = _camera.WorldToScreen(_player.Position).XY0();
+                _view.View.target.position = _camera.WorldToScreen(_player.Target).XY0();
                 
-                if (_player.IsMovement)
-                {
-                    _refreshTargetView();
-                }
+                _view.View.target.gameObject.SetActive(_player.HasTarget);
             }
         }
 
         private void _refreshTargetView()
         {
-            bool isNear = _player.Position.Equals(_player.Target);
-         
-            if (_view.Instance.target.gameObject.activeSelf == isNear)
-            {
-                _view.Instance.target.gameObject.SetActive(!_view.Instance.target.gameObject.activeSelf);
-            }
-            
             //TODO: https://risenbeast.youtrack.cloud/issue/R-6 Set travel time 
             
             /*float distance = BMath.Distance(_player.Position, _player.Target) * 1000;

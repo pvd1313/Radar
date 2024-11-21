@@ -45,7 +45,7 @@ namespace Beast.Radar.UI
         {
             _screenSize = new int2(Screen.width, Screen.height);
 
-            _cityPool = new UIPool<CityView>(_prefabLibrary.city, _worldView.Instance.cityRoot);
+            _cityPool = new UIPool<CityView>(_prefabLibrary.city, _worldView.View.cityRoot);
 
             return UniTask.CompletedTask;
         }

@@ -19,7 +19,7 @@ namespace Beast.Radar.UI
 
         public Transform CanvasTransform => _canvas.transform;
 
-        public string CurrentWindow => _currentWindow;
+        public string WindowID => _currentWindow;
         
         private readonly EssentialPrefabLibrary _library;
         private readonly ICamera _camera;
@@ -28,7 +28,7 @@ namespace Beast.Radar.UI
         private List<Record> _debugHandleRecords;
         private LegacyCanvasView _canvas;
         
-        private string _currentWindow = WindowID.NONE;
+        private string _currentWindow = UI.WindowID.NONE;
         
         public WindowManager(EssentialPrefabLibrary library, ICamera camera)
         {
@@ -109,7 +109,7 @@ namespace Beast.Radar.UI
                 }
             }
 
-            if (_currentWindow != WindowID.NONE)
+            if (_currentWindow != UI.WindowID.NONE)
             {
                 try
                 {
@@ -120,7 +120,7 @@ namespace Beast.Radar.UI
                     BDebug.LogException(e);    
                 }
                 
-                _currentWindow = WindowID.NONE;
+                _currentWindow = UI.WindowID.NONE;
             }
 
             DataContainer<TData> dataContainer = (DataContainer<TData>)windowData.dataContainer;
