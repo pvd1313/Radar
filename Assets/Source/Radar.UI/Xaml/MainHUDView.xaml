@@ -31,7 +31,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ImageBrush x:Key="Brush.Image.Stand" 
                     ImageSource="..\..\..\Texture\Sprite\UI_main\icon_stay.png" 
                     Stretch="UniformToFill" />
-
+            
             <Style
                 TargetType="Button"
                 x:Key="Style.Button.Alpha">
@@ -78,7 +78,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
                 </Setter>
             </Style>
 
-            <SolidColorBrush x:Key="Brush.Button.Path.Background" Color="Transparent" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -135,13 +134,11 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
              Height="100"
              Width="100"
              HorizontalAlignment="Right"
-             VerticalAlignment="Bottom"
-             Margin="0,0,0,0">
+             VerticalAlignment="Bottom">
             <Button.OpacityMask>
-                <StaticResource ResourceKey="Brush.Image.Move" /> 
+                <StaticResource ResourceKey="Brush.Image.Move" />
             </Button.OpacityMask>
         </Button>
-
-
+        
     </Grid>
 </UserControl>
