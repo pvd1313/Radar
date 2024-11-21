@@ -17,7 +17,7 @@
                     <ResourceDictionary Source="../packages\NoesisGUI-Unity-3.2.5-Indie\theme\NoesisTheme.DarkBlue.xaml"/>
                 </-->
           
-                <ResourceDictionary Source="../assets\source\radar\ui\window\resources.xaml" />
+                <ResourceDictionary Source="../Assets\Source\Radar.UI\Theme\Beast.Radar.UI.Theme.xaml" />
         
             </ResourceDictionary.MergedDictionaries>
     

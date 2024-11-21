@@ -4,27 +4,6 @@
     <SolidColorBrush Color="#AAAAAA" x:Key="TextColor" />
     <SolidColorBrush Color="#323232" x:Key="PanelBaseColor" />
 
-    <Style TargetType="TextBlock" x:Key="DefaultText">
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
-    </Style>
 
-    <Thickness x:Key="MarginLeft">10 0 0 0</Thickness>
-    <Thickness x:Key="MarginTop">0 10 0 0</Thickness>
-    <Thickness x:Key="MarginLeftTop">10 10 0 0</Thickness>
-    <Thickness x:Key="MarginTopLeft">10 10 0 0</Thickness>
-    <Thickness x:Key="MarginRight">0 0 10 0</Thickness>
-    <Thickness x:Key="MarginBottom">0 0 0 10</Thickness>
-    <Thickness x:Key="MarginRightBottom">0 0 10 10</Thickness>
-    <Thickness x:Key="MarginBottomRight">0 0 10 10</Thickness>
-    <Thickness x:Key="MarginLeftRightBottom">10 0 10 10</Thickness>
-    <Thickness x:Key="MarginLeftBottom">10 0 0 10</Thickness>
-    <Thickness x:Key="MarginLeftBottomTop">10 10 0 10</Thickness>
-    <Thickness x:Key="MarginLeftBottomTopBottom">10 10 10 10</Thickness>
-
-    <ImageBrush
-        ImageSource="..\..\Texture\LoadingScreen\loading_screen_background_1.png"
-        Stretch="UniformToFill"
-        x:Key="LoadingScreenBackground_1" />
 
 </ResourceDictionary>

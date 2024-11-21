@@ -5,13 +5,32 @@
         <ResourceDictionary Source="Beast.Radar.UI.Colors.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <SolidColorBrush Color="#AAAAAA" x:Key="TextColor" />
-    <SolidColorBrush Color="#AA000000" x:Key="PanelBackgroundColor" />
-    <SolidColorBrush Color="#323232" x:Key="PanelBaseColor" />
+    <SolidColorBrush x:Key="Brush.Text.Default" Color="#AAAAAA" />
+
+    <SolidColorBrush x:Key="Brush.Panel.Default" Color="#323232" />
+    <SolidColorBrush x:Key="Brush.Panel.Background" Color="#AA000000"/>
 
     <SolidColorBrush x:Key="Brush.Element.Dark" Color="{StaticResource Color.Black}" />
-    <SolidColorBrush x:Key="Brush.Element.Light" Color="{StaticResource Color.Gray8}" />
-    
+    <SolidColorBrush x:Key="Brush.Element.Light.Active" Color="{StaticResource Color.Gray6}" />
+    <SolidColorBrush x:Key="Brush.Element.Light.Disable" Color="{StaticResource Color.Gray4}" />
+
+    <!-- Noesis -->
+
+    <SolidColorBrush x:Key="Brush.Window.Background" Color="{StaticResource Color.White}" />
+
+    <SolidColorBrush x:Key="Brush.Glyph.Normal" Color="{StaticResource Color.Gray0}" />
+    <SolidColorBrush x:Key="Brush.Glyph.Over" Color="{StaticResource Color.Black}" />
+    <SolidColorBrush x:Key="Brush.Glyph.Pressed" Color="{StaticResource Color.White}" />
+    <SolidColorBrush x:Key="Brush.Glyph.Checked" Color="{StaticResource Color.White}" />
+    <SolidColorBrush x:Key="Brush.Glyph.Disabled" Color="{StaticResource Color.Gray2}" />
+    <SolidColorBrush x:Key="Brush.Glyph.DisabledChecked" Color="{StaticResource Color.Gray8}" />
+
+    <SolidColorBrush x:Key="Brush.Foreground.Normal" Color="{StaticResource Color.Black}" />
+    <SolidColorBrush x:Key="Brush.Foreground.Placeholder" Color="{StaticResource Color.Gray2}" />
+    <SolidColorBrush x:Key="Brush.Foreground.Disabled" Color="{StaticResource Color.Gray2}" />
+    <SolidColorBrush x:Key="Brush.Foreground.DisabledChecked" Color="{StaticResource Color.Accent0}" />
+    <SolidColorBrush x:Key="Brush.Foreground.DisabledPlaceholder" Color="{StaticResource Color.Gray4}" />
+
     <SolidColorBrush x:Key="Brush.Background.Normal" Color="{StaticResource Color.Gray5}" />
     <SolidColorBrush x:Key="Brush.Background.Pressed" Color="{StaticResource Color.Gray3}" />
     <SolidColorBrush x:Key="Brush.Background.Checked" Color="{StaticResource Color.Accent2}" />
@@ -27,13 +46,7 @@
     <SolidColorBrush x:Key="Brush.Border.DisabledChecked" Color="{StaticResource Color.Accent3}" />
     <SolidColorBrush x:Key="Brush.Border.Popup" Color="{StaticResource Color.Gray6}" />
 
-    <SolidColorBrush x:Key="Brush.Foreground.Normal" Color="{StaticResource Color.Black}" />
-    <SolidColorBrush x:Key="Brush.Foreground.Placeholder" Color="{StaticResource Color.Gray2}" />
-    <SolidColorBrush x:Key="Brush.Foreground.Disabled" Color="{StaticResource Color.Gray2}" />
-    <SolidColorBrush x:Key="Brush.Foreground.DisabledChecked" Color="{StaticResource Color.Accent0}" />
-    <SolidColorBrush x:Key="Brush.Foreground.DisabledPlaceholder" Color="{StaticResource Color.Gray4}" />
-
-    <SolidColorBrush x:Key="Brush.Window.Background" Color="{StaticResource Color.White}" />
+    <SolidColorBrush x:Key="Brush.Track.Normal" Color="{StaticResource Color.Gray7}" />
 
     <SolidColorBrush x:Key="Brush.Thumb.Normal" Color="{StaticResource Color.Gray3}" />
     <SolidColorBrush x:Key="Brush.Thumb.Over" Color="{StaticResource Color.Gray1}" />
@@ -47,9 +60,34 @@
     <SolidColorBrush x:Key="Brush.Header.CheckedOver" Color="{StaticResource Color.Accent2}" />
     <SolidColorBrush x:Key="Brush.Header.CheckedPressed" Color="{StaticResource Color.Accent}" />
 
+    <SolidColorBrush x:Key="Brush.Hyperlink.Normal" Color="{StaticResource Color.Accent}" />
+    <SolidColorBrush x:Key="Brush.Hyperlink.Over" Color="{StaticResource Color.Black}" />
 
     <SolidColorBrush x:Key="Brush.TextBox.Normal" Color="{StaticResource Color.Gray9}" />
     <SolidColorBrush x:Key="Brush.TextBox.Focused" Color="{StaticResource Color.White}" />
+
+    <SolidColorBrush x:Key="Brush.Item.Over" Color="{StaticResource Color.Gray6}" />
+    <SolidColorBrush x:Key="Brush.Item.Selected" Color="{StaticResource Color.Accent3}" />
+    <SolidColorBrush x:Key="Brush.Item.SelectedOver" Color="{StaticResource Color.Accent2}" />
+
+    <SolidColorBrush x:Key="Brush.ComboBox.Normal" Color="{StaticResource Color.Gray9}" />
+    <SolidColorBrush x:Key="Brush.ComboBox.Over" Color="{StaticResource Color.Gray6}" />
+    <SolidColorBrush x:Key="Brush.ComboBox.Pressed" Color="{StaticResource Color.Gray5}" />
+    <SolidColorBrush x:Key="Brush.ComboBox.Edit" Color="{StaticResource Color.White}" />
+
+    <SolidColorBrush x:Key="Brush.TabControl.Normal" Color="{StaticResource Color.Gray8}" />
+    <SolidColorBrush x:Key="Brush.TabControl.Over" Color="{StaticResource Color.Gray9}" />
+    <SolidColorBrush x:Key="Brush.TabControl.Selected" Color="{StaticResource Color.Accent2}" />
+
+    <SolidColorBrush x:Key="Brush.TreeView.Collapsed" Color="{StaticResource Color.Gray1}" />
+    <SolidColorBrush x:Key="Brush.TreeView.Expanded" Color="{StaticResource Color.Black}" />
+    <SolidColorBrush x:Key="Brush.TreeView.Over" Color="{StaticResource Color.Accent}" />
+    <SolidColorBrush x:Key="Brush.TreeView.SelectedOver" Color="{StaticResource Color.Accent0}" />
+
+    <SolidColorBrush x:Key="Brush.ToolBar.Normal" Color="{StaticResource Color.Gray8}" />
+    <SolidColorBrush x:Key="Brush.ToolBar.Over" Color="{StaticResource Color.Gray6}" />
+    <SolidColorBrush x:Key="Brush.ToolBar.Pressed" Color="{StaticResource Color.Gray5}" />
+    <SolidColorBrush x:Key="Brush.ToolBar.Checked" Color="{StaticResource Color.Accent2}" />
 
 
 </ResourceDictionary>

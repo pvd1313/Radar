@@ -13,7 +13,7 @@
     <Color x:Key="Color.Gray1">#5d6469</Color>
     <Color x:Key="Color.Gray2">#7b8085</Color>
     <Color x:Key="Color.Gray3">#93979b</Color>
-    <Color x:Key="Color.Gray4">#abaeb2</Color>
+    <Color x:Key="Color.Gray4">#aaaaaa</Color>
     <Color x:Key="Color.Gray5">#bbbec1</Color>
     <Color x:Key="Color.Gray6">#cbced0</Color>
     <Color x:Key="Color.Gray7">#dcdee0</Color>

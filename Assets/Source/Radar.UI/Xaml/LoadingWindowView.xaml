@@ -3,16 +3,28 @@
              xmlns:x = "http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc = "http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d = "http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
              mc:Ignorable = "d"
              d:DesignWidth = "960" d:DesignHeight = "480">
 
+    <noesis:Xaml.Dependencies>
+        <noesis:Dependency Source="..\..\..\Texture\LoadingScreen\loading_screen_background_1.png"/>
+    </noesis:Xaml.Dependencies>
+
     <UserControl.Resources>
-        <ResourceDictionary Source = "..\Resources.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Theme.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid 
-        x:Name = "grid" 
-        Background = "{StaticResource LoadingScreenBackground_1}">
+        x:Name = "grid">
+        <Grid.Background>
+            <ImageBrush  ImageSource="..\..\..\Texture\LoadingScreen\loading_screen_background_1.png" Stretch="UniformToFill" />
+        </Grid.Background>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width = "*" />
@@ -32,17 +44,15 @@
                 </Grid.ColumnDefinitions>
 
                 <Border 
-                    Width = "9999"
-                    HorizontalAlignment = "Left"
+                    HorizontalAlignment = "Stretch"
                     Margin = "{StaticResource MarginLeftBottomTopBottom}"
-                    Background = "{StaticResource PanelBackground}">
-
+                    Background = "{StaticResource Brush.Panel.Background}">
                     <TextBlock 
                         x:Name = "text_log" 
                         FontSize = "16"
                         Margin = "5 3 0 0"
                         Text = "Lorem ipsum"
-                        TextBlock.Foreground = "{StaticResource TextColor}"/>
+                        TextBlock.Foreground = "{StaticResource Brush.Text.Default}"/>
                 </Border>
             </Grid>
 
@@ -53,7 +63,7 @@
                 Maximum = "1"
                 Margin = "{StaticResource MarginLeftRightBottom}"
                 VerticalAlignment = "Bottom"
-                Background = "{StaticResource PanelBackground}"/>
+                Background = "{StaticResource Brush.Panel.Background}"/>
         </Grid>
 
         <TextBlock 
@@ -62,11 +72,11 @@
            Text = "99" 
            FontSize = "36"  
            VerticalAlignment = "Bottom"
-           Background = "{StaticResource PanelBackground}"
+           Background = "{StaticResource Brush.Panel.Background}"
            Width = "100"
            Margin = "{StaticResource MarginBottomRight}"
            TextAlignment = "Center"
-           TextBlock.Foreground = "{StaticResource TextColor}"/>
+           TextBlock.Foreground = "{StaticResource Brush.Text.Default}"/>
     </Grid>
-    
+
 </UserControl>
