@@ -100,7 +100,7 @@ namespace Beast.Claw.Input
                 _mouseAxis.status == EAxisStatus.Starting)
             {
                 DragAxis dragAxis = DragAxis.StartingAt(_mouseAxis.position);
-                PackedAxis packedAxis = new (_drag);
+                PackedAxis packedAxis = new (dragAxis);
 
                 if (_manager.TryFindConsumer(packedAxis, out _consumer))
                 {
