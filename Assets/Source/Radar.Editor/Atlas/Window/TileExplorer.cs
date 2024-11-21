@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Mathematics;
 using UnityEngine;
-using EditorWindow = Beast.Claw.Editor.Window.EditorWindow;
+using EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
 
 using Object = UnityEngine.Object;
+using UI_EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
 
 namespace Beast.Radar.Editor.Atlas
 {
-    public class TileExplorer : EditorWindow, ITileExplorer
+    public class TileExplorer : UI_EditorWindow, ITileExplorer
     {
         private static readonly FloatMinMax CELL_SIZE = new (48, 196);
         

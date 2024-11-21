@@ -10,6 +10,8 @@ namespace Beast.Claw.Resources
     public class Address<TObject> : ISerializationCallbackReceiver, IAddress<TObject> 
         where TObject : Object
     {
+        public Type InnerType { get; } = typeof(TObject);
+
         public Guid Guid => _guid;
         
         public AssetReference Reference => _reference;

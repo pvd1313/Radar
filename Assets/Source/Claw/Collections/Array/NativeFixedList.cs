@@ -10,8 +10,9 @@ namespace Beast.Claw.Collections
     /// </summary>
     public struct NativeFixedList<T> where T : unmanaged
     {
-        public bool IsCreated => _array.IsCreated;
         public int Count => _count;
+
+        public int Capacity => _array.Length;
         
         private NativeArray<T> _array;
         private int _count;

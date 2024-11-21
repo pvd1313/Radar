@@ -18,9 +18,10 @@ namespace Beast.Claw.Input
             _consumers = new List<ConsumerInfo>(8);
             
             _validFlags = new Int32Mask();
-            _validFlags.Union((int) EInputAxis.Zoom);
-            _validFlags.Union((int) EInputAxis.Drag);
-            _validFlags.Union((int) EInputAxis.RawTouch);
+
+            AxisType.DRAG.AddTo(ref _validFlags);
+            AxisType.ZOOM.AddTo(ref _validFlags);
+            AxisType.RAW_TOUCH.AddTo(ref _validFlags);
             
             return UniTask.CompletedTask;
         }
@@ -29,7 +30,7 @@ namespace Beast.Claw.Input
         {
             info = default;
 
-            int axisTypeInt = (int)axis.GetAxisType();
+            int axisTypeInt = 1 << axis.GetAxisType().id;
             
             foreach (ConsumerInfo consumer in _consumers)
             {
@@ -48,16 +49,16 @@ namespace Beast.Claw.Input
         {
             consumer.ValidateNotNullThrowException(nameof(consumer));
 
-            Int32Mask axisMask = new((int)consumer.SupportedAxis);
+            Int32Mask axisMask = consumer.SupportedAxis;
 
             if (Build.IS_DEVELOPMENT)
             {
                 if (axisMask.value == 0)
                 {
-                    throw new ArgumentException($"Consumer ({consumer.Meta.name}) has invalid axis mask. (none).");
+                    throw new ArgumentException($"Consumer ({consumer.Meta.name}) has unassigned  axis mask.");
                 }
 
-                if (axisMask.HitsButNotEqual((int)EInputAxis.RawTouch))
+                if (axisMask.HitsButNotEqual(1 << AxisType.RAW_TOUCH.id))
                 {
                     throw new ArgumentException($"Invalid axis mode. ({consumer.Meta.name}) Has RawTouch, " +
                                                 $"but also other. This is not supported. " +

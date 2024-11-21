@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Beast.Claw.Attributes
+namespace Beast.Claw.Attributes.Annotation
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class LabelCanBeEmptyAttribute : Attribute
+    public sealed class LabelCanBeEmptyAttribute : AnnotationAttribute
     {
     }
 }

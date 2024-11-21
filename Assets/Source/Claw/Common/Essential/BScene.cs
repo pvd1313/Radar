@@ -1,9 +1,12 @@
-﻿using Beast.Claw.Reflection;
+﻿using System.Diagnostics;
+using Beast.Claw.Attributes.Annotation;
+using Beast.Claw.Reflection;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Common
 {
+    [StaticUtility]
     public static class BScene
     {
         public static GameObject CreateGameObject<TOwner>(TOwner owner)
@@ -12,25 +15,32 @@ namespace Beast.Claw.Common
 
             return gameObject;
         }
+
+        /// <summary>
+        /// Instantiates MonoBehaviour prefab at zero position with identity rotation.
+        /// </summary>
+        public static TMono InstantiateMono<TMono>(IController owner, TMono prefab) 
+            where TMono : MonoBehaviour
+        {
+            return InstantiateMono(owner, prefab, float3.zero, quaternion.identity);
+        }
         
-        public static TMono InstantiateMono<TOwner, TMono>
-            (TOwner owner, TMono prefab, float3 position, quaternion rotation) where TMono : MonoBehaviour
+        public static TMono InstantiateMono<TMono>(IController owner, TMono prefab, float3 position, quaternion rotation) 
+            where TMono : MonoBehaviour
         {
             TMono mono = Object.Instantiate(prefab, position, rotation);
 
-            mono.gameObject.name = TypeStorage<TOwner>.FullNameWithPrefixOrFullName(prefab.name);
+            _attachDebugInfo(mono.gameObject, owner);
             
             return mono;
         }
 
-        public static GameObject InstantiateGameObject<TOwner>
-            (TOwner owner, GameObject prefab, float3 position, quaternion rotation)
+        [Conditional("UNITY_EDITOR")]
+        private static void _attachDebugInfo(GameObject toObject, IController owner)
         {
-            GameObject gameObject = Object.Instantiate(prefab, position, rotation);
-
-            gameObject.name = TypeStorage<TOwner>.FullNameWithPrefixOrFullName(prefab.name);
-
-            return gameObject;
+            MonoDebugInfo info = toObject.AddComponent<MonoDebugInfo>();
+            
+            info.owner = owner.Meta;
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Beast.Radar.Terrain
 
             PackedAxis activeAxis = _deviceManager.ActiveDevice.GetActiveAxis();
 
-            if (activeAxis.GetAxisType() != EInputAxis.Drag)
+            if (activeAxis.GetAxisType() != AxisType.DRAG)
             {
                 return;
             }

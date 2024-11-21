@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Input;
-using Beast.Claw.Reflection;
 using Beast.Claw.Resources;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Beast.Radar.UI;
-using UnityEditor;
 using UnityEngine;
 using Zenject;
 
@@ -27,12 +24,14 @@ namespace Beast.Radar.Essential
         {
             yield return typeof(Runtime);
             yield return typeof(ResourceManager);
+            yield return typeof(FrameTime);
             
             // Camera
             yield return typeof(DeviceScreen);
             yield return typeof(CameraSpawner);
             
             // Input
+            yield return typeof(UnityInputDriver);
             yield return typeof(InputManager);
             yield return typeof(DeviceManager);
             

@@ -3,6 +3,7 @@ using Beast.Claw.Attributes.Annotation;
 
 namespace Beast.Claw.Editor
 {
+    [ExtensionClass]
     public static class ListExtension
     {
         [PerformanceCritical]

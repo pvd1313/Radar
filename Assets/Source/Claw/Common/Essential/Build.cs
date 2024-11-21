@@ -1,5 +1,8 @@
-﻿namespace Beast.Claw.Common
-{
+﻿using Beast.Claw.Attributes.Annotation;
+
+namespace Beast.Claw.Common
+{ 
+    [ConstantGroup]
     public static class Build
     {
         public const int SMALL_ARRAY_SAFE_CAPACITY = 64;
@@ -14,6 +17,12 @@
         public static readonly bool IS_EDITOR = true;
 #else
         public const bool IS_EDITOR = false;
+#endif
+
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+        public static readonly bool IS_MOBILE_PLATFORM = true;
+#else
+        public static readonly bool IS_MOBILE_PLATFORM = false;
 #endif
     }
 }

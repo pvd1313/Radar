@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Beast.Claw.Attributes.Annotation;
 using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Serialization
 {
+    [ExtensionClass]
     public static class BinaryReaderExtension
     {
         public static TData Read<TData>(this IBinaryReader stream) 

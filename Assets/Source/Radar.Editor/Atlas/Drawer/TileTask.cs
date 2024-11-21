@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
 using Beast.Radar.Terrain;
 
 namespace Beast.Radar.Editor.Atlas

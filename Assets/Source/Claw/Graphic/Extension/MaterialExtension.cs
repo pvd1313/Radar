@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 using Unity.Mathematics;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine.Rendering;
 
 namespace Beast.Claw.Graphic
 {
+    [ExtensionClass]
     public static class MaterialExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

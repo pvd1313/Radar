@@ -113,7 +113,7 @@ namespace Beast.Radar.Terrain
                     material = renderMaterial,
                     matrix = new Float4x4TRS
                     {
-                        translation = new float3(0, 0, RenderOrderZ.TerrainColorRender),
+                        translation = new float3(0, 0, RenderOrderZ.TERRAIN_COLOR_RENDER),
                         rotation = quaternion.identity,
                         scale = new float3(screenAspect, 1, 1)
                     }

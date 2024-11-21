@@ -96,7 +96,7 @@ namespace Beast.Claw.Editor.Validation
                 return true;
             }
 
-            long valueLong = Reflect.UnboxAsLong(value, enumData.typeCode);
+            long valueLong = BReflect.UnboxAsLong(value, enumData.typeCode);
 
             if (enumData.isFlags)
             {

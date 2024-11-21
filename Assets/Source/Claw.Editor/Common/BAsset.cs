@@ -9,6 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Editor
 {
+    [StaticUtility]
     public static class BAsset
     {
         public static string AbsoluteToProjectPath(string path)

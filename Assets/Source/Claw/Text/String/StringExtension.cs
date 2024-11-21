@@ -1,9 +1,11 @@
 ﻿using System;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
 using Beast.Claw.Debug;
 
 namespace Beast.Claw.Text
 {
+    [ExtensionClass]
     public static class StringExtension
     {
         private static readonly RingPool<StringBuilder> BUILDERS; 

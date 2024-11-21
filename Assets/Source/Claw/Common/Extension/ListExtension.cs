@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 
 namespace Beast.Claw.Common
 {
+    [ExtensionClass]
     public static class ListExtension
     {
         public static TValue PopOrNull<TValue>(this IList<TValue> list) where TValue : class

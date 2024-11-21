@@ -1,5 +1,7 @@
 ﻿using System;
 using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using UnityEditor;
 using UnityEngine;
 

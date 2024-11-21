@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Beast.Claw.Common;
 using Beast.Claw.Jobs;
 using Beast.Claw.Validation;
 using Unity.Jobs;
@@ -35,9 +34,9 @@ namespace Beast.Claw.Profiling
                 inSiblings = _tree.siblings,
                 inTimes = _tree.times,
                 inReadRange = new int2(offset, offset + count - 1),
-                outNodeCount = Native.CreateTempArray<int>(1),
-                outTotalNodeCount = Native.CreateTempArray<int>(1),
-                outNodes = Native.CreateTempArray<NativeNode>(count)
+                outNodeCount = BNative.CreateTempArray<int>(1),
+                outTotalNodeCount = BNative.CreateTempArray<int>(1),
+                outNodes = BNative.CreateTempArray<NativeNode>(count)
             };
             job.Run();
             

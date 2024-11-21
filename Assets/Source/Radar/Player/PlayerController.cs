@@ -92,7 +92,7 @@ namespace Beast.Radar.Player
                 // };
             }
 
-            _path = Native.CreatePermList<int2>(256);
+            _path = BNative.CreatePermList<int2>(256);
             _pathWatch = new Stopwatch();
             _gizmo = _gizmoManager.CreateHandle(this);
 

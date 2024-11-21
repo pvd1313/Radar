@@ -1,5 +1,8 @@
-﻿namespace Beast.Radar.UI
+﻿using Beast.Claw.Attributes.Annotation;
+
+namespace Beast.Radar.UI
 {
+    [ConstantGroup]
     public static class WindowID
     {
         public const string NONE = "none";

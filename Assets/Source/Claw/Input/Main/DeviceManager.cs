@@ -4,44 +4,35 @@ using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
 
-using Application = UnityEngine.Application;
-using UnityInput = UnityEngine.Input;
-
 namespace Beast.Claw.Input
 {
     public class DeviceManager : Actor, IDeviceManager
     {
         public IInputDevice ActiveDevice => _activeDevice;
 
-        private readonly IScreen _screen;
         private readonly InputConfig _config;
         private readonly IInputManager _inputManager;
         private readonly IRuntime _runtime;
+        private readonly IInputDriver _driver;
 
         private IInputDevice _mouse;
         private IInputDevice _touchScreen;
-
         private IInputDevice _activeDevice;
 
         public DeviceManager(
-            IScreen screen, 
             InputConfig config, 
             IInputManager inputManager, 
-            IRuntime runtime)
+            IRuntime runtime,
+            IInputDriver driver)
         {
-            _screen = screen;
             _config = config;
             _inputManager = inputManager;
             _runtime = runtime;
+            _driver = driver;
         }
 
         protected override async UniTask _warmup(ConcurrentContext context)
         {
-            UnityInput.gyro.enabled = false;
-            UnityInput.compass.enabled = false;
-            UnityInput.compensateSensors = false;
-            UnityInput.simulateMouseWithTouches = false;
-
             // Now we are simply binding based on platform type. But in future we would bind multiple device to control
             // separate screen parts. Like twin stick shooter has two dpad touch controls for movement & shooting.
             // Also, maybe create factory for devices. For now, we can not bind device into container, as to call _warmup
@@ -49,8 +40,8 @@ namespace Beast.Claw.Input
             // creating event for devices sounds like overhead. Let's now just instantiate them. Actually manual control
             // gives us advantages, because we can easily swap devices.
             
-            _mouse = new Mouse(_screen, _inputManager, _config.mouse);
-            _touchScreen = new TouchScreen(_screen, _inputManager, _config.touchScreen);
+            _mouse = new Mouse(_driver, _inputManager, _config);
+            _touchScreen = new TouchScreen(_driver, _inputManager, _config);
 
             await _mouse.Warmup(context);
             await _touchScreen.Warmup(context);
@@ -69,7 +60,7 @@ namespace Beast.Claw.Input
         {
             IInputDevice desiredDevice;
 
-            if (Application.isMobilePlatform || _runtime.IsMobileSimulatorActive)
+            if (Build.IS_MOBILE_PLATFORM || _runtime.IsMobileSimulatorActive)
             {
                 desiredDevice = _touchScreen;
             }

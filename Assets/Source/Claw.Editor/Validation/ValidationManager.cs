@@ -120,7 +120,7 @@ namespace Beast.Claw.Editor.Validation
                     continue;
                 }
                 
-                Reflect.GetDummy(out IValidatable dummy);
+                BReflect.GetDummy(out IValidatable dummy);
                 
                 MethodInfo method = type.GetMethod(nameof(dummy.Validate));
                 if (method == null)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Beast.Claw.Agony;
 using Beast.Claw.GameLoop;
-using Beast.Claw.Input;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Common

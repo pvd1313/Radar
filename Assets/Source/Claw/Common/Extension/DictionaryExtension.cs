@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beast.Claw.Attributes;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 
 namespace Beast.Claw.Common
 {
+    [ExtensionClass]
     public static class DictionaryExtension
     {
         public static TValue GetOrNew<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
@@ -24,7 +25,7 @@ namespace Beast.Claw.Common
             return value;
         }
 
-        public static TValue GetOrFactory<TKey, TValue>(
+        public static TValue GetOrCreateWithFactory<TKey, TValue>(
             this IDictionary<TKey, TValue> dictionary,
             TKey key,
             Func<TKey, TValue> factory)
@@ -45,9 +46,7 @@ namespace Beast.Claw.Common
         }
 
         public static bool SafeTryGetValueOrDefault<TKey, TValue>(
-            this IReadOnlyDictionary<TKey, TValue> dictionary, 
-            [CanBeNull] TKey key,
-            out TValue value) where TKey: class
+            this IReadOnlyDictionary<TKey, TValue> dictionary, [CanBeNull] TKey key, out TValue value) where TKey: class
         {
             if (key == null)
             {

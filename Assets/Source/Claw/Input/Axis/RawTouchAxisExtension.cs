@@ -1,9 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
-using Unity.Collections;
 
 namespace Beast.Claw.Input
 {
+    [ExtensionClass]
     public static class RawTouchAxisExtension
     {
         public static bool ContainsWorkingOrStartingTouch(this NativeFixedList<RawTouchAxis> touches)

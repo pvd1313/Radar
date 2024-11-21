@@ -2,13 +2,16 @@
 using System.Linq;
 using Beast.Claw.Common;
 using Beast.Claw.Editor;
+using Beast.Claw.Editor.UI;
+using Beast.Claw.Editor.UI.UI;
 using Beast.Radar.Terrain;
 using UnityEngine;
-using EditorWindow = Beast.Claw.Editor.Window.EditorWindow;
+using EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
+using UI_EditorWindow = Beast.Claw.Editor.UI.EditorWindow;
 
 namespace Beast.Radar.Editor.Atlas
 {
-    public class TileInspector : EditorWindow
+    public class TileInspector : UI_EditorWindow
     {
         [SerializeField] private WindowContainer<ITileExplorer> _explorer = new();
         

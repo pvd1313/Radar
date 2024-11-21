@@ -43,7 +43,7 @@ namespace Beast.Radar.Terrain
             int blockCountX = biomeTexture.width / blockSize;
             
             Profiler.BeginSample("AllocateNativeArray");
-            NativeArray<EBiomeName> textureWithBlocks = Native.PermArray<EBiomeName>(biomeTexture.width * biomeTexture.width);
+            NativeArray<EBiomeName> textureWithBlocks = BNative.PermArray<EBiomeName>(biomeTexture.width * biomeTexture.width);
             Profiler.EndSample();
             
             CreateTextureBlocksJob<EBiomeName, BiomeTextureConverter> job = new()

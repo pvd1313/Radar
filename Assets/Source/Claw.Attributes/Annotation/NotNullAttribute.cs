@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Beast.Claw.Attributes
+namespace Beast.Claw.Attributes.Annotation
 {
     [AttributeUsage(AttributeTargets.Class | 
                     AttributeTargets.Method | 
@@ -12,7 +12,7 @@ namespace Beast.Claw.Attributes
                     AttributeTargets.Delegate | 
                     AttributeTargets.GenericParameter)]
     
-    public sealed class NotNullAttribute : Attribute
+    public sealed class NotNullAttribute : AnnotationAttribute
     {
     }
 }

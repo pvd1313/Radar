@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Debug;
 using Beast.Claw.Reflection;
 using Beast.Claw.Validation;
@@ -12,7 +12,8 @@ using UnityEngine.Experimental.Rendering;
 
 namespace Beast.Claw.Graphic
 {
-    [DomainInitialize]
+    [StaticUtility]
+    [InitializedWithDomain]
     public static partial class BGraphic
     {
         private static readonly HashSet<RenderTexture> PERMANENT_TEXTURES;
