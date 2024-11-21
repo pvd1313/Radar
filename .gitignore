@@ -52,8 +52,6 @@ ExportedObj/
 *.VC.db
 *.csproj 
 *.sln
-*.sln.meta
-*.csproj.meta    
 
 # Noesis blend
 !Radar-blend.csproj
