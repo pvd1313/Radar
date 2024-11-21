@@ -81,7 +81,7 @@ namespace Beast.Radar.Terrain
 
             float cos60 = BMath.Cos(_camera.RotationRad.roll);
             float sin45 = BMath.Sin(_camera.RotationRad.pitch);
-            int textureSize = BMath.CeilToInt(BMath.Max(_screen.Width, _screen.Height) / cos60 * sin45);
+            int textureSize = BMath.CeilToInt(BMath.Max(_screen.Width(), _screen.Height()) / cos60 * sin45);
             
             // Will not work when aspect < 1.5
             textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount) *

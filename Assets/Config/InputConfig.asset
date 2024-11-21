@@ -18,3 +18,7 @@ MonoBehaviour:
     useDiscreteZoom: 1
   mouse:
     zoomMultiplier: 2
+  discardTapWhenHoldSeconds: 0.3
+  discardTapComboAfterSeconds: 0.5
+  discardTapOnHoldMotionThreshold: 0.01
+  discardTapComboDistance: 0.05

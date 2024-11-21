@@ -1,33 +1,32 @@
-﻿using Beast.Claw.Debug;
+﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
+using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Input
 {
-    public class Mouse : GestureDevice, IInputDevice
+    public class Mouse : Gesture, IInputDevice
     {
         public string FriendlyName => nameof(Mouse);
         
-        private readonly IInputDriver _driver;
-        private readonly InputConfig _config;
-
         private RawTouchAxis _mouseAxis;
+        private RawTouchAxis _mouseAxisPrev;
         
         public Mouse(
+            IScreen screen,
             IInputDriver driver, 
-            IInputManager manager, 
-            InputConfig config) : base(manager)
+            IInputManager manager,
+            IFrameTime time,
+            InputConfig config) : base(driver, screen, manager, time, config)
         {
-            _driver = driver;
-            _config = config;
+            
         }
 
         public UniTask Warmup(ConcurrentContext context)
         {
             _warmup(1);
-            
-            _rawTouches.Add(RawTouchAxis.Disabled);
             
             return UniTask.CompletedTask;
         }
@@ -50,14 +49,33 @@ namespace Beast.Claw.Input
         public void Tick(BlockingContext context)
         {
             _mouseAxis = _driver.ReadMousePointer();
-
-            _rawTouches[0] = _mouseAxis;
-
-            _processRawTouches();
             
-            _processDrag();
+            _rawTouches.Clear();
+
+            // We need to remove rawTouch when it is not active for two frames.
+            // This will mimic TouchScreen behaviour.
+            if (_mouseAxis.status != EAxisStatus.Disabled ||
+                _mouseAxisPrev.status != EAxisStatus.Disabled)
+            {
+                _rawTouches.Add(_mouseAxis);
+            }
+
+            try
+            {
+                _processRawTouches();
+
+                _processTap(_mouseAxis);
             
-            _processZoom();
+                _processDrag();
+            
+                _processZoom();
+            }
+            catch (AxisMutatedException)
+            {
+                   
+            }
+
+            _mouseAxisPrev = _mouseAxis;
             
             BDebug.Track(this, nameof(_activeAxis), _activeAxis.ToString());
         }
@@ -72,7 +90,7 @@ namespace Beast.Claw.Input
 
                 if (_mouseAxis.status == EAxisStatus.Disabled)
                 {
-                    _setActiveAxisAndConsumerToDefault();
+                    _resetActiveAxisAndConsumer();
                 }
                 
                 return;
@@ -81,18 +99,14 @@ namespace Beast.Claw.Input
             if (_activeAxis == AxisType.NONE &&
                 _mouseAxis.status == EAxisStatus.Starting)
             {
-                _drag = DragAxis.StartingAt(_mouseAxis.position);
-                
+                DragAxis dragAxis = DragAxis.StartingAt(_mouseAxis.position);
                 PackedAxis packedAxis = new (_drag);
 
                 if (_manager.TryFindConsumer(packedAxis, out _consumer))
                 {
                     _activeAxis = AxisType.DRAG;
+                    _drag = dragAxis;
                     _consumer.UpdateAxis(packedAxis);
-                }
-                else
-                {
-                    _drag = DragAxis.Inactive;   
                 }
             }
         }

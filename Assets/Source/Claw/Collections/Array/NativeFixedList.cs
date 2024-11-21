@@ -68,7 +68,7 @@ namespace Beast.Claw.Collections
             _count++;
         }
 
-        public void ResetCount()
+        public void Clear()
         {
             _count = 0;
         }

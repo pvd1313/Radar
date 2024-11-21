@@ -18,8 +18,8 @@ namespace Beast.Claw.Input
         private float _f3;
         private NativeSlice<RawTouchAxis> _rawTouch;
         
-        // In the future we will probably create NativeBinaryStream,
-        // so we will have to forget about this byte boilerplate.
+        // In the future we will probably have NativeBinaryStream.
+        // So we will have to forget about this byte boilerplate.
         public PackedAxis(ZoomAxis zoom)
         {
             _b0 = _axisToByte(AxisType.ZOOM);
@@ -39,6 +39,28 @@ namespace Beast.Claw.Input
             {
                 position = new float2(_f0, _f1),
                 delta = _f2
+            };
+        }
+
+        public PackedAxis(TapAxis tap)
+        {
+            _b0 = _axisToByte(AxisType.TAP);
+            _b1 = 0;
+            _f0 = tap.position.x;
+            _f1 = tap.position.y;
+            _f2 = tap.tapCount;
+            _f3 = 0;
+            _rawTouch = default;
+        }
+
+        public void Unpack(out TapAxis tap)
+        {
+            _axisUnpackTypeValidation(AxisType.TAP);
+
+            tap = new TapAxis
+            {
+                position = new float2(_f0, _f1),
+                tapCount = (int) _f2,
             };
         }
 

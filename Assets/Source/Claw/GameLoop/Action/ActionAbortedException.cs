@@ -1,8 +1,14 @@
 ﻿using System;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Debug;
 
 namespace Beast.Claw.GameLoop
 {
+    /// <summary>
+    /// Action is aborted and must not be executed anymore. Subscription will be canceled. This is commonly used for
+    /// empty methods.
+    /// </summary>
+    [FlowControlException]
     public class ActionAbortedException : Exception
     {
         private static readonly ActionAbortedException EMPTY_METHOD;

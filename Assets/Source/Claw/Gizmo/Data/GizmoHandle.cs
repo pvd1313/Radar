@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
@@ -61,6 +62,18 @@ namespace Beast.Claw.Gizmo
             buffer[offset + 7] = py1;
 
             shapeCount++;
+        }
+
+        public void OverrideLastPoint(float2 position, float size)
+        {
+            if (shapeCount == 0)
+            {
+                throw new InvalidOperationException("No shapes. Nothing to override");
+            }
+
+            shapeCount--;
+
+            AddPoint(position, size);
         }
 
         public void AddQuad(float2 position, float worldSize)

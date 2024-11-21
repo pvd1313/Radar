@@ -25,7 +25,7 @@ namespace Beast.Claw.GameLoop
             
             public void Run()
             {
-                passedActors.ResetCount();
+                passedActors.Clear();
 
                 bool hasProfiler = profiler != null;
                 string listenerName = null;
@@ -60,7 +60,7 @@ namespace Beast.Claw.GameLoop
 
                         if (!canContinue)
                         {
-                            passedActors.ResetCount();
+                            passedActors.Clear();
 
                             break;
                         }

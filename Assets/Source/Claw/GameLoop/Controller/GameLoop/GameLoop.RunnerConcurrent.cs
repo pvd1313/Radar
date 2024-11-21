@@ -27,7 +27,7 @@ namespace Beast.Claw.GameLoop
             {
                 EActionStatus result = EActionStatus.Success;
                 
-                passedActors.ResetCount();
+                passedActors.Clear();
 
                 bool hasProfiler = profiler != null;
                 

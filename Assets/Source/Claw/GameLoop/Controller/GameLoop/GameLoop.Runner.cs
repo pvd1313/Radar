@@ -205,7 +205,7 @@ namespace Beast.Claw.GameLoop
 
                 _allActors = newBuffer;
                 
-                _passedActorBuffer.ResetCount();
+                _passedActorBuffer.Clear();
             }
 
             private void _maintainActorMainList()

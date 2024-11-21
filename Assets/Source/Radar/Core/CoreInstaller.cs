@@ -26,6 +26,9 @@ namespace Beast.Radar.Core
         {
             // Camera
             yield return typeof(CameraTransform);
+            
+            yield return typeof(GizmoRender);
+            
             yield return typeof(CameraTransformController);
             
             // Main
@@ -34,7 +37,7 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
-            yield return typeof(GizmoRender);
+            
             
             // Windows
             yield return typeof(MainHUDWindow);

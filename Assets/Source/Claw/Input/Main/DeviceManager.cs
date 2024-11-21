@@ -14,6 +14,8 @@ namespace Beast.Claw.Input
         private readonly IInputManager _inputManager;
         private readonly IRuntime _runtime;
         private readonly IInputDriver _driver;
+        private readonly IFrameTime _frameTime;
+        private readonly IScreen _screen;
 
         private IInputDevice _mouse;
         private IInputDevice _touchScreen;
@@ -23,12 +25,16 @@ namespace Beast.Claw.Input
             InputConfig config, 
             IInputManager inputManager, 
             IRuntime runtime,
-            IInputDriver driver)
+            IInputDriver driver,
+            IFrameTime frameTime,
+            IScreen screen)
         {
             _config = config;
             _inputManager = inputManager;
             _runtime = runtime;
             _driver = driver;
+            _frameTime = frameTime;
+            _screen = screen;
         }
 
         protected override async UniTask _warmup(ConcurrentContext context)
@@ -40,8 +46,8 @@ namespace Beast.Claw.Input
             // creating event for devices sounds like overhead. Let's now just instantiate them. Actually manual control
             // gives us advantages, because we can easily swap devices.
             
-            _mouse = new Mouse(_driver, _inputManager, _config);
-            _touchScreen = new TouchScreen(_driver, _inputManager, _config);
+            _mouse = new Mouse(_screen, _driver, _inputManager, _frameTime, _config);
+            _touchScreen = new TouchScreen(_screen, _driver, _inputManager, _frameTime, _config);
 
             await _mouse.Warmup(context);
             await _touchScreen.Warmup(context);

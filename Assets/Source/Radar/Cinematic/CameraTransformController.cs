@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.GameLoop;
+using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.Math;
@@ -15,6 +16,7 @@ namespace Beast.Radar.Cinematic
         private readonly ICameraTransform _transform;
         private readonly CameraConfig _cameraConfig;
         private readonly IInputManager _inputManager;
+        private readonly IGizmoManager _gizmoManager;
 
         private float2 _dragCameraPosition;
 
@@ -30,8 +32,8 @@ namespace Beast.Radar.Cinematic
         
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP);
-            
+            _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP_NAVIGATION);
+
             return UniTask.CompletedTask;
         }
         

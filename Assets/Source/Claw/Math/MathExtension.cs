@@ -1,7 +1,10 @@
-﻿using Unity.Mathematics;
+﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
+using Unity.Mathematics;
 
 namespace Beast.Claw.Math
 {
+    [ExtensionClass]
     public static class MathExtension
     {
         public static float2 Mul(this int2 vector, float scale)
@@ -48,6 +51,18 @@ namespace Beast.Claw.Math
             double d = matrix.c1.y;
             
             return new double2x2(d, -b, -c, a) * (1 / (a * d - b * c));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Magnitude(this float2 a)
+        {
+            return math.length(a);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Magnitude(this float3 a)
+        {
+            return math.length(a);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Beast.Claw.Input
 
         public void ReadTouchScreen(ref NativeFixedList<RawTouchAxis> rawTouches)
         {
-            rawTouches.ResetCount();
+            rawTouches.Clear();
             
             int touchCount = UnityInput.touchCount;
             int touchLimit = BMath.Min(touchCount, rawTouches.Capacity);
@@ -80,12 +80,12 @@ namespace Beast.Claw.Input
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static EAxisStatus _getMouseButtonStatus(int buttonID)
         {
-            if (UnityEngine.Input.GetMouseButtonDown(buttonID))
+            if (UnityInput.GetMouseButtonDown(buttonID))
             {
                 return EAxisStatus.Starting;
             }
 
-            if (UnityEngine.Input.GetMouseButton(buttonID))
+            if (UnityInput.GetMouseButton(buttonID))
             {
                 return EAxisStatus.Working;
             }

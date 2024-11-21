@@ -154,18 +154,6 @@ namespace Beast.Claw.Math
         {
             return math.distancesq(a,b);
         }
-            
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Magnitude(this float2 a)
-        {
-            return math.length(a);
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Magnitude(this float3 a)
-        {
-            return math.length(a);
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(FloatMinMax range, float t)

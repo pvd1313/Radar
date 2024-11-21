@@ -76,7 +76,7 @@ namespace Beast.Radar.Terrain
             // }
 
             _tileHeight = 1f / _camera.ViewDistance / WorldTransform.CellTileCount;
-            _tilePixelSize = _tileHeight * _screen.Height;
+            _tilePixelSize = _tileHeight * _screen.Height();
             if (_tilePixelSize < _config.minPixelSize)
             {
                 return;

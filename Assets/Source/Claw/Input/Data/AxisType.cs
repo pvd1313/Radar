@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Math;
 
@@ -12,6 +11,7 @@ namespace Beast.Claw.Input
         public static readonly AxisType RAW_TOUCH = new (1, "raw_touch");
         public static readonly AxisType DRAG = new(2, "drag");
         public static readonly AxisType ZOOM = new(3, "zoom");
+        public static readonly AxisType TAP = new(4, "tap");
         
         public static AxisType Parse(int id)
         {
@@ -21,6 +21,7 @@ namespace Beast.Claw.Input
                 1 => RAW_TOUCH,
                 2 => DRAG,
                 3 => ZOOM,
+                4 => TAP,
                 _ => throw new ArgumentException($"Unknown AxisType id: {id}")
             };
         }

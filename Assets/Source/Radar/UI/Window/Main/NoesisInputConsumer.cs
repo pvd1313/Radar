@@ -88,8 +88,10 @@ namespace Beast.Radar.UI
         
         private float2 _projectPosition(float2 position)
         {
-            float x = position.x * _screen.Width;
-            float y = (1 - position.y) * _screen.Height;
+            int2 screenSize = _screen.Size;
+            
+            float x = position.x * screenSize.x;
+            float y = (1 - position.y) * screenSize.y;
 
             return new float2(x, y);
         }
