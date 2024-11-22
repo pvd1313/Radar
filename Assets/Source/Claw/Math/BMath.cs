@@ -138,6 +138,12 @@ namespace Beast.Claw.Math
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Length(float2 vector)
+        {
+            return math.length(vector);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 NormalizeSafe(float2 x)
         {
             return math.normalizesafe(x);

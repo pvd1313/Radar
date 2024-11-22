@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Debug
 {
-    public class DebugPreferences : ISerializable
+    public class DebugPreference : ISerializable
     {
         public bool showLogConsole;
         public bool showFPSCounter;

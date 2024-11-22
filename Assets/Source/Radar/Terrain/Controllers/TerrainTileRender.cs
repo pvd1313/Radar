@@ -75,7 +75,7 @@ namespace Beast.Radar.Terrain
             //     return;
             // }
 
-            _tileHeight = 1f / _camera.ViewDistance / WorldTransform.CellTileCount;
+            _tileHeight = 1f / _camera.ViewDistance / BWorld.TILES_PER_CELL;
             _tilePixelSize = _tileHeight * _screen.Height();
             if (_tilePixelSize < _config.minPixelSize)
             {
@@ -94,7 +94,7 @@ namespace Beast.Radar.Terrain
             float2 viewportPoint = new (0, 1.0f);
             float2 worldPoint = _camera.ViewportToWorld(viewportPoint);
 
-            float cellTileCount = WorldTransform.CellTileCount;
+            float cellTileCount = BWorld.TILES_PER_CELL;
             float texelSize = 1.0f / cellTileCount;
             worldPoint.x -= texelSize;
             worldPoint.y += texelSize * 2.0f;

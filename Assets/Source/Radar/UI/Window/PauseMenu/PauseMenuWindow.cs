@@ -13,7 +13,7 @@ namespace Beast.Radar.UI
         private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
-        private readonly PlayerPreferences _playerPreferences;
+        private readonly PlayerPreference _playerPreference;
         
         private PauseMenuView _view;
         private IWindowHandle<Empty> _mainHUD;
@@ -23,12 +23,12 @@ namespace Beast.Radar.UI
             CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
-            PlayerPreferences playerPreferences)
+            PlayerPreference playerPreference)
         {
             _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
-            _playerPreferences = playerPreferences;
+            _playerPreference = playerPreference;
         }
 
         public UniTask Open(Empty data)
@@ -39,8 +39,8 @@ namespace Beast.Radar.UI
             bool saveExists = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             _view.loadButton.SetInteractable(saveExists);
 
-            _view.fpsToggle.SetValueWithoutNotify(_playerPreferences.isMaxFps);
-            _view.pathfindingToggle.SetValueWithoutNotify(_playerPreferences.isAutoPathfinding);
+            _view.fpsToggle.SetValueWithoutNotify(_playerPreference.isMaxFps);
+            _view.pathfindingToggle.SetValueWithoutNotify(_playerPreference.isAutoPathfinding);
             _refreshMapMovementText();
             
             return UniTask.CompletedTask;
@@ -96,37 +96,37 @@ namespace Beast.Radar.UI
 
             _view.fpsToggle.Changed += on =>
             {
-                _playerPreferences.isMaxFps = on;
+                _playerPreference.isMaxFps = on;
                 _setFPS();
             };
 
             _view.pathfindingToggle.Changed += on =>
             {
-                _playerPreferences.isAutoPathfinding = on;
+                _playerPreference.isAutoPathfinding = on;
             };
             
             _view.mapMovementButtons.Increment.Clicked += () =>
             {
-                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
+                _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
             
             _view.mapMovementButtons.Decrement.Clicked += () =>
             {
-                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
+                _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
         }
 
         private void _refreshMapMovementText()
         {
-            string mapMovementMode = _playerPreferences.beginMovementOnSingleTap ? "single tap" : "double tap";
+            string mapMovementMode = _playerPreference.beginMovementOnSingleTap ? "single tap" : "double tap";
             _view.mapMovementText.SetText(mapMovementMode);
         }
 
         private void _setFPS()
         {
-            if (_playerPreferences.isMaxFps)
+            if (_playerPreference.isMaxFps)
             {
                 RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
                 float screenRate = (float)refreshRate.numerator / refreshRate.denominator;

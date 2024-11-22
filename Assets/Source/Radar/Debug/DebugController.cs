@@ -8,7 +8,7 @@ namespace Beast.Radar.Debug
     public class DebugController : Actor, IDebugController
     {
         private readonly DebugPrefabLibrary _library;
-        private readonly DebugPreferences _preferences;
+        private readonly DebugPreference _preference;
         private readonly IResourceManager _resources;
 
         private GameObject _logConsole;
@@ -16,11 +16,11 @@ namespace Beast.Radar.Debug
 
         public DebugController(
             DebugPrefabLibrary library, 
-            DebugPreferences preferences, 
+            DebugPreference preference, 
             IResourceManager resources)
         {
             _library = library;
-            _preferences = preferences;
+            _preference = preference;
             _resources = resources;
         }
 
@@ -29,10 +29,10 @@ namespace Beast.Radar.Debug
             UniTask.Create(async () =>
             {
                 _logConsole = await _resources.InstantiateGameObject(this, _library.logConsole);
-                _logConsole.SetActive(_preferences.showLogConsole);
+                _logConsole.SetActive(_preference.showLogConsole);
 
                 _fpsCounter = await _resources.InstantiateGameObject(this, _library.fpsCounter);
-                _fpsCounter.SetActive(_preferences.showFPSCounter);
+                _fpsCounter.SetActive(_preference.showFPSCounter);
             });
 
             return UniTask.CompletedTask;
@@ -44,7 +44,7 @@ namespace Beast.Radar.Debug
             {
                 case EDebugFeature.FpsCounter:
                     
-                    _preferences.showFPSCounter = isActive;
+                    _preference.showFPSCounter = isActive;
                     
                     if (_fpsCounter != null)
                     {
@@ -55,7 +55,7 @@ namespace Beast.Radar.Debug
                 
                 case EDebugFeature.LogConsole:
                     
-                    _preferences.showLogConsole = isActive;
+                    _preference.showLogConsole = isActive;
                     
                     if (_logConsole != null)
                     {
@@ -71,10 +71,10 @@ namespace Beast.Radar.Debug
             switch (feature)
             {
                 case EDebugFeature.FpsCounter:
-                    return _preferences.showFPSCounter;
+                    return _preference.showFPSCounter;
                 
                 case EDebugFeature.LogConsole:
-                    return _preferences.showLogConsole;
+                    return _preference.showLogConsole;
             }
 
             return false;

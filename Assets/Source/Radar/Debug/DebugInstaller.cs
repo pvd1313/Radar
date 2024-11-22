@@ -16,13 +16,13 @@ namespace Beast.Radar.Debug
         protected override IEnumerable<Type> BindInterfaces()
         {
             yield return typeof(DebugController);
-            yield return typeof(DebugPreferencesController);
+            yield return typeof(DebugPreferenceSerializer);
             yield return typeof(DebugMenuWindow);
         }
 
         protected override void BindCustom(DiContainer diContainer)
         {
-            diContainer.Bind<DebugPreferences>().FromNew().AsSingle().NonLazy();
+            diContainer.Bind<DebugPreference>().FromNew().AsSingle().NonLazy();
         }
     }
 }

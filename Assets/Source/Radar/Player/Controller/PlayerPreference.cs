@@ -2,7 +2,7 @@
 
 namespace Beast.Radar.Player
 {
-    public class PlayerPreferences : ISerializable
+    public class PlayerPreference : ISerializable
     {
         public bool isMaxFps;
         public bool isAutoPathfinding;

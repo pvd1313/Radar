@@ -1,10 +1,9 @@
-﻿using System;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Navigation
 {
-    public struct PathBuffer : IDisposable
+    public struct PathJobBuffer
     {
         public NativeList<int2> outputPath;
         public NativeList<PathNode> pathNodeList;

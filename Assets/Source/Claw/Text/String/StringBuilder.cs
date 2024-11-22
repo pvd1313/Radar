@@ -35,6 +35,15 @@ namespace Beast.Claw.Text
             return this;
         }
 
+        public StringBuilder Add(int value)
+        {
+            _ensureCreated();
+
+            _builder.Append(value);
+
+            return this;
+        }
+
         public StringBuilder Add(char chr)
         {
             _ensureCreated();
