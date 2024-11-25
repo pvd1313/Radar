@@ -39,6 +39,7 @@
     <Thickness x:Key="MarginLeftBottom">10 0 0 10</Thickness>
     <Thickness x:Key="MarginLeftBottomTop">10 10 0 10</Thickness>
     <Thickness x:Key="MarginLeftBottomTopBottom">10 10 10 10</Thickness>
+    <Thickness x:Key="Margin.GridElement">15</Thickness>
 
     <CornerRadius x:Key="Corner.Border0">0</CornerRadius>
     <CornerRadius x:Key="Corner.Border0.Top">1.75,1.75,0,0</CornerRadius>

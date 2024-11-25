@@ -4,7 +4,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <FontFamily x:Key="Font.Family.Default">Font/#Inconsolata</FontFamily>
-    <sys:Double x:Key="Font.Size.Header">25</sys:Double>
+    <sys:Double x:Key="Font.Size.Header">20</sys:Double>
     <sys:Double x:Key="Font.Size.Normal">16</sys:Double>
     <sys:Double x:Key="Font.Size.ToolTip">12</sys:Double>
 

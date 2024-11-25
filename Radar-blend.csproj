@@ -73,6 +73,9 @@
     <Compile Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml.cs">
       <DependentUpon>MainHUDView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml.cs">
+      <DependentUpon>MapGenerationWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml.cs">
       <DependentUpon>PauseWindowView.xaml</DependentUpon>
     </Compile>
@@ -1016,6 +1019,10 @@
     <Page Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml">
       <SubType>Designer</SubType>
