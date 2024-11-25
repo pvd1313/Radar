@@ -1,7 +1,7 @@
 ﻿
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:local="clr-namespace:NoesisGUIExtensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -12,7 +12,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Beast.Radar.UI.Brushes.xaml" />
-       
+
     </ResourceDictionary.MergedDictionaries>
 
     <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
@@ -123,9 +123,6 @@
         <Setter Property="Background" Value="{DynamicResource Brush.Background.Normal}" />
     </Style>
 
-    
-    
-
     <!--  TextBox  -->
     <Style TargetType="TextBlock" x:Key="Style.Text.Light.Normal">
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Normal}" />
@@ -152,23 +149,23 @@
             <Border Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Corner.Border0}" />
             <Grid>
                 <Border
-             Margin="2,0"
-             Padding="{TemplateBinding Padding}"
-             Visibility="Collapsed"
-             x:Name="Placeholder">
+                    Margin="2,0"
+                    Padding="{TemplateBinding Padding}"
+                    Visibility="Collapsed"
+                    x:Name="Placeholder">
                     <TextBlock Style="{DynamicResource Style.TextBox.Placeholder}" />
                 </Border>
                 <ScrollViewer
-             Focusable="False"
-             Foreground="{TemplateBinding Foreground}"
-             Padding="{TemplateBinding Padding}"
-             x:Name="PART_ContentHost" />
+                    Focusable="False"
+                    Foreground="{TemplateBinding Foreground}"
+                    Padding="{TemplateBinding Padding}"
+                    x:Name="PART_ContentHost" />
             </Grid>
             <Border
-         BorderBrush="{TemplateBinding BorderBrush}"
-         BorderThickness="{TemplateBinding BorderThickness}"
-         CornerRadius="{DynamicResource Corner.Border1}"
-         x:Name="Border" />
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{DynamicResource Corner.Border1}"
+                x:Name="Border" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="Text" Value="">
@@ -226,56 +223,47 @@
             <Grid.RenderTransform>
                 <ScaleTransform />
             </Grid.RenderTransform>
-
-            <!-- Основная часть кнопки -->
             <Border x:Name="Border"
-                Background="{TemplateBinding Background}" 
-                CornerRadius="{DynamicResource Corner.Border0}"/>
-
-            <!-- Содержимое кнопки -->
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{DynamicResource Corner.Border0}"/>
             <ContentPresenter x:Name="PART_ContentPresenter"
-                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                          Margin="{TemplateBinding Padding}"
-                          TextElement.Foreground="{TemplateBinding Foreground}" />
-
-            <!-- Полоска внизу -->
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Margin="{TemplateBinding Padding}"
+                              TextElement.Foreground="{TemplateBinding Foreground}" />
             <Rectangle x:Name="BottomStripe"
-                   Height="3"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Stretch"
-                   Fill="{TemplateBinding BorderBrush}" />
+                       Height="3"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Stretch"
+                       Fill="{TemplateBinding BorderBrush}" />
         </Grid>
 
         <!-- Ресурсы шаблона -->
         <ControlTemplate.Resources>
             <Storyboard x:Key="Anim.Press">
                 <DoubleAnimation Storyboard.TargetName="TemplateRoot"
-                             Storyboard.TargetProperty="RenderTransform.ScaleX"
-                             To="0.99" Duration="0:0:0.1"
-                             DecelerationRatio="0.25"/>
+                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                 To="0.99" Duration="0:0:0.1"
+                                 DecelerationRatio="0.25"/>
                 <DoubleAnimation Storyboard.TargetName="TemplateRoot"
-                             Storyboard.TargetProperty="RenderTransform.ScaleY"
-                             To="0.99" Duration="0:0:0.1"
-                             DecelerationRatio="0.25"/>
+                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                 To="0.99" Duration="0:0:0.1"
+                                 DecelerationRatio="0.25"/>
             </Storyboard>
             <Storyboard x:Key="Anim.Release">
                 <DoubleAnimation Storyboard.TargetName="TemplateRoot"
-                             Storyboard.TargetProperty="RenderTransform.ScaleX"
-                             To="1"
-                             Duration="0:0:0.2"
-                             DecelerationRatio="1"/>
+                                 Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                 To="1"
+                                 Duration="0:0:0.2"
+                                 DecelerationRatio="1"/>
                 <DoubleAnimation Storyboard.TargetName="TemplateRoot"
-                             Storyboard.TargetProperty="RenderTransform.ScaleY"
-                             To="1"
-                             Duration="0:0:0.2"
-                             DecelerationRatio="1"/>
+                                 Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                 To="1"
+                                 Duration="0:0:0.2"
+                                 DecelerationRatio="1"/>
             </Storyboard>
         </ControlTemplate.Resources>
-
-        <!-- Триггеры шаблона -->
         <ControlTemplate.Triggers>
-            <!-- Нажатие -->
             <Trigger Property="IsPressed" Value="True">
                 <Trigger.EnterActions>
                     <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
@@ -288,8 +276,6 @@
                 <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Pressed}" TargetName="BottomStripe"/>
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
             </Trigger>
-
-            <!-- Отключённая кнопка -->
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
                 <Setter Property="Fill" Value="{DynamicResource Brush.Element.Light.Disable}" TargetName="BottomStripe"/>
@@ -304,6 +290,97 @@
         <Setter Property="Padding" Value="0,0"/>
         <Setter Property="UseLayoutRounding" Value="True"/>
         <Setter Property="Template" Value="{StaticResource Template.ButtonBase}"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Default}"/>
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Normal}"/>
+    </Style>
+
+    <!--  Triangle Button  -->
+    <ControlTemplate x:Key="Template.TriangleButton" TargetType="ButtonBase">
+        <Grid x:Name="TemplateRoot"
+              RenderTransformOrigin="0.5,0.5"
+              Background="Transparent">
+            <Grid.RenderTransform>
+                <ScaleTransform />
+            </Grid.RenderTransform>
+            <Border Background="Transparent"
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+            <Path x:Name="TrianglePath"
+                  Data="M 0,20 L 20,0 L 40,20 Z"
+                  Fill="{TemplateBinding Background}"
+                  Stroke="{TemplateBinding BorderBrush}"
+                  StrokeThickness="{StaticResource Size.Button.Border}"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Stretch="Uniform"
+                  RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <RotateTransform Angle="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <ScaleTransform x:Name="TriangleScaleTransform" />
+                    </TransformGroup>
+                </Path.RenderTransform>
+            </Path>
+            <ContentPresenter x:Name="PART_ContentPresenter"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Margin="{TemplateBinding Padding}"
+                              TextElement.Foreground="{TemplateBinding Foreground}" />
+        </Grid>
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="Anim.Press">
+                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
+                                 Storyboard.TargetProperty="ScaleX"
+                                 To="0.95" Duration="0:0:0.1"
+                                 DecelerationRatio="0.25"/>
+                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
+                                 Storyboard.TargetProperty="ScaleY"
+                                 To="0.95" Duration="0:0:0.1"
+                                 DecelerationRatio="0.25"/>
+            </Storyboard>
+            <Storyboard x:Key="Anim.Release">
+                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
+                                 Storyboard.TargetProperty="ScaleX"
+                                 To="1" Duration="0:0:0.2"
+                                 DecelerationRatio="1"/>
+                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
+                                 Storyboard.TargetProperty="ScaleY"
+                                 To="1" Duration="0:0:0.2"
+                                 DecelerationRatio="1"/>
+            </Storyboard>
+        </ControlTemplate.Resources>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
+                </Trigger.ExitActions>
+                <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Pressed}" TargetName="TrianglePath"/>
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
+                <Setter Property="Background" Value="{DynamicResource Brush.Accent.Pressed}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Pressed}" />
+            </Trigger>
+
+
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
+                <Setter Property="Fill" Value="{DynamicResource Brush.Element.Light.Disable}" TargetName="TrianglePath"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="Style.Button.Triangle" TargetType="ButtonBase" BasedOn="{StaticResource {x:Type ContentControl}}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Background" Value="{DynamicResource  Brush.Accent.Normal}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="40"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="Template" Value="{StaticResource Template.TriangleButton}"/>
         <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}"/>
         <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Default}"/>
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
@@ -412,6 +489,9 @@
         <Setter Property="Template" Value="{StaticResource Template.ToggleButton}" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
     </Style>
+
+
+
 
     <!--  ProgressBar  -->
     <ControlTemplate TargetType="ProgressBar" x:Key="Template.ProgressBar">
@@ -709,101 +789,6 @@
         </Style.Triggers>
     </Style>
 
-    <ControlTemplate x:Key="Template.TriangleButton" TargetType="ButtonBase">
-        <Grid x:Name="TemplateRoot" RenderTransformOrigin="0.5,0.5">
-            <Grid.RenderTransform>
-                <ScaleTransform />
-            </Grid.RenderTransform>
 
-            <!-- Треугольник -->
-            <Path x:Name="TrianglePath"
-              Data="M 0,20 L 20,0 L 40,20 Z" 
-              Fill="{TemplateBinding Background}"
-              Stroke="{TemplateBinding BorderBrush}"
-              StrokeThickness ="{StaticResource Size.Button.Border}"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Stretch="Uniform"
-              RenderTransformOrigin="0.5,0.5">
-                <Path.RenderTransform>
-                    <TransformGroup>
-                        <RotateTransform Angle="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
-                        <ScaleTransform x:Name="TriangleScaleTransform" />
-                    </TransformGroup>
-                </Path.RenderTransform>
-            </Path>
-
-            <!-- Содержимое кнопки (если нужно) -->
-            <ContentPresenter x:Name="PART_ContentPresenter"
-                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                          Margin="{TemplateBinding Padding}"
-                          TextElement.Foreground="{TemplateBinding Foreground}" />
-
- 
-        </Grid>
-
-        <!-- Ресурсы шаблона -->
-        <ControlTemplate.Resources>
-            <Storyboard x:Key="Anim.Press">
-                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
-                             Storyboard.TargetProperty="ScaleX"
-                             To="0.95" Duration="0:0:0.1"
-                             DecelerationRatio="0.25"/>
-                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
-                             Storyboard.TargetProperty="ScaleY"
-                             To="0.95" Duration="0:0:0.1"
-                             DecelerationRatio="0.25"/>
-            </Storyboard>
-
-            <Storyboard x:Key="Anim.Release">
-                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
-                             Storyboard.TargetProperty="ScaleX"
-                             To="1" Duration="0:0:0.2"
-                             DecelerationRatio="1"/>
-                <DoubleAnimation Storyboard.TargetName="TriangleScaleTransform"
-                             Storyboard.TargetProperty="ScaleY"
-                             To="1" Duration="0:0:0.2"
-                             DecelerationRatio="1"/>
-            </Storyboard>
-        </ControlTemplate.Resources>
-        
-        <!-- Триггеры шаблона -->
-        <ControlTemplate.Triggers>
-            <!-- Нажатие -->
-            <Trigger Property="IsPressed" Value="True">
-                <Trigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
-                </Trigger.ExitActions>
-                <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Pressed}" TargetName="TrianglePath"/>
-                <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
-                <Setter Property="Background" Value="{DynamicResource Brush.Accent.Pressed}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Pressed}" />
-            </Trigger>
-
-            <!-- Отключённая кнопка -->
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
-                <Setter Property="Fill" Value="{DynamicResource Brush.Element.Light.Disable}" TargetName="TrianglePath"/>
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-
-    <Style x:Key="Style.Button.Triangle" TargetType="ButtonBase" BasedOn="{StaticResource {x:Type ContentControl}}">
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Background" Value="{DynamicResource  Brush.Accent.Normal}"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="UseLayoutRounding" Value="True"/>
-        <Setter Property="Template" Value="{StaticResource Template.TriangleButton}"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Default}"/>
-        <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Normal}"/>
-    </Style>
 
 </ResourceDictionary>

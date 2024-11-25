@@ -157,19 +157,20 @@
                             />
 
                         <Button x:Name="button_next_movement"
-                                Style="{StaticResource Style.Button.Triangle}"
+                                Style="{DynamicResource Style.Button.Triangle}"
                                 Tag="90"
                                 Width="30"
-                                Height="15"
+                                Height="40"
                                 HorizontalAlignment="Right"
-                                Margin="{StaticResource Margin.GridElement}"
+                                VerticalAlignment="Center"
+                                Margin="0,0,15,0"
                                 />
 
                         <Button x:Name="button_previous_movement"
                                 Style="{StaticResource Style.Button.Triangle}"
                                 Tag="270"
                                 Width="30"
-                                Height="15"
+                                Height="40"
                                 HorizontalAlignment="Center"
                                 />
 
