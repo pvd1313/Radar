@@ -13,6 +13,7 @@ namespace Beast.Claw.Math
         public const float TWO_PI = 2 * math.PI;
         public const float PI = math.PI;
         public const float EPSILON = math.EPSILON;
+        public const float SQRT2 = math.SQRT2;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sin(float angleRag)

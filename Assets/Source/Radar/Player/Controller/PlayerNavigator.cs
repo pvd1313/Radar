@@ -28,9 +28,11 @@ namespace Beast.Radar.Player
         private Stopwatch _stopwatch;
 
         private NativeList<int2> _path;
+        private int _pathRemainingDiagonalCount;
+        private int _pathRemainingStraightCount;
         private float _remainingDistance;
 
-        private int _nodeIndex;
+        private int _targetNodeIndex;
         
         public PlayerNavigator(
             IGizmoManager gizmoManager, 
@@ -57,7 +59,7 @@ namespace Beast.Radar.Player
             };
 
             _path = BNative.PermList<int2>(256);
-            _nodeIndex = -1;
+            _targetNodeIndex = 0;
 
             _stopwatch = new Stopwatch();
         }
@@ -66,41 +68,65 @@ namespace Beast.Radar.Player
         {
             isDestinationReached = false;
             
-            if (_nodeIndex < 0)
+            if (_targetNodeIndex >= _path.Length)
             {
                 isDestinationReached = true;
                 return;
             }
 
-            float2 currentTarget = _getCellCenter(_path[_nodeIndex]);
+            int2 targetNode = _path[_targetNodeIndex];
+            float2 targetNodeWorld = _getCellCenter(targetNode);
             
-            position = BMath.MoveTowards(position, currentTarget, BMath.Length(movementDelta));
+            position = BMath.MoveTowards(position, targetNodeWorld, BMath.Length(movementDelta));
 
-            if (BMath.Distance(position, currentTarget) < BWorld.DESTINATION_REACHED_DISTANCE)
+            if (BMath.Distance(position, targetNodeWorld) < BWorld.DESTINATION_REACHED_DISTANCE)
             {
-                _nodeIndex--;
+                if (_targetNodeIndex > 0)
+                {
+                    if (BNavigation.IsStraight(_path[_targetNodeIndex - 1], targetNode))
+                    {
+                        _pathRemainingStraightCount--;
+                    }
+                    else
+                    {
+                        _pathRemainingDiagonalCount--;
+                    }
+                }
+                
+                _targetNodeIndex++;
             }
 
             _remainingDistance = _calcRemainingDistance(position);
 
-            BDebug.Track(this, nameof(_nodeIndex), _nodeIndex);
+            BDebug.Track(this, nameof(_targetNodeIndex), _targetNodeIndex);
         }
 
         private float _calcRemainingDistance(float2 playerPosition)
         {
-            int traveledNodeCount = _path.Length - _nodeIndex - 1;
-            int leftNodeCount = _path.Length - traveledNodeCount - 1;
+            int straightCount = _pathRemainingStraightCount;
+            int diagonalCount = _pathRemainingDiagonalCount;
 
-            BDebug.Track(this, nameof(traveledNodeCount), traveledNodeCount);
-            
-            float distance = BMath.Max(0, leftNodeCount * _biome.Terrain8kmCell.cellSize);
+            float distance = 0;
 
-            if (_nodeIndex > 0)
+            if (_targetNodeIndex > 0 && _targetNodeIndex < _path.Length)
             {
-                float2 currentTarget = _getCellCenter(_path[_nodeIndex]);
-                
-                distance += BMath.Length(currentTarget - playerPosition);
+                int2 fromNode = _path[_targetNodeIndex - 1];
+                int2 targetNode = _path[_targetNodeIndex];
+
+                if (BNavigation.IsStraight(fromNode, targetNode))
+                {
+                    straightCount--;
+                }
+                else
+                {
+                    diagonalCount--;
+                }
+
+                distance += BMath.Distance(playerPosition, _getCellCenter(targetNode));
             }
+
+            distance += _biome.Terrain8kmCell.cellSize * straightCount;
+            distance += diagonalCount * _biome.Terrain8kmCell.cellSize * BMath.SQRT2;
 
             return distance;
         }
@@ -121,7 +147,7 @@ namespace Beast.Radar.Player
                 tileCosts = _config.TileSpeedModifiersToTileCost(),
                 textureSizeX = _biome.Terrain8kmCell.cellCountX,
                 texture = _biome.Terrain8kmCell.texture,
-                outputPath = _path,
+                outputReversedPath = _path,
                 jobBuffer = _pathJobBuffer
             };
             
@@ -130,14 +156,16 @@ namespace Beast.Radar.Player
             job.Schedule().Complete();
             
             _stopwatch.Stop();
-
-            _nodeIndex = _path.Length - 1;
             
+            _path.Reverse();
+            _targetNodeIndex = 0;
+            BNavigation.CalcPathNodeTypeCount(_path, out _pathRemainingDiagonalCount, out _pathRemainingStraightCount);
+
             _remainingDistance = _calcRemainingDistance(start);
             
             BDebug.Track(this, "jobElapsedMS", _stopwatch.ElapsedMillisecondsFloat());
             BDebug.Track(this, "nodeCount", _path.Length);
-            BDebug.Track(this, nameof(_nodeIndex), _nodeIndex);
+            BDebug.Track(this, nameof(_targetNodeIndex), _targetNodeIndex);
             
             _redrawPathGizmo();
         }

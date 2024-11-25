@@ -20,11 +20,11 @@ namespace Beast.Radar.Navigation
         public NativeArray<EBiomeName> texture;
         public PathJobBuffer jobBuffer;
         public ByteArray16 tileCosts;
-        public NativeList<int2> outputPath;
+        public NativeList<int2> outputReversedPath;
 
         public void Execute()
         {
-            outputPath.Clear();
+            outputReversedPath.Clear();
             
             int2 gridSizeXY = new (textureSizeX, textureSizeX);
             
@@ -178,11 +178,11 @@ namespace Beast.Radar.Navigation
 
             while (endNode.cameFromNodeIndex != -1)
             {
-                outputPath.Add(endNode.position);
+                outputReversedPath.Add(endNode.position);
                 endNode = pathNodes[endNode.cameFromNodeIndex];
             }
 
-            outputPath.Add(endNode.position);
+            outputReversedPath.Add(endNode.position);
         }
     }
 }
