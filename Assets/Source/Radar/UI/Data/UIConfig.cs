@@ -6,13 +6,10 @@ namespace Beast.Radar.UI
 {
     public class UIConfig : ScriptableConfig
     {
-        public XamlAsset HUDAsset;
+        public XamlAsset HUDWindowAsset;
+        public XamlAsset PauseWindowAsset;
         
-        public Sprite offMoveButtonSprite;
-        public Sprite onMoveButtonSprite;
-
         public Sprite[] citySprites;
-        
         
         public override IEnumerable<IConfig> Bind()
         {

@@ -88,14 +88,14 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         </Grid.RowDefinitions>
 
         <Rectangle 
-            Fill="{StaticResource Brush.Foreground.Normal}" 
+            Fill="{StaticResource Brush.Panel.Dark.Default}" 
             Grid.Row="0" />
 
         <TextBlock x:Name="text_time"
             Grid.Row="0"
             HorizontalAlignment="Right"
             Margin="0,0,10,0"
-            Style="{StaticResource Style.Text.Normal}"
+            Style="{StaticResource Style.Text.Light.Normal}"
             Text="00:00"
             VerticalAlignment="Center"/>
 

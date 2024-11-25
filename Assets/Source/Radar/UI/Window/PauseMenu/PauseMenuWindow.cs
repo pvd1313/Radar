@@ -1,8 +1,10 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
+using Noesis;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -14,8 +16,10 @@ namespace Beast.Radar.UI
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
         private readonly PlayerPreferences _playerPreferences;
-        
-        private PauseMenuView _view;
+        private readonly UIConfig _uiConfig;
+        private readonly INoesisWindowManager _noesisWindowManager;
+
+        private PauseWindowView _view;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
         
@@ -23,17 +27,25 @@ namespace Beast.Radar.UI
             CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
-            PlayerPreferences playerPreferences)
+            PlayerPreferences playerPreferences,
+            UIConfig uiConfig,
+            INoesisWindowManager noesisWindowManager)
         {
             _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
             _playerPreferences = playerPreferences;
+            _uiConfig = uiConfig;
+            _noesisWindowManager = noesisWindowManager;
         }
 
         public UniTask Open(Empty data)
         {
-            _view.gameObject.SetActive(true);
+            _view.Visibility = Visibility.Visible;
+
+            _view.toggleFPS.IsChecked = _playerPreferences.isMaxFps;
+
+            /*
             _view.loadButton.SetInteractable(false);
 
             bool saveExists = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
@@ -42,24 +54,27 @@ namespace Beast.Radar.UI
             _view.fpsToggle.SetValueWithoutNotify(_playerPreferences.isMaxFps);
             _view.pathfindingToggle.SetValueWithoutNotify(_playerPreferences.isAutoPathfinding);
             _refreshMapMovementText();
-            
+            */
             return UniTask.CompletedTask;
         }
 
         public UniTask Close()
         {
-            _view.gameObject.SetActive(false);
+           _view.Visibility = Visibility.Hidden;
 
-            return UniTask.CompletedTask;
+           return UniTask.CompletedTask;
         }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _view = BScene.InstantiateMono(this, _library.pauseMenu);
-            _view.gameObject.SetActive(false);
-            _windowManager.Register(this, WindowID.PAUSE);
-            _view.transform.SetParent(_windowManager.CanvasTransform, false);
+            _uiConfig.PauseWindowAsset.Instantiate(out _view);
 
+            _noesisWindowManager.Attach(_view);
+            
+            _view.Visibility = Visibility.Hidden;
+            
+            _windowManager.Register(this, WindowID.PAUSE);
+            
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
             _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
 
@@ -72,7 +87,19 @@ namespace Beast.Radar.UI
 
         private void _subscribeView()
         {
-            _view.closeButton.Clicked += () => { _mainHUD.Open(default); };
+            _view.buttonClose.Click += (sender, args) =>
+            {
+                BDebug.LogInfo(this, "press button close");
+                _mainHUD.Open(default);
+            };
+
+            _view.toggleFPS.Click += (sender, args) =>
+            {
+                _playerPreferences.isMaxFps = _view.toggleFPS.IsChecked ?? false;
+                _setFPS();
+            };
+
+            /*
 
             _view.loadButton.Clicked += () =>
             {
@@ -94,11 +121,7 @@ namespace Beast.Radar.UI
                 _mapGenerationWindow.Open(default);
             };
 
-            _view.fpsToggle.Changed += on =>
-            {
-                _playerPreferences.isMaxFps = on;
-                _setFPS();
-            };
+        
 
             _view.pathfindingToggle.Changed += on =>
             {
@@ -115,13 +138,13 @@ namespace Beast.Radar.UI
             {
                 _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
                 _refreshMapMovementText();
-            };
+            };*/
         }
 
         private void _refreshMapMovementText()
         {
             string mapMovementMode = _playerPreferences.beginMovementOnSingleTap ? "single tap" : "double tap";
-            _view.mapMovementText.SetText(mapMovementMode);
+            //_view.mapMovementText.SetText(mapMovementMode);
         }
 
         private void _setFPS()

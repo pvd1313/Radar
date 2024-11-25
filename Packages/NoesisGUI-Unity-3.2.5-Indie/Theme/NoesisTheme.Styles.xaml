@@ -7,7 +7,7 @@
   <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
   <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
 
-  <Thickness x:Key="Border.Normal">0</Thickness>
+    <Thickness x:Key="Border.Normal">3</Thickness>
   <Thickness x:Key="Border.Box">1</Thickness>
   <Thickness x:Key="Border.Over">2</Thickness>
   <Thickness x:Key="Border.Focus">2</Thickness>
@@ -106,8 +106,14 @@
 
   <!-- Label -->
   <ControlTemplate x:Key="Template.Label" TargetType="Label">
-    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
-      <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}"/>
+    <Border Background="{TemplateBinding Background}" 
+            BorderBrush="{TemplateBinding BorderBrush}" 
+            BorderThickness="{TemplateBinding BorderThickness}" 
+            Padding="{TemplateBinding Padding}">
+      <ContentPresenter 
+          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+          Margin="{TemplateBinding Padding}"/>
     </Border>
     <ControlTemplate.Triggers>
       <Trigger Property="IsEnabled" Value="False">
@@ -124,71 +130,107 @@
   </Style>
 
   <!-- Button/RepeatButton -->
-  <ControlTemplate x:Key="Template.ButtonBase" TargetType="ButtonBase">
-    <Grid x:Name="TemplateRoot" RenderTransformOrigin="0.5,0.5">
-      <Grid.RenderTransform>
-        <ScaleTransform />
-      </Grid.RenderTransform>
-      <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource Corner.Border0}"/>
-      <ContentPresenter x:Name="PART_ContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}"/>
-    </Grid>
-    <ControlTemplate.Resources>
-      <Storyboard x:Key="Anim.Press">
-        <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.99" Duration="0:0:0.1" DecelerationRatio="0.25"/>
-        <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.99" Duration="0:0:0.1" DecelerationRatio="0.25"/>
-      </Storyboard>
-      <Storyboard x:Key="Anim.Release">
-        <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="0:0:0.2" DecelerationRatio="1"/>
-        <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.2" DecelerationRatio="1"/>
-      </Storyboard>
-    </ControlTemplate.Resources>
-    <ControlTemplate.Triggers>
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Over}" TargetName="Border"/>
-        <Setter Property="BorderThickness" Value="{DynamicResource Border.Over}" TargetName="Border"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border2}" TargetName="Border"/>
-      </Trigger>
-      <Trigger Property="IsPressed" Value="True">
-        <Trigger.EnterActions>
-          <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
-        </Trigger.EnterActions>
-        <Trigger.ExitActions>
-          <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
-        </Trigger.ExitActions>
-        <Setter Property="Background" Value="{DynamicResource Brush.Background.Pressed}" TargetName="Border"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Pressed}" TargetName="Border"/>
-        <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}" TargetName="Border"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border0}" TargetName="Border"/>
-      </Trigger>
-      <Trigger Property="IsEnabled" Value="False">
-        <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Disabled}" TargetName="Border"/>
-      </Trigger>
-    </ControlTemplate.Triggers>
-  </ControlTemplate>
-  <Style x:Key="Style.ButtonBase" TargetType="ButtonBase" BasedOn="{StaticResource {x:Type ContentControl}}">
-    <Setter Property="OverridesDefaultStyle" Value="True"/>
-    <Setter Property="Background" Value="{DynamicResource Brush.Background.Normal}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Normal}"/>
-    <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}"/>
-    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="Padding" Value="8,7"/>
-    <Setter Property="UseLayoutRounding" Value="True"/>
-    <Setter Property="Template" Value="{StaticResource Template.ButtonBase}"/>
-    <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}"/>
-  </Style>
-  <Style TargetType="Button" BasedOn="{StaticResource Style.ButtonBase}"/>
-  <Style TargetType="RepeatButton" BasedOn="{StaticResource Style.ButtonBase}"/>
+    <ControlTemplate x:Key="Template.ButtonBase" TargetType="ButtonBase">
+        <Grid x:Name="TemplateRoot" RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform>
+                <ScaleTransform />
+            </Grid.RenderTransform>
+            <!-- Основная часть кнопки -->
+            <Border x:Name="Border" 
+                Background="{TemplateBinding Background}" 
+                BorderBrush="{TemplateBinding BorderBrush}" 
+                BorderThickness="{TemplateBinding BorderThickness}" 
+                CornerRadius="{DynamicResource Corner.Border0}"/>
 
-  <!-- ToggleButton -->
+            <!-- Содержимое кнопки -->
+            <ContentPresenter x:Name="PART_ContentPresenter" 
+                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                          Margin="{TemplateBinding Padding}"/>
+
+            <!-- Полоска внизу -->
+            <Rectangle x:Name="BottomStripe"
+                   Height="4"
+                   VerticalAlignment="Bottom"
+                   Fill="{TemplateBinding BorderBrush}" />
+        </Grid>
+
+        <!-- Ресурсы шаблона -->
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="Anim.Press">
+                <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.99" Duration="0:0:0.1" DecelerationRatio="0.25"/>
+                <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.99" Duration="0:0:0.1" DecelerationRatio="0.25"/>
+            </Storyboard>
+            <Storyboard x:Key="Anim.Release">
+                <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="0:0:0.2" DecelerationRatio="1"/>
+                <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.2" DecelerationRatio="1"/>
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <!-- Триггеры шаблона -->
+        <ControlTemplate.Triggers>
+            <!-- Наведение мыши -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Over}" TargetName="Border"/>
+                <Setter Property="BorderThickness" Value="{DynamicResource Border.Over}" TargetName="Border"/>
+                <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border2}" TargetName="Border"/>
+                <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Over}" TargetName="BottomStripe"/>
+            </Trigger>
+
+            <!-- Нажатие -->
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
+                </Trigger.ExitActions>
+                <Setter Property="Background" Value="{DynamicResource Brush.Background.Pressed}" TargetName="Border"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Pressed}" TargetName="Border"/>
+                <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}" TargetName="Border"/>
+                <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border0}" TargetName="Border"/>
+                <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Pressed}" TargetName="BottomStripe"/>
+            </Trigger>
+
+            <!-- Отключенная кнопка -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Disabled}" TargetName="Border"/>
+                <Setter Property="Fill" Value="{DynamicResource Brush.Accent.Disabled}" TargetName="BottomStripe"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    
+    <Style x:Key="Style.ButtonBase" TargetType="ButtonBase" BasedOn="{StaticResource {x:Type ContentControl}}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Background" Value="{DynamicResource Brush.Background.Normal}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Normal}"/>
+        <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="8,7"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="Template" Value="{StaticResource Template.ButtonBase}"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}"/>
+        <!-- Цвет полоски -->
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Normal}"/>
+    </Style>
+
+    <!-- ToggleButton -->
   <ControlTemplate x:Key="Template.ToggleButton" TargetType="ToggleButton">
     <Grid x:Name="TemplateRoot" RenderTransformOrigin="0.5,0.5">
       <Grid.RenderTransform>
         <ScaleTransform />
       </Grid.RenderTransform>
-      <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource Corner.Border0}"/>
-      <ContentPresenter x:Name="PART_ContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}"/>
+      <Border x:Name="Border" 
+              Background="{TemplateBinding Background}" 
+              BorderBrush="{TemplateBinding BorderBrush}" 
+              BorderThickness="{TemplateBinding BorderThickness}" 
+              CornerRadius="{DynamicResource Corner.Border0}"/>
+      <ContentPresenter x:Name="PART_ContentPresenter" 
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                        Margin="{TemplateBinding Padding}"/>
     </Grid>
     <ControlTemplate.Resources>
       <Storyboard x:Key="Anim.Press">
@@ -200,46 +242,41 @@
         <DoubleAnimation Storyboard.TargetName="TemplateRoot" Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.2" DecelerationRatio="1"/>
       </Storyboard>
     </ControlTemplate.Resources>
-    <ControlTemplate.Triggers>
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Over}" TargetName="Border"/>
-        <Setter Property="BorderThickness" Value="{DynamicResource Border.Over}" TargetName="Border"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border2}" TargetName="Border"/>
-      </Trigger>
-      <Trigger Property="IsPressed" Value="True">
-        <Trigger.EnterActions>
-          <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
-        </Trigger.EnterActions>
-        <Trigger.ExitActions>
-          <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
-        </Trigger.ExitActions>
-        <Setter Property="Background" Value="{DynamicResource Brush.Background.Pressed}" TargetName="Border"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Pressed}" TargetName="Border"/>
-        <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}" TargetName="Border"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border0}" TargetName="Border"/>
-      </Trigger>
-      <Trigger Property="IsChecked" Value="True">
-        <Setter Property="Background" Value="{DynamicResource Brush.Background.Checked}" TargetName="Border"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Checked}" TargetName="Border"/>
-      </Trigger>
-      <Trigger Property="IsEnabled" Value="False">
-        <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Disabled}" TargetName="Border"/>
-      </Trigger>
-      <MultiTrigger>
-        <MultiTrigger.Conditions>
-          <Condition Property="IsEnabled" Value="False"/>
-          <Condition Property="IsChecked" Value="True"/>
-        </MultiTrigger.Conditions>
-        <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.DisabledChecked}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.DisabledChecked}" TargetName="Border"/>
-      </MultiTrigger>
-    </ControlTemplate.Triggers>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}"/>
+                </Trigger.ExitActions>
+                <Setter Property="Background" Value="{DynamicResource Brush.Background.Pressed}" TargetName="Border"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Element.Dark.Active}" TargetName="Border"/>
+                <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}" TargetName="Border"/>
+                <Setter Property="CornerRadius" Value="{DynamicResource Corner.Border0}" TargetName="Border"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Brush.Background.Checked}" TargetName="Border"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Element.Dark.Active}" TargetName="Border"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Brush.Element.Dark.Disable}" TargetName="Border"/>
+          </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsEnabled" Value="False"/>
+                    <Condition Property="IsChecked" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.DisabledChecked}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Brush.Element.Dark.Disable}" TargetName="Border"/>
+            </MultiTrigger>
+        </ControlTemplate.Triggers>
   </ControlTemplate>
   <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ContentControl}}">
     <Setter Property="OverridesDefaultStyle" Value="True"/>
     <Setter Property="Background" Value="{DynamicResource Brush.Background.Normal}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Normal}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Element.Dark.Active}"/>
     <Setter Property="BorderThickness" Value="{DynamicResource Border.Normal}"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -2114,7 +2151,7 @@
           <Border x:Name="Border" Grid.ColumnSpan="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource Corner.Border1}" IsHitTestVisible="False"/>
           <TextBox x:Name="PART_EditableTextBox" Template="{StaticResource Template.ComboBox.Text}" Foreground="{TemplateBinding Foreground}" IsReadOnly="{TemplateBinding IsReadOnly}" Padding="{TemplateBinding Padding}" CaretBrush="{TemplateBinding Foreground}" SelectionBrush="{DynamicResource Brush.Background.Checked}" SelectionOpacity="0.5" FocusVisualStyle="{x:Null}"/>
           <Decorator Grid.Column="0" Margin="2,0">
-            <TextBlock x:Name="Placeholder" Text="{Binding (local:Text.Placeholder), RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource Style.TextBox.Placeholder}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" Visibility="Collapsed"/>
+            <TextBlock x:Name="Placeholder" Text ="{Binding (local:Text.Placeholder), RelativeSource={RelativeSource TemplatedParent}}" Style="{DynamicResource Style.TextBox.Placeholder}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" Visibility="Collapsed"/>
           </Decorator>
           <Path x:Name="Arrow" Grid.Column="1" Data="{StaticResource Geometry.ComboBox.Arrow}" Stroke="{DynamicResource Brush.Glyph.Normal}" VerticalAlignment="Center" Margin="10,1,10,0" IsHitTestVisible="False">
             <Path.RenderTransform>

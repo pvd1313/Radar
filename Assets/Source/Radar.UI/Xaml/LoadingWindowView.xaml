@@ -8,7 +8,7 @@
              d:DesignWidth = "960" d:DesignHeight = "480">
 
     <noesis:Xaml.Dependencies>
-        <noesis:Dependency Source="..\..\..\Texture\LoadingScreen\loading_screen_background_1.png"/>
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\Screen\loading_screen_background_1.png"/>
     </noesis:Xaml.Dependencies>
 
     <UserControl.Resources>
@@ -23,7 +23,7 @@
     <Grid 
         x:Name = "grid">
         <Grid.Background>
-            <ImageBrush  ImageSource="..\..\..\Texture\LoadingScreen\loading_screen_background_1.png" Stretch="UniformToFill" />
+            <ImageBrush  ImageSource="..\..\..\Texture\Sprite\Screen\loading_screen_background_1.png" Stretch="UniformToFill" />
         </Grid.Background>
 
         <Grid.ColumnDefinitions>
@@ -52,7 +52,7 @@
                         FontSize = "16"
                         Margin = "5 3 0 0"
                         Text = "Lorem ipsum"
-                        TextBlock.Foreground = "{StaticResource Brush.Text.Default}"/>
+                        TextBlock.Foreground = "{StaticResource Brush.Text.Light.Default}"/>
                 </Border>
             </Grid>
 
@@ -76,7 +76,7 @@
            Width = "100"
            Margin = "{StaticResource MarginBottomRight}"
            TextAlignment = "Center"
-           TextBlock.Foreground = "{StaticResource Brush.Text.Default}"/>
+           TextBlock.Foreground = "{StaticResource Brush.Text.Light.Default}"/>
     </Grid>
 
 </UserControl>

@@ -1,0 +1,198 @@
+﻿<UserControl 
+    d:DesignHeight="480"
+    d:DesignWidth="960"
+    mc:Ignorable="d"
+    x:Class="Beast.Radar.UI.PauseWindowView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Theme.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Thickness x:Key="ElementMargin">15</Thickness>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <!-- Screen grid -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15*" />
+            <RowDefinition Height="70*" />
+            <RowDefinition Height="15*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*" />
+            <ColumnDefinition Width="75*" />
+            <ColumnDefinition Width="15*" />
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="button_close"
+            Grid.ColumnSpan="3" 
+            Grid.RowSpan="3" 
+            Template="{StaticResource Template.Button.Background}">
+        </Button>
+
+        <Rectangle 
+            Grid.Row = "1" 
+            Grid.Column = "1"   
+            Fill="{StaticResource Brush.Panel.Dark.Default}" />
+
+        <!-- Window grid -->
+        <Grid Grid.Row="1" Grid.Column="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="10*" />
+                <RowDefinition Height="10*" />
+                <RowDefinition Height="10*" />
+                <RowDefinition Height="10*" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="30" />
+            </Grid.ColumnDefinitions>
+
+            <!-- FPS -->
+            <Border 
+                Grid.Row="1" 
+                Grid.Column="1" 
+                Margin="{StaticResource ElementMargin}"
+                Background="{StaticResource Brush.Panel.Background}"
+                CornerRadius="{StaticResource Corner.Border0}"/>
+
+            <Border 
+               Grid.Row="1" 
+               Grid.Column="1" 
+               Width="30"
+               Height="30"
+               Margin="27.5,0,0,0"
+               HorizontalAlignment="Left"
+               Background="{StaticResource Brush.Panel.Dark.Default}"
+               CornerRadius="{StaticResource Corner.Border0}"/>
+
+            <ToggleButton x:Name="toggle_fps"  
+                Grid.Row="1" 
+                Grid.Column="1" 
+                Width="20"
+                Height="20"
+                HorizontalAlignment="Left"
+                Margin="33,0,0,0">
+            </ToggleButton>
+
+            <TextBlock
+                Grid.Row="1" 
+                Grid.Column="1"
+                Text="MAX FPS"
+                Margin="70,0,25,0"
+                VerticalAlignment="Center"
+                Style="{StaticResource Style.Text.Light.Header}"
+                />
+
+            <!-- Save -->
+            <Button x:Name="button_save"
+                    Grid.Row = "1" 
+                    Grid.Column="2"
+                    Content="SAVE"
+                    Style="{StaticResource Style.ButtonBase}"
+                    Margin="{StaticResource ElementMargin}">
+            </Button>
+
+            <Button x:Name="button_load"
+                    Grid.Row = "1" 
+                    Grid.Column="3"
+                    Content="LOAD"
+                    Style="{StaticResource Style.ButtonBase}"
+                    Margin="{StaticResource ElementMargin}">
+            </Button>
+
+            <Button x:Name="button_new_game"
+                    Grid.Row = "2" 
+                    Grid.Column="3"
+                    Content="NEW GAME"
+                    Style="{StaticResource Style.ButtonBase}"
+                    Margin="{StaticResource ElementMargin}">
+            </Button>
+
+            <Button x:Name="button_main_menu"
+                    Grid.Row = "2" 
+                    Grid.Column="1" Grid.ColumnSpan="2"
+                    Content="MAIN MENU"
+                    Style="{StaticResource Style.ButtonBase}"
+                    Margin="{StaticResource ElementMargin}">    
+            </Button>
+
+
+            <!-- Movement -->
+            <Border 
+              Grid.Row="3" 
+              Grid.Column="1" Grid.ColumnSpan="3" 
+              Margin="20,15,10,15"
+              Background="{StaticResource Brush.Panel.Background}"
+              CornerRadius="{StaticResource Corner.Border0}">
+            </Border>
+           
+            
+            <TextBlock 
+             Grid.Row="3" 
+             Grid.Column="1" Grid.ColumnSpan="2"
+             Text="MAP MOVEMENT"
+             Margin="70,0,0,0"
+             VerticalAlignment="Center"
+             HorizontalAlignment="Left"
+             Style="{StaticResource Style.Text.Light.Header}"
+             />
+
+            <Button x:Name="button_next_movement"
+                    Grid.Row="3"
+                    Grid.Column="3"
+                    Style="{StaticResource Style.Button.Triangle}" 
+                    Tag="90"
+                    Width="30" 
+                    Height="20" 
+                    HorizontalAlignment="Right"
+                    Margin="0,0,30,0"/>
+
+            <Button x:Name="button_previous_movement"
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Style="{StaticResource Style.Button.Triangle}" 
+                    Tag="270"
+                    Width="30" 
+                    Height="20" 
+                    HorizontalAlignment="Left"
+                    Margin="101,0,0,0"/>
+
+            <TextBlock x:Name="text_map_movement"
+                Grid.Row="3" 
+                Grid.Column="2" Grid.ColumnSpan="3"
+                Text="SINGLE TAP"
+                Margin="152,0,110,0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Style="{StaticResource Style.Text.Light.Header}"
+                Foreground="{StaticResource Brush.Accent.Normal}"
+                />
+
+        </Grid>
+
+
+    </Grid>
+
+
+
+</UserControl>

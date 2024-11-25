@@ -1363,6 +1363,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_0.png" />
+    <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_1.png" />
     <Content Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Documentation.html" />
     <Resource Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Doc\600px-WPFUnleashed3-2.jpg" />
     <Resource Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Doc\600px-WPFUnleashed3-3.jpg" />
@@ -2310,6 +2312,8 @@
     <None Include="Assets\Texture\LoadingScreen\loading_screen_background_1.png.meta" />
     <None Include="Assets\Texture\Sprite\cities.png.meta" />
     <None Include="Assets\Texture\Sprite\deviceButtons.png.meta" />
+    <None Include="Assets\Texture\Sprite\Screen\loading_screen_background_0.png.meta" />
+    <None Include="Assets\Texture\Sprite\Screen\loading_screen_background_1.png.meta" />
     <None Include="Assets\Texture\Sprite\UI_character.meta" />
     <None Include="Assets\Texture\Sprite\UI_character\characters.png.meta" />
     <None Include="Assets\Texture\Sprite\UI_character\dest_mark.png.meta" />
@@ -3530,5 +3534,6 @@
     <Resource Include="Assets\Texture\LoadingScreen\loading_screen_background_0.png" />
     <Resource Include="Assets\Texture\LoadingScreen\loading_screen_background_1.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

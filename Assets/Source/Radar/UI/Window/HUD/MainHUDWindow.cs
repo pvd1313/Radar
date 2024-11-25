@@ -67,7 +67,7 @@ namespace Beast.Radar.UI
         {
             _windowManager.Register(this, WindowID.HUD);
 
-            _config.HUDAsset.Instantiate(out _view);
+            _config.HUDWindowAsset.Instantiate(out _view);
             
             _noesisWindow.Attach(_view, 0);
 
