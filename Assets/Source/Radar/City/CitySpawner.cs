@@ -72,10 +72,10 @@ namespace Beast.Radar.City
             int minorCityCountX = BMath.CeilToInt(terrain.terrainSize / minorGridSize);
 
             int maxCityCount = majorCityCountX * majorCityCountX + minorCityCountX * minorCityCountX;
-            _cities = BNative.CreatePermList<CityInfo>(maxCityCount);
+            _cities = BNative.PermList<CityInfo>(maxCityCount);
 
             NativeHashSet<short2> majorCities =
-                BNative.CreateTempHashSet<short2>(majorCityCountX * majorCityCountX);
+                BNative.TempHashSet<short2>(majorCityCountX * majorCityCountX);
 
             CitySpawnJob majorCitySpawnJob = new ()
             {

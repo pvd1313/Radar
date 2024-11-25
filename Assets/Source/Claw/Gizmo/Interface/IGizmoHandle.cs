@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Gizmo
 {
-    public interface IGizmoHandle : IDisposable
+    public interface IGizmoHandle
     {
         void SetColor(Color color);
         
@@ -17,5 +17,7 @@ namespace Beast.Claw.Gizmo
         void OverrideLastPoint(float2 position, float size);
         
         void AddQuad(float2 position, float worldSize);
+
+        void Dispose();
     }
 }

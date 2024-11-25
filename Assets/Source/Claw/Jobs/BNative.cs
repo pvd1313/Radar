@@ -10,7 +10,7 @@ namespace Beast.Claw.Jobs
     public static class BNative
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeArray<T> CreateTempArray<T>(int length) where T : unmanaged
+        public static NativeArray<T> TempArray<T>(int length) where T : unmanaged
         {
             return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
         }
@@ -34,31 +34,31 @@ namespace Beast.Claw.Jobs
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeList<T> CreatePermList<T>(int capacity) where T : unmanaged
+        public static NativeList<T> PermList<T>(int capacity) where T : unmanaged
         {
             return new NativeList<T>(capacity, Allocator.Persistent);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeList<T> CreateTempList<T>(int capacity) where T : unmanaged
+        public static NativeList<T> TempList<T>(int capacity) where T : unmanaged
         {
             return new NativeList<T>(capacity, Allocator.TempJob);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeHashSet<T> CreateTempHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
+        public static NativeHashSet<T> TempHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
         {
             return new NativeHashSet<T>(capacity, Allocator.TempJob);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeHashSet<T> CreatePermHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
+        public static NativeHashSet<T> PermHashSet<T>(int capacity) where T : unmanaged, IEquatable<T>
         {
             return new NativeHashSet<T>(capacity, Allocator.Persistent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeReference<T> CreatePersistentReference<T>(T withValue) where T : unmanaged
+        public static NativeReference<T> PermReference<T>(T withValue) where T : unmanaged
         {
             NativeReference<T> reference = new NativeReference<T>(Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             reference.Value = withValue;
@@ -66,7 +66,7 @@ namespace Beast.Claw.Jobs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeReference<T> CreateTempJobReference<T>() where T : unmanaged
+        public static NativeReference<T> TempReference<T>() where T : unmanaged
         {
             return new NativeReference<T>(Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
         }
@@ -89,7 +89,7 @@ namespace Beast.Claw.Jobs
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MaintainPersistentArrayLength<T>(ref NativeArray<T> array, ArrayMaintenanceData rule) 
+        public static void MaintainPermArrayLength<T>(ref NativeArray<T> array, ArrayMaintenanceData rule) 
             where T : unmanaged
         {
             int requiredCapacity = rule.requiredCapacity;

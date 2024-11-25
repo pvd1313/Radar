@@ -11,7 +11,7 @@ namespace Beast.Radar.UI
 {
     public class MainHUDWindow : Actor, IWindow<Empty>
     {
-        private readonly PlayerPreferences _preferences;
+        private readonly PlayerPreference _preference;
         private readonly UIConfig _config;
         private readonly INoesisWindowManager _noesisWindow;
         private readonly IPlayer _player;
@@ -24,16 +24,17 @@ namespace Beast.Radar.UI
 
         private bool _isOpened;
         private DateTime _displayedDate;
+        private Cache<(int, int)> _displayedDateCache;
         
         public MainHUDWindow(
-            PlayerPreferences preferences,
+            PlayerPreference preference,
             UIConfig config,
             INoesisWindowManager noesisWindow,
             IWindowManager windowManager,
             IPlayer player,
             IGameTime gameTime)
         {
-            _preferences = preferences;
+            _preference = preference;
             _config = config;
             _noesisWindow = noesisWindow;
             _windowManager = windowManager;
@@ -45,8 +46,6 @@ namespace Beast.Radar.UI
         {
             _fetchView();
             
-            _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
-
             _view.Visibility = Visibility.Visible;
 
             _isOpened = true;
@@ -91,18 +90,13 @@ namespace Beast.Radar.UI
         private void _fetchView()
         {
             DateTime now = _gameTime.Now;
-            
-            bool hoursDiffer = _displayedDate.Hour != now.Hour;
-            bool minutesDiffer = _displayedDate.Minute != now.Minute;
 
-            if (hoursDiffer || minutesDiffer)
+            if (_displayedDateCache.Update((now.Hour, now.Minute)))
             {
-                _displayedDate = now;
-
                 _view.textTime.Text = now.ToString("t", CultureInfo.InvariantCulture);
             }
             
-            _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
+            _view.SetAutoPathFindingActive(_preference.isAutoPathfinding);
 
             _view.SetPlayerMovementState(_player.HasTarget, _player.IsMoving);
         }
@@ -116,9 +110,9 @@ namespace Beast.Radar.UI
 
             _view.autoPathFindingButton.Click += (_, _) =>
             {
-                _preferences.isAutoPathfinding = !_preferences.isAutoPathfinding;
+                _preference.isAutoPathfinding = !_preference.isAutoPathfinding;
                 
-                _view.SetAutoPathFindingState(_preferences.isAutoPathfinding);
+                _view.SetAutoPathFindingActive(_preference.isAutoPathfinding);
             };
        
             _view.buttonMove.Click += (_, _) =>

@@ -1,3 +1,4 @@
+using Beast.Claw.Common;
 using Beast.Claw.UI;
 using Noesis;
 
@@ -16,9 +17,9 @@ namespace Beast.Radar.UI
         private Brush _brushStandImage;
         private Brush _brushMoveImage;
 
-        private bool _isPathFindingActive;
-        private int _playerMovementCache;
-        
+        private Cache<int> _playerMovementCache;
+        private Cache<bool> _autoPathFindingActiveCache;
+
         public override void BindElements()
         {
             _find("text_time", out textTime);
@@ -31,46 +32,25 @@ namespace Beast.Radar.UI
             
             _brushMoveImage = (ImageBrush)FindResource("Brush.Image.Move");
             _brushStandImage = (ImageBrush)FindResource("Brush.Image.Stand");
-
-            _isPathFindingActive = true;
-            _playerMovementCache = -1;
-            
-            SetPlayerMovementState(false, false);
-            SetAutoPathFindingState(false);
         }
         
         public void SetPlayerMovementState(bool hasTarget, bool isMoving)
         {
-            int targetValue;
-            
-            if (!hasTarget)
-            {
-                targetValue = 0;
-            }
-            else
-            {
-                targetValue = isMoving ? 1 : 2;
-            }
+            int playerMovement = !hasTarget ? 0 : (isMoving ? 1 : 2);
 
-            if (targetValue != _playerMovementCache)
+            if (_playerMovementCache.Update(playerMovement))
             {
-                _playerMovementCache = targetValue;
-
                 buttonMove.OpacityMask = isMoving ? _brushMoveImage : _brushStandImage;
                 buttonMove.Visibility = hasTarget ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
-        public void SetAutoPathFindingState(bool isActive)
+        public void SetAutoPathFindingActive(bool isActive)
         {
-            if (_isPathFindingActive == isActive)
+            if (_autoPathFindingActiveCache.Update(isActive))
             {
-                return;
+                autoPathFindingButton.Background = isActive ? _brushActiveColor : _brushDisableColor;
             }
-
-            _isPathFindingActive = isActive;
-            
-            autoPathFindingButton.Background = _isPathFindingActive ? _brushActiveColor : _brushDisableColor;
         }
     }
 }

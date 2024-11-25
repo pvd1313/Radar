@@ -84,11 +84,11 @@ namespace Beast.Claw.Profiling
                 outNames = BNative.PermArray<ushort>(nodeCount),
                 outSiblings = BNative.PermArray<ushort>(nodeCount),
                 outTimes = BNative.PermArray<float>(nodeCount),
-                outState = BNative.CreateTempArray<TreeBuildState>(1),
-                parentStack = BNative.CreateTempArray<ushort>(_config.stackSize),
-                siblingStack = BNative.CreateTempArray<ushort>(_config.stackSize),
-                timeStack = BNative.CreateTempArray<int>(_config.stackSize),
-                nameHashStack = BNative.CreateTempArray<int>(_config.stackSize)
+                outState = BNative.TempArray<TreeBuildState>(1),
+                parentStack = BNative.TempArray<ushort>(_config.stackSize),
+                siblingStack = BNative.TempArray<ushort>(_config.stackSize),
+                timeStack = BNative.TempArray<int>(_config.stackSize),
+                nameHashStack = BNative.TempArray<int>(_config.stackSize)
             };
             
             UnityEngine.Profiling.Profiler.BeginSample("ProfilingManager.BuildTreeJob");

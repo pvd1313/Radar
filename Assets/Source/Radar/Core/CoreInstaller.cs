@@ -56,7 +56,7 @@ namespace Beast.Radar.Core
             yield return typeof(CitySpawner);
             
             // Player
-            yield return typeof(PlayerPreferencesController);
+            yield return typeof(PlayerPreferenceSerializer);
             yield return typeof(GameTime.GameTime);
             yield return typeof(Player.Player);
             yield return typeof(GameTimeScale);
@@ -69,7 +69,7 @@ namespace Beast.Radar.Core
 
         protected override void BindCustom(DiContainer diContainer)
         {
-            diContainer.Bind<PlayerPreferences>().FromNew().AsSingle().NonLazy();
+            diContainer.Bind<PlayerPreference>().FromNew().AsSingle().NonLazy();
             diContainer.Bind<GameModel>().FromNew().AsSingle().NonLazy();
         }
     }

@@ -15,10 +15,8 @@ namespace Beast.Radar.UI
         private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
-        private readonly PlayerPreferences _playerPreferences;
-        private readonly UIConfig _uiConfig;
-        private readonly INoesisWindowManager _noesisWindowManager;
-
+        private readonly PlayerPreference _playerPreference;
+        
         private PauseWindowView _view;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
@@ -27,16 +25,16 @@ namespace Beast.Radar.UI
             CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
-            PlayerPreferences playerPreferences,
+            PlayerPreference playerPreference,
             UIConfig uiConfig,
             INoesisWindowManager noesisWindowManager)
         {
             _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
-            _playerPreferences = playerPreferences;
             _uiConfig = uiConfig;
             _noesisWindowManager = noesisWindowManager;
+            _playerPreference = playerPreference;
         }
 
         public UniTask Open(Empty data)
@@ -122,21 +120,26 @@ namespace Beast.Radar.UI
             };
 
         
+            _view.fpsToggle.Changed += on =>
+            {
+                _playerPreference.isMaxFps = on;
+                _setFPS();
+            };
 
             _view.pathfindingToggle.Changed += on =>
             {
-                _playerPreferences.isAutoPathfinding = on;
+                _playerPreference.isAutoPathfinding = on;
             };
             
             _view.mapMovementButtons.Increment.Clicked += () =>
             {
-                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
+                _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
             
             _view.mapMovementButtons.Decrement.Clicked += () =>
             {
-                _playerPreferences.beginMovementOnSingleTap = !_playerPreferences.beginMovementOnSingleTap;
+                _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };*/
         }
@@ -149,7 +152,7 @@ namespace Beast.Radar.UI
 
         private void _setFPS()
         {
-            if (_playerPreferences.isMaxFps)
+            if (_playerPreference.isMaxFps)
             {
                 RefreshRate refreshRate = Screen.currentResolution.refreshRateRatio;
                 float screenRate = (float)refreshRate.numerator / refreshRate.denominator;

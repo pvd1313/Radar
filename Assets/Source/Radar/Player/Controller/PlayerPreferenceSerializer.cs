@@ -1,39 +1,38 @@
 ﻿using System;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Radar.Debug
+namespace Beast.Radar.Player
 {
-    public class DebugPreferencesController : Actor
+    public class PlayerPreferenceSerializer : Actor
     {
         private readonly IFileManager _fileManager;
-        private readonly DebugPreferences _preferences;
+        private readonly PlayerPreference _preference;
 
-        public DebugPreferencesController(IFileManager fileManager, DebugPreferences preferences)
+        public PlayerPreferenceSerializer(IFileManager fileManager, PlayerPreference preference)
         {
             _fileManager = fileManager;
-            _preferences = preferences;
+            _preference = preference;
         }
 
         protected override UniTask _preferencesLoad(ConcurrentContext context)
         {
-            bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
+            bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
             if (!fileExists)
             {
                 return UniTask.CompletedTask;
             }
 
-            using StreamData stream = _fileManager.OpenToRead(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
+            using StreamData stream = _fileManager.OpenToRead(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
 
             try
             {
                 BinaryReader reader = new (stream.stream);
 
-                _preferences.Deserialize(reader);
+                _preference.Deserialize(reader);
             }
             catch (Exception e)
             {
@@ -45,13 +44,13 @@ namespace Beast.Radar.Debug
 
         protected override void _preferencesSave(BlockingContext context)
         {
-            using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
+            using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
 
             try
             {
                 BinaryWriter writer = new (stream.stream);
                 
-                _preferences.Serialize(writer);
+                _preference.Serialize(writer);
                 
                 stream.stream.Flush();
             }
@@ -60,5 +59,6 @@ namespace Beast.Radar.Debug
                 BDebug.LogException(e);
             }
         }
+        
     }
 }

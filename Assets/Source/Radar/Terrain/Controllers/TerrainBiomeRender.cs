@@ -84,8 +84,7 @@ namespace Beast.Radar.Terrain
             int textureSize = BMath.CeilToInt(BMath.Max(_screen.Width(), _screen.Height()) / cos60 * sin45);
             
             // Will not work when aspect < 1.5
-            textureSize = BMath.CeilToInt(textureSize / (float)WorldTransform.CellTileCount) *
-                          WorldTransform.CellTileCount;
+            textureSize = BMath.CeilToInt(textureSize / (float)BWorld.TILES_PER_CELL) * BWorld.TILES_PER_CELL;
 
             RenderTextureData textureData = _config.terrain.biomeRenderTexture.WithSize(textureSize);
             _biomeTexture = BGraphic.CreatePermRenderTexture(this, textureData);
@@ -141,16 +140,16 @@ namespace Beast.Radar.Terrain
             data.cellPixelSize = task.outputBiomeTexture.height / data.viewDistance / data.textureYScale;
             
             // Upscale when very close to terrain.
-            if (task.useDynamicConstraints && data.cellPixelSize > WorldTransform.CellTileCount)
+            if (task.useDynamicConstraints && data.cellPixelSize > BWorld.TILES_PER_CELL)
             {
-                data.viewDistance *= data.cellPixelSize / WorldTransform.CellTileCount;
-                data.cellPixelSize = WorldTransform.CellTileCount;
+                data.viewDistance *= data.cellPixelSize / BWorld.TILES_PER_CELL;
+                data.cellPixelSize = BWorld.TILES_PER_CELL;
             }
 
             // Snap to grid.
             if (task.useDynamicConstraints)
             {
-                data.snapGridSize = WorldTransform.CellTileCount / data.cellPixelSize;
+                data.snapGridSize = BWorld.TILES_PER_CELL / data.cellPixelSize;
                 data.renderPosition = BMath.Floor(task.renderPosition / data.snapGridSize) * data.snapGridSize;
             }
             else
@@ -160,7 +159,7 @@ namespace Beast.Radar.Terrain
             }
             
             data.renderDistance = data.viewDistance * data.textureYScale;
-            data.texelSize = 1f / data.renderDistance / WorldTransform.CellTileCount;
+            data.texelSize = 1f / data.renderDistance / BWorld.TILES_PER_CELL;
             
             // LODs.
             if (!task.useDynamicConstraints || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)

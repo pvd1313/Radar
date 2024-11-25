@@ -5,34 +5,34 @@ using Beast.Claw.Serialization;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 
-namespace Beast.Radar.Player
+namespace Beast.Radar.Debug
 {
-    public class PlayerPreferencesController : Actor
+    public class DebugPreferenceSerializer : Actor
     {
         private readonly IFileManager _fileManager;
-        private readonly PlayerPreferences _preferences;
+        private readonly DebugPreference _preference;
 
-        public PlayerPreferencesController(IFileManager fileManager, PlayerPreferences preferences)
+        public DebugPreferenceSerializer(IFileManager fileManager, DebugPreference preference)
         {
             _fileManager = fileManager;
-            _preferences = preferences;
+            _preference = preference;
         }
 
         protected override UniTask _preferencesLoad(ConcurrentContext context)
         {
-            bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
+            bool fileExists = _fileManager.Exists(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
             if (!fileExists)
             {
                 return UniTask.CompletedTask;
             }
 
-            using StreamData stream = _fileManager.OpenToRead(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
+            using StreamData stream = _fileManager.OpenToRead(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
 
             try
             {
                 BinaryReader reader = new (stream.stream);
 
-                _preferences.Deserialize(reader);
+                _preference.Deserialize(reader);
             }
             catch (Exception e)
             {
@@ -44,13 +44,13 @@ namespace Beast.Radar.Player
 
         protected override void _preferencesSave(BlockingContext context)
         {
-            using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.PLAYER_PREFERENCES);
+            using StreamData stream = _fileManager.OpenToWrite(FolderName.PREFERENCES, FileName.DEBUG_PREFERENCES);
 
             try
             {
                 BinaryWriter writer = new (stream.stream);
                 
-                _preferences.Serialize(writer);
+                _preference.Serialize(writer);
                 
                 stream.stream.Flush();
             }
@@ -59,6 +59,5 @@ namespace Beast.Radar.Player
                 BDebug.LogException(e);
             }
         }
-        
     }
 }
