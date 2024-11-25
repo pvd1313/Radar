@@ -20,7 +20,9 @@ namespace Beast.Radar.UI
         private PauseWindowView _view;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
-        
+        private readonly UIConfig _uiConfig;
+        private readonly INoesisWindowManager _noesisWindowManager;
+
         public PauseMenuWindow(
             CorePrefabLibrary library,
             IWindowManager windowManager,
@@ -41,18 +43,13 @@ namespace Beast.Radar.UI
         {
             _view.Visibility = Visibility.Visible;
 
-            _view.toggleFPS.IsChecked = _playerPreferences.isMaxFps;
-
-            /*
-            _view.loadButton.SetInteractable(false);
+            _view.toggleFPS.IsChecked = _playerPreference.isMaxFps;
 
             bool saveExists = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-            _view.loadButton.SetInteractable(saveExists);
-
-            _view.fpsToggle.SetValueWithoutNotify(_playerPreferences.isMaxFps);
-            _view.pathfindingToggle.SetValueWithoutNotify(_playerPreferences.isAutoPathfinding);
+            _view.buttonLoadGame.IsEnabled = saveExists;
+            
             _refreshMapMovementText();
-            */
+           
             return UniTask.CompletedTask;
         }
 
@@ -93,61 +90,48 @@ namespace Beast.Radar.UI
 
             _view.toggleFPS.Click += (sender, args) =>
             {
-                _playerPreferences.isMaxFps = _view.toggleFPS.IsChecked ?? false;
+                _playerPreference.isMaxFps = _view.toggleFPS.IsChecked ?? false;
                 _setFPS();
             };
 
-            /*
-
-            _view.loadButton.Clicked += () =>
+            _view.buttonLoadGame.Click += (sender, args) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
                 _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
                 _mainHUD.Open(default);
             };
 
-            _view.saveButton.Clicked += () =>
+            _view.buttonSaveGame.Click += (sender, args) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
                 // Also should block UI during save
                 _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                _view.loadButton.SetInteractable(true);
+                _view.buttonLoadGame.IsEnabled = true;
             };
 
-            _view.newGameButton.Clicked += () =>
+            _view.buttonNewGame.Click += (sender, args) =>
             {
                 _mapGenerationWindow.Open(default);
             };
 
-        
-            _view.fpsToggle.Changed += on =>
-            {
-                _playerPreference.isMaxFps = on;
-                _setFPS();
-            };
-
-            _view.pathfindingToggle.Changed += on =>
-            {
-                _playerPreference.isAutoPathfinding = on;
-            };
             
-            _view.mapMovementButtons.Increment.Clicked += () =>
+            _view.buttonNextMovement.Click += (sender, args) =>
             {
                 _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
             
-            _view.mapMovementButtons.Decrement.Clicked += () =>
+            _view.buttonPreviousMovement.Click += (sender, args) =>
             {
                 _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
-            };*/
+            };
         }
 
         private void _refreshMapMovementText()
         {
-            string mapMovementMode = _playerPreferences.beginMovementOnSingleTap ? "single tap" : "double tap";
-            //_view.mapMovementText.SetText(mapMovementMode);
+            string mapMovementMode = _playerPreference.beginMovementOnSingleTap ? "single tap" : "double tap";
+            _view.textMovement.Text = mapMovementMode;
         }
 
         private void _setFPS()

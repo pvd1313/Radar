@@ -103,7 +103,6 @@
                 Style="{StaticResource Style.Text.Light.Header}"
                 />
 
-            <!-- Save -->
             <Button x:Name="button_save"
                     Grid.Row = "1" 
                     Grid.Column="2"
@@ -145,8 +144,7 @@
               Background="{StaticResource Brush.Panel.Background}"
               CornerRadius="{StaticResource Corner.Border0}">
             </Border>
-           
-            
+ 
             <TextBlock 
              Grid.Row="3" 
              Grid.Column="1" Grid.ColumnSpan="2"
@@ -177,7 +175,7 @@
                     HorizontalAlignment="Left"
                     Margin="101,0,0,0"/>
 
-            <TextBlock x:Name="text_map_movement"
+            <TextBlock x:Name="text_movement"
                 Grid.Row="3" 
                 Grid.Column="2" Grid.ColumnSpan="3"
                 Text="SINGLE TAP"
