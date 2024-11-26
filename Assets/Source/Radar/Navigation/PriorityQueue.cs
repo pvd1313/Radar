@@ -7,15 +7,15 @@ namespace Beast.Radar.Navigation
         public int Count => _items.Length;
             
         private NativeList<int> _items;
-        private NativeList<int> _priorities;
+        private NativeList<float> _priorities;
             
         public PriorityQueue(Allocator allocator)
         {
             _items = new NativeList<int>(allocator);
-            _priorities = new NativeList<int>(allocator);
+            _priorities = new NativeList<float>(allocator);
         }
 
-        public void Enqueue(int item, int priority)
+        public void Enqueue(int item, float priority)
         {
             _items.Add(item);
             _priorities.Add(priority);
