@@ -55,7 +55,7 @@ namespace Beast.Radar.UI
 
         public UniTask Close()
         {
-           _view.Visibility = Visibility.Hidden;
+           _view.Visibility = Visibility.Collapsed;
 
            return UniTask.CompletedTask;
         }
@@ -66,7 +66,7 @@ namespace Beast.Radar.UI
 
             _noesisWindowManager.Attach(_view);
             
-            _view.Visibility = Visibility.Hidden;
+            _view.Visibility = Visibility.Collapsed;
             
             _windowManager.Register(this, WindowID.PAUSE);
             

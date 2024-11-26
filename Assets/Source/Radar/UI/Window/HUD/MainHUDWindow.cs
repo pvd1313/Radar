@@ -55,7 +55,7 @@ namespace Beast.Radar.UI
 
         public UniTask Close()
         {
-            _view.Visibility = Visibility.Hidden;
+            _view.Visibility = Visibility.Collapsed;
 
             _isOpened = false;
 
