@@ -517,6 +517,116 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
     </Style>
 
+    <!--  ============== RADIO BUTTON ==============  -->
+
+
+    <ControlTemplate x:Key="Template.RadioButtonBase" TargetType="RadioButton">
+        <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
+            <Grid.RenderTransform>
+                <ScaleTransform />
+            </Grid.RenderTransform>
+
+            <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource Corner.Border0}"
+                x:Name="Border" />
+
+            <ContentPresenter
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                Margin="{TemplateBinding Padding}"
+                TextElement.Foreground="{TemplateBinding Foreground}"
+                x:Name="PART_ContentPresenter" />
+
+            <!-- Bottom Stripe -->
+            <Rectangle
+                Fill="{TemplateBinding BorderBrush}"
+                Height="3"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                x:Name="BottomStripe" />
+        </Grid>
+
+        <ControlTemplate.Resources>
+            <!-- Animation for button press -->
+            <Storyboard x:Key="Anim.Press">
+                <DoubleAnimation
+                    DecelerationRatio="0.25"
+                    Duration="0:0:0.1"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                    To="0.99" />
+                <DoubleAnimation
+                    DecelerationRatio="0.25"
+                    Duration="0:0:0.1"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                    To="0.99" />
+            </Storyboard>
+
+            <Storyboard x:Key="Anim.Release">
+                <DoubleAnimation
+                    DecelerationRatio="1"
+                    Duration="0:0:0.2"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                    To="1" />
+                <DoubleAnimation
+                    DecelerationRatio="1"
+                    Duration="0:0:0.2"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                    To="1" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <ControlTemplate.Triggers>
+            <!-- When button is pressed -->
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}" />
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}" />
+                </Trigger.ExitActions>
+                <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Button.Normal}" />
+                <Setter Property="CornerRadius" TargetName="Border" Value="{DynamicResource Corner.Border0}" />
+                <Setter Property="Fill" TargetName="BottomStripe" Value="{DynamicResource Brush.Accent.Pressed}" />
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
+            </Trigger>
+
+            <!-- When radio button is selected (IsChecked) -->
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Accent.Normal}" />
+                <Setter Property="Fill" TargetName="BottomStripe" Value="{DynamicResource Brush.Accent.Pressed}" />
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Dark.Normal}" />
+            </Trigger>
+
+            <!-- When radio button is disabled -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}" />
+                <Setter Property="Fill" TargetName="BottomStripe" Value="{DynamicResource Brush.Element.Light.Disabled}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="RadioButton" x:Key="Style.RadioButton.Base">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource Brush.Button.Normal}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="0,0" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template" Value="{StaticResource Template.RadioButtonBase}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Normal}" />
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Normal}" />
+    </Style>
+
+
     <!--  ============== BAR ==============  -->
 
     <!--  ProgressBar  -->

@@ -1,14 +1,17 @@
-﻿<UserControl x:Class="Beast.Radar.UI.MapGenerationWindowView"
-             d:DesignHeight="480"
-             d:DesignWidth="960"
-             mc:Ignorable="d"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:noesis1="clr-namespace:Noesis">
+﻿<UserControl
+    Background="{StaticResource Brush.Panel.Dark.Normal}"
+    d:DesignHeight="480"
+    d:DesignWidth="960"
+    mc:Ignorable="d"
+    x:Class="Beast.Radar.UI.MapGenerationWindowView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    xmlns:noesis1="clr-namespace:Noesis"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -18,36 +21,219 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    <Viewbox Stretch="Uniform">
 
-    <Grid Background="{StaticResource Brush.Panel.Dark.Normal}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="390" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="10*" />
-            <RowDefinition Height="70*" />
-            <RowDefinition Height="10*" />
-        </Grid.RowDefinitions>
+            <!--  Grid params  -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="400" />
+                <ColumnDefinition Width="470" />
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+
+            <Viewbox
+                Grid.Column="2"
+                Grid.Row="1"
+                Stretch="Uniform"
+                Width="420">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="420" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="70" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Seed  -->
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1.2*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="SEED" />
 
 
-        <!-- Grid params-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10*" />
-            <ColumnDefinition Width="35*" />
-            <ColumnDefinition Width="40*" />
-            <ColumnDefinition Width="10*" />
-        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Foreground="{StaticResource Brush.Accent.Normal}"
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="BLACK FOREST"
+                            x:Name="text_seed" />
 
-        <Grid Grid.Row="1" Grid.Column="2">
-            <Slider x:Name="slider_water"
-                    Margin="0,4,0,0"
-                    Minimum="0"
-                    Maximum="100"
-                    Value="0.5"
+                        <Button
+                            Grid.Row="1"
+                            Height="30"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource Style.Button.Triangle}"
+                            Tag="90"
+                            Width="30"
+                            x:Name="button_next_seed" />
 
-                    RenderTransformOrigin="0.5,0.5" />
+                        <Button
+                            Grid.Row="1"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource Style.Button.Triangle}"
+                            Tag="270"
+                            Width="30"
+                            x:Name="button_previous_seed" />
 
+                    </Grid>
+
+                    <!--  Map size  -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Grid.ColumnSpan="4"
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="MAP SIZE" />
+
+                        <RadioButton
+                            Content="x512"
+                            Grid.Row="1"
+                            Margin="4"
+                            Style="{StaticResource Style.RadioButton.Base}" />
+
+                        <RadioButton
+                            Content="x1024"
+                            Grid.Column="1"
+                            Grid.Row="1"
+                            Margin="4"
+                            Style="{StaticResource Style.RadioButton.Base}" />
+
+                        <RadioButton
+                            Content="x2048"
+                            Grid.Column="2"
+                            Grid.Row="1"
+                            Margin="4"
+                            Style="{StaticResource Style.RadioButton.Base}" />
+
+                        <RadioButton
+                            Content="x4096"
+                            Grid.Column="3"
+                            Grid.Row="1"
+                            Margin="4"
+                            Style="{StaticResource Style.RadioButton.Base}" />
+                    </Grid>
+
+                    <!--  Water  -->
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.2*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="WATER" />
+
+                        <Slider
+                            Grid.Row="2"
+                            Margin="0,4,0,0"
+                            Maximum="100"
+                            Minimum="0"
+                            RenderTransformOrigin="0.5,0.5"
+                            Value="50"
+                            x:Name="slider_water" />
+                    </Grid>
+
+                    <!--  Forest  -->
+                    <Grid Grid.Row="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1.2*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="FOREST" />
+
+                        <Slider
+                            Grid.Row="1"
+                            Margin="0,4,0,0"
+                            Maximum="100"
+                            Minimum="0"
+                            RenderTransformOrigin="0.5,0.5"
+                            Value="50"
+                            x:Name="slider_forest" />
+                    </Grid>
+
+                    <!--  Biome size  -->
+                    <Grid Grid.Row="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1.2*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Style="{StaticResource Style.Text.Light.Header}"
+                            Text="BIOME SIZE" />
+
+
+                        <Slider
+                            Grid.Row="1"
+                            Margin="0,4,0,0"
+                            Maximum="100"
+                            Minimum="0"
+                            RenderTransformOrigin="0.5,0.5"
+                            Value="50"
+                            x:Name="slider_biome_size" />
+                    </Grid>
+
+                    <Button
+                        Content="CREATE"
+                        Grid.Row="6"
+                        Margin="{StaticResource Margin.GridElement}"
+                        Style="{StaticResource Style.ButtonBase}"
+                        x:Name="button_create" />
+
+                </Grid>
+            </Viewbox>
 
         </Grid>
-
-
-    </Grid>
+    </Viewbox>
 </UserControl>

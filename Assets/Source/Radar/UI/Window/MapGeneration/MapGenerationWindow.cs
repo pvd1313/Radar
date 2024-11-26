@@ -213,13 +213,13 @@ namespace Beast.Radar.UI
 
         private void _drawTexture()
         {
-            /*_previewRender.Render(new TerrainPreviewRenderTask
+            _previewRender.Render(new TerrainPreviewRenderTask
             {
                 terrain = _terrainData,
                 texture = _terrainTexture
             });
             
-            _menuView.mapImage.texture = _terrainTexture.color;*/
+            //_menuView.mapImage.texture = _terrainTexture.color;
         }
 
         protected override void _dispose(BlockingContext context)
