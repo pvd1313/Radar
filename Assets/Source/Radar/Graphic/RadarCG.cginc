@@ -67,7 +67,9 @@ inline float beast_dither_cs(float2 positionCS, float alpha)
         16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
     };
 
-    int index = int(positionCS.x) % 4 * 4 + int(positionCS.y) % 4;
+    uint x = uint(positionCS.x) % 4u;
+    uint y = uint(positionCS.y) % 4u;
+    uint index = y * 4u + x;
     
     return alpha - BAYER_MATRIX[index];
 }
