@@ -11,9 +11,6 @@ namespace Beast.Radar.Navigation
     public struct FindPathJob<TBiomeTexture> : IJob 
         where TBiomeTexture : IBiomeTexture     
     {
-        private const int MOVE_STRAIGHT_COST = 1;
-        private const int MOVE_DIAGONAL_COST = 2;
-
         public int2 startPosition;
         public int2 endPosition;
         public TBiomeTexture texture;
@@ -77,7 +74,7 @@ namespace Beast.Radar.Navigation
                         continue;
                     }
 
-                    int tentativeGCost = _calculateTentativeGCost(buffer.pathNodeList, currentNodeIndex, neighbourNodeIndex);
+                    float tentativeGCost = _calculateTentativeGCost(buffer.pathNodeList, currentNodeIndex, neighbourNodeIndex);
                         
                     PathNode neighbourNode = buffer.pathNodeList[neighbourNodeIndex];
 
@@ -101,7 +98,7 @@ namespace Beast.Radar.Navigation
             _buildPath(buffer.pathNodeList, buffer.pathNodeList[endNodeIndex]);
         }
 
-        private int _calculateTentativeGCost(
+        private float _calculateTentativeGCost(
             NativeList<PathNode> pathNodeList, 
             int currentNodeIndex,
             int neighbourNodeIndex)
@@ -112,8 +109,8 @@ namespace Beast.Radar.Navigation
             cost <<= 1;
 
             PathNode currentNode = pathNodeList[currentNodeIndex];
-            int distanceCost = _calcDistanceCost(currentNode.position, neighbourNode.position);
-            int movementCost = BMath.Max(1, cost) * distanceCost;
+            float distanceCost = _calcDistanceCost(currentNode.position, neighbourNode.position);
+            float movementCost = BMath.Max(1, cost) * distanceCost;
               
             return currentNode.gCost + movementCost;
         }
@@ -145,15 +142,9 @@ namespace Beast.Radar.Navigation
             return newIndex;
         }
 
-        private int _calcDistanceCost(int2 start, int2 end)
+        private float _calcDistanceCost(int2 start, int2 end)
         {
-            // return (int)BMath.DistanceSq(start, end);
-            
-            int xDistance = BMath.Abs(start.x - end.x);
-            int yDistance = BMath.Abs(start.y - end.y);
-            int remaining = BMath.Abs(xDistance - yDistance);
-            
-            return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+            return BMath.Distance(start, end);
         }
 
         private void _buildPath(NativeList<PathNode> pathNodes, PathNode endNode)
