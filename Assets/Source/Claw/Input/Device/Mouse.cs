@@ -119,7 +119,7 @@ namespace Beast.Claw.Input
             }
 
             float mouseScrollDelta = _driver.ReadMouseWheel();
-            FloatBounds2 viewport = new (0, 1);
+            Bounds2D viewport = new (0, 1);
 
             if (mouseScrollDelta != 0 && 
                 viewport.Contains(_mouseAxis.position))
@@ -138,7 +138,7 @@ namespace Beast.Claw.Input
         
         public void Dispose(BlockingContext context)
         {
-            _rawTouches.SafeDispose();
+            _rawTouches.Dispose();
         }
     }
 }

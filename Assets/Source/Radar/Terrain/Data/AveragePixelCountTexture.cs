@@ -18,7 +18,7 @@ namespace Beast.Radar.Terrain
         public int cellCountX;
         public NativeArray<TValue> texture;
 
-        public TValue GetPixelClamped(int2 worldPosition)
+        public readonly TValue GetPixelClamped(int2 worldPosition)
         {
             int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
             cellPosition.x = BMath.Clamp(cellPosition.x, 0, cellCountX - 1);
@@ -27,24 +27,24 @@ namespace Beast.Radar.Terrain
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
 
-        public TValue GetPixel(int2 worldPosition)
+        public readonly TValue GetPixel(int2 worldPosition)
         {
             int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
             
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
 
-        public int2 FloorToCellWorldPosition(int2 worldPosition)
+        public readonly int2 FloorToCellWorldPosition(int2 worldPosition)
         {
             return BMath.FloorToInt(worldPosition.Div(cellSize)) * cellSize;
         }
         
-        public int2 WorldPositionToCell(float2 worldPosition)
+        public readonly int2 WorldPositionToCell(float2 worldPosition)
         {
             return BMath.FloorToInt(worldPosition / cellSize);
         }
         
-        public int2 CellToWorldPoint(int2 cell)
+        public readonly int2 CellToWorldPoint(int2 cell)
         {
             return BMath.FloorToInt(cell.Mul(cellSize));
         }
@@ -84,12 +84,10 @@ namespace Beast.Radar.Terrain
 
         public void Dispose()
         {
-            if (!texture.IsCreated)
+            if (texture.IsCreated)
             {
-                return;
+                texture.Dispose();
             }
-            
-            texture.Dispose();
         }
     }
 }

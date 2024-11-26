@@ -78,7 +78,7 @@ namespace Beast.Claw.Collections
             return _array.Slice(0, _count);
         }
 
-        public void SafeDispose()
+        public void Dispose()
         {
             if (_array.IsCreated)
             {

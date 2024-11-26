@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Beast.Claw.Math;
+﻿using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Burst;
 using Unity.Collections;
@@ -9,77 +8,78 @@ using Unity.Mathematics;
 namespace Beast.Radar.Navigation
 {
     [BurstCompile]
-    public struct FindPathJob : IJob
+    public struct FindPathJob<TBiomeTexture> : IJob 
+        where TBiomeTexture : IBiomeTexture     
     {
         private const int MOVE_STRAIGHT_COST = 1;
         private const int MOVE_DIAGONAL_COST = 2;
 
-        public int textureSizeX;
         public int2 startPosition;
         public int2 endPosition;
-        public NativeArray<EBiomeName> texture;
-        public PathJobBuffer jobBuffer;
-        public ByteArray16 tileCosts;
-        public NativeList<int2> outputReversedPath;
+        public TBiomeTexture texture;
+        public Bounds2D searchBounds;
+        public PathJobBuffer buffer;
+        public ByteArray16 tileCost;
 
         public void Execute()
         {
-            outputReversedPath.Clear();
+            buffer.Clear();
             
-            int2 gridSizeXY = new (textureSizeX, textureSizeX);
-            
-            int endNodeIndex = _createOrGetPathNode(endPosition, ref jobBuffer.pathNodeList, ref jobBuffer.positionToIndexMap);
+            int endNodeIndex = _createOrGetPathNode(
+                endPosition, 
+                ref buffer.pathNodeList, 
+                ref buffer.positionToIndexMap);
                 
-            PathNode startNode = jobBuffer.pathNodeList[_createOrGetPathNode(
+            PathNode startNode = buffer.pathNodeList[_createOrGetPathNode(
                 startPosition, 
-                ref jobBuffer.pathNodeList, 
-                ref jobBuffer.positionToIndexMap)];
+                ref buffer.pathNodeList, 
+                ref buffer.positionToIndexMap)];
                
             startNode.gCost = 0;
             startNode.CalculateFCost();
-            jobBuffer.pathNodeList[startNode.index] = startNode;
+            buffer.pathNodeList[startNode.index] = startNode;
 
-            jobBuffer.openList.Enqueue(startNode.index, startNode.fCost);
-            jobBuffer.openSet.Add(startNode.index);
+            buffer.openList.Enqueue(startNode.index, startNode.fCost);
+            buffer.openSet.Add(startNode.index);
 
-            while (jobBuffer.openList.Count > 0)
+            while (buffer.openList.Count > 0)
             {
-                int currentNodeIndex = jobBuffer.openList.Dequeue();
+                int currentNodeIndex = buffer.openList.Dequeue();
                    
-                jobBuffer.openSet.Remove(currentNodeIndex);
+                buffer.openSet.Remove(currentNodeIndex);
                     
                 if (currentNodeIndex == endNodeIndex)
                 {
                     break;
                 }
 
-                jobBuffer.closedList.Add(currentNodeIndex);
+                buffer.closedList.Add(currentNodeIndex);
 
-                for (int i = 0; i < NeighbourOffsets.COUNT; i++)
+                for (int i = 0; i < NeighbourOffset.COUNT; i++)
                 {
-                    int2 offset = NeighbourOffsets.Get(i);
+                    int2 offset = NeighbourOffset.Get(i);
                     
-                    PathNode currentNode = jobBuffer.pathNodeList[currentNodeIndex];
+                    PathNode currentNode = buffer.pathNodeList[currentNodeIndex];
                     int2 neighbourPosition = currentNode.position + offset;
-                        
-                    if (!_isPositionInsideGrid(neighbourPosition, gridSizeXY))
+
+                    if (!searchBounds.Contains(neighbourPosition))
                     {
                         continue;
                     }
 
                     int neighbourNodeIndex = _createOrGetPathNode(
                         neighbourPosition, 
-                        ref jobBuffer.pathNodeList,
-                        ref jobBuffer.positionToIndexMap);
+                        ref buffer.pathNodeList,
+                        ref buffer.positionToIndexMap);
                     
-                    if (jobBuffer.closedList.Contains(neighbourNodeIndex))
+                    if (buffer.closedList.Contains(neighbourNodeIndex))
                     {
                         continue;
                     }
 
-                    int tentativeGCost = _calculateTentativeGCost(jobBuffer.pathNodeList, currentNodeIndex, neighbourNodeIndex);
+                    int tentativeGCost = _calculateTentativeGCost(buffer.pathNodeList, currentNodeIndex, neighbourNodeIndex);
                         
-                    PathNode neighbourNode = jobBuffer.pathNodeList[neighbourNodeIndex];
+                    PathNode neighbourNode = buffer.pathNodeList[neighbourNodeIndex];
 
                     if (tentativeGCost < neighbourNode.gCost)
                     {
@@ -87,24 +87,18 @@ namespace Beast.Radar.Navigation
                         neighbourNode.gCost = tentativeGCost;
                         neighbourNode.CalculateFCost();
                         
-                        jobBuffer.pathNodeList[neighbourNodeIndex] = neighbourNode;
+                        buffer.pathNodeList[neighbourNodeIndex] = neighbourNode;
 
-                        if (!jobBuffer.openSet.Contains(neighbourNodeIndex))
+                        if (!buffer.openSet.Contains(neighbourNodeIndex))
                         {
-                            jobBuffer.openList.Enqueue(neighbourNodeIndex, neighbourNode.fCost);
-                            jobBuffer.openSet.Add(neighbourNodeIndex);
+                            buffer.openList.Enqueue(neighbourNodeIndex, neighbourNode.fCost);
+                            buffer.openSet.Add(neighbourNodeIndex);
                         }
                     }
                 }
             }
 
-            _calcPath(jobBuffer.pathNodeList, jobBuffer.pathNodeList[endNodeIndex]);
-            
-            jobBuffer.pathNodeList.Clear();
-            jobBuffer.positionToIndexMap.Clear();
-            jobBuffer.openList.Clear();
-            jobBuffer.closedList.Clear();
-            jobBuffer.openSet.Clear(); 
+            _buildPath(buffer.pathNodeList, buffer.pathNodeList[endNodeIndex]);
         }
 
         private int _calculateTentativeGCost(
@@ -113,24 +107,15 @@ namespace Beast.Radar.Navigation
             int neighbourNodeIndex)
         {
             PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
-            int textureIndex = neighbourNode.position.y * textureSizeX + neighbourNode.position.x;
-            int tileCost = tileCosts.GetByte((byte)texture[textureIndex]);
-            tileCost <<= 1;
+            EBiomeName biomeName = texture.GetPixel(neighbourNode.position);
+            int cost = tileCost.GetByte((byte)biomeName);
+            cost <<= 1;
 
             PathNode currentNode = pathNodeList[currentNodeIndex];
             int distanceCost = _calcDistanceCost(currentNode.position, neighbourNode.position);
-            int movementCost = BMath.Max(1, tileCost) * distanceCost;
+            int movementCost = BMath.Max(1, cost) * distanceCost;
               
             return currentNode.gCost + movementCost;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool _isPositionInsideGrid(int2 gridPosition, int2 gridSize)
-        {
-            return gridPosition.x >= 0 && 
-                   gridPosition.y >= 0 && 
-                   gridPosition.x < gridSize.x &&
-                   gridPosition.y < gridSize.y;
         }
 
         private int _createOrGetPathNode(
@@ -162,6 +147,8 @@ namespace Beast.Radar.Navigation
 
         private int _calcDistanceCost(int2 start, int2 end)
         {
+            // return (int)BMath.DistanceSq(start, end);
+            
             int xDistance = BMath.Abs(start.x - end.x);
             int yDistance = BMath.Abs(start.y - end.y);
             int remaining = BMath.Abs(xDistance - yDistance);
@@ -169,7 +156,7 @@ namespace Beast.Radar.Navigation
             return MOVE_DIAGONAL_COST * BMath.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
         }
 
-        private void _calcPath(NativeList<PathNode> pathNodes, PathNode endNode)
+        private void _buildPath(NativeList<PathNode> pathNodes, PathNode endNode)
         {
             if (endNode.cameFromNodeIndex == -1)
             {
@@ -178,11 +165,11 @@ namespace Beast.Radar.Navigation
 
             while (endNode.cameFromNodeIndex != -1)
             {
-                outputReversedPath.Add(endNode.position);
+                buffer.outputPath.Add(endNode.position);
                 endNode = pathNodes[endNode.cameFromNodeIndex];
             }
 
-            outputReversedPath.Add(endNode.position);
+            buffer.outputPath.Add(endNode.position);
         }
     }
 }

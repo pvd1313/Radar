@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.Navigation
 {
-    public static class NeighbourOffsets
+    public static class NeighbourOffset
     {
         public const int COUNT = 8;
         

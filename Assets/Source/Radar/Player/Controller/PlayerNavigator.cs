@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Gizmo;
@@ -12,27 +13,30 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Beast.Radar.Player
 {
     public class PlayerNavigator : Controller
     {
-        public float RemainingDistance => _remainingDistance;
+        private const float MAX_PATH_DISTANCE_1KM = 128;
         
         private readonly IGizmoManager _gizmoManager;
         private readonly PlayerConfig _config;
         private readonly ITerrainBackedBiome _biome;
 
-        private IGizmoHandle _gizmo;
         private PathJobBuffer _pathJobBuffer;
         private Stopwatch _stopwatch;
 
-        private NativeList<int2> _path;
-        private int _pathRemainingDiagonalCount;
-        private int _pathRemainingStraightCount;
-        private float _remainingDistance;
+        private IGizmoHandle _gizmo8KM;
+        private PathNavigator _path8KM;
 
-        private int _targetNodeIndex;
+        private IGizmoHandle _gizmo1KM;
+        private PathNavigator _path1KM;
+
+        private NativeList<float2> _consumed8KMPoints;
+
+        private float2 _finishPosition;
         
         public PlayerNavigator(
             IGizmoManager gizmoManager, 
@@ -46,155 +50,208 @@ namespace Beast.Radar.Player
 
         public void Warmup()
         {
-            _gizmo = _gizmoManager.CreateHandle(this);
+            _pathJobBuffer = PathJobBuffer.Create(_config.pathBufferCapacity, Allocator.Persistent);
             
-            _pathJobBuffer = new PathJobBuffer
-            {
-                openList = new PriorityQueue(Allocator.Persistent),
-                outputPath = new NativeList<int2>(Allocator.Persistent),
-                pathNodeList = new NativeList<PathNode>(_config.maxNodeCount, Allocator.Persistent),
-                positionToIndexMap = new NativeHashMap<int2, int>(_config.maxNodeCount, Allocator.Persistent),
-                closedList = new NativeHashSet<int>(_config.maxNodeCount, Allocator.Persistent),
-                openSet = new NativeHashSet<int>(_config.maxNodeCount, Allocator.Persistent),
-            };
+            _path8KM = new PathNavigator(_config.pathBufferCapacity);
+            _gizmo8KM = _gizmoManager.CreateHandle(this);
 
-            _path = BNative.PermList<int2>(256);
-            _targetNodeIndex = 0;
+            _path1KM = new PathNavigator(_config.pathBufferCapacity);
+            _gizmo1KM = _gizmoManager.CreateHandle(this);
 
+            _consumed8KMPoints = BNative.PermList<float2>(16);
+            
             _stopwatch = new Stopwatch();
         }
 
-        public void MovePlayer(ref float2 position, float movementDelta, out bool isDestinationReached)
+        public void MovePlayer(ref float2 playerPosition, float movementDelta, out bool isDestinationReached)
         {
             isDestinationReached = false;
-            
-            if (_targetNodeIndex >= _path.Length)
+
+            if (BMath.Distance(_finishPosition, playerPosition) < BWorld.DESTINATION_REACHED_DISTANCE)
             {
                 isDestinationReached = true;
                 return;
             }
 
-            int2 targetNode = _path[_targetNodeIndex];
-            float2 targetNodeWorld = _getCellCenter(targetNode);
-            
-            position = BMath.MoveTowards(position, targetNodeWorld, BMath.Length(movementDelta));
+            float2 targetPosition = _finishPosition;
 
-            if (BMath.Distance(position, targetNodeWorld) < BWorld.DESTINATION_REACHED_DISTANCE)
+            _consume8kmAndRebuild1km(playerPosition, false);
+
+            if (_path1KM.GetRemainingNodeCount() > 0)
             {
-                if (_targetNodeIndex > 0)
+                targetPosition = _path1KM.GetTargetNodeWorldPosition();
+            }
+
+            playerPosition = BMath.MoveTowards(playerPosition, targetPosition, BMath.Length(movementDelta));
+
+            if (_path1KM.GetRemainingNodeCount() > 0)
+            {
+                if (_path1KM.GetRemainingNodeCount() == 1 ||
+                    BMath.Distance(playerPosition, targetPosition) < 1)
                 {
-                    if (BNavigation.IsStraight(_path[_targetNodeIndex - 1], targetNode))
+                    _path1KM.SwitchToNextTargetNode();
+                }
+            }
+        }
+
+        public void Setup(float2 start, float2 finish)
+        {
+            _finishPosition = finish;
+            
+            _buildPath8KM(start, finish);
+            
+            _consumed8KMPoints.Clear();
+
+            _consume8kmAndRebuild1km(start, true);
+        }
+
+        public void Clear()
+        {
+            _gizmo1KM.Clear();
+            _gizmo8KM.Clear();
+            _path1KM.Clear();
+            _path8KM.Clear();
+        }
+
+        private void _consume8kmAndRebuild1km(float2 playerPosition, bool isForce)
+        {
+            bool mustRebuild1KM = isForce;
+            
+            float2 targetPosition = _finishPosition;
+
+            bool isFirstConsume = true;
+            
+            while (_path8KM.GetRemainingNodeCount() > 0)
+            {
+                float2 position8KM = _path8KM.GetTargetNodeWorldPosition();
+
+                if (BMath.Distance(position8KM, playerPosition) > MAX_PATH_DISTANCE_1KM)
+                {
+                    break;
+                }
+
+                targetPosition = position8KM;
+                mustRebuild1KM = true;
+
+                if (isFirstConsume)
+                {
+                    if (_consumed8KMPoints.Length > 0)
                     {
-                        _pathRemainingStraightCount--;
+                        _consumed8KMPoints.RemoveAt(0);
                     }
-                    else
-                    {
-                        _pathRemainingDiagonalCount--;
-                    }
+                    
+                    isFirstConsume = false;
                 }
                 
-                _targetNodeIndex++;
+                _consumed8KMPoints.Add(position8KM);
+                
+                _path8KM.SwitchToNextTargetNode();
+
+                if (_path8KM.GetRemainingNodeCount() == 0)
+                {
+                    targetPosition = _finishPosition;
+                }
             }
 
-            _remainingDistance = _calcRemainingDistance(position);
-
-            BDebug.Track(this, nameof(_targetNodeIndex), _targetNodeIndex);
-        }
-
-        private float _calcRemainingDistance(float2 playerPosition)
-        {
-            int straightCount = _pathRemainingStraightCount;
-            int diagonalCount = _pathRemainingDiagonalCount;
-
-            float distance = 0;
-
-            if (_targetNodeIndex > 0 && _targetNodeIndex < _path.Length)
+            if (mustRebuild1KM)
             {
-                int2 fromNode = _path[_targetNodeIndex - 1];
-                int2 targetNode = _path[_targetNodeIndex];
-
-                if (BNavigation.IsStraight(fromNode, targetNode))
-                {
-                    straightCount--;
-                }
-                else
-                {
-                    diagonalCount--;
-                }
-
-                distance += BMath.Distance(playerPosition, _getCellCenter(targetNode));
+                _buildPath1KM(playerPosition, targetPosition);
             }
-
-            distance += _biome.Terrain8kmCell.cellSize * straightCount;
-            distance += diagonalCount * _biome.Terrain8kmCell.cellSize * BMath.SQRT2;
-
-            return distance;
         }
 
-        private float2 _getCellCenter(int2 cellIndex)
+        private void _buildPath8KM(float2 start, float2 finish)
         {
-            float2 cellSizeHalf = _biome.Terrain8kmCell.cellSize * 0.5f;
+            int textureSize = _biome.Terrain8kmCell.cellCountX;
             
-            return _biome.Terrain8kmCell.CellToWorldPoint(cellIndex) + cellSizeHalf;
-        }
-
-        public void SetupPath(float2 start, float2 finish)
-        {
-            FindPathJob job = new ()
+            FindPathJob<AverageBiomeTexture> job = new ()
             {
                 startPosition = _biome.Terrain8kmCell.WorldPositionToCell(start),
                 endPosition = _biome.Terrain8kmCell.WorldPositionToCell(finish),
-                tileCosts = _config.TileSpeedModifiersToTileCost(),
-                textureSizeX = _biome.Terrain8kmCell.cellCountX,
-                texture = _biome.Terrain8kmCell.texture,
-                outputReversedPath = _path,
-                jobBuffer = _pathJobBuffer
+                tileCost = _config.TileSpeedModifiersToTileCost(),
+                texture = new AverageBiomeTexture(_biome.Terrain8kmCell),
+                buffer = _pathJobBuffer,
+                searchBounds = new Bounds2D(0, textureSize - 1, 0, textureSize - 1)
             };
             
             _stopwatch.Restart();
-            
+            Profiler.BeginSample("8km_job");
             job.Schedule().Complete();
-            
+            Profiler.EndSample();
             _stopwatch.Stop();
-            
-            _path.Reverse();
-            _targetNodeIndex = 0;
-            BNavigation.CalcPathNodeTypeCount(_path, out _pathRemainingDiagonalCount, out _pathRemainingStraightCount);
+            BDebug.Track(this, "8km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
 
-            _remainingDistance = _calcRemainingDistance(start);
-            
-            BDebug.Track(this, "jobElapsedMS", _stopwatch.ElapsedMillisecondsFloat());
-            BDebug.Track(this, "nodeCount", _path.Length);
-            BDebug.Track(this, nameof(_targetNodeIndex), _targetNodeIndex);
-            
-            _redrawPathGizmo();
+            _path8KM.Setup(job.buffer.outputPath, _biome.Terrain8kmCell.cellSize);
+            _path8KM.DrawGizmo(_gizmo8KM, Color.magenta.WithAlpha(0.5f));
         }
-        
-        [Conditional("DEVELOPMENT")]
-        private void _redrawPathGizmo()
-        {
-            _gizmo.Clear();
-            _gizmo.SetColor(Color.magenta.WithAlpha(0.4f));
-            
-            float cellSize = _biome.Terrain8kmCell.cellSize;
-            float2 cellSizeHalf = cellSize * 0.5f;
-            
-            if (_path.Length > 0)
-            {
-                foreach (int2 point in _path)
-                {
-                    float2 position = _biome.Terrain8kmCell.CellToWorldPoint(point) + cellSizeHalf;
 
-                    _gizmo.AddQuad(position, cellSize);
-                }
+        private void _buildPath1KM(float2 start, float2 finish)
+        {
+            int2 startCell = _biome.Terrain1kmCell.WorldPositionToCell(start);
+            int2 finishCell = _biome.Terrain1kmCell.WorldPositionToCell(finish);
+
+            Bounds2D searchBounds = Bounds2D.FromTwoPoints(startCell, finishCell);
+
+            float searchRangeX = searchBounds.x.GetRange();
+            float searchRangeY = searchBounds.y.GetRange();
+
+            float deltaRangeHalf = BMath.Ceil((searchRangeY - searchRangeX) * 0.5f);
+
+            // This will make search bounds to be a square.
+            if (deltaRangeHalf > 0)
+            {
+                searchBounds.x = searchBounds.x.Expand(deltaRangeHalf);
             }
+            else
+            {
+                searchBounds.y = searchBounds.y.Expand(deltaRangeHalf * -1);
+            }
+
+            float km8Radius = _biome.Terrain8kmCell.cellSize * 0.5f;
+            foreach (float2 point8KM in _consumed8KMPoints)
+            {
+                Bounds2D pointBounds = Bounds2D.FromPointWithRadius(point8KM, km8Radius);
+                searchBounds = searchBounds.EnsureContains(pointBounds);
+            }
+            
+            int textureSize = _biome.Terrain1kmCell.blockSize * _biome.Terrain1kmCell.blockCountX;
+            Bounds2D textureBounds = new (0, textureSize - 1);
+
+            searchBounds = searchBounds.EnsureInside(textureBounds);
+            
+            FindPathJob<BiomeTextureWithBlocks> job = new()
+            {
+                startPosition = startCell,
+                endPosition = finishCell,
+                tileCost = _config.TileSpeedModifiersToTileCost(),
+                texture = new BiomeTextureWithBlocks(_biome.Terrain1kmCell),
+                buffer = _pathJobBuffer,
+                searchBounds = searchBounds,
+            };
+            
+            _stopwatch.Restart();
+            Profiler.BeginSample("1km_job");
+            job.Schedule().Complete();
+            Profiler.EndSample();
+            _stopwatch.Stop();
+            BDebug.Track(this, "1km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
+            
+            _path1KM.Setup(job.buffer.outputPath, 1);
+            _path1KM.DrawGizmo(_gizmo1KM, Color.yellow.WithAlpha(0.5f));
+        }
+
+        public float GetRemainingDistance()
+        {
+            return _path8KM.GetDistanceFromTargetNodeToFinish() + _path1KM.GetDistanceFromTargetNodeToFinish();
         }
 
         public void Dispose()
         {
-            _gizmo.Dispose();
+            _gizmo1KM.Dispose();
+            _gizmo8KM.Dispose();
             _pathJobBuffer.Dispose();
-            _path.Dispose();
+            _path1KM.Dispose();
+            _path8KM.Dispose();
+            _consumed8KMPoints.Dispose();
         }
     }
 }

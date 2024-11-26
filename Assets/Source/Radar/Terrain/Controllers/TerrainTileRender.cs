@@ -99,8 +99,7 @@ namespace Beast.Radar.Terrain
             worldPoint.x -= texelSize;
             worldPoint.y += texelSize * 2.0f;
             
-            // Snap to the grid.
-            worldPoint = BMath.Floor(worldPoint * cellTileCount) / cellTileCount + texelSize * 0.5f;
+            worldPoint = BWorld.SnapToTileGridCenter(worldPoint);
             viewportPoint = _camera.WorldToViewport(worldPoint);
             
             // Fade
