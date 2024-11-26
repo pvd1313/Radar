@@ -23,9 +23,8 @@ namespace Beast.Radar.UI
 
         //private MapGenerationView _menuView;
         private MapGenerationWindowView _view;
-        private ButtonRadioGroup<RadioButton> _sizeButtonsGroup;
         private Dictionary<RadioButton, int> _buttonSizes;
-        
+
         private TerrainData _terrainData;
         private TerrainPreviewTexture _terrainTexture;
         private int _seedIndex;
@@ -51,22 +50,22 @@ namespace Beast.Radar.UI
 
         public UniTask Open(Empty data)
         {
-            /*_configureView();
+            _configureView();
+
             _drawTexture();
-            */
 
             _view.Visibility = Visibility.Visible;
-            
+
             return UniTask.CompletedTask;
         }
 
         public UniTask Close()
         {
-            //_hideView();
-            //_terrainTexture.Dispose();
-            //_terrainTexture = null;
-
             _view.Visibility = Visibility.Collapsed;
+
+            _terrainTexture.Dispose();
+
+            _terrainTexture = null;
 
             return UniTask.CompletedTask;
         }
@@ -76,141 +75,125 @@ namespace Beast.Radar.UI
             _uiConfig.MapGenerationWindowAsset.Instantiate(out _view);
 
             _view.Visibility = Visibility.Collapsed;
-            
-            _noesisWindowManager.Attach(_view);
-            
-            _windowManager.Register(this, WindowID.MAP_GENERATION);
 
+            _noesisWindowManager.Attach(_view);
+
+            _windowManager.Register(this, WindowID.MAP_GENERATION);
 
             _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
 
-            /*_buttonSizes = new()
-            {
-                {_menuView.sizeButtons[0], 512},
-                {_menuView.sizeButtons[1], 1024},
-                {_menuView.sizeButtons[2], 2048},
-                {_menuView.sizeButtons[3], 4096},
-            };
-            _sizeButtonsGroup = new ButtonRadioGroup<RadioButton>(_menuView.sizeButtons);
-            _sizeButtonsGroup.Warmup();*/
-            
             _subscribeView();
-            
+
             return UniTask.CompletedTask;
         }
 
         private void _configureView()
         {
-            /*int size = (int)(_menuView.mapImage.rectTransform.sizeDelta.x * _generationConfig.previewSizeMultiplier); 
+            int imageSize = 300;
+            int size = (int)(imageSize * _generationConfig.previewSizeMultiplier);
             _terrainTexture = _previewRender.CreateTexture(this, size);
-            
-            RadioButton startSizeButton = _menuView.sizeButtons[3]; 
-            
+
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             MapGenerationSeed seed = _generationConfig.seeds[_seedIndex];
-        
+
             _terrainData = new TerrainData
             {
                 biomeSize01 = 0.5f,
                 seed = seed.value,
-                terrainSize = _buttonSizes[startSizeButton],
+                terrainSize = 2048,
                 water01 = 0.2f,
                 forest01 = 0.2f
             };
-            
-            _menuView.biomeSlider.SetValueWithoutNotify(_terrainData.biomeSize01);
-            _menuView.waterSlider.SetValueWithoutNotify(_terrainData.water01);
-            _menuView.forestSlider.SetValueWithoutNotify(_terrainData.forest01);
-            _menuView.seedResult.SetText(seed.name);
-            _sizeButtonsGroup.Select(startSizeButton);*/
+
+            _view.sliderBiomeSize.Value = _terrainData.biomeSize01 * 100;
+            _view.sliderWater.Value = _terrainData.water01 * 100;
+            _view.sliderBiomeSize.Value = _terrainData.biomeSize01 * 100;
+            _view.textSeed.Text = seed.name;
+            _view.buttonSize2048.IsChecked = true;
         }
 
         private void _subscribeView()
         {
-            /*_sizeButtonsGroup.Selected += _onSizeSelected;
-            _menuView.seedButtons.Clicked += _onSeedButtonsClicked;
-            _menuView.closeButton.Clicked += _onCloseButtonClicked;
-            _menuView.createMapButton.Clicked += _onCreateMapButtonClicked;
-            _menuView.forestSlider.EndedChange += _onForestEndedChange;
-            _menuView.waterSlider.EndedChange += _onWaterEndedChange;
-            _menuView.biomeSlider.EndedChange += _onBiomeSizeEndedChange;*/
-        }
-
-        private void _unsubscribeView()
-        {
-            /*_sizeButtonsGroup.Selected -= _onSizeSelected;
-            _menuView.seedButtons.Clicked -= _onSeedButtonsClicked;
-            _menuView.closeButton.Clicked -= _onCloseButtonClicked;
-            _menuView.createMapButton.Clicked -= _onCreateMapButtonClicked;
-            _menuView.forestSlider.EndedChange -= _onForestEndedChange;
-            _menuView.waterSlider.EndedChange -= _onWaterEndedChange;
-            _menuView.biomeSlider.EndedChange -= _onBiomeSizeEndedChange;*/
-        }
-
-        private void _onBiomeSizeEndedChange(float value)
-        {
-            /*_terrainData.biomeSize01 = value;
-            _drawTexture();*/
-        }
-
-        private void _onSizeSelected(RadioButton button)
-        {
-            /*_terrainData.terrainSize = _buttonSizes[button];
-            _drawTexture();
-            BDebug.Track(this, "size", _terrainData.terrainSize);*/
-        }
-
-        private void _onWaterEndedChange(float value)
-        {
-            /*_terrainData.water01 = value;
-            _drawTexture();
-            BDebug.Track(this, "water", _terrainData.water01);*/
-        }
-
-        private void _onForestEndedChange(float value)
-        {
-            /*_terrainData.forest01 = value;
-            _drawTexture();
-            BDebug.Track(this, "forest", _terrainData.forest01);*/
-        }
-
-        private void _onSeedButtonsClicked(int step)
-        {
-            /*_seedIndex += step;
-            if (_seedIndex < 0)
+            _view.buttonCreate.Click += (sender, args) =>
             {
-                _seedIndex = _generationConfig.seeds.Length - 1;
-            }
-            else if (_seedIndex == _generationConfig.seeds.Length)
-            {
-                _seedIndex = 0;
-            }
+                _newGameSetup.StartNewGame(_terrainData);
+                _mainHUD.Open(default);
+            };
 
-            MapGenerationSeed seedData = _generationConfig.seeds[_seedIndex];
-            string seedName = seedData.name;
-            _menuView.seedResult.SetText(seedName);
-            _terrainData.seed = seedData.value; 
-            _drawTexture();
+            _view.buttonClose.Click += (sender, args) =>
+            {
+                _mainHUD.Open(default);
+            };
+
+            _view.buttonNextSeed.Click += (sender, args) =>
+            {
+                _seedIndex++;
+                if (_seedIndex == _generationConfig.seeds.Length)
+                {
+                    _seedIndex = 0;
+                }
+
+                _refreshSeed();
+            };
+
+            _view.buttonPreviousSeed.Click += (sender, args) =>
+            {
+                _seedIndex--;
+
+                if (_seedIndex < 0)
+                {
+                    _seedIndex = _generationConfig.seeds.Length - 1;
+                }
+
+                _refreshSeed();
+            };
             
-            BDebug.Track(this, "seed", _terrainData.seed);*/
+            for (int i = 0; i < _view.buttonsSize.Length; i++)
+            {
+                int size = (i + 1) * 512;
+                _view.buttonsSize[i].Click += (sender, args) =>
+                {
+                    _terrainData.terrainSize = size;
+                    _drawTexture();
+                    BDebug.Track(this, "size", _terrainData.terrainSize);
+                };
+            }
+
+            _view.sliderWater.ValueChanged += (sender, args) =>
+            {
+                _terrainData.water01 = args.NewValue / 100;
+                _drawTexture();
+                BDebug.Track(this, "water", _terrainData.water01);
+            };
+            
+            _view.sliderForest.ValueChanged += (sender, args) =>
+            {
+                _terrainData.forest01 = args.NewValue / 100;
+                _drawTexture();
+                BDebug.Track(this, "forest", _terrainData.forest01);
+            };
+            
+            _view.sliderBiomeSize.ValueChanged += (sender, args) =>
+            {
+                _terrainData.biomeSize01 = args.NewValue / 100;
+                _drawTexture();
+                BDebug.Track(this, "biome size", _terrainData.biomeSize01);
+            };
         }
         
-        private void _onCreateMapButtonClicked()
+        private void _refreshSeed()
         {
-            _newGameSetup.StartNewGame(_terrainData);
-            _mainHUD.Open(default);
-        }
+            MapGenerationSeed seedData = _generationConfig.seeds[_seedIndex];
 
-        private void _onCloseButtonClicked()
-        {
-            _mainHUD.Open(default);
-        }
+            _view.textSeed.Text = seedData.name;
 
-        private void _hideView()
-        {
-            _view.Visibility = Visibility.Collapsed;
-        }
+            _terrainData.seed = seedData.value;
 
+            _drawTexture();
+
+            BDebug.Track(this, "seed", _terrainData.seed);
+        }
+        
         private void _drawTexture()
         {
             _previewRender.Render(new TerrainPreviewRenderTask
@@ -219,14 +202,7 @@ namespace Beast.Radar.UI
                 texture = _terrainTexture
             });
             
-            //_menuView.mapImage.texture = _terrainTexture.color;
-        }
-
-        protected override void _dispose(BlockingContext context)
-        {
-            //_unsubscribeView();
-
-            //_sizeButtonsGroup.Dispose();
+            //todo set texture
         }
     }
 }

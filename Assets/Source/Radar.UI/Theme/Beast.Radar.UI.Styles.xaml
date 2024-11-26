@@ -517,10 +517,104 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
     </Style>
 
+
+    <!--  Close button  -->
+
+    <ControlTemplate TargetType="Button" x:Key="Template.Button.Close">
+        <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
+            <Grid.RenderTransform>
+                <ScaleTransform />
+            </Grid.RenderTransform>
+            <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{StaticResource Border.Normal}"
+                CornerRadius="{StaticResource Corner.Border0}"
+                x:Name="Border" />
+            <Grid
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                x:Name="CrossGrid">
+                <Path
+                    Data="M 0,0 L 1,1 M 1,0 L 0,1"
+                    Height="20"
+                    Stretch="Uniform"
+                    Stroke="{TemplateBinding Foreground}"
+                    StrokeThickness="3"
+                    Width="20" />
+            </Grid>
+
+        </Grid>
+
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="Anim.Press">
+                <DoubleAnimation
+                    DecelerationRatio="0.25"
+                    Duration="0:0:0.1"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                    To="0.9" />
+                <DoubleAnimation
+                    DecelerationRatio="0.25"
+                    Duration="0:0:0.1"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                    To="0.9" />
+            </Storyboard>
+
+            <Storyboard x:Key="Anim.Release">
+                <DoubleAnimation
+                    DecelerationRatio="1"
+                    Duration="0:0:0.2"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleX"
+                    To="1" />
+                <DoubleAnimation
+                    DecelerationRatio="1"
+                    Duration="0:0:0.2"
+                    Storyboard.TargetName="TemplateRoot"
+                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                    To="1" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Press}" />
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Anim.Release}" />
+                </Trigger.ExitActions>
+                <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Button.Normal}" />
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="Button" x:Key="Style.Button.Close">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource Brush.Button.Normal}" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Normal}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Light.Normal}" />
+        <Setter Property="Template" Value="{StaticResource Template.Button.Close}" />
+    </Style>
+
+
     <!--  ============== RADIO BUTTON ==============  -->
 
 
-    <ControlTemplate x:Key="Template.RadioButtonBase" TargetType="RadioButton">
+    <ControlTemplate TargetType="RadioButton" x:Key="Template.RadioButtonBase">
         <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
             <Grid.RenderTransform>
                 <ScaleTransform />
@@ -535,12 +629,12 @@
 
             <ContentPresenter
                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                 Margin="{TemplateBinding Padding}"
                 TextElement.Foreground="{TemplateBinding Foreground}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                 x:Name="PART_ContentPresenter" />
 
-            <!-- Bottom Stripe -->
+            <!--  Bottom Stripe  -->
             <Rectangle
                 Fill="{TemplateBinding BorderBrush}"
                 Height="3"
@@ -550,7 +644,7 @@
         </Grid>
 
         <ControlTemplate.Resources>
-            <!-- Animation for button press -->
+            <!--  Animation for button press  -->
             <Storyboard x:Key="Anim.Press">
                 <DoubleAnimation
                     DecelerationRatio="0.25"
@@ -583,7 +677,7 @@
         </ControlTemplate.Resources>
 
         <ControlTemplate.Triggers>
-            <!-- When button is pressed -->
+            <!--  When button is pressed  -->
             <Trigger Property="IsPressed" Value="True">
                 <Trigger.EnterActions>
                     <BeginStoryboard Storyboard="{StaticResource Anim.Press}" />
@@ -597,14 +691,14 @@
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Pressed}" />
             </Trigger>
 
-            <!-- When radio button is selected (IsChecked) -->
+            <!--  When radio button is selected (IsChecked)  -->
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Accent.Normal}" />
                 <Setter Property="Fill" TargetName="BottomStripe" Value="{DynamicResource Brush.Accent.Pressed}" />
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Dark.Normal}" />
             </Trigger>
 
-            <!-- When radio button is disabled -->
+            <!--  When radio button is disabled  -->
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}" />
                 <Setter Property="Fill" TargetName="BottomStripe" Value="{DynamicResource Brush.Element.Light.Disabled}" />
@@ -704,20 +798,20 @@
                 <ControlTemplate TargetType="Thumb">
                     <Grid Background="Transparent">
                         <Rectangle
-                            x:Name="ThumbRectangle"
                             Fill="{StaticResource Brush.Thumb.Normal}"
-                            Stroke="{StaticResource Brush.Element.Dark.Normal}"
-                            StrokeThickness="1"
                             Height="20"
                             Margin="-8"
-                            Width="10" />
-                        <!-- Определение визуальных состояний -->
+                            Stroke="{StaticResource Brush.Element.Dark.Normal}"
+                            StrokeThickness="1"
+                            Width="10"
+                            x:Name="ThumbRectangle" />
+                        <!--  Определение визуальных состояний  -->
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <!-- Нормальное состояние -->
+                                <!--  Нормальное состояние  -->
                                 <VisualState x:Name="Normal" />
 
-                                <!-- Состояние перетаскивания -->
+                                <!--  Состояние перетаскивания  -->
                                 <VisualState x:Name="Dragging">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -726,7 +820,7 @@
                                     </Storyboard>
                                 </VisualState>
 
-                                <!-- Состояние отключённого элемента -->
+                                <!--  Состояние отключённого элемента  -->
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -742,8 +836,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="Style.Slider.RepeatButton" BasedOn="{StaticResource {x:Type RepeatButton}}"
-           TargetType="RepeatButton">
+    <Style
+        BasedOn="{StaticResource {x:Type RepeatButton}}"
+        TargetType="RepeatButton"
+        x:Key="Style.Slider.RepeatButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Focusable" Value="False" />
@@ -761,7 +857,7 @@
         </Setter>
     </Style>
 
-    <!-- Horizontal slider -->
+    <!--  Horizontal slider  -->
     <ControlTemplate TargetType="Slider" x:Key="Template.Slider.Horizontal">
         <Grid
             Height="30"
@@ -820,8 +916,8 @@
                 <Track.Thumb>
                     <Thumb
                         Background="{TemplateBinding Foreground}"
-                        Style="{StaticResource Style.Slider.Thumb}"
                         Height="25"
+                        Style="{StaticResource Style.Slider.Thumb}"
                         x:Name="Thumb" />
                 </Track.Thumb>
             </Track>
@@ -849,7 +945,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <!-- Vertical slider -->
+    <!--  Vertical slider  -->
     <ControlTemplate TargetType="Slider" x:Key="Template.Slider.Vertical">
         <Grid
             Margin="0,8"
