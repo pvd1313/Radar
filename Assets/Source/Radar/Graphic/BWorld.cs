@@ -19,5 +19,14 @@ namespace Beast.Radar.Graphic
         {
             return BMath.FloorToInt(worldPosition * TILES_PER_CELL);
         }
+
+        public static float2 SnapToTileGridCenter(float2 worldPosition)
+        {
+            float2 tileSize = 1f / TILES_PER_CELL;
+
+            worldPosition = BMath.Floor(worldPosition * TILES_PER_CELL) / TILES_PER_CELL;
+
+            return worldPosition + tileSize * 0.5f;
+        }
     }
 }

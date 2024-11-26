@@ -20,9 +20,9 @@ namespace Beast.Radar.Terrain
         public bool isBiomeTile;
         public int index;
 
-        public FloatBounds2 SpawnRangeAsBounds()
+        public Bounds2D SpawnRangeAsBounds()
         {
-            return new FloatBounds2(biomeWaterRange, biomeForestRange);
+            return new Bounds2D(biomeWaterRange, biomeForestRange);
         }
         
         public string Validate()

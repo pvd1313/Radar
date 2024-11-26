@@ -14,7 +14,7 @@ namespace Beast.Radar.City
         public float gridSize;
         public float collisionRadius;
         public Random random;
-        public FloatBounds2 mapBounds;
+        public Bounds2D mapBounds;
         public AveragePixelCountTexture<EBiomeName> terrain8km;
         public TextureWithBlocks<EBiomeName> terrain1km;
         public FloatMinMax citySizeRange;
@@ -25,12 +25,12 @@ namespace Beast.Radar.City
         
         public void Execute()
         {
-            FloatBounds2 globalBounds = default;
+            Bounds2D globalBounds = default;
             bool hasExcludePositions = !excludePositions.IsEmpty;
 
             for (int y = 0; y < maxCityCountX; y++)
             {
-                FloatBounds2 localBounds = default;
+                Bounds2D localBounds = default;
 
                 for (int x = 0; x < maxCityCountX; x++)
                 {

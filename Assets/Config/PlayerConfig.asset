@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
   movementSpeedKilometresPerHour: 30
-  maxNodeCount: 1024
+  pathBufferCapacity: 1024
   tileSpeedModifiers:
   - biome: 0
     speedMultiplier: 1

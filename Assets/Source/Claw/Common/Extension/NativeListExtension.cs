@@ -15,5 +15,13 @@ namespace Beast.Claw.Common
                 (list[i], list[count - i - 1]) = (list[count - i - 1], list[i]);
             }
         }
+
+        public static void AddRangeReverseOrder<T>(this NativeList<T> list, NativeArray<T> source) where T : unmanaged
+        {
+            for (int i = source.Length - 1; i >= 0; i--)
+            {
+                list.Add(source[i]);
+            }
+        }
     }
 }

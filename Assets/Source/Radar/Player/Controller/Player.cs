@@ -71,21 +71,11 @@ namespace Beast.Radar.Player
                 return 0;
             }
 
-            return _navigator.RemainingDistance;
+            return _navigator.GetRemainingDistance();
         }
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
-            if (Build.IS_DEVELOPMENT)
-            {
-                // TODO: #R-93 Restore.
-                // _input.DebugInput.TeleportButton.PressStarted += () =>
-                // {
-                //     Position = _camera.ScreenToWorld(_input.GameInput.ScreenPoint.Value);
-                //     Target = Position;
-                // };
-            }
-            
             _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP_NAVIGATION);
 
             _navigator = new PlayerNavigator(_gizmoManager, _config, _biome);
@@ -153,15 +143,34 @@ namespace Beast.Radar.Player
             {
                 _isMoving = true;
             }
+
+            if (Build.IS_DEVELOPMENT)
+            {
+                if (tap.tapCount == 3)
+                {
+                    _isMoving = false;
+                    _hasTarget = false;
+
+                    float2 tapWorldPosition = _camera.ViewportToWorld(tap.position);
+                    _position = BWorld.SnapToTileGridCenter(tapWorldPosition);
+                    
+                    _navigator.Clear();
+                }
+            }
         }
 
         private void _setTargetSetupPath(float2 target)
         {
-            _target = target;
+            float textureSize = _biome.Terrain1kmCell.blockSize * _biome.Terrain1kmCell.blockCountX - 1;
+
+            target.x = BMath.Clamp(target.x, 0, textureSize - 1);
+            target.y = BMath.Clamp(target.y, 0, textureSize - 1);
+            
+            _target = BWorld.SnapToTileGridCenter(target);
             
             _hasTarget = true;
             
-            _navigator.SetupPath(_position, _target);
+            _navigator.Setup(_position, _target);
         }
 
         protected override void _dispose(BlockingContext obj)

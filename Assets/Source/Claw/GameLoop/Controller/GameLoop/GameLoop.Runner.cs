@@ -246,7 +246,7 @@ namespace Beast.Claw.GameLoop
                 _lastToFirstBuffer = default;
                 _allActors = default;
 
-                _passedActorBuffer.SafeDispose();
+                _passedActorBuffer.Dispose();
 
                 if (_errorCounters.IsCreated)
                 {

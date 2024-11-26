@@ -66,7 +66,7 @@ namespace Beast.Radar.Terrain
             };
         }
 
-        public TValue GetPixelClamped(int2 worldPosition)
+        public readonly TValue GetPixelClamped(int2 worldPosition)
         {
             texture.ValidateIsCreated();
             
@@ -79,8 +79,22 @@ namespace Beast.Radar.Terrain
             return texture[blockOffset + innerOffset];
         }
 
+        public readonly int2 WorldPositionToCell(float2 worldPosition)
+        {
+            return BMath.FloorToInt(worldPosition);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetBlockOffset(int2 absolutePosition)
+        public readonly TValue GetPixel(int2 position)
+        {
+            int blockOffset = GetBlockOffset(position);
+            int innerOffset = GetInnerOffset(position);
+            
+            return texture[blockOffset + innerOffset];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly int GetBlockOffset(int2 absolutePosition)
         {
             int2 blockXY = absolutePosition / blockSize;
             
@@ -88,7 +102,7 @@ namespace Beast.Radar.Terrain
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetInnerOffset(int2 absolutePosition)
+        public readonly int GetInnerOffset(int2 absolutePosition)
         {
             int2 innerXY = absolutePosition % blockSize;
             return innerXY.y * blockSize + innerXY.x;
