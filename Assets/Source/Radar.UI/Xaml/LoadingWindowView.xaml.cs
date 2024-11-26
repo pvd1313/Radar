@@ -9,6 +9,7 @@ namespace Beast.Radar.UI
         public TextBlock progressText;
         public TextBlock textLog;
         public Grid grid;
+        
 
         public override void BindElements()
         {

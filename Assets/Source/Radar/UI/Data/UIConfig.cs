@@ -8,9 +8,9 @@ namespace Beast.Radar.UI
     {
         public XamlAsset HUDWindowAsset;
         public XamlAsset PauseWindowAsset;
+        public XamlAsset MapGenerationWindowAsset;
         
         public Sprite[] citySprites;
-        
         public override IEnumerable<IConfig> Bind()
         {
             yield break;

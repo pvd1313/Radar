@@ -1,18 +1,17 @@
 ﻿
 using Beast.Claw.UI;
+using Noesis;
 
-namespace Radar.Assets.Source.Radar.UI.Xaml
+namespace Beast.Radar.UI
 {
-    /// <summary>
-    /// Interaction logic for MapGenerationWindowView.xaml
-    /// </summary>
-    public partial class MapGenerationWindowView : BeastControl
+    public class MapGenerationWindowView : BeastControl
     {
-      
-
+        private Slider sliderWater;
+        
         public override void BindElements()
         {
-            
+            _find("slider_water", out sliderWater);
         }
+
     }
 }

@@ -64,9 +64,6 @@
     <Compile Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs">
       <DependentUpon>Canvas.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Assets\Source\Radar.UI\Xaml\CanvasView.xaml.cs">
-      <DependentUpon>CanvasView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.cs">
       <DependentUpon>LoadingWindowView.xaml</DependentUpon>
     </Compile>
@@ -1005,10 +1002,6 @@
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </Page>
-    <Page Include="Assets\Source\Radar.UI\Xaml\CanvasView.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
@@ -2310,7 +2303,6 @@
     <None Include="Assets\Source\Radar.UI\Xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.meta" />
-    <None Include="Assets\Source\Radar.UI\Xaml\Image\icon_settings.png.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml.cs.meta" />
@@ -3520,9 +3512,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Source\Radar.UI\Theme\Font\Inconsolata.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Source\Radar.UI\Xaml\Image\icon_settings.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Texture\Sprite\cities.png" />

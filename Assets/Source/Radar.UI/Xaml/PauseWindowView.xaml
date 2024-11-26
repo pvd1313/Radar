@@ -67,7 +67,7 @@
                 <Rectangle
                     Grid.Row = "0" Grid.RowSpan="6"
                     Grid.Column = "0" Grid.ColumnSpan="5"
-                    Fill="{StaticResource Brush.Panel.Dark.Default}" />
+                    Fill="{StaticResource Brush.Panel.Dark.Normal}" />
 
                 <!-- FPS -->
                 <Border
@@ -84,7 +84,7 @@
                     Height="30"
                     Margin="27.5,0,0,0"
                     HorizontalAlignment="Left"
-                    Background="{StaticResource Brush.Panel.Dark.Default}"
+                    Background="{StaticResource Brush.Panel.Dark.Normal}"
                     CornerRadius="{StaticResource Corner.Border0}"/>
 
                 <ToggleButton x:Name="toggle_fps"

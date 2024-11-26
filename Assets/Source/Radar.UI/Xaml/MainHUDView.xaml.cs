@@ -27,8 +27,8 @@ namespace Beast.Radar.UI
             _find("button_path", out autoPathFindingButton);
             _find("button_move", out buttonMove);
             
-            _brushActiveColor = (SolidColorBrush)FindResource("Brush.Element.Light.Active");
-            _brushDisableColor = (SolidColorBrush)FindResource("Brush.Element.Light.Disable");
+            _brushActiveColor = (SolidColorBrush)FindResource("Brush.Element.Light.Normal");
+            _brushDisableColor = (SolidColorBrush)FindResource("Brush.Element.Light.Disabled");
             
             _brushMoveImage = (ImageBrush)FindResource("Brush.Image.Move");
             _brushStandImage = (ImageBrush)FindResource("Brush.Image.Stand");

@@ -16,6 +16,8 @@ MonoBehaviour:
     asset: {fileID: -8414808784256213763, guid: 83614fcc75489c0428556f67ba0785a0, type: 3}
   PauseWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 93719d3ee90e81c46b6eac86cf1e1a47, type: 3}
+  MapGenerationWindowAsset:
+    asset: {fileID: -8414808784256213763, guid: 72380e5a66d5f334799459fa5b387afb, type: 3}
   citySprites:
   - {fileID: -1911697403, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}
   - {fileID: 399424393, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}
