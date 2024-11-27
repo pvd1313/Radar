@@ -3,6 +3,7 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
+using Beast.Radar.UI.Graphy;
 using Cysharp.Threading.Tasks;
 using Noesis;
 using Unity.Mathematics;
@@ -12,30 +13,30 @@ namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : Actor, IWindow<Empty>
     {
-        private readonly CorePrefabLibrary _library;
         private readonly IWindowManager _windowManager;
         private readonly ISaveManager _saveManager;
         private readonly PlayerPreference _playerPreference;
-        
+        private readonly UIConfig _uiConfig;
+        private readonly INoesisWindowManager _noesisWindowManager;
+        private readonly IGraphyWindow _graphyWindow;
+
         private PauseWindowView _view;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
-        private readonly UIConfig _uiConfig;
-        private readonly INoesisWindowManager _noesisWindowManager;
-
+        
         public PauseMenuWindow(
-            CorePrefabLibrary library,
             IWindowManager windowManager,
             ISaveManager saveManager,
             PlayerPreference playerPreference,
             UIConfig uiConfig,
-            INoesisWindowManager noesisWindowManager)
+            INoesisWindowManager noesisWindowManager,
+            IGraphyWindow graphyWindow)
         {
-            _library = library;
             _windowManager = windowManager;
             _saveManager = saveManager;
             _uiConfig = uiConfig;
             _noesisWindowManager = noesisWindowManager;
+            _graphyWindow = graphyWindow;
             _playerPreference = playerPreference;
         }
 
@@ -44,9 +45,10 @@ namespace Beast.Radar.UI
             _view.Visibility = Visibility.Visible;
 
             _view.toggleFPS.IsChecked = _playerPreference.isMaxFps;
+            
+            _view.toggleGraphy.IsChecked = _playerPreference.isShowGraphy;
 
-            bool saveExists = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-            _view.buttonLoadGame.IsEnabled = saveExists;
+            _view.buttonLoadGame.IsEnabled = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             
             _refreshMapMovementText();
            
@@ -62,7 +64,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _uiConfig.PauseWindowAsset.Instantiate(out _view);
+            _uiConfig.pauseWindowAsset.Instantiate(out _view);
 
             _noesisWindowManager.Attach(_view);
             
@@ -94,6 +96,19 @@ namespace Beast.Radar.UI
                 _setFPS();
             };
 
+            _view.toggleGraphy.Click += (sender, args) =>
+            {
+                _playerPreference.isShowGraphy = _view.toggleGraphy.IsChecked ?? false;
+                if (_playerPreference.isShowGraphy)
+                {
+                    _graphyWindow.Open();
+                }
+                else
+                {
+                    _graphyWindow.Close();
+                }
+            };
+            
             _view.buttonLoadGame.Click += (sender, args) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window

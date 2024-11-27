@@ -3,5 +3,6 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=RG/@EntryIndexedValue">RG</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=UV/@EntryIndexedValue">UV</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=XY/@EntryIndexedValue">XY</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Graphy/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=passability/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Poolable/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

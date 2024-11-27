@@ -73,7 +73,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _uiConfig.MapGenerationWindowAsset.Instantiate(out _view);
+            _uiConfig.mapGenerationWindowAsset.Instantiate(out _view);
 
             _view.Visibility = Visibility.Collapsed;
 

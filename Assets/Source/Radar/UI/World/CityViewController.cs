@@ -14,7 +14,7 @@ namespace Beast.Radar.UI
     {
         public bool IsReady { get; private set; }
 
-        private readonly IWorldViewInstance _worldView;
+        /*private readonly IWorldViewInstance _worldView;
         private readonly ICitySpawner _citySpawner;
         private readonly ICameraTransform _camera;
 
@@ -92,6 +92,6 @@ namespace Beast.Radar.UI
                     _cityPool.Disable(view);
                 }
             }
-        }
+        }*/
     }
 }

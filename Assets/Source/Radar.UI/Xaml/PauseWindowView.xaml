@@ -105,6 +105,44 @@
                     Style="{StaticResource Style.Text.Light.Header}"
                     />
 
+
+                <!-- Graphy -->
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="{StaticResource ElementMargin}"
+                    Background="{StaticResource Brush.Panel.Background}"
+                    CornerRadius="{StaticResource Corner.Border0}"/>
+
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Width="30"
+                    Height="30"
+                    Margin="27.5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="{StaticResource Brush.Panel.Dark.Normal}"
+                    CornerRadius="{StaticResource Corner.Border0}"/>
+
+                <ToggleButton x:Name="toggle_graphy"
+                              Grid.Row="2"
+                              Grid.Column="1"
+                              Width="20"
+                              Height="20"
+                              HorizontalAlignment="Left"
+                              Margin="33,0,0,0">
+                </ToggleButton>
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Text="GRAPHY"
+                    Margin="70,0,25,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource Style.Text.Light.Header}"
+                    />
+
+
                 <!-- Buttons-->
                 <Button x:Name="button_save"
                         Grid.Row = "1"
@@ -132,7 +170,7 @@
 
                 <Button x:Name="button_main_menu"
                         Grid.Row = "2"
-                        Grid.Column="1" Grid.ColumnSpan="2"
+                        Grid.Column="2"
                         Content="MAIN MENU"
                         Style="{StaticResource Style.ButtonBase}"
                         Margin="{StaticResource ElementMargin}">

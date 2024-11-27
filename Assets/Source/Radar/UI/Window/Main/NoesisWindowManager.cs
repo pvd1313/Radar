@@ -1,4 +1,6 @@
-﻿using Beast.Claw.Common;
+﻿using System.Linq;
+using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
@@ -6,7 +8,6 @@ using Beast.Claw.UI;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using Unity.Mathematics;
 
 namespace Beast.Radar.UI
 {
@@ -53,6 +54,8 @@ namespace Beast.Radar.UI
         {
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
+            Panel.SetZIndex(uiElement, 0);
+            
             _grid.Children.Add(uiElement);
         }
 
@@ -60,7 +63,9 @@ namespace Beast.Radar.UI
         {
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
-            _grid.Children.Insert(index, uiElement);
+            Panel.SetZIndex(uiElement, index);
+            
+            _grid.Children.Add(uiElement);
         }
     }
 }

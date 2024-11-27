@@ -14,10 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HUDWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 83614fcc75489c0428556f67ba0785a0, type: 3}
-  PauseWindowAsset:
+  pauseWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 93719d3ee90e81c46b6eac86cf1e1a47, type: 3}
-  MapGenerationWindowAsset:
+  mapGenerationWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 72380e5a66d5f334799459fa5b387afb, type: 3}
+  graphy:
+    _reference:
+      m_AssetGUID: ec09055262c4e754aa082930f5fd04ef
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 1
   citySprites:
   - {fileID: -1911697403, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}
   - {fileID: 399424393, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}
