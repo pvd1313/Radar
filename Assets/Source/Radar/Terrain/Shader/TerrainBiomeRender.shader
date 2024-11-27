@@ -12,7 +12,6 @@
             CGPROGRAM
 
             #pragma multi_compile NOISE_SAMPLER_LOD_0 NOISE_SAMPLER_LOD_1
-            #pragma shader_feature NOISE_SAMPLER_LOD_0 NOISE_SAMPLER_LOD_1
 
             #pragma target 2.0
             
