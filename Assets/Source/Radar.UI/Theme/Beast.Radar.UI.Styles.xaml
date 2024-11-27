@@ -124,6 +124,14 @@
         <Setter Property="Background" Value="{DynamicResource Brush.Background.Normal}" />
     </Style>
 
+
+    <Style TargetType="Border" x:Key="Style.Border.Debug">
+
+        <Setter Property="Background" Value="{StaticResource Brush.Panel.Background}"/>
+        <Setter Property="Opacity" Value="0.7"/>
+        <Setter Property="CornerRadius" Value="{StaticResource Corner.Border0}"/>
+    </Style>
+
     <!--  ============== TEXT ==============  -->
 
     <!--  TextBox  -->
@@ -800,12 +808,17 @@
                         <Rectangle
                             Fill="{StaticResource Brush.Thumb.Normal}"
                             Height="20"
-                            Width="10"
                             Stroke="{StaticResource Brush.Element.Dark.Normal}"
                             StrokeThickness="1"
+                            Width="10"
                             x:Name="ThumbRectangle" />
+                        <!--  Определение визуальных состояний  -->
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <!--  Нормальное состояние  -->
+                                <VisualState x:Name="Normal" />
+
+                                <!--  Состояние перетаскивания  -->
                                 <VisualState x:Name="Dragging">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -813,6 +826,8 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+
+                                <!--  Состояние отключённого элемента  -->
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -851,7 +866,10 @@
 
     <!--  Horizontal slider  -->
     <ControlTemplate TargetType="Slider" x:Key="Template.Slider.Horizontal">
-        <Grid Height="30" Margin="8,0" x:Name="TemplateRoot">
+        <Grid
+            Height="30"
+            Margin="8,0"
+            x:Name="TemplateRoot">
             <Border
                 Background="{TemplateBinding Background}"
                 CornerRadius="5"
@@ -859,7 +877,10 @@
                 Height="10"
                 MaxHeight="10"
                 x:Name="Background" />
-            <Track Grid.RowSpan="3" Orientation="Horizontal" x:Name="PART_Track">
+            <Track
+                Grid.RowSpan="3"
+                Orientation="Horizontal"
+                x:Name="PART_Track">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton
                         Background="{TemplateBinding Foreground}"
@@ -881,12 +902,33 @@
                     <Thumb
                         Background="{TemplateBinding Foreground}"
                         Height="20"
-                        Width="10"
                         Style="{StaticResource Style.Slider.Thumb}"
+                        Width="10"
                         x:Name="Thumb" />
                 </Track.Thumb>
             </Track>
         </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsDirectionReversed" Value="True">
+                <Setter Property="Margin" TargetName="DecreaseButton" Value="-2,0,0,0" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" TargetName="Thumb" Value="{StaticResource Brush.Border.Over}" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter Property="Visibility" TargetName="TopTicks" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter Property="Visibility" TargetName="BottomTicks" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter Property="Visibility" TargetName="TopTicks" Value="Visible" />
+                <Setter Property="Visibility" TargetName="BottomTicks" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" TargetName="DecreaseButton" Value="{DynamicResource Brush.Border.DisabledChecked}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <!--  Vertical slider  -->
@@ -989,4 +1031,146 @@
         </Style.Triggers>
     </Style>
 
+
+    <!--  ============== BOX ==============  -->
+
+    <!--  GroupBox  -->
+    <ControlTemplate TargetType="GroupBox" x:Key="Template.GroupBox.NoHeader">
+        <Grid>
+            <Rectangle
+                RadiusX="4"
+                RadiusY="4"
+                Stroke="{TemplateBinding BorderBrush}"
+                StrokeThickness="{DynamicResource Size.GroupBox.Border}" />
+            <Decorator Margin="5">
+                <ContentPresenter Margin="{TemplateBinding Padding}" />
+            </Decorator>
+        </Grid>
+    </ControlTemplate>
+    <ControlTemplate TargetType="GroupBox" x:Key="Template.GroupBox">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" MaxHeight="5" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition MaxWidth="9" Width="9" />
+            </Grid.ColumnDefinitions>
+            <Path
+                Data="M8,0L4,0A4,4,0,0,0,0,4"
+                Grid.Column="0"
+                Grid.Row="1"
+                Margin="0,4,0,-4"
+                Stretch="Fill"
+                Stroke="{TemplateBinding BorderBrush}"
+                StrokeEndLineCap="Square"
+                StrokeStartLineCap="Square"
+                StrokeThickness="{DynamicResource Size.GroupBox.Border}"
+                VerticalAlignment="Bottom" />
+            <Border
+                Background="{TemplateBinding BorderBrush}"
+                Grid.Column="0"
+                Grid.Row="2"
+                Grid.RowSpan="2"
+                HorizontalAlignment="Left"
+                Margin="0,4,0,0"
+                Width="{DynamicResource Size.GroupBox.Border}" />
+            <Path
+                Data="M0,0A4,4,0,0,0,4,4L8,4"
+                Grid.Column="0"
+                Grid.Row="4"
+                Stretch="Fill"
+                Stroke="{TemplateBinding BorderBrush}"
+                StrokeEndLineCap="Square"
+                StrokeStartLineCap="Square"
+                StrokeThickness="{DynamicResource Size.GroupBox.Border}" />
+            <Border
+                Background="{TemplateBinding BorderBrush}"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Grid.Row="5"
+                Height="{DynamicResource Size.GroupBox.Border}"
+                VerticalAlignment="Bottom" />
+            <Path
+                Data="M0,4L4,4A4,4,0,0,0,8,0"
+                Grid.Column="3"
+                Grid.Row="4"
+                Stretch="Fill"
+                Stroke="{TemplateBinding BorderBrush}"
+                StrokeEndLineCap="Square"
+                StrokeStartLineCap="Square"
+                StrokeThickness="{DynamicResource Size.GroupBox.Border}" />
+            <Border
+                Background="{TemplateBinding BorderBrush}"
+                Grid.Column="3"
+                Grid.Row="2"
+                Grid.RowSpan="2"
+                HorizontalAlignment="Right"
+                Margin="0,4,0,0"
+                Width="{DynamicResource Size.GroupBox.Border}" />
+            <Path
+                Data="M8,4A4,4,0,0,0,4,0L0,0"
+                Grid.Column="3"
+                Grid.Row="1"
+                Margin="0,4,0,-4"
+                Stretch="Fill"
+                Stroke="{TemplateBinding BorderBrush}"
+                StrokeEndLineCap="Square"
+                StrokeStartLineCap="Square"
+                StrokeThickness="{DynamicResource Size.GroupBox.Border}"
+                VerticalAlignment="Bottom" />
+            <Border
+                Background="{TemplateBinding BorderBrush}"
+                Grid.Column="2"
+                Grid.Row="1"
+                Height="{DynamicResource Size.GroupBox.Border}"
+                VerticalAlignment="Bottom" />
+            <Border
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Grid.Row="3"
+                Margin="-4,0"
+                x:Name="ContentHost">
+                <ContentPresenter Margin="{TemplateBinding Padding}" />
+            </Border>
+            <ContentPresenter
+                ContentSource="Header"
+                Grid.Column="1"
+                Grid.Row="0"
+                Grid.RowSpan="3"
+                Margin="4,0"
+                TextElement.FontSize="{DynamicResource Font.Size.Header}"
+                x:Name="HeaderHost" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="Header" Value="{x:Null}">
+                <Setter Property="Margin" TargetName="HeaderHost" Value="0" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Foreground.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Disabled}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style BasedOn="{StaticResource {x:Type HeaderedContentControl}}" TargetType="GroupBox">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Normal}" />
+        <Setter Property="Padding" Value="{DynamicResource Margin.Focus.Padded}" />
+        <Setter Property="Template" Value="{StaticResource Template.GroupBox}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.Panel.Background}" />
+
+
+        <Style.Triggers>
+            <Trigger Property="Header" Value="{x:Null}">
+                <Setter Property="Template" Value="{StaticResource Template.GroupBox.NoHeader}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

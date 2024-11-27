@@ -13,11 +13,9 @@ namespace Beast.Radar.UI.Graphy
         private readonly IResourceManager _resources;
 
         private GameObject _view;
+        private GraphyView _graphyView;
 
-        public GraphyWindow(
-            PlayerPreference preference,
-            UIConfig uiConfig,
-            IResourceManager resources)
+        public GraphyWindow(PlayerPreference preference, UIConfig uiConfig, IResourceManager resources)
         {
             _preference = preference;
             _uiConfig = uiConfig;

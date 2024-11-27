@@ -64,6 +64,9 @@
     <Compile Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs">
       <DependentUpon>Canvas.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Source\Radar.UI\Xaml\GraphyView.xaml.cs">
+      <DependentUpon>GraphyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.cs">
       <DependentUpon>LoadingWindowView.xaml</DependentUpon>
     </Compile>
@@ -1004,6 +1007,10 @@
     <Page Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Assets\Source\Radar.UI\Xaml\GraphyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml">
       <SubType>Designer</SubType>

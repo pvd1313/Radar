@@ -18,6 +18,8 @@ MonoBehaviour:
     asset: {fileID: -8414808784256213763, guid: 93719d3ee90e81c46b6eac86cf1e1a47, type: 3}
   mapGenerationWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 72380e5a66d5f334799459fa5b387afb, type: 3}
+  graphyAsset:
+    asset: {fileID: -8414808784256213763, guid: c34993d400ad92b46905b4d1dda509bd, type: 3}
   graphy:
     _reference:
       m_AssetGUID: ec09055262c4e754aa082930f5fd04ef
