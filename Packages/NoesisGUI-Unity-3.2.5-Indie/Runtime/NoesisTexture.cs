@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Noesis
 {
@@ -34,6 +36,11 @@ namespace Noesis
         private static Texture WrapTexture(object texture, IntPtr nativePointer,
             int width, int height, int numLevels)
         {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan)
+            {
+                throw new NotSupportedException("TextureSource crashes Vulkan!");
+            }
+            
             IntPtr texturePtr = Noesis_WrapTexture(nativePointer, width, height, numLevels);
             Noesis.Texture tex = new Noesis.NativeTexture(texturePtr, true);
 

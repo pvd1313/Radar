@@ -6,7 +6,7 @@ using Beast.Radar.NewGame;
 using Beast.Radar.Terrain;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using Unity.Mathematics;
+
 using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
@@ -21,12 +21,12 @@ namespace Beast.Radar.UI
         private readonly UIConfig _uiConfig;
         private readonly INoesisWindowManager _noesisWindowManager;
 
-        //private MapGenerationView _menuView;
         private MapGenerationWindowView _view;
         private Dictionary<RadioButton, int> _buttonSizes;
 
         private TerrainData _terrainData;
         private TerrainPreviewTexture _terrainTexture;
+        private RenderTextureBrush _renderTextureBrush;
         private int _seedIndex;
         private IWindowHandle<Empty> _mainHUD;
 
@@ -64,6 +64,7 @@ namespace Beast.Radar.UI
             _view.Visibility = Visibility.Collapsed;
 
             _terrainTexture.Dispose();
+            _renderTextureBrush.Dispose();
 
             _terrainTexture = null;
 
@@ -92,6 +93,8 @@ namespace Beast.Radar.UI
             int imageSize = 300;
             int size = (int)(imageSize * _generationConfig.previewSizeMultiplier);
             _terrainTexture = _previewRender.CreateTexture(this, size);
+            _renderTextureBrush = new RenderTextureBrush(_terrainTexture.color);
+            _view.texture.Fill = _renderTextureBrush.Brush;
 
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             MapGenerationSeed seed = _generationConfig.seeds[_seedIndex];
@@ -114,18 +117,18 @@ namespace Beast.Radar.UI
 
         private void _subscribeView()
         {
-            _view.buttonCreate.Click += (sender, args) =>
+            _view.buttonCreate.Click += (_, _) =>
             {
                 _newGameSetup.StartNewGame(_terrainData);
                 _mainHUD.Open(default);
             };
 
-            _view.buttonClose.Click += (sender, args) =>
+            _view.buttonClose.Click += (_, _) =>
             {
                 _mainHUD.Open(default);
             };
 
-            _view.buttonNextSeed.Click += (sender, args) =>
+            _view.buttonNextSeed.Click += (_, _) =>
             {
                 _seedIndex++;
                 if (_seedIndex == _generationConfig.seeds.Length)
@@ -136,7 +139,7 @@ namespace Beast.Radar.UI
                 _refreshSeed();
             };
 
-            _view.buttonPreviousSeed.Click += (sender, args) =>
+            _view.buttonPreviousSeed.Click += (_, _) =>
             {
                 _seedIndex--;
 
@@ -151,7 +154,8 @@ namespace Beast.Radar.UI
             for (int i = 0; i < _view.buttonsSize.Length; i++)
             {
                 int size = (i + 1) * 512;
-                _view.buttonsSize[i].Click += (sender, args) =>
+                
+                _view.buttonsSize[i].Click += (_, _) =>
                 {
                     _terrainData.terrainSize = size;
                     _drawTexture();
@@ -159,21 +163,21 @@ namespace Beast.Radar.UI
                 };
             }
 
-            _view.sliderWater.ValueChanged += (sender, args) =>
+            _view.sliderWater.ValueChanged += (_, args) =>
             {
                 _terrainData.water01 = args.NewValue / 100;
                 _drawTexture();
                 BDebug.Track(this, "water", _terrainData.water01);
             };
             
-            _view.sliderForest.ValueChanged += (sender, args) =>
+            _view.sliderForest.ValueChanged += (_, args) =>
             {
                 _terrainData.forest01 = args.NewValue / 100;
                 _drawTexture();
                 BDebug.Track(this, "forest", _terrainData.forest01);
             };
             
-            _view.sliderBiomeSize.ValueChanged += (sender, args) =>
+            _view.sliderBiomeSize.ValueChanged += (_, args) =>
             {
                 _terrainData.biomeSize01 = args.NewValue / 100;
                 _drawTexture();
@@ -202,7 +206,7 @@ namespace Beast.Radar.UI
                 texture = _terrainTexture
             });
             
-            //todo set texture
+            _renderTextureBrush.Blit();
         }
     }
 }

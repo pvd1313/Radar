@@ -1,21 +1,20 @@
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Noesis
 {
-    [Obsolete("Dont use! It crashes on Vulkan!")]
     public partial class TextureSource
     {
-        [Obsolete("Dont use! It crashes on Vulkan!")]
         public TextureSource(UnityEngine.Texture texture): this(Texture.WrapTexture(texture))
         {
-            throw new NotSupportedException("TextureSource crashes Vulkan!");
+            
         }
 
-        [Obsolete("Dont use! It crashes on Vulkan!")]
         public TextureSource(UnityEngine.Texture2D texture): this(Texture.WrapTexture(texture))
         {
-            throw new NotSupportedException("TextureSource crashes Vulkan!");
+            
         }
 
         internal static void SetTexture(IntPtr cPtr, UnityEngine.Texture tex)
