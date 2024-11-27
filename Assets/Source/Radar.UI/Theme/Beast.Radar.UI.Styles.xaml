@@ -791,13 +791,12 @@
 
 
     <!--  ============== SLIDER ==============  -->
+
     <Style TargetType="Thumb" x:Key="Style.Slider.Thumb">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <!-- Контейнер с увеличенной областью -->
                     <Grid Background="Transparent" Margin="-10">
-                        <!-- Видимая часть Thumb -->
                         <Rectangle
                             Fill="{StaticResource Brush.Thumb.Normal}"
                             Height="20"
@@ -805,12 +804,8 @@
                             Stroke="{StaticResource Brush.Element.Dark.Normal}"
                             StrokeThickness="1"
                             x:Name="ThumbRectangle" />
-                        <!-- Определение визуальных состояний -->
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <!-- Нормальное состояние -->
-                                <VisualState x:Name="Normal" />
-                                <!-- Состояние перетаскивания -->
                                 <VisualState x:Name="Dragging">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -818,7 +813,6 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <!-- Состояние отключённого элемента -->
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -857,43 +851,15 @@
 
     <!--  Horizontal slider  -->
     <ControlTemplate TargetType="Slider" x:Key="Template.Slider.Horizontal">
-        <Grid
-            Height="30"
-            Margin="8,0"
-            x:Name="TemplateRoot">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <Grid Height="30" Margin="8,0" x:Name="TemplateRoot">
             <Border
                 Background="{TemplateBinding Background}"
-                CornerRadius="{DynamicResource Corner.Border2}"
+                CornerRadius="5"
                 Grid.Row="1"
-                Height="30"
+                Height="10"
+                MaxHeight="10"
                 x:Name="Background" />
-            <Border Grid.Row="0" Height="8">
-                <TickBar
-                    Fill="{TemplateBinding Background}"
-                    Height="4"
-                    Placement="Top"
-                    VerticalAlignment="Top"
-                    Visibility="Hidden"
-                    x:Name="TopTicks" />
-            </Border>
-            <Border Grid.Row="2" Height="8">
-                <TickBar
-                    Fill="{TemplateBinding Background}"
-                    Height="4"
-                    Placement="Bottom"
-                    VerticalAlignment="Bottom"
-                    Visibility="Hidden"
-                    x:Name="BottomTicks" />
-            </Border>
-            <Track
-                Grid.RowSpan="3"
-                Orientation="Horizontal"
-                x:Name="PART_Track">
+            <Track Grid.RowSpan="3" Orientation="Horizontal" x:Name="PART_Track">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton
                         Background="{TemplateBinding Foreground}"
@@ -914,33 +880,13 @@
                 <Track.Thumb>
                     <Thumb
                         Background="{TemplateBinding Foreground}"
-                        Height="25"
+                        Height="20"
+                        Width="10"
                         Style="{StaticResource Style.Slider.Thumb}"
                         x:Name="Thumb" />
                 </Track.Thumb>
             </Track>
         </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsDirectionReversed" Value="True">
-                <Setter Property="Margin" TargetName="DecreaseButton" Value="-2,0,0,0" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" TargetName="Thumb" Value="{StaticResource Brush.Border.Over}" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="TopLeft">
-                <Setter Property="Visibility" TargetName="TopTicks" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter Property="Visibility" TargetName="BottomTicks" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter Property="Visibility" TargetName="TopTicks" Value="Visible" />
-                <Setter Property="Visibility" TargetName="BottomTicks" Value="Visible" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" TargetName="DecreaseButton" Value="{DynamicResource Brush.Border.DisabledChecked}" />
-            </Trigger>
-        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <!--  Vertical slider  -->
