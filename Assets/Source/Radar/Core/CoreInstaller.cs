@@ -10,6 +10,7 @@ using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
+using Beast.Radar.UI.Graphy;
 using Beast.Radar.World;
 using Zenject;
 
@@ -37,12 +38,12 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
-            
-            
+
             // Windows
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
+            yield return typeof(GraphyWindow);
             
             // Terrain
             yield return typeof(TerrainFbmRender);

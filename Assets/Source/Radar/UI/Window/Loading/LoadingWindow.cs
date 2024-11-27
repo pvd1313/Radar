@@ -57,7 +57,7 @@ namespace Beast.Radar.UI
                 }
             };
             
-            _windows.Attach(_view);
+            _windows.Attach(_view, 1);
             
             _legacy.Register(this, WindowID.LOADING);
             

@@ -7,6 +7,7 @@ namespace Beast.Radar.UI
     {
         public Button buttonClose;
         public ToggleButton toggleFPS;
+        public ToggleButton toggleGraphy;
 
         public TextBlock textMovement;
         public Button buttonNextMovement;
@@ -22,6 +23,7 @@ namespace Beast.Radar.UI
         {
             _find("button_close", out buttonClose);
             _find("toggle_fps", out toggleFPS);
+            _find("toggle_graphy", out toggleGraphy);
             _find("text_movement", out textMovement);
             _find("button_next_movement", out buttonNextMovement);
             _find("button_previous_movement", out buttonPreviousMovement);

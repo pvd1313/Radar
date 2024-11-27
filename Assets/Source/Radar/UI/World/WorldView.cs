@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -6,7 +7,7 @@ namespace Beast.Radar.UI
     {
         public Transform player;
         public Transform target;
-        public UIText targetText;
+        public TextMeshProUGUI targetText;
         public Transform cityRoot;
     }
 }
