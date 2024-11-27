@@ -10,11 +10,6 @@ namespace Beast.Radar
         [Header("World")]
         public WorldView worldView;
         public CityView city;
-
-        [Header("UI")]
-        public HUDView hud;
-        public MapGenerationView mapGeneration;
-        public PauseMenuView pauseMenu;
         
         public override IEnumerable<IConfig> Bind()
         {
