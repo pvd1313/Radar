@@ -11,15 +11,13 @@ namespace Beast.Radar.UI
     public class RenderTextureBrush
     {
         public ImageBrush Brush => _brush;
-
-        private Texture2D _vulkanTexture2D;
-        private byte[] _vulkanByteArray;
-
-        private readonly RenderTexture _unityRenderTexture;
         
-        private ImageBrush _brush;
-
+        private readonly RenderTexture _unityRenderTexture;
         private readonly bool _isVulkan;
+        
+        private byte[] _vulkanByteArray;
+        private ImageBrush _brush;
+        private bool _hasActiveGPURequest;
 
         public RenderTextureBrush(RenderTexture unityRenderTexture)
         {
@@ -29,17 +27,6 @@ namespace Beast.Radar.UI
 
             if (_isVulkan)
             {
-                _vulkanTexture2D = BGraphic.CreateTexture2D(this, new Texture2DParameters
-                {
-                    isLinear = true,
-                    createInitialized = false,
-                    filterMode = FilterMode.Point,
-                    format = UnityEngine.TextureFormat.RGB24,
-                    mipChain = false,
-                    size = _unityRenderTexture.Size(),
-                    wrapMode = TextureWrapMode.Clamp
-                });
-
                 int byteSize = _unityRenderTexture.width * _unityRenderTexture.height * 3;
 
                 _vulkanByteArray = new byte[byteSize];
@@ -52,18 +39,39 @@ namespace Beast.Radar.UI
 
         public void Blit()
         {
-            if (!_isVulkan)
+            if (!_isVulkan || _hasActiveGPURequest)
             {
                 return;
             }
-
-            Profiler.BeginSample("RenderTextureBrush.Blit()");
             
-            Profiler.BeginSample("BlitRenderTextureTo2D");
-            BGraphic.BlitRenderTextureTo2D(_unityRenderTexture, _vulkanTexture2D);
-            Profiler.EndSample();
+            Profiler.BeginSample("AsyncGPUReadback.Request");
 
-            Span<byte> sourceSpan = _vulkanTexture2D.GetRawTextureData<byte>().AsSpan();
+            _hasActiveGPURequest = true;
+
+            AsyncGPUReadback.Request(_unityRenderTexture, 0, UnityEngine.TextureFormat.RGB24, request =>
+            {
+                if (!_hasActiveGPURequest)
+                {
+                    return;
+                }
+
+                try
+                {
+                    _vulkanBlitRenderTexture(request.GetData<byte>().AsSpan());
+                }
+                finally
+                {
+                    _hasActiveGPURequest = false;
+                }
+            });
+            
+            Profiler.EndSample();
+        }
+
+        private void _vulkanBlitRenderTexture(Span<byte> sourceSpan)
+        {
+            Profiler.BeginSample("RenderTextureBrush._vulkanBlitRenderTexture()");
+            
             Span<byte> targetSpan = _vulkanByteArray.AsSpan();
             
             Profiler.BeginSample("Copy bytes & Reverse Y");
@@ -80,13 +88,10 @@ namespace Beast.Radar.UI
 
                 from.CopyTo(to);
             }
-            
             Profiler.EndSample();
             
             Profiler.BeginSample("Create BitmapSource");
-            
             _brush.ImageSource?.Dispose();
-            
             _brush.ImageSource = BitmapSource.Create(
                 _unityRenderTexture.width, 
                 _unityRenderTexture.height, 
@@ -95,7 +100,6 @@ namespace Beast.Radar.UI
                 _vulkanByteArray, 
                 3 * _unityRenderTexture.width, 
                 BitmapSource.Format.RGB8);
-            
             Profiler.EndSample();
             
             Profiler.EndSample();
@@ -103,11 +107,12 @@ namespace Beast.Radar.UI
         
         public void Dispose()
         {
-            BGraphic.TryDispose(ref _vulkanTexture2D);
             _vulkanByteArray = null;
 
             _brush.ImageSource?.Dispose();
             _brush.ImageSource = null;
+
+            _hasActiveGPURequest = false;
             
             _brush.Dispose();
             _brush = null;
