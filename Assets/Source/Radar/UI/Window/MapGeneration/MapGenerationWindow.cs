@@ -26,7 +26,8 @@ namespace Beast.Radar.UI
 
         private TerrainData _terrainData;
         private TerrainPreviewTexture _terrainTexture;
-        private RenderTextureBrush _renderTextureBrush;
+        private ImageBrush _terrainBrush;
+        private TextureSource _terrainTextureSource;
         private int _seedIndex;
         private IWindowHandle<Empty> _mainHUD;
 
@@ -64,7 +65,8 @@ namespace Beast.Radar.UI
             _view.Visibility = Visibility.Collapsed;
 
             _terrainTexture.Dispose();
-            _renderTextureBrush.Dispose();
+            _terrainBrush.Dispose();
+            _terrainTextureSource.Dispose();
 
             _terrainTexture = null;
 
@@ -93,8 +95,9 @@ namespace Beast.Radar.UI
             int imageSize = 300;
             int size = (int)(imageSize * _generationConfig.previewSizeMultiplier);
             _terrainTexture = _previewRender.CreateTexture(this, size);
-            _renderTextureBrush = new RenderTextureBrush(_terrainTexture.color);
-            _view.texture.Fill = _renderTextureBrush.Brush;
+            _terrainTextureSource = new TextureSource(_terrainTexture.color);
+            _terrainBrush = new ImageBrush(_terrainTextureSource);
+            _view.texture.Fill = _terrainBrush;
 
             _seedIndex = Random.Range(0, _generationConfig.seeds.Length);
             MapGenerationSeed seed = _generationConfig.seeds[_seedIndex];
@@ -205,8 +208,6 @@ namespace Beast.Radar.UI
                 terrain = _terrainData,
                 texture = _terrainTexture
             });
-            
-            _renderTextureBrush.Blit();
         }
     }
 }
