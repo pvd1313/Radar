@@ -791,27 +791,26 @@
 
 
     <!--  ============== SLIDER ==============  -->
-
     <Style TargetType="Thumb" x:Key="Style.Slider.Thumb">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Grid Background="Transparent">
+                    <!-- Контейнер с увеличенной областью -->
+                    <Grid Background="Transparent" Margin="-10">
+                        <!-- Видимая часть Thumb -->
                         <Rectangle
                             Fill="{StaticResource Brush.Thumb.Normal}"
                             Height="20"
-                            Margin="-8"
+                            Width="10"
                             Stroke="{StaticResource Brush.Element.Dark.Normal}"
                             StrokeThickness="1"
-                            Width="10"
                             x:Name="ThumbRectangle" />
-                        <!--  Определение визуальных состояний  -->
+                        <!-- Определение визуальных состояний -->
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <!--  Нормальное состояние  -->
+                                <!-- Нормальное состояние -->
                                 <VisualState x:Name="Normal" />
-
-                                <!--  Состояние перетаскивания  -->
+                                <!-- Состояние перетаскивания -->
                                 <VisualState x:Name="Dragging">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
@@ -819,8 +818,7 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-
-                                <!--  Состояние отключённого элемента  -->
+                                <!-- Состояние отключённого элемента -->
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill">
