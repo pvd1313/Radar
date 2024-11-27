@@ -17,21 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: fd80a9d38221dae49b1f5a8fcf76c608
   m_SerializeEntries:
-  - m_GUID: 63fe3b6b5cb3b17499cccb9e46d347ab
-    m_Address: IngameDebugConsole
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7ce29ab08b76fc0449f4a492a9b0d179
-    m_Address: DebugInstaller
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cb5d7b23a9e684a41a6a5d4f300eb1e6
-    m_Address: Sprites
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec09055262c4e754aa082930f5fd04ef
     m_Address: GraphyFPSCounter
     m_ReadOnly: 0

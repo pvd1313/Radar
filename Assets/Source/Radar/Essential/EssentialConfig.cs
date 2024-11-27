@@ -9,7 +9,6 @@ namespace Beast.Radar.Essential
     public class EssentialConfig : IConfig
     {
         public List<Address<ScriptableInstaller>> coreInstallers; 
-        public Address<ScriptableInstaller> debugInstaller; 
         
         public IEnumerable<IConfig> Bind()
         {

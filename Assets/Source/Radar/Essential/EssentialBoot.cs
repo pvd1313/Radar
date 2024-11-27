@@ -76,15 +76,6 @@ namespace Beast.Radar.Essential
                 installer.InstallBindings();
             }
             
-            if (Build.IS_DEVELOPMENT)
-            {
-                ScriptableInstaller debugInstaller = await _resources.LoadAsset(this, _config.debugInstaller);
-                
-                _container.Inject(debugInstaller);
-                
-                debugInstaller.InstallBindings();
-            }
-            
             await tracker.Next("Booting core");
             await _container.Resolve<ICoreBoot>().Boot(tracker);
         }
