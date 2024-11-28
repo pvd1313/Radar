@@ -2,6 +2,7 @@
 
 using System;
 using Beast.Claw.Debug;
+using Beast.Claw.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,7 +16,6 @@ namespace Beast.Claw.Editor.UI
             DisableInteraction,
             RemoveIndent,
         }
-        
         
 #if UI_ACTION_STACK_TRACE
         private static readonly bool STACK_TRACING = true;
@@ -63,7 +63,7 @@ namespace Beast.Claw.Editor.UI
                 return;
             }
             
-            string message = $"Detected action that was not disposed: '{_action}'. ";
+            string message = $"Detected action that was not disposed: {_action.Q()}";
                 
             if (STACK_TRACING)
             {
@@ -74,7 +74,7 @@ namespace Beast.Claw.Editor.UI
                 message += "Enable stack tracing to detect leak.";
             }
                 
-            BDebug.LogWarning(this, message);
+            BDebug.StaticLogWarning("UIAction: " + message);
         }
         
         public void Dispose()

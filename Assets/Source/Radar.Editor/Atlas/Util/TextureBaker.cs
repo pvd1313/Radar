@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -12,7 +13,7 @@ using UnityEngine;
 namespace Beast.Radar.Editor.Atlas
 {
     [Serializable]
-    public class TextureBaker
+    public class TextureBaker : Controller
     {
         private const int INDEX_MAP_SIZE = 512;
         

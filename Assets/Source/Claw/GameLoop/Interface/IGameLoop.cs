@@ -11,7 +11,7 @@ namespace Beast.Claw.GameLoop
         
         public void Initialize(GameLoopSetup input);
 
-        public void RegisterListeners();
+        public void RegisterActors(IReadOnlyList<IGameLoopActor> actors);
         
         public IProfiler TryGetProfiler(string operationName);
 

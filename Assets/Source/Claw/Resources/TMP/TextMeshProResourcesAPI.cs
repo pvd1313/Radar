@@ -6,14 +6,15 @@ using TMPro;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class TextMeshProResourcesAPI : ResourcesAPI {
-
+public class TextMeshProResourcesAPI : ResourcesAPI, IController 
+{
     private const string AssetsFolder = "Assets/Plugins/TextMesh Pro/Assets";
     private const string MaterialsFolder = "Materials";
     private const string AssetExtension = ".asset";
@@ -23,13 +24,16 @@ public class TextMeshProResourcesAPI : ResourcesAPI {
     private static readonly Type fontAssetType = typeof(TMP_FontAsset);
     private static readonly Type materialType = typeof(Material);
     private static readonly Type spriteAssetType = typeof(TMP_SpriteAsset);
+    
+    public ControllerMeta Meta { get; }
 
     private bool isLoading = false;
     private Dictionary<int, IResourceLocation> locations = null;
     private List<AsyncOperationHandle> operations = new List<AsyncOperationHandle>(1);
 
     public TextMeshProResourcesAPI()
-        : base() {
+    {
+        Meta = ControllerMeta.Create(this);
     }
 
     public void ReleaseOperations() {

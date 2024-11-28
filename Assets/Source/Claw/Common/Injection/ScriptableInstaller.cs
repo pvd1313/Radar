@@ -2,45 +2,48 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Beast.Claw.Attributes;
-using Zenject;
+using VContainer;
 
 namespace Beast.Claw.Common
 {
     [FancyAsset]
-    public abstract class ScriptableInstaller : ScriptableObjectInstaller
+    public abstract class ScriptableInstaller : Scriptable
     {
         private const int MAX_CONFIG_DEPTH = 16;
         
         public List<ScriptableConfig> configs;
-        
-        public override void InstallBindings()
+
+        public void Configure(IContainerBuilder container)
         {
-            foreach (IConfig config in BindConfigs())
+            foreach (IConfig config in _bindConfigs())
             {
-                _bindConfigSelfAndChildrenRecursive(config, 0);
+                _bindConfigSelfAndChildrenRecursive(container, config, 0);
             }
             
             foreach (ScriptableConfig config in configs)
             {
-                _bindConfigSelfAndChildrenRecursive(config, 0);
+                _bindConfigSelfAndChildrenRecursive(container, config, 0);
             }
-
-            BindCustom(Container);
             
-            IEnumerable<Type> interfaceContract = BindInterfaces();
+            IEnumerable<Type> interfaceContract = _bindInterfaces();
             foreach (Type logicType in interfaceContract)
             {
-                Container.BindInterfacesTo(logicType).AsSingle();
+                container.Register(logicType, Lifetime.Singleton).AsImplementedInterfaces();
+            }
+
+            foreach (Type model in _bindModels())
+            {
+                container.Register(model, Lifetime.Singleton).AsSelf();
             }
         }
 
-        protected abstract IEnumerable<IConfig> BindConfigs();
+        protected abstract IEnumerable<IConfig> _bindConfigs();
 
-        protected abstract IEnumerable<Type> BindInterfaces();
+        protected abstract IEnumerable<Type> _bindInterfaces();
 
-        protected abstract void BindCustom(DiContainer diContainer);
+        protected abstract IEnumerable<Type> _bindModels();
 
-        private void _bindConfigSelfAndChildrenRecursive(IConfig config, int depth)
+        private void _bindConfigSelfAndChildrenRecursive(IContainerBuilder container, IConfig config, int depth)
         {
             if (depth < 0)
             {
@@ -54,8 +57,8 @@ namespace Beast.Claw.Common
             
             ValidateConfigTypeAndReference(config);
 
-            Container.BindInterfacesAndSelfTo(config.GetType()).FromInstance(config).AsSingle();
-            
+            container.RegisterInstance(config).AsSelf();
+
             foreach (IConfig child in config.Bind())
             {
                 ValidateConfigTypeAndReference(child);
@@ -65,7 +68,7 @@ namespace Beast.Claw.Common
                     throw new Exception($"Config tried to bind self. {config.GetType().FullName}");
                 }
 
-                _bindConfigSelfAndChildrenRecursive(child, depth + 1);
+                _bindConfigSelfAndChildrenRecursive(container, child, depth + 1);
             }
         }
 

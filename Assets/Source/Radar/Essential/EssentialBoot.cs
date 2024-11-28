@@ -1,19 +1,22 @@
-﻿using Beast.Claw.Common;
+﻿using System.Collections.Generic;
+using System.Threading;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Beast.Radar.Core;
 using Beast.Radar.UI;
 using Cysharp.Threading.Tasks;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Beast.Radar.Essential
 {
-    public class EssentialBoot : Controller, IInitializable
+    public class EssentialBoot : Controller, IAsyncStartable
     {
         private readonly EssentialConfig _config;
         private readonly IWindowManager _windows;
         private readonly IGameLoop _gameLoop;
-        private readonly DiContainer _container;
+        private readonly IObjectResolver _scope;
         private readonly IResourceManager _resources;
 
         private ScriptableInstaller[] _coreInstallers;
@@ -22,24 +25,26 @@ namespace Beast.Radar.Essential
             EssentialConfig config, 
             IWindowManager windows, 
             IGameLoop gameLoop,
-            DiContainer container,
+            IObjectResolver scope,
             IResourceManager resources)
         {
             _config = config;
             _windows = windows;
             _gameLoop = gameLoop;
-            _container = container;
+            _scope = scope;
             _resources = resources;
         }
         
-        public async void Initialize()
+        public async UniTask StartAsync(CancellationToken cancellation = new ())
         {
             _gameLoop.Initialize(new GameLoopSetup
             {
                 actions = new GameLoopActionList().All
             });
+
+            _scope.TryResolve(out IReadOnlyList<IGameLoopActor> actors);
             
-            _gameLoop.RegisterListeners();
+            _gameLoop.RegisterActors(actors);
 
             await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP);
 
@@ -69,15 +74,17 @@ namespace Beast.Radar.Essential
             }
 
             await tracker.Next("Binding installers");
-            foreach (ScriptableInstaller installer in _coreInstallers)
+            
+            IScopedObjectResolver resolver = _scope.CreateScope(container =>
             {
-                _container.Inject(installer);
-                
-                installer.InstallBindings();
-            }
+                foreach (ScriptableInstaller installer in _coreInstallers)
+                {
+                    installer.Configure(container);
+                }
+            });
             
             await tracker.Next("Booting core");
-            await _container.Resolve<ICoreBoot>().Boot(tracker);
+            await resolver.Resolve<ICoreBoot>().Boot(tracker);
         }
     }
 }

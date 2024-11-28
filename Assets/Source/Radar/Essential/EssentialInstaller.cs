@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Input;
@@ -7,7 +8,6 @@ using Beast.Radar.Cinematic;
 using Beast.Radar.Graphic;
 using Beast.Radar.UI;
 using UnityEngine;
-using Zenject;
 
 namespace Beast.Radar.Essential
 {
@@ -15,13 +15,15 @@ namespace Beast.Radar.Essential
     {
         [SerializeField] private EssentialConfig _essentialConfig;
 
-        protected override IEnumerable<IConfig> BindConfigs()
+        protected override IEnumerable<IConfig> _bindConfigs()
         {
             yield return _essentialConfig;
         }
 
-        protected override IEnumerable<System.Type> BindInterfaces()
+        protected override IEnumerable<Type> _bindInterfaces()
         {
+            yield return typeof(GameLoop);
+            
             yield return typeof(Runtime);
             yield return typeof(ResourceManager);
             yield return typeof(FrameTime);
@@ -44,10 +46,9 @@ namespace Beast.Radar.Essential
             yield return typeof(EssentialBoot);
         }
 
-        protected override void BindCustom(DiContainer diContainer)
+        protected override IEnumerable<Type> _bindModels()
         {
-            diContainer.Bind<GameLoop>().FromNew().AsSingle().NonLazy();
-            diContainer.BindInterfacesAndSelfTo<GameLoop.Proxy>().FromNew().AsSingle().NonLazy();
+            yield break;
         }
     }
 }

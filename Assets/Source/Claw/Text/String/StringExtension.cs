@@ -25,6 +25,11 @@ namespace Beast.Claw.Text
         /// <returns>'text'</returns>
         public static string Q(this string text)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "''";
+            }
+            
             StringBuilder builder = BUILDERS.Next().Clear();
             builder.Add('\'');
             builder.Add(text);
@@ -36,6 +41,11 @@ namespace Beast.Claw.Text
         /// <returns>'obj.ToString()'</returns>
         public static string Q(this object obj)
         {
+            if (obj == null)
+            {
+                return "''";
+            }
+            
             StringBuilder builder = BUILDERS.Next().Clear();
             builder.Add('\'');
             builder.Add(obj.ToString());

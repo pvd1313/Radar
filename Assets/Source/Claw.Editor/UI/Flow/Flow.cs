@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Collections;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.UI.UI;
 using UnityEditor;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Editor.UI
 {
-    public partial class Flow : IFlow
+    public partial class Flow : Controller, IFlow
     {
         private const int TEMP_ARRAY_CAPACITY = 8;
         private const string FATAL_MESSAGE = ": Flow terminated and not able to process commands until domain reload.";

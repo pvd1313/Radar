@@ -2,33 +2,32 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
+using Beast.Claw.Profiling;
+using Beast.Claw.Text;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
-using Zenject;
 
 namespace Beast.Claw.GameLoop
 {
-    public partial class GameLoop
+    public partial class GameLoop : Controller, IGameLoop
     {
+        public IReadOnlyList<string> AllOperations => _operationIds;
+        
         private readonly GameLoopConfig _config;
-        private readonly DiContainer _container;
 
         private Dictionary<string, Runner> _runners;
+        private HashSet<IGameLoopActor> _registeredActors;
         private List<string> _operationIds;
 
         private bool _initialized;
-        private bool _isRegisteringListeners;
-        private int _listenerCount;
+        private bool _isRegisteringActors;
 
-        public GameLoop(Proxy proxy, GameLoopConfig config, DiContainer container)
+        public GameLoop(GameLoopConfig config)
         {
             _config = config;
-            _container = container;
-
-            proxy.Inject(this);
         }
         
-        private void _initialize(GameLoopSetup input)
+        public void Initialize(GameLoopSetup input)
         {
             if (_initialized)
             {
@@ -41,6 +40,7 @@ namespace Beast.Claw.GameLoop
 
             _runners = new Dictionary<string, Runner>();
             _operationIds = new List<string>(input.actions.Count);
+            _registeredActors = new HashSet<IGameLoopActor>();
 
             foreach (ActionProperties operation in input.actions)
             {
@@ -49,32 +49,25 @@ namespace Beast.Claw.GameLoop
             }
         }
 
-        private void _registerListeners()
+        public void RegisterActors(IReadOnlyList<IGameLoopActor> actors)
         {
-            _isRegisteringListeners = true;
+            actors.ValidateNotNullThrowException(nameof(actors));
+            
+            _isRegisteringActors = true;
             
             Handle handle = new (this);
-            
-            List<IGameLoopActor> listeners = _container.TryResolve<List<IGameLoopActor>>();
-            
-            if (listeners == null)
-            {
-                throw new Exception("Failed to resolve listeners");
-            }
 
-            if (listeners.Count < _listenerCount)
+            foreach (IGameLoopActor actor in actors)
             {
-                throw new Exception("New listener count is less than already registered listener count");
-            }
-
-            for (int i = _listenerCount; i < listeners.Count; i++)
-            {
-                IGameLoopActor subscriber = listeners[i];
+                if (!_registeredActors.Add(actor))
+                {
+                    continue;
+                }
                 
                 try
                 {
-                    handle.currentListener = subscriber;
-                    subscriber.Register(handle);
+                    handle.currentListener = actor;
+                    actor.Register(handle);
                 }
                 catch (Exception e)
                 {
@@ -84,48 +77,56 @@ namespace Beast.Claw.GameLoop
                 }
             }
 
-            _listenerCount = listeners.Count;
+            _isRegisteringActors = false;
+        }
+        
+        public IProfiler TryGetProfiler(string operationName)
+        {
+            if (!_runners.TryGetValue(operationName, out Runner runner))
+            {
+                return null;
+            }
 
-            _isRegisteringListeners = false;
+            return runner.Profiler;
         }
 
-        private async UniTask<EActionStatus> _executeConcurrent(IController owner, string eventID) 
+        public async UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID) 
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
             
-            if (_isRegisteringListeners)
+            if (_isRegisteringActors)
             {
                 throw new InvalidOperationException("Tried to invoke operation during registration");
             }
 
             if (!_runners.TryGetValue(eventID, out Runner runner))
             {
-                throw new InvalidOperationException($"Tried to invoke invalid operation '{eventID}'");
+                throw new InvalidOperationException($"Tried to invoke invalid operation {eventID.Q()}");
             }
 
             return await runner.ExecuteConcurrent(owner);
         }
 
-        private void _executeBlocking(IController owner, string eventID)
+        public void ExecuteBlocking(IController owner, string eventID)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
             
-            if (_isRegisteringListeners)
+            if (_isRegisteringActors)
             {
                 throw new InvalidOperationException("Tried to invoke update during subscription");
             }
 
             if (!_runners.TryGetValue(eventID, out Runner runner))
             {
-                throw new InvalidOperationException($"Tried to invoke invalid update '{eventID}'");
+                throw new InvalidOperationException($"Tried to invoke invalid update {eventID.Q()}");
             }
             
             runner.ExecuteBlocking(owner);
         }
 
-        private void _dispose()
+        public void Dispose()
         {
             foreach (Runner runner in _runners.Values)
             {

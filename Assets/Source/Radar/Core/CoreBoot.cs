@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.ProgressTracker;
@@ -6,6 +7,7 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
+using VContainer;
 
 namespace Beast.Radar.Core
 {
@@ -16,19 +18,22 @@ namespace Beast.Radar.Core
         private readonly IntegratedSave _integratedSave;
         private readonly IGameLoop _gameLoop;
         private readonly IWorldManager _worldManager;
+        private readonly IObjectResolver _container;
 
         public CoreBoot(
             IWindowManager window, 
             ISaveManager save, 
             IntegratedSave integratedSave, 
             IGameLoop gameLoop, 
-            IWorldManager worldManager)
+            IWorldManager worldManager,
+            IObjectResolver container)
         {
             _window = window;
             _save = save;
             _integratedSave = integratedSave;
             _gameLoop = gameLoop;
             _worldManager = worldManager;
+            _container = container;
         }
         
         public async UniTask Boot(IProgressTracker tracker)
@@ -39,8 +44,9 @@ namespace Beast.Radar.Core
 
             tracker.Begin(4, 1 - tracker.Progress);
 
-            await tracker.Next("Core: Registering GameCycle listeners");
-            _gameLoop.RegisterListeners();
+            await tracker.Next("Core: Registering GameLoop actors");
+            _container.TryResolve(out IReadOnlyList<IGameLoopActor> actors);
+            _gameLoop.RegisterActors(actors);
 
             await tracker.Next("Core: Loading preferences");
             await _gameLoop.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);

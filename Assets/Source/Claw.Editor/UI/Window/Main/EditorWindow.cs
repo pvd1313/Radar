@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.UI.UI;
 using UnityEditor;
@@ -8,8 +9,10 @@ using UnityEngine;
 namespace Beast.Claw.Editor.UI
 {
     [FancyAsset]
-    public abstract class EditorWindow : UnityEditor.EditorWindow, IHasCustomMenu
+    public abstract class EditorWindow : UnityEditor.EditorWindow, IHasCustomMenu, IController
     {
+        public ControllerMeta Meta { get; }
+        
         protected Flow _flow;
         protected RectUI _rectUI;
         
@@ -18,6 +21,8 @@ namespace Beast.Claw.Editor.UI
         
         protected EditorWindow()
         {
+            Meta = ControllerMeta.Create(this);
+            
             _subscribeUnityEvents();
         }
         

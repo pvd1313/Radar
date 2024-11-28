@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
@@ -12,18 +13,17 @@ using Beast.Radar.Terrain;
 using Beast.Radar.UI;
 using Beast.Radar.UI.Graphy;
 using Beast.Radar.World;
-using Zenject;
 
 namespace Beast.Radar.Core
 {
     public class CoreInstaller : ScriptableInstaller
     {
-        protected override IEnumerable<IConfig> BindConfigs()
+        protected override IEnumerable<IConfig> _bindConfigs()
         {
             yield break;
         }
 
-        protected override IEnumerable<Type> BindInterfaces()
+        protected override IEnumerable<Type> _bindInterfaces()
         {
             // Camera
             yield return typeof(CameraTransform);
@@ -68,10 +68,10 @@ namespace Beast.Radar.Core
             // yield return typeof(CityViewController);
         }
 
-        protected override void BindCustom(DiContainer diContainer)
+        protected override IEnumerable<Type> _bindModels()
         {
-            diContainer.Bind<PlayerPreference>().FromNew().AsSingle().NonLazy();
-            diContainer.Bind<GameModel>().FromNew().AsSingle().NonLazy();
+            yield return typeof(PlayerPreference);
+            yield return typeof(GameModel);
         }
     }
 }

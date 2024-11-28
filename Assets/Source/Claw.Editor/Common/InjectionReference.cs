@@ -1,4 +1,5 @@
 using UnityEngine;
+using VContainer.Unity;
 using Zenject;
 
 namespace Beast.Claw.Editor
@@ -25,10 +26,13 @@ namespace Beast.Claw.Editor
                 _referenceSearched = true;
                 _reference = null;
 
-                SceneContext context = Object.FindObjectOfType<SceneContext>();
-                if (context != null)
+                LifetimeScope scope = Object.FindObjectOfType<LifetimeScope>();
+                
+                if (scope != null)
                 {
-                    _reference = context.Container.TryResolve<TObject>();
+                    scope.Container.TryResolve(typeof(TObject), out object resolved);
+
+                    _reference = resolved as TObject;
                 }
             }
 
