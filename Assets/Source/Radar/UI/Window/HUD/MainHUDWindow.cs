@@ -14,7 +14,6 @@ namespace Beast.Radar.UI
     {
         [Required] private readonly PlayerPreference _preference;
         [Required] private readonly UIConfig _config;
-        [Required] private readonly INoesisWindowManager _noesisWindow;
         [Required] private readonly IPlayer _player;
         [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly IGameTime _gameTime;
@@ -53,7 +52,7 @@ namespace Beast.Radar.UI
 
             _config.HUDWindowAsset.Instantiate(out _view);
             
-            _noesisWindow.Attach(_view, 0);
+            _windowManager.Attach(_view, 0);
 
             _view.Visibility = Visibility.Visible;
 

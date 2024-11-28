@@ -17,7 +17,6 @@ namespace Beast.Radar.UI
         [Required] private readonly ISaveManager _saveManager;
         [Required] private readonly PlayerPreference _playerPreference;
         [Required] private readonly UIConfig _uiConfig;
-        [Required] private readonly INoesisWindowManager _noesisWindowManager;
         [Required] private readonly IGraphyWindow _graphyWindow;
 
         private PauseWindowView _view;
@@ -50,7 +49,7 @@ namespace Beast.Radar.UI
         {
             _uiConfig.pauseWindowAsset.Instantiate(out _view);
 
-            _noesisWindowManager.Attach(_view);
+            _windowManager.Attach(_view);
             
             _view.Visibility = Visibility.Collapsed;
             

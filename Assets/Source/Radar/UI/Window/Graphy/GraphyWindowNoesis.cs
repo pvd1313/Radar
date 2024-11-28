@@ -12,7 +12,7 @@ namespace Beast.Radar.UI.Graphy
     {
         [Required] private readonly PlayerPreference _preference;
         [Required] private readonly UIConfig _uiConfig;
-        [Required] private readonly INoesisWindowManager _noesisWindowManager;
+        [Required] private readonly IWindowManager _windowManager;
 
         private GraphyView _view;
 
@@ -21,7 +21,7 @@ namespace Beast.Radar.UI.Graphy
             if (_view == null)
             {
                 _uiConfig.graphyAsset.Instantiate(out _view);
-                _noesisWindowManager.Attach(_view, 100);
+                _windowManager.Attach(_view, 100);
             }
             else
             {

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Beast.Claw;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
+using Beast.Claw.Input;
+using Beast.Claw.UI;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
-using UnityEngine;
+using Noesis;
 
 namespace Beast.Radar.UI
 {
@@ -18,18 +18,42 @@ namespace Beast.Radar.UI
     {
         public event Action<string> WindowChanged;
 
-        public Transform CanvasTransform => _canvas.transform;
-
         public string WindowID => _currentWindow;
         
         [Required] private readonly EssentialPrefabLibrary _library;
         [Required] private readonly ICamera _camera;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly IInputManager _inputManager;
 
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
-        private LegacyCanvasView _canvas;
-        
         private string _currentWindow = UI.WindowID.NONE;
+        
+        private NoesisMonoRender _noesisRender;
+        private CanvasView _canvas;
+        private Grid _grid;
+        private NoesisInputConsumer _inputConsumer;
+        
+        protected override UniTask _warmup(ConcurrentContext context)
+        {
+            _library.canvasXaml.Instantiate(out _canvas);
+            _grid = _canvas.grid;
+            
+            _idToWindow = new Dictionary<string, WindowData>(64);
+
+            if (Build.IS_DEVELOPMENT)
+            {
+                _debugHandleRecords = new List<Record>(256);
+            }
+            
+            NoesisMonoRender render = BScene.InstantiateMono(this, _library.noesisRender);
+            NoesisView view = render.Initialize(_camera.Camera, _canvas);
+
+            _inputConsumer = new NoesisInputConsumer(view, _screen);
+            _inputManager.RegisterConsumer(_inputConsumer, InputConsumerPriority.UI_NAVIGATION);
+
+            return UniTask.CompletedTask;
+        }
         
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
         {
@@ -47,6 +71,24 @@ namespace Beast.Radar.UI
             }
             
             return new Handle<TData>(this, windowID);
+        }
+        
+        public void Attach(UIElement uiElement)
+        {
+            uiElement.ValidateNotNullThrowException(nameof(uiElement));
+
+            Panel.SetZIndex(uiElement, 0);
+            
+            _grid.Children.Add(uiElement);
+        }
+
+        public void Attach(UIElement uiElement, int index)
+        {
+            uiElement.ValidateNotNullThrowException(nameof(uiElement));
+
+            Panel.SetZIndex(uiElement, index);
+            
+            _grid.Children.Add(uiElement);
         }
         
         public void Register<TData>(IWindow<TData> window, string windowID) where TData : struct
@@ -72,20 +114,6 @@ namespace Beast.Radar.UI
                 dataType = typeof(TData),
                 windowID = windowID
             };
-        }
-
-        protected override UniTask _warmup(ConcurrentContext context)
-        {
-            _idToWindow = new Dictionary<string, WindowData>(64);
-
-            if (Build.IS_DEVELOPMENT)
-            {
-                _debugHandleRecords = new List<Record>(256);
-            }
-
-            _canvas = BScene.InstantiateMono(this, _library.canvas);
-
-            return UniTask.CompletedTask;
         }
         
         private async UniTask _open<TData>(string windowID, TData data)

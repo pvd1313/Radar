@@ -39,7 +39,6 @@ namespace Beast.Radar.Essential
             
             // UI
             yield return typeof(WindowManager);
-            yield return typeof(NoesisWindowManager);
             
             yield return typeof(LoadingWindow);
             

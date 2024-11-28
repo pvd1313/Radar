@@ -1,16 +1,15 @@
-﻿using System;
-using Beast.Claw.Common;
-using Unity.Mathematics;
-using UnityEngine;
+﻿using Beast.Claw.Common;
+using Noesis;
 
 namespace Beast.Radar.UI
 {
     public interface IWindowManager
     {
-        event Action<string> WindowChanged; 
-
-        public Transform CanvasTransform { get; }
         public string WindowID { get; }
+        
+        void Attach(UIElement uiElement);
+        
+        void Attach(UIElement uiElement, int index);
         
         void Register<TData>(IWindow<TData> window, string windowID) where TData : struct;
         

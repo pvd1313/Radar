@@ -15,8 +15,7 @@ namespace Beast.Radar.UI
     {
         [Required] private readonly EssentialPrefabLibrary _library;
         [Required] private readonly LoadingWindowConfig _config;
-        [Required] private readonly INoesisWindowManager _windows;
-        [Required] private readonly IWindowManager _legacy;
+        [Required] private readonly IWindowManager _windows;
         
         private LoadingWindowView _view;
         
@@ -50,7 +49,7 @@ namespace Beast.Radar.UI
             
             _windows.Attach(_view, 1);
             
-            _legacy.Register(this, WindowID.LOADING);
+            _windows.Register(this, WindowID.LOADING);
             
             return UniTask.CompletedTask;
         }

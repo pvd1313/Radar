@@ -19,7 +19,6 @@ namespace Beast.Radar.UI
         [Required] private readonly ITerrainPreviewRender _previewRender;
         [Required] private readonly INewGameSetup _newGameSetup;
         [Required] private readonly UIConfig _uiConfig;
-        [Required] private readonly INoesisWindowManager _noesisWindowManager;
 
         private MapGenerationWindowView _view;
         private Dictionary<RadioButton, int> _buttonSizes;
@@ -61,7 +60,7 @@ namespace Beast.Radar.UI
 
             _view.Visibility = Visibility.Collapsed;
 
-            _noesisWindowManager.Attach(_view);
+            _windowManager.Attach(_view);
 
             _windowManager.Register(this, WindowID.MAP_GENERATION);
 
