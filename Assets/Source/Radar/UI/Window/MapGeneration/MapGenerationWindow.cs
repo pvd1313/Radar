@@ -131,10 +131,12 @@ namespace Beast.Radar.UI
 
                 _refreshSeed();
             };
+
+            int[] sizes = { 512, 1024, 2048, 4096 };
             
             for (int i = 0; i < _view.buttonsSize.Length; i++)
             {
-                int size = (i + 1) * 512;
+                int size = sizes[i];
                 
                 _view.buttonsSize[i].Click += (_, _) =>
                 {
