@@ -67,7 +67,7 @@ namespace Beast.Radar.Player
 
         protected override UniTask _gameLoad(ConcurrentContext arg)
         {
-            _position = _game.player.position;
+            _position = BWorld.TileIndexToWorld(_game.player.position);
             _isMoving = false;
             _hasTarget = false;
             

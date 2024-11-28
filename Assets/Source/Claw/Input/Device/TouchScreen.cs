@@ -15,7 +15,7 @@ namespace Beast.Claw.Input
         public string FriendlyName => nameof(TouchScreen);
 
         private float _startZoomDistance;
-        
+
         public UniTask Warmup(ConcurrentContext context)
         {
             _warmup(MAX_TOUCH_COUNT);

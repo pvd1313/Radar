@@ -20,6 +20,14 @@ namespace Beast.Radar.Graphic
             return BMath.FloorToInt(worldPosition * TILES_PER_CELL);
         }
 
+        /// <para>13 -> 0.13</para>
+        /// <para>100 -> 1.0</para>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 TileIndexToWorld(int2 tileIndex)
+        {
+            return tileIndex / TILES_PER_CELL;
+        }
+
         public static float2 SnapToTileGridCenter(float2 worldPosition)
         {
             float2 tileSize = 1f / TILES_PER_CELL;
