@@ -1,6 +1,5 @@
 using UnityEngine;
 using VContainer.Unity;
-using Zenject;
 
 namespace Beast.Claw.Editor
 {
