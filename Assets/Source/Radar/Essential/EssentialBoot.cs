@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
@@ -13,28 +14,14 @@ namespace Beast.Radar.Essential
 {
     public class EssentialBoot : Controller, IAsyncStartable
     {
-        private readonly EssentialConfig _config;
-        private readonly IWindowManager _windows;
-        private readonly IGameLoop _gameLoop;
-        private readonly IObjectResolver _scope;
-        private readonly IResourceManager _resources;
+        [Required] private readonly EssentialConfig _config;
+        [Required] private readonly IWindowManager _windows;
+        [Required] private readonly IGameLoop _gameLoop;
+        [Required] private readonly IObjectResolver _scope;
+        [Required] private readonly IResourceManager _resources;
 
         private ScriptableInstaller[] _coreInstallers;
 
-        public EssentialBoot(
-            EssentialConfig config, 
-            IWindowManager windows, 
-            IGameLoop gameLoop,
-            IObjectResolver scope,
-            IResourceManager resources)
-        {
-            _config = config;
-            _windows = windows;
-            _gameLoop = gameLoop;
-            _scope = scope;
-            _resources = resources;
-        }
-        
         public async UniTask StartAsync(CancellationToken cancellation = new ())
         {
             _gameLoop.Initialize(new GameLoopSetup

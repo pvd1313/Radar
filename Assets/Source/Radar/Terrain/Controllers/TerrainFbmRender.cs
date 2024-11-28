@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -12,14 +13,9 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainFbmRender : Actor, ITerrainFbmRender
     {
-        private readonly GraphicLibrary _graphicLibrary;
+        [Required] private readonly GraphicLibrary _graphicLibrary;
 
         private Material _material;
-
-        public TerrainFbmRender(GraphicLibrary graphicLibrary)
-        {
-            _graphicLibrary = graphicLibrary;
-        }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {

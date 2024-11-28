@@ -22,7 +22,7 @@ namespace Beast.Radar.Terrain
         
         public IEnumerable<IConfig> Bind()
         {
-            yield break;
+            yield return atlas;
         }
     }
 }

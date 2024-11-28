@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -23,24 +24,14 @@ namespace Beast.Radar.City
     {
         public NativeList<CityInfo> Cities => _cities;
         
-        private readonly IGizmoManager _gizmoManager;
-        private readonly ITerrainBackedBiome _biome;
-        private readonly IWorldManager _worldManager;
+        [Required] private readonly IGizmoManager _gizmoManager;
+        [Required] private readonly ITerrainBackedBiome _biome;
+        [Required] private readonly IWorldManager _worldManager;
 
         private IGizmoHandle _gizmo;
         private NativeList<CityInfo> _cities;
 
         private TerrainData _bakedForTerrain;
-
-        public CitySpawner(
-            IGizmoManager gizmoManager, 
-            ITerrainBackedBiome biome, 
-            IWorldManager worldManager)
-        {
-            _gizmoManager = gizmoManager;
-            _biome = biome;
-            _worldManager = worldManager;
-        }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {

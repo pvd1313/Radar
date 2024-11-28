@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -10,20 +11,13 @@ namespace Beast.Radar.UI
 {
     public class PlayerViewController : Actor
     {
-        private readonly ICameraTransform _camera;
-        private readonly IPlayer _player;
-        private readonly IWorldViewInstance _view;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly IPlayer _player;
+        [Required] private readonly IWorldViewInstance _view;
 
         private Cache<bool> _playerHasTargetCache;
         private Cache<int> _remainingDistanceCache;
         private StringBuilder _stringBuilder;
-
-        public PlayerViewController(IWorldViewInstance worldView, ICameraTransform camera, IPlayer player)
-        {
-            _view = worldView;
-            _camera = camera;
-            _player = player;
-        }
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {

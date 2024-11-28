@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -13,27 +14,15 @@ namespace Beast.Radar.UI
 {
     public class NoesisWindowManager : Actor, INoesisWindowManager
     {
-        private readonly EssentialPrefabLibrary _library;
-        private readonly ICamera _camera;
-        private readonly IScreen _screen;
-        private readonly IInputManager _inputManager;
+        [Required] private readonly EssentialPrefabLibrary _library;
+        [Required] private readonly ICamera _camera;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly IInputManager _inputManager;
 
         private NoesisMonoRender _noesisRender;
         private CanvasView _canvas;
         private Grid _grid;
         private NoesisInputConsumer _inputConsumer;
-
-        public NoesisWindowManager(
-            EssentialPrefabLibrary library, 
-            ICamera camera, 
-            IScreen screen,
-            IInputManager inputManager)
-        {
-            _library = library;
-            _camera = camera;
-            _screen = screen;
-            _inputManager = inputManager;
-        }
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -10,32 +11,16 @@ namespace Beast.Claw.Input
     {
         public IInputDevice ActiveDevice => _activeDevice;
 
-        private readonly InputConfig _config;
-        private readonly IInputManager _inputManager;
-        private readonly IRuntime _runtime;
-        private readonly IInputDriver _driver;
-        private readonly IFrameTime _frameTime;
-        private readonly IScreen _screen;
+        [Required] private readonly InputConfig _config;
+        [Required] private readonly IInputManager _inputManager;
+        [Required] private readonly IRuntime _runtime;
+        [Required] private readonly IInputDriver _driver;
+        [Required] private readonly IFrameTime _frameTime;
+        [Required] private readonly IScreen _screen;
 
         private IInputDevice _mouse;
         private IInputDevice _touchScreen;
         private IInputDevice _activeDevice;
-
-        public DeviceManager(
-            InputConfig config, 
-            IInputManager inputManager, 
-            IRuntime runtime,
-            IInputDriver driver,
-            IFrameTime frameTime,
-            IScreen screen)
-        {
-            _config = config;
-            _inputManager = inputManager;
-            _runtime = runtime;
-            _driver = driver;
-            _frameTime = frameTime;
-            _screen = screen;
-        }
 
         protected override async UniTask _warmup(ConcurrentContext context)
         {

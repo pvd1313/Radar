@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -13,13 +14,12 @@ namespace Beast.Radar.UI
 {
     public class MapGenerationWindow : Actor, IWindow<Empty>
     {
-        private readonly IWindowManager _windowManager;
-        private readonly MapGenerationWindowConfig _generationConfig;
-        private readonly ITerrainPreviewRender _previewRender;
-        private readonly INewGameSetup _newGameSetup;
-        private readonly CorePrefabLibrary _library;
-        private readonly UIConfig _uiConfig;
-        private readonly INoesisWindowManager _noesisWindowManager;
+        [Required] private readonly IWindowManager _windowManager;
+        [Required] private readonly MapGenerationWindowConfig _generationConfig;
+        [Required] private readonly ITerrainPreviewRender _previewRender;
+        [Required] private readonly INewGameSetup _newGameSetup;
+        [Required] private readonly UIConfig _uiConfig;
+        [Required] private readonly INoesisWindowManager _noesisWindowManager;
 
         private MapGenerationWindowView _view;
         private Dictionary<RadioButton, int> _buttonSizes;
@@ -30,24 +30,6 @@ namespace Beast.Radar.UI
         private TextureSource _terrainTextureSource;
         private int _seedIndex;
         private IWindowHandle<Empty> _mainHUD;
-
-        public MapGenerationWindow(
-            MapGenerationWindowConfig generationConfig,
-            IWindowManager windowManager,
-            ITerrainPreviewRender previewRender,
-            INewGameSetup newGameSetup,
-            CorePrefabLibrary library,
-            UIConfig uiConfig,
-            INoesisWindowManager noesisWindowManager)
-        {
-            _generationConfig = generationConfig;
-            _windowManager = windowManager;
-            _previewRender = previewRender;
-            _newGameSetup = newGameSetup;
-            _library = library;
-            _uiConfig = uiConfig;
-            _noesisWindowManager = noesisWindowManager;
-        }
 
         public UniTask Open(Empty data)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
@@ -13,7 +14,7 @@ namespace Beast.Claw.GameLoop
     {
         public IReadOnlyList<string> AllOperations => _operationIds;
         
-        private readonly GameLoopConfig _config;
+        [Required] private readonly GameLoopConfig _config;
 
         private Dictionary<string, Runner> _runners;
         private HashSet<IGameLoopActor> _registeredActors;
@@ -22,11 +23,6 @@ namespace Beast.Claw.GameLoop
         private bool _initialized;
         private bool _isRegisteringActors;
 
-        public GameLoop(GameLoopConfig config)
-        {
-            _config = config;
-        }
-        
         public void Initialize(GameLoopSetup input)
         {
             if (_initialized)

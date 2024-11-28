@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
@@ -19,25 +20,14 @@ namespace Beast.Radar.Terrain
         
         public bool IsReady { get; private set; }
 
-        private readonly ITerrainBakedFbm _bakedTerrain;
-        private readonly IWorldManager _worldManager;
-        private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
-        private readonly GraphicConfig _graphicConfig;
+        [Required] private readonly ITerrainBakedFbm _bakedTerrain;
+        [Required] private readonly IWorldManager _worldManager;
+        [Required] private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
+        [Required] private readonly GraphicConfig _graphicConfig;
+        
         private TextureWithBlocks<EBiomeName> _biomeWithBlocks;
         private AveragePixelCountTexture<EBiomeName> _biomePacked;
         private TerrainData _bakedForTerrain;
-
-        public TerrainBakedBiome(
-            ITerrainBakedFbm bakedTerrain,
-            IWorldManager worldManager,
-            IRender<TerrainBiomeRenderTask> biomeRender,
-            GraphicConfig graphicConfig)
-        {
-            _bakedTerrain = bakedTerrain;
-            _worldManager = worldManager;
-            _biomeRender = biomeRender;
-            _graphicConfig = graphicConfig;
-        }
 
         protected override UniTask _gameLoad(ConcurrentContext context)
         {

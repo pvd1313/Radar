@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Beast.Radar.Terrain
 {
     [Serializable]
-    public class TerrainAtlas : IValidatable
+    public class TerrainAtlas : IValidatable, IConfig
     {
         private static Dictionary<int, string> _indexToName;
         private static Dictionary<int, Bounds2D> _indexToBounds;
@@ -27,7 +27,12 @@ namespace Beast.Radar.Terrain
         
         public int2 tileCount;
         public int pixelsPerTile;
-
+        
+        public IEnumerable<IConfig> Bind()
+        {
+            yield break;
+        }
+        
         public string Validate()
         {
             if (tileCount.x <= 0 || tileCount.y <= 0)

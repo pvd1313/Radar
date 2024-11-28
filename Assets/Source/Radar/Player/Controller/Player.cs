@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
@@ -24,14 +25,14 @@ namespace Beast.Radar.Player
         public bool IsMoving => _isMoving;
         public bool HasTarget => _hasTarget;
 
-        private readonly IGameTime _gameTime;
-        private readonly PlayerConfig _config;
-        private readonly ICameraTransform _camera;
-        private readonly ITerrainBackedBiome _biome;
-        private readonly GameModel _game;
-        private readonly PlayerPreference _prefs;
-        private readonly IGizmoManager _gizmoManager;
-        private readonly IInputManager _inputManager;
+        [Required] private readonly IGameTime _gameTime;
+        [Required] private readonly PlayerConfig _config;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly ITerrainBackedBiome _biome;
+        [Required] private readonly GameModel _game;
+        [Required] private readonly PlayerPreference _prefs;
+        [Required] private readonly IGizmoManager _gizmoManager;
+        [Required] private readonly IInputManager _inputManager;
         
         private bool _isMoving;
         private bool _hasTarget;
@@ -39,26 +40,6 @@ namespace Beast.Radar.Player
         private float2 _target;
         private PlayerNavigator _navigator;
         
-        public Player(
-            IGameTime gameTime,
-            PlayerConfig config,
-            ICameraTransform camera,
-            ITerrainBackedBiome biome,
-            GameModel game,
-            PlayerPreference prefs,
-            IGizmoManager gizmoManager,
-            IInputManager inputManager)
-        {
-            _gameTime = gameTime;
-            _config = config;
-            _camera = camera;
-            _biome = biome;
-            _game = game;
-            _prefs = prefs;
-            _gizmoManager = gizmoManager;
-            _inputManager = inputManager;
-        }
-
         public void ToggleMovementState()
         {
             _isMoving = !_isMoving;

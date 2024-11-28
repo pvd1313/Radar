@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
@@ -11,12 +12,12 @@ namespace Beast.Radar.UI
 {
     public class MainHUDWindow : Actor, IWindow<Empty>
     {
-        private readonly PlayerPreference _preference;
-        private readonly UIConfig _config;
-        private readonly INoesisWindowManager _noesisWindow;
-        private readonly IPlayer _player;
-        private readonly IWindowManager _windowManager;
-        private readonly IGameTime _gameTime;
+        [Required] private readonly PlayerPreference _preference;
+        [Required] private readonly UIConfig _config;
+        [Required] private readonly INoesisWindowManager _noesisWindow;
+        [Required] private readonly IPlayer _player;
+        [Required] private readonly IWindowManager _windowManager;
+        [Required] private readonly IGameTime _gameTime;
         
         private IntToStringConverter _intToString;
         private IWindowHandle<Empty> _pauseMenu;
@@ -26,22 +27,6 @@ namespace Beast.Radar.UI
         private DateTime _displayedDate;
         private Cache<(int, int)> _displayedDateCache;
         
-        public MainHUDWindow(
-            PlayerPreference preference,
-            UIConfig config,
-            INoesisWindowManager noesisWindow,
-            IWindowManager windowManager,
-            IPlayer player,
-            IGameTime gameTime)
-        {
-            _preference = preference;
-            _config = config;
-            _noesisWindow = noesisWindow;
-            _windowManager = windowManager;
-            _gameTime = gameTime;
-            _player = player;
-        }
-
         public UniTask Open(Empty data)
         {
             _fetchView();

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameLoop;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
@@ -8,19 +9,12 @@ namespace Beast.Radar.UI.Graphy
 {
     public class GraphyWindow : Actor, IGraphyWindow
     {
-        private readonly PlayerPreference _preference;
-        private readonly UIConfig _uiConfig;
-        private readonly IResourceManager _resources;
+        [Required] private readonly PlayerPreference _preference;
+        [Required] private readonly UIConfig _uiConfig;
+        [Required] private readonly IResourceManager _resources;
 
         private GameObject _view;
         private GraphyView _graphyView;
-
-        public GraphyWindow(PlayerPreference preference, UIConfig uiConfig, IResourceManager resources)
-        {
-            _preference = preference;
-            _uiConfig = uiConfig;
-            _resources = resources;
-        }
 
         public async void Open()
         {

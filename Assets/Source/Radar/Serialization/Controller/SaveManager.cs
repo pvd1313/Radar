@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Beast.Claw;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -15,20 +16,10 @@ namespace Beast.Radar.Serialization
 {
     public class SaveManager : Controller, ISaveManager
     {
-        private readonly GameModel _gameModel;
-        private readonly IGameLoop _gameLoop;
-        private readonly IFileManager _fileManager;
+        [Required] private readonly GameModel _gameModel;
+        [Required] private readonly IGameLoop _gameLoop;
+        [Required] private readonly IFileManager _fileManager;
 
-        public SaveManager(
-            GameModel gameModel,
-            IGameLoop gameLoop,
-            IFileManager fileManager)
-        {
-            _gameModel = gameModel;
-            _gameLoop = gameLoop;
-            _fileManager = fileManager;
-        }
-        
         public bool Exists(string folderName, string fileName)
         {
             return _fileManager.Exists(folderName, fileName);

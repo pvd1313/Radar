@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameLoop;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
@@ -13,23 +14,13 @@ namespace Beast.Radar.Cinematic
     {
         public Int32Mask SupportedAxis { get; } = AxisType.DRAG.AsMask() | AxisType.ZOOM.AsMask();
         
-        private readonly ICameraTransform _transform;
-        private readonly CameraConfig _cameraConfig;
-        private readonly IInputManager _inputManager;
-        private readonly IGizmoManager _gizmoManager;
+        [Required] private readonly ICameraTransform _transform;
+        [Required] private readonly CameraConfig _cameraConfig;
+        [Required] private readonly IInputManager _inputManager;
+        [Required] private readonly IGizmoManager _gizmoManager;
 
         private float2 _dragCameraPosition;
 
-        public CameraTransformController(
-            ICameraTransform transform, 
-            CameraConfig cameraConfig, 
-            IInputManager inputManager)
-        {
-            _transform = transform;
-            _cameraConfig = cameraConfig;
-            _inputManager = inputManager;
-        }
-        
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP_NAVIGATION);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
@@ -12,10 +13,10 @@ namespace Beast.Radar.UI
 {
     public class LoadingWindow : Actor, IWindow<LoadingWindowInput>, IProgressTrackerListener
     {
-        private readonly EssentialPrefabLibrary _library;
-        private readonly LoadingWindowConfig _config;
-        private readonly INoesisWindowManager _windows;
-        private readonly IWindowManager _legacy;
+        [Required] private readonly EssentialPrefabLibrary _library;
+        [Required] private readonly LoadingWindowConfig _config;
+        [Required] private readonly INoesisWindowManager _windows;
+        [Required] private readonly IWindowManager _legacy;
         
         private LoadingWindowView _view;
         
@@ -25,16 +26,6 @@ namespace Beast.Radar.UI
         private StringBuilder _stringBuilder;
         private bool _canInvokeNextAction;
 
-        public LoadingWindow(
-            LoadingWindowConfig config, 
-            INoesisWindowManager windows, 
-            IWindowManager legacy)
-        {
-            _config = config;
-            _windows = windows;
-            _legacy = legacy;
-        }
-        
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _intToString = new IntToStringConverter(99);

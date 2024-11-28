@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
@@ -13,25 +14,13 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainBiomeTest : Actor
     {
-        private readonly ICameraTransform _camera;
-        private readonly ITerrainBackedBiome _biome;
-        private readonly IGizmoManager _gizmoManager;
-        private readonly IDeviceManager _deviceManager;
-        private readonly IInputDevice _input;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly ITerrainBackedBiome _biome;
+        [Required] private readonly IGizmoManager _gizmoManager;
+        [Required] private readonly IDeviceManager _deviceManager;
+        [Required] private readonly IInputDevice _input;
 
         private IGizmoHandle _gizmo;
-
-        public TerrainBiomeTest(
-            ICameraTransform camera, 
-            ITerrainBackedBiome biome, 
-            IGizmoManager gizmoManager,
-            IDeviceManager deviceManager)
-        {
-            _camera = camera;
-            _biome = biome;
-            _gizmoManager = gizmoManager;
-            _deviceManager = deviceManager;
-        }
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {

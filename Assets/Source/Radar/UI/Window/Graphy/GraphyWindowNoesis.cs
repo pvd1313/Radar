@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameLoop;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.GameLoop;
 using Beast.Claw.Resources;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
@@ -9,21 +10,11 @@ namespace Beast.Radar.UI.Graphy
 {
     public class GraphyWindowNoesis : Actor, IGraphyWindow
     {
-        private readonly PlayerPreference _preference;
-        private readonly UIConfig _uiConfig;
-        private readonly INoesisWindowManager _noesisWindowManager;
+        [Required] private readonly PlayerPreference _preference;
+        [Required] private readonly UIConfig _uiConfig;
+        [Required] private readonly INoesisWindowManager _noesisWindowManager;
 
         private GraphyView _view;
-
-        public GraphyWindowNoesis(
-            PlayerPreference preference,
-            UIConfig uiConfig,
-            INoesisWindowManager noesisWindowManager)
-        {
-            _preference = preference;
-            _uiConfig = uiConfig;
-            _noesisWindowManager = noesisWindowManager;
-        }
 
         public async void Open()
         {

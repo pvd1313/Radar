@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Cysharp.Threading.Tasks;
@@ -11,15 +12,10 @@ namespace Beast.Radar.Cinematic
     {
         public Camera Camera => _camera;
         
-        private readonly EssentialPrefabLibrary _library;
+        [Required] private readonly EssentialPrefabLibrary _library;
 
         private CameraView _view;
         private Camera _camera;
-
-        public CameraSpawner(EssentialPrefabLibrary library)
-        {
-            _library = library;
-        }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {

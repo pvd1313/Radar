@@ -1,6 +1,7 @@
 ﻿#if UNITY_2022_3_OR_NEWER
 
 using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes;
 using Beast.Claw.Collections;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -14,7 +15,7 @@ namespace Beast.Claw.Input
 {
     public class UnityInputDriver : Actor, IInputDriver
     {
-        private readonly IScreen _screen;
+        [Required] private readonly IScreen _screen;
 
         public UnityInputDriver(IScreen screen)
         {

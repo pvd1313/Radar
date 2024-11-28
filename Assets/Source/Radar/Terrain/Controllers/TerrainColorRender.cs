@@ -1,5 +1,6 @@
 ﻿using System;
 using Beast.Claw;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -14,25 +15,13 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainColorRender : Actor, ITerrainColorRender
     {
-        private readonly IScreen _screen;
-        private readonly GraphicLibrary _library;
-        private readonly ITerrainBiomeRender _biomeRender;
-        private readonly ICameraTransform _camera;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly GraphicLibrary _library;
+        [Required] private readonly ITerrainBiomeRender _biomeRender;
+        [Required] private readonly ICameraTransform _camera;
 
         private Material _materialForCamera;
 
-        public TerrainColorRender(
-            IScreen screen,
-            GraphicLibrary library, 
-            ITerrainBiomeRender biomeRender,
-            ICameraTransform camera)
-        {
-            _screen = screen;
-            _library = library;
-            _biomeRender = biomeRender;
-            _camera = camera;
-        }
-        
         public void Render(TerrainColorRenderTask task)
         {
             task.ValidateThrowException(nameof(task));

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -9,13 +10,8 @@ namespace Beast.Radar.UI
     {
         public WorldView View { get; private set; }
         
-        private readonly CorePrefabLibrary _prefabLibrary;
+        [Required] private readonly CorePrefabLibrary _prefabLibrary;
         
-        public WorldViewInstance(CorePrefabLibrary prefabLibrary)
-        {
-            _prefabLibrary = prefabLibrary;
-        }
-
         protected override UniTask _warmup(ConcurrentContext arg)
         {
             View = BScene.InstantiateMono(this, _prefabLibrary.worldView);

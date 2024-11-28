@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -13,12 +14,12 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainTileRender : Actor
     {
-        private readonly ICameraTransform _camera;
-        private readonly GraphicLibrary _library;
-        private readonly IScreen _screen;
-        private readonly ITerrainBiomeRender _terrainBiome;
-        private readonly TileRenderConfig _config;
-        private readonly TerrainAtlas _atlas;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly GraphicLibrary _library;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly ITerrainBiomeRender _terrainBiome;
+        [Required] private readonly TileRenderConfig _config;
+        [Required] private readonly TerrainAtlas _atlas;
 
         private RenderTexture _tileToScreenBuffer;
         private Material _tileRenderMaterial;
@@ -29,21 +30,6 @@ namespace Beast.Radar.Terrain
         private int _tileCount;
         private int2 _gridSize;
         private float _blitTextureAlpha01;
-
-        public TerrainTileRender(
-            ICameraTransform camera, 
-            GraphicLibrary library, 
-            IScreen screen,
-            ITerrainBiomeRender terrainBiome,
-            TileRenderConfig config)
-        {
-            _camera = camera;
-            _library = library;
-            _screen = screen;
-            _terrainBiome = terrainBiome;
-            _config = config;
-            _atlas = _library.terrain.atlas.data;
-        }
 
         protected override UniTask _warmup(ConcurrentContext context)
         {

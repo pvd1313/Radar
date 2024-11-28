@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -24,9 +25,9 @@ namespace Beast.Claw.Gizmo
 
         private const int MAX_TEXTURE_SIZE = 128;
         
-        private readonly ICameraTransform _camera;
-        private readonly IScreen _screen;
-        private readonly GizmoConfig _config;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly GizmoConfig _config;
 
         private RenderTexture _canvas;
         private int2 _canvasSize;
@@ -42,16 +43,6 @@ namespace Beast.Claw.Gizmo
         private int _prevTexturePower;
         private int _prevShapeCount;
 
-        public GizmoRender(
-            ICameraTransform camera, 
-            IScreen screen,
-            GizmoConfig config)
-        {
-            _camera = camera;
-            _screen = screen;
-            _config = config;
-        }
-        
         public IGizmoHandle CreateHandle(IController owner)
         {
             owner.ValidateNotNullThrowException(nameof(owner));

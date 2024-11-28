@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Beast.Claw;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -21,20 +22,14 @@ namespace Beast.Radar.UI
 
         public string WindowID => _currentWindow;
         
-        private readonly EssentialPrefabLibrary _library;
-        private readonly ICamera _camera;
+        [Required] private readonly EssentialPrefabLibrary _library;
+        [Required] private readonly ICamera _camera;
 
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
         private LegacyCanvasView _canvas;
         
         private string _currentWindow = UI.WindowID.NONE;
-        
-        public WindowManager(EssentialPrefabLibrary library, ICamera camera)
-        {
-            _library = library;
-            _camera = camera;
-        }
         
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
         {

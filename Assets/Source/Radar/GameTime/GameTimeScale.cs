@@ -1,4 +1,5 @@
-﻿using Beast.Claw.GameLoop;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.UI;
 
@@ -6,22 +7,10 @@ namespace Beast.Radar.GameTime
 {
     public class GameTimeScale : Actor
     {
-        private readonly IPlayer _player;
-        private readonly IGameTime _time;
-        private readonly IWindowManager _windowManager;
-        private readonly GameTimeConfig _config;
-
-        public GameTimeScale(
-            IPlayer player, 
-            IGameTime time, 
-            IWindowManager windowManager,
-            GameTimeConfig config)
-        {
-            _player = player;
-            _time = time;
-            _windowManager = windowManager;
-            _config = config;
-        }
+        [Required] private readonly IPlayer _player;
+        [Required] private readonly IGameTime _time;
+        [Required] private readonly IWindowManager _windowManager;
+        [Required] private readonly GameTimeConfig _config;
 
         protected override void _tick(BlockingContext context)
         {

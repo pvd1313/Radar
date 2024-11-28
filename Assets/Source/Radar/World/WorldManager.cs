@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
@@ -18,8 +19,8 @@ namespace Beast.Radar.World
         private const string ROOT_FILE_NAME = "all";
         private const string POSTFIX = ".";
         
-        private readonly IFileManager _fileManager;
-        private readonly GameModel _game;
+        [Required] private readonly IFileManager _fileManager;
+        [Required] private readonly GameModel _game;
 
         private Dictionary<Guid, WorldData> _worlds;
         private Dictionary<Guid, string> _guidToStringDictionary;
@@ -27,12 +28,6 @@ namespace Beast.Radar.World
         private StringBuilder _stringBuilder;
         private bool _isDirty;
         
-        public WorldManager(IFileManager fileManager, GameModel game)
-        {
-            _fileManager = fileManager;
-            _game = game;
-        }
-
         public void Clean()
         {
             if (_worlds.Count > 0)

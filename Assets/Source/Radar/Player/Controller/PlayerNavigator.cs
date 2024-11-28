@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Gizmo;
@@ -37,17 +36,14 @@ namespace Beast.Radar.Player
         private NativeList<float2> _consumed8KMPoints;
 
         private float2 _finishPosition;
-        
-        public PlayerNavigator(
-            IGizmoManager gizmoManager, 
-            PlayerConfig config, 
-            ITerrainBackedBiome biome)
+
+        public PlayerNavigator(IGizmoManager gizmoManager, PlayerConfig config, ITerrainBackedBiome biome)
         {
             _gizmoManager = gizmoManager;
             _config = config;
             _biome = biome;
         }
-
+        
         public void Warmup()
         {
             _pathJobBuffer = PathJobBuffer.Create(_config.pathBufferCapacity, Allocator.Persistent);

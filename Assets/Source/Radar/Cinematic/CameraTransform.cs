@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -20,10 +21,10 @@ namespace Beast.Radar.Cinematic
         public float Zoom01 => _zoom01;
         public float ViewDistance => _viewDistance;
 
-        private readonly IScreen _screen;
-        private readonly CameraTransformConfig _config;
-        private readonly GameModel _game;
-        private readonly IWorldManager _worldManager;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly CameraTransformConfig _config;
+        [Required] private readonly GameModel _game;
+        [Required] private readonly IWorldManager _worldManager;
 
         private float2x2 _rotation;
         private float2x2 _scale;
@@ -38,14 +39,6 @@ namespace Beast.Radar.Cinematic
         private float _zoomMax;
         private double2 _position;
         
-        public CameraTransform(IScreen screen, CameraConfig config, GameModel game, IWorldManager worldManager)
-        {
-            _screen = screen;
-            _config = config.transform;
-            _game = game;
-            _worldManager = worldManager;
-        }
-
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _rotationRad = _config.isometricRotationDeg * BMath.DEG2_RAD;

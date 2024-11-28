@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
@@ -9,14 +10,8 @@ namespace Beast.Radar.Player
 {
     public class PlayerPreferenceSerializer : Actor
     {
-        private readonly IFileManager _fileManager;
-        private readonly PlayerPreference _preference;
-
-        public PlayerPreferenceSerializer(IFileManager fileManager, PlayerPreference preference)
-        {
-            _fileManager = fileManager;
-            _preference = preference;
-        }
+        [Required] private readonly IFileManager _fileManager;
+        [Required] private readonly PlayerPreference _preference;
 
         protected override UniTask _preferencesLoad(ConcurrentContext context)
         {

@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
@@ -6,40 +7,23 @@ using Beast.Radar.Serialization;
 using Beast.Radar.UI.Graphy;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
     public class PauseMenuWindow : Actor, IWindow<Empty>
     {
-        private readonly IWindowManager _windowManager;
-        private readonly ISaveManager _saveManager;
-        private readonly PlayerPreference _playerPreference;
-        private readonly UIConfig _uiConfig;
-        private readonly INoesisWindowManager _noesisWindowManager;
-        private readonly IGraphyWindow _graphyWindow;
+        [Required] private readonly IWindowManager _windowManager;
+        [Required] private readonly ISaveManager _saveManager;
+        [Required] private readonly PlayerPreference _playerPreference;
+        [Required] private readonly UIConfig _uiConfig;
+        [Required] private readonly INoesisWindowManager _noesisWindowManager;
+        [Required] private readonly IGraphyWindow _graphyWindow;
 
         private PauseWindowView _view;
         private IWindowHandle<Empty> _mainHUD;
         private IWindowHandle<Empty> _mapGenerationWindow;
         
-        public PauseMenuWindow(
-            IWindowManager windowManager,
-            ISaveManager saveManager,
-            PlayerPreference playerPreference,
-            UIConfig uiConfig,
-            INoesisWindowManager noesisWindowManager,
-            IGraphyWindow graphyWindow)
-        {
-            _windowManager = windowManager;
-            _saveManager = saveManager;
-            _uiConfig = uiConfig;
-            _noesisWindowManager = noesisWindowManager;
-            _graphyWindow = graphyWindow;
-            _playerPreference = playerPreference;
-        }
-
         public UniTask Open(Empty data)
         {
             _view.Visibility = Visibility.Visible;
@@ -84,19 +68,19 @@ namespace Beast.Radar.UI
 
         private void _subscribeView()
         {
-            _view.buttonClose.Click += (sender, args) =>
+            _view.buttonClose.Click += (_, _) =>
             {
                 BDebug.LogInfo(this, "press button close");
                 _mainHUD.Open(default);
             };
 
-            _view.toggleFPS.Click += (sender, args) =>
+            _view.toggleFPS.Click += (_, _) =>
             {
                 _playerPreference.isMaxFps = _view.toggleFPS.IsChecked ?? false;
                 _setFPS();
             };
 
-            _view.toggleGraphy.Click += (sender, args) =>
+            _view.toggleGraphy.Click += (_, _) =>
             {
                 _playerPreference.isShowGraphy = _view.toggleGraphy.IsChecked ?? false;
                 if (_playerPreference.isShowGraphy)
@@ -109,14 +93,14 @@ namespace Beast.Radar.UI
                 }
             };
             
-            _view.buttonLoadGame.Click += (sender, args) =>
+            _view.buttonLoadGame.Click += (_, _) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
                 _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
                 _mainHUD.Open(default);
             };
 
-            _view.buttonSaveGame.Click += (sender, args) =>
+            _view.buttonSaveGame.Click += (_, _) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
                 // Also should block UI during save
@@ -124,19 +108,19 @@ namespace Beast.Radar.UI
                 _view.buttonLoadGame.IsEnabled = true;
             };
 
-            _view.buttonNewGame.Click += (sender, args) =>
+            _view.buttonNewGame.Click += (_, _) =>
             {
                 _mapGenerationWindow.Open(default);
             };
 
             
-            _view.buttonNextMovement.Click += (sender, args) =>
+            _view.buttonNextMovement.Click += (_, _) =>
             {
                 _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();
             };
             
-            _view.buttonPreviousMovement.Click += (sender, args) =>
+            _view.buttonPreviousMovement.Click += (_, _) =>
             {
                 _playerPreference.beginMovementOnSingleTap = !_playerPreference.beginMovementOnSingleTap;
                 _refreshMapMovementText();

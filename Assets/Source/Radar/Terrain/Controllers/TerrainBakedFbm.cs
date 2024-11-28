@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Serialization;
@@ -17,22 +18,13 @@ namespace Beast.Radar.Terrain
         public bool IsReady { get; private set; }
         public Texture Texture => _texture;
 
-        private readonly ITerrainFbmRender _fbmRender;
-        private readonly GraphicConfig _config;
-        private readonly IWorldManager _worldManager;
+        [Required] private readonly ITerrainFbmRender _fbmRender;
+        [Required] private readonly GraphicConfig _config;
+        [Required] private readonly IWorldManager _worldManager;
+        
         private Texture2D _texture;
         private TerrainData _bakedForTerrain;
         
-        public TerrainBakedFbm(
-            ITerrainFbmRender fbmRender, 
-            GraphicConfig config,
-            IWorldManager worldManager)
-        {
-            _fbmRender = fbmRender;
-            _config = config;
-            _worldManager = worldManager;
-        }
-
         protected override UniTask _gameLoad(ConcurrentContext context)
         {
             WorldData world = _worldManager.GetCurrentWorld();

@@ -12,10 +12,6 @@ namespace Beast.Radar.Graphic
         public int2 Size => new(Screen.width, Screen.height);
         
         public float Aspect => Screen.width / (float)Screen.height;
-        
-        public int Width => Screen.width;
-        
-        public int Height => Screen.height;
 
         protected override void _tick(BlockingContext context)
         {

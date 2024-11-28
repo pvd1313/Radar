@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.ProgressTracker;
@@ -13,29 +14,13 @@ namespace Beast.Radar.Core
 {
     public class CoreBoot : Controller, ICoreBoot
     {
-        private readonly IWindowManager _window;
-        private readonly ISaveManager _save;
-        private readonly IntegratedSave _integratedSave;
-        private readonly IGameLoop _gameLoop;
-        private readonly IWorldManager _worldManager;
-        private readonly IObjectResolver _container;
+        [Required] private readonly IWindowManager _window;
+        [Required] private readonly ISaveManager _save;
+        [Required] private readonly IntegratedSave _integratedSave;
+        [Required] private readonly IGameLoop _gameLoop;
+        [Required] private readonly IWorldManager _worldManager;
+        [Required] private readonly IObjectResolver _container;
 
-        public CoreBoot(
-            IWindowManager window, 
-            ISaveManager save, 
-            IntegratedSave integratedSave, 
-            IGameLoop gameLoop, 
-            IWorldManager worldManager,
-            IObjectResolver container)
-        {
-            _window = window;
-            _save = save;
-            _integratedSave = integratedSave;
-            _gameLoop = gameLoop;
-            _worldManager = worldManager;
-            _container = container;
-        }
-        
         public async UniTask Boot(IProgressTracker tracker)
         {
             IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.HUD);

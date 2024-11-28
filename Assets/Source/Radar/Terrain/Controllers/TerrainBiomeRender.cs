@@ -1,4 +1,5 @@
 ﻿using Beast.Claw;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
@@ -32,11 +33,11 @@ namespace Beast.Radar.Terrain
         public float2 TexelSize => _renderResult.texelSize;
         public float ViewDistance => _renderResult.viewDistance;
 
-        private readonly IScreen _screen;
-        private readonly ITerrainBakedFbm _bakedTerrain;
-        private readonly GraphicLibrary _library;
-        private readonly ICameraTransform _camera;
-        private readonly GraphicConfig _config;
+        [Required] private readonly IScreen _screen;
+        [Required] private readonly ITerrainBakedFbm _bakedTerrain;
+        [Required] private readonly GraphicLibrary _library;
+        [Required] private readonly ICameraTransform _camera;
+        [Required] private readonly GraphicConfig _config;
 
         private Material _renderMaterial;
         private RenderTexture _biomeTexture;
@@ -44,20 +45,6 @@ namespace Beast.Radar.Terrain
         private RenderResult _renderResult;
         
         private bool _isReady;
-
-        public TerrainBiomeRender(
-            IScreen screen,
-            ITerrainBakedFbm bakedTerrain,
-            ICameraTransform camera,
-            GraphicLibrary library,
-            GraphicConfig config)
-        {
-            _screen = screen;
-            _bakedTerrain = bakedTerrain;
-            _library = library;
-            _camera = camera;
-            _config = config;
-        }
 
         public void Render(TerrainBiomeRenderTask task)
         {

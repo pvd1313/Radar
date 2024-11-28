@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
@@ -12,23 +13,13 @@ namespace Beast.Radar.GameTime
         public DateTime Now => _config.initialDate.Date + TimeSpan.FromMinutes(_timeMinutes);
         public TimeSpan Delta => _delta;
         
-        private readonly GameTimeConfig _config;
-        private readonly GameModel _game;
-        private readonly IFrameTime _frameTime;
+        [Required] private readonly GameTimeConfig _config;
+        [Required] private readonly GameModel _game;
+        [Required] private readonly IFrameTime _frameTime;
 
         private double _timeMinutes;
         private float _timeMinutesMultiplier;
         private TimeSpan _delta;
-
-        public GameTime(
-            GameTimeConfig config, 
-            GameModel game, 
-            IFrameTime frameTime)
-        {
-            _config = config;
-            _game = game;
-            _frameTime = frameTime;
-        }
 
         public void SetScale(float minutesPerSecond)
         {
