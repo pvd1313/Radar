@@ -14,7 +14,7 @@ namespace Beast.Radar.Core
 {
     public class CoreBoot : Controller, ICoreBoot
     {
-        [Required] private readonly IWindowManager _window;
+        [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly ISaveManager _save;
         [Required] private readonly IntegratedSave _integratedSave;
         [Required] private readonly IGameLoop _gameLoop;
@@ -23,10 +23,6 @@ namespace Beast.Radar.Core
 
         public async UniTask Boot(IProgressTracker tracker)
         {
-            IWindowHandle<Empty> mainHUD = _window.GetHandle<Empty>(this, WindowID.HUD);
-            IWindowHandle<Empty> mapGeneration = _window.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
-            IWindowHandle<LoadingWindowInput> loadingScreen = _window.GetHandle<LoadingWindowInput>(this, WindowID.LOADING);
-
             tracker.Begin(4, 1 - tracker.Progress);
 
             await tracker.Next("Core: Registering GameLoop actors");
@@ -54,8 +50,8 @@ namespace Beast.Radar.Core
                 _worldManager.AddWorld(_integratedSave.worldData);
                 
                 await _save.LoadAsync(_integratedSave.gameModel);
-            
-                await mainHUD.Open(default);
+
+                await _windowManager.Open.HUD();
             
                 return;
             }
@@ -71,21 +67,21 @@ namespace Beast.Radar.Core
 
                 if (result == EActionStatus.Success)
                 {
-                    nextAction = () => mainHUD.Open(default);
+                    nextAction = () => _windowManager.Open.HUD();
                 }
                 else
                 {
-                    nextAction = () => mapGeneration.Open(default);
+                    nextAction = () => _windowManager.Open.MapGeneration();
                 }
             }
             else
             {
-                nextAction = () => mapGeneration.Open(default);
+                nextAction = () => _windowManager.Open.MapGeneration();
             }
 
             await tracker.Next("Waiting for player input");
 
-            await loadingScreen.Open(new LoadingWindowInput
+            await _windowManager.Open.LoadingScreen(new LoadingWindowInput
             {
                 clearLastProgress = false,
                 currentProgress = 1,

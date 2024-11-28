@@ -16,9 +16,9 @@ namespace Beast.Radar.UI
 {
     public partial class WindowManager : Actor, IWindowManager
     {
-        public event Action<string> WindowChanged;
-
         public string WindowID => _currentWindow;
+        
+        public WindowOpener Open { get; private set; }
         
         [Required] private readonly EssentialPrefabLibrary _library;
         [Required] private readonly ICamera _camera;
@@ -51,6 +51,8 @@ namespace Beast.Radar.UI
 
             _inputConsumer = new NoesisInputConsumer(view, _screen);
             _inputManager.RegisterConsumer(_inputConsumer, InputConsumerPriority.UI_NAVIGATION);
+
+            Open = new WindowOpener(this);
 
             return UniTask.CompletedTask;
         }
@@ -160,8 +162,6 @@ namespace Beast.Radar.UI
 
             _currentWindow = windowID;
             
-            WindowChanged?.Invoke(_currentWindow);
-
             await UniTask.NextFrame();
         }
 

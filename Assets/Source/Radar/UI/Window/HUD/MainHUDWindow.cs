@@ -19,7 +19,6 @@ namespace Beast.Radar.UI
         [Required] private readonly IGameTime _gameTime;
         
         private IntToStringConverter _intToString;
-        private IWindowHandle<Empty> _pauseMenu;
         private MainHUDView _view;
 
         private bool _isOpened;
@@ -56,8 +55,6 @@ namespace Beast.Radar.UI
 
             _view.Visibility = Visibility.Visible;
 
-            _pauseMenu = _windowManager.GetHandle<Empty>(this, WindowID.PAUSE);
-            
             _subscribe();
 
             return UniTask.CompletedTask;
@@ -89,7 +86,7 @@ namespace Beast.Radar.UI
         {
             _view.buttonSettings.Click += (_, _) =>
             {
-                _pauseMenu.Open(default);
+                _windowManager.Open.Pause();
             };
 
             _view.autoPathFindingButton.Click += (_, _) =>

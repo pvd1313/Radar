@@ -7,6 +7,8 @@ namespace Beast.Radar.UI
     {
         public string WindowID { get; }
         
+        public WindowOpener Open { get; }
+        
         void Attach(UIElement uiElement);
         
         void Attach(UIElement uiElement, int index);

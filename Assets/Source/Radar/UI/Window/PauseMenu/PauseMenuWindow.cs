@@ -20,8 +20,6 @@ namespace Beast.Radar.UI
         [Required] private readonly IGraphyWindow _graphyWindow;
 
         private PauseWindowView _view;
-        private IWindowHandle<Empty> _mainHUD;
-        private IWindowHandle<Empty> _mapGenerationWindow;
         
         public UniTask Open(Empty data)
         {
@@ -55,9 +53,6 @@ namespace Beast.Radar.UI
             
             _windowManager.Register(this, WindowID.PAUSE);
             
-            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
-            _mapGenerationWindow = _windowManager.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
-
             _subscribeView();
 
             _setFPS();
@@ -69,8 +64,7 @@ namespace Beast.Radar.UI
         {
             _view.buttonClose.Click += (_, _) =>
             {
-                BDebug.LogInfo(this, "press button close");
-                _mainHUD.Open(default);
+                _windowManager.Open.HUD();
             };
 
             _view.toggleFPS.Click += (_, _) =>
@@ -92,11 +86,12 @@ namespace Beast.Radar.UI
                 }
             };
             
-            _view.buttonLoadGame.Click += (_, _) =>
+            _view.buttonLoadGame.Click += async (_, _) =>
             {
                 // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-                _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                _mainHUD.Open(default);
+                await _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+
+                await _windowManager.Open.HUD();
             };
 
             _view.buttonSaveGame.Click += (_, _) =>
@@ -109,7 +104,7 @@ namespace Beast.Radar.UI
 
             _view.buttonNewGame.Click += (_, _) =>
             {
-                _mapGenerationWindow.Open(default);
+                _windowManager.Open.MapGeneration();
             };
 
             

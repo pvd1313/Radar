@@ -28,7 +28,6 @@ namespace Beast.Radar.UI
         private ImageBrush _terrainBrush;
         private TextureSource _terrainTextureSource;
         private int _seedIndex;
-        private IWindowHandle<Empty> _mainHUD;
 
         public UniTask Open(Empty data)
         {
@@ -63,8 +62,6 @@ namespace Beast.Radar.UI
             _windowManager.Attach(_view);
 
             _windowManager.Register(this, WindowID.MAP_GENERATION);
-
-            _mainHUD = _windowManager.GetHandle<Empty>(this, WindowID.HUD);
 
             _subscribeView();
 
@@ -104,12 +101,12 @@ namespace Beast.Radar.UI
             _view.buttonCreate.Click += (_, _) =>
             {
                 _newGameSetup.StartNewGame(_terrainData);
-                _mainHUD.Open(default);
+                _windowManager.Open.HUD();
             };
 
             _view.buttonClose.Click += (_, _) =>
             {
-                _mainHUD.Open(default);
+                _windowManager.Open.HUD();
             };
 
             _view.buttonNextSeed.Click += (_, _) =>
