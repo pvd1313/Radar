@@ -26,6 +26,7 @@ namespace Beast.Claw.GameLoop
             
             private readonly GameLoopConfig _config;
             private readonly ActionProperties _operation;
+            private readonly Container<NativeFixedList<short>> _passedActorContainer;
 
             private HashSet<object> _singleFireActors;
             private HashSet<object> _duplicateSubscriptionActors;
@@ -61,6 +62,7 @@ namespace Beast.Claw.GameLoop
                 
                 _allActors = new ManagedFixedList<Actor>(_operation.bufferCapacity);
                 _passedActorBuffer = new NativeFixedList<short>(_operation.bufferCapacity, Allocator.Persistent);
+                _passedActorContainer = new Container<NativeFixedList<short>>();
 
                 if (Build.IS_DEVELOPMENT)
                 {
@@ -131,7 +133,7 @@ namespace Beast.Claw.GameLoop
                 }
 
                 _maintainActorMainList();
-
+                
                 RunnerConcurrent runner = new ()
                 {
                     owner = owner,
@@ -143,12 +145,12 @@ namespace Beast.Claw.GameLoop
                     frequency = _operation.frequency,
                     flushProfilerToConsole = _operation.flushProfilerToConsole,
                     enableClawProfiling = _config.profiler.customProfilingEnabled,
-                    passedActors = _passedActorBuffer
+                    passedActorContainer = _passedActorContainer.SetData(_passedActorBuffer)
                 };
 
                 EActionStatus result = await runner.Run();
 
-                _passedActorBuffer = runner.passedActors;
+                _passedActorBuffer = _passedActorContainer.data;
                 _checkoutPassedActors();
 
                 return result;

@@ -106,13 +106,13 @@ namespace Beast.Radar.UI
                 }
             }
 
-            DataContainer<TData> dataContainer = new ();
+            Container<TData> container = new ();
 
             _idToWindow[windowID] = new WindowData
             {
-                openWindow = () => window.Open(dataContainer.data),
+                openWindow = () => window.Open(container.data),
                 closeWindow = window.Close,
-                dataContainer = dataContainer,
+                dataContainer = container,
                 dataType = typeof(TData),
                 windowID = windowID
             };
@@ -148,8 +148,8 @@ namespace Beast.Radar.UI
                 _currentWindow = UI.WindowID.NONE;
             }
 
-            DataContainer<TData> dataContainer = (DataContainer<TData>)windowData.dataContainer;
-            dataContainer.data = data;
+            Container<TData> container = (Container<TData>)windowData.dataContainer;
+            container.data = data;
             
             try
             {

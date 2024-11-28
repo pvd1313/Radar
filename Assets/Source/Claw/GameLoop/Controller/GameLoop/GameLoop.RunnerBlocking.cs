@@ -22,7 +22,7 @@ namespace Beast.Claw.GameLoop
             public bool flushProfilerToConsole;
             public ProfilerTreeStringBuilder treeStringBuilder;
             public NativeFixedList<short> passedActors;
-            
+
             public void Run()
             {
                 passedActors.Clear();

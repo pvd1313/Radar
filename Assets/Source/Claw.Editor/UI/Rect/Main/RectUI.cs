@@ -68,7 +68,7 @@ namespace Beast.Claw.Editor.UI
             }
 
             _fieldValueToDrawer[valueType] = drawerType;
-            _fieldValueToContainer[valueType] = new DataContainer<TValue>();
+            _fieldValueToContainer[valueType] = new Container<TValue>();
 
             TDrawer drawer = new();
             drawer.Warmup(this, _style);
@@ -77,7 +77,7 @@ namespace Beast.Claw.Editor.UI
             {
                 FieldTask<TValue> task;
 
-                DataContainer<TValue> container = (DataContainer<TValue>)_currentValueContainer;
+                Container<TValue> container = (Container<TValue>)_currentValueContainer;
                 
                 task.value = container.data;
                 task.label = _currentLabel;
@@ -118,13 +118,13 @@ namespace Beast.Claw.Editor.UI
 
             try
             {
-                DataContainer<TValue> valueContainer = _currentValueContainer as DataContainer<TValue>;
+                Container<TValue> container = _currentValueContainer as Container<TValue>;
 
-                valueContainer.data = value;
+                container.data = value;
                 
                 drawAction.Invoke();
 
-                return valueContainer.data;
+                return container.data;
             }
             finally
             {

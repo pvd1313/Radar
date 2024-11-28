@@ -19,15 +19,19 @@ namespace Beast.Claw.GameLoop
             public string operationID;
             public Profiler profiler;
             public ProfilerTreeStringBuilder treeStringBuilder;
-            public NativeFixedList<short> passedActors;
+            public Container<NativeFixedList<short>> passedActorContainer;
             public bool enableClawProfiling;
             public bool flushProfilerToConsole;
+
+            private NativeFixedList<short> _passedActors;
             
             public async UniTask<EActionStatus> Run()
             {
                 EActionStatus result = EActionStatus.Success;
-                
-                passedActors.Clear();
+
+                _passedActors = passedActorContainer.data;
+
+                _passedActors.Clear();
 
                 bool hasProfiler = profiler != null;
                 
@@ -57,7 +61,7 @@ namespace Beast.Claw.GameLoop
 
                         await actor.concurrent.Invoke(context);
 
-                        passedActors.Add((short)actorIndex);
+                        _passedActors.Add((short)actorIndex);
                     }
                     catch (ActionAbortedException)
                     {
@@ -90,6 +94,8 @@ namespace Beast.Claw.GameLoop
                         BDebug.StaticLogInfo(info);
                     }
                 }
+
+                passedActorContainer.data = _passedActors;
 
                 return result;
             }
