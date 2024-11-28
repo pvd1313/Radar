@@ -70,8 +70,7 @@ namespace Beast.Radar.UI
 
         private void _configureView()
         {
-            int imageSize = 300;
-            int size = (int)(imageSize * _generationConfig.previewSizeMultiplier);
+            int size = (int)(_view.texture.Width * _generationConfig.previewSizeMultiplier);
             _terrainTexture = _previewRender.CreateTexture(this, size);
             _terrainTextureSource = new TextureSource(_terrainTexture.color);
             _terrainBrush = new ImageBrush(_terrainTextureSource);
