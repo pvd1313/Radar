@@ -15,17 +15,7 @@ namespace Beast.Claw.Input
         public string FriendlyName => nameof(TouchScreen);
 
         private float _startZoomDistance;
-
-        public TouchScreen(
-            IScreen screen,
-            IInputDriver driver,
-            IInputManager manager,
-            IFrameTime frameTime,
-            InputConfig config) : base(driver, screen, manager, frameTime, config)
-        {
-            
-        }
-
+        
         public UniTask Warmup(ConcurrentContext context)
         {
             _warmup(MAX_TOUCH_COUNT);

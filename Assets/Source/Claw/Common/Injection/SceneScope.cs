@@ -14,6 +14,8 @@ namespace Beast.Claw.Common
             {
                 installer.Configure(container);
             }
+
+            container.Register<ObjectFactory>(Lifetime.Scoped).AsImplementedInterfaces();
         }
     }
 }

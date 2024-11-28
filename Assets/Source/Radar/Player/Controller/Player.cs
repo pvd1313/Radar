@@ -31,8 +31,8 @@ namespace Beast.Radar.Player
         [Required] private readonly ITerrainBackedBiome _biome;
         [Required] private readonly GameModel _game;
         [Required] private readonly PlayerPreference _prefs;
-        [Required] private readonly IGizmoManager _gizmoManager;
         [Required] private readonly IInputManager _inputManager;
+        [Required] private readonly IObjectFactory _objectFactory;
         
         private bool _isMoving;
         private bool _hasTarget;
@@ -59,7 +59,7 @@ namespace Beast.Radar.Player
         {
             _inputManager.RegisterConsumer(this, InputConsumerPriority.WORLD_MAP_NAVIGATION);
 
-            _navigator = new PlayerNavigator(_gizmoManager, _config, _biome);
+            _navigator = _objectFactory.Create<PlayerNavigator>();
             _navigator.Warmup();
             
             return UniTask.CompletedTask;

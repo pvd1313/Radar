@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Gizmo;
@@ -20,9 +21,9 @@ namespace Beast.Radar.Player
     {
         private const float MAX_PATH_DISTANCE_1KM = 128;
         
-        private readonly IGizmoManager _gizmoManager;
-        private readonly PlayerConfig _config;
-        private readonly ITerrainBackedBiome _biome;
+        [Required] private readonly IGizmoManager _gizmoManager;
+        [Required] private readonly PlayerConfig _config;
+        [Required] private readonly ITerrainBackedBiome _biome;
 
         private PathJobBuffer _pathJobBuffer;
         private Stopwatch _stopwatch;
@@ -37,13 +38,6 @@ namespace Beast.Radar.Player
 
         private float2 _finishPosition;
 
-        public PlayerNavigator(IGizmoManager gizmoManager, PlayerConfig config, ITerrainBackedBiome biome)
-        {
-            _gizmoManager = gizmoManager;
-            _config = config;
-            _biome = biome;
-        }
-        
         public void Warmup()
         {
             _pathJobBuffer = PathJobBuffer.Create(_config.pathBufferCapacity, Allocator.Persistent);

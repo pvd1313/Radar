@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Collections;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Unity.Collections;
@@ -8,11 +9,11 @@ namespace Beast.Claw.Input
 {
     public abstract class Gesture : Controller
     {
-        protected readonly IInputDriver _driver;
-        protected readonly IScreen _screen;
-        protected readonly IInputManager _manager;
-        protected readonly InputConfig _config;
-        protected readonly IFrameTime _time;
+        [Required] protected readonly IInputDriver _driver;
+        [Required] protected readonly IScreen _screen;
+        [Required] protected readonly IInputManager _manager;
+        [Required] protected readonly InputConfig _config;
+        [Required] protected readonly IFrameTime _time;
 
         protected DragAxis _drag;
         protected ZoomAxis _zoom;
@@ -24,20 +25,6 @@ namespace Beast.Claw.Input
         
         protected ConsumerInfo _consumer;
         protected AxisType _activeAxis;
-
-        protected Gesture(
-            IInputDriver driver,
-            IScreen screen,
-            IInputManager manager, 
-            IFrameTime time, 
-            InputConfig config)
-        {
-            _driver = driver;
-            _screen = screen;
-            _manager = manager;
-            _time = time;
-            _config = config;
-        }
 
         protected void _warmup(int maxTouchCount)
         {

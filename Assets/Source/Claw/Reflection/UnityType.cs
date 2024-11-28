@@ -1,6 +1,7 @@
 ﻿using System;
 using Beast.Claw.Attributes.Annotation;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Beast.Claw.Reflection
 {
@@ -8,6 +9,7 @@ namespace Beast.Claw.Reflection
     public static class UnityType
     {
         public static readonly Type GAME_OBJECT = typeof(GameObject);
+        public static readonly Type OBJECT = typeof(Object);
         public static readonly Type MONO_BEHAVIOUR = typeof(MonoBehaviour);
     }
 }

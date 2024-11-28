@@ -13,16 +13,6 @@ namespace Beast.Claw.Input
         
         private RawTouchAxis _mouseAxis;
         private RawTouchAxis _mouseAxisPrev;
-        
-        public Mouse(
-            IScreen screen,
-            IInputDriver driver, 
-            IInputManager manager,
-            IFrameTime time,
-            InputConfig config) : base(driver, screen, manager, time, config)
-        {
-            
-        }
 
         public UniTask Warmup(ConcurrentContext context)
         {

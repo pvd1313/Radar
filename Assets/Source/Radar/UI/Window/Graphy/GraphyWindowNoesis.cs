@@ -16,7 +16,7 @@ namespace Beast.Radar.UI.Graphy
 
         private GraphyView _view;
 
-        public async void Open()
+        public void Open()
         {
             if (_view == null)
             {
@@ -26,7 +26,6 @@ namespace Beast.Radar.UI.Graphy
             else
             {
                 _view.Visibility = Visibility.Visible;
-                
             }
         }
 

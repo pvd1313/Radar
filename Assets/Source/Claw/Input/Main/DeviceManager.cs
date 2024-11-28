@@ -11,12 +11,8 @@ namespace Beast.Claw.Input
     {
         public IInputDevice ActiveDevice => _activeDevice;
 
-        [Required] private readonly InputConfig _config;
-        [Required] private readonly IInputManager _inputManager;
         [Required] private readonly IRuntime _runtime;
-        [Required] private readonly IInputDriver _driver;
-        [Required] private readonly IFrameTime _frameTime;
-        [Required] private readonly IScreen _screen;
+        [Required] private readonly IObjectFactory _objectFactory;
 
         private IInputDevice _mouse;
         private IInputDevice _touchScreen;
@@ -26,13 +22,9 @@ namespace Beast.Claw.Input
         {
             // Now we are simply binding based on platform type. But in future we would bind multiple device to control
             // separate screen parts. Like twin stick shooter has two dpad touch controls for movement & shooting.
-            // Also, maybe create factory for devices. For now, we can not bind device into container, as to call _warmup
-            // we need to call GameCycle.Execute... Maybe we could create separate event for device warmup... But
-            // creating event for devices sounds like overhead. Let's now just instantiate them. Actually manual control
-            // gives us advantages, because we can easily swap devices.
-            
-            _mouse = new Mouse(_screen, _driver, _inputManager, _frameTime, _config);
-            _touchScreen = new TouchScreen(_screen, _driver, _inputManager, _frameTime, _config);
+
+            _mouse = _objectFactory.Create<Mouse>();
+            _touchScreen = _objectFactory.Create<TouchScreen>();
 
             await _mouse.Warmup(context);
             await _touchScreen.Warmup(context);
