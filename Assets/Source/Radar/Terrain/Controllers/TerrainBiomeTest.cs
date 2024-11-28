@@ -18,7 +18,6 @@ namespace Beast.Radar.Terrain
         [Required] private readonly ITerrainBackedBiome _biome;
         [Required] private readonly IGizmoManager _gizmoManager;
         [Required] private readonly IDeviceManager _deviceManager;
-        [Required] private readonly IInputDevice _input;
 
         private IGizmoHandle _gizmo;
 

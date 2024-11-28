@@ -10,7 +10,7 @@ namespace Beast.Radar.Cinematic
         
         public override IEnumerable<IConfig> Bind()
         {
-            yield break;
+            yield return transform;
         }
     }
 }
