@@ -26,18 +26,20 @@
     <Thickness x:Key="Margin.Focus.Uniform">-3</Thickness>
     <Thickness x:Key="Margin.Focus.Padded">-8,-3</Thickness>
 
-    <Thickness x:Key="MarginLeft">10 0 0 0</Thickness>
-    <Thickness x:Key="MarginTop">0 10 0 0</Thickness>
-    <Thickness x:Key="MarginLeftTop">10 10 0 0</Thickness>
-    <Thickness x:Key="MarginTopLeft">10 10 0 0</Thickness>
-    <Thickness x:Key="MarginRight">0 0 10 0</Thickness>
-    <Thickness x:Key="MarginBottom">0 0 0 10</Thickness>
-    <Thickness x:Key="MarginRightBottom">0 0 10 10</Thickness>
-    <Thickness x:Key="MarginBottomRight">0 0 10 10</Thickness>
-    <Thickness x:Key="MarginLeftRightBottom">10 0 10 10</Thickness>
-    <Thickness x:Key="MarginLeftBottom">10 0 0 10</Thickness>
-    <Thickness x:Key="MarginLeftBottomTop">10 10 0 10</Thickness>
-    <Thickness x:Key="MarginLeftBottomTopBottom">10 10 10 10</Thickness>
+    <Thickness x:Key="Margin.SafeArea.Left">15 0 0 0</Thickness>
+    <Thickness x:Key="Margin.SafeArea.Right">0 0 15 0</Thickness>
+    <Thickness x:Key="Margin.Left">10 0 0 0</Thickness>
+    <Thickness x:Key="Margin.Top">0 10 0 0</Thickness>
+    <Thickness x:Key="Margin.LeftTop">10 10 0 0</Thickness>
+    <Thickness x:Key="Margin.TopLeft">10 10 0 0</Thickness>
+    <Thickness x:Key="Margin.Right">0 0 10 0</Thickness>
+    <Thickness x:Key="Margin.Bottom">0 0 0 10</Thickness>
+    <Thickness x:Key="Margin.RightBottom">0 0 10 10</Thickness>
+    <Thickness x:Key="Margin.BottomRight">0 0 10 10</Thickness>
+    <Thickness x:Key="Margin.LeftRightBottom">10 0 10 10</Thickness>
+    <Thickness x:Key="Margin.LeftBottom">10 0 0 10</Thickness>
+    <Thickness x:Key="Margin.LeftBottomTop">10 10 0 10</Thickness>
+    <Thickness x:Key="Margin.LeftBottomTopBottom">10 10 10 10</Thickness>
     <Thickness x:Key="Margin.GridElement">15</Thickness>
 
     <CornerRadius x:Key="Corner.Border0">0</CornerRadius>
@@ -125,12 +127,6 @@
     </Style>
 
 
-    <Style TargetType="Border" x:Key="Style.Border.Debug">
-
-        <Setter Property="Background" Value="{StaticResource Brush.Panel.Background}"/>
-        <Setter Property="Opacity" Value="0.7"/>
-        <Setter Property="CornerRadius" Value="{StaticResource Corner.Border0}"/>
-    </Style>
 
     <!--  ============== TEXT ==============  -->
 

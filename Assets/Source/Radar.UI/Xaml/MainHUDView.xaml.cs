@@ -1,6 +1,7 @@
 using Beast.Claw.Common;
 using Beast.Claw.UI;
 using Noesis;
+using UnityEngine;
 
 namespace Beast.Radar.UI
 {
@@ -11,14 +12,14 @@ namespace Beast.Radar.UI
         public Button autoPathFindingButton;
         public Button buttonMove;
         
-        private Brush _brushActiveColor;
-        private Brush _brushDisableColor;
+        private Thickness _thicknessActive;
+        private Thickness _thicknessDisable;
         
-        private Brush _brushStandImage;
-        private Brush _brushMoveImage;
-
         private Cache<int> _playerMovementCache;
         private Cache<bool> _autoPathFindingActiveCache;
+
+        private string _pathIconMove;
+        private string _pathIconStand;
 
         public override void BindElements()
         {
@@ -26,21 +27,21 @@ namespace Beast.Radar.UI
             _find("button_settings", out buttonSettings);
             _find("button_path", out autoPathFindingButton);
             _find("button_move", out buttonMove);
+
+            _thicknessActive = new Thickness(1);
+            _thicknessDisable= new Thickness(0);
             
-            _brushActiveColor = (SolidColorBrush)FindResource("Brush.Element.Light.Normal");
-            _brushDisableColor = (SolidColorBrush)FindResource("Brush.Element.Light.Disabled");
-            
-            _brushMoveImage = (ImageBrush)FindResource("Brush.Image.Move");
-            _brushStandImage = (ImageBrush)FindResource("Brush.Image.Stand");
+            _pathIconMove = (string)FindResource("Path.Icon.Move");
+            _pathIconStand = (string)FindResource("Path.Icon.Stand");
         }
-        
+
         public void SetPlayerMovementState(bool hasTarget, bool isMoving)
         {
             int playerMovement = !hasTarget ? 0 : (isMoving ? 1 : 2);
 
             if (_playerMovementCache.Update(playerMovement))
             {
-                buttonMove.OpacityMask = isMoving ? _brushMoveImage : _brushStandImage;
+                buttonMove.Tag = isMoving ? _pathIconMove : _pathIconStand;
                 buttonMove.Visibility = hasTarget ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -49,7 +50,7 @@ namespace Beast.Radar.UI
         {
             if (_autoPathFindingActiveCache.Update(isActive))
             {
-                autoPathFindingButton.Background = isActive ? _brushActiveColor : _brushDisableColor;
+                autoPathFindingButton.BorderThickness = isActive ? _thicknessActive : _thicknessDisable;
             }
         }
     }
