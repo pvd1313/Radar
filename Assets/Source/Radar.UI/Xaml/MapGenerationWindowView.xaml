@@ -137,14 +137,14 @@
                             Text="MAP SIZE" />
 
                         <RadioButton
-                            Content="x512"
+                            Content="512"
                             Grid.Row="1"
                             Margin="4"
                             Style="{StaticResource Style.RadioButton.Base}"
                             x:Name="radio_button_512" />
 
                         <RadioButton
-                            Content="x1024"
+                            Content="1024"
                             Grid.Column="1"
                             Grid.Row="1"
                             Margin="4"
@@ -152,7 +152,7 @@
                             x:Name="radio_button_1024" />
 
                         <RadioButton
-                            Content="x2048"
+                            Content="2048"
                             Grid.Column="2"
                             Grid.Row="1"
                             Margin="4"
@@ -160,7 +160,7 @@
                             x:Name="radio_button_2048" />
 
                         <RadioButton
-                            Content="x4096"
+                            Content="4096"
                             Grid.Column="3"
                             Grid.Row="1"
                             Margin="4"
