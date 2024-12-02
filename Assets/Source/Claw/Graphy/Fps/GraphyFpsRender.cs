@@ -1,9 +1,6 @@
-﻿using Beast.Claw.Debug;
-using Beast.Claw.Graphic;
-using Beast.Claw.Graphy;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Tayx.Graphy.Fps
+namespace Beast.Claw.Graphy.Fps
 {
     public class GraphyFpsRender
     {
@@ -11,9 +8,7 @@ namespace Tayx.Graphy.Fps
 
         private readonly GraphyConfig _config;
         private readonly GraphyFpsMonitor _monitor;
-
-  
-
+        
         private int _resolution = 150;
         private int[] _fpsArray;
         private int _highestFps;
@@ -48,7 +43,7 @@ namespace Tayx.Graphy.Fps
         }
 
 
-        public void UpdateGraph()
+        public void Update()
         {
             short fps = (short)(1 / Time.unscaledDeltaTime);
 
@@ -86,8 +81,6 @@ namespace Tayx.Graphy.Fps
                 TextureGraph.shaderArrayValues[i] = _fpsArray[i] / (float)_highestFps;
             }
 
-            // Update the material values
-
             TextureGraph.UpdatePoints();
 
             TextureGraph.average = (float)_monitor.AverageFPS / _highestFps;
@@ -98,8 +91,6 @@ namespace Tayx.Graphy.Fps
             TextureGraph.UpdateThresholds();
             
             TextureGraph.Blit();
-
-            Debug.Log("update graph");
         }
 
         private void CreatePoints()

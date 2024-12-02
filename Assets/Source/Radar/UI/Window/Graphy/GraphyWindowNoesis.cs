@@ -15,7 +15,7 @@ namespace Beast.Radar.UI.Graphy
         [Required] private readonly PlayerPreference _preference;
         [Required] private readonly UIConfig _uiConfig;
         [Required] private readonly IGraphyManager _graphyManager;
-        [Required] private readonly GraphyConfig _graphyConfig;
+        [Required] private readonly GraphyConfig _config;
         [Required] private readonly IWindowManager _windowManager;
 
         private IntToStringConverter _intConverter;
@@ -29,19 +29,16 @@ namespace Beast.Radar.UI.Graphy
             if (_view == null)
             {
                 _uiConfig.graphyAsset.Instantiate(out _view);
+                _view.InitializeBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
 
                 _windowManager.Attach(_view, 100);
 
                 _intConverter = new IntToStringConverter(2000);
                 _floatConverter = new FloatToStringConverter("D2");
-
-                _fpsText = new GraphyFpsText(
-                    _graphyManager.FpsMonitor,
-                    _view.textAssets,
-                    _intConverter,
-                    _floatConverter);
                 
-                _fpsText.UpdateParameters(_graphyConfig.fpsTextUpdateRate);
+                _fpsText = new GraphyFpsText(_config, _graphyManager.FpsMonitor, _view, _intConverter, _floatConverter);
+                
+                _fpsText.Initialize();
                 
                 _view.SetFpsTexture(_graphyManager.FpsRender.TextureGraph._material);
                 

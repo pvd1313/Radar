@@ -1,7 +1,6 @@
-﻿using System;
-using Beast.Claw.GameLoop;
+﻿using Beast.Claw.GameLoop;
+using Beast.Claw.Graphy.Fps;
 using Cysharp.Threading.Tasks;
-using Tayx.Graphy.Fps;
 
 namespace Beast.Claw.Graphy
 {
@@ -27,7 +26,7 @@ namespace Beast.Claw.Graphy
         protected override UniTask _warmup(ConcurrentContext context)
         {
             FpsMonitor = new GraphyFpsMonitor();
-            FpsMonitor.Init();
+            FpsMonitor.Initialize();
 
             FpsRender = new GraphyFpsRender(_config, FpsMonitor);
             FpsRender.Initialize();
@@ -40,7 +39,7 @@ namespace Beast.Claw.Graphy
         protected override void _tick(BlockingContext context)
         {
             FpsMonitor.Update();
-            FpsRender.UpdateGraph();
+            FpsRender.Update();
         }
 
 

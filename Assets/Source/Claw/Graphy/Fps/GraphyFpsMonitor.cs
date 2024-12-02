@@ -1,111 +1,143 @@
-using Beast.Claw.GameLoop;
-using UnityEngine;
 using System;
+using Beast.Claw.Debug;
+using Beast.Claw.GameLoop;
+using Beast.Claw.Math;
+using UnityEngine;
 
-namespace Beast.Claw.Graphy
+namespace Beast.Claw.Graphy.Fps
 {
     public class GraphyFpsMonitor : Actor
     {
-        public short CurrentFPS { get; private set; } = 0;
-        public short AverageFPS { get; private set; } = 0;
-        public short OnePercentFPS { get; private set; } = 0;
-        public short Zero1PercentFps { get; private set; } = 0;
+        public short CurrentFPS { get; private set; }
+        public short AverageFPS { get; private set; }
+        public short OnePercentFPS { get; private set; }
+        public short Zero1PercentFps { get; private set; }
+
+        private const short FPS_SAMPLES_CAPACITY = 1024;
 
         private short[] _fpsSamples;
-        private short[] _fpsSamplesSorted;
-        private short _fpsSamplesCapacity = 1024;
-        private short _onePercentSamples = 10;
-        private short _zero1PercentSamples = 1;
-        private short _fpsSamplesCount = 0;
-        private short _indexSample = 0;
+        private short[] _sortedSamples;
+        private short _onePercentSamples;
+        private short _zero1PercentSamples;
+        private short _fpsSamplesCount;
+        private short _indexSample;
 
-        private float _unscaledDeltaTime = 0f;
+        private float _unscaledDeltaTime;
 
-        public void Init()
+        public void Initialize()
         {
-            _fpsSamples = new short[_fpsSamplesCapacity];
-            _fpsSamplesSorted = new short[_fpsSamplesCapacity];
-
-            UpdateParameters();
+            _fpsSamples = new short[FPS_SAMPLES_CAPACITY];
+            _sortedSamples = new short[FPS_SAMPLES_CAPACITY];
+            _updateParameters();
         }
 
-        
-        public  void Update()
+        public void Update()
         {
             _unscaledDeltaTime = Time.unscaledDeltaTime;
 
-            // Update fps and ms
+            CurrentFPS = (short)Mathf.RoundToInt(1f / _unscaledDeltaTime);
 
-            CurrentFPS = (short)(Mathf.RoundToInt(1f / _unscaledDeltaTime));
-
-            // Update avg fps
-
-            uint averageAddedFps = 0;
-
-            _indexSample++;
-
-            if (_indexSample >= _fpsSamplesCapacity) _indexSample = 0;
+            _indexSample = (short)((_indexSample + 1) % FPS_SAMPLES_CAPACITY);
+            
+            short oldSample = _fpsSamples[_indexSample];
 
             _fpsSamples[_indexSample] = CurrentFPS;
 
-            if (_fpsSamplesCount < _fpsSamplesCapacity)
+            if (_fpsSamplesCount < FPS_SAMPLES_CAPACITY)
             {
                 _fpsSamplesCount++;
             }
 
+            _removeFromSortedArray(oldSample);
+
+            _insertIntoSortedArray(CurrentFPS);
+
+            long totalFPS = 0;
             for (int i = 0; i < _fpsSamplesCount; i++)
+                totalFPS += _fpsSamples[i];
+
+            AverageFPS = (short)(totalFPS / _fpsSamplesCount);
+
+            OnePercentFPS = _calculatePercentileFPS(_onePercentSamples);
+
+            Zero1PercentFps = _calculatePercentileFPS(_zero1PercentSamples);
+        }
+
+        private void _removeFromSortedArray(short value)
+        {
+            if (_fpsSamplesCount <= 0)
             {
-                averageAddedFps += (uint)_fpsSamples[i];
+                return;
             }
 
-            AverageFPS = (short)((float)averageAddedFps / (float)_fpsSamplesCount);
-
-            // Update percent lows
-
-            _fpsSamples.CopyTo(_fpsSamplesSorted, 0);
-
-            /*
-             * TODO: Find a faster way to do this.
-             *      We can probably avoid copying the full array every time
-             *      and insert the new item already sorted in the list.
-             */
-            Array.Sort(_fpsSamplesSorted,
-                (x, y) => x.CompareTo(y)); // The lambda expression avoids garbage generation
-
-            bool zero1PercentCalculated = false;
-
-            uint totalAddedFps = 0;
-
-            short samplesToIterateThroughForOnePercent = _fpsSamplesCount < _onePercentSamples
-                ? _fpsSamplesCount
-                : _onePercentSamples;
-
-            short samplesToIterateThroughForZero1Percent = _fpsSamplesCount < _zero1PercentSamples
-                ? _fpsSamplesCount
-                : _zero1PercentSamples;
-
-            short sampleToStartIn = (short)(_fpsSamplesCapacity - _fpsSamplesCount);
-
-            for (short i = sampleToStartIn; i < sampleToStartIn + samplesToIterateThroughForOnePercent; i++)
+            for (int i = 0; i < _fpsSamplesCount; i++)
             {
-                totalAddedFps += (ushort)_fpsSamplesSorted[i];
-
-                if (!zero1PercentCalculated && i >= samplesToIterateThroughForZero1Percent - 1)
+                if (_sortedSamples[i] == value)
                 {
-                    zero1PercentCalculated = true;
+                    int remainingLength = _fpsSamplesCount - i - 1;
 
-                    Zero1PercentFps = (short)((float)totalAddedFps / (float)_zero1PercentSamples);
+                    if (remainingLength > 0)
+                    {
+                        Array.Copy(_sortedSamples, i + 1, _sortedSamples, i, remainingLength);
+                    }
+
+                    _sortedSamples[_fpsSamplesCount - 1] = 0;
+                    break;
+                }
+            }
+        }
+
+        private void _insertIntoSortedArray(short value)
+        {
+            if (_fpsSamplesCount == 0)
+            {
+                _sortedSamples[0] = value;
+                return;
+            }
+
+            int insertIndex = 0;
+            for (int i = 0; i < _fpsSamplesCount; i++)
+            {
+                insertIndex = i;
+                if (_sortedSamples[i] > value)
+                {
+                    break;
                 }
             }
 
-            OnePercentFPS = (short)((float)totalAddedFps / (float)_onePercentSamples);
+            if (insertIndex >= FPS_SAMPLES_CAPACITY)
+            {
+                UnityEngine.Debug.Log('+');
+                return;
+            }
+
+            int remainingLength = _fpsSamplesCount - insertIndex;
+
+            if (remainingLength > 0 && insertIndex + remainingLength < FPS_SAMPLES_CAPACITY)
+            {
+                Array.Copy(_sortedSamples, insertIndex, _sortedSamples, insertIndex + 1, remainingLength);
+            }
+
+            _sortedSamples[insertIndex] = value;
         }
         
-        public void UpdateParameters()
+        private short _calculatePercentileFPS(short sampleCount)
         {
-            _onePercentSamples = (short)(_fpsSamplesCapacity / 100);
-            _zero1PercentSamples = (short)(_fpsSamplesCapacity / 1000);
+            if (_fpsSamplesCount == 0) return 0;
+
+            sampleCount = (short)BMath.Min(sampleCount, _fpsSamplesCount);
+            long total = 0;
+
+            for (int i = 0; i < sampleCount; i++)
+                total += _sortedSamples[i];
+
+            return (short)(total / sampleCount);
         }
 
+        private void _updateParameters()
+        {
+            _onePercentSamples = FPS_SAMPLES_CAPACITY / 100;
+            _zero1PercentSamples = FPS_SAMPLES_CAPACITY / 1000;
+        }
     }
 }

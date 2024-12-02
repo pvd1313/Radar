@@ -1,6 +1,7 @@
 ﻿using System;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
+using Noesis;
 
 namespace Beast.Claw.UI
 {
@@ -28,6 +29,17 @@ namespace Beast.Claw.UI
             target.BindElements();
 
             control = target;
+        }
+
+        public static Color ToNoesis(this UnityEngine.Color color)
+        {
+            return new Color()
+            {
+                A = (byte)(color.a * 255),
+                R = (byte)(color.r * 255),
+                G = (byte)(color.g * 255),
+                B = (byte)(color.b * 255),
+            };
         }
     }
 }

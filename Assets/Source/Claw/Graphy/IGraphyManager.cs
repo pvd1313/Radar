@@ -1,4 +1,4 @@
-﻿using Tayx.Graphy.Fps;
+﻿using Beast.Claw.Graphy.Fps;
 
 namespace Beast.Claw.Graphy
 {

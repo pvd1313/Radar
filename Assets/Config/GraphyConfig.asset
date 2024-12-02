@@ -29,7 +29,7 @@ MonoBehaviour:
     vrUsage: 0
   graphyMode: 0
   fpsModuleState: 0
-  goodFpsColor: {r: 0.67050946, g: 0.8679245, b: 0.5444998, a: 1}
+  goodFpsColor: {r: 0.17933428, g: 0.7311321, b: 0.534362, a: 1}
   goodFpsThreshold: 60
   cautionFpsColor: {r: 1, g: 0.74509805, b: 0.23529413, a: 1}
   cautionFpsThreshold: 30
