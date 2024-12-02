@@ -14,8 +14,7 @@ namespace Beast.Radar.UI.Graphy
         [Required] private readonly IResourceManager _resources;
 
         private GameObject _view;
-        private GraphyView _graphyView;
-
+        
         public async void Open()
         {
             if (_view == null)

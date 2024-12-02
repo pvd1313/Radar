@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Attributes;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.Math;
@@ -12,7 +11,7 @@ namespace Beast.Radar.UI
     public class NoesisInputConsumer : Controller, IInputConsumer
     {
         public Int32Mask SupportedAxis => AxisType.RAW_TOUCH.AsMask();
-        
+
         private readonly NoesisView _view;
         private readonly Visual _viewRoot;
         private readonly IScreen _screen;
@@ -21,7 +20,7 @@ namespace Beast.Radar.UI
         {
             _view = view;
             _screen = screen;
-            
+
             _viewRoot = (Visual)VisualTreeHelper.GetRoot(view.Content);
         }
 
@@ -30,14 +29,14 @@ namespace Beast.Radar.UI
             if (axis.GetAxisType() == AxisType.RAW_TOUCH)
             {
                 axis.Unpack(out NativeSlice<RawTouchAxis> touches);
-                
+
                 foreach (RawTouchAxis touch in touches)
                 {
                     float2 proj = _projectPosition(touch.position);
 
                     // Maybe in future there be more complex logic.
                     // For example check if control can capture (transparent panel, debug stats panel, etc.)
-                    
+
                     if (_hitTest(proj))
                     {
                         return true;
@@ -51,7 +50,7 @@ namespace Beast.Radar.UI
         public void UpdateAxis(PackedAxis axis)
         {
             axis.Unpack(out NativeSlice<RawTouchAxis> touches);
-            
+
             foreach (RawTouchAxis touch in touches)
             {
                 float2 proj = _projectPosition(touch.position);
@@ -62,35 +61,45 @@ namespace Beast.Radar.UI
                     case EAxisStatus.Starting:
                         _view.TouchDown((int)proj.x, (int)proj.y, (uint)touch.fingerId);
                         break;
-                    
+
                     case EAxisStatus.Working:
                         _view.TouchMove((int)proj.x, (int)proj.y, (uint)touch.fingerId);
                         break;
-                    
+
                     default:
                         _view.TouchUp((int)proj.x, (int)proj.y, (uint)touch.fingerId);
                         break;
                 }
             }
         }
-        
+
         private bool _hitTest(float2 position)
         {
             UnityEngine.Profiling.Profiler.BeginSample("NoesisInputConsumer._hitTest()");
-            
-            Point p = _viewRoot.PointFromScreen(new Point(position.x, position.y));
-            
-            bool result = VisualTreeHelper.HitTest(_viewRoot, p).VisualHit != null;
-            
-            UnityEngine.Profiling.Profiler.EndSample();
 
-            return result;
+            try
+            {
+                Point p = _viewRoot.PointFromScreen(new Point(position.x, position.y));
+
+                DependencyObject dependencyObject = VisualTreeHelper.HitTest(_viewRoot, p).VisualHit;
+
+                if (dependencyObject != null && dependencyObject is UIElement uiElement)
+                {
+                    return uiElement.IsHitTestVisible;
+                }
+            }
+            finally
+            {
+                UnityEngine.Profiling.Profiler.EndSample();
+            }
+
+            return false;
         }
-        
+
         private float2 _projectPosition(float2 position)
         {
             int2 screenSize = _screen.Size;
-            
+
             float x = position.x * screenSize.x;
             float y = (1 - position.y) * screenSize.y;
 

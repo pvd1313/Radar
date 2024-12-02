@@ -18,7 +18,7 @@ namespace Beast.Claw.Graphic
     {
         private static readonly HashSet<RenderTexture> PERMANENT_TEXTURES;
         private static readonly HashSet<RenderTexture> TEMPORARY_TEXTURES;
-        
+
         static BGraphic()
         {
             try
@@ -45,8 +45,8 @@ namespace Beast.Claw.Graphic
         public static RenderTexture CreatePermRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
             input.ValidateThrowException(nameof(input));
-            
-            RenderTexture texture = new (
+
+            RenderTexture texture = new(
                 input.size.x,
                 input.size.y,
                 input.depth,
@@ -66,7 +66,7 @@ namespace Beast.Claw.Graphic
         public static RenderTexture CreateTempRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
         {
             input.ValidateThrowException(nameof(input));
-            
+
             RenderTexture texture = RenderTexture.GetTemporary(
                 input.size.x,
                 input.size.y,
@@ -89,7 +89,7 @@ namespace Beast.Claw.Graphic
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             input.ValidateThrowException(nameof(input));
-            
+
             return new Material(input.shader)
             {
                 name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
@@ -107,8 +107,8 @@ namespace Beast.Claw.Graphic
             };
         }
 
-        public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input) 
-            where TOwner: class
+        public static Texture2D CreateTexture2D<TOwner>(TOwner owner, Texture2DParameters input)
+            where TOwner : class
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             input.ValidateThrowException(nameof(input));
@@ -131,16 +131,16 @@ namespace Beast.Claw.Graphic
         {
             sourceTexture.ValidateNotNullThrowException(nameof(sourceTexture));
             targetTexture.ValidateNotNullThrowException(nameof(targetTexture));
-            
+
             RenderTexture renderTextureBak = RenderTexture.active;
-            
+
             try
             {
                 RenderTexture.active = sourceTexture;
-                
-                Rect rect = new (0, 0, targetTexture.width, targetTexture.height);
+
+                Rect rect = new(0, 0, targetTexture.width, targetTexture.height);
                 targetTexture.ReadPixels(rect, 0, 0, false);
-                
+
                 targetTexture.Apply(targetTexture.mipmapCount > 0);
             }
             finally
@@ -156,19 +156,19 @@ namespace Beast.Claw.Graphic
             RenderTexture bakTexture = RenderTexture.active;
 
             RenderTexture.active = input.targetTexture;
-            
+
             GL.PushMatrix();
-            
+
             GL.LoadPixelMatrix(0, input.targetTexture.width, input.targetTexture.height, 0);
 
-            Rect rect = new (
-                input.targetTexturePixelOffset.x, 
+            Rect rect = new(
+                input.targetTexturePixelOffset.x,
                 input.targetTexture.height - input.targetTexturePixelOffset.y - input.sourceTexture.height,
-                input.sourceTexture.width, 
+                input.sourceTexture.width,
                 input.sourceTexture.height);
-            
+
             Graphics.DrawTexture(rect, input.sourceTexture);
-            
+
             GL.PopMatrix();
 
             RenderTexture.active = bakTexture;
@@ -177,9 +177,9 @@ namespace Beast.Claw.Graphic
         public static void Blit(BlitParameters input)
         {
             Graphics.Blit(
-                input.sourceTexture, 
-                input.targetTexture, 
-                input.material, 
+                input.sourceTexture,
+                input.targetTexture,
+                input.material,
                 input.shaderPass);
         }
 
@@ -193,6 +193,19 @@ namespace Beast.Claw.Graphic
                 input.targetCamera,
                 input.layer,
                 input.materialProperties);
+        }
+
+        public static void ClearTexture(RenderTexture texture)
+        {
+            texture.ValidateNotNullThrowException(nameof(texture));
+
+            RenderTexture bak = RenderTexture.active;
+
+            RenderTexture.active = texture;
+            
+            GL.Clear(true, true, Color.clear);
+
+            RenderTexture.active = bak;
         }
     }
 }

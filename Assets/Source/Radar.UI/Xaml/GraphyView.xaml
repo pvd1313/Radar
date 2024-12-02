@@ -1,14 +1,16 @@
-﻿<UserControl x:Class="Beast.Radar.UI.GraphyView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
-             xmlns:local="clr-namespace:Beast.Radar.UI"
-             mc:Ignorable="d"
-             IsTabStop="False"
-             d:DesignHeight="1092.486" d:DesignWidth="1798.923">
-
+﻿<UserControl
+    IsHitTestVisible="False"
+    d:DesignHeight="{StaticResource Size.Screen.Height}"
+    d:DesignWidth="{StaticResource Size.Screen.Wight}"
+    mc:Ignorable="d"
+    x:Class="Beast.Radar.UI.GraphyView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Beast.Radar.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,31 +18,170 @@
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Theme.xaml" />
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="Border" x:Key="Style.Border.Debug">
+                <Setter Property="Background" Value="{StaticResource Brush.Panel.Background}" />
+                <Setter Property="Opacity" Value="0.7" />
+                <Setter Property="CornerRadius" Value="{StaticResource Corner.Popup}" />
+            </Style>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Viewbox Stretch="Uniform">
-        <Canvas Height="1092.486" Width="1798.923">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-            <Grid
-                RenderTransformOrigin="0.0,0.0"
-                Width="330"
-                Height="172"
-                Canvas.Right="50"
-                Canvas.Top="50"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top" >
+        <Viewbox Grid.Row ="1" VerticalAlignment="Top" Stretch="Uniform"  >
+            <Grid x:Name="Grid" Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch" >
+                <Grid.ColumnDefinitions         >
+                    <ColumnDefinition Width="250"  />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="10"  />
 
-                <Border Style="{StaticResource Style.Border.Dark.Normal}"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBlock
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
 
-                    Height="30"
-                    Width="33"
-                    Text="FPS"
-                    Style="{StaticResource Style.Text.Light.Header}" />
+
+                <Grid Grid.Row="0" Grid.Column="4" Background="{x:Null}" IsHitTestVisible="False" >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"  />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.2*" />
+                        <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="0.7*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+
+                    <Border
+                        Grid.ColumnSpan="6"
+                        Grid.RowSpan="4"
+                        IsHitTestVisible="False"
+                        Style="{StaticResource Style.Border.Debug}"  IsEnabled="False"  />
+
+                    <!--  FPS  -->
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        Margin="{StaticResource Margin.Left}"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="FPS" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Column="1"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="##"
+                        VerticalAlignment="Center"
+                        x:Name="text_fps" />
+
+                    <!--  MS  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        Margin="{StaticResource Margin.Left}"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="MS"
+                        VerticalAlignment="Center" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="##"
+                        x:Name="text_ms" />
+
+                    <!--  AVG  -->
+                    <TextBlock
+                        Grid.Column="3"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="AVG"
+                        VerticalAlignment="Center" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="##"
+                        VerticalAlignment="Center"
+                        x:Name="text_avg" />
+
+                    <!--  1%  -->
+                    <TextBlock
+                        Grid.Column="4"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="1%"
+                        VerticalAlignment="Center" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Column="4"
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="##"
+                        VerticalAlignment="Center"
+                        x:Name="text_one_percent" />
+
+
+                    <!--  1%  -->
+                    <TextBlock
+                        Grid.Column="5"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text=".1%"
+                        VerticalAlignment="Center" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Column="5"
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Margin="{StaticResource Margin.Right}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text=".##"
+                        VerticalAlignment="Center"
+                        x:Name="text_zero_one_percent" />
+
+
+                    <Rectangle x:Name="texture_fps"
+                               Grid.ColumnSpan="6" Grid.Row="3" Height="75" Margin="15"/>
+
+                </Grid>
 
             </Grid>
-        </Canvas>
-    </Viewbox>
+        </Viewbox>
+    </Grid>
 </UserControl>

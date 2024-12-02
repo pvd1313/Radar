@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
+using Beast.Claw.Graphy;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
@@ -38,13 +39,14 @@ namespace Beast.Radar.Core
             yield return typeof(FileManager);
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
+            yield return typeof(RadarGraphyManager);
 
             // Windows
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
-            yield return typeof(GraphyWindow);
-            //yield return typeof(GraphyWindowNoesis);
+            //yield return typeof(GraphyWindow);
+            yield return typeof(GraphyWindowNoesis);
             
             // Terrain
             yield return typeof(TerrainFbmRender);

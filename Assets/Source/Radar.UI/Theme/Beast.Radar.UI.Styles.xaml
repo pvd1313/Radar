@@ -18,6 +18,12 @@
     <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
     <sys:Double x:Key="Size.Button.Border">1</sys:Double>
 
+
+
+    <sys:Double x:Key="Size.Screen.Wight">1260</sys:Double>
+    <sys:Double x:Key="Size.Screen.Height">780</sys:Double>
+
+
     <Thickness x:Key="Border.Normal">1</Thickness>
     <Thickness x:Key="Border.Box">1</Thickness>
     <Thickness x:Key="Border.Over">2</Thickness>

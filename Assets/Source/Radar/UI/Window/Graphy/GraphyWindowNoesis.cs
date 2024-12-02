@@ -1,31 +1,63 @@
 ﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
-using Beast.Claw.Resources;
+using Beast.Claw.Graphy;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using UnityEngine;
 
 namespace Beast.Radar.UI.Graphy
 {
-    public class GraphyWindowNoesis : Actor, IGraphyWindow
+    public class GraphyWindowNoesis : Actor, IGraphyWindow, IReady
     {
+        public bool IsReady { get; private set; }
+
         [Required] private readonly PlayerPreference _preference;
         [Required] private readonly UIConfig _uiConfig;
+        [Required] private readonly IGraphyManager _graphyManager;
+        [Required] private readonly GraphyConfig _graphyConfig;
         [Required] private readonly IWindowManager _windowManager;
 
+        private IntToStringConverter _intConverter;
+        private FloatToStringConverter _floatConverter;
+
         private GraphyView _view;
+        private GraphyFpsText _fpsText;
 
         public void Open()
         {
             if (_view == null)
             {
                 _uiConfig.graphyAsset.Instantiate(out _view);
+
                 _windowManager.Attach(_view, 100);
+
+                _intConverter = new IntToStringConverter(2000);
+                _floatConverter = new FloatToStringConverter("D2");
+
+                _fpsText = new GraphyFpsText(
+                    _graphyManager.FpsMonitor,
+                    _view.textAssets,
+                    _intConverter,
+                    _floatConverter);
+                
+                _fpsText.UpdateParameters(_graphyConfig.fpsTextUpdateRate);
+                
+                _view.SetFpsTexture(_graphyManager.FpsRender.TextureGraph._material);
+                
+                IsReady = true;
             }
             else
             {
                 _view.Visibility = Visibility.Visible;
+            }
+        }
+
+        protected override void _tick(BlockingContext context)
+        {
+            if (IsReady)
+            {
+                _fpsText.UpdateText();
             }
         }
 

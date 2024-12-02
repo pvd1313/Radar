@@ -176,7 +176,7 @@
                     color.a *= (1 - xCoord) / 0.03;
                 }
 
-                fixed4 c = SampleSpriteTexture(IN.texcoord) * color;
+                fixed4 c = /*SampleSpriteTexture(IN.texcoord) **/ color;
 
                 c.rgb *= c.a;
 
