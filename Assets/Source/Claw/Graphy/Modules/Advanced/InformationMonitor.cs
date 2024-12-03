@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class AdvancedMonitor
+    public class InformationMonitor
     {
         public event Action WindowResolutionChanged;
         public AdvancedData Data { get; private set; }

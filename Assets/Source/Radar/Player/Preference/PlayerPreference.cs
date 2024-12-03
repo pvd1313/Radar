@@ -8,6 +8,7 @@ namespace Beast.Radar.Player
         public bool isAutoPathfinding;
         public bool beginMovementOnSingleTap;
         public bool isShowGraphy;
+        public GraphyPreference graphy;
         
         public void Serialize(IBinaryWriter stream)
         {
@@ -15,6 +16,7 @@ namespace Beast.Radar.Player
             stream.WriteBool(isAutoPathfinding);
             stream.WriteBool(beginMovementOnSingleTap);
             stream.WriteBool(isShowGraphy);
+            graphy.Serialize(stream);
         }
 
         public void Deserialize(IBinaryReader stream)
@@ -23,6 +25,7 @@ namespace Beast.Radar.Player
             isAutoPathfinding = stream.ReadBool();
             beginMovementOnSingleTap = stream.ReadBool();
             isShowGraphy = stream.ReadBool();
+            graphy.Deserialize(stream);
         }
     }
 }

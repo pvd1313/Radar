@@ -7,14 +7,16 @@ namespace Beast.Radar.UI
     public class GraphyView : BeastControl
     {
         public GraphyFpsAssets FpsAssets { get; private set; }
-        public GraphyAdvancedAssets AdvancedAssets { get; private set; }
+        public GraphyInformationAssets InformationAssets { get; private set; }
         
-
+        private Thickness _thicknessActive;
+        private Thickness _thicknessDisable;
+        
         public override void BindElements()
         {
-            IsHitTestVisible = false;
-
             FpsAssets = new GraphyFpsAssets();
+            _find("grid_fps", out FpsAssets.view);
+            _find("button_fps", out FpsAssets.button);
             _find("text_fps", out FpsAssets.fps);
             _find("text_ms", out FpsAssets.ms);
             _find("text_avg", out FpsAssets.avg);
@@ -22,16 +24,20 @@ namespace Beast.Radar.UI
             _find("text_zero_one_percent", out FpsAssets.textZero1PercentFps);
             _find("texture_fps", out FpsAssets.textureFps);
             
-            AdvancedAssets = new GraphyAdvancedAssets();
-            _find("grid_advanced", out AdvancedAssets.view);
-            _find("text_graphicsDeviceVersion", out AdvancedAssets.graphicsDeviceVersionText);
-            _find("text_processorType", out AdvancedAssets.processorTypeText);
-            _find("text_operatingSystem", out AdvancedAssets.operatingSystemText);
-            _find("text_graphicsDeviceName", out AdvancedAssets.graphicsDeviceNameText);
-            _find("text_graphicsMemorySize", out AdvancedAssets.graphicsMemorySizeText);
-            _find("text_screenResolution", out AdvancedAssets.screenResolutionText);
-            _find("text_gameWindowResolution", out AdvancedAssets.gameWindowResolutionText);
-            _find("text_systemMemory", out AdvancedAssets.systemMemoryText);
+            InformationAssets = new GraphyInformationAssets();
+            _find("grid_information", out InformationAssets.view);
+            _find("button_information", out InformationAssets.button);
+            _find("text_graphicsDeviceVersion", out InformationAssets.graphicsDeviceVersionText);
+            _find("text_processorType", out InformationAssets.processorTypeText);
+            _find("text_operatingSystem", out InformationAssets.operatingSystemText);
+            _find("text_graphicsDeviceName", out InformationAssets.graphicsDeviceNameText);
+            _find("text_graphicsMemorySize", out InformationAssets.graphicsMemorySizeText);
+            _find("text_screenResolution", out InformationAssets.screenResolutionText);
+            _find("text_gameWindowResolution", out InformationAssets.gameWindowResolutionText);
+            _find("text_systemMemory", out InformationAssets.systemMemoryText);
+            
+            _thicknessActive = new Thickness(1);
+            _thicknessDisable= new Thickness(0);
         }
 
         public void InitializeFpsBrushes(Color good, Color caution, Color critical)

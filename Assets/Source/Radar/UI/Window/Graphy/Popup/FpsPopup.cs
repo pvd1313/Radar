@@ -1,6 +1,7 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Graphy;
 using Beast.Claw.Graphy.Modules;
+using Beast.Radar.Player;
 using Noesis;
 using UnityEngine;
 
@@ -10,38 +11,52 @@ namespace Beast.Radar.UI
     {
         private readonly FpsMonitor _fpsMonitor;
         private readonly GraphyFpsAssets _assets;
+        private readonly PlayerPreference _preference;
         private readonly GraphyConfig _config;
 
-        private readonly IntToStringConverter _intConverter;
-        private readonly FloatToStringConverter _floatConverter;
+        private IntToStringConverter _intConverter;
+        private FloatToStringConverter _floatConverter;
 
         private int _updateRate;
         private int _frameCount;
         private float _deltaTime;
         private float _fps;
         private float _ms;
-        
-        public FpsPopup(
-            GraphyConfig config,
-            FpsMonitor monitor,
-            GraphyFpsAssets assets,
-            IntToStringConverter intConverter,
-            FloatToStringConverter floatConverter)
+
+        public FpsPopup(PlayerPreference preference, GraphyConfig config, FpsMonitor monitor, GraphyFpsAssets assets)
         {
+            _preference = preference;
             _config = config;
             _fpsMonitor = monitor;
             _assets = assets;
-            _intConverter = intConverter;
-            _floatConverter = floatConverter;
         }
 
         public void Initialize()
         {
+            _intConverter = new IntToStringConverter(2000);
+            _floatConverter = new FloatToStringConverter("D2");
+
             _updateRate = _config.fpsTextUpdateRate;
+
+            _assets.button.Click += (_, _) =>
+            {
+                _preference.graphy.isFpsEnabled = !_preference.graphy.isFpsEnabled;
+                SetState();
+            };
+        }
+
+        public void SetState()
+        {
+            _assets.view.Visibility = _preference.graphy.isFpsEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateText()
         {
+            if (!_preference.graphy.isAudioEnabled)
+            {
+                return;
+            }
+
             _deltaTime += Time.unscaledDeltaTime;
 
             _frameCount++;

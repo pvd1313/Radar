@@ -16,13 +16,13 @@
 
     <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
     <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
-    <sys:Double x:Key="Size.Button.Border">1</sys:Double>
 
-
+    <sys:Double x:Key="Size.Button.Scale.Small">40</sys:Double>
 
     <sys:Double x:Key="Size.Screen.Wight">1260</sys:Double>
     <sys:Double x:Key="Size.Screen.Height">780</sys:Double>
 
+    <sys:Double x:Key="Size.Button.Border">1</sys:Double>
 
     <Thickness x:Key="Border.Normal">1</Thickness>
     <Thickness x:Key="Border.Box">1</Thickness>
@@ -435,6 +435,34 @@
         </Grid>
     </ControlTemplate>
 
+
+    <!--  Icon button  -->
+    <Style TargetType="Button" x:Key="Style.Button.Icon">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource Corner.Border1}"/>
+                        <Rectangle RenderTransformOrigin="0.5,0.5"
+                                   Margin="2,2,2,2"
+                                   Fill="{TemplateBinding Foreground}"
+                                   Width="{TemplateBinding Width}"
+                                   Height="{TemplateBinding Height}">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Stretch="UniformToFill"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  ToggleButton  -->
     <ControlTemplate TargetType="ToggleButton" x:Key="Template.ToggleButton">
         <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
@@ -528,8 +556,45 @@
     </Style>
 
 
-    <!--  Close button  -->
+    <!-- Toggle Button Icon -->
+    <Style TargetType="ToggleButton" x:Key="Style.ToggleButton.Icon">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="{StaticResource Corner.Border1}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <Rectangle RenderTransformOrigin="0.5,0.5"
+                                   Margin="2,2,2,2"
+                                   Fill="{TemplateBinding Foreground}"
+                                   Width="{TemplateBinding Width}"
+                                   Height="{TemplateBinding Height}">
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Stretch="UniformToFill"/>
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+
+    <!--  Close button  -->
     <ControlTemplate TargetType="Button" x:Key="Template.Button.Close">
         <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
             <Grid.RenderTransform>

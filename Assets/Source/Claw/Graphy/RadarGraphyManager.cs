@@ -14,7 +14,7 @@ namespace Beast.Claw.Graphy
 
         public FpsMonitor FpsMonitor { get; private set; }
         public FpsRender FpsRender { get; private set;}
-        public AdvancedMonitor AdvancedMonitor { get; private set; }
+        public InformationMonitor InformationMonitor { get; private set; }
 
         protected RadarGraphyManager(GraphyConfig config)
         {
@@ -31,8 +31,8 @@ namespace Beast.Claw.Graphy
             FpsRender = new FpsRender(_config, FpsMonitor);
             FpsRender.Initialize();
 
-            AdvancedMonitor = new AdvancedMonitor();
-            AdvancedMonitor.Initialize();
+            InformationMonitor = new InformationMonitor();
+            InformationMonitor.Initialize();
             
             Initialize();
             
@@ -43,7 +43,7 @@ namespace Beast.Claw.Graphy
         {
             FpsMonitor.Update();
             FpsRender.Update();
-            AdvancedMonitor.Update();
+            InformationMonitor.Update();
         }
         
         protected override void _dispose(BlockingContext obj)

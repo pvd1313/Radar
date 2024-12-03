@@ -1,10 +1,13 @@
 ﻿using Noesis;
 using UnityEngine;
+using Grid = Noesis.Grid;
 
 namespace Beast.Radar.UI
 {
     public class GraphyFpsAssets
     {
+        public ToggleButton button;
+        public Grid view;
         public TextBlock fps;
         public TextBlock ms;
         public TextBlock avg;

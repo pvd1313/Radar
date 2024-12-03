@@ -2,9 +2,10 @@
 
 namespace Beast.Radar.UI
 {
-    public class GraphyAdvancedAssets
+    public class GraphyInformationAssets
     {
         public Grid view;
+        public ToggleButton button;
         public TextBlock graphicsDeviceVersionText;
         public TextBlock processorTypeText;
         public TextBlock operatingSystemText;

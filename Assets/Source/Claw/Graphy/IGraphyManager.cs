@@ -6,6 +6,6 @@ namespace Beast.Claw.Graphy
     {
         public FpsMonitor FpsMonitor { get; }
         public FpsRender FpsRender { get; }
-        public AdvancedMonitor AdvancedMonitor { get; }
+        public InformationMonitor InformationMonitor { get; }
     }
 }

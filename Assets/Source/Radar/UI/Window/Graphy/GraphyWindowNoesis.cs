@@ -18,14 +18,11 @@ namespace Beast.Radar.UI
         [Required] private readonly GraphyConfig _config;
         [Required] private readonly IWindowManager _windowManager;
 
-        private IntToStringConverter _intConverter;
-        private FloatToStringConverter _floatConverter;
-
         private GraphyView _view;
         private FpsPopup _fpsPopup;
-        private AdvancedPopup _advancedPopup;
+        private InformationPopup _informationPopup;
 
-        
+
         public void Open()
         {
             if (_view == null)
@@ -35,23 +32,14 @@ namespace Beast.Radar.UI
 
                 _windowManager.Attach(_view, 100);
 
-                _intConverter = new IntToStringConverter(2000);
-                _floatConverter = new FloatToStringConverter("D2");
-                
-                _fpsPopup = new FpsPopup(
-                    _config, 
-                    _manager.FpsMonitor, 
-                    _view.FpsAssets, 
-                    _intConverter, 
-                    _floatConverter);
-                
+                _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _view.FpsAssets);
                 _view.FpsAssets.SetFpsTexture(_manager.FpsRender.TextureGraph._material);
-                
                 _fpsPopup.Initialize();
+                _fpsPopup.SetState();
 
-                _advancedPopup = new AdvancedPopup(_view.AdvancedAssets, _manager.AdvancedMonitor);
-                _advancedPopup.Initialize();
-                
+                _informationPopup = new InformationPopup(_preference, _view.InformationAssets, _manager.InformationMonitor);
+                _informationPopup.Initialize();
+
                 IsReady = true;
             }
             else

@@ -1,14 +1,19 @@
 ﻿using Beast.Claw.Graphy.Modules;
+using Beast.Radar.Player;
+using Google.GData.Documents;
+using Noesis;
 
 namespace Beast.Radar.UI
 {
-    public class AdvancedPopup
+    public class InformationPopup
     {
-        private readonly GraphyAdvancedAssets _assets;
-        private readonly AdvancedMonitor _monitor;
+        private readonly PlayerPreference _preference;
+        private readonly GraphyInformationAssets _assets;
+        private readonly InformationMonitor _monitor;
 
-        public AdvancedPopup(GraphyAdvancedAssets assets, AdvancedMonitor monitor)
+        public InformationPopup(PlayerPreference preference, GraphyInformationAssets assets, InformationMonitor monitor)
         {
+            _preference = preference;
             _assets = assets;
             _monitor = monitor;
         }
@@ -16,7 +21,13 @@ namespace Beast.Radar.UI
         public void Initialize()
         {
             _monitor.WindowResolutionChanged += OnWindowResolutionChanged;
-
+            
+            _assets.button.Click += (_, _) =>
+            {
+                _preference.graphy.isInformationEnabled = !_preference.graphy.isInformationEnabled;
+                SetState();
+            };
+            
             _assets.graphicsDeviceVersionText.Text = _monitor.Data.graphicsDeviceVersion;
             _assets.processorTypeText.Text = _monitor.Data.processorType;
             _assets.systemMemoryText.Text = _monitor.Data.systemMemory;
@@ -25,6 +36,17 @@ namespace Beast.Radar.UI
             _assets.screenResolutionText.Text = _monitor.Data.screenResolution;
             _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
             _assets.operatingSystemText.Text = _monitor.Data.operatingSystem;
+            
+            SetState();
+        }
+
+        private void SetState()
+        {
+            _assets.view.Visibility = _preference.graphy.isInformationEnabled
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            
+            
         }
 
         private void OnWindowResolutionChanged()
@@ -45,7 +67,5 @@ namespace Beast.Radar.UI
 
             m_backgroundImages.SetAllActive(active && m_graphyManager.Background);
         }*/
-
-        
     }
 }

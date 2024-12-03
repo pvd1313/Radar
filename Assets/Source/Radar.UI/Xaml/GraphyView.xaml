@@ -1,5 +1,4 @@
 ﻿<UserControl
-    IsHitTestVisible="False"
     d:DesignHeight="{StaticResource Size.Screen.Height}"
     d:DesignWidth="{StaticResource Size.Screen.Wight}"
     mc:Ignorable="d"
@@ -12,6 +11,15 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+
+    <noesis:Xaml.Dependencies>
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_speedometer.png" />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_ram.png" />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_cassette.png" />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_info.png" />
+    </noesis:Xaml.Dependencies>
+
+
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -20,6 +28,11 @@
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <sys:String x:Key="Path.Icon.Speedometer">Assets/Texture/Sprite/UI_main/icon_speedometer.png</sys:String>
+            <sys:String x:Key="Path.Icon.Ram">Assets/Texture/Sprite/UI_main/icon_ram.png</sys:String>
+            <sys:String x:Key="Path.Icon.Cassette">Assets/Texture/Sprite/UI_main/icon_cassette.png</sys:String>
+            <sys:String x:Key="Path.Icon.Info">Assets/Texture/Sprite/UI_main/icon_info.png</sys:String>
+
             <Style TargetType="Border" x:Key="Style.Border.Debug">
                 <Setter Property="Background" Value="{StaticResource Brush.Panel.Background}" />
                 <Setter Property="Opacity" Value="0.7" />
@@ -27,6 +40,8 @@
             </Style>
 
             <GridLength x:Key="Size.Offset.Content">5</GridLength>
+
+            <Thickness x:Key="Margin.SmallButton">1.5, 1.5, 1.5, 1.5</Thickness>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -47,7 +62,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <!--  Top gtid -->
+        <!--  Top view -->
         <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Top" Stretch="Uniform">
             <Grid>
                 <Grid.ColumnDefinitions >
@@ -70,8 +85,9 @@
                 <!-- Fps -->
 
                 <Grid x:Name="grid_fps"
-                      Grid.Row="0"
-                      Grid.Column="5">
+                      Grid.Row="1"
+                      Grid.Column="5"
+                      IsHitTestVisible="False">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"  />
@@ -93,7 +109,7 @@
                     <Border
                         Grid.ColumnSpan="6"
                         Grid.RowSpan="5"
-                        IsHitTestVisible="False"
+
                         Style="{StaticResource Style.Border.Debug}"  IsEnabled="False"  />
 
                     <!--  FPS  -->
@@ -203,12 +219,13 @@
         </Viewbox>
 
 
-        <!-- Bottom gtid -->
+        <!-- Bottom view -->
         <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Bottom" Stretch="Uniform">
-            <Grid Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch"  >
+
+            <Grid Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch">
 
                 <Grid.ColumnDefinitions         >
-                    <ColumnDefinition Width="250"  />
+                    <ColumnDefinition Width="50"  />
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="250" />
@@ -225,10 +242,70 @@
                     <RowDefinition Height="20*" />
                 </Grid.RowDefinitions>
 
-                <!-- ADVANCED -->
-                <Grid x:Name="grid_advanced" HorizontalAlignment="Left"
-                      Grid.Row="5"
-                      Grid.Column="0" Grid.ColumnSpan="3">
+                <!-- Buttons -->
+
+                <Grid Grid.Row="5" Grid.Column="0"  >
+
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+                    <ToggleButton x:Name="button_information"
+                                  Grid.Row="0"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Icon}"
+                                  Tag="{StaticResource Path.Icon.Info}"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.SmallButton}"
+                                  />
+
+                    <ToggleButton x:Name="button_fps"
+                                  Grid.Row="1"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Icon}"
+                                  Tag="{StaticResource Path.Icon.Speedometer}"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.SmallButton}"
+                                  />
+
+
+                    <ToggleButton x:Name="button_audio"
+                                  Grid.Row="2"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Icon}"
+                                  Tag="{StaticResource Path.Icon.Cassette}"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.SmallButton}"
+                                  />
+
+
+                    <ToggleButton x:Name="button_ram"
+                                  Grid.Row="3"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Icon}"
+                                  Tag="{StaticResource Path.Icon.Ram}"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.SmallButton}"
+                                  />
+
+                </Grid>
+
+                <!-- Information -->
+                <Grid x:Name="grid_information"
+                      HorizontalAlignment="Left"
+                      IsHitTestVisible="False"
+                      Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />
@@ -253,7 +330,7 @@
                     <Border
                         Grid.RowSpan="10"
                         Grid.ColumnSpan="3"
-                        IsHitTestVisible="False"
+
                         Margin="-2"
                         Style="{StaticResource Style.Border.Debug}"  IsEnabled="False" />
 

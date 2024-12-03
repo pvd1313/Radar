@@ -12,14 +12,12 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-
     <noesis:Xaml.Dependencies>
         <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_settings.png" />
         <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_go.png" />
         <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_stay.png" />
         <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_path.png" />
     </noesis:Xaml.Dependencies>
-
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -32,34 +30,6 @@
             <sys:String x:Key="Path.Icon.Move">Assets/Texture/Sprite/UI_main/icon_go.png</sys:String>
             <sys:String x:Key="Path.Icon.Settings">Assets/Texture/Sprite/UI_main/icon_settings.png</sys:String>
             <sys:String x:Key="Path.Icon.Pathfinding">Assets/Texture/Sprite/UI_main/icon_path.png</sys:String>
-
-            <sys:Double x:Key="Size.Button.Small">40</sys:Double>
-
-            <Style TargetType="Button" x:Key="Style.Button.Icon">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
-                                <Border
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{StaticResource Corner.Border1}"/>
-                                <Rectangle RenderTransformOrigin="0.5,0.5"
-                                           Margin="2,2,2,2"
-                                           Fill="{TemplateBinding Foreground}"
-                                           Width="{TemplateBinding Width}"
-                                           Height="{TemplateBinding Height}">
-                                    <Rectangle.OpacityMask>
-                                        <ImageBrush ImageSource="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
-                                                    Stretch="UniformToFill"/>
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -97,8 +67,8 @@
                 Tag="{StaticResource Path.Icon.Settings}"
                 Background="{StaticResource Brush.Element.Dark.Normal}"
                 Foreground="{StaticResource Brush.Element.Light.Normal}"
-                Height="{StaticResource Size.Button.Small}"
-                Width="{StaticResource Size.Button.Small}"
+                Height="{StaticResource Size.Button.Scale.Small}"
+                Width="{StaticResource Size.Button.Scale.Small}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top">
 
@@ -112,8 +82,8 @@
                 Background="{StaticResource Brush.Element.Dark.Normal}"
                 Foreground="{StaticResource Brush.Element.Light.Normal}"
                 BorderBrush="{StaticResource Brush.Accent.Normal}"
-                Height="{StaticResource Size.Button.Small}"
-                Width="{StaticResource Size.Button.Small}"
+                Height="{StaticResource Size.Button.Scale.Small}"
+                Width="{StaticResource Size.Button.Scale.Small}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top">
         </Button>
