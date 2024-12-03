@@ -20,7 +20,7 @@ MonoBehaviour:
       y: 100
     format: 0
     wrapMode: 1
-    filterMode: 0
+    filterMode: 1
     depth: 0
     mipCount: 0
     antiAliasing: 1

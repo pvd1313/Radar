@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 
-namespace Beast.Claw.Graphy.Fps
+namespace Beast.Claw.Graphy.Modules
 {
-    public class GraphyFpsRender
+    public class FpsRender
     {
         public GraphyTexture TextureGraph { get; private set; }
 
         private readonly GraphyConfig _config;
-        private readonly GraphyFpsMonitor _monitor;
+        private readonly FpsMonitor _monitor;
         
         private int _resolution = 150;
         private int[] _fpsArray;
         private int _highestFps;
 
-        public GraphyFpsRender(GraphyConfig config, GraphyFpsMonitor monitor)
+        public FpsRender(GraphyConfig config, FpsMonitor monitor)
         {
             _config = config;
             _monitor = monitor;

@@ -6,7 +6,7 @@ using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
 
-namespace Beast.Radar.UI.Graphy
+namespace Beast.Radar.UI
 {
     public class GraphyWindowNoesis : Actor, IGraphyWindow, IReady
     {
@@ -14,7 +14,7 @@ namespace Beast.Radar.UI.Graphy
 
         [Required] private readonly PlayerPreference _preference;
         [Required] private readonly UIConfig _uiConfig;
-        [Required] private readonly IGraphyManager _graphyManager;
+        [Required] private readonly IGraphyManager _manager;
         [Required] private readonly GraphyConfig _config;
         [Required] private readonly IWindowManager _windowManager;
 
@@ -22,25 +22,35 @@ namespace Beast.Radar.UI.Graphy
         private FloatToStringConverter _floatConverter;
 
         private GraphyView _view;
-        private GraphyFpsText _fpsText;
+        private FpsPopup _fpsPopup;
+        private AdvancedPopup _advancedPopup;
 
+        
         public void Open()
         {
             if (_view == null)
             {
                 _uiConfig.graphyAsset.Instantiate(out _view);
-                _view.InitializeBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
+                _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
 
                 _windowManager.Attach(_view, 100);
 
                 _intConverter = new IntToStringConverter(2000);
                 _floatConverter = new FloatToStringConverter("D2");
                 
-                _fpsText = new GraphyFpsText(_config, _graphyManager.FpsMonitor, _view, _intConverter, _floatConverter);
+                _fpsPopup = new FpsPopup(
+                    _config, 
+                    _manager.FpsMonitor, 
+                    _view.FpsAssets, 
+                    _intConverter, 
+                    _floatConverter);
                 
-                _fpsText.Initialize();
+                _view.FpsAssets.SetFpsTexture(_manager.FpsRender.TextureGraph._material);
                 
-                _view.SetFpsTexture(_graphyManager.FpsRender.TextureGraph._material);
+                _fpsPopup.Initialize();
+
+                _advancedPopup = new AdvancedPopup(_view.AdvancedAssets, _manager.AdvancedMonitor);
+                _advancedPopup.Initialize();
                 
                 IsReady = true;
             }
@@ -54,7 +64,7 @@ namespace Beast.Radar.UI.Graphy
         {
             if (IsReady)
             {
-                _fpsText.UpdateText();
+                _fpsPopup.UpdateText();
             }
         }
 

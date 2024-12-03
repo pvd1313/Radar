@@ -5,7 +5,7 @@ using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Beast.Radar.UI.Graphy
+namespace Beast.Radar.UI
 {
     public class GraphyWindow : Actor, IGraphyWindow
     {

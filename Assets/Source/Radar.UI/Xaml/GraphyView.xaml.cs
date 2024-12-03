@@ -1,47 +1,48 @@
 ﻿using Beast.Claw.UI;
-using Beast.Radar.UI.Graphy;
 using Noesis;
-using UnityEngine;
 using Color = UnityEngine.Color;
 
 namespace Beast.Radar.UI
 {
     public class GraphyView : BeastControl
     {
-        public GraphyBrushes Brushes { get; private set; }
-        public GraphyFpsTextAssets FpsTextAssets { get; private set; }
-
-        private Rectangle textureFps;
+        public GraphyFpsAssets FpsAssets { get; private set; }
+        public GraphyAdvancedAssets AdvancedAssets { get; private set; }
+        
 
         public override void BindElements()
         {
             IsHitTestVisible = false;
 
-            FpsTextAssets = new GraphyFpsTextAssets();
-
-            _find("text_fps", out FpsTextAssets.fps);
-            _find("text_ms", out FpsTextAssets.ms);
-            _find("text_avg", out FpsTextAssets.avg);
-            _find("text_one_percent", out FpsTextAssets.onePercentFps);
-            _find("text_zero_one_percent", out FpsTextAssets.textZero1PercentFps);
-            _find("texture_fps", out textureFps);
+            FpsAssets = new GraphyFpsAssets();
+            _find("text_fps", out FpsAssets.fps);
+            _find("text_ms", out FpsAssets.ms);
+            _find("text_avg", out FpsAssets.avg);
+            _find("text_one_percent", out FpsAssets.onePercentFps);
+            _find("text_zero_one_percent", out FpsAssets.textZero1PercentFps);
+            _find("texture_fps", out FpsAssets.textureFps);
+            
+            AdvancedAssets = new GraphyAdvancedAssets();
+            _find("grid_advanced", out AdvancedAssets.view);
+            _find("text_graphicsDeviceVersion", out AdvancedAssets.graphicsDeviceVersionText);
+            _find("text_processorType", out AdvancedAssets.processorTypeText);
+            _find("text_operatingSystem", out AdvancedAssets.operatingSystemText);
+            _find("text_graphicsDeviceName", out AdvancedAssets.graphicsDeviceNameText);
+            _find("text_graphicsMemorySize", out AdvancedAssets.graphicsMemorySizeText);
+            _find("text_screenResolution", out AdvancedAssets.screenResolutionText);
+            _find("text_gameWindowResolution", out AdvancedAssets.gameWindowResolutionText);
+            _find("text_systemMemory", out AdvancedAssets.systemMemoryText);
         }
 
-        public void InitializeBrushes(Color good, Color caution, Color critical)
+        public void InitializeFpsBrushes(Color good, Color caution, Color critical)
         {
-            Brushes = new GraphyBrushes()
+            FpsAssets.brushes = new GraphyBrushes()
             {
                 good = new SolidColorBrush(good.ToNoesis()),
                 caution = new SolidColorBrush(caution.ToNoesis()),
                 critical = new SolidColorBrush(critical.ToNoesis())
             };
         }
-
-        public void SetFpsTexture(Material shaderGraphMaterial)
-        {
-            TextureSource texture = new(shaderGraphMaterial.mainTexture);
-            ImageBrush brush = new(texture);
-            textureFps.Fill = brush;
-        }
+        
     }
 }

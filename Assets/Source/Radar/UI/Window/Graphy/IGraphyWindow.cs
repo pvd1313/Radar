@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-
-namespace Beast.Radar.UI.Graphy
+﻿namespace Beast.Radar.UI
 {
     public interface IGraphyWindow
     {

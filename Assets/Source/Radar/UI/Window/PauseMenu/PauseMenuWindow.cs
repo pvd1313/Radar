@@ -4,7 +4,6 @@ using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
-using Beast.Radar.UI.Graphy;
 using Cysharp.Threading.Tasks;
 using Noesis;
 using UnityEngine;

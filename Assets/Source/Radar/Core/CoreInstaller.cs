@@ -12,7 +12,6 @@ using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
-using Beast.Radar.UI.Graphy;
 using Beast.Radar.World;
 
 namespace Beast.Radar.Core

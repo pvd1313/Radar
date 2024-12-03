@@ -1,5 +1,5 @@
 ﻿using Beast.Claw.GameLoop;
-using Beast.Claw.Graphy.Fps;
+using Beast.Claw.Graphy.Modules;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.Graphy
@@ -12,10 +12,10 @@ namespace Beast.Claw.Graphy
         private bool _active = true;
         private bool _focused = true;
 
-        public GraphyFpsMonitor FpsMonitor { get; private set; }
-        public GraphyFpsRender FpsRender { get; private set;}
-        
-        
+        public FpsMonitor FpsMonitor { get; private set; }
+        public FpsRender FpsRender { get; private set;}
+        public AdvancedMonitor AdvancedMonitor { get; private set; }
+
         protected RadarGraphyManager(GraphyConfig config)
         {
             _config = config;
@@ -25,13 +25,16 @@ namespace Beast.Claw.Graphy
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            FpsMonitor = new GraphyFpsMonitor();
+            FpsMonitor = new FpsMonitor();
             FpsMonitor.Initialize();
 
-            FpsRender = new GraphyFpsRender(_config, FpsMonitor);
+            FpsRender = new FpsRender(_config, FpsMonitor);
             FpsRender.Initialize();
+
+            AdvancedMonitor = new AdvancedMonitor();
+            AdvancedMonitor.Initialize();
             
-            Init();
+            Initialize();
             
             return UniTask.CompletedTask;
         }
@@ -40,9 +43,9 @@ namespace Beast.Claw.Graphy
         {
             FpsMonitor.Update();
             FpsRender.Update();
+            AdvancedMonitor.Update();
         }
-
-
+        
         protected override void _dispose(BlockingContext obj)
         {
             FpsRender.Dispose();
@@ -225,7 +228,7 @@ namespace Beast.Claw.Graphy
             }*/
         }
         
-        private void Init()
+        private void Initialize()
         {
             /*m_fpsManager.SetState(_graphyConfig.fpsModuleState);
             m_ramManager.SetState(_graphyConfig.ramModuleState);

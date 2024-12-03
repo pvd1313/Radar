@@ -1,15 +1,15 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Graphy;
-using Beast.Claw.Graphy.Fps;
+using Beast.Claw.Graphy.Modules;
 using Noesis;
 using UnityEngine;
 
-namespace Beast.Radar.UI.Graphy
+namespace Beast.Radar.UI
 {
-    public class GraphyFpsText
+    public class FpsPopup
     {
-        private readonly GraphyFpsMonitor _fpsMonitor;
-        private readonly GraphyView _view;
+        private readonly FpsMonitor _fpsMonitor;
+        private readonly GraphyFpsAssets _assets;
         private readonly GraphyConfig _config;
 
         private readonly IntToStringConverter _intConverter;
@@ -20,18 +20,17 @@ namespace Beast.Radar.UI.Graphy
         private float _deltaTime;
         private float _fps;
         private float _ms;
-
-
-        public GraphyFpsText(
+        
+        public FpsPopup(
             GraphyConfig config,
-            GraphyFpsMonitor monitor,
-            GraphyView view,
+            FpsMonitor monitor,
+            GraphyFpsAssets assets,
             IntToStringConverter intConverter,
             FloatToStringConverter floatConverter)
         {
             _config = config;
             _fpsMonitor = monitor;
-            _view = view;
+            _assets = assets;
             _intConverter = intConverter;
             _floatConverter = floatConverter;
         }
@@ -52,21 +51,21 @@ namespace Beast.Radar.UI.Graphy
                 _fps = _frameCount / _deltaTime;
                 _ms = _deltaTime / _frameCount * 1000f;
 
-                _view.FpsTextAssets.fps.Text = _intConverter.Convert((int)_fps);
-                SetFpsRelatedTextColor(_view.FpsTextAssets.fps, _fps);
+                _assets.fps.Text = _intConverter.Convert((int)_fps);
+                SetFpsRelatedTextColor(_assets.fps, _fps);
 
                 _floatConverter.ToString(_ms, out string exponent, out string fractionWithDot);
-                _view.FpsTextAssets.ms.Text = $"{exponent}{fractionWithDot}";
-                SetFpsRelatedTextColor(_view.FpsTextAssets.ms, _fps);
+                _assets.ms.Text = $"{exponent}{fractionWithDot}";
+                SetFpsRelatedTextColor(_assets.ms, _fps);
 
-                _view.FpsTextAssets.onePercentFps.Text = _intConverter.Convert(_fpsMonitor.OnePercentFPS);
-                SetFpsRelatedTextColor(_view.FpsTextAssets.onePercentFps, _fpsMonitor.OnePercentFPS);
+                _assets.onePercentFps.Text = _intConverter.Convert(_fpsMonitor.OnePercentFPS);
+                SetFpsRelatedTextColor(_assets.onePercentFps, _fpsMonitor.OnePercentFPS);
 
-                _view.FpsTextAssets.textZero1PercentFps.Text = _intConverter.Convert(_fpsMonitor.Zero1PercentFps);
-                SetFpsRelatedTextColor(_view.FpsTextAssets.textZero1PercentFps, _fpsMonitor.Zero1PercentFps);
+                _assets.textZero1PercentFps.Text = _intConverter.Convert(_fpsMonitor.Zero1PercentFps);
+                SetFpsRelatedTextColor(_assets.textZero1PercentFps, _fpsMonitor.Zero1PercentFps);
 
-                _view.FpsTextAssets.avg.Text = _intConverter.Convert(_fpsMonitor.AverageFPS);
-                SetFpsRelatedTextColor(_view.FpsTextAssets.avg, _fpsMonitor.AverageFPS);
+                _assets.avg.Text = _intConverter.Convert(_fpsMonitor.AverageFPS);
+                SetFpsRelatedTextColor(_assets.avg, _fpsMonitor.AverageFPS);
 
                 _deltaTime = 0f;
                 _frameCount = 0;
@@ -80,15 +79,15 @@ namespace Beast.Radar.UI.Graphy
 
             if (roundedFps >= _config.goodFpsThreshold)
             {
-                text.Foreground = _view.Brushes.good;
+                text.Foreground = _assets.brushes.good;
             }
             else if (roundedFps >= _config.cautionFpsThreshold)
             {
-                text.Foreground = _view.Brushes.caution;
+                text.Foreground = _assets.brushes.caution;
             }
             else
             {
-                text.Foreground = _view.Brushes.critical;
+                text.Foreground = _assets.brushes.critical;
             }
         }
     }

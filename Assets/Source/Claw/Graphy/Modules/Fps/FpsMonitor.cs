@@ -1,12 +1,11 @@
 using System;
-using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using UnityEngine;
 
-namespace Beast.Claw.Graphy.Fps
+namespace Beast.Claw.Graphy.Modules
 {
-    public class GraphyFpsMonitor : Actor
+    public class FpsMonitor : Actor
     {
         public short CurrentFPS { get; private set; }
         public short AverageFPS { get; private set; }

@@ -29,21 +29,29 @@
     </UserControl.Resources>
 
     <Grid >
+
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
 
-        <Viewbox Grid.Row ="1" VerticalAlignment="Top" Stretch="Uniform"  >
-            <Grid x:Name="Grid" Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch" >
-                <Grid.ColumnDefinitions         >
-                    <ColumnDefinition Width="250"  />
-                    <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="10"  />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"  />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5"  />
+        </Grid.ColumnDefinitions>
 
+
+        <!--  Top gtid -->
+        <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Top" Stretch="Uniform">
+            <Grid>
+                <Grid.ColumnDefinitions >
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions >
@@ -55,8 +63,11 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
+                <!-- Fps -->
 
-                <Grid Grid.Row="0" Grid.Column="4" Background="{x:Null}" IsHitTestVisible="False" >
+                <Grid x:Name="grid_fps"
+                      Grid.Row="0"
+                      Grid.Column="5">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"  />
@@ -154,7 +165,6 @@
                         VerticalAlignment="Center"
                         x:Name="text_one_percent" />
 
-
                     <!--  1%  -->
                     <TextBlock
                         Grid.Column="5"
@@ -175,13 +185,131 @@
                         VerticalAlignment="Center"
                         x:Name="text_zero_one_percent" />
 
-
                     <Rectangle x:Name="texture_fps"
                                Grid.ColumnSpan="6" Grid.Row="3" Height="75" Margin="15"/>
 
                 </Grid>
-
             </Grid>
         </Viewbox>
+
+
+        <!-- Bottom gtid -->
+        <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Bottom" Stretch="Uniform">
+            <Grid Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch"  >
+
+                <Grid.ColumnDefinitions         >
+                    <ColumnDefinition Width="250"  />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250"  />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="20*" />
+                </Grid.RowDefinitions>
+
+                <!-- ADVANCED -->
+                <Grid x:Name="grid_advanced"  HorizontalAlignment="Left"
+                      Grid.Row="5"
+                      Grid.Column="0" Grid.ColumnSpan="3">
+
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+                    <Border
+                        Grid.RowSpan="8"
+                        IsHitTestVisible="False"
+                        Margin="-2"
+                        Style="{StaticResource Style.Border.Debug}"  IsEnabled="False"  />
+
+                    <TextBlock x:Name="text_graphicsDeviceVersion"
+                               Foreground="White"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_graphicsDeviceVersion" />
+
+                    <TextBlock x:Name="text_processorType"
+                               Foreground="White"
+                               Grid.Row="1"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_processorType"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_operatingSystem"
+                               Foreground="White"
+                               Grid.Row="2"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_operatingSystem"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_systemMemory"
+                               Foreground="White"
+                               Grid.Row="3"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_systemMemory"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_graphicsDeviceName"
+                               Foreground="White"
+                               Grid.Row="4"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_graphicsDeviceName"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_graphicsMemorySize"
+                               Foreground="White"
+                               Grid.Row="5"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_graphicsMemorySize"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_screenResolution"
+                               Foreground="White"
+                               Grid.Row="6"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_screenResolution"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock x:Name="text_gameWindowResolution"
+                               Foreground="White"
+                               Grid.Row="7"
+                               HorizontalAlignment="Left"
+                               Margin="{StaticResource Margin.Left}"
+                               Style="{StaticResource Style.Text.Light.Normal}"
+                               Text="text_gameWindowResolution"
+                               VerticalAlignment="Center" />
+
+                </Grid>
+            </Grid>
+        </Viewbox>
+
     </Grid>
 </UserControl>

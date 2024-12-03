@@ -1,10 +1,11 @@
-﻿using Beast.Claw.Graphy.Fps;
+﻿using Beast.Claw.Graphy.Modules;
 
 namespace Beast.Claw.Graphy
 {
     public interface IGraphyManager
     {
-        public GraphyFpsMonitor FpsMonitor { get; }
-        public GraphyFpsRender FpsRender { get; }
+        public FpsMonitor FpsMonitor { get; }
+        public FpsRender FpsRender { get; }
+        public AdvancedMonitor AdvancedMonitor { get; }
     }
 }
