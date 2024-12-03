@@ -11,9 +11,13 @@ namespace Beast.Claw.Graphy.Modules
         public string gameWindowResolution;
         public string operatingSystem;
         
-        public void UpdateWindowResolution(string value)
+        public AdvancedData UpdateWindowResolution(string value)
         {
-            gameWindowResolution = value;
+            AdvancedData updatedData = this;
+            
+            updatedData.gameWindowResolution = value;
+            
+            return updatedData;
         }
     }
 }

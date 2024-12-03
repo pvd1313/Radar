@@ -44,8 +44,8 @@ namespace Beast.Radar.Core
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
-            yield return typeof(GraphyWindow);
-            //yield return typeof(GraphyWindowNoesis);
+            //yield return typeof(GraphyWindow);
+            yield return typeof(GraphyWindowNoesis);
             
             // Terrain
             yield return typeof(TerrainFbmRender);
