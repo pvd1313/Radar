@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Beast.Claw.Math.CCL;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
@@ -14,7 +14,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
-
 using Random = Unity.Mathematics.Random;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
@@ -113,6 +112,20 @@ namespace Beast.Radar.City
 
             majorCities.Dispose();
 
+            int textureSizeX = _biome.Terrain8kmCell.cellCountX;
+
+            CCLTextureJob<BiomeCCLTexture> recognitionJob = new()
+            {
+                inTexture = new BiomeCCLTexture(_biome.Terrain8kmCell.texture, textureSizeX),
+                outLabeledTexture = new NativeArray<ushort>(textureSizeX * textureSizeX, Allocator.TempJob)
+            };
+            
+            Profiler.BeginSample("CCLTextureJob");
+            recognitionJob.Schedule().Complete();
+            Profiler.EndSample();
+
+            recognitionJob.outLabeledTexture.Dispose();
+
             _drawCityGizmo();
             
             return UniTask.CompletedTask;
@@ -141,7 +154,7 @@ namespace Beast.Radar.City
                 else
                 {
                     minorCount++;
-                    _gizmo.SetColor(Color.gray);
+                    _gizmo.SetColor(Color.red);
                     _gizmo.AddPoint(position, 2f * (size + 2));
                 }
             }

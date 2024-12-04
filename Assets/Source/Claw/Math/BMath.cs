@@ -139,6 +139,21 @@ namespace Beast.Claw.Math
                 max = x;
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MinMax(int x, int y, out int min, out int max)
+        {
+            if (x < y)
+            {
+                min = x;
+                max = y;
+            }
+            else
+            {
+                min = y;
+                max = x;
+            }
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Min(int x, int y)

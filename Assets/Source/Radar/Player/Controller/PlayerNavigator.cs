@@ -160,7 +160,7 @@ namespace Beast.Radar.Player
                 tileCost = _config.TileSpeedModifiersToTileCost(),
                 texture = new AverageBiomeTexture(_biome.Terrain8kmCell),
                 buffer = _pathJobBuffer,
-                searchBounds = new Bounds2D(0, textureSize - 1, 0, textureSize - 1)
+                searchBounds = new Bounds2D(0, textureSize - 1)
             };
             
             _stopwatch.Restart();
