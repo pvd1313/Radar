@@ -41,14 +41,16 @@
 
             <GridLength x:Key="Size.Offset.Content">5</GridLength>
 
-            <Thickness x:Key="Margin.SmallButton">1.5, 1.5, 1.5, 1.5</Thickness>
+            <Thickness x:Key="Margin.Button">1.5, 1.5, 1.5, 1.5</Thickness>
+            <Thickness x:Key="Margin.Module">1.5, 1.5, 1.5, 1.5</Thickness>
+            <Thickness x:Key="Margin.Display">1.5, 1.5, 1.5, 1.5</Thickness>
 
+            <SolidColorBrush x:Key="Brush.Information.Header" Color="{StaticResource Color.Accent1}"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
 
     <Grid >
-
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
@@ -83,10 +85,9 @@
                 </Grid.RowDefinitions>
 
                 <!-- Fps -->
-
                 <Grid x:Name="grid_fps"
-                      Grid.Row="1"
-                      Grid.Column="5"
+                      Grid.Row="1" Grid.Column="5"
+                      Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
                     <Grid.ColumnDefinitions>
@@ -107,10 +108,8 @@
                     </Grid.RowDefinitions>
 
                     <Border
-                        Grid.ColumnSpan="6"
-                        Grid.RowSpan="5"
-
-                        Style="{StaticResource Style.Border.Debug}"  IsEnabled="False"  />
+                        Grid.ColumnSpan="6" Grid.RowSpan="5"
+                        Style="{StaticResource Style.Border.Debug}"/>
 
                     <!--  FPS  -->
                     <TextBlock
@@ -128,7 +127,7 @@
                         Style="{StaticResource Style.Text.Light.Header}"
                         Text="##"
                         VerticalAlignment="Center"
-                        x:Name="text_fps" />
+                        x:Name="text_fps"/>
 
                     <!--  MS  -->
                     <TextBlock
@@ -212,7 +211,62 @@
                         x:Name="text_zero_one_percent" />
 
                     <Rectangle x:Name="texture_fps"
-                               Grid.ColumnSpan="6" Grid.Row="3" Height="75" Margin="15"/>
+                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Height="75"
+                               Margin="{StaticResource Margin.Display}"/>
+
+                </Grid>
+
+                <!-- Audio -->
+                <Grid x:Name="grid_audio"
+                      Grid.Row="2" Grid.Column="5"
+                      Margin="{StaticResource Margin.Module}"
+                      IsHitTestVisible="False">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"  />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.2*" />
+                        <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="0.7*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="{StaticResource Size.Offset.Content}" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="{StaticResource Size.Offset.Content}" />
+                    </Grid.RowDefinitions>
+
+                    <Border
+                        Grid.ColumnSpan="6" Grid.RowSpan="5"
+                        Style="{StaticResource Style.Border.Debug}"/>
+
+                    <!--  FPS  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        Margin="{StaticResource Margin.Left}"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="dB" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource Style.Text.Light.Header}"
+                        Text="##"
+                        VerticalAlignment="Center"
+                        x:Name="text_db" />
+
+
+                    <Rectangle x:Name="texture_audio"
+                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Height="75"
+                               Margin="{StaticResource Margin.Display}"/>
 
                 </Grid>
             </Grid>
@@ -261,7 +315,7 @@
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.SmallButton}"
+                                  Margin="{StaticResource Margin.Button}"
                                   />
 
                     <ToggleButton x:Name="button_fps"
@@ -272,7 +326,7 @@
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.SmallButton}"
+                                  Margin="{StaticResource Margin.Button}"
                                   />
 
 
@@ -284,7 +338,7 @@
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.SmallButton}"
+                                  Margin="{StaticResource Margin.Button}"
                                   />
 
 
@@ -296,7 +350,7 @@
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.SmallButton}"
+                                  Margin="{StaticResource Margin.Button}"
                                   />
 
                 </Grid>
@@ -339,7 +393,6 @@
                                Foreground="White"
                                Grid.Row="1" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_graphicsDeviceVersion" />
 
@@ -347,7 +400,6 @@
                                Foreground="White"
                                Grid.Row="2" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_processorType"
                                VerticalAlignment="Center" />
@@ -356,7 +408,6 @@
                                Foreground="White"
                                Grid.Row="3" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_operatingSystem"
                                VerticalAlignment="Center" />
@@ -365,7 +416,6 @@
                                Foreground="White"
                                Grid.Row="4" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_systemMemory"
                                VerticalAlignment="Center" />
@@ -374,7 +424,6 @@
                                Foreground="White"
                                Grid.Row="5" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_graphicsDeviceName"
                                VerticalAlignment="Center" />
@@ -383,7 +432,6 @@
                                Foreground="White"
                                Grid.Row="6" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_graphicsMemorySize"
                                VerticalAlignment="Center" />
@@ -392,7 +440,6 @@
                                Foreground="White"
                                Grid.Row="7" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_screenResolution"
                                VerticalAlignment="Center" />
@@ -401,7 +448,6 @@
                                Foreground="White"
                                Grid.Row="8" Grid.Column="1"
                                HorizontalAlignment="Left"
-                               Margin="{StaticResource Margin.Left}"
                                Style="{StaticResource Style.Text.Light.Normal}"
                                Text="text_gameWindowResolution"
                                VerticalAlignment="Center" />

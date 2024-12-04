@@ -1,6 +1,6 @@
 namespace Beast.Claw.Graphy.Modules
 {
-    public struct AdvancedData
+    public struct InformationData
     {
         public string graphicsDeviceVersion;
         public string processorType;
@@ -11,9 +11,9 @@ namespace Beast.Claw.Graphy.Modules
         public string gameWindowResolution;
         public string operatingSystem;
         
-        public AdvancedData UpdateWindowResolution(string value)
+        public InformationData UpdateWindowResolution(string value)
         {
-            AdvancedData updatedData = this;
+            InformationData updatedData = this;
             
             updatedData.gameWindowResolution = value;
             

@@ -14,14 +14,7 @@ namespace Beast.Radar.UI
         public TextBlock onePercentFps;
         public TextBlock textZero1PercentFps;
         public GraphyBrushes brushes;
+        public Rectangle display;
         
-        public Rectangle textureFps;
-        
-        public void SetFpsTexture(Material shaderGraphMaterial)
-        {
-            TextureSource texture = new(shaderGraphMaterial.mainTexture);
-            ImageBrush brush = new(texture);
-            textureFps.Fill = brush;
-        }
     }
 }

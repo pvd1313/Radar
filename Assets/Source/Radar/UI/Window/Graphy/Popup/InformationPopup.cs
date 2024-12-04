@@ -37,6 +37,9 @@ namespace Beast.Radar.UI
             _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
             _assets.operatingSystemText.Text = _monitor.Data.operatingSystem;
             
+            
+            
+            
             SetState();
         }
 

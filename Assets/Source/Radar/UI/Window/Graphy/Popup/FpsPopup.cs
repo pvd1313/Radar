@@ -41,6 +41,7 @@ namespace Beast.Radar.UI
             _assets.button.Click += (_, _) =>
             {
                 _preference.graphy.isFpsEnabled = !_preference.graphy.isFpsEnabled;
+            
                 SetState();
             };
         }
@@ -52,7 +53,7 @@ namespace Beast.Radar.UI
 
         public void UpdateText()
         {
-            if (!_preference.graphy.isAudioEnabled)
+            if (!_preference.graphy.isFpsEnabled)
             {
                 return;
             }

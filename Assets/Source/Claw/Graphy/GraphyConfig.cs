@@ -38,7 +38,7 @@ namespace Beast.Claw.Graphy
         
         [Space, Header("Audio")]
         public EModuleState audioModuleState = EModuleState.FULL;
-        public ELookForAudioListener findAudioListenerInCameraIfNull = ELookForAudioListener.ON_SCENE_LOAD;
+        public Color audioColor = Color.white;
         [Range(10, 300)] public int audioGraphResolution = 81;
         [Range(1, 200)] public int audioTextUpdateRate = 3; // 3 updates per sec.
         public FFTWindow FFTWindow = FFTWindow.Blackman;

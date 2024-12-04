@@ -10,7 +10,7 @@ namespace Beast.Claw.Graphy.Modules
     public class InformationMonitor
     {
         public event Action WindowResolutionChanged;
-        public AdvancedData Data { get; private set; }
+        public InformationData Data { get; private set; }
 
         private Cache<int2> _windowResolutionCache;
         private StringBuilder _stringBuilder;
@@ -33,7 +33,7 @@ namespace Beast.Claw.Graphy.Modules
 
             _windowResolutionCache.Update(new int2(Screen.width, Screen.height));
 
-            Data = new AdvancedData
+            Data = new InformationData
             {
                 graphicsDeviceVersion = $"Graphics API: {SystemInfo.graphicsDeviceVersion}",
                 processorType = $"CPU: {SystemInfo.processorType} [{SystemInfo.processorCount} cores]",

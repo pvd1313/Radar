@@ -1,54 +1,75 @@
-﻿using Beast.Claw.GameLoop;
+﻿using Beast.Claw.Common;
+using Beast.Claw.GameLoop;
+using Beast.Claw.Graphic;
 using Beast.Claw.Graphy.Modules;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Beast.Claw.Graphy
 {
-    public class RadarGraphyManager : Actor, IGraphyManager
+    public class RadarGraphyManager : Actor, IGraphyManager, IReady 
     {
-        private readonly GraphyConfig _config;
-        
-        private bool _initialized = false;
-        private bool _active = true;
-        private bool _focused = true;
-
         public FpsMonitor FpsMonitor { get; private set; }
         public FpsRender FpsRender { get; private set;}
         public InformationMonitor InformationMonitor { get; private set; }
+        public AudioMonitor AudioMonitor { get; private set; }
+        public AudioRender AudioRender { get; private set; }
 
-        protected RadarGraphyManager(GraphyConfig config)
+        public bool IsReady { get; private set; }
+        
+        private readonly GraphyConfig _config;
+        private readonly ICamera _camera;
+
+        private bool _active = true;
+        private bool _focused = true;
+        
+
+        protected RadarGraphyManager(GraphyConfig config, ICamera camera)
         {
             _config = config;
+            _camera = camera;
         }
-
-        /// ////////////////////////////////////////////////////////////////////////////////////////////////
-
+        
         protected override UniTask _warmup(ConcurrentContext context)
         {
             FpsMonitor = new FpsMonitor();
             FpsMonitor.Initialize();
-
+         
             FpsRender = new FpsRender(_config, FpsMonitor);
             FpsRender.Initialize();
 
             InformationMonitor = new InformationMonitor();
             InformationMonitor.Initialize();
+
+            AudioMonitor = new AudioMonitor(_config, _camera.Camera.GetComponent<AudioListener>());
+            AudioMonitor.Initialize();
+           
+            AudioRender = new AudioRender(_config, AudioMonitor);
+            AudioRender.Initialize();
             
             Initialize();
-            
+
             return UniTask.CompletedTask;
         }
 
         protected override void _tick(BlockingContext context)
         {
+            if (!IsReady)
+            {
+                return;
+            }
+            
             FpsMonitor.Update();
             FpsRender.Update();
             InformationMonitor.Update();
+            AudioMonitor.Update();
+            AudioRender.Update();
         }
         
         protected override void _dispose(BlockingContext obj)
         {
             FpsRender.Dispose();
+            AudioRender.Dispose();
         }
 
         public void SetModuleMode(EModuleType moduleType, EModuleState moduleState)
@@ -236,6 +257,8 @@ namespace Beast.Claw.Graphy
             m_advancedData.SetState(_graphyConfig.advancedModuleState);
             
             m_initialized = true;*/
+
+            IsReady = true;
         }
 
         private void UpdateAllParameters()
@@ -253,6 +276,7 @@ namespace Beast.Claw.Graphy
             m_audioManager.RefreshParameters();
             m_advancedData.RefreshParameters();*/
         }
+
 
 
     }

@@ -8,10 +8,9 @@ namespace Beast.Radar.UI
     {
         public GraphyFpsAssets FpsAssets { get; private set; }
         public GraphyInformationAssets InformationAssets { get; private set; }
-        
-        private Thickness _thicknessActive;
-        private Thickness _thicknessDisable;
-        
+
+        public GraphyAudioAssets AudioAssets { get; private set; }
+
         public override void BindElements()
         {
             FpsAssets = new GraphyFpsAssets();
@@ -22,7 +21,7 @@ namespace Beast.Radar.UI
             _find("text_avg", out FpsAssets.avg);
             _find("text_one_percent", out FpsAssets.onePercentFps);
             _find("text_zero_one_percent", out FpsAssets.textZero1PercentFps);
-            _find("texture_fps", out FpsAssets.textureFps);
+            _find("texture_fps", out FpsAssets.display);
             
             InformationAssets = new GraphyInformationAssets();
             _find("grid_information", out InformationAssets.view);
@@ -35,9 +34,12 @@ namespace Beast.Radar.UI
             _find("text_screenResolution", out InformationAssets.screenResolutionText);
             _find("text_gameWindowResolution", out InformationAssets.gameWindowResolutionText);
             _find("text_systemMemory", out InformationAssets.systemMemoryText);
-            
-            _thicknessActive = new Thickness(1);
-            _thicknessDisable= new Thickness(0);
+
+            AudioAssets = new GraphyAudioAssets();
+            _find("grid_audio", out AudioAssets.view);
+            _find("grid_audio", out AudioAssets.view);
+            _find("grid_audio", out AudioAssets.view);
+            _find("grid_audio", out AudioAssets.view);
         }
 
         public void InitializeFpsBrushes(Color good, Color caution, Color critical)

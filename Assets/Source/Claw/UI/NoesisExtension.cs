@@ -2,6 +2,8 @@
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
 using Noesis;
+using UnityEngine;
+using Color = Noesis.Color;
 
 namespace Beast.Claw.UI
 {
@@ -40,6 +42,13 @@ namespace Beast.Claw.UI
                 G = (byte)(color.g * 255),
                 B = (byte)(color.b * 255),
             };
+        }
+
+        public static void SetMaterial(this Rectangle rectangle, Material material)
+        {
+            TextureSource textureSource = new(material.mainTexture);
+            ImageBrush brush = new(textureSource);
+            rectangle.Fill = brush;
         }
     }
 }

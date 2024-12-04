@@ -9,7 +9,7 @@ namespace Beast.Claw.Graphy.Modules
         private readonly GraphyConfig _config;
         private readonly FpsMonitor _monitor;
         
-        private int _resolution = 150;
+        private int _resolution;
         private int[] _fpsArray;
         private int _highestFps;
 
@@ -22,19 +22,6 @@ namespace Beast.Claw.Graphy.Modules
         public void Initialize()
         {
             TextureGraph = new GraphyTexture(_config);
-
-            switch (_config.graphyMode)
-            {
-                case EMode.FULL:
-                    TextureGraph.arrayMaxSize = GraphyTexture.arrayMaxSizeFull;
-                    TextureGraph._material.EnableKeyword("FULL");
-                    break;
-
-                case EMode.LIGHT:
-                    TextureGraph.arrayMaxSize = GraphyTexture.arrayMaxSizeLight;
-                    break;
-            }
-
             TextureGraph.InitializeShader();
 
             _resolution = _config.fpsGraphResolution;

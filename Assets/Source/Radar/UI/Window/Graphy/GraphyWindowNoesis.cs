@@ -2,6 +2,7 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphy;
+using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
@@ -21,8 +22,7 @@ namespace Beast.Radar.UI
         private GraphyView _view;
         private FpsPopup _fpsPopup;
         private InformationPopup _informationPopup;
-
-
+        
         public void Open()
         {
             if (_view == null)
@@ -33,12 +33,12 @@ namespace Beast.Radar.UI
                 _windowManager.Attach(_view, 100);
 
                 _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _view.FpsAssets);
-                _view.FpsAssets.SetFpsTexture(_manager.FpsRender.TextureGraph._material);
+                _view.FpsAssets.display.SetMaterial(_manager.FpsRender.TextureGraph._material);
                 _fpsPopup.Initialize();
                 _fpsPopup.SetState();
 
                 _informationPopup = new InformationPopup(_preference, _view.InformationAssets, _manager.InformationMonitor);
-                _informationPopup.Initialize();
+                _informationPopup.Initialize(); 
 
                 IsReady = true;
             }

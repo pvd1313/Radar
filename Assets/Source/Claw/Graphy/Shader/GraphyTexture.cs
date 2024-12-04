@@ -7,16 +7,14 @@ namespace Beast.Claw.Graphy
 {
     public class GraphyTexture : Controller
     {
-        public RenderTexture Texture => _texture;
+        private const int ARRAY_MAX_SIZE_FULL = 512;
+        private const int ARRAY_MAX_SIZE_LIGHT = 128;
 
-        public const int arrayMaxSizeFull = 512;
-        public const int arrayMaxSizeLight = 128;
-
-        public int arrayMaxSize = 128;
+        private int _arrayMaxSize;
 
         public float[] shaderArrayValues;
 
-        public Material _material = null;
+        public Material _material;
 
         public float average = 0;
 
@@ -27,7 +25,7 @@ namespace Beast.Claw.Graphy
         public Color cautionColor = Color.white;
         public Color criticalColor = Color.white;
 
-        
+
         private static readonly int AveragePropertyId = Shader.PropertyToID("Average");
 
         private static readonly int GoodThresholdPropertyId = Shader.PropertyToID("_GoodThreshold");
@@ -41,6 +39,7 @@ namespace Beast.Claw.Graphy
         private static readonly int GraphValuesLength = Shader.PropertyToID("GraphValues_Length");
 
         private RenderTexture _texture;
+        private EMode _mode;
 
         public GraphyTexture(GraphyConfig config)
         {
@@ -48,12 +47,13 @@ namespace Beast.Claw.Graphy
             _texture = BGraphic.CreateTempRenderTexture(this, config.renderTextureData);
             _material = new Material(config.shader);
             _material.SetTexture("_MainTex", _texture);
+            _mode = config.graphyMode;
         }
 
         public void Blit()
         {
             BGraphic.ClearTexture(_texture);
-            
+
             BGraphic.Blit(new BlitParameters
             {
                 material = _material,
@@ -61,7 +61,7 @@ namespace Beast.Claw.Graphy
                 targetTexture = _texture
             });
         }
-        
+
         /// <summary>
         /// This is done to avoid a design problem that arrays in shaders have, 
         /// and should be called before initializing any shader graph.
@@ -73,7 +73,18 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void InitializeShader()
         {
-            _material.SetFloatArray(GraphValues, new float[arrayMaxSize]);
+            if (_mode is EMode.FULL)
+            {
+                _arrayMaxSize = ARRAY_MAX_SIZE_FULL;
+                _material.EnableKeyword("FULL");
+            }
+            else
+            {
+                _arrayMaxSize = ARRAY_MAX_SIZE_LIGHT;
+                _material.DisableKeyword("FULL");
+            }
+            
+            _material.SetFloatArray(GraphValues, new float[_arrayMaxSize]);
         }
 
         /// <summary>
