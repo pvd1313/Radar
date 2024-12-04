@@ -22,37 +22,36 @@ namespace Beast.Radar.UI
         private GraphyView _view;
         private FpsPopup _fpsPopup;
         private InformationPopup _informationPopup;
-        
-        public void Open()
+        private AudioPopup _audioPopup;
+
+        protected override UniTask _warmup(ConcurrentContext arg)
         {
-            if (_view == null)
+            if (_preference.graphy.isShowGraphy)
             {
-                _uiConfig.graphyAsset.Instantiate(out _view);
-                _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
-
-                _windowManager.Attach(_view, 100);
-
-                _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _view.FpsAssets);
-                _view.FpsAssets.display.SetMaterial(_manager.FpsRender.TextureGraph._material);
-                _fpsPopup.Initialize();
-                _fpsPopup.SetState();
-
-                _informationPopup = new InformationPopup(_preference, _view.InformationAssets, _manager.InformationMonitor);
-                _informationPopup.Initialize(); 
-
-                IsReady = true;
+                Open();
             }
-            else
-            {
-                _view.Visibility = Visibility.Visible;
-            }
+
+            return UniTask.CompletedTask;
         }
 
         protected override void _tick(BlockingContext context)
         {
-            if (IsReady)
+            if (IsReady && _preference.graphy.isShowGraphy)
             {
-                _fpsPopup.UpdateText();
+                _fpsPopup.Update();
+                _audioPopup.Update();
+            }
+        }
+
+        public void Open()
+        {
+            if (_view == null)
+            {
+                _initialize();
+            }
+            else
+            {
+                _view.Visibility = Visibility.Visible;
             }
         }
 
@@ -64,14 +63,26 @@ namespace Beast.Radar.UI
             }
         }
 
-        protected override UniTask _warmup(ConcurrentContext arg)
+        private void _initialize()
         {
-            if (_preference.isShowGraphy)
-            {
-                Open();
-            }
+            _uiConfig.graphyAsset.Instantiate(out _view);
+            _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
 
-            return UniTask.CompletedTask;
+            _windowManager.Attach(_view, 100);
+
+            _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _view.FpsAssets);
+            _view.FpsAssets.display.SetMaterial(_manager.FpsRender.TextureGraph.material);
+            _fpsPopup.Initialize();
+            _fpsPopup.SetState();
+
+            _informationPopup = new InformationPopup(_preference, _view.InformationAssets, _manager.InformationMonitor);
+            _informationPopup.Initialize();
+
+            _audioPopup = new AudioPopup(_config, _manager.AudioMonitor, _view.AudioAssets.db);
+            _view.AudioAssets.displayCurrent.SetMaterial(_manager.AudioRender.TextureGraphCurrent.material);
+            _view.AudioAssets.displayPrevious.SetMaterial(_manager.AudioRender.TextureGraphPrevious.material);
+            
+            IsReady = true;
         }
     }
 }

@@ -43,7 +43,7 @@ MonoBehaviour:
   ramGraphResolution: 150
   ramTextUpdateRate: 3
   audioModuleState: 0
-  findAudioListenerInCameraIfNull: 1
+  audioColor: {r: 1, g: 0.74509805, b: 0.23529413, a: 1}
   audioGraphResolution: 81
   audioTextUpdateRate: 3
   FFTWindow: 4

@@ -8,7 +8,6 @@ namespace Beast.Radar.UI
     {
         public GraphyFpsAssets FpsAssets { get; private set; }
         public GraphyInformationAssets InformationAssets { get; private set; }
-
         public GraphyAudioAssets AudioAssets { get; private set; }
 
         public override void BindElements()
@@ -37,9 +36,10 @@ namespace Beast.Radar.UI
 
             AudioAssets = new GraphyAudioAssets();
             _find("grid_audio", out AudioAssets.view);
-            _find("grid_audio", out AudioAssets.view);
-            _find("grid_audio", out AudioAssets.view);
-            _find("grid_audio", out AudioAssets.view);
+            _find("button_audio", out AudioAssets.button);
+            _find("text_db", out AudioAssets.db);
+            _find("texture_audio_current", out AudioAssets.displayCurrent);
+            _find("texture_audio_previous", out AudioAssets.displayPrevious);
         }
 
         public void InitializeFpsBrushes(Color good, Color caution, Color critical)

@@ -26,9 +26,8 @@ namespace Beast.Claw.Graphy.Modules
 
             _resolution = _config.fpsGraphResolution;
 
-            CreatePoints();
+            _createPoints();
         }
-
 
         public void Update()
         {
@@ -80,7 +79,7 @@ namespace Beast.Claw.Graphy.Modules
             TextureGraph.Blit();
         }
 
-        private void CreatePoints()
+        private void _createPoints()
         {
             if (TextureGraph.shaderArrayValues == null || _fpsArray.Length != _resolution)
             {

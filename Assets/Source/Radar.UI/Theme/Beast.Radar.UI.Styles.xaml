@@ -3,7 +3,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:local="clr-namespace:NoesisGUIExtensions"
+    xmlns:local="clr-namespace:Beast.Radar.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -578,15 +578,65 @@
                             </Border.Style>
                         </Border>
                         <Rectangle RenderTransformOrigin="0.5,0.5"
-                                   Margin="2,2,2,2"
+                                   Margin="3,3,3,3"
                                    Fill="{TemplateBinding Foreground}"
-                                   Width="{TemplateBinding Width}"
-                                   Height="{TemplateBinding Height}">
+                                   Width="{Binding IconWidth, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=16}"
+                                   Height="{Binding IconHeight, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=16}">
                             <Rectangle.OpacityMask>
                                 <ImageBrush ImageSource="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
                                             Stretch="UniformToFill"/>
                             </Rectangle.OpacityMask>
                         </Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- Toggle Button Text -->
+    <Style TargetType="ToggleButton" x:Key="Style.ToggleButton.Text">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}"
+                          Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}">
+                        <Border
+                            Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}"
+                            BorderBrush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}"
+                            CornerRadius="{StaticResource Corner.Border1}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+
+                        <TextBlock
+                            RenderTransformOrigin="0.5,0.5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                            FontSize="20">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+                                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

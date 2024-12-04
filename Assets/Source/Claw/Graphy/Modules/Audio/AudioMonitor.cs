@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Beast.Claw.Debug;
+using UnityEngine;
 
 namespace Beast.Claw.Graphy.Modules
 {
@@ -6,23 +7,14 @@ namespace Beast.Claw.Graphy.Modules
     {
         private const float REF_VALUE = 1f;
         
-        /// <summary>
-        /// Current audio spectrum from the specified AudioListener.
-        /// </summary>
-        public float[] Spectrum { get; private set; }
-
-        /// <summary>
-        /// Highest audio spectrum from the specified AudioListener in the last few seconds.
-        /// </summary>
-        public float[] SpectrumHighestValues { get; private set; }
-        
+        public float[] SpectrumCurrent { get; private set; }
+        public float[] SpectrumPrevious { get; private set; }
         public float MaxDB { get; private set; }
-        
         public bool SpectrumDataAvailable => _audioListener != null;
         
         private readonly GraphyConfig _config;
+        private readonly AudioListener _audioListener;
         
-        private AudioListener _audioListener;
         private int _spectrumSize = 512;
 
         public AudioMonitor(GraphyConfig config, AudioListener listener)
@@ -34,8 +26,8 @@ namespace Beast.Claw.Graphy.Modules
         public void Initialize()
         {
             _spectrumSize = _config.spectrumSize;
-            Spectrum = new float[_spectrumSize];
-            SpectrumHighestValues = new float[_spectrumSize];
+            SpectrumCurrent = new float[_spectrumSize];
+            SpectrumPrevious = new float[_spectrumSize];
         }
         
         public void Update()
@@ -44,39 +36,45 @@ namespace Beast.Claw.Graphy.Modules
             {
                 // Use this data to calculate the dB value
 
-                AudioListener.GetOutputData(Spectrum, 0);
+                AudioListener.GetOutputData(SpectrumCurrent, 0);
 
                 float sum = 0;
 
-                for (int i = 0; i < Spectrum.Length; i++)
+                for (int i = 0; i < SpectrumCurrent.Length; i++)
                 {
-                    sum += Spectrum[i] * Spectrum[i]; // sum squared samples
+                    sum += SpectrumCurrent[i] * SpectrumCurrent[i]; // sum squared samples
                 }
+                BDebug.Track(this, "sum", sum);
+                
+                float rmsValue = Mathf.Sqrt(sum / SpectrumCurrent.Length); // rms = square root of average
 
-                float rmsValue = Mathf.Sqrt(sum / Spectrum.Length); // rms = square root of average
-
+                BDebug.Track(this, "rms Value", rmsValue);
+                
                 MaxDB = 20 * Mathf.Log10(rmsValue / REF_VALUE); // calculate dB
 
                 if (MaxDB < -80) MaxDB = -80; // clamp it to -80dB min
 
+                
+                BDebug.Track(this, "MaxDB", MaxDB);
                 // Use this data to draw the spectrum in the graphs
 
-                AudioListener.GetSpectrumData(Spectrum, 0, _config.FFTWindow);
+                AudioListener.GetSpectrumData(SpectrumCurrent, 0, _config.FFTWindow);
 
-                for (int i = 0; i < Spectrum.Length; i++)
+                BDebug.Track(this, "Spectrum length", SpectrumCurrent.Length);
+                for (int i = 0; i < SpectrumCurrent.Length; i++)
                 {
                     // Update the highest value if its lower than the current one
-                    if (Spectrum[i] > SpectrumHighestValues[i])
+                    if (SpectrumCurrent[i] > SpectrumPrevious[i])
                     {
-                        SpectrumHighestValues[i] = Spectrum[i];
+                        SpectrumPrevious[i] = SpectrumCurrent[i];
                     }
 
                     // Slowly lower the value 
                     else
                     {
-                        SpectrumHighestValues[i] = Mathf.Clamp
+                        SpectrumPrevious[i] = Mathf.Clamp
                         (
-                            value: SpectrumHighestValues[i] - SpectrumHighestValues[i] * Time.deltaTime * 2,
+                            value: SpectrumPrevious[i] - SpectrumPrevious[i] * Time.deltaTime * 2,
                             min: 0,
                             max: 1
                         );
@@ -91,7 +89,7 @@ namespace Beast.Claw.Graphy.Modules
         /// </summary>
         /// <param name="linear"></param>
         /// <returns></returns>
-        public float lin2dB(float linear)
+        public float Lin2dB(float linear)
         {
             return Mathf.Clamp(Mathf.Log10(linear) * 20.0f, -160.0f, 0.0f);
         }
@@ -101,7 +99,7 @@ namespace Beast.Claw.Graphy.Modules
         /// </summary>
         /// <param name="db"></param>
         /// <returns></returns>
-        public float dBNormalized(float db)
+        public float DBNormalized(float db)
         {
             return (db + 160f) / 160f;
         }

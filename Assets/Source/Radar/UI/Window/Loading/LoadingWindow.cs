@@ -27,7 +27,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _intToString = new IntToStringConverter(99);
+            _intToString = new IntToStringConverter(0, 99);
             _stringBuilder = new StringBuilder();
             
             _config.asset.Instantiate(out _view);

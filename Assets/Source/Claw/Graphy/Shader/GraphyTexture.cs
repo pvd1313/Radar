@@ -9,23 +9,7 @@ namespace Beast.Claw.Graphy
     {
         private const int ARRAY_MAX_SIZE_FULL = 512;
         private const int ARRAY_MAX_SIZE_LIGHT = 128;
-
-        private int _arrayMaxSize;
-
-        public float[] shaderArrayValues;
-
-        public Material _material;
-
-        public float average = 0;
-
-        public float goodThreshold = 0;
-        public float cautionThreshold = 0;
-
-        public Color goodColor = Color.white;
-        public Color cautionColor = Color.white;
-        public Color criticalColor = Color.white;
-
-
+        
         private static readonly int AveragePropertyId = Shader.PropertyToID("Average");
 
         private static readonly int GoodThresholdPropertyId = Shader.PropertyToID("_GoodThreshold");
@@ -37,16 +21,27 @@ namespace Beast.Claw.Graphy
 
         private static readonly int GraphValues = Shader.PropertyToID("GraphValues");
         private static readonly int GraphValuesLength = Shader.PropertyToID("GraphValues_Length");
+        
+        public float[] shaderArrayValues;
+        public Material material;
+        public float average;
+        public float goodThreshold;
+        public float cautionThreshold;
 
+        public Color goodColor = Color.white;
+        public Color cautionColor = Color.white;
+        public Color criticalColor = Color.white;
+        
+        private readonly EMode _mode;
         private RenderTexture _texture;
-        private EMode _mode;
+        private int _arrayMaxSize;
 
         public GraphyTexture(GraphyConfig config)
         {
             config.renderTextureData.ValidateThrowException(nameof(config.renderTextureData));
             _texture = BGraphic.CreateTempRenderTexture(this, config.renderTextureData);
-            _material = new Material(config.shader);
-            _material.SetTexture("_MainTex", _texture);
+            material = new Material(config.shader);
+            material.SetTexture("_MainTex", _texture);
             _mode = config.graphyMode;
         }
 
@@ -56,7 +51,7 @@ namespace Beast.Claw.Graphy
 
             BGraphic.Blit(new BlitParameters
             {
-                material = _material,
+                material = material,
                 shaderPass = 0,
                 targetTexture = _texture
             });
@@ -76,15 +71,15 @@ namespace Beast.Claw.Graphy
             if (_mode is EMode.FULL)
             {
                 _arrayMaxSize = ARRAY_MAX_SIZE_FULL;
-                _material.EnableKeyword("FULL");
+                material.EnableKeyword("FULL");
             }
             else
             {
                 _arrayMaxSize = ARRAY_MAX_SIZE_LIGHT;
-                _material.DisableKeyword("FULL");
+                material.DisableKeyword("FULL");
             }
             
-            _material.SetFloatArray(GraphValues, new float[_arrayMaxSize]);
+            material.SetFloatArray(GraphValues, new float[_arrayMaxSize]);
         }
 
         /// <summary>
@@ -93,7 +88,7 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void UpdateArrayValuesLength()
         {
-            _material.SetInt(GraphValuesLength, shaderArrayValues.Length);
+            material.SetInt(GraphValuesLength, shaderArrayValues.Length);
         }
 
         /// <summary>
@@ -101,7 +96,7 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void UpdateAverage()
         {
-            _material.SetFloat(AveragePropertyId, average);
+            material.SetFloat(AveragePropertyId, average);
         }
 
         /// <summary>
@@ -109,8 +104,8 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void UpdateThresholds()
         {
-            _material.SetFloat(GoodThresholdPropertyId, goodThreshold);
-            _material.SetFloat(CautionThresholdPropertyId, cautionThreshold);
+            material.SetFloat(GoodThresholdPropertyId, goodThreshold);
+            material.SetFloat(CautionThresholdPropertyId, cautionThreshold);
         }
 
         /// <summary>
@@ -118,9 +113,9 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void UpdateColors()
         {
-            _material.SetColor(GoodColorPropertyId, goodColor);
-            _material.SetColor(CautionColorPropertyId, cautionColor);
-            _material.SetColor(CriticalColorPropertyId, criticalColor);
+            material.SetColor(GoodColorPropertyId, goodColor);
+            material.SetColor(CautionColorPropertyId, cautionColor);
+            material.SetColor(CriticalColorPropertyId, criticalColor);
         }
 
         /// <summary>
@@ -128,13 +123,13 @@ namespace Beast.Claw.Graphy
         /// </summary>
         public void UpdatePoints()
         {
-            _material.SetFloatArray(GraphValues, shaderArrayValues);
+            material.SetFloatArray(GraphValues, shaderArrayValues);
         }
 
         public void Dispose()
         {
             BGraphic.TryDispose(ref _texture);
-            BGraphic.TryDispose(ref _material);
+            BGraphic.TryDispose(ref material);
         }
     }
 }

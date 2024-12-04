@@ -26,7 +26,7 @@ namespace Beast.Radar.UI
 
             _view.toggleFPS.IsChecked = _playerPreference.isMaxFps;
             
-            _view.toggleGraphy.IsChecked = _playerPreference.isShowGraphy;
+            _view.toggleGraphy.IsChecked = _playerPreference.graphy.isShowGraphy;
 
             _view.buttonLoadGame.IsEnabled = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             
@@ -74,8 +74,8 @@ namespace Beast.Radar.UI
 
             _view.toggleGraphy.Click += (_, _) =>
             {
-                _playerPreference.isShowGraphy = _view.toggleGraphy.IsChecked ?? false;
-                if (_playerPreference.isShowGraphy)
+                _playerPreference.graphy.isShowGraphy = _view.toggleGraphy.IsChecked ?? false;
+                if (_playerPreference.graphy.isShowGraphy)
                 {
                     _graphyWindow.Open();
                 }

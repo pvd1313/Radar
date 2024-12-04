@@ -37,7 +37,7 @@ namespace Beast.Radar.UI
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
-            if (_preference.isShowGraphy)
+            if (_preference.graphy.isShowGraphy)
             {
                 Open();
             }

@@ -33,7 +33,7 @@ namespace Beast.Radar.UI
 
         public void Initialize()
         {
-            _intConverter = new IntToStringConverter(2000);
+            _intConverter = new IntToStringConverter(0, 2000);
             _floatConverter = new FloatToStringConverter("D2");
 
             _updateRate = _config.fpsTextUpdateRate;
@@ -51,7 +51,7 @@ namespace Beast.Radar.UI
             _assets.view.Visibility = _preference.graphy.isFpsEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateText()
+        public void Update()
         {
             if (!_preference.graphy.isFpsEnabled)
             {
@@ -68,28 +68,27 @@ namespace Beast.Radar.UI
                 _ms = _deltaTime / _frameCount * 1000f;
 
                 _assets.fps.Text = _intConverter.Convert((int)_fps);
-                SetFpsRelatedTextColor(_assets.fps, _fps);
+                _setFpsRelatedTextColor(_assets.fps, _fps);
 
                 _floatConverter.ToString(_ms, out string exponent, out string fractionWithDot);
                 _assets.ms.Text = $"{exponent}{fractionWithDot}";
-                SetFpsRelatedTextColor(_assets.ms, _fps);
+                _setFpsRelatedTextColor(_assets.ms, _fps);
 
                 _assets.onePercentFps.Text = _intConverter.Convert(_fpsMonitor.OnePercentFPS);
-                SetFpsRelatedTextColor(_assets.onePercentFps, _fpsMonitor.OnePercentFPS);
+                _setFpsRelatedTextColor(_assets.onePercentFps, _fpsMonitor.OnePercentFPS);
 
                 _assets.textZero1PercentFps.Text = _intConverter.Convert(_fpsMonitor.Zero1PercentFps);
-                SetFpsRelatedTextColor(_assets.textZero1PercentFps, _fpsMonitor.Zero1PercentFps);
+                _setFpsRelatedTextColor(_assets.textZero1PercentFps, _fpsMonitor.Zero1PercentFps);
 
                 _assets.avg.Text = _intConverter.Convert(_fpsMonitor.AverageFPS);
-                SetFpsRelatedTextColor(_assets.avg, _fpsMonitor.AverageFPS);
+                _setFpsRelatedTextColor(_assets.avg, _fpsMonitor.AverageFPS);
 
                 _deltaTime = 0f;
                 _frameCount = 0;
             }
         }
-
-
-        private void SetFpsRelatedTextColor(TextBlock text, float fps)
+        
+        private void _setFpsRelatedTextColor(TextBlock text, float fps)
         {
             int roundedFps = Mathf.RoundToInt(fps);
 

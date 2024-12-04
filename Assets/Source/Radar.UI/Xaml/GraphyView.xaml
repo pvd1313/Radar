@@ -11,15 +11,6 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-
-    <noesis:Xaml.Dependencies>
-        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_speedometer.png" />
-        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_ram.png" />
-        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_cassette.png" />
-        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_main\icon_info.png" />
-    </noesis:Xaml.Dependencies>
-
-
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -27,11 +18,6 @@
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Theme.xaml" />
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <sys:String x:Key="Path.Icon.Speedometer">Assets/Texture/Sprite/UI_main/icon_speedometer.png</sys:String>
-            <sys:String x:Key="Path.Icon.Ram">Assets/Texture/Sprite/UI_main/icon_ram.png</sys:String>
-            <sys:String x:Key="Path.Icon.Cassette">Assets/Texture/Sprite/UI_main/icon_cassette.png</sys:String>
-            <sys:String x:Key="Path.Icon.Info">Assets/Texture/Sprite/UI_main/icon_info.png</sys:String>
 
             <Style TargetType="Border" x:Key="Style.Border.Debug">
                 <Setter Property="Background" Value="{StaticResource Brush.Panel.Background}" />
@@ -63,7 +49,6 @@
             <ColumnDefinition Width="5"  />
         </Grid.ColumnDefinitions>
 
-
         <!--  Top view -->
         <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Top" Stretch="Uniform">
             <Grid>
@@ -84,7 +69,7 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
-                <!-- Fps -->
+                <!-- Grid Fps -->
                 <Grid x:Name="grid_fps"
                       Grid.Row="1" Grid.Column="5"
                       Margin="{StaticResource Margin.Module}"
@@ -217,7 +202,7 @@
 
                 </Grid>
 
-                <!-- Audio -->
+                <!-- Grid Audio -->
                 <Grid x:Name="grid_audio"
                       Grid.Row="2" Grid.Column="5"
                       Margin="{StaticResource Margin.Module}"
@@ -244,7 +229,6 @@
                         Grid.ColumnSpan="6" Grid.RowSpan="5"
                         Style="{StaticResource Style.Border.Debug}"/>
 
-                    <!--  FPS  -->
                     <TextBlock
                         Grid.Row="1"
                         HorizontalAlignment="Left"
@@ -263,10 +247,19 @@
                         x:Name="text_db" />
 
 
-                    <Rectangle x:Name="texture_audio"
+
+                    <Rectangle x:Name="texture_audio_previous"
+                               Opacity="0.5"
                                Grid.ColumnSpan="6" Grid.Row="3"
                                Height="75"
                                Margin="{StaticResource Margin.Display}"/>
+
+
+                    <Rectangle x:Name="texture_audio_current"
+                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Height="75"
+                               Margin="{StaticResource Margin.Display}"/>
+
 
                 </Grid>
             </Grid>
@@ -309,20 +302,22 @@
 
                     <ToggleButton x:Name="button_information"
                                   Grid.Row="0"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Icon}"
-                                  Tag="{StaticResource Path.Icon.Info}"
-                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Height="{StaticResource Size.Button.Scale.Small}"
+                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="OS"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  Background="{StaticResource Brush.Panel.Background}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
                                   Margin="{StaticResource Margin.Button}"
                                   />
 
                     <ToggleButton x:Name="button_fps"
                                   Grid.Row="1"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Icon}"
-                                  Tag="{StaticResource Path.Icon.Speedometer}"
+                                  Height="{StaticResource Size.Button.Scale.Small}"
+                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="FPS"
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
@@ -333,8 +328,8 @@
                     <ToggleButton x:Name="button_audio"
                                   Grid.Row="2"
                                   Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Icon}"
-                                  Tag="{StaticResource Path.Icon.Cassette}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="AUX"
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"
@@ -345,8 +340,8 @@
                     <ToggleButton x:Name="button_ram"
                                   Grid.Row="3"
                                   Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Icon}"
-                                  Tag="{StaticResource Path.Icon.Ram}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="RAM"
                                   Background="{StaticResource Brush.Panel.Background}"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
                                   BorderBrush="{StaticResource Brush.Accent.Normal}"

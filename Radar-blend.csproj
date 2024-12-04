@@ -61,6 +61,7 @@
     <Compile Include="Assets\Source\Claw\UI\BeastControl.cs" />
     <Compile Include="Assets\Source\Claw\UI\NoesisExtension.cs" />
     <Compile Include="Assets\Source\Radar.UI\Data\XamlAsset.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Extension\CustomToggleButton.cs" />
     <Compile Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs">
       <DependentUpon>Canvas.xaml</DependentUpon>
     </Compile>
@@ -2297,6 +2298,7 @@
     <None Include="Assets\Source\Radar.UI\Beast.Radar.UI.asmdef.meta" />
     <None Include="Assets\Source\Radar.UI\Data.meta" />
     <None Include="Assets\Source\Radar.UI\Data\XamlAsset.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Extension\CustomToggleButton.cs.meta" />
     <None Include="Assets\Source\Radar.UI\link.xml.meta" />
     <None Include="Assets\Source\Radar.UI\Resources.xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Theme.meta" />

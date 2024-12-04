@@ -8,6 +8,7 @@ namespace Beast.Radar.UI
         public ToggleButton button;
         public Grid view;
         public TextBlock db;
-        public Rectangle display;
+        public Rectangle displayCurrent;
+        public Rectangle displayPrevious;
     }
 }
