@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Graphy.Modules;
+using Beast.Claw.Graphy.Modules.Ram;
 
 namespace Beast.Claw.Graphy
 {
@@ -9,5 +10,7 @@ namespace Beast.Claw.Graphy
         public InformationMonitor InformationMonitor { get; }
         public AudioMonitor AudioMonitor { get; }
         public AudioRender AudioRender { get; }
+        public RamMonitor RamMonitor { get; }
+        public RamRender RamRender { get; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class AudioMonitor
+    public class AudioMonitor : GraphyMonitor
     {
         private const float REF_VALUE = 1f;
         
@@ -22,14 +22,19 @@ namespace Beast.Claw.Graphy.Modules
             _spectrumSize = _config.spectrumSize;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             SpectrumCurrent = new float[_spectrumSize];
             SpectrumPrevious = new float[_spectrumSize];
         }
         
-        public void Update()
+        public override void Update()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+            
             if (_audioListener != null)
             {
                 AudioListener.GetOutputData(SpectrumCurrent, 0);

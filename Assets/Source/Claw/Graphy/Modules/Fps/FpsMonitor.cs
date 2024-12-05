@@ -1,11 +1,10 @@
 using System;
-using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using UnityEngine;
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class FpsMonitor : Actor
+    public class FpsMonitor : GraphyMonitor
     {
         public short CurrentFPS { get; private set; }
         public short AverageFPS { get; private set; }
@@ -22,16 +21,21 @@ namespace Beast.Claw.Graphy.Modules
         private short _indexSample;
 
         private float _unscaledDeltaTime;
-
-        public void Initialize()
+        
+        public override void Initialize()
         {
             _fpsSamples = new short[FPS_SAMPLES_CAPACITY];
             _sortedSamples = new short[FPS_SAMPLES_CAPACITY];
             _updateParameters();
         }
 
-        public void Update()
+        public override void Update()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+            
             _unscaledDeltaTime = Time.unscaledDeltaTime;
 
             CurrentFPS = (short)Mathf.RoundToInt(1f / _unscaledDeltaTime);

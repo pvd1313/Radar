@@ -2,14 +2,13 @@
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class AudioRender
+    public class AudioRender : GraphyMonitor
     {
-        public GraphyTexture TextureGraphCurrent { get; private set; }
-        public GraphyTexture TextureGraphPrevious { get; private set; }
-
         private readonly GraphyConfig _config;
         private readonly AudioMonitor _monitor;
 
+        private GraphyTexture _textureGraphCurrent;
+        private GraphyTexture _textureGraphPrevious;
         private int _resolution;
 
         private float[] _renderArrayCurrent;
@@ -21,21 +20,26 @@ namespace Beast.Claw.Graphy.Modules
             _monitor = monitor;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             _resolution = _config.audioGraphResolution;
 
-            TextureGraphCurrent = new GraphyTexture(_config);
-            TextureGraphCurrent.InitializeShader();
+            _textureGraphCurrent = new GraphyTexture(_config);
+            _textureGraphCurrent.InitializeShader();
 
-            TextureGraphPrevious = new GraphyTexture(_config);
-            TextureGraphPrevious.InitializeShader();
+            _textureGraphPrevious = new GraphyTexture(_config);
+            _textureGraphPrevious.InitializeShader();
             
             _createPoints();
         }
 
-        public void Update()
+        public override void Update()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+            
             int incrementPerIteration = Mathf.FloorToInt(_monitor.SpectrumCurrent.Length / (float)_resolution);
             
             _updateCurrentValue(incrementPerIteration);
@@ -43,6 +47,16 @@ namespace Beast.Claw.Graphy.Modules
             _updateHighValue(incrementPerIteration);
         }
 
+        public Material GetCurrentMaterial()
+        {
+            return _textureGraphCurrent.material;
+        }
+
+        public Material getPreviousMaterial()
+        {
+            return _textureGraphPrevious.material;
+        }
+        
         private void _updateHighValue(int incrementPerIteration)
         {
             for (int i = 0; i <= _resolution - 1; i++)
@@ -79,12 +93,12 @@ namespace Beast.Claw.Graphy.Modules
 
             for (int i = 0; i <= _resolution - 1; i++)
             {
-                TextureGraphPrevious.shaderArrayValues[i] = _renderArrayPrevious[i];
+                _textureGraphPrevious.shaderArrayValues[i] = _renderArrayPrevious[i];
             }
 
-            TextureGraphPrevious.UpdatePoints();
+            _textureGraphPrevious.UpdatePoints();
             
-            TextureGraphPrevious.Blit();
+            _textureGraphPrevious.Blit();
         }
 
         private void _updateCurrentValue(int incrementPerIteration)
@@ -123,68 +137,68 @@ namespace Beast.Claw.Graphy.Modules
 
             for (int i = 0; i <= _resolution - 1; i++)
             {
-                TextureGraphCurrent.shaderArrayValues[i] = _renderArrayCurrent[i];
+                _textureGraphCurrent.shaderArrayValues[i] = _renderArrayCurrent[i];
             }
 
-            TextureGraphCurrent.UpdatePoints();
+            _textureGraphCurrent.UpdatePoints();
             
-            TextureGraphCurrent.Blit();
+            _textureGraphCurrent.Blit();
         }
 
         private void _createPoints()
         {
             // Init Arrays
-            if (TextureGraphCurrent.shaderArrayValues == null || TextureGraphCurrent.shaderArrayValues.Length != _resolution)
+            if (_textureGraphCurrent.shaderArrayValues == null || _textureGraphCurrent.shaderArrayValues.Length != _resolution)
             {
                 _renderArrayCurrent = new float[_resolution];
                 _renderArrayPrevious = new float[_resolution];
-                TextureGraphCurrent.shaderArrayValues = new float[_resolution];
-                TextureGraphPrevious.shaderArrayValues = new float[_resolution];
+                _textureGraphCurrent.shaderArrayValues = new float[_resolution];
+                _textureGraphPrevious.shaderArrayValues = new float[_resolution];
             }
 
             for (int i = 0; i < _resolution; i++)
             {
-                TextureGraphCurrent.shaderArrayValues[i] = 0;
-                TextureGraphPrevious.shaderArrayValues[i] = 0;
+                _textureGraphCurrent.shaderArrayValues[i] = 0;
+                _textureGraphPrevious.shaderArrayValues[i] = 0;
             }
 
             // Color
-            TextureGraphCurrent.goodColor = _config.audioColor;
-            TextureGraphCurrent.cautionColor = _config.audioColor;
-            TextureGraphCurrent.criticalColor = _config.audioColor;
-            TextureGraphCurrent.UpdateColors();
+            _textureGraphCurrent.goodColor = _config.audioColor;
+            _textureGraphCurrent.cautionColor = _config.audioColor;
+            _textureGraphCurrent.criticalColor = _config.audioColor;
+            _textureGraphCurrent.UpdateColors();
 
-            TextureGraphPrevious.goodColor = _config.audioColor;
-            TextureGraphPrevious.cautionColor = _config.audioColor;
-            TextureGraphPrevious.criticalColor = _config.audioColor;
-            TextureGraphPrevious.UpdateColors();
+            _textureGraphPrevious.goodColor = _config.audioColor;
+            _textureGraphPrevious.cautionColor = _config.audioColor;
+            _textureGraphPrevious.criticalColor = _config.audioColor;
+            _textureGraphPrevious.UpdateColors();
 
             // Threshold
-            TextureGraphCurrent.goodThreshold = 0;
-            TextureGraphCurrent.cautionThreshold = 0;
-            TextureGraphCurrent.UpdateThresholds();
+            _textureGraphCurrent.goodThreshold = 0;
+            _textureGraphCurrent.cautionThreshold = 0;
+            _textureGraphCurrent.UpdateThresholds();
 
-            TextureGraphPrevious.goodThreshold = 0;
-            TextureGraphPrevious.cautionThreshold = 0;
-            TextureGraphPrevious.UpdateThresholds();
+            _textureGraphPrevious.goodThreshold = 0;
+            _textureGraphPrevious.cautionThreshold = 0;
+            _textureGraphPrevious.UpdateThresholds();
 
             // Update Array
-            TextureGraphCurrent.UpdateArrayValuesLength();
-            TextureGraphPrevious.UpdateArrayValuesLength();
+            _textureGraphCurrent.UpdateArrayValuesLength();
+            _textureGraphPrevious.UpdateArrayValuesLength();
 
             // Average
-            TextureGraphCurrent.average = 0;
-            TextureGraphCurrent.UpdateAverage();
+            _textureGraphCurrent.average = 0;
+            _textureGraphCurrent.UpdateAverage();
 
-            TextureGraphPrevious.average = 0;
-            TextureGraphPrevious.UpdateAverage();
+            _textureGraphPrevious.average = 0;
+            _textureGraphPrevious.UpdateAverage();
         }
         
 
         public void Dispose()
         {
-            TextureGraphCurrent.Dispose();
-            TextureGraphPrevious.Dispose();
+            _textureGraphCurrent.Dispose();
+            _textureGraphPrevious.Dispose();
         }
     }
 }

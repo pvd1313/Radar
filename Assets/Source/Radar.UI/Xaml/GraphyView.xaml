@@ -33,9 +33,9 @@
 
             <SolidColorBrush x:Key="Brush.Text.Main" Color="White"/>
             <SolidColorBrush x:Key="Brush.Text.Accent" Color="{StaticResource Color.Accent1}"/>
-
-
             <SolidColorBrush x:Key="Brush.Information.Header" Color="{StaticResource Color.Accent1}"/>
+
+            <sys:Double x:Key="Size.Display.Height">60</sys:Double>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -74,7 +74,6 @@
                 </Grid.RowDefinitions>
 
                 <!-- Buttons -->
-
                 <Grid Grid.Row="1" Grid.Column="4"  >
 
                     <Grid.ColumnDefinitions >
@@ -86,8 +85,7 @@
 
                     <ToggleButton x:Name="button_information"
                                   Grid.Column="0"
-                                  Height="{StaticResource Size.Button.Scale.Small}"
-                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Height="{StaticResource Size.Button.Scale.Small}"  Width="{StaticResource Size.Button.Scale.Medium}"
                                   Style="{StaticResource Style.ToggleButton.Text}"
                                   Tag="OS"
                                   Foreground="{StaticResource Brush.Element.Light.Normal}"
@@ -98,8 +96,7 @@
 
                     <ToggleButton x:Name="button_fps"
                                   Grid.Column="1"
-                                  Height="{StaticResource Size.Button.Scale.Small}"
-                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Medium}"
                                   Style="{StaticResource Style.ToggleButton.Text}"
                                   Tag="FPS"
                                   Background="{StaticResource Brush.Panel.Background}"
@@ -111,7 +108,7 @@
 
                     <ToggleButton x:Name="button_audio"
                                   Grid.Column="2"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Medium}"
                                   Style="{StaticResource Style.ToggleButton.Text}"
                                   Tag="AUX"
                                   Background="{StaticResource Brush.Panel.Background}"
@@ -123,7 +120,7 @@
 
                     <ToggleButton x:Name="button_ram"
                                   Grid.Column="3"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Medium}"
                                   Style="{StaticResource Style.ToggleButton.Text}"
                                   Tag="RAM"
                                   Background="{StaticResource Brush.Panel.Background}"
@@ -135,8 +132,7 @@
                 </Grid>
 
                 <!-- Grid Fps -->
-                <Grid x:Name="grid_fps"
-                      Grid.Row="2" Grid.Column="5"
+                <Grid x:Name="grid_fps" Grid.Row="2" Grid.Column="4"
                       Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
@@ -264,14 +260,13 @@
 
                     <Rectangle x:Name="texture_fps"
                                Grid.ColumnSpan="7" Grid.Column="1" Grid.Row="3"
-                               Height="75"
+                               Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                 </Grid>
 
                 <!-- Grid Audio -->
-                <Grid x:Name="grid_audio"
-                      Grid.Row="3" Grid.Column="5"
+                <Grid x:Name="grid_audio" Grid.Row="3" Grid.Column="4"
                       Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
@@ -316,20 +311,19 @@
                     <Rectangle x:Name="texture_audio_previous"
                                Opacity="0.5"
                                Grid.ColumnSpan="6" Grid.Row="2"
-                               Height="75"
+                               Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                     <Rectangle x:Name="texture_audio_current"
                                Grid.ColumnSpan="6" Grid.Row="2"
-                               Height="75"
+                               Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                 </Grid>
 
-
                 <!-- Grid Ram -->
                 <Grid x:Name="grid_ram"
-                      Grid.Row="5" Grid.Column="5"
+                      Grid.Row="4" Grid.Column="4"
                       Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
@@ -404,7 +398,7 @@
 
 
 
-                    <!-- allocated -->
+                    <!-- mono -->
                     <TextBlock
                         Grid.Row="3" Grid.Column="1"
                         HorizontalAlignment="Right"
@@ -429,16 +423,26 @@
                         Text="MB" />
 
 
-                    <Rectangle x:Name="texture_ram"
+                    <Rectangle x:Name="texture_reserved"
                                Opacity="0.5"
                                Grid.ColumnSpan="6" Grid.Row="4"
-                               Height="75"
+                               Height="{StaticResource Size.Display.Height}"
+                               Margin="{StaticResource Margin.Display}"/>
+
+                    <Rectangle x:Name="texture_allocated"
+                               Opacity="0.5"
+                               Grid.ColumnSpan="6" Grid.Row="4"
+                               Height="{StaticResource Size.Display.Height}"
+                               Margin="{StaticResource Margin.Display}"/>
+
+                    <Rectangle x:Name="texture_mono"
+                               Opacity="0.5"
+                               Grid.ColumnSpan="6" Grid.Row="4"
+                               Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
 
                 </Grid>
-
-
 
             </Grid>
         </Viewbox>
@@ -465,7 +469,6 @@
                     <RowDefinition Height="20*" />
 
                 </Grid.RowDefinitions>
-
 
 
                 <!-- Information -->

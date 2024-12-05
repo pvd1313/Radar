@@ -1,15 +1,17 @@
 ﻿using Beast.Claw.Common;
 using Beast.Claw.Graphy;
 using Beast.Claw.Graphy.Modules;
+using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Noesis;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class FpsPopup
+    public class FpsPopup : GraphyPopup
     {
-        private readonly FpsMonitor _fpsMonitor;
+        private readonly FpsMonitor _monitor;
+        private readonly FpsRender _render;
         private readonly GraphyFpsAssets _assets;
         private readonly PlayerPreference _preference;
         private readonly GraphyConfig _config;
@@ -23,35 +25,46 @@ namespace Beast.Radar.UI
         private float _fps;
         private float _ms;
 
-        public FpsPopup(PlayerPreference preference, GraphyConfig config, FpsMonitor monitor, GraphyFpsAssets assets)
+        public FpsPopup(PlayerPreference preference, GraphyConfig config, FpsMonitor monitor, FpsRender render ,GraphyFpsAssets assets)
         {
             _preference = preference;
             _config = config;
-            _fpsMonitor = monitor;
+            _monitor = monitor;
+            _render = render;
             _assets = assets;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             _intConverter = new IntToStringConverter(0, 2000);
             _floatConverter = new FloatToStringConverter("D2");
 
             _updateRate = _config.fpsTextUpdateRate;
 
+            _assets.display.SetMaterial(_render.GetFpsMaterial());
+
+            _assets.button.IsChecked = _preference.graphy.isFpsEnabled;
+            
             _assets.button.Click += (_, _) =>
             {
                 _preference.graphy.isFpsEnabled = !_preference.graphy.isFpsEnabled;
             
-                SetState();
+                RefreshState();
             };
         }
 
-        public void SetState()
+        public override void RefreshState()
         {
-            _assets.view.Visibility = _preference.graphy.isFpsEnabled ? Visibility.Visible : Visibility.Collapsed;
+            _monitor.SetEnable(_preference.graphy.isFpsEnabled);
+            
+            _render.SetEnable(_preference.graphy.isFpsEnabled);
+            
+            _assets.view.Visibility = _preference.graphy.isFpsEnabled 
+                ? Visibility.Visible 
+                : Visibility.Collapsed;
         }
 
-        public void Update()
+        public override void Update()
         {
             if (!_preference.graphy.isFpsEnabled)
             {
@@ -74,14 +87,14 @@ namespace Beast.Radar.UI
                 _assets.ms.Text = $"{exponent}{fractionWithDot}";
                 _setFpsRelatedTextColor(_assets.ms, _fps);
 
-                _assets.onePercentFps.Text = _intConverter.Convert(_fpsMonitor.OnePercentFPS);
-                _setFpsRelatedTextColor(_assets.onePercentFps, _fpsMonitor.OnePercentFPS);
+                _assets.onePercentFps.Text = _intConverter.Convert(_monitor.OnePercentFPS);
+                _setFpsRelatedTextColor(_assets.onePercentFps, _monitor.OnePercentFPS);
 
-                _assets.textZero1PercentFps.Text = _intConverter.Convert(_fpsMonitor.Zero1PercentFps);
-                _setFpsRelatedTextColor(_assets.textZero1PercentFps, _fpsMonitor.Zero1PercentFps);
+                _assets.textZero1PercentFps.Text = _intConverter.Convert(_monitor.Zero1PercentFps);
+                _setFpsRelatedTextColor(_assets.textZero1PercentFps, _monitor.Zero1PercentFps);
 
-                _assets.avg.Text = _intConverter.Convert(_fpsMonitor.AverageFPS);
-                _setFpsRelatedTextColor(_assets.avg, _fpsMonitor.AverageFPS);
+                _assets.avg.Text = _intConverter.Convert(_monitor.AverageFPS);
+                _setFpsRelatedTextColor(_assets.avg, _monitor.AverageFPS);
 
                 _deltaTime = 0f;
                 _frameCount = 0;

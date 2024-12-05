@@ -1,9 +1,6 @@
 ﻿using System;
-using Beast.Claw.Math;
 using Beast.Claw.Validation;
 using Noesis;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace Beast.Claw.UI
 {
@@ -34,7 +31,7 @@ namespace Beast.Claw.UI
 
         protected void _updateSafeArea()
         {
-            _find("grid_window", out Noesis.Grid window);
+            _find("grid_window", out Grid window);
 
             if (window == null)
             {
@@ -52,13 +49,6 @@ namespace Beast.Claw.UI
             {
                 Width = new GridLength(padding.right, GridUnitType.Star)
             };
-
-            /*
-            window.RowDefinitions[0] = new RowDefinition()
-            {
-                Height = new GridLength(padding.up, GridUnitType.Star)
-            };
-            */
             
             window.RowDefinitions[^1] = new RowDefinition()
             {

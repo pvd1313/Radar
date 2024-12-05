@@ -2,13 +2,12 @@
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class FpsRender
+    public class FpsRender : GraphyMonitor
     {
-        public GraphyTexture TextureGraph { get; private set; }
-
         private readonly GraphyConfig _config;
         private readonly FpsMonitor _monitor;
         
+        private GraphyTexture _textureGraph;
         private int _resolution;
         private int[] _fpsArray;
         private int _highestFps;
@@ -19,18 +18,23 @@ namespace Beast.Claw.Graphy.Modules
             _monitor = monitor;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            TextureGraph = new GraphyTexture(_config);
-            TextureGraph.InitializeShader();
-
             _resolution = _config.fpsGraphResolution;
 
+            _textureGraph = new GraphyTexture(_config);
+            _textureGraph.InitializeShader();
+            
             _createPoints();
         }
 
-        public void Update()
+        public override void Update()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+            
             short fps = (short)(1 / Time.unscaledDeltaTime);
 
             int currentMaxFps = 0;
@@ -56,54 +60,59 @@ namespace Beast.Claw.Graphy.Modules
 
             _highestFps = _highestFps > 0 ? _highestFps : 1;
 
-            if (TextureGraph.shaderArrayValues == null)
+            if (_textureGraph.shaderArrayValues == null)
             {
                 _fpsArray = new int[_resolution];
-                TextureGraph.shaderArrayValues = new float[_resolution];
+                _textureGraph.shaderArrayValues = new float[_resolution];
             }
 
             for (int i = 0; i <= _resolution - 1; i++)
             {
-                TextureGraph.shaderArrayValues[i] = _fpsArray[i] / (float)_highestFps;
+                _textureGraph.shaderArrayValues[i] = _fpsArray[i] / (float)_highestFps;
             }
 
-            TextureGraph.UpdatePoints();
+            _textureGraph.UpdatePoints();
 
-            TextureGraph.average = (float)_monitor.AverageFPS / _highestFps;
-            TextureGraph.UpdateAverage();
+            _textureGraph.average = (float)_monitor.AverageFPS / _highestFps;
+            _textureGraph.UpdateAverage();
 
-            TextureGraph.goodThreshold = (float)_config.goodFpsThreshold / _highestFps;
-            TextureGraph.cautionThreshold = (float)_config.cautionFpsThreshold / _highestFps;
-            TextureGraph.UpdateThresholds();
+            _textureGraph.goodThreshold = (float)_config.goodFpsThreshold / _highestFps;
+            _textureGraph.cautionThreshold = (float)_config.cautionFpsThreshold / _highestFps;
+            _textureGraph.UpdateThresholds();
             
-            TextureGraph.Blit();
+            _textureGraph.Blit();
+        }
+
+        public Material GetFpsMaterial()
+        {
+            return _textureGraph.material;
         }
 
         private void _createPoints()
         {
-            if (TextureGraph.shaderArrayValues == null || _fpsArray.Length != _resolution)
+            if (_textureGraph.shaderArrayValues == null || _fpsArray.Length != _resolution)
             {
                 _fpsArray = new int[_resolution];
-                TextureGraph.shaderArrayValues = new float[_resolution];
+                _textureGraph.shaderArrayValues = new float[_resolution];
             }
 
             for (int i = 0; i < _resolution; i++)
             {
-                TextureGraph.shaderArrayValues[i] = 0;
+                _textureGraph.shaderArrayValues[i] = 0;
             }
 
-            TextureGraph.goodColor = _config.goodFpsColor;
-            TextureGraph.cautionColor = _config.cautionFpsColor;
-            TextureGraph.criticalColor = _config.criticalFpsColor;
+            _textureGraph.goodColor = _config.goodFpsColor;
+            _textureGraph.cautionColor = _config.cautionFpsColor;
+            _textureGraph.criticalColor = _config.criticalFpsColor;
 
-            TextureGraph.UpdateColors();
+            _textureGraph.UpdateColors();
 
-            TextureGraph.UpdateArrayValuesLength();
+            _textureGraph.UpdateArrayValuesLength();
         }
 
         public void Dispose()
         {
-            TextureGraph.Dispose();
+            _textureGraph.Dispose();
         }
     }
 }

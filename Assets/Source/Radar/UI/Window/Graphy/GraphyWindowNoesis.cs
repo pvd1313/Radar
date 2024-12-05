@@ -2,7 +2,6 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphy;
-using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
@@ -23,6 +22,7 @@ namespace Beast.Radar.UI
         private FpsPopup _fpsPopup;
         private InformationPopup _informationPopup;
         private AudioPopup _audioPopup;
+        private RamPopup _ramPopup;
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
@@ -40,6 +40,7 @@ namespace Beast.Radar.UI
             {
                 _fpsPopup.Update();
                 _audioPopup.Update();
+                _ramPopup.Update();
             }
         }
 
@@ -66,22 +67,36 @@ namespace Beast.Radar.UI
         private void _initialize()
         {
             _uiConfig.graphyAsset.Instantiate(out _view);
-            _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
-
             _windowManager.Attach(_view, 100);
 
-            _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _view.FpsAssets);
-            _view.FpsAssets.display.SetMaterial(_manager.FpsRender.TextureGraph.material);
+            _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
+
+            _fpsPopup = new FpsPopup(_preference, _config, _manager.FpsMonitor, _manager.FpsRender, _view.FpsAssets);
             _fpsPopup.Initialize();
-            _fpsPopup.SetState();
+            _fpsPopup.RefreshState();
 
             _informationPopup = new InformationPopup(_preference, _view.InformationAssets, _manager.InformationMonitor);
             _informationPopup.Initialize();
+            _informationPopup.RefreshState();
 
-            _audioPopup = new AudioPopup(_config, _manager.AudioMonitor, _view.AudioAssets.db);
-            _view.AudioAssets.displayCurrent.SetMaterial(_manager.AudioRender.TextureGraphCurrent.material);
-            _view.AudioAssets.displayPrevious.SetMaterial(_manager.AudioRender.TextureGraphPrevious.material);
-            
+            _audioPopup = new AudioPopup(
+                _preference,
+                _manager.AudioMonitor,
+                _manager.AudioRender,
+                _view.AudioAssets,
+                _config.audioTextUpdateRate);
+            _audioPopup.Initialize();
+            _audioPopup.RefreshState();
+
+            _ramPopup = new RamPopup(
+                _preference, 
+                _manager.RamMonitor, 
+                _manager.RamRender, 
+                _view.RamAssets,
+                _config.ramTextUpdateRate);
+            _ramPopup.Initialize();
+            _ramPopup.RefreshState();
+
             IsReady = true;
         }
     }

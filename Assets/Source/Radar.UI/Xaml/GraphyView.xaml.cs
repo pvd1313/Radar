@@ -9,6 +9,7 @@ namespace Beast.Radar.UI
         public GraphyFpsAssets FpsAssets { get; private set; }
         public GraphyInformationAssets InformationAssets { get; private set; }
         public GraphyAudioAssets AudioAssets { get; private set; }
+        public GraphyRamAssets RamAssets { get; private set; }
 
         public override void BindElements()
         {
@@ -42,6 +43,16 @@ namespace Beast.Radar.UI
             _find("text_db", out AudioAssets.db);
             _find("texture_audio_current", out AudioAssets.displayCurrent);
             _find("texture_audio_previous", out AudioAssets.displayPrevious);
+
+            RamAssets = new GraphyRamAssets();
+            _find("grid_ram", out RamAssets.view);
+            _find("button_ram", out RamAssets.button);
+            _find("text_reserved", out RamAssets.reserved);
+            _find("text_allocated", out RamAssets.allocated);
+            _find("text_mono", out RamAssets.mono);
+            _find("texture_allocated", out RamAssets.displayAllocated);
+            _find("texture_reserved", out RamAssets.displayReserved);
+            _find("texture_mono", out RamAssets.displayMono);
         }
 
         public void InitializeFpsBrushes(Color good, Color caution, Color critical)

@@ -1,11 +1,10 @@
 ﻿using Beast.Claw.Graphy.Modules;
 using Beast.Radar.Player;
-using Google.GData.Documents;
 using Noesis;
 
 namespace Beast.Radar.UI
 {
-    public class InformationPopup
+    public class InformationPopup : GraphyPopup
     {
         private readonly PlayerPreference _preference;
         private readonly GraphyInformationAssets _assets;
@@ -18,57 +17,39 @@ namespace Beast.Radar.UI
             _monitor = monitor;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            _monitor.WindowResolutionChanged += OnWindowResolutionChanged;
+            _assets.button.IsChecked = _preference.graphy.isInformationEnabled;
+            
+            _monitor.WindowResolutionChanged += () =>
+            {
+                _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
+            };
             
             _assets.button.Click += (_, _) =>
             {
                 _preference.graphy.isInformationEnabled = !_preference.graphy.isInformationEnabled;
-                SetState();
+                RefreshState();
             };
-            
-            _assets.graphicsDeviceVersionText.Text = _monitor.Data.graphicsDeviceVersion;
-            _assets.processorTypeText.Text = _monitor.Data.processorType;
-            _assets.systemMemoryText.Text = _monitor.Data.systemMemory;
-            _assets.graphicsDeviceNameText.Text = _monitor.Data.graphicsDeviceName;
-            _assets.graphicsMemorySizeText.Text = _monitor.Data.graphicsMemorySize;
-            _assets.screenResolutionText.Text = _monitor.Data.screenResolution;
-            _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
-            _assets.operatingSystemText.Text = _monitor.Data.operatingSystem;
-            
-            
-            
-            
-            SetState();
         }
 
-        private void SetState()
+        public override void RefreshState()
         {
             _assets.view.Visibility = _preference.graphy.isInformationEnabled
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-            
-            
+
+            if (_preference.graphy.isInformationEnabled)
+            {
+                _assets.graphicsDeviceVersionText.Text = _monitor.Data.graphicsDeviceVersion;
+                _assets.processorTypeText.Text = _monitor.Data.processorType;
+                _assets.systemMemoryText.Text = _monitor.Data.systemMemory;
+                _assets.graphicsDeviceNameText.Text = _monitor.Data.graphicsDeviceName;
+                _assets.graphicsMemorySizeText.Text = _monitor.Data.graphicsMemorySize;
+                _assets.screenResolutionText.Text = _monitor.Data.screenResolution;
+                _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
+                _assets.operatingSystemText.Text = _monitor.Data.operatingSystem;
+            }
         }
-
-        private void OnWindowResolutionChanged()
-        {
-            _assets.gameWindowResolutionText.Text = _monitor.Data.gameWindowResolution;
-        }
-
-        /*
-        public void SetState(EModuleState state)
-        {
-            _currentState = state;
-
-            bool active = state == EModuleState.FULL
-                          || state == EModuleState.TEXT
-                          || state == EModuleState.BASIC;
-
-            gameObject.SetActive(active);
-
-            m_backgroundImages.SetAllActive(active && m_graphyManager.Background);
-        }*/
     }
 }

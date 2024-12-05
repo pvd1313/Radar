@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Graphy.Modules
 {
-    public class InformationMonitor
+    public class InformationMonitor : GraphyMonitor
     {
         public event Action WindowResolutionChanged;
         public InformationData Data { get; private set; }
@@ -23,7 +23,7 @@ namespace Beast.Claw.Graphy.Modules
             "dpi]"
         };
 
-        public void Initialize()
+        public override void Initialize()
         {
             _stringBuilder = new StringBuilder(256);
 
@@ -49,8 +49,13 @@ namespace Beast.Claw.Graphy.Modules
             };
         }
 
-        public void Update()
+        public override void Update()
         {
+            if (!IsEnabled)
+            {
+                return;    
+            }
+            
             if (_windowResolutionCache.Update(new int2(Screen.width, Screen.height)))
             {
                 Data = Data.UpdateWindowResolution(_getWindowResolution());
