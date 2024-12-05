@@ -44,11 +44,17 @@ namespace Beast.Claw.UI
             };
         }
 
+        public static Run AsRun(this string text, Brush brush)
+        {
+            return new Run(text) { Foreground = brush };
+        }
+
         public static void SetMaterial(this Rectangle rectangle, Material material)
         {
             TextureSource textureSource = new(material.mainTexture);
             ImageBrush brush = new(textureSource);
             rectangle.Fill = brush;
         }
+        
     }
 }

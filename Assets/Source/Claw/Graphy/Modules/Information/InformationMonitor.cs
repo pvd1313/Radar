@@ -35,17 +35,17 @@ namespace Beast.Claw.Graphy.Modules
 
             Data = new InformationData
             {
-                graphicsDeviceVersion = $"Graphics API: {SystemInfo.graphicsDeviceVersion}",
-                processorType = $"CPU: {SystemInfo.processorType} [{SystemInfo.processorCount} cores]",
-                systemMemory = $"RAM {SystemInfo.systemMemorySize} MB",
-                graphicsDeviceName = $"GPU: {SystemInfo.graphicsDeviceName}",
-                graphicsMemorySize = $"VRAM: {SystemInfo.graphicsMemorySize} " +
-                                     $"MB. Max texture size: {SystemInfo.maxTextureSize} " +
-                                     $"px. Shader level: {SystemInfo.graphicsShaderLevel}",
-                screenResolution = $"Screen: {displayResolution.width}x{displayResolution.height} " +
+                graphicsDeviceVersion = $"{SystemInfo.graphicsDeviceVersion}",
+                processorType = $"{SystemInfo.processorType} [{SystemInfo.processorCount} cores]",
+                systemMemory = $"{SystemInfo.systemMemorySize} MB",
+                graphicsDeviceName = $"{SystemInfo.graphicsDeviceName}",
+                graphicsMemorySize = $"{SystemInfo.graphicsMemorySize} MB. " +
+                                     $"Max texture size: {SystemInfo.maxTextureSize} px. " +
+                                     $"Shader level: {SystemInfo.graphicsShaderLevel}",
+                screenResolution = $"{displayResolution.width}x{displayResolution.height} " +
                                    $"@{Screen.currentResolution.refreshRateRatio.value.ToString(CultureInfo.InvariantCulture)} Hz",
                 gameWindowResolution = _getWindowResolution(),
-                operatingSystem = $"OS: {SystemInfo.operatingSystem} [{SystemInfo.deviceType}]"
+                operatingSystem = $"{SystemInfo.operatingSystem} [{SystemInfo.deviceType}]"
             };
         }
 

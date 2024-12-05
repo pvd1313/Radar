@@ -36,6 +36,8 @@ namespace Beast.Radar.UI
             _find("text_screenResolution", out InformationAssets.screenResolutionText);
             _find("text_gameWindowResolution", out InformationAssets.gameWindowResolutionText);
             _find("text_systemMemory", out InformationAssets.systemMemoryText);
+            InformationAssets.defaultTextBrush = (Brush)FindResource("Brush.Text.Main");
+            InformationAssets.headerTextBrush = (Brush)FindResource("Brush.Information.Header");
 
             AudioAssets = new GraphyAudioAssets();
             _find("grid_audio", out AudioAssets.view);

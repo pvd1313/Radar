@@ -14,5 +14,8 @@ namespace Beast.Radar.UI
         public TextBlock graphicsMemorySizeText;
         public TextBlock screenResolutionText;
         public TextBlock gameWindowResolutionText;
+
+        public Brush headerTextBrush;
+        public Brush defaultTextBrush;
     }
 }
