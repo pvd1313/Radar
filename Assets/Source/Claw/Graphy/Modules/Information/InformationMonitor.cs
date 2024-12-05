@@ -17,7 +17,6 @@ namespace Beast.Claw.Graphy.Modules
 
         private readonly string[] _windowStrings =
         {
-            "Window: ",
             "x",
             "[",
             "dpi]"
@@ -69,14 +68,13 @@ namespace Beast.Claw.Graphy.Modules
             _stringBuilder.Clear();
 
             _stringBuilder
-                .Add(_windowStrings[0])
                 .Add(Screen.width)
-                .Add(_windowStrings[1])
+                .Add(_windowStrings[0])
                 .Add(Screen.height)
                 .Add(" ")
-                .Add(_windowStrings[2])
+                .Add(_windowStrings[1])
                 .Add((int)Screen.dpi)
-                .Add(_windowStrings[3]);
+                .Add(_windowStrings[2]);
 
             return _stringBuilder.ToString();
         }
