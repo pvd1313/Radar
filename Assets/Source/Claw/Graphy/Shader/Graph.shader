@@ -1,4 +1,4 @@
-﻿Shader "Graphy/Graph"
+﻿Shader "Beast/Claw/Graphy/Graph"
 {
     Properties
     {
@@ -35,14 +35,14 @@
         {
             Name "Default"
             CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+            #pragma vertex vertex
+            #pragma fragment fragment
             #pragma multi_compile _ PIXELSNAP_ON
             #pragma multi_compile FULL
 
             #include "UnityCG.cginc"
 
-            struct appdata_t
+            struct ApplicationDataType
             {
                 float4 vertex : POSITION;
                 float4 color : COLOR;
@@ -51,7 +51,7 @@
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct v2f
+            struct VertexToFragment
             {
                 float4 vertex : SV_POSITION;
                 fixed4 color : COLOR;
@@ -62,12 +62,12 @@
 
             fixed4 _Color;
 
-            v2f vert(appdata_t IN)
+            VertexToFragment vertex(ApplicationDataType IN)
             {
-                v2f OUT;
+                VertexToFragment OUT;
 
                 UNITY_SETUP_INSTANCE_ID(IN);
-                UNITY_INITIALIZE_OUTPUT(v2f, OUT);
+                UNITY_INITIALIZE_OUTPUT(VertexToFragment, OUT);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
 
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
@@ -84,7 +84,7 @@
             sampler2D _AlphaTex;
             float _AlphaSplitEnabled;
 
-            fixed4 SampleSpriteTexture(float2 uv)
+            fixed4 sampleSpriteTexture(float2 uv)
             {
                 fixed4 color = tex2D(_MainTex, uv);
 
@@ -115,24 +115,24 @@
             
             uniform float GraphValues_Length;
 
-            fixed4 frag(v2f IN) : SV_Target
+            fixed4 fragment(VertexToFragment IN) : SV_Target
             {
                 fixed4 color = IN.color;
 
-                fixed xCoord = IN.texcoord.x;
-                fixed yCoord = IN.texcoord.y;
+                const fixed x_coord = IN.texcoord.x;
+                const fixed y_coord = IN.texcoord.y;
 
-                float graphValue = GraphValues[floor(xCoord * GraphValues_Length)];
+                const float graph_value = GraphValues[floor(x_coord * GraphValues_Length)];
 
                 // Define the width of each element of the graph
-                float increment = 1.0f / (GraphValues_Length - 1);
+                const float increment = 1.0f / (GraphValues_Length - 1);
 
                 // Assign the corresponding color
-                if (graphValue > _GoodThreshold)
+                if (graph_value > _GoodThreshold)
                 {
                     color *= _GoodColor;
                 }
-                else if (graphValue > _CautionThreshold)
+                else if (graph_value > _CautionThreshold)
                 {
                     color *= _CautionColor;
                 }
@@ -142,51 +142,49 @@
                 }
 
                 // Point coloring
-                if (graphValue - yCoord > increment * 4)
+                if (graph_value - y_coord > increment * 4)
                 {
                     //color.a = yCoord * graphValue * 0.3;
-                    color.a *= yCoord * 0.3 / graphValue;
+                    color.a *= y_coord * 0.3 / graph_value;
                 }
 
                 // Set as transparent the part on top of the current point value
-                if (yCoord > graphValue)
+                if (y_coord > graph_value)
                 {
                     color.a = 0;
                 }
 
                 // Average white bar
-                if (yCoord < Average && yCoord > Average - 0.02)
+                if (y_coord < Average && y_coord > Average - 0.02)
                 {
                     color = fixed4(1, 1, 1, 1);
                 }
 
                 // CautionColor bar
-                if (yCoord < _CautionThreshold && yCoord > _CautionThreshold - 0.02)
+                if (y_coord < _CautionThreshold && y_coord > _CautionThreshold - 0.02)
                 {
                     color = _CautionColor;
                 }
 
                 // GoodColor bar
-                if (yCoord < _GoodThreshold && yCoord > _GoodThreshold - 0.02)
+                if (y_coord < _GoodThreshold && y_coord > _GoodThreshold - 0.02)
                 {
                     color = _GoodColor;
                 }
 
                 // Fade the alpha of the sides of the graph
-                if (xCoord < 0.03)
+                if (x_coord < 0.03)
                 {
-                    color.a *= 1 - (0.03 - xCoord) / 0.03;
+                    color.a *= 1 - (0.03 - x_coord) / 0.03;
                 }
-                else if (xCoord > 0.97)
+                else if (x_coord > 0.97)
                 {
-                    color.a *= (1 - xCoord) / 0.03;
+                    color.a *= (1 - x_coord) / 0.03;
                 }
-
-                fixed4 c = /*SampleSpriteTexture(IN.texcoord) * */color;
-
-                c.rgb *= c.a;
-
-                return c;
+                
+                color.rgb *= color.a;
+                
+                return color;
             }
             ENDCG
         }

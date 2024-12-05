@@ -259,7 +259,7 @@
                         x:Name="text_zero_one_percent" />
 
                     <Rectangle x:Name="texture_fps"
-                               Grid.ColumnSpan="7" Grid.Column="1" Grid.Row="3"
+                               Grid.ColumnSpan="6" Grid.Column="1" Grid.Row="3"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
@@ -272,7 +272,7 @@
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{StaticResource Size.Offset.Content}"  />
-                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="0.2*" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="{StaticResource Size.Offset.Content}"/>
                     </Grid.ColumnDefinitions>
@@ -292,11 +292,10 @@
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="1"
-                        HorizontalAlignment="Left"
-                        Margin="{StaticResource Margin.Left}"
+                        HorizontalAlignment="Right"
                         Style="{StaticResource Style.Text.Light.Header}"
                         Foreground="{StaticResource Brush.Text.Main}"
-                        Text="dB" />
+                        Text="DB" />
 
                     <TextBlock
                         Foreground="{StaticResource Brush.Text.Accent}"
@@ -310,12 +309,12 @@
 
                     <Rectangle x:Name="texture_audio_previous"
                                Opacity="0.5"
-                               Grid.ColumnSpan="6" Grid.Row="2"
+                               Grid.Column="1"  Grid.ColumnSpan="2" Grid.Row="2"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                     <Rectangle x:Name="texture_audio_current"
-                               Grid.ColumnSpan="6" Grid.Row="2"
+                               Grid.Column="1"  Grid.ColumnSpan="2" Grid.Row="2"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
@@ -329,7 +328,7 @@
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
-                        <ColumnDefinition Width="0.7*"  />
+                        <ColumnDefinition Width="0.75*"  />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="0.3*" />
                         <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
@@ -425,19 +424,19 @@
 
                     <Rectangle x:Name="texture_reserved"
                                Opacity="0.5"
-                               Grid.ColumnSpan="6" Grid.Row="4"
+                               Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                     <Rectangle x:Name="texture_allocated"
                                Opacity="0.5"
-                               Grid.ColumnSpan="6" Grid.Row="4"
+                               Grid.Column="1" Grid.ColumnSpan="3"  Grid.Row="4"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
                     <Rectangle x:Name="texture_mono"
                                Opacity="0.5"
-                               Grid.ColumnSpan="6" Grid.Row="4"
+                               Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4"
                                Height="{StaticResource Size.Display.Height}"
                                Margin="{StaticResource Margin.Display}"/>
 
