@@ -12,11 +12,8 @@ namespace Beast.Radar.UI
         public XamlAsset pauseWindowAsset;
         public XamlAsset mapGenerationWindowAsset;
         public XamlAsset graphyAsset;
-    
-        public Address<GameObject> graphy;
-
-        public Sprite[] citySprites;
         
+        public Sprite[] citySprites;
         
         public override IEnumerable<IConfig> Bind()
         {
