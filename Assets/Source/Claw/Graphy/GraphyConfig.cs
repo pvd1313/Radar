@@ -11,7 +11,6 @@ namespace Beast.Claw.Graphy
         public RenderTextureData renderTextureData;
         public EMode graphyMode = EMode.FULL;
         
-        
         [Space, Header("Fps")]
         public EModuleState fpsModuleState = EModuleState.FULL;
         [Space]
@@ -26,7 +25,6 @@ namespace Beast.Claw.Graphy
         [Range(10, 300)] public int fpsGraphResolution = 150;
         [Range(1, 200)] public int fpsTextUpdateRate = 3; // 3 updates per sec.
         
-        
         [Space, Header("Ram")]
         public EModuleState ramModuleState = EModuleState.FULL;
         public Color allocatedRamColor = new Color32(255, 190, 60, 255);
@@ -34,7 +32,6 @@ namespace Beast.Claw.Graphy
         public Color monoRamColor = new Color(0.3f, 0.65f, 1f, 1);
         [Range(10, 300)] public int ramGraphResolution = 150;
         [Range(1, 200)] public int ramTextUpdateRate = 3; // 3 updates per sec.
-        
         
         [Space, Header("Audio")]
         public EModuleState audioModuleState = EModuleState.FULL;

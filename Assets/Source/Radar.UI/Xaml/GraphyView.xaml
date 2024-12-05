@@ -25,28 +25,32 @@
                 <Setter Property="CornerRadius" Value="{StaticResource Corner.Popup}" />
             </Style>
 
-            <GridLength x:Key="Size.Offset.Content">5</GridLength>
+            <GridLength x:Key="Size.Offset.Content">3</GridLength>
 
             <Thickness x:Key="Margin.Button">1.5, 1.5, 1.5, 1.5</Thickness>
             <Thickness x:Key="Margin.Module">1.5, 1.5, 1.5, 1.5</Thickness>
-            <Thickness x:Key="Margin.Display">1.5, 1.5, 1.5, 1.5</Thickness>
+            <Thickness x:Key="Margin.Display">2, 2, 2, 2</Thickness>
+
+            <SolidColorBrush x:Key="Brush.Text.Main" Color="White"/>
+            <SolidColorBrush x:Key="Brush.Text.Accent" Color="{StaticResource Color.Accent1}"/>
+
 
             <SolidColorBrush x:Key="Brush.Information.Header" Color="{StaticResource Color.Accent1}"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
 
-    <Grid >
+    <Grid x:Name="grid_window">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" x:Name="grid_row_top"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"  />
+            <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5"  />
+            <ColumnDefinition Width="0"/>
         </Grid.ColumnDefinitions>
 
         <!--  Top view -->
@@ -57,7 +61,7 @@
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="220" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions >
@@ -69,45 +73,109 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
+                <!-- Buttons -->
+
+                <Grid Grid.Row="1" Grid.Column="4"  >
+
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton x:Name="button_information"
+                                  Grid.Column="0"
+                                  Height="{StaticResource Size.Button.Scale.Small}"
+                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="OS"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.Button}"
+                                  />
+
+                    <ToggleButton x:Name="button_fps"
+                                  Grid.Column="1"
+                                  Height="{StaticResource Size.Button.Scale.Small}"
+                                  Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="FPS"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.Button}"
+                                  />
+
+
+                    <ToggleButton x:Name="button_audio"
+                                  Grid.Column="2"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="AUX"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.Button}"
+                                  />
+
+
+                    <ToggleButton x:Name="button_ram"
+                                  Grid.Column="3"
+                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
+                                  Style="{StaticResource Style.ToggleButton.Text}"
+                                  Tag="RAM"
+                                  Background="{StaticResource Brush.Panel.Background}"
+                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
+                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
+                                  Margin="{StaticResource Margin.Button}"
+                                  />
+
+                </Grid>
+
                 <!-- Grid Fps -->
                 <Grid x:Name="grid_fps"
-                      Grid.Row="1" Grid.Column="5"
+                      Grid.Row="2" Grid.Column="5"
                       Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"  />
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
+                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="0.2*" />
                         <ColumnDefinition Width="0.7*" />
                         <ColumnDefinition Width="0.7*" />
                         <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions >
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />
                     </Grid.RowDefinitions>
 
                     <Border
-                        Grid.ColumnSpan="6" Grid.RowSpan="5"
+                        Grid.ColumnSpan="8" Grid.RowSpan="5"
                         Style="{StaticResource Style.Border.Debug}"/>
 
                     <!--  FPS  -->
                     <TextBlock
-                        Grid.Row="1"
+                        Grid.Row="1" Grid.Column="1"
                         HorizontalAlignment="Left"
                         Margin="{StaticResource Margin.Left}"
                         Style="{StaticResource Style.Text.Light.Header}"
+                        Foreground="{StaticResource Brush.Text.Main}"
                         Text="FPS" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
-                        Grid.Row="1"
-                        Grid.Column="1"
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Row="1" Grid.Column="2"
                         HorizontalAlignment="Left"
                         Style="{StaticResource Style.Text.Light.Header}"
                         Text="##"
@@ -116,17 +184,17 @@
 
                     <!--  MS  -->
                     <TextBlock
-                        Grid.Row="2"
+                        Grid.Row="2" Grid.Column="1"
                         HorizontalAlignment="Left"
                         Margin="{StaticResource Margin.Left}"
                         Style="{StaticResource Style.Text.Light.Header}"
+                        Foreground="{StaticResource Brush.Text.Main}"
                         Text="MS"
                         VerticalAlignment="Center" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
-                        Grid.Column="1"
-                        Grid.Row="2"
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Column="2" Grid.Row="2"
                         HorizontalAlignment="Left"
                         Style="{StaticResource Style.Text.Light.Header}"
                         Text="##"
@@ -134,18 +202,17 @@
 
                     <!--  AVG  -->
                     <TextBlock
-                        Grid.Column="3"
-                        Grid.Row="1"
+                        Grid.Column="4" Grid.Row="1"
                         HorizontalAlignment="Right"
                         Margin="{StaticResource Margin.Right}"
                         Style="{StaticResource Style.Text.Light.Normal}"
+                        Foreground="{StaticResource Brush.Text.Main}"
                         Text="AVG"
                         VerticalAlignment="Center" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
-                        Grid.Column="3"
-                        Grid.Row="2"
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Column="4" Grid.Row="2"
                         HorizontalAlignment="Right"
                         Margin="{StaticResource Margin.Right}"
                         Style="{StaticResource Style.Text.Light.Normal}"
@@ -155,17 +222,17 @@
 
                     <!--  1%  -->
                     <TextBlock
-                        Grid.Column="4"
-                        Grid.Row="1"
+                        Grid.Column="5" Grid.Row="1"
                         HorizontalAlignment="Right"
                         Margin="{StaticResource Margin.Right}"
                         Style="{StaticResource Style.Text.Light.Normal}"
+                        Foreground="{StaticResource Brush.Text.Main}"
                         Text="1%"
                         VerticalAlignment="Center" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
-                        Grid.Column="4"
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Column="5"
                         Grid.Row="2"
                         HorizontalAlignment="Right"
                         Margin="{StaticResource Margin.Right}"
@@ -176,17 +243,17 @@
 
                     <!--  1%  -->
                     <TextBlock
-                        Grid.Column="5"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Grid.Column="6"
                         Grid.Row="1"
                         HorizontalAlignment="Right"
-                        Margin="{StaticResource Margin.Right}"
                         Style="{StaticResource Style.Text.Light.Normal}"
                         Text=".1%"
                         VerticalAlignment="Center" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
-                        Grid.Column="5"
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Column="6"
                         Grid.Row="2"
                         HorizontalAlignment="Right"
                         Margin="{StaticResource Margin.Right}"
@@ -196,7 +263,7 @@
                         x:Name="text_zero_one_percent" />
 
                     <Rectangle x:Name="texture_fps"
-                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Grid.ColumnSpan="7" Grid.Column="1" Grid.Row="3"
                                Height="75"
                                Margin="{StaticResource Margin.Display}"/>
 
@@ -204,24 +271,22 @@
 
                 <!-- Grid Audio -->
                 <Grid x:Name="grid_audio"
-                      Grid.Row="2" Grid.Column="5"
+                      Grid.Row="3" Grid.Column="5"
                       Margin="{StaticResource Margin.Module}"
                       IsHitTestVisible="False">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"  />
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}"  />
+                        <ColumnDefinition Width="0.3*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="0.2*" />
-                        <ColumnDefinition Width="0.7*" />
-                        <ColumnDefinition Width="0.7*" />
-                        <ColumnDefinition Width="0.7*" />
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions >
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="3*" />
+
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />
                     </Grid.RowDefinitions>
 
@@ -231,37 +296,150 @@
 
                     <TextBlock
                         Grid.Row="1"
+                        Grid.Column="1"
                         HorizontalAlignment="Left"
                         Margin="{StaticResource Margin.Left}"
                         Style="{StaticResource Style.Text.Light.Header}"
+                        Foreground="{StaticResource Brush.Text.Main}"
                         Text="dB" />
 
                     <TextBlock
-                        Foreground="{StaticResource Brush.Accent.Normal}"
+                        Foreground="{StaticResource Brush.Text.Accent}"
                         Grid.Row="1"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         HorizontalAlignment="Left"
                         Style="{StaticResource Style.Text.Light.Header}"
                         Text="##"
                         VerticalAlignment="Center"
                         x:Name="text_db" />
 
-
-
                     <Rectangle x:Name="texture_audio_previous"
                                Opacity="0.5"
-                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Grid.ColumnSpan="6" Grid.Row="2"
                                Height="75"
                                Margin="{StaticResource Margin.Display}"/>
 
-
                     <Rectangle x:Name="texture_audio_current"
-                               Grid.ColumnSpan="6" Grid.Row="3"
+                               Grid.ColumnSpan="6" Grid.Row="2"
+                               Height="75"
+                               Margin="{StaticResource Margin.Display}"/>
+
+                </Grid>
+
+
+                <!-- Grid Ram -->
+                <Grid x:Name="grid_ram"
+                      Grid.Row="5" Grid.Column="5"
+                      Margin="{StaticResource Margin.Module}"
+                      IsHitTestVisible="False">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
+                        <ColumnDefinition Width="0.7*"  />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="{StaticResource Size.Offset.Content}" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="3*" />
+                        <RowDefinition Height="{StaticResource Size.Offset.Content}" />
+                    </Grid.RowDefinitions>
+
+                    <Border
+                        Grid.ColumnSpan="5" Grid.RowSpan="5"
+                        Style="{StaticResource Style.Border.Debug}"/>
+
+                    <!-- reserved -->
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="reserved" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Row="1" Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="######"
+                        VerticalAlignment="Center"
+                        x:Name="text_reserved" />
+
+                    <TextBlock
+                        Grid.Row="1" Grid.Column="3"
+                        HorizontalAlignment="Center"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="MB" />
+
+                    <!-- allocated -->
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="allocated" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Row="2" Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="######"
+                        VerticalAlignment="Center"
+                        x:Name="text_allocated" />
+
+                    <TextBlock
+                        Grid.Row="2" Grid.Column="3"
+                        HorizontalAlignment="Center"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="MB" />
+
+
+
+                    <!-- allocated -->
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="mono" />
+
+                    <TextBlock
+                        Foreground="{StaticResource Brush.Text.Accent}"
+                        Grid.Row="3" Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="######"
+                        VerticalAlignment="Center"
+                        x:Name="text_mono" />
+
+                    <TextBlock
+                        Grid.Row="3" Grid.Column="3"
+                        HorizontalAlignment="Center"
+                        Foreground="{StaticResource Brush.Text.Main}"
+                        Style="{StaticResource Style.Text.Light.Normal}"
+                        Text="MB" />
+
+
+                    <Rectangle x:Name="texture_ram"
+                               Opacity="0.5"
+                               Grid.ColumnSpan="6" Grid.Row="4"
                                Height="75"
                                Margin="{StaticResource Margin.Display}"/>
 
 
                 </Grid>
+
+
+
             </Grid>
         </Viewbox>
 
@@ -269,7 +447,7 @@
         <!-- Bottom view -->
         <Viewbox Grid.Row ="1" Grid.Column="1" VerticalAlignment="Bottom" Stretch="Uniform">
 
-            <Grid Width="{StaticResource Size.Screen.Wight}" HorizontalAlignment="Stretch">
+            <Grid  HorizontalAlignment="Stretch">
 
                 <Grid.ColumnDefinitions         >
                     <ColumnDefinition Width="50"  />
@@ -285,76 +463,16 @@
                     <RowDefinition Height="20*" />
                     <RowDefinition Height="20*" />
                     <RowDefinition Height="20*" />
-                    <RowDefinition Height="20*" />
-                    <RowDefinition Height="20*" />
+
                 </Grid.RowDefinitions>
 
-                <!-- Buttons -->
 
-                <Grid Grid.Row="5" Grid.Column="0"  >
-
-                    <Grid.RowDefinitions >
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-
-                    <ToggleButton x:Name="button_information"
-                                  Grid.Row="0"
-                                  Height="{StaticResource Size.Button.Scale.Small}"
-                                  Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Text}"
-                                  Tag="OS"
-                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
-                                  Background="{StaticResource Brush.Panel.Background}"
-                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.Button}"
-                                  />
-
-                    <ToggleButton x:Name="button_fps"
-                                  Grid.Row="1"
-                                  Height="{StaticResource Size.Button.Scale.Small}"
-                                  Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Text}"
-                                  Tag="FPS"
-                                  Background="{StaticResource Brush.Panel.Background}"
-                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
-                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.Button}"
-                                  />
-
-
-                    <ToggleButton x:Name="button_audio"
-                                  Grid.Row="2"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Text}"
-                                  Tag="AUX"
-                                  Background="{StaticResource Brush.Panel.Background}"
-                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
-                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.Button}"
-                                  />
-
-
-                    <ToggleButton x:Name="button_ram"
-                                  Grid.Row="3"
-                                  Height="{StaticResource Size.Button.Scale.Small}" Width="{StaticResource Size.Button.Scale.Small}"
-                                  Style="{StaticResource Style.ToggleButton.Text}"
-                                  Tag="RAM"
-                                  Background="{StaticResource Brush.Panel.Background}"
-                                  Foreground="{StaticResource Brush.Element.Light.Normal}"
-                                  BorderBrush="{StaticResource Brush.Accent.Normal}"
-                                  Margin="{StaticResource Margin.Button}"
-                                  />
-
-                </Grid>
 
                 <!-- Information -->
                 <Grid x:Name="grid_information"
                       HorizontalAlignment="Left"
                       IsHitTestVisible="False"
-                      Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4">
+                      Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{StaticResource Size.Offset.Content}" />

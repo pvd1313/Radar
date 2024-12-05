@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Debug;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Beast.Claw.Graphy.Modules
 {
@@ -14,18 +13,17 @@ namespace Beast.Claw.Graphy.Modules
         
         private readonly GraphyConfig _config;
         private readonly AudioListener _audioListener;
+        private readonly int _spectrumSize;
         
-        private int _spectrumSize = 512;
-
         public AudioMonitor(GraphyConfig config, AudioListener listener)
         {
             _config = config;
             _audioListener = listener;
+            _spectrumSize = _config.spectrumSize;
         }
 
         public void Initialize()
         {
-            _spectrumSize = _config.spectrumSize;
             SpectrumCurrent = new float[_spectrumSize];
             SpectrumPrevious = new float[_spectrumSize];
         }
@@ -34,42 +32,29 @@ namespace Beast.Claw.Graphy.Modules
         {
             if (_audioListener != null)
             {
-                // Use this data to calculate the dB value
-
                 AudioListener.GetOutputData(SpectrumCurrent, 0);
 
                 float sum = 0;
 
                 for (int i = 0; i < SpectrumCurrent.Length; i++)
                 {
-                    sum += SpectrumCurrent[i] * SpectrumCurrent[i]; // sum squared samples
+                    sum += SpectrumCurrent[i] * SpectrumCurrent[i]; 
                 }
-                BDebug.Track(this, "sum", sum);
                 
-                float rmsValue = Mathf.Sqrt(sum / SpectrumCurrent.Length); // rms = square root of average
-
-                BDebug.Track(this, "rms Value", rmsValue);
+                float rmsValue = Mathf.Sqrt(sum / SpectrumCurrent.Length);
                 
-                MaxDB = 20 * Mathf.Log10(rmsValue / REF_VALUE); // calculate dB
+                MaxDB = 20 * Mathf.Log10(rmsValue / REF_VALUE); 
 
-                if (MaxDB < -80) MaxDB = -80; // clamp it to -80dB min
-
+                if (MaxDB < -80) MaxDB = -80;
                 
-                BDebug.Track(this, "MaxDB", MaxDB);
-                // Use this data to draw the spectrum in the graphs
-
                 AudioListener.GetSpectrumData(SpectrumCurrent, 0, _config.FFTWindow);
 
-                BDebug.Track(this, "Spectrum length", SpectrumCurrent.Length);
                 for (int i = 0; i < SpectrumCurrent.Length; i++)
                 {
-                    // Update the highest value if its lower than the current one
                     if (SpectrumCurrent[i] > SpectrumPrevious[i])
                     {
                         SpectrumPrevious[i] = SpectrumCurrent[i];
                     }
-
-                    // Slowly lower the value 
                     else
                     {
                         SpectrumPrevious[i] = Mathf.Clamp

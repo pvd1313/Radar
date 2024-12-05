@@ -14,13 +14,18 @@
 
     </ResourceDictionary.MergedDictionaries>
 
+
+
+    <GridLength x:Key="Size.SafeArea.Left">0</GridLength>
+    <GridLength x:Key="Size.SafeArea.Right">0</GridLength>
+
     <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
     <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
 
     <sys:Double x:Key="Size.Button.Scale.Small">40</sys:Double>
 
-    <sys:Double x:Key="Size.Screen.Wight">1260</sys:Double>
-    <sys:Double x:Key="Size.Screen.Height">780</sys:Double>
+    <sys:Double x:Key="Size.Screen.Wight">1920</sys:Double>
+    <sys:Double x:Key="Size.Screen.Height">1080</sys:Double>
 
     <sys:Double x:Key="Size.Button.Border">1</sys:Double>
 

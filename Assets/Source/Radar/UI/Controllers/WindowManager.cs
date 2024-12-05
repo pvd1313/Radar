@@ -6,34 +6,38 @@ using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
+using Beast.Claw.Graphy;
 using Beast.Claw.Input;
 using Beast.Claw.UI;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
 using Noesis;
+using UnityEngine;
+using Grid = Noesis.Grid;
+using Rect = Noesis.Rect;
 
 namespace Beast.Radar.UI
 {
     public partial class WindowManager : Actor, IWindowManager
     {
         public string WindowID => _currentWindow;
-        
+
         public WindowOpener Open { get; private set; }
-        
+
         [Required] private readonly EssentialPrefabLibrary _library;
         [Required] private readonly ICamera _camera;
         [Required] private readonly IScreen _screen;
         [Required] private readonly IInputManager _inputManager;
-
+        
         private Dictionary<string, WindowData> _idToWindow;
         private List<Record> _debugHandleRecords;
         private string _currentWindow = UI.WindowID.NONE;
-        
+
         private NoesisMonoRender _noesisRender;
         private CanvasView _canvas;
         private Grid _grid;
         private NoesisInputConsumer _inputConsumer;
-        
+
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _library.canvasXaml.Instantiate(out _canvas);
@@ -45,7 +49,7 @@ namespace Beast.Radar.UI
             {
                 _debugHandleRecords = new List<Record>(256);
             }
-            
+
             NoesisMonoRender render = BScene.InstantiateMono(this, _library.noesisRender);
             NoesisView view = render.Initialize(_camera.Camera, _canvas);
 
@@ -56,7 +60,7 @@ namespace Beast.Radar.UI
 
             return UniTask.CompletedTask;
         }
-        
+
         public IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct
         {
             owner.ValidateNotNullThrowException(nameof(owner));
@@ -71,16 +75,16 @@ namespace Beast.Radar.UI
                     windowID = windowID
                 });
             }
-            
+
             return new Handle<TData>(this, windowID);
         }
-        
+
         public void Attach(UIElement uiElement)
         {
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
             Panel.SetZIndex(uiElement, 0);
-            
+
             _grid.Children.Add(uiElement);
         }
 
@@ -89,10 +93,10 @@ namespace Beast.Radar.UI
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
             Panel.SetZIndex(uiElement, index);
-            
+
             _grid.Children.Add(uiElement);
         }
-        
+
         public void Register<TData>(IWindow<TData> window, string windowID) where TData : struct
         {
             window.ValidateNotNullThrowException(nameof(window));
@@ -106,7 +110,7 @@ namespace Beast.Radar.UI
                 }
             }
 
-            Container<TData> container = new ();
+            Container<TData> container = new();
 
             _idToWindow[windowID] = new WindowData
             {
@@ -117,7 +121,7 @@ namespace Beast.Radar.UI
                 windowID = windowID
             };
         }
-        
+
         private async UniTask _open<TData>(string windowID, TData data)
         {
             if (!_idToWindow.TryGetValue(windowID, out WindowData windowData))
@@ -142,28 +146,30 @@ namespace Beast.Radar.UI
                 }
                 catch (Exception e)
                 {
-                    BDebug.LogException(e);    
+                    BDebug.LogException(e);
                 }
-                
+
                 _currentWindow = UI.WindowID.NONE;
             }
 
             Container<TData> container = (Container<TData>)windowData.dataContainer;
             container.data = data;
-            
+
             try
             {
                 await windowData.openWindow();
             }
             catch (Exception e)
             {
-                BDebug.LogException(e);    
+                BDebug.LogException(e);
             }
 
             _currentWindow = windowID;
-            
+
             await UniTask.NextFrame();
         }
+
+
 
         protected override void _dispose(BlockingContext context)
         {

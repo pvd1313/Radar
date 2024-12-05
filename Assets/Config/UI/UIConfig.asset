@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0d8bface6647928bf222f6d8f673c7, type: 3}
   m_Name: UIConfig
   m_EditorClassIdentifier: 
+  style:
+    asset: {fileID: -8414808784256213763, guid: 996c1870e5d4eed4795cea348d6d67da, type: 3}
   HUDWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 83614fcc75489c0428556f67ba0785a0, type: 3}
   pauseWindowAsset:

@@ -11,7 +11,6 @@
     <SolidColorBrush x:Key="Brush.Panel.Light.Normal" Color="{StaticResource Color.Gray0}" />
     <SolidColorBrush x:Key="Brush.Panel.Background" Color= "{StaticResource Color.Dark.Alpa}" />
 
-
     <SolidColorBrush x:Key="Brush.Button.Normal" Color="{StaticResource Color.Dark.Alpa}" />
     <SolidColorBrush x:Key="Brush.Button.Pressed" Color= "{StaticResource Color.Dark.Alpa}" />
     <SolidColorBrush x:Key="Brush.Button.Disabled" Color= "{StaticResource Color.Dark.Alpa}" />

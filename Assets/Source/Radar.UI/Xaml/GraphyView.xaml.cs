@@ -12,6 +12,8 @@ namespace Beast.Radar.UI
 
         public override void BindElements()
         {
+            _updateSafeArea();
+
             FpsAssets = new GraphyFpsAssets();
             _find("grid_fps", out FpsAssets.view);
             _find("button_fps", out FpsAssets.button);
@@ -21,7 +23,7 @@ namespace Beast.Radar.UI
             _find("text_one_percent", out FpsAssets.onePercentFps);
             _find("text_zero_one_percent", out FpsAssets.textZero1PercentFps);
             _find("texture_fps", out FpsAssets.display);
-            
+
             InformationAssets = new GraphyInformationAssets();
             _find("grid_information", out InformationAssets.view);
             _find("button_information", out InformationAssets.button);
@@ -51,6 +53,5 @@ namespace Beast.Radar.UI
                 critical = new SolidColorBrush(critical.ToNoesis())
             };
         }
-        
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System;
+using Beast.Claw.Math;
 using Beast.Claw.Validation;
 using Noesis;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Claw.UI
 {
     public abstract class BeastControl : UserControl
     {
         public string uri;
-        
         public abstract void BindElements();
 
         protected void _find<T>(string name, out T element) where T : FrameworkElement
@@ -15,7 +17,7 @@ namespace Beast.Claw.UI
             name.ValidateNotEmptyOrNullThrowException(nameof(name));
 
             object obj = FindName(name);
-            
+
             if (obj == null)
             {
                 throw new InvalidOperationException($"'{name}' was not found in '{uri}'");
@@ -28,6 +30,40 @@ namespace Beast.Claw.UI
             }
 
             element = target;
+        }
+
+        protected void _updateSafeArea()
+        {
+            _find("grid_window", out Noesis.Grid window);
+
+            if (window == null)
+            {
+                throw new InvalidOperationException($"'grid_window' was not found in '{uri}'");
+            }
+
+            BSafeArea.Padding padding = BSafeArea.GetPadding();
+            
+            window.ColumnDefinitions[0] = new ColumnDefinition()
+            {
+                Width = new GridLength(padding.left, GridUnitType.Star)
+            };
+
+            window.ColumnDefinitions[^1] = new ColumnDefinition()
+            {
+                Width = new GridLength(padding.right, GridUnitType.Star)
+            };
+
+            /*
+            window.RowDefinitions[0] = new RowDefinition()
+            {
+                Height = new GridLength(padding.up, GridUnitType.Star)
+            };
+            */
+            
+            window.RowDefinitions[^1] = new RowDefinition()
+            {
+                Height = new GridLength(padding.down, GridUnitType.Star)
+            };
         }
     }
 }
