@@ -16,12 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: fd80a9d38221dae49b1f5a8fcf76c608
-  m_SerializeEntries:
-  - m_GUID: ec09055262c4e754aa082930f5fd04ef
-    m_Address: GraphyFPSCounter
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cf2e623232487b749914d1bae3f43512, type: 2}
   m_SchemaSet:
