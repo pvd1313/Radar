@@ -4,5 +4,7 @@
     {
         public void Open();
         public void Close();
+        void Expand();
+        void Collapse();
     }
 }

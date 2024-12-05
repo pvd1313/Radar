@@ -11,9 +11,19 @@ namespace Beast.Radar.UI
         public GraphyAudioAssets AudioAssets { get; private set; }
         public GraphyRamAssets RamAssets { get; private set; }
 
+        private Grid _window;
+        private RowDefinition _defaultRowSize;
+        private RowDefinition _expandedRowSize;
+        
         public override void BindElements()
         {
-            _updateSafeArea();
+            _find("grid_window", out _window);
+            _updateSafeArea(_window);
+            _defaultRowSize = _window.RowDefinitions[0];
+            _expandedRowSize = new RowDefinition()
+            {
+                Height = new GridLength(0)
+            };
 
             FpsAssets = new GraphyFpsAssets();
             _find("grid_fps", out FpsAssets.view);
@@ -65,6 +75,16 @@ namespace Beast.Radar.UI
                 caution = new SolidColorBrush(caution.ToNoesis()),
                 critical = new SolidColorBrush(critical.ToNoesis())
             };
+        }
+
+        public void ExpandWindow()
+        {
+            _window.RowDefinitions[0] = _expandedRowSize;
+        }
+
+        public void CollapseWindow()
+        {
+            _window.RowDefinitions[0] = _defaultRowSize;
         }
     }
 }

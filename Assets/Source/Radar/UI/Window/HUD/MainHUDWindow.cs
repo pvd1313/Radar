@@ -7,6 +7,7 @@ using Beast.Radar.Player;
 using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
 using Noesis;
+using Rect = UnityEngine.Rect;
 
 namespace Beast.Radar.UI
 {
@@ -17,6 +18,7 @@ namespace Beast.Radar.UI
         [Required] private readonly IPlayer _player;
         [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly IGameTime _gameTime;
+        [Required] private readonly IGraphyWindow _graphyWindow;
         
         private IntToStringConverter _intToString;
         private MainHUDView _view;
@@ -33,6 +35,8 @@ namespace Beast.Radar.UI
 
             _isOpened = true;
 
+            _graphyWindow.Collapse();
+
             return UniTask.CompletedTask;
         }
 
@@ -42,6 +46,8 @@ namespace Beast.Radar.UI
 
             _isOpened = false;
 
+            _graphyWindow.Expand();
+            
             return UniTask.CompletedTask;
         }
 

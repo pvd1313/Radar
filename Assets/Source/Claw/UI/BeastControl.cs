@@ -29,10 +29,8 @@ namespace Beast.Claw.UI
             element = target;
         }
 
-        protected void _updateSafeArea()
+        protected void _updateSafeArea( Grid window)
         {
-            _find("grid_window", out Grid window);
-
             if (window == null)
             {
                 throw new InvalidOperationException($"'grid_window' was not found in '{uri}'");

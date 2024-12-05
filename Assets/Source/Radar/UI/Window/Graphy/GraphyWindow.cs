@@ -35,6 +35,16 @@ namespace Beast.Radar.UI
             }
         }
 
+        public void Expand()
+        {
+            
+        }
+
+        public void Collapse()
+        {
+        
+        }
+
         protected override UniTask _warmup(ConcurrentContext arg)
         {
             if (_preference.graphy.isShowGraphy)

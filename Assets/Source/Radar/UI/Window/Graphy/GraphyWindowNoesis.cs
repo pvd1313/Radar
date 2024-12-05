@@ -23,6 +23,7 @@ namespace Beast.Radar.UI
         private InformationPopup _informationPopup;
         private AudioPopup _audioPopup;
         private RamPopup _ramPopup;
+        private bool _isExpanded;
 
         protected override UniTask _warmup(ConcurrentContext arg)
         {
@@ -64,6 +65,17 @@ namespace Beast.Radar.UI
             }
         }
 
+        public void Expand()
+        {
+            _view.ExpandWindow();
+        }
+
+        public void Collapse()
+        {
+            _view.CollapseWindow();
+        }
+
+
         private void _initialize()
         {
             _uiConfig.graphyAsset.Instantiate(out _view);
@@ -89,9 +101,9 @@ namespace Beast.Radar.UI
             _audioPopup.RefreshState();
 
             _ramPopup = new RamPopup(
-                _preference, 
-                _manager.RamMonitor, 
-                _manager.RamRender, 
+                _preference,
+                _manager.RamMonitor,
+                _manager.RamRender,
                 _view.RamAssets,
                 _config.ramTextUpdateRate);
             _ramPopup.Initialize();
