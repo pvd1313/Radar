@@ -67,12 +67,12 @@ namespace Beast.Radar.UI
 
         public void Expand()
         {
-            _view.ExpandWindow();
+            _view?.ExpandWindow();
         }
 
         public void Collapse()
         {
-            _view.CollapseWindow();
+            _view?.CollapseWindow();
         }
 
 
