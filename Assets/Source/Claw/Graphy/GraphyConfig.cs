@@ -12,8 +12,6 @@ namespace Beast.Claw.Graphy
         public EMode graphyMode = EMode.FULL;
         
         [Space, Header("Fps")]
-        public EModuleState fpsModuleState = EModuleState.FULL;
-        [Space]
         public Color goodFpsColor = new Color32(118, 212, 58, 255);
         public int goodFpsThreshold = 60;
         [Space]
@@ -26,7 +24,6 @@ namespace Beast.Claw.Graphy
         [Range(1, 200)] public int fpsTextUpdateRate = 3; // 3 updates per sec.
         
         [Space, Header("Ram")]
-        public EModuleState ramModuleState = EModuleState.FULL;
         public Color allocatedRamColor = new Color32(255, 190, 60, 255);
         public Color reservedRamColor = new Color32(205, 84, 229, 255);
         public Color monoRamColor = new Color(0.3f, 0.65f, 1f, 1);
@@ -34,17 +31,12 @@ namespace Beast.Claw.Graphy
         [Range(1, 200)] public int ramTextUpdateRate = 3; // 3 updates per sec.
         
         [Space, Header("Audio")]
-        public EModuleState audioModuleState = EModuleState.FULL;
         public Color audioColor = Color.white;
         [Range(10, 300)] public int audioGraphResolution = 81;
         [Range(1, 200)] public int audioTextUpdateRate = 3; // 3 updates per sec.
         public FFTWindow FFTWindow = FFTWindow.Blackman;
         [Tooltip("Must be a power of 2 and between 64-8192")]
         public int spectrumSize = 512;
-
-        
-        [Space, Header("Advanced")]
-        public EModuleState advancedModuleState = EModuleState.FULL;
         
         public override IEnumerable<IConfig> Bind()
         {

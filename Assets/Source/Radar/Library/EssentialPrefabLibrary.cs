@@ -8,7 +8,6 @@ namespace Beast.Radar
     public class EssentialPrefabLibrary : ScriptableConfig
     {
         public CameraView camera;
-        public LegacyCanvasView canvas;
         public NoesisMonoRender noesisRender;
         public NoesisXaml canvasXaml;
         

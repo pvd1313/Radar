@@ -10,8 +10,5 @@ namespace Beast.Radar.UI
         public const string PAUSE = "pause_window";
         public const string MAP_GENERATION = "map_generation_window";
         public const string LOADING = "loading_window";
-        public const string GRAPHY = "graphy_window";
-        
-        
     }
 }
