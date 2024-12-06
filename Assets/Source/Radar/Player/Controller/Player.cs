@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Attributes;
+﻿using System;
+using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
@@ -16,8 +17,8 @@ namespace Beast.Radar.Player
 {
     public class Player : Actor, IPlayer, IInputConsumer
     {
+        public event Action ChangedTarget;
         public Int32Mask SupportedAxis { get; } = AxisType.TAP.AsMask();
-        
         public bool IsReady { get; private set; }
 
         public float2 Position => _position;
@@ -152,6 +153,8 @@ namespace Beast.Radar.Player
             _hasTarget = true;
             
             _navigator.Setup(_position, _target);
+            
+            ChangedTarget?.Invoke();
         }
 
         protected override void _dispose(BlockingContext obj)

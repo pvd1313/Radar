@@ -16,5 +16,6 @@ namespace Beast.Radar.UI
         void Register<TData>(IWindow<TData> window, string windowID) where TData : struct;
         
         IWindowHandle<TData> GetHandle<TData>(IController owner, string windowID) where TData : struct;
+
     }
 }

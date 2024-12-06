@@ -46,7 +46,7 @@ namespace Beast.Radar.UI
         {
             _uiConfig.pauseWindowAsset.Instantiate(out _view);
 
-            _windowManager.Attach(_view);
+            _windowManager.Attach(_view, 1);
             
             _view.Visibility = Visibility.Collapsed;
             

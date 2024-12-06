@@ -1,10 +1,13 @@
-﻿using Beast.Claw.Common;
+﻿using System;
+using Beast.Claw.Common;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Player
 {
     public interface IPlayer : IReady
     {
+        public event Action ChangedTarget;
+        
         float2 Position { get; }
         
         float2 Target { get; }

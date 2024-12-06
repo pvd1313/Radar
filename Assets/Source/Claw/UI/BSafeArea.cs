@@ -29,7 +29,7 @@ namespace Beast.Claw.UI
 
                 _padding = new Padding
                 {
-                    left = BMath.Max(0, safeArea.x / screenSize.x),
+                    left = BMath.Max(0, safeArea.x / screenSize.x ),
                     right = BMath.Max(0, (screenSize.x - safeArea.x - safeArea.width) / screenSize.x),
                     down = BMath.Max(0, safeArea.y / screenSize.y),
                     up = BMath.Max(0, (screenSize.y - safeArea.y - safeArea.height) / screenSize.y)

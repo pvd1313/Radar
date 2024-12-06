@@ -8,7 +8,7 @@ using Noesis;
 
 namespace Beast.Radar.UI
 {
-    public class GraphyWindowNoesis : Actor, IGraphyWindow, IReady
+    public class GraphyWindow : Actor, IGraphyWindow, IReady
     {
         public bool IsReady { get; private set; }
 

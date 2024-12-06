@@ -6,15 +6,12 @@ using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
-using Beast.Claw.Graphy;
 using Beast.Claw.Input;
 using Beast.Claw.UI;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using UnityEngine;
 using Grid = Noesis.Grid;
-using Rect = Noesis.Rect;
 
 namespace Beast.Radar.UI
 {
@@ -78,7 +75,7 @@ namespace Beast.Radar.UI
 
             return new Handle<TData>(this, windowID);
         }
-
+        
         public void Attach(UIElement uiElement)
         {
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
@@ -93,7 +90,7 @@ namespace Beast.Radar.UI
             uiElement.ValidateNotNullThrowException(nameof(uiElement));
 
             Panel.SetZIndex(uiElement, index);
-
+            
             _grid.Children.Add(uiElement);
         }
 

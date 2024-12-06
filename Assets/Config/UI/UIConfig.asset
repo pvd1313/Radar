@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0d8bface6647928bf222f6d8f673c7, type: 3}
   m_Name: UIConfig
   m_EditorClassIdentifier: 
-  style:
-    asset: {fileID: -8414808784256213763, guid: 996c1870e5d4eed4795cea348d6d67da, type: 3}
   HUDWindowAsset:
     asset: {fileID: -8414808784256213763, guid: 83614fcc75489c0428556f67ba0785a0, type: 3}
   pauseWindowAsset:
@@ -22,12 +20,21 @@ MonoBehaviour:
     asset: {fileID: -8414808784256213763, guid: 72380e5a66d5f334799459fa5b387afb, type: 3}
   graphyAsset:
     asset: {fileID: -8414808784256213763, guid: c34993d400ad92b46905b4d1dda509bd, type: 3}
-  graphy:
-    _reference:
-      m_AssetGUID: ec09055262c4e754aa082930f5fd04ef
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 1
+  playerViewData:
+    asset:
+      asset: {fileID: -8414808784256213763, guid: 26e7874b734fc794999408b6f83d5843, type: 3}
+    viewSize: 25
+    offset:
+      x: 0
+      y: 0
+  targetViewData:
+    asset:
+      asset: {fileID: -8414808784256213763, guid: cef6e79b1833b1a44a29ef955c60e97f, type: 3}
+    viewSize: 40
+    offset:
+      x: 0
+      y: 0
+    fontSize: 11
   citySprites:
   - {fileID: -1911697403, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}
   - {fileID: 399424393, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}

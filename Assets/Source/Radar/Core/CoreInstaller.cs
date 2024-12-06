@@ -4,6 +4,7 @@ using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphy;
+using Beast.Claw.UI;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
@@ -12,6 +13,7 @@ using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
+using Beast.Radar.UI.Player;
 using Beast.Radar.World;
 
 namespace Beast.Radar.Core
@@ -44,7 +46,7 @@ namespace Beast.Radar.Core
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
-            yield return typeof(GraphyWindowNoesis);
+            yield return typeof(GraphyWindow);
             
             // Terrain
             yield return typeof(TerrainFbmRender);
@@ -58,14 +60,16 @@ namespace Beast.Radar.Core
             yield return typeof(CitySpawner);
             
             // Player
+            yield return typeof(WorldElementCanvas);
             yield return typeof(PlayerPreferenceSerializer);
             yield return typeof(GameTime.GameTime);
             yield return typeof(Player.Player);
             yield return typeof(GameTimeScale);
+            yield return typeof(PlayerWindow);
 
             // O_o
-            yield return typeof(WorldViewInstance);
-            yield return typeof(PlayerViewController);
+            /*yield return typeof(WorldViewInstance);
+            yield return typeof(PlayerViewController);*/
             // yield return typeof(CityViewController);
         }
 

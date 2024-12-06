@@ -60,6 +60,13 @@
     </ApplicationDefinition>
     <Compile Include="Assets\Source\Claw\UI\BeastControl.cs" />
     <Compile Include="Assets\Source\Claw\UI\NoesisExtension.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Converter\FontSizeConverter.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Converter\LocalFontSizeConverter.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Data\GraphyBrushes.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Data\Graphy\GraphyAudioAssets.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Data\Graphy\GraphyFpsAssets.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Data\Graphy\GraphyInformationAssets.cs" />
+    <Compile Include="Assets\Source\Radar.UI\Data\Graphy\GraphyRamAssets.cs" />
     <Compile Include="Assets\Source\Radar.UI\Data\XamlAsset.cs" />
     <Compile Include="Assets\Source\Radar.UI\Extension\CustomToggleButton.cs" />
     <Compile Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs">
@@ -79,6 +86,12 @@
     </Compile>
     <Compile Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml.cs">
       <DependentUpon>PauseWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Assets\Source\Radar.UI\Xaml\PlayerView.xaml.cs">
+      <DependentUpon>PlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Assets\Source\Radar.UI\Xaml\TargetView.xaml.cs">
+      <DependentUpon>TargetView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Blend\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -1011,7 +1024,7 @@
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\GraphyView.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml">
       <SubType>Designer</SubType>
@@ -1023,11 +1036,19 @@
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Assets\Source\Radar.UI\Xaml\PlayerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\Source\Radar.UI\Xaml\TargetView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Samples~\BackgroundBlur\Blend~\App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1371,6 +1392,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\Source\Radar.UI\link.xml" />
+    <Resource Include="Assets\Source\Radar.UI\Theme\Font\Inconsolata.ttf" />
     <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_0.png" />
     <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_1.png" />
     <Content Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Documentation.html" />
@@ -2296,7 +2319,14 @@
     <None Include="Assets\Source\Claw\UI\NoesisExtension.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Beast.Radar.UI.asmdef" />
     <None Include="Assets\Source\Radar.UI\Beast.Radar.UI.asmdef.meta" />
+    <None Include="Assets\Source\Radar.UI\Converter\FontSizeConverter.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Data.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\Graphy.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\GraphyBrushes.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\Graphy\GraphyAudioAssets.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\Graphy\GraphyFpsAssets.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\Graphy\GraphyInformationAssets.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Data\Graphy\GraphyRamAssets.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Data\XamlAsset.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Extension\CustomToggleButton.cs.meta" />
     <None Include="Assets\Source\Radar.UI\link.xml.meta" />
@@ -2312,10 +2342,20 @@
     <None Include="Assets\Source\Radar.UI\Xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\Canvas.xaml.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\GraphyView.xaml.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\GraphyView.xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\LoadingWindowView.xaml.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml.cs.meta" />
     <None Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\PauseWindowView.xaml.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\PlayerView.xaml.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\PlayerView.xaml.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\TargetView.xaml.cs.meta" />
+    <None Include="Assets\Source\Radar.UI\Xaml\TargetView.xaml.meta" />
     <None Include="Assets\Texture\LoadingScreen\loading_screen_background_0.png.meta" />
     <None Include="Assets\Texture\LoadingScreen\loading_screen_background_1.png.meta" />
     <None Include="Assets\Texture\Sprite\cities.png.meta" />
@@ -3515,12 +3555,6 @@
     <None Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Theme\NoesisTheme.LightPurple.xaml.meta" />
     <None Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Theme\NoesisTheme.LightRed.xaml.meta" />
     <None Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Theme\NoesisTheme.Styles.xaml.meta" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Source\Radar.UI\link.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Source\Radar.UI\Theme\Font\Inconsolata.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Texture\Sprite\cities.png" />
