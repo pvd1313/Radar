@@ -13,7 +13,7 @@ namespace Beast.Claw.UI
             public float down;
             public float up;
         }
-        
+
         private static Padding _padding;
         private static Rect _safeArea;
 
@@ -24,10 +24,8 @@ namespace Beast.Claw.UI
             if (!safeArea.Equals(_safeArea))
             {
                 _safeArea = safeArea;
-                
-                Resolution screen = Screen.currentResolution;
-                
-                int2 screenSize = new(screen.width, screen.height);
+
+                int2 screenSize = new(Screen.width, Screen.height);
 
                 _padding = new Padding
                 {
@@ -36,7 +34,12 @@ namespace Beast.Claw.UI
                     down = BMath.Max(0, safeArea.y / screenSize.y),
                     up = BMath.Max(0, (screenSize.y - safeArea.y - safeArea.height) / screenSize.y)
                 };
-                
+
+                UnityEngine.Debug.Log($"padding {_padding.left}x{_padding.right} " +
+                                      $"| safe area {safeArea.x} {safeArea.y} " +
+                                      $"| safe area width {safeArea.width}" +
+                                      $"| screen width {screenSize.x}");
+
                 return _padding;
             }
 
