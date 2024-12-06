@@ -34,12 +34,7 @@ namespace Beast.Claw.UI
                     down = BMath.Max(0, safeArea.y / screenSize.y),
                     up = BMath.Max(0, (screenSize.y - safeArea.y - safeArea.height) / screenSize.y)
                 };
-
-                UnityEngine.Debug.Log($"padding {_padding.left}x{_padding.right} " +
-                                      $"| safe area {safeArea.x} {safeArea.y} " +
-                                      $"| safe area width {safeArea.width}" +
-                                      $"| screen width {screenSize.x}");
-
+                
                 return _padding;
             }
 
