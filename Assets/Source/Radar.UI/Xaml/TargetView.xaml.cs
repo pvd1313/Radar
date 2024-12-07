@@ -1,6 +1,4 @@
-﻿
-
-using Beast.Claw.UI;
+﻿using Beast.Claw.UI;
 using Beast.Claw.Validation;
 using Noesis;
 

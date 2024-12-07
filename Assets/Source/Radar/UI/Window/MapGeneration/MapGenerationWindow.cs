@@ -59,7 +59,7 @@ namespace Beast.Radar.UI
 
             _view.Visibility = Visibility.Collapsed;
 
-            _windowManager.Attach(_view);
+            _windowManager.Attach(_view, 1);
 
             _windowManager.Register(this, WindowID.MAP_GENERATION);
 

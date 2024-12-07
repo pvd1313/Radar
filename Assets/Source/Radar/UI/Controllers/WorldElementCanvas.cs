@@ -26,10 +26,13 @@
             public void UpdatePosition(UIElement element, float2 worldPosition, float2 offset)
             {
                 float2 viewport = _camera.WorldToViewport(worldPosition);
+                
                 viewport.x *= _canvas.ActualWidth;
+                
                 viewport.y *= _canvas.ActualHeight;
                 
                 Canvas.SetLeft(element, viewport.x - offset.x);
+            
                 Canvas.SetBottom(element, viewport.y - offset.x);
             }
 
@@ -42,9 +45,6 @@
             {
                 if (_canvas.Children.Contains(element))
                 {
-                    /*_canvas.Children.Remove(element);
-                    _canvas.Children.Insert(zIndex, element);*/
-                    
                     Panel.SetZIndex(element, zIndex);
                 }
             }

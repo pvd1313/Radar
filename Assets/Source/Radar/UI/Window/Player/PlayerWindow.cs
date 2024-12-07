@@ -44,19 +44,16 @@ namespace Beast.Radar.UI.Player
 
             _player.ChangedTarget += () =>
             {
-                
                 if (_player.Target.y < _player.Position.y)
                 {
-                    _worldElement.UpdateZIndex(_targetView.target, 5);
+                    _worldElement.UpdateZIndex(_targetView.target, 1);
                     _worldElement.UpdateZIndex(_playerView.player, 0);
                 }
                 else
                 {
                     _worldElement.UpdateZIndex(_targetView.target, 0);
-                    _worldElement.UpdateZIndex(_playerView.player, 5);
+                    _worldElement.UpdateZIndex(_playerView.player, 1);
                 }
-                
-         
             };
             
             return UniTask.CompletedTask;
