@@ -15,6 +15,7 @@ namespace Beast.Radar.UI
         private readonly NoesisView _view;
         private readonly Visual _viewRoot;
         private readonly IScreen _screen;
+        private bool _gotHit;
 
         public NoesisInputConsumer(NoesisView view, IScreen screen)
         {
@@ -77,23 +78,15 @@ namespace Beast.Radar.UI
         {
             UnityEngine.Profiling.Profiler.BeginSample("NoesisInputConsumer._hitTest()");
 
-            try
-            {
-                Point p = _viewRoot.PointFromScreen(new Point(position.x, position.y));
+            Point point = _viewRoot.PointFromScreen(new Point(position.x, position.y));
+            
+            _gotHit = false;
 
-                DependencyObject dependencyObject = VisualTreeHelper.HitTest(_viewRoot, p).VisualHit;
-
-                if (dependencyObject != null && dependencyObject is UIElement uiElement)
-                {
-                    return uiElement.IsHitTestVisible;
-                }
-            }
-            finally
-            {
-                UnityEngine.Profiling.Profiler.EndSample();
-            }
-
-            return false;
+            VisualTreeHelper.HitTest(_viewRoot, _hitTestFilter, _hitResult, new PointHitTestParameters(point));
+            
+            UnityEngine.Profiling.Profiler.EndSample();
+            
+            return _gotHit;
         }
 
         private float2 _projectPosition(float2 position)
@@ -104,6 +97,27 @@ namespace Beast.Radar.UI
             float y = (1 - position.y) * screenSize.y;
 
             return new float2(x, y);
+        }
+
+        private HitTestResultBehavior _hitResult(HitTestResult hit)
+        {
+            if (hit.VisualHit != null)
+            {
+                _gotHit = true;
+                return HitTestResultBehavior.Stop;
+            }
+
+            return HitTestResultBehavior.Continue;
+        }
+
+        private HitTestFilterBehavior _hitTestFilter(Visual hit)
+        {
+            if (hit is UIElement { IsHitTestVisible: false })
+            {
+                return HitTestFilterBehavior.ContinueSkipSelfAndChildren;
+            }
+
+            return HitTestFilterBehavior.Continue;
         }
     }
 }
