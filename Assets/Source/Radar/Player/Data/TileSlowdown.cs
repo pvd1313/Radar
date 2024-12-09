@@ -6,7 +6,7 @@ namespace Beast.Radar.Player
     [Serializable]
     public struct TileSlowdown
     {
-        public EBiomeName biome;
+        public ETerrainBiome biome;
         
         public float speedMultiplier;
     }

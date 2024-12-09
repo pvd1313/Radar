@@ -15,8 +15,8 @@ namespace Beast.Radar.City
         public float collisionRadius;
         public Random random;
         public Bounds2D mapBounds;
-        public AveragePixelCountTexture<EBiomeName> terrain8km;
-        public TextureWithBlocks<EBiomeName> terrain1km;
+        public AveragePixelCountTexture<TerrainCell> terrain8km;
+        public TextureWithBlocks<TerrainCell> terrain1km;
         public FloatMinMax citySizeRange;
         public bool useCityPositionCorrection;
         public NativeHashSet<short2> excludePositions;
@@ -73,7 +73,7 @@ namespace Beast.Radar.City
 
         private bool _tryCorrectCityCenter(ref int2 center)
         {
-            if (_isValidBiomeForCity(terrain1km.GetPixelClamped(center)))
+            if (_isValidCellForCity(terrain1km.GetPixelClamped(center)))
             {
                 if (!useCityPositionCorrection)
                 {
@@ -89,7 +89,7 @@ namespace Beast.Radar.City
                     {
                         int2 position = center + delta * terrain8km.cellSize;
                         if (!mapBounds.Contains(position) ||
-                            terrain8km.GetPixel(position) != EBiomeName.Shallow ||
+                            terrain8km.GetPixel(position).Biome != ETerrainBiome.Shallow ||
                             !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                         {
                             continue;
@@ -119,7 +119,7 @@ namespace Beast.Radar.City
                     int2 position = center + delta * terrain8km.cellSize;
 
                     if (!mapBounds.Contains(position) || 
-                        terrain8km.GetPixel(position) == EBiomeName.Deep ||
+                        terrain8km.GetPixel(position).Biome == ETerrainBiome.Deep ||
                         !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                     {
                         continue;
@@ -146,9 +146,9 @@ namespace Beast.Radar.City
 
                 int innerOffset = terrain1km.GetInnerOffset(cellPosition + pixelXY);
 
-                EBiomeName biome = terrain1km.texture[blockOffset + innerOffset];
+                TerrainCell cell = terrain1km.texture[blockOffset + innerOffset];
 
-                if (_isValidBiomeForCity(biome))
+                if (_isValidCellForCity(cell))
                 {
                     newPosition = cellPosition + pixelXY;
                     return true;
@@ -160,10 +160,12 @@ namespace Beast.Radar.City
             return false;
         }
         
-        bool _isValidBiomeForCity(EBiomeName biomeName)
+        bool _isValidCellForCity(TerrainCell cell)
         {
-            return biomeName != EBiomeName.Deep &&
-                   biomeName != EBiomeName.Shallow;
+            ETerrainBiome biome = cell.Biome;
+            
+            return biome != ETerrainBiome.Deep &&
+                   biome != ETerrainBiome.Shallow;
         }
     }
 }

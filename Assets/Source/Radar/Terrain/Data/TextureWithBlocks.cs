@@ -23,7 +23,7 @@ namespace Beast.Radar.Terrain
         public int blockSize;
         public int blockCountX;
         
-        public static TextureWithBlocks<EBiomeName> FromBiomeTexture(Texture2D biomeTexture, int blockSize)
+        public static TextureWithBlocks<TerrainCell> FromBiomeTexture(Texture2D biomeTexture, int blockSize)
         {
             biomeTexture.ValidateNotNullThrowException(nameof(biomeTexture));
             
@@ -43,10 +43,10 @@ namespace Beast.Radar.Terrain
             int blockCountX = biomeTexture.width / blockSize;
             
             Profiler.BeginSample("AllocateNativeArray");
-            NativeArray<EBiomeName> textureWithBlocks = BNative.PermArray<EBiomeName>(biomeTexture.width * biomeTexture.width);
+            NativeArray<TerrainCell> textureWithBlocks = BNative.PermArray<TerrainCell>(biomeTexture.width * biomeTexture.width);
             Profiler.EndSample();
             
-            CreateTextureBlocksJob<EBiomeName, BiomeTextureConverter> job = new()
+            CreateTextureBlocksJob<TerrainCell, BiomeTextureConverter> job = new()
             {
                 inputTexture = biomeTexture.GetRawTextureData<short>(),
                 inputTextureSize = biomeTexture.width,
@@ -58,7 +58,7 @@ namespace Beast.Radar.Terrain
             job.Schedule(blockCountX * blockCountX, 32).Complete();
             Profiler.EndSample();
 
-            return new TextureWithBlocks<EBiomeName>
+            return new TextureWithBlocks<TerrainCell>
             {
                 texture = job.outputTextureBlocks,
                 blockSize = blockSize,

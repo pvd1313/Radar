@@ -49,7 +49,7 @@ namespace Beast.Radar.Terrain
             return BMath.FloorToInt(cell.Mul(cellSize));
         }
 
-        public static AveragePixelCountTexture<EBiomeName> FromTextureWithBlocks(TextureWithBlocks<EBiomeName> texture, int cellSize)
+        public static AveragePixelCountTexture<TerrainCell> FromTextureWithBlocks(TextureWithBlocks<TerrainCell> texture, int cellSize)
         {
             if (Build.IS_DEVELOPMENT)
             {
@@ -66,7 +66,7 @@ namespace Beast.Radar.Terrain
             {
                 outputCellSize = cellSize,
                 sourceTexture = texture,
-                outputTexture = BNative.PermArray<EBiomeName>(cellCountX * cellCountX)
+                outputTexture = BNative.PermArray<TerrainCell>(cellCountX * cellCountX)
             };
             Profiler.EndSample();
             
@@ -74,7 +74,7 @@ namespace Beast.Radar.Terrain
             job.Schedule(texture.blockCountX * texture.blockCountX, 16).Complete();
             Profiler.EndSample();
 
-            return new AveragePixelCountTexture<EBiomeName>
+            return new AveragePixelCountTexture<TerrainCell>
             {
                 cellSize = cellSize,
                 texture = job.outputTexture,

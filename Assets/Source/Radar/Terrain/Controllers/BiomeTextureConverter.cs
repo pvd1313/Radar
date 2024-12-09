@@ -1,10 +1,10 @@
 ﻿namespace Beast.Radar.Terrain
 {
-    public struct BiomeTextureConverter : IShortTextureConverter<EBiomeName>
+    public struct BiomeTextureConverter : IShortTextureConverter<TerrainCell>
     {
-        public EBiomeName Convert(short pixel)
+        public TerrainCell Convert(short pixel)
         {
-            return (EBiomeName)pixel;
+            return new TerrainCell((ETerrainBiome)pixel, ETerrainFeature.None);
         }
     }
 }

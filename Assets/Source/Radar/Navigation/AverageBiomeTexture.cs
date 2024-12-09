@@ -7,14 +7,14 @@ namespace Beast.Radar.Navigation
     {
         public int2 Size => _source.cellCountX;
 
-        private readonly AveragePixelCountTexture<EBiomeName> _source;
+        private readonly AveragePixelCountTexture<TerrainCell> _source;
 
-        public AverageBiomeTexture(AveragePixelCountTexture<EBiomeName> source)
+        public AverageBiomeTexture(AveragePixelCountTexture<TerrainCell> source)
         {
             _source = source;
         }
         
-        public EBiomeName GetPixel(int2 position)
+        public TerrainCell GetPixel(int2 position)
         {
             return _source.texture[position.y * _source.cellCountX + position.x];
         }

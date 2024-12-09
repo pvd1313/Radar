@@ -104,8 +104,8 @@ namespace Beast.Radar.Navigation
             int neighbourNodeIndex)
         {
             PathNode neighbourNode = pathNodeList[neighbourNodeIndex];
-            EBiomeName biomeName = texture.GetPixel(neighbourNode.position);
-            int cost = tileCost.GetByte((byte)biomeName);
+            TerrainCell cell = texture.GetPixel(neighbourNode.position);
+            int cost = tileCost.GetByte((byte)cell.Biome);
             cost <<= 1;
 
             PathNode currentNode = pathNodeList[currentNodeIndex];

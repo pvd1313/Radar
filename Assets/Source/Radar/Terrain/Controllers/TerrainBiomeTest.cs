@@ -58,7 +58,7 @@ namespace Beast.Radar.Terrain
             
             BDebug.Track(this, "WorldPoint_1KM", worldPoint1km);
             
-            EBiomeName biomeIndex = _biome.Terrain1kmCell.GetPixelClamped(worldPoint1km);
+            ETerrainBiome biomeIndex = _biome.Terrain1kmCell.GetPixelClamped(worldPoint1km).Biome;
             
             BDebug.Track(this, "Biome_1KM", biomeIndex.ToString());
             
@@ -75,7 +75,7 @@ namespace Beast.Radar.Terrain
             
             BDebug.Track(this, "WorldPoint_8KM", worldPoint8km);
             
-            biomeIndex = _biome.Terrain8kmCell.GetPixelClamped(worldPoint1km);
+            biomeIndex = _biome.Terrain8kmCell.GetPixelClamped(worldPoint1km).Biome;
             
             BDebug.Track(this, "Biome_8KM", biomeIndex.ToString());
         }

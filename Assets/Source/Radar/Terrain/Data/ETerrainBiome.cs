@@ -1,6 +1,6 @@
 ﻿namespace Beast.Radar.Terrain
 {
-    public enum EBiomeName : byte
+    public enum ETerrainBiome : byte
     {
         Empty = 0,
         Plains = 1,

@@ -7,7 +7,7 @@ namespace Beast.Radar.Navigation
     {
         public int2 Size { get; }
 
-        EBiomeName GetPixel(int2 position);
+        TerrainCell GetPixel(int2 position);
 
         int2 WorldPositionToCell(float2 position);
     }

@@ -15,8 +15,8 @@ namespace Beast.Radar.Terrain
     {
         private const int MAP_1KM_BLOCK_SIZE = 128;
 
-        public TextureWithBlocks<EBiomeName> Terrain1kmCell => _biomeWithBlocks;
-        public AveragePixelCountTexture<EBiomeName> Terrain8kmCell => _biomePacked;
+        public TextureWithBlocks<TerrainCell> Terrain1kmCell => _biomeWithBlocks;
+        public AveragePixelCountTexture<TerrainCell> Terrain8kmCell => _biomePacked;
         
         public bool IsReady { get; private set; }
 
@@ -25,8 +25,8 @@ namespace Beast.Radar.Terrain
         [Required] private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
         [Required] private readonly GraphicConfig _graphicConfig;
         
-        private TextureWithBlocks<EBiomeName> _biomeWithBlocks;
-        private AveragePixelCountTexture<EBiomeName> _biomePacked;
+        private TextureWithBlocks<TerrainCell> _biomeWithBlocks;
+        private AveragePixelCountTexture<TerrainCell> _biomePacked;
         private TerrainData _bakedForTerrain;
 
         protected override UniTask _gameLoad(ConcurrentContext context)
@@ -66,12 +66,12 @@ namespace Beast.Radar.Terrain
             Profiler.EndSample();
 
             Profiler.BeginSample("TextureWithBlocks.FromBiomeTexture");
-            _biomeWithBlocks = TextureWithBlocks<EBiomeName>.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
+            _biomeWithBlocks = TextureWithBlocks<TerrainCell>.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
             Profiler.EndSample();
 
             Profiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
             int cellSize = BMath.Clamp(terrain.terrainSize / 256, 8, 16);
-            _biomePacked = AveragePixelCountTexture<EBiomeName>.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
+            _biomePacked = AveragePixelCountTexture<TerrainCell>.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
             Profiler.EndSample();
             
             Profiler.BeginSample("Dispose Textures");

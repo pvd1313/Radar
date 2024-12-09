@@ -4,20 +4,20 @@ namespace Beast.Radar.Terrain
 {
     public struct ByteArray16
     {
-        public ulong v0;
-        public ulong v1;
+        private ulong _v0;
+        private ulong _v1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetByte(int index)
         {
             if (index < 8)
             {
-                return (byte)((v0 >> (index * 8)) & 0xFF);
+                return (byte)((_v0 >> (index * 8)) & 0xFF);
             }
 
             index -= 8;
 
-            return (byte)((v1 >> (index * 8)) & 0xFF);
+            return (byte)((_v1 >> (index * 8)) & 0xFF);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -26,13 +26,13 @@ namespace Beast.Radar.Terrain
             if (index < 8)
             {
                 ulong mask = 0xFFuL << (index * 8);
-                v0 = (v0 & ~mask) | ((ulong)value << (index * 8));
+                _v0 = (_v0 & ~mask) | ((ulong)value << (index * 8));
             }
             else
             {
                 index -= 8;
                 ulong mask = 0xFFuL << (index * 8);
-                v1 = (v1 & ~mask) | ((ulong)value << (index * 8));
+                _v1 = (_v1 & ~mask) | ((ulong)value << (index * 8));
             }
         }
     }

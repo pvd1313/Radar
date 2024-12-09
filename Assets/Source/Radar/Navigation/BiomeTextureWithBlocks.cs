@@ -7,14 +7,14 @@ namespace Beast.Radar.Navigation
     {
         public int2 Size => _source.blockCountX * _source.blockSize;
         
-        private readonly TextureWithBlocks<EBiomeName> _source;
+        private readonly TextureWithBlocks<TerrainCell> _source;
 
-        public BiomeTextureWithBlocks(TextureWithBlocks<EBiomeName> source)
+        public BiomeTextureWithBlocks(TextureWithBlocks<TerrainCell> source)
         {
             _source = source;
         }
         
-        public EBiomeName GetPixel(int2 position)
+        public TerrainCell GetPixel(int2 position)
         {
             return _source.GetPixel(position);
         }

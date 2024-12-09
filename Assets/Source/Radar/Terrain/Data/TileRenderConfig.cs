@@ -13,9 +13,8 @@ namespace Beast.Radar.Terrain
         public int minPixelSize;
         public int maxCount;
         public int fadeInCount;
-        public float denoiseScale;
         
-        [Header("Textures")]
+        [Header("Texture")]
         public RenderTextureData renderTexture;
         public RenderTextureData solverTexture;
         

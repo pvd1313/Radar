@@ -9,10 +9,10 @@ namespace Beast.Radar.City
     {
         public int2 Size => _textureSize;
 
-        private readonly NativeArray<EBiomeName> _texture;
+        private readonly NativeArray<TerrainCell> _texture;
         private readonly int2 _textureSize;
 
-        public BiomeCCLTexture(NativeArray<EBiomeName> sourceTexture, int2 sourceTextureSize)
+        public BiomeCCLTexture(NativeArray<TerrainCell> sourceTexture, int2 sourceTextureSize)
         {
             _texture = sourceTexture;
             _textureSize = sourceTextureSize;
@@ -20,7 +20,7 @@ namespace Beast.Radar.City
         
         public bool TestPixel(int x, int y)
         {
-            return _texture[y * _textureSize.x + x] != EBiomeName.Deep;
+            return _texture[y * _textureSize.x + x].Biome != ETerrainBiome.Deep;
         }
     }
 }

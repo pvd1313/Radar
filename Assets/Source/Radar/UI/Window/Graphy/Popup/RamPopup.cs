@@ -42,7 +42,6 @@ namespace Beast.Radar.UI
             {
                 _preference.graphy.isRamEnabled = !_preference.graphy.isRamEnabled;
                 
-                Debug.Log("click");
                 RefreshState();
             };
             
