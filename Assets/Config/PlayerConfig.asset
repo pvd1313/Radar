@@ -14,20 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeedKilometresPerHour: 30
   pathBufferCapacity: 1024
-  tileSpeedModifiers:
-  - biome: 0
-    speedMultiplier: 1
-  - biome: 1
-    speedMultiplier: 1
-  - biome: 2
-    speedMultiplier: 1
-  - biome: 6
-    speedMultiplier: 1
-  - biome: 3
-    speedMultiplier: 1
-  - biome: 4
-    speedMultiplier: 0
-  - biome: 5
-    speedMultiplier: 1
-  - biome: 7
-    speedMultiplier: 1
+  cellMovementCostConfig:
+    biome:
+    - biome: 1
+      cost: 5
+    - biome: 2
+      cost: 5
+    - biome: 6
+      cost: 5
+    - biome: 3
+      cost: 5
+    - biome: 5
+      cost: 5
+    - biome: 7
+      cost: 5
+    - biome: 4
+      cost: 255
+    feature:
+    - feature: 1
+      cost: 1

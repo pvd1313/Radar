@@ -35,11 +35,7 @@ namespace Beast.Claw.Math.CCL
             }
 
             _labelEquivalency = new NativeHashSet<int>(1024, Allocator.Temp);
-            _textureWithLabels = new NativeTexture<ushort>
-            {
-                size = inTextureSize,
-                texture = outLabeledTexture
-            };
+            _textureWithLabels = new NativeTexture<ushort>(outLabeledTexture, inTextureSize);
 
             _textureLabelingFirstPass();
 

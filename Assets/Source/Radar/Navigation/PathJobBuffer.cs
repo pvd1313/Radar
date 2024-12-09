@@ -1,14 +1,15 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Navigation
 {
-    public struct PathJobBuffer
+    public struct PathJobBuffer : IDisposable
     {
-        public NativeList<int2> outputPath;
+        public NativeList<int2> outputPathReversed;
         public NativeList<PathNode> pathNodeList;
         public NativeHashMap<int2, int> positionToIndexMap;
-        public PriorityQueue openList;
+        public NativePriorityQueue<int> openList;
         public NativeHashSet<int> closedList;
         public NativeHashSet<int> openSet;
 
@@ -16,8 +17,8 @@ namespace Beast.Radar.Navigation
         {
             return new PathJobBuffer
             {
-                openList = new PriorityQueue(allocator),
-                outputPath = new NativeList<int2>(allocator),
+                openList = new NativePriorityQueue<int>(capacity, allocator),
+                outputPathReversed = new NativeList<int2>(capacity, allocator),
                 pathNodeList = new NativeList<PathNode>(capacity, allocator),
                 positionToIndexMap = new NativeHashMap<int2, int>(capacity, allocator),
                 closedList = new NativeHashSet<int>(capacity, allocator),
@@ -27,7 +28,7 @@ namespace Beast.Radar.Navigation
 
         public void Clear()
         {
-            outputPath.Clear();
+            outputPathReversed.Clear();
             pathNodeList.Clear();
             positionToIndexMap.Clear();
             openList.Clear();
@@ -37,7 +38,7 @@ namespace Beast.Radar.Navigation
 
         public void Dispose()
         {
-            outputPath.Dispose();
+            outputPathReversed.Dispose();
             pathNodeList.Dispose();
             positionToIndexMap.Dispose();
             openList.Dispose();

@@ -157,11 +157,11 @@ namespace Beast.Radar.Player
             {
                 startPosition = _biome.Terrain8kmCell.WorldPositionToCell(start),
                 endPosition = _biome.Terrain8kmCell.WorldPositionToCell(finish),
-                tileCost = _config.TileSpeedModifiersToTileCost(),
                 texture = new AverageBiomeTexture(_biome.Terrain8kmCell),
                 buffer = _pathJobBuffer,
                 searchBounds = new Bounds2D(0, textureSize - 1)
             };
+            _config.cellMovementCostConfig.ToByteArray(out job.cellBiomeCost, out job.cellFeatureCost);
             
             _stopwatch.Restart();
             Profiler.BeginSample("8km_job");
@@ -170,7 +170,7 @@ namespace Beast.Radar.Player
             _stopwatch.Stop();
             BDebug.Track(this, "8km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
 
-            _path8KM.Setup(job.buffer.outputPath, _biome.Terrain8kmCell.cellSize);
+            _path8KM.Setup(job.buffer.outputPathReversed, _biome.Terrain8kmCell.cellSize);
             _path8KM.DrawGizmo(_gizmo8KM, Color.magenta.WithAlpha(0.5f));
         }
 
@@ -212,11 +212,11 @@ namespace Beast.Radar.Player
             {
                 startPosition = startCell,
                 endPosition = finishCell,
-                tileCost = _config.TileSpeedModifiersToTileCost(),
                 texture = new BiomeTextureWithBlocks(_biome.Terrain1kmCell),
                 buffer = _pathJobBuffer,
                 searchBounds = searchBounds,
             };
+            _config.cellMovementCostConfig.ToByteArray(out job.cellBiomeCost, out job.cellFeatureCost);
             
             _stopwatch.Restart();
             Profiler.BeginSample("1km_job");
@@ -225,7 +225,7 @@ namespace Beast.Radar.Player
             _stopwatch.Stop();
             BDebug.Track(this, "1km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
             
-            _path1KM.Setup(job.buffer.outputPath, 1);
+            _path1KM.Setup(job.buffer.outputPathReversed, 1);
             _path1KM.DrawGizmo(_gizmo1KM, Color.yellow.WithAlpha(0.5f));
         }
 

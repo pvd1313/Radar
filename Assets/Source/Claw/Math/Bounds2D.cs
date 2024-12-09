@@ -87,6 +87,22 @@ namespace Beast.Claw.Math
             return bounds;
         }
 
+        public Bounds2D EnsureContains(float2 point)
+        {
+            Bounds2D bounds;
+            bounds.x.min = BMath.Min(x.min, point.x);
+            bounds.x.max = BMath.Max(x.max, point.x);
+            bounds.y.min = BMath.Min(y.min, point.y);
+            bounds.y.max = BMath.Max(y.max, point.y);
+
+            return bounds;
+        }
+
+        public readonly bool IsOnBorder(float2 point)
+        {
+            return x.IsOnBorder(point.x) || y.IsOnBorder(point.y);
+        }
+
         public Bounds2D Shrink(float size)
         {
             size.ValidateIsZeroOrGreaterThrowException(nameof(size));

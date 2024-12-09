@@ -15,32 +15,37 @@ namespace Beast.Claw.Math
             this.max = max;
         }
 
-        public bool Intersects(FloatMinMax other)
+        public readonly bool Intersects(FloatMinMax other)
         {
             return other.max >= min && max >= other.min;
         }
 
-        public bool Contains(float x)
+        public readonly bool Contains(float x)
         {
             return x >= min && x <= max;
         }
 
-        public bool IsNormalized()
+        public readonly bool IsOnBorder(float x)
+        {
+            return BMath.Approximately(x, min) || BMath.Approximately(x, max);
+        }
+
+        public readonly bool IsNormalized()
         {
             return min >= 0 && max >= 0 && min <= 1 && max <= 1;
         }
 
-        public bool IsValidRange()
+        public readonly bool IsValidRange()
         {
             return min <= max;
         }
 
-        public float GetRange()
+        public readonly float GetRange()
         {
             return max - min;
         }
 
-        public FloatMinMax Expand(float size)
+        public readonly FloatMinMax Expand(float size)
         {
             size.ValidateIsZeroOrGreaterThrowException(nameof(size));
 
@@ -49,7 +54,7 @@ namespace Beast.Claw.Math
             return new FloatMinMax(min - halfSize, max + halfSize);
         }
 
-        public FloatMinMax Shrink(float size)
+        public readonly FloatMinMax Shrink(float size)
         {
             size.ValidateIsZeroOrGreaterThrowException(nameof(size));
             
@@ -65,12 +70,12 @@ namespace Beast.Claw.Math
             return new FloatMinMax(min + halfSize, max - halfSize);
         }
 
-        public float GetCenter()
+        public readonly float GetCenter()
         {
             return BMath.Lerp(this, 0.5f);
         }
 
-        public string Validate()
+        public readonly string Validate()
         {
             if (min > max)
             {

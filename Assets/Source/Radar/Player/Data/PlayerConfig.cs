@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.Math;
-using Beast.Radar.Terrain;
+using Beast.Radar.Navigation;
 
 namespace Beast.Radar.Player
 {
@@ -9,27 +8,11 @@ namespace Beast.Radar.Player
     {
         public float movementSpeedKilometresPerHour;
         public int pathBufferCapacity;
-        public TileSlowdown[] tileSpeedModifiers;
+        public CellMovementCostConfig cellMovementCostConfig;
         
         public override IEnumerable<IConfig> Bind()
         {
             yield break;
-        }
-        
-        public ByteArray16 TileSpeedModifiersToTileCost()
-        {
-            ByteArray16 byteArray = new();
-            
-            int count = BMath.Min(tileSpeedModifiers.Length, 16);
-            
-            for (int i = 0; i < count; i++)
-            {
-                TileSlowdown modifier = tileSpeedModifiers[i];
-                byte speedValue = (byte)((1f - modifier.speedMultiplier) * 255);
-                byteArray.SetByte((byte)modifier.biome, speedValue);
-            }
-
-            return byteArray;
         }
     }
 }

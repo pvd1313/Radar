@@ -1,35 +1,39 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 
 namespace Beast.Radar.Navigation
 {
-    public struct PriorityQueue
+    public struct NativePriorityQueue<TValue> : IDisposable 
+        where TValue : unmanaged
     {
         public int Count => _items.Length;
             
-        private NativeList<int> _items;
+        private NativeList<TValue> _items;
         private NativeList<float> _priorities;
             
-        public PriorityQueue(Allocator allocator)
+        public NativePriorityQueue(int capacity, Allocator allocator)
         {
-            _items = new NativeList<int>(allocator);
-            _priorities = new NativeList<float>(allocator);
+            _items = new NativeList<TValue>(capacity, allocator);
+            _priorities = new NativeList<float>(capacity, allocator);
         }
 
-        public void Enqueue(int item, float priority)
+        public void Enqueue(TValue item, float priority)
         {
             _items.Add(item);
             _priorities.Add(priority);
             _heapifyUp(_items.Length - 1);
         }
 
-        public int Dequeue()
+        public TValue Dequeue()
         {
-            int item = _items[0];
+            TValue item = _items[0];
             _items[0] = _items[^1];
             _priorities[0] = _priorities[^1];
             _items.RemoveAt(_items.Length - 1);
             _priorities.RemoveAt(_priorities.Length - 1);
+            
             _heapifyDown(0);
+            
             return item;
         }
 
