@@ -6,9 +6,10 @@ namespace Beast.Radar.City
 {
     public class CitySpawnConfig : ScriptableConfig
     {
-        public float majorCityGridScale;
-        public float minorCityGridScale;
+        public float majorCityGridSize;
+        public float minorCityGridSize;
         public CellMovementCostConfig roadBuildCost;
+        public ERoadSpawnPriority majorRoadSpawnPriority;
         
         public override IEnumerable<IConfig> Bind()
         {

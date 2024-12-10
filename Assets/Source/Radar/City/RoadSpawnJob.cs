@@ -1,5 +1,6 @@
 ﻿// #define ROAD_PROFILING
 
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Math;
@@ -20,6 +21,7 @@ namespace Beast.Radar.City
         public AveragePixelCountTexture<TerrainCell> inTerrain8KM;
         public ByteArray16 inCellBiomeCost;
         public ByteArray16 inCellFeatureCost;
+        public ERoadSpawnPriority inMajorRoadSpawnPriority;
         
         public NativeList<int2> outRoadCells8KM;
 
@@ -71,17 +73,13 @@ namespace Beast.Radar.City
                 {
                     continue;
                 }
-                
-                _beginSample("_getCityBounds");
-                Bounds2D majorCityBounds = _getCityBounds(majorCities);
-                _endSample();
 
                 _beginSample("_selectHubCity");
-                CityInfo hubCity = _selectHubCity(majorCities, majorCityBounds);
+                CityInfo hubCity = _selectCityOnBorder(cityGroup);
                 _endSample();
 
                 _beginSample("_createRoadQueue");
-                using NativePriorityQueue<short2> roadQueue = _createRoadQueue(hubCity, majorCities);
+                using NativePriorityQueue<short2> roadQueue = _createRoadQueue(hubCity, majorCities, inMajorRoadSpawnPriority);
                 _endSample();
 
                 _buildRoads(hubCity, roadQueue, pathJobBuffer);
@@ -141,11 +139,19 @@ namespace Beast.Radar.City
             return bounds;
         }
         
-        private NativePriorityQueue<short2> _createRoadQueue(CityInfo hubCity, NativeList<CityInfo> majorCities)
+        private NativePriorityQueue<short2> _createRoadQueue(
+            CityInfo hubCity, 
+            NativeList<CityInfo> otherCities, 
+            ERoadSpawnPriority priorityMethod)
         {
-            NativePriorityQueue<short2> roadQueue = new(majorCities.Length, Allocator.Temp);
+            if (priorityMethod == ERoadSpawnPriority.None)
+            {
+                throw new ArgumentException("priorityMethod");
+            }
+            
+            NativePriorityQueue<short2> roadQueue = new(otherCities.Length, Allocator.Temp);
 
-            foreach (CityInfo city in majorCities)
+            foreach (CityInfo city in otherCities)
             {
                 if (city.position.Equals(hubCity.position))
                 {
@@ -154,7 +160,12 @@ namespace Beast.Radar.City
 
                 float distance = BMath.Distance(city.position, hubCity.position);
 
-                roadQueue.Enqueue(city.position, 8192 - distance);
+                if (priorityMethod == ERoadSpawnPriority.FirstAreFarthest)
+                {
+                    distance = 8192 - distance;
+                }
+
+                roadQueue.Enqueue(city.position, distance);
             }
 
             return roadQueue;
@@ -175,13 +186,17 @@ namespace Beast.Radar.City
             return major;
         }
 
-        private CityInfo _selectHubCity(NativeList<CityInfo> majorCities, Bounds2D majorCityBounds)
+        private CityInfo _selectCityOnBorder(NativeList<CityInfo> cities)
         {
+            _beginSample("_getCityBounds");
+            Bounds2D cityBounds = _getCityBounds(cities);
+            _endSample();
+            
             using NativeList<CityInfo> borderCities = new(16, Allocator.Temp); 
             
-            foreach (CityInfo city in majorCities)
+            foreach (CityInfo city in cities)
             {
-                if (majorCityBounds.IsOnBorder(city.position))
+                if (cityBounds.IsOnBorder(city.position))
                 {
                     borderCities.Add(city);
                 }

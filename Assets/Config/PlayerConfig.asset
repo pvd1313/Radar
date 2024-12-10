@@ -22,11 +22,11 @@ MonoBehaviour:
       cost: 2
     - biome: 6
       cost: 2
-    - biome: 3
+    - biome: 7
       cost: 2
     - biome: 5
       cost: 2
-    - biome: 7
+    - biome: 3
       cost: 2
     - biome: 4
       cost: 255
