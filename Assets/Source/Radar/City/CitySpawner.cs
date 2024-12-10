@@ -3,6 +3,7 @@ using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
+using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
@@ -143,7 +144,7 @@ namespace Beast.Radar.City
 
             int cellSize8KM = _biome.Terrain8kmCell.cellSize;
             
-            _gizmo.SetColor(Color.black);
+            _gizmo.SetColor(Color.black.WithAlpha(0.7f));
 
             foreach (int2 position in roadCells8KM)
             {
@@ -160,13 +161,13 @@ namespace Beast.Radar.City
                 {
                     majorCount++;
                     _gizmo.SetColor(Color.cyan);
-                    _gizmo.AddPoint(position, 3 * size);
+                    _gizmo.AddPoint(position, 12);
                 }
                 else
                 {
                     minorCount++;
                     _gizmo.SetColor(Color.red);
-                    _gizmo.AddPoint(position, 2f * (size + 2));
+                    _gizmo.AddPoint(position, 8);
                 }
             }
 
