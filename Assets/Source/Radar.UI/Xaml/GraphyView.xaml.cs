@@ -71,9 +71,9 @@ namespace Beast.Radar.UI
         {
             FpsAssets.brushes = new GraphyBrushes()
             {
-                good = new SolidColorBrush(good.ToNoesis()),
-                caution = new SolidColorBrush(caution.ToNoesis()),
-                critical = new SolidColorBrush(critical.ToNoesis())
+                good = new SolidColorBrush(good.ToNoesisColor()),
+                caution = new SolidColorBrush(caution.ToNoesisColor()),
+                critical = new SolidColorBrush(critical.ToNoesisColor())
             };
         }
 

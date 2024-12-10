@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
-using Noesis;
-using Unity.Mathematics;
-using UnityEngine;
-using Color = Noesis.Color;
 
 namespace Beast.Claw.UI
 {
@@ -33,38 +28,6 @@ namespace Beast.Claw.UI
             target.BindElements();
 
             control = target;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Color ToNoesis(this UnityEngine.Color color)
-        {
-            return new Color()
-            {
-                A = (byte)(color.a * 255),
-                R = (byte)(color.r * 255),
-                G = (byte)(color.g * 255),
-                B = (byte)(color.b * 255),
-            };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Run AsRun(this string text, Brush brush)
-        {
-            return new Run(text) { Foreground = brush };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetMaterial(this Rectangle rectangle, Material material)
-        {
-            TextureSource textureSource = new(material.mainTexture);
-            ImageBrush brush = new(textureSource);
-            rectangle.Fill = brush;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float2 GetActualSize(this FrameworkElement element)
-        {
-            return new float2(element.ActualWidth, element.ActualHeight);
         }
     }
 }

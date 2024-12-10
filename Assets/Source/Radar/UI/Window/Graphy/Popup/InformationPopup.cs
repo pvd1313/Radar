@@ -1,4 +1,5 @@
-﻿using Beast.Claw.Graphy.Modules;
+﻿using System.Runtime.CompilerServices;
+using Beast.Claw.Graphy.Modules;
 using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Noesis;
@@ -46,51 +47,58 @@ namespace Beast.Radar.UI
                 {
                     // Graphics Device Version
                     _assets.graphicsDeviceVersionText.Inlines.Clear();
-                    _assets.graphicsDeviceVersionText.Inlines.Add("GAPI: ".AsRun(_assets.headerTextBrush));
-                    _assets.graphicsDeviceVersionText.Inlines.Add(
-                        _monitor.Data.graphicsDeviceVersion.AsRun(_assets.defaultTextBrush));
+                    _assets.graphicsDeviceVersionText.Inlines.Add(_asRun("GAPI: ", _assets.headerTextBrush));
+                    _assets.graphicsDeviceVersionText.Inlines.Add(_asRun(_monitor.Data.graphicsDeviceVersion,
+                        _assets.defaultTextBrush));
 
                     // Processor Type
                     _assets.processorTypeText.Inlines.Clear();
-                    _assets.processorTypeText.Inlines.Add("CPU: ".AsRun(_assets.headerTextBrush));
-                    _assets.processorTypeText.Inlines.Add(_monitor.Data.processorType.AsRun(_assets.defaultTextBrush));
+                    _assets.processorTypeText.Inlines.Add(_asRun("CPU: ", _assets.headerTextBrush));
+                    _assets.processorTypeText.Inlines.Add(_asRun(_monitor.Data.processorType,
+                        _assets.defaultTextBrush));
 
                     // System Memory
                     _assets.systemMemoryText.Inlines.Clear();
-                    _assets.systemMemoryText.Inlines.Add("RAM: ".AsRun(_assets.headerTextBrush));
-                    _assets.systemMemoryText.Inlines.Add(_monitor.Data.systemMemory.AsRun(_assets.defaultTextBrush));
+                    _assets.systemMemoryText.Inlines.Add(_asRun("RAM: ", _assets.headerTextBrush));
+                    _assets.systemMemoryText.Inlines.Add(_asRun(_monitor.Data.systemMemory, _assets.defaultTextBrush));
 
                     // Graphics Device Name
                     _assets.graphicsDeviceNameText.Inlines.Clear();
-                    _assets.graphicsDeviceNameText.Inlines.Add("GPU: ".AsRun(_assets.headerTextBrush));
-                    _assets.graphicsDeviceNameText.Inlines.Add(
-                        _monitor.Data.graphicsDeviceName.AsRun(_assets.defaultTextBrush));
+                    _assets.graphicsDeviceNameText.Inlines.Add(_asRun("GPU: ", _assets.headerTextBrush));
+                    _assets.graphicsDeviceNameText.Inlines.Add(_asRun(_monitor.Data.graphicsDeviceName,
+                        _assets.defaultTextBrush));
 
                     // Graphics Memory Size
                     _assets.graphicsMemorySizeText.Inlines.Clear();
-                    _assets.graphicsMemorySizeText.Inlines.Add("VRAM: ".AsRun(_assets.headerTextBrush));
-                    _assets.graphicsMemorySizeText.Inlines.Add(
-                        _monitor.Data.graphicsMemorySize.AsRun(_assets.defaultTextBrush));
+                    _assets.graphicsMemorySizeText.Inlines.Add(_asRun("VRAM: ", _assets.headerTextBrush));
+                    _assets.graphicsMemorySizeText.Inlines.Add(_asRun(_monitor.Data.graphicsMemorySize,
+                        _assets.defaultTextBrush));
 
                     // Screen Resolution
                     _assets.screenResolutionText.Inlines.Clear();
-                    _assets.screenResolutionText.Inlines.Add("Screen: ".AsRun(_assets.headerTextBrush));
-                    _assets.screenResolutionText.Inlines.Add(
-                        _monitor.Data.screenResolution.AsRun(_assets.defaultTextBrush));
+                    _assets.screenResolutionText.Inlines.Add(_asRun("Screen: ", _assets.headerTextBrush));
+                    _assets.screenResolutionText.Inlines.Add(_asRun(_monitor.Data.screenResolution,
+                        _assets.defaultTextBrush));
 
                     // Game Window Resolution
                     _assets.gameWindowResolutionText.Inlines.Clear();
-                    _assets.gameWindowResolutionText.Inlines.Add("Window: ".AsRun(_assets.headerTextBrush));
-                    _assets.gameWindowResolutionText.Inlines.Add(
-                        _monitor.Data.gameWindowResolution.AsRun(_assets.defaultTextBrush));
+                    _assets.gameWindowResolutionText.Inlines.Add(_asRun("Window: ", _assets.headerTextBrush));
+                    _assets.gameWindowResolutionText.Inlines.Add(_asRun(_monitor.Data.gameWindowResolution,
+                        _assets.defaultTextBrush));
 
                     // Operating System
                     _assets.operatingSystemText.Inlines.Clear();
-                    _assets.operatingSystemText.Inlines.Add("OS: ".AsRun(_assets.headerTextBrush));
-                    _assets.operatingSystemText.Inlines.Add(
-                        _monitor.Data.operatingSystem.AsRun(_assets.defaultTextBrush));
+                    _assets.operatingSystemText.Inlines.Add(_asRun("OS: ", _assets.headerTextBrush));
+                    _assets.operatingSystemText.Inlines.Add(_asRun(_monitor.Data.operatingSystem,
+                        _assets.defaultTextBrush));
                 }
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Run _asRun(string text, Brush brush)
+        {
+            return new Run(text) { Foreground = brush };
         }
     }
 }
