@@ -3,7 +3,7 @@ using Beast.Claw.Math;
 
 namespace Beast.Radar.Terrain
 {
-    public struct TerrainCell
+    public readonly struct TerrainCell
     {
         public ETerrainBiome Biome => (ETerrainBiome)(_value >> 4);
         public ETerrainFeature Feature => _extractFeature();
@@ -12,7 +12,7 @@ namespace Beast.Radar.Terrain
         
         public TerrainCell(ETerrainBiome biome, ETerrainFeature feature)
         {
-            _value = (byte)((int)biome << 4 | ((int)feature & 0xF));
+            _value = (byte)(((int)biome << 4) | ((int)feature & 0xF));
         }
 
         public byte GetFeatureMinCost(ByteArray16 cost)
@@ -28,22 +28,22 @@ namespace Beast.Radar.Terrain
 
             if ((featureMask & 1) == 1)
             {
-                minCost = BMath.Min(minCost, cost.GetByte(1));
+                minCost = BMath.Min(minCost, cost.GetByte(0));
             }
 
             if ((featureMask & 2) == 2)
             {
-                minCost = BMath.Min(minCost, cost.GetByte(2));
+                minCost = BMath.Min(minCost, cost.GetByte(1));
             }
             
             if ((featureMask & 4) == 4)
             {
-                minCost = BMath.Min(minCost, cost.GetByte(4));
+                minCost = BMath.Min(minCost, cost.GetByte(2));
             }
             
             if ((featureMask & 8) == 8)
             {
-                minCost = BMath.Min(minCost, cost.GetByte(8));
+                minCost = BMath.Min(minCost, cost.GetByte(3));
             }
 
             return (byte)minCost;

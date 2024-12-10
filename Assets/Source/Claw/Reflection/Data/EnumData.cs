@@ -1,5 +1,5 @@
 ﻿using System;
-using Unity.Collections;
+using System.Collections.Generic;
 
 namespace Beast.Claw.Reflection
 {
@@ -8,6 +8,6 @@ namespace Beast.Claw.Reflection
         public bool isFlags;
         public long flagsMask;
         public TypeCode typeCode;
-        public NativeHashSet<long> allValues;
+        public HashSet<long> allValues;
     }
 }

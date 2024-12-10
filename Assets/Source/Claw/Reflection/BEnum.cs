@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
-using Beast.Claw.Jobs;
-using Beast.Claw.Reflection;
-using Unity.Collections;
 
-namespace Beast.Claw.Editor.Validation
+namespace Beast.Claw.Reflection
 {
+    [StaticUtility]
     public static class BEnum
     {
         private static readonly Dictionary<Type, EnumData> ENUMS;
@@ -19,13 +18,16 @@ namespace Beast.Claw.Editor.Validation
             {
                 ENUMS = new Dictionary<Type, EnumData>(64);
                 FLAGS_ATTRIBUTE_TYPE = typeof(FlagsAttribute);
-
-                StaticDispose.Add(_dispose);
             }
             catch (Exception e)
             {
                 BDebug.LogException(e);
             }
+        }
+
+        public static TEnum[] GetValues<TEnum>()
+        {
+            return (TEnum[])Enum.GetValues(typeof(TEnum));
         }
 
         public static bool TryGetEnumData(Type type, out EnumData enumData)
@@ -76,8 +78,8 @@ namespace Beast.Claw.Editor.Validation
                 };
             }
 
-            BNative.PermHashSet(values.Length, out NativeHashSet<long> allValues);
-            
+            HashSet<long> allValues = new (values.Length);
+
             for (int i = 0; i < values.Length; i++)
             {
                 object value = values.GetValue(i);
@@ -93,19 +95,6 @@ namespace Beast.Claw.Editor.Validation
                 allValues = allValues,
                 typeCode = typeCode
             };
-        }
-
-        private static void _dispose()
-        {
-            foreach (EnumData data in ENUMS.Values)
-            {
-                if (!data.isFlags)
-                {
-                    data.allValues.Dispose();
-                }
-            }
-            
-            ENUMS.Clear();
         }
     }
 }
