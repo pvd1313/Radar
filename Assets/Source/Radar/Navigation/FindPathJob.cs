@@ -107,12 +107,12 @@ namespace Beast.Radar.Navigation
         {
             PathNode siblingNode = pathNodeList[siblingNodeIndex];
             TerrainCell siblingCell = texture.GetPixel(siblingNode.position);
-            float siblingCost = cellBiomeCost.GetByte((byte)siblingCell.Biome);
+            int siblingCost = cellBiomeCost.GetByte((byte)siblingCell.Biome);
             siblingCost = BMath.Min(siblingCost, siblingCell.GetFeatureMinCost(cellFeatureCost));
             
             PathNode currentNode = pathNodeList[currentNodeIndex];
             TerrainCell currentCell = texture.GetPixel(currentNode.position);
-            float currentCost = cellBiomeCost.GetByte((byte)currentCell.Biome);
+            int currentCost = cellBiomeCost.GetByte((byte)currentCell.Biome);
             currentCost = BMath.Min(currentCost, currentCell.GetFeatureMinCost(cellBiomeCost));
             
             float distanceCost = _calcDistanceCost(currentNode.position, siblingNode.position);

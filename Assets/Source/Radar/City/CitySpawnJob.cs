@@ -15,8 +15,8 @@ namespace Beast.Radar.City
         public float collisionRadius;
         public Random random;
         public Bounds2D mapBounds;
-        public AveragePixelCountTexture<TerrainCell> terrain8km;
-        public TextureWithBlocks<TerrainCell> terrain1km;
+        public AveragePixelCountTexture<TerrainCell> terrain8KM;
+        public TextureWithBlocks<TerrainCell> terrain1KM;
         public FloatMinMax citySizeRange;
         public bool useCityPositionCorrection;
         public NativeHashSet<short2> excludePositions;
@@ -35,33 +35,38 @@ namespace Beast.Radar.City
                 for (int x = 0; x < maxCityCountX; x++)
                 {
                     float2 randomFloat2 = random.NextFloat2();
-                    float2 cityCenter = new float2(x, y) * gridSize + new float2(gridSize * 0.5f);
+                    float2 estimatedPosition = new float2(x, y) * gridSize + new float2(gridSize * 0.5f);
                     float2 randomXY =  randomFloat2 * 2.0f - 1.0f;
-                    cityCenter += randomXY * gridSize * 0.5f;
+                    estimatedPosition += randomXY * gridSize * 0.5f;
                     
-                    int2 cityCenterInt = BMath.FloorToInt(cityCenter);
+                    int2 finalPosition = BMath.FloorToInt(estimatedPosition);
                     
-                    if (localBounds.Contains(cityCenter) || globalBounds.Contains(cityCenter))
+                    if (localBounds.Contains(estimatedPosition) || globalBounds.Contains(estimatedPosition))
                     {
                         continue;
                     }
 
-                    if (!_tryCorrectCityCenter(ref cityCenterInt))
+                    if (!_tryCorrectCityCenter(ref finalPosition))
                     {
                         continue;
                     }
                     
-                    if (hasExcludePositions && excludePositions.Contains((short2)cityCenterInt))
+                    if (localBounds.Contains(finalPosition) || globalBounds.Contains(finalPosition))
                     {
                         continue;
                     }
 
-                    localBounds.x.max = BMath.Max(cityCenter.x + collisionRadius, localBounds.x.max);
-                    localBounds.y.max = BMath.Max(cityCenter.y + collisionRadius, localBounds.y.max);
+                    if (hasExcludePositions && excludePositions.Contains((short2)finalPosition))
+                    {
+                        continue;
+                    }
+
+                    localBounds.x.max = BMath.Max(finalPosition.x + collisionRadius, localBounds.x.max);
+                    localBounds.y.max = BMath.Max(finalPosition.y + collisionRadius, localBounds.y.max);
                     
                     outputCities.Add(new CityInfo
                     {
-                        position = (short2) cityCenterInt,
+                        position = (short2) finalPosition,
                         size = (byte) BMath.Round(BMath.Lerp(citySizeRange, randomFloat2.x))
                     });       
                 }
@@ -73,7 +78,7 @@ namespace Beast.Radar.City
 
         private bool _tryCorrectCityCenter(ref int2 center)
         {
-            if (_isValidCellForCity(terrain1km.GetPixelClamped(center)))
+            if (_isValidCellForCity(terrain1KM.GetPixelClamped(center)))
             {
                 if (!useCityPositionCorrection)
                 {
@@ -87,9 +92,9 @@ namespace Beast.Radar.City
 
                     while (iterator.GotNext(out int2 delta))
                     {
-                        int2 position = center + delta * terrain8km.cellSize;
+                        int2 position = center + delta * terrain8KM.cellSize;
                         if (!mapBounds.Contains(position) ||
-                            terrain8km.GetPixel(position).Biome != ETerrainBiome.Shallow ||
+                            terrain8KM.GetPixel(position).Biome != ETerrainBiome.Shallow ||
                             !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                         {
                             continue;
@@ -116,10 +121,10 @@ namespace Beast.Radar.City
 
                 while (iterator.GotNext(out int2 delta))
                 {
-                    int2 position = center + delta * terrain8km.cellSize;
+                    int2 position = center + delta * terrain8KM.cellSize;
 
                     if (!mapBounds.Contains(position) || 
-                        terrain8km.GetPixel(position).Biome == ETerrainBiome.Deep ||
+                        terrain8KM.GetPixel(position).Biome == ETerrainBiome.Deep ||
                         !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                     {
                         continue;
@@ -136,17 +141,17 @@ namespace Beast.Radar.City
         
         private bool _tryFindValidPlaceInCell8km(int2 referencePosition, out int2 newPosition)
         {
-            int2 cellPosition = terrain8km.FloorToCellWorldPosition(referencePosition);
-            int blockOffset = terrain1km.GetBlockOffset(cellPosition);
-            int cellSize = terrain8km.cellSize;
+            int2 cellPosition = terrain8KM.FloorToCellWorldPosition(referencePosition);
+            int blockOffset = terrain1KM.GetBlockOffset(cellPosition);
+            int cellSize = terrain8KM.cellSize;
 
             for (int i = 0; i < cellSize * cellSize; i++)
             {
                 int2 pixelXY = new (i % cellSize, i / cellSize);
 
-                int innerOffset = terrain1km.GetInnerOffset(cellPosition + pixelXY);
+                int innerOffset = terrain1KM.GetInnerOffset(cellPosition + pixelXY);
 
-                TerrainCell cell = terrain1km.texture[blockOffset + innerOffset];
+                TerrainCell cell = terrain1KM.texture[blockOffset + innerOffset];
 
                 if (_isValidCellForCity(cell))
                 {

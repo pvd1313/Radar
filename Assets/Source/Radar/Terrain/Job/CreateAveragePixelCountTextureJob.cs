@@ -26,7 +26,8 @@ namespace Beast.Radar.Terrain
             int2 blockXYAbs = blockXY * sourceTexture.blockSize;
             int blockOffset = sourceTexture.GetBlockOffset(blockXYAbs);
 
-            int cellHalfPixelCount = outputCellSize * outputCellSize / 2;
+            int outputCellSizeSqr = outputCellSize * outputCellSize;
+            int outputCellSizeSqrHalf = outputCellSizeSqr / 2;
             
             for (int cellIndex = 0; cellIndex < cellsPerBlockSqr; cellIndex++)
             {
@@ -39,7 +40,7 @@ namespace Beast.Radar.Terrain
 
                 int maxColorIndex = 255;
 
-                for (int pixelIndex = 0; pixelIndex < outputCellSize; pixelIndex++)
+                for (int pixelIndex = 0; pixelIndex < outputCellSizeSqr; pixelIndex++)
                 {
                     int2 pixelXY;
                     pixelXY.x = pixelIndex % outputCellSize;
@@ -52,21 +53,21 @@ namespace Beast.Radar.Terrain
                     byte count = pixelCount.GetByte(pixelColor);
 
                     count++;
-                    
-                    pixelCount.SetByte(pixelColor, (byte)(count + 1));
 
-                    if (count >= cellHalfPixelCount)
+                    if (count >= outputCellSizeSqrHalf)
                     {
                         maxColorIndex = pixelColor;
                         break;
                     }
+                    
+                    pixelCount.SetByte(pixelColor, count);
                 }
 
                 if (maxColorIndex == 255)
                 {
                     maxColorIndex = 0;
                     byte maxColorCount = pixelCount.GetByte(0);
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 1; i < 16; i++)
                     {
                         byte colorCount = pixelCount.GetByte(i);
                         if (colorCount > maxColorCount)

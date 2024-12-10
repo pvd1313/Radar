@@ -36,6 +36,17 @@ namespace Beast.Claw.Math
             return bounds;
         }
 
+        public static Bounds2D FromPoint(float2 point)
+        {
+            Bounds2D bounds;
+            bounds.x.min = point.x;
+            bounds.x.max = point.x;
+            bounds.y.min = point.y;
+            bounds.y.max = point.y;
+
+            return bounds;
+        }
+
         public static Bounds2D FromPointWithRadius(float2 point, float radius)
         {
             Bounds2D bounds;

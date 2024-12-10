@@ -11,8 +11,9 @@ using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 using UnityEngine.Profiling;
+
+using Color = UnityEngine.Color;
 using Random = Unity.Mathematics.Random;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
@@ -58,10 +59,10 @@ namespace Beast.Radar.City
                 _cities.Dispose();
             }
 
-            float majorGridSize = terrain.terrainSize / _config.majorCityGridScale;
+            float majorGridSize = _config.majorCityGridSize;
             int majorCityCountX = BMath.CeilToInt(terrain.terrainSize / majorGridSize);
             
-            float minorGridSize = terrain.terrainSize / _config.minorCityGridScale;
+            float minorGridSize = _config.minorCityGridSize;
             int minorCityCountX = BMath.CeilToInt(terrain.terrainSize / minorGridSize);
 
             int maxCityCount = majorCityCountX * majorCityCountX + minorCityCountX * minorCityCountX;
@@ -78,8 +79,8 @@ namespace Beast.Radar.City
                 maxCityCountX = majorCityCountX,
                 mapBounds = new Bounds2D(0, terrain.terrainSize - 1),
                 outputCities = _cities,
-                terrain1km = _biome.Terrain1kmCell,
-                terrain8km = _biome.Terrain8kmCell,
+                terrain1KM = _biome.Terrain1kmCell,
+                terrain8KM = _biome.Terrain8kmCell,
                 citySizeRange = MAJOR_CITY_SIZE,
                 useCityPositionCorrection = true,
                 excludePositions = majorCities
@@ -102,8 +103,8 @@ namespace Beast.Radar.City
                 maxCityCountX = minorCityCountX,
                 mapBounds = new Bounds2D(0, terrain.terrainSize - 1),
                 outputCities = _cities,
-                terrain1km = _biome.Terrain1kmCell,
-                terrain8km = _biome.Terrain8kmCell,
+                terrain1KM = _biome.Terrain1kmCell,
+                terrain8KM = _biome.Terrain8kmCell,
                 citySizeRange = MINOR_CITY_SIZE,
                 useCityPositionCorrection = false,
                 excludePositions = majorCities
@@ -118,7 +119,8 @@ namespace Beast.Radar.City
                 inCities = _cities,
                 inTerrain1KM = _biome.Terrain1kmCell,
                 inTerrain8KM = _biome.Terrain8kmCell,
-                outRoadCells8KM = BNative.TempList<int2>(1024)
+                inMajorRoadSpawnPriority = _config.majorRoadSpawnPriority,
+                outRoadCells8KM = BNative.TempList<int2>(1024),
             };
             _config.roadBuildCost.ToByteArray(out roadJob.inCellBiomeCost, out roadJob.inCellFeatureCost);
             
@@ -160,13 +162,13 @@ namespace Beast.Radar.City
                 {
                     majorCount++;
                     _gizmo.SetColor(Color.cyan);
-                    _gizmo.AddPoint(position, 3 * size);
+                    _gizmo.AddPoint(position, 12);
                 }
                 else
                 {
                     minorCount++;
                     _gizmo.SetColor(Color.red);
-                    _gizmo.AddPoint(position, 2f * (size + 2));
+                    _gizmo.AddPoint(position, 8);
                 }
             }
 

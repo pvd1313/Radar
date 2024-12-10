@@ -6,5 +6,10 @@ namespace Beast.Radar.City
     {
         public short2 position;
         public byte size;
+        
+        public override string ToString()
+        {
+            return $"{{position: ({position.x}, {position.y}), s{size})}}";
+        }
     }
 }

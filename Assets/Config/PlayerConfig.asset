@@ -17,17 +17,17 @@ MonoBehaviour:
   cellMovementCostConfig:
     biome:
     - biome: 1
-      cost: 5
+      cost: 2
     - biome: 2
-      cost: 5
+      cost: 2
     - biome: 6
-      cost: 5
-    - biome: 3
-      cost: 5
-    - biome: 5
-      cost: 5
+      cost: 2
     - biome: 7
-      cost: 5
+      cost: 2
+    - biome: 5
+      cost: 2
+    - biome: 3
+      cost: 2
     - biome: 4
       cost: 255
     feature:

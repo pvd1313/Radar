@@ -1,18 +1,19 @@
-﻿using System.Runtime.CompilerServices;
+﻿// #define ROAD_PROFILING
+
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Beast.Claw.Math;
 using Beast.Claw.Math.CCL;
 using Beast.Radar.Navigation;
 using Beast.Radar.Terrain;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-//using Profiler = UnityEngine.Profiling.Profiler;
-
 namespace Beast.Radar.City
 {
-    [BurstCompile]
+    [Unity.Burst.BurstCompile]
     public struct RoadSpawnJob : IJob
     {
         public NativeList<CityInfo> inCities;
@@ -20,6 +21,7 @@ namespace Beast.Radar.City
         public AveragePixelCountTexture<TerrainCell> inTerrain8KM;
         public ByteArray16 inCellBiomeCost;
         public ByteArray16 inCellFeatureCost;
+        public ERoadSpawnPriority inMajorRoadSpawnPriority;
         
         public NativeList<int2> outRoadCells8KM;
 
@@ -33,9 +35,9 @@ namespace Beast.Radar.City
                 outLabeledTexture = new NativeArray<ushort>(textureSizeX * textureSizeX, Allocator.Temp)
             };
             
-            // Profiler.BeginSample("cclJob.Execute()");
+            _beginSample("cclJob.Execute()");
             cclJob.Execute();
-            // Profiler.EndSample();
+            _endSample();
             
             using NativeTexture<ushort> labels8KM = new (cclJob.outLabeledTexture, textureSizeX);
             using NativeMultiHashMap<ushort, CityInfo> cityGroups = _groupCitiesByLabel(labels8KM);
@@ -56,29 +58,29 @@ namespace Beast.Radar.City
                 
                 cityGroup.Clear();
                 
-                // Profiler.BeginSample("cityGroups.GetValuesForKey(label)");
+                _beginSample("cityGroups.GetValuesForKey(label)");
                 foreach (CityInfo city in cityGroups.GetValuesForKey(label))
                 {
                     cityGroup.Add(city);
                 }
-                // Profiler.EndSample();
+                _endSample();
                 
-                // Profiler.BeginSample("_getMajorCitiesAndBounds");
-                using NativeList<CityInfo> majorCities = _getMajorCitiesAndBounds(cityGroup, out Bounds2D majorCityBounds);
-                // Profiler.EndSample();
+                _beginSample("_getMajorCitiesAndBounds");
+                using NativeList<CityInfo> majorCities = _getMajorCities(cityGroup);
+                _endSample();
 
                 if (majorCities.Length < 2)
                 {
                     continue;
                 }
 
-                // Profiler.BeginSample("_selectHubCity");
-                CityInfo hubCity = _selectHubCity(majorCities, majorCityBounds);
-                // Profiler.EndSample();
+                _beginSample("_selectHubCity");
+                CityInfo hubCity = _selectCityOnBorder(cityGroup);
+                _endSample();
 
-                // Profiler.BeginSample("_createRoadQueue");
-                using NativePriorityQueue<short2> roadQueue = _createRoadQueue(hubCity, majorCities);
-                // Profiler.EndSample();
+                _beginSample("_createRoadQueue");
+                using NativePriorityQueue<short2> roadQueue = _createRoadQueue(hubCity, majorCities, inMajorRoadSpawnPriority);
+                _endSample();
 
                 _buildRoads(hubCity, roadQueue, pathJobBuffer);
             }
@@ -99,11 +101,11 @@ namespace Beast.Radar.City
                     texture = new AverageBiomeTexture(inTerrain8KM)
                 };
                 
-                // Profiler.BeginSample("FindPathJob<AverageBiomeTexture>.Execute()");
+                _beginSample("FindPathJob<AverageBiomeTexture>.Execute()");
                 job.Execute();
-                // Profiler.EndSample();
+                _endSample();
 
-                // Profiler.BeginSample("for pathBuffer.outputPathReversed");
+                _beginSample("for pathBuffer.outputPathReversed");
                 for (int i = pathBuffer.outputPathReversed.Length - 1; i >= 0; i--)
                 {
                     int2 position = pathBuffer.outputPathReversed[i];
@@ -121,15 +123,35 @@ namespace Beast.Radar.City
 
                     inTerrain8KM.texture[cellIndex] = cell.AddFeature(ETerrainFeature.Road);
                 }
-                // Profiler.EndSample();
+                _endSample();
             }
         }
-        
-        private NativePriorityQueue<short2> _createRoadQueue(CityInfo hubCity, NativeList<CityInfo> majorCities)
-        {
-            NativePriorityQueue<short2> roadQueue = new(majorCities.Length, Allocator.Temp);
 
-            foreach (CityInfo city in majorCities)
+        private Bounds2D _getCityBounds(NativeList<CityInfo> cities)
+        {
+            Bounds2D bounds = Bounds2D.FromPoint(cities[0].position);
+            
+            for (int i = 1; i < cities.Length; i++)
+            {
+                bounds = bounds.EnsureContains(cities[i].position);
+            }
+
+            return bounds;
+        }
+        
+        private NativePriorityQueue<short2> _createRoadQueue(
+            CityInfo hubCity, 
+            NativeList<CityInfo> otherCities, 
+            ERoadSpawnPriority priorityMethod)
+        {
+            if (priorityMethod == ERoadSpawnPriority.None)
+            {
+                throw new ArgumentException("priorityMethod");
+            }
+            
+            NativePriorityQueue<short2> roadQueue = new(otherCities.Length, Allocator.Temp);
+
+            foreach (CityInfo city in otherCities)
             {
                 if (city.position.Equals(hubCity.position))
                 {
@@ -138,16 +160,19 @@ namespace Beast.Radar.City
 
                 float distance = BMath.Distance(city.position, hubCity.position);
 
-                roadQueue.Enqueue(city.position, 8192 - distance);
+                if (priorityMethod == ERoadSpawnPriority.FirstAreFarthest)
+                {
+                    distance = 8192 - distance;
+                }
+
+                roadQueue.Enqueue(city.position, distance);
             }
 
             return roadQueue;
         }
 
-        private NativeList<CityInfo> _getMajorCitiesAndBounds(NativeList<CityInfo> cities, out Bounds2D bounds)
+        private NativeList<CityInfo> _getMajorCities(NativeList<CityInfo> cities)
         {
-            bounds = default;
-            
             NativeList<CityInfo> major = new(128, Allocator.Temp);
             
             foreach (CityInfo city in cities)
@@ -155,21 +180,23 @@ namespace Beast.Radar.City
                 if (CitySpawner.MAJOR_CITY_SIZE.Contains(city.size))
                 {
                     major.Add(city);
-
-                    bounds = bounds.EnsureContains(city.position);
                 }
             }
 
             return major;
         }
 
-        private CityInfo _selectHubCity(NativeList<CityInfo> majorCities, Bounds2D majorCityBounds)
+        private CityInfo _selectCityOnBorder(NativeList<CityInfo> cities)
         {
+            _beginSample("_getCityBounds");
+            Bounds2D cityBounds = _getCityBounds(cities);
+            _endSample();
+            
             using NativeList<CityInfo> borderCities = new(16, Allocator.Temp); 
             
-            foreach (CityInfo city in majorCities)
+            foreach (CityInfo city in cities)
             {
-                if (majorCityBounds.IsOnBorder(city.position))
+                if (cityBounds.IsOnBorder(city.position))
                 {
                     borderCities.Add(city);
                 }
@@ -214,6 +241,18 @@ namespace Beast.Radar.City
         private int2 _cityToTexture8KMPosition(short2 cityPosition)
         {
             return (int2)cityPosition / inTerrain8KM.cellSize;
+        }
+
+        [Conditional("ROAD_PROFILING")]
+        private static void _beginSample(string name)
+        {
+            UnityEngine.Profiling.Profiler.BeginSample(name);
+        }
+
+        [Conditional("ROAD_PROFILING")]
+        private static void _endSample()
+        {
+            UnityEngine.Profiling.Profiler.EndSample();
         }
     }
 }
