@@ -392,5 +392,11 @@ namespace Beast.Claw.Math
             sin = math.sin(angleRad);
             cos = math.cos(angleRad);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Pow(int x, int y)
+        {
+            return math.pow(x, y);
+        }
     }
 }

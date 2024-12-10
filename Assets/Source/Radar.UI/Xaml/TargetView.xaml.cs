@@ -6,7 +6,7 @@ namespace Beast.Radar.UI
 {
     public class TargetView : BeastControl
     {
-        public Viewbox target;
+        public Canvas target;
         public TextBlock distanceText;
         
         private ResourceDictionary _resources;

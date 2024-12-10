@@ -2,10 +2,12 @@
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
+using Beast.Claw.Math;
 using Beast.Claw.Text;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
+using Screen = UnityEngine.Device.Screen;
 
 namespace Beast.Radar.UI.Player
 {
@@ -30,16 +32,27 @@ namespace Beast.Radar.UI.Player
         protected override UniTask _warmup(ConcurrentContext arg)
         {
             _stringBuilder = new StringBuilder(64);
+
+            float scale = 1;
             
+            if (Screen.dpi < 100)
+            {
+                float diagonalPixels = BMath.Sqrt(BMath.Pow(Screen.width, 2) + BMath.Pow(Screen.height, 2));
+                
+                float diagonalInches = diagonalPixels / Screen.dpi;
+
+                scale = diagonalInches * 0.1f;
+            }
+
             _playerData = _uiConfig.playerViewData;
             _playerData.asset.Instantiate(out _playerView);
-            _playerView.SetViewSize(_playerData.viewSize);
+            _playerView.SetViewSize(_playerData.viewSize * scale);
             _worldElement.AddElement(_playerView.player);
 
             _targetData = _uiConfig.targetViewData;
             _targetData.asset.Instantiate(out _targetView);
-            _targetView.SetViewSize(_targetData.viewSize);
-            _targetView.SetFontSize(_targetData.fontSize);
+            _targetView.SetViewSize(_targetData.viewSize * scale);
+            _targetView.SetFontSize(_targetData.fontSize * scale);
             _worldElement.AddElement(_targetView.target);
 
             _player.ChangedTarget += () =>
