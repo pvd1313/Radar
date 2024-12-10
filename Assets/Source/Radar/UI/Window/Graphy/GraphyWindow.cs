@@ -79,7 +79,8 @@ namespace Beast.Radar.UI
         private void _initialize()
         {
             _uiConfig.graphyAsset.Instantiate(out _view);
-            _windowManager.Attach(_view, 100);
+            
+            _windowManager.Attach(_view, WindowOrder.GRAPHY);
 
             _view.InitializeFpsBrushes(_config.goodFpsColor, _config.cautionFpsColor, _config.criticalFpsColor);
 

@@ -57,12 +57,12 @@ namespace Beast.Radar.UI
         {
             _uiConfig.mapGenerationWindowAsset.Instantiate(out _view);
 
-            _view.Visibility = Visibility.Collapsed;
-
-            _windowManager.Attach(_view, 1);
-
             _windowManager.Register(this, WindowID.MAP_GENERATION);
 
+            _windowManager.Attach(_view, WindowOrder.MAP_GENERATION);
+            
+            _view.Visibility = Visibility.Collapsed;
+            
             _subscribeView();
 
             return UniTask.CompletedTask;

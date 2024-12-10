@@ -18,7 +18,7 @@
             {
                 _canvas = new Canvas();
                 
-                _windowManager.Attach(_canvas, 0);
+                _windowManager.Attach(_canvas, WindowOrder.WORLD_ELEMENT);
                 
                 return UniTask.CompletedTask;
             }

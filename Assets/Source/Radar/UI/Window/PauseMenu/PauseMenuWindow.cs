@@ -46,11 +46,11 @@ namespace Beast.Radar.UI
         {
             _uiConfig.pauseWindowAsset.Instantiate(out _view);
 
-            _windowManager.Attach(_view, 1);
+            _windowManager.Register(this, WindowID.PAUSE);
+            
+            _windowManager.Attach(_view, WindowOrder.PAUSE);
             
             _view.Visibility = Visibility.Collapsed;
-            
-            _windowManager.Register(this, WindowID.PAUSE);
             
             _subscribeView();
 

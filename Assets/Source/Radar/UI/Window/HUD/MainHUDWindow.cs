@@ -57,7 +57,7 @@ namespace Beast.Radar.UI
 
             _config.HUDWindowAsset.Instantiate(out _view);
             
-            _windowManager.Attach(_view, 0);
+            _windowManager.Attach(_view, WindowOrder.HUD);
 
             _view.Visibility = Visibility.Visible;
 
