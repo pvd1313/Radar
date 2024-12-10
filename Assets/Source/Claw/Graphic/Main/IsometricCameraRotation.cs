@@ -18,6 +18,11 @@ namespace Beast.Claw.Graphic
                 roll = rotation.roll * scale
             };
         }
+
+        public bool IsZero()
+        {
+            return BMath.Approximately(roll, 0) && BMath.Approximately(pitch, 0);
+        }
         
         public static float2x2 GetScaleMatrix(float pitchRad)
         {

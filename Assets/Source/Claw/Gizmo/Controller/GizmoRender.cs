@@ -224,16 +224,24 @@ namespace Beast.Claw.Gizmo
             _shapeMaterial.SetFloat2("_ScreenSize", _canvasSize);
             _canvasMaterial.SetTexture("_Texture", _canvas);
 
-            float rollCos = BMath.Cos(_camera.RotationRad.roll);
-            float pitchCos = BMath.Cos(_camera.RotationRad.pitch);
+            if (_camera.RotationRad.IsZero())
+            {
+                _shapeMaterial.SetFloat2x2("_ViewMatrix0", float2x2.identity);
+                _shapeMaterial.SetFloat2x2("_ViewMatrix1", float2x2.identity);
+                _shapeMaterial.SetFloat("_ProjectionScale", 2f);
+            }
+            else
+            {
+                float rollCos = BMath.Cos(_camera.RotationRad.roll);
+                float pitchCos = BMath.Cos(_camera.RotationRad.pitch);
             
-            float2x2 rotation = float2x2.Rotate(_camera.RotationRad.roll * -1);
-            float2x2 scale = float2x2.Scale(1, pitchCos);
+                float2x2 rotation = float2x2.Rotate(_camera.RotationRad.roll * -1);
+                float2x2 scale = float2x2.Scale(1, pitchCos);
             
-            _shapeMaterial.SetFloat2x2("_ViewMatrix0", rotation);
-            _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
-            
-            _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
+                _shapeMaterial.SetFloat2x2("_ViewMatrix0", rotation);
+                _shapeMaterial.SetFloat2x2("_ViewMatrix1", scale);
+                _shapeMaterial.SetFloat("_ProjectionScale", 1f / (rollCos * pitchCos));
+            }
             
             Profiler.EndSample();
         }
