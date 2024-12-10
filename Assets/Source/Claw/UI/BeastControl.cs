@@ -29,7 +29,7 @@ namespace Beast.Claw.UI
             element = target;
         }
 
-        protected void _updateSafeArea( Grid window)
+        protected void _updateSafeArea(Grid window)
         {
             if (window == null)
             {

@@ -30,7 +30,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Canvas x:Name="canvas_target"  RenderTransformOrigin="0.5,0.75"
+    <Canvas x:Name="canvas_target"  RenderTransformOrigin="0.5,0.8"
             Height="{DynamicResource Size.Icon}" Width="{DynamicResource Size.Icon}" >
         <Grid Height="{DynamicResource Size.Icon}" Width="{DynamicResource Size.Icon}">
 

@@ -33,6 +33,9 @@ namespace Beast.Radar.UI
             
             _pathIconMove = (string)FindResource("Path.Icon.Move");
             _pathIconStand = (string)FindResource("Path.Icon.Stand");
+            
+            _find("grid_window", out Noesis.Grid window);
+            _updateSafeArea(window);
         }
 
         public void SetPlayerMovementState(bool hasTarget, bool isMoving)
