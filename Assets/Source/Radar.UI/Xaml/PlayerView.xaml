@@ -7,7 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    av:DesignHeight="165.777" av:DesignWidth="404.444">
 
     <noesis:Xaml.Dependencies>
         <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_character\player.png" />
@@ -18,14 +20,13 @@
             <sys:Double x:Key="Size.Icon">10</sys:Double>
             <ImageBrush x:Key="Brush.Icon"
                         ImageSource="..\..\..\Texture\Sprite\UI_character\player.png"
-                        Stretch="UniformToFill" />
+                        Stretch="Uniform" />
         </ResourceDictionary>
     </UserControl.Resources>
 
 
-    <Rectangle x:Name="view_player"
+    <Rectangle x:Name="view_player" RenderTransformOrigin="0.5,1"
                Fill="{StaticResource Brush.Icon}"
                Height="{DynamicResource Size.Icon}"
                Width="{DynamicResource Size.Icon}" />
-
 </UserControl>

@@ -1,5 +1,4 @@
 ﻿using System;
-using Unity.Mathematics;
 
 namespace Beast.Radar.UI.Player
 {
@@ -8,6 +7,5 @@ namespace Beast.Radar.UI.Player
     {
         public XamlAsset asset;
         public float viewSize;
-        public float2 offset;
     }
 }

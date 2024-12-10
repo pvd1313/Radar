@@ -33,7 +33,7 @@ MonoBehaviour:
     viewSize: 40
     offset:
       x: 0
-      y: 0
+      y: 0.75
     fontSize: 11
   citySprites:
   - {fileID: -1911697403, guid: f20d456610eb01b4da4fb7835672ad07, type: 3}

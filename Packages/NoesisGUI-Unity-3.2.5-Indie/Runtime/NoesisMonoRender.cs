@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 using UnityEngine.Rendering;
 using UnityEngine.Profiling;
 
-public class NoesisMonoRender: MonoBehaviour
+public class NoesisMonoRender : MonoBehaviour
 {
     [DllImport(Library.Name)]
     private static extern void Noesis_UnityUpdate();
-    
+
     private static class Profiling
     {
         public static readonly CustomSampler UpdateSampler = CustomSampler.Create("Noesis.Update");
@@ -19,30 +19,30 @@ public class NoesisMonoRender: MonoBehaviour
         public static readonly string RenderOnScreen = "Noesis.RenderOnscreen";
         public static readonly string RenderTexture = "Noesis.RenderTexture";
     }
-    
+
     [SerializeField] private float _tessellationMaxPixelError = TessellationMaxPixelError.MediumQuality.Error;
     [SerializeField] private RenderFlags _renderFlags = 0;
     [SerializeField] private bool _useRealTimeClock;
     [SerializeField] private bool _clearStencil;
-    
+
     private NoesisView _uiView;
     private bool _needsRendering;
-    
+
     private bool _updatePending = true;
     private int _viewSizeX;
     private int _viewSizeY;
     private float _viewScale;
     private Camera _camera;
     private CommandBuffer _commandBuffer;
-    
+
     public NoesisView Initialize(Camera unityCamera, FrameworkElement element)
     {
         _commandBuffer = new CommandBuffer();
         _camera = unityCamera;
-        
+
         Camera.onPreRender += _onPreRender;
         Camera.onPostRender += _onPostRender;
-        
+
         _createView(element);
 
         return _uiView;
@@ -78,7 +78,7 @@ public class NoesisMonoRender: MonoBehaviour
             _commandBuffer.Clear();
         }
     }
-    
+
     private void _fetchSize()
     {
         int sizeX = _camera.pixelWidth;
@@ -91,8 +91,21 @@ public class NoesisMonoRender: MonoBehaviour
             _viewSizeY = sizeY;
         }
 
-        // float scale = (!WorldSpace && _dpiScale && Screen.dpi > 0.0f) ? Screen.dpi / 96.0f : 1.0f;
-        float scale = (Screen.dpi > 0.0f) ? Screen.dpi / 144.0f : 1.0f;
+
+        float scale;
+
+        if (SystemInfo.deviceType == DeviceType.Desktop)
+        {
+            float diagonalPixels = Mathf.Sqrt(Screen.width * Screen.width + Screen.height * Screen.height);
+            
+            scale = diagonalPixels * 0.001f;
+        }
+        else
+        {
+            // float scale = (!WorldSpace && _dpiScale && Screen.dpi > 0.0f) ? Screen.dpi / 96.0f : 1.0f;
+            scale = (Screen.dpi > 0.0f) ? Screen.dpi / 144.0f : 1.0f;
+        }
+        
 
         if (!Mathf.Approximately(scale, _viewScale))
         {
@@ -123,19 +136,19 @@ public class NoesisMonoRender: MonoBehaviour
             _updatePending = false;
         }
     }
-    
+
     private void _onPostRender(Camera cam)
     {
         _commandBuffer.name = Profiling.RenderOnScreen;
-        
+
         NoesisRenderer.RenderOnscreen(_uiView, false, _commandBuffer, false, _clearStencil);
 
         Graphics.ExecuteCommandBuffer(_commandBuffer);
-        
+
         _commandBuffer.Clear();
 
         GL.InvalidateState();
-        
+
         _updatePending = true;
     }
 
@@ -143,7 +156,7 @@ public class NoesisMonoRender: MonoBehaviour
     {
         // Unity should automatically restore the render target but sometimes (for example a scene without lights)
         // it doesn't. We use this hack to flush the active render target and force unity to set the camera RT afterward
-        RenderTexture surface = RenderTexture.GetTemporary(1,1);
+        RenderTexture surface = RenderTexture.GetTemporary(1, 1);
         Graphics.SetRenderTarget(surface);
         RenderTexture.ReleaseTemporary(surface);
     }
@@ -193,7 +206,7 @@ public class NoesisMonoRender: MonoBehaviour
     {
         Camera.onPreRender -= _onPreRender;
         Camera.onPostRender -= _onPostRender;
-        
+
         if (_uiView != null)
         {
             _commandBuffer.name = Profiling.UnregisterView;

@@ -1,6 +1,7 @@
 ﻿    using Beast.Claw.Attributes;
     using Beast.Claw.GameLoop;
     using Beast.Claw.Graphic;
+    using Beast.Claw.UI;
     using Cysharp.Threading.Tasks;
     using Noesis;
     using Unity.Mathematics;
@@ -23,17 +24,21 @@
                 return UniTask.CompletedTask;
             }
             
-            public void UpdatePosition(UIElement element, float2 worldPosition, float2 offset)
+            public void UpdatePosition(FrameworkElement element, float2 worldPosition)
             {
+                float2 size = element.GetActualSize();
+
+                Point pivot = element.RenderTransformOrigin;
+                
+                float2 offset = new float2(size) - new float2(pivot.X, pivot.Y) * size;
+                
                 float2 viewport = _camera.WorldToViewport(worldPosition);
                 
                 viewport.x *= _canvas.ActualWidth;
-                
                 viewport.y *= _canvas.ActualHeight;
                 
                 Canvas.SetLeft(element, viewport.x - offset.x);
-            
-                Canvas.SetBottom(element, viewport.y - offset.x);
+                Canvas.SetBottom(element, viewport.y - offset.y);
             }
 
             public void AddElement(UIElement element)

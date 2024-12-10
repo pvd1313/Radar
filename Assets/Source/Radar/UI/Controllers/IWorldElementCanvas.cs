@@ -5,7 +5,7 @@ namespace Beast.Radar.UI
 {
     public interface IWorldElementCanvas
     {
-        void UpdatePosition(UIElement element, float2 worldPosition, float2 offset); 
+        void UpdatePosition(FrameworkElement element, float2 worldPosition); 
         
         void AddElement(UIElement element);
      
