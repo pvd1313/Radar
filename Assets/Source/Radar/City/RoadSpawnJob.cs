@@ -75,7 +75,7 @@ namespace Beast.Radar.City
                 }
 
                 _beginSample("_selectHubCity");
-                CityInfo hubCity = _selectCityOnBorder(cityGroup);
+                CityInfo hubCity = _selectCityOnBorder(majorCities);
                 _endSample();
 
                 _beginSample("_createRoadQueue");
