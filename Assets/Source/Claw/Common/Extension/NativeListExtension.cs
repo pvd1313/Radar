@@ -16,7 +16,7 @@ namespace Beast.Claw.Common
             }
         }
 
-        public static void AddRangeReverseOrder<T>(this NativeList<T> list, NativeArray<T> source) where T : unmanaged
+        public static void AddRangeReverseOrder<T>(this NativeList<T> list, NativeList<T> source) where T : unmanaged
         {
             for (int i = source.Length - 1; i >= 0; i--)
             {

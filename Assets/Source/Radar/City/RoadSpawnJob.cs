@@ -40,7 +40,7 @@ namespace Beast.Radar.City
             _endSample();
             
             using NativeTexture<ushort> labels8KM = new (cclJob.outLabeledTexture, textureSizeX);
-            using NativeMultiHashMap<ushort, CityInfo> cityGroups = _groupCitiesByLabel(labels8KM);
+            using NativeParallelMultiHashMap<ushort, CityInfo> cityGroups = _groupCitiesByLabel(labels8KM);
             using PathJobBuffer pathJobBuffer = PathJobBuffer.Create(1024, Allocator.Temp);
             using NativeArray<ushort> labels = cityGroups.GetKeyArray(Allocator.Temp);
             using NativeList<CityInfo> cityGroup = new (inCities.Length, Allocator.Temp);
@@ -222,9 +222,9 @@ namespace Beast.Radar.City
             return hub;
         }
         
-        private NativeMultiHashMap<ushort, CityInfo> _groupCitiesByLabel(NativeTexture<ushort> labels8KM)
+        private NativeParallelMultiHashMap<ushort, CityInfo> _groupCitiesByLabel(NativeTexture<ushort> labels8KM)
         {
-            NativeMultiHashMap<ushort, CityInfo> cityGroups = new(1024, Allocator.Temp);
+            NativeParallelMultiHashMap<ushort, CityInfo> cityGroups = new(1024, Allocator.Temp);
             
             foreach (CityInfo cityInfo in inCities)
             {
