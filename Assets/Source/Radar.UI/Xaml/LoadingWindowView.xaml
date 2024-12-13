@@ -1,6 +1,6 @@
 ﻿<UserControl
-    d:DesignHeight="480"
-    d:DesignWidth="960"
+    d:DesignHeight="{StaticResource Size.Screen.Height}"
+    d:DesignWidth="{StaticResource Size.Screen.Wight}"
     mc:Ignorable="d"
     x:Class="Beast.Radar.UI.LoadingWindowView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

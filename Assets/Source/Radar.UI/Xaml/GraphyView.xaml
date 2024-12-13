@@ -1,13 +1,12 @@
 ﻿<UserControl
     d:DesignHeight="{StaticResource Size.Screen.Height}"
     d:DesignWidth="{StaticResource Size.Screen.Wight}"
-    mc:Ignorable="d"
+    mc:Ignorable ="d"
     x:Class="Beast.Radar.UI.GraphyView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Beast.Radar.UI"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -442,7 +441,6 @@
 
 
                 </Grid>
-
             </Grid>
         </Viewbox>
 
@@ -495,14 +493,11 @@
                         <ColumnDefinition Width="{StaticResource Size.Offset.Content}" />
                     </Grid.ColumnDefinitions>
 
-
                     <Border
                         Grid.RowSpan="10"
                         Grid.ColumnSpan="3"
-
                         Margin="-2"
                         Style="{StaticResource Style.Border.Debug}"  IsEnabled="False" />
-
 
                     <TextBlock x:Name="text_graphicsDeviceVersion"
                                Foreground="White"

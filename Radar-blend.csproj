@@ -81,6 +81,9 @@
     <Compile Include="Assets\Source\Radar.UI\Xaml\MainHUDView.xaml.cs">
       <DependentUpon>MainHUDView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Source\Radar.UI\Xaml\MainMenuView.xaml.cs">
+      <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml.cs">
       <DependentUpon>MapGenerationWindowView.xaml</DependentUpon>
     </Compile>
@@ -1034,6 +1037,10 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
+    <Page Include="Assets\Source\Radar.UI\Xaml\MainMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Assets\Source\Radar.UI\Xaml\MapGenerationWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
@@ -1396,6 +1403,10 @@
     <Resource Include="Assets\Source\Radar.UI\Theme\Font\Inconsolata.ttf" />
     <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_0.png" />
     <Resource Include="Assets\Texture\Sprite\Screen\loading_screen_background_1.png" />
+    <Resource Include="Assets\Texture\Sprite\Reference\Main menu_3.png" />
+    <Resource Include="Assets\Texture\Sprite\Screen\screen_mainMenu.png" />
+    <Resource Include="Assets\Texture\Sprite\Texture\texture_background.png" />
+    <Resource Include="Assets\Texture\Sprite\Texture\texture_rebar.png" />
     <Content Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Documentation.html" />
     <Resource Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Doc\600px-WPFUnleashed3-2.jpg" />
     <Resource Include="Packages\NoesisGUI-Unity-3.2.5-Indie\Documentation~\Doc\600px-WPFUnleashed3-3.jpg" />
@@ -2362,6 +2373,9 @@
     <None Include="Assets\Texture\Sprite\deviceButtons.png.meta" />
     <None Include="Assets\Texture\Sprite\Screen\loading_screen_background_0.png.meta" />
     <None Include="Assets\Texture\Sprite\Screen\loading_screen_background_1.png.meta" />
+    <None Include="Assets\Texture\Sprite\Screen\screen_mainMenu.png.meta" />
+    <None Include="Assets\Texture\Sprite\Texture\texture_background.png.meta" />
+    <None Include="Assets\Texture\Sprite\Texture\texture_rebar.png.meta" />
     <None Include="Assets\Texture\Sprite\UI_character.meta" />
     <None Include="Assets\Texture\Sprite\UI_character\characters.png.meta" />
     <None Include="Assets\Texture\Sprite\UI_character\dest_mark.png.meta" />
