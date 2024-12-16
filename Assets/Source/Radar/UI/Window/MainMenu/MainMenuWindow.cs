@@ -1,7 +1,6 @@
 ﻿using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
-using Beast.Claw.UI;
 using Cysharp.Threading.Tasks;
 using Noesis;
 

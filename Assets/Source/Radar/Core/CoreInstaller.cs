@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphy;
-using Beast.Claw.UI;
 using Beast.Radar.Cinematic;
 using Beast.Radar.City;
 using Beast.Radar.GameTime;
@@ -29,9 +27,7 @@ namespace Beast.Radar.Core
         {
             // Camera
             yield return typeof(CameraTransform);
-            
-            yield return typeof(GizmoRender);
-            
+            yield return typeof(GizmoRender);   
             yield return typeof(CameraTransformController);
             
             // Main
@@ -43,6 +39,7 @@ namespace Beast.Radar.Core
             yield return typeof(RadarGraphyManager);
 
             // Windows
+            yield return typeof(MainMenuWindow);
             yield return typeof(MainHUDWindow);
             yield return typeof(PauseMenuWindow);
             yield return typeof(MapGenerationWindow);
@@ -66,11 +63,6 @@ namespace Beast.Radar.Core
             yield return typeof(Player.Player);
             yield return typeof(GameTimeScale);
             yield return typeof(PlayerWindow);
-
-            // O_o
-            /*yield return typeof(WorldViewInstance);
-            yield return typeof(PlayerViewController);*/
-            // yield return typeof(CityViewController);
         }
 
         protected override IEnumerable<Type> _bindModels()
