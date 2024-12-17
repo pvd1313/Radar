@@ -12,6 +12,8 @@
 
     <!--=== TEMPLATE ===-->
 
+
+
     <!--  template: button & repeatButton  -->
     <ControlTemplate TargetType="ButtonBase" x:Key="Template.ButtonBase">
         <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
@@ -458,6 +460,45 @@
 
     <!--=== STYLE ===-->
 
+    <!-- style: button main -->
+
+    <Style TargetType="Button" x:Key="Style.Button.Main">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button" >
+                    <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="0.1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Background="{DynamicResource Brush.Color.Solid}"
+                            BorderBrush="{DynamicResource Brush.Color.Frame}"
+                            BorderThickness="{DynamicResource Border.Normal}"/>
+                        <Border Background="{DynamicResource Brush.Texture.Noise}"/>
+
+                        <Border Grid.Row="1"
+                                Background="{DynamicResource Brush.Color.Active}"/>
+                        <Border Grid.Row="1"
+                                Background="{DynamicResource Brush.Texture.Rebar}" Opacity="0.3"/>
+
+                        <TextBlock Grid.RowSpan="1"
+                                   FontSize="20"
+                                   HorizontalAlignment="Center"
+                                   RenderTransformOrigin="0.5,0.5"
+                                   Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                                   Foreground="{StaticResource Brush.Color.Text}"
+                                   VerticalAlignment="Center">
+                        </TextBlock>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
     <!--  style: base Button  -->
     <Style BasedOn="{StaticResource {x:Type ContentControl}}" TargetType="ButtonBase" x:Key="Style.ButtonBase">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -619,7 +660,7 @@
     <!--  style: radio button base-->
     <Style TargetType="RadioButton" x:Key="Style.RadioButton.Base">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{DynamicResource Brush.Button.Normal}" />
+        <Setter Property="Background" Value="{StaticResource Brush.Button.Normal}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="0,0" />

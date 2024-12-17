@@ -3,13 +3,16 @@
     xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--=== BASE TEMPLATE ===-->
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
 
-
-    <!--=== STYLE ===-->
+    <!--=== COMPONENT STYLE ===-->
 
     <!--  style: thumb  -->
+    <!-- todo: refactoring colors -->
     <Style TargetType="Thumb" x:Key="Style.ScrollBar.Thumb">
         <Setter Property="Template">
             <Setter.Value>
@@ -34,6 +37,7 @@
     </Style>
 
     <!--  style: line button  -->
+    <!-- todo: refactoring -->
     <Style BasedOn="{StaticResource {x:Type RepeatButton}}" TargetType="RepeatButton" x:Key="Style.ScrollBar.LineButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="IsTabStop" Value="False" />
@@ -72,26 +76,12 @@
         </Setter>
     </Style>
 
-    <!--  style: page button  -->
-    <Style BasedOn="{StaticResource {x:Type RepeatButton}}" TargetType="RepeatButton" x:Key="Style.ScrollBar.PageButton">
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="ClickMode" Value="Press" />
-        <Setter Property="Delay" Value="250" />
-        <Setter Property="Interval" Value="100" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="Transparent" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
 
     <!--=== TEMPLATE ===-->
 
     <!--  template: scroll bar horizontal  -->
+    <!-- todo: refactoring animation -->
+    <!-- todo: refactoring colors -->
     <ControlTemplate TargetType="ScrollBar" x:Key="Template.ScrollBar.Horizontal">
         <ControlTemplate.Resources>
             <Geometry x:Key="Geometry.LeftArrow">M4,0L0,4 4,8</Geometry>
@@ -166,36 +156,10 @@
                 Grid.ColumnSpan="3"
                 Opacity="0"
                 x:Name="Background" />
-            <RepeatButton
-                Command="ScrollBar.LineLeftCommand"
-                Content="{StaticResource Geometry.LeftArrow}"
-                Grid.Column="0"
-                Opacity="0"
-                Style="{StaticResource Style.ScrollBar.LineButton}"
-                x:Name="LineLeftButton" />
-            <RepeatButton
-                Command="ScrollBar.LineRightCommand"
-                Content="{StaticResource Geometry.RightArrow}"
-                Grid.Column="2"
-                Opacity="0"
-                Style="{StaticResource Style.ScrollBar.LineButton}"
-                x:Name="LineRightButton" />
             <Track
                 Grid.Column="1"
                 Orientation="Horizontal"
                 x:Name="PART_Track">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton
-                        Command="ScrollBar.PageLeftCommand"
-                        Style="{StaticResource Style.ScrollBar.PageButton}"
-                        x:Name="PageLeftButton" />
-                </Track.DecreaseRepeatButton>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton
-                        Command="ScrollBar.PageRightCommand"
-                        Style="{StaticResource Style.ScrollBar.PageButton}"
-                        x:Name="IncreaseButton" />
-                </Track.IncreaseRepeatButton>
                 <Track.Thumb>
                     <Thumb
                         RenderTransformOrigin="0,0.8"
@@ -221,30 +185,16 @@
     </ControlTemplate>
 
     <!--  template: scroll bar vertical  -->
+    <!-- todo: refactoring animation -->
+    <!-- todo: refactoring colors -->
     <ControlTemplate TargetType="ScrollBar" x:Key="Template.ScrollBar.Vertical">
         <ControlTemplate.Resources>
-            <Geometry x:Key="Geometry.UpArrow">M0,4L4,0 8,4</Geometry>
-            <Geometry x:Key="Geometry.DownArrow">M0,0 L4,4 8,0</Geometry>
             <Storyboard BeginTime="0:0:0.1" x:Key="Anim.ExpandBar">
                 <DoubleAnimation
                     AccelerationRatio="0.75"
                     DecelerationRatio="0.25"
                     Duration="0:0:0.1"
                     Storyboard.TargetName="Background"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="LineUpButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="LineDownButton"
                     Storyboard.TargetProperty="Opacity"
                     To="1" />
                 <DoubleAnimation
@@ -260,20 +210,6 @@
                     DecelerationRatio="0.25"
                     Duration="0:0:0.15"
                     Storyboard.TargetName="Background"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="LineUpButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="LineDownButton"
                     Storyboard.TargetProperty="Opacity"
                     To="0" />
                 <DoubleAnimation
@@ -295,78 +231,44 @@
                 Grid.RowSpan="3"
                 Opacity="0"
                 x:Name="Background" />
-            <RepeatButton
-                Command="ScrollBar.LineUpCommand"
-                Content="{StaticResource Geometry.UpArrow}"
-                Grid.Row="0"
-                Opacity="0"
-                Style="{StaticResource Style.ScrollBar.LineButton}"
-                x:Name="LineUpButton" />
-            <RepeatButton
-                Command="ScrollBar.LineDownCommand"
-                Content="{StaticResource Geometry.DownArrow}"
-                Grid.Row="2"
-                Opacity="0"
-                Style="{StaticResource Style.ScrollBar.LineButton}"
-                x:Name="LineDownButton" />
             <Track
                 Grid.Row="1"
                 IsDirectionReversed="True"
                 Orientation="Vertical"
                 x:Name="PART_Track">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton
-                        Command="ScrollBar.PageUpCommand"
-                        Style="{StaticResource Style.ScrollBar.PageButton}"
-                        x:Name="PageUpButton" />
-                </Track.DecreaseRepeatButton>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton
-                        Command="ScrollBar.PageDownCommand"
-                        Style="{StaticResource Style.ScrollBar.PageButton}"
-                        x:Name="IncreaseButton" />
-                </Track.IncreaseRepeatButton>
                 <Track.Thumb>
                     <Thumb
-                        RenderTransformOrigin="0.8,0"
+                        RenderTransformOrigin="0.1,0.5"
                         Style="{StaticResource Style.ScrollBar.Thumb}"
                         x:Name="Thumb">
                         <Thumb.RenderTransform>
-                            <ScaleTransform ScaleX="0.2" />
+                            <ScaleTransform ScaleX="0.5" ScaleY="0.95"/>
                         </Thumb.RenderTransform>
                     </Thumb>
                 </Track.Thumb>
             </Track>
         </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Trigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.ExpandBar}" />
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.CollapseBar}" />
-                </Trigger.ExitActions>
-            </Trigger>
-        </ControlTemplate.Triggers>
+
     </ControlTemplate>
 
-    <!--  template: scroll viewer  -->
-    <ControlTemplate TargetType="ScrollViewer" x:Key="Template.ScrollViewer">
-        <Border
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}"
-            CornerRadius="{DynamicResource Corner.Border0}">
+
+    <!--  template: scroll viewer horizontal  -->
+    <!--  todo: refactoring -->
+    <ControlTemplate TargetType="ScrollViewer" x:Key="Template.ScrollViewer.Horizontal">
+        <Border>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
-                <Decorator IsEnabled="False" x:Name="ShowBarsRef" />
+
+                <ContentControl Grid.Column="0" Grid.Row="0" Template="{StaticResource Template.ContentControl.Background.Window}"></ContentControl>
+                <ContentControl Grid.Column="0" Grid.Row="1" Template="{StaticResource Template.ContentControl.Background.Window}"></ContentControl>
+
                 <ScrollContentPresenter
                     CanContentScroll="{TemplateBinding CanContentScroll}"
                     Content="{TemplateBinding Content}"
@@ -408,88 +310,49 @@
                     x:Name="PART_VerticalScrollBar" />
             </Grid>
         </Border>
-        <ControlTemplate.Resources>
-            <Storyboard BeginTime="0:0:0.1" x:Key="Anim.ShowBars">
-                <DoubleAnimation
-                    AccelerationRatio="0.5"
-                    DecelerationRatio="0.5"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="PART_HorizontalScrollBar"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-                <DoubleAnimation
-                    AccelerationRatio="0.5"
-                    DecelerationRatio="0.5"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="PART_VerticalScrollBar"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-            </Storyboard>
-            <Storyboard BeginTime="0:0:2" x:Key="Anim.HideBars">
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="PART_HorizontalScrollBar"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="PART_VerticalScrollBar"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-            </Storyboard>
-            <Storyboard BeginTime="0:0:0.1" x:Key="Anim.ShowCorner">
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="Corner"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-            </Storyboard>
-            <Storyboard BeginTime="0:0:2" x:Key="Anim.HideCorner">
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="Corner"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-            </Storyboard>
-        </ControlTemplate.Resources>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                <Setter Property="IsEnabled" TargetName="ShowBarsRef" Value="True" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="IsEnabled" TargetName="ShowBarsRef" Value="True" />
-            </Trigger>
-            <Trigger Property="IsEnabled" SourceName="ShowBarsRef" Value="True">
-                <Trigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.ShowBars}" />
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <!--          <BeginStoryboard Storyboard="{StaticResource Anim.HideBars}" />  -->
-                </Trigger.ExitActions>
-            </Trigger>
-            <Trigger Property="IsMouseOver" SourceName="PART_HorizontalScrollBar" Value="True">
-                <Setter Property="IsEnabled" TargetName="Corner" Value="True" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" SourceName="PART_VerticalScrollBar" Value="True">
-                <Setter Property="IsEnabled" TargetName="Corner" Value="True" />
-            </Trigger>
-            <Trigger Property="IsEnabled" SourceName="Corner" Value="True">
-                <Trigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Anim.ShowCorner}" />
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <!--     <BeginStoryboard Storyboard="{StaticResource Anim.HideCorner}" /> -->
-                </Trigger.ExitActions>
-            </Trigger>
-        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--  template: scroll viewer  -->
+    <ControlTemplate TargetType="ScrollViewer" x:Key="Template.ScrollViewer.Vertical">
+        <Border>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="15" />
+                </Grid.ColumnDefinitions>
+
+                <ContentControl Grid.Column="0" Grid.Row="0"
+                                Template="{StaticResource Template.ContentControl.Background.Window}"
+                                Tag="5"
+                                Background="{StaticResource Brush.Panel.Dark.Normal}"/>
+
+                <ContentControl Grid.Column="3" Grid.Row="0"
+                                Template="{StaticResource Template.ContentControl.Background.Window}"
+                                Tag="0,5,5,5"
+                                Background="Black"/>
+
+                <ScrollContentPresenter
+                    CanContentScroll="{TemplateBinding CanContentScroll}"
+                    Content="{TemplateBinding Content}"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                    Grid.ColumnSpan="2"
+                    Margin="{TemplateBinding Padding}" />
+
+                <ScrollBar
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    MaxWidth="{TemplateBinding MinWidth}"
+                    Maximum="{TemplateBinding ScrollableHeight}"
+                    Minimum="0"
+                    Opacity="1"
+                    Orientation="Vertical"
+                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                    ViewportSize="{TemplateBinding ViewportHeight}"
+                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                    x:Name="PART_VerticalScrollBar" />
+            </Grid>
+        </Border>
     </ControlTemplate>
 
 
@@ -519,9 +382,19 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="PanningMode" Value="VerticalFirst" />
-        <Setter Property="Template" Value="{StaticResource Template.ScrollViewer}" />
+        <Setter Property="Template" Value="{StaticResource Template.ScrollViewer.Vertical}" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
     </Style>
 
+
+    <!--=== STYLE ===-->
+
+    <Style BasedOn="{StaticResource {x:Type ContentControl}}" TargetType="ScrollViewer" x:Key="Style.ScrollView.Vertical">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="PanningMode" Value="VerticalFirst" />
+        <Setter Property="Template" Value="{StaticResource Template.ScrollViewer.Vertical}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Style.Focus.Outer.Uniform}" />
+    </Style>
 
 </ResourceDictionary>

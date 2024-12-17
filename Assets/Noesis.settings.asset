@@ -17,8 +17,8 @@ MonoBehaviour:
   applicationResources: {fileID: -8414808784256213763, guid: 955e005f63be2104c8357db7815c75cc, type: 3}
   applicationResourcesHash:
     serializedVersion: 2
-    Hash: e8f8c3635326d44a65bbb6c9ce5f3119
-  defaultFont: {fileID: 913751575213456102, guid: 1a3a59d50bece7f4cbfe5ce761d49f88, type: 3}
+    Hash: 424f26e6450d36bed4e54850c78d899e
+  defaultFont: {fileID: 913751575213456102, guid: 9b802fb205185214791392e32970671c, type: 3}
   loadPlatformFonts: 1
   defaultFontSize: 15
   defaultFontWeight: 400

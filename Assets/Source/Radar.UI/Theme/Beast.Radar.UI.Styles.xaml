@@ -9,25 +9,22 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
-    </ResourceDictionary.MergedDictionaries>
-
-
     <GridLength x:Key="Size.SafeArea.Left">0</GridLength>
     <GridLength x:Key="Size.SafeArea.Right">0</GridLength>
 
     <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
     <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
 
+
     <sys:Double x:Key="Size.Button.Scale.Small">40</sys:Double>
     <sys:Double x:Key="Size.Button.Scale.Medium">50</sys:Double>
+    <GridLength x:Key="Size.Button.Height.GL">30</GridLength>
+
 
     <sys:Double x:Key="Size.Screen.Wight">1920</sys:Double>
     <sys:Double x:Key="Size.Screen.Height">1080</sys:Double>
 
-    <sys:Double x:Key="Size.Button.Border">1</sys:Double>
+    <sys:Double x:Key="Size.Button.Border">2</sys:Double>
 
     <Thickness x:Key="Border.Normal">1</Thickness>
     <Thickness x:Key="Border.Box">1</Thickness>
@@ -140,35 +137,14 @@
 
 
     <!--  template: content control  -->
-
     <ControlTemplate TargetType="ContentControl" x:Key="Template.ContentControl.Background.Window">
         <Grid>
-            <Rectangle Fill="{StaticResource Brush.Panel.Dark.Normal}" />
-            <Rectangle Opacity="0.6">
-                <Rectangle.Fill>
-                    <ImageBrush
-                        ImageSource="..\..\..\Texture\Sprite\Texture\texture_rebar.png"
-                        Stretch="Fill"
-                        TileMode="Tile"
-                        Viewport="0,0,16,16"
-                        ViewportUnits="Absolute" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Rectangle Fill="{StaticResource Brush.Panel.Dark.Normal}" Margin="5" />
-            <Rectangle Margin="5">
-                <Rectangle.Fill>
-                    <ImageBrush
-                        ImageSource="..\..\..\Texture\Sprite\Texture\texture_background.png"
-                        Stretch="Fill"
-                        TileMode="FlipXY"
-                        Viewport="0,0,682,341"
-                        ViewportUnits="Absolute" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <ContentPresenter Panel.ZIndex="1" />
+            <Rectangle Fill="{StaticResource Brush.Color.Solid}" />
+            <Rectangle Fill="{StaticResource Brush.Texture.Rebar}"/>
+            <Rectangle Fill="{TemplateBinding Background}" Margin="{TemplateBinding Tag}" />
+            <Rectangle Fill="{StaticResource Brush.Texture.Window}" Margin="{TemplateBinding Tag}"/>
         </Grid>
     </ControlTemplate>
-
 
 
 

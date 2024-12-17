@@ -1,5 +1,18 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- figma -->
+
+    <Color x:Key="Color.Solid">#1A1A19</Color>
+    <Color x:Key="Color.Shadow">#000000</Color>
+    <Color x:Key="Color.Frame">#353535</Color>
+    <Color x:Key="Color.Text">#F6FCDF</Color>
+    <Color x:Key="Color.Active">#FD7014</Color>
+    <Color x:Key="Color.Active.Pressed">#FD7014</Color>
+
+
+    <!-- legacy -->
 
     <Color x:Key="Color.Dark.Alpa">#CC151515</Color>
 
