@@ -13,14 +13,12 @@
 
     <noesis:Xaml.Dependencies>
         <noesis:Dependency Source="..\..\..\Texture\Sprite\Screen\screen_mainMenu.png"  />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_Main\icon_discord.png"  />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_Main\icon_youtube.png"  />
     </noesis:Xaml.Dependencies>
 
     <UserControl.Resources>
         <ResourceDictionary>
-
-            <sys:String x:Key="Path.Screen">Assets/Texture/Sprite/Screen/screen_mainMenu.png</sys:String>
-
-            <Thickness x:Key="Margin.Buttons">0 0 15 0</Thickness>
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.xaml" />
@@ -28,6 +26,13 @@
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Scroll.xaml" />
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <sys:String x:Key="Path.Screen">Assets/Texture/Sprite/Screen/screen_mainMenu.png</sys:String>
+            <sys:String x:Key="Path.Icon.Discord">Assets/Texture/Sprite/UI_main/icon_discord.png</sys:String>
+            <sys:String x:Key="Path.Icon.Youtube">Assets/Texture/Sprite/UI_main/icon_youtube.png</sys:String>
+
+            <Thickness x:Key="Margin.Buttons.Down">0 0 15 0</Thickness>
+            <Thickness x:Key="Margin.Buttons.Top">0 0 10 0</Thickness>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -39,9 +44,11 @@
         </Grid.Background>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
             <RowDefinition Height="15"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="0"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -53,7 +60,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Grid Grid.Column="2" Grid.Row="1" >
+        <Grid Grid.Column="2" Grid.Row="2" >
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.4*"/>
@@ -61,7 +68,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="{StaticResource Size.Button.Icon.Height.GL}"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="{StaticResource Size.Button.Height.GL}"/>
             </Grid.RowDefinitions>
@@ -71,15 +78,12 @@
                           VerticalScrollBarVisibility="Visible"
                           Background="Transparent"  Padding="5">
                 <StackPanel x:Name="stack_updates" Margin="10,5,10,5">
-                    <TextBlock Style="{StaticResource Style.Text.Light.Header}" Text="dsdasdadas">
 
-                    </TextBlock>
                 </StackPanel>
             </ScrollViewer>
 
-
+            <!-- down buttons -->
             <Grid Grid.Column="0" Grid.Row="2">
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
@@ -88,16 +92,36 @@
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="button_continue"
-                        Style="{StaticResource Style.Button.Main}" Margin="{StaticResource Margin.Buttons}"  Tag="CONTINUE"/>
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="CONTINUE"/>
 
                 <Button x:Name="button_new_game" Grid.Column="1"
-                        Style="{StaticResource Style.Button.Main}" Margin="{StaticResource Margin.Buttons}"  Tag="NEW GAME"/>
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="NEW GAME"/>
 
                 <Button x:Name="button_options" Grid.Column="2"
-                        Style="{StaticResource Style.Button.Main}" Margin="{StaticResource Margin.Buttons}"  Tag="OPTIONS"/>
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="OPTIONS"/>
 
                 <Button x:Name="button_about" Grid.Column="3"
-                        Style="{StaticResource Style.Button.Main}" Margin="{StaticResource Margin.Buttons}"  Tag="ABOUT"/>
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="ABOUT"/>
+
+            </Grid>
+
+            <!-- top buttons -->
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5.8*"/>
+                    <ColumnDefinition Width="0.9*"/>
+                    <ColumnDefinition Width="0.9*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="button_youtube" Grid.Column="1"
+                        Style="{StaticResource Style.Button.Main.Icon}"
+                        Margin="{StaticResource Margin.Buttons.Top}"
+                        Tag="{StaticResource Path.Icon.Youtube}"/>
+
+                <Button x:Name="button_discord" Grid.Column="2"
+                        Style="{StaticResource Style.Button.Main.Icon}"
+                        Margin="{StaticResource Margin.Buttons.Top}"
+                        Tag="{StaticResource Path.Icon.Discord}"/>
 
 
             </Grid>

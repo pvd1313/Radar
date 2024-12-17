@@ -35,9 +35,9 @@
 
     <Grid x:Name="grid_window">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width ="{StaticResource Size.SafeArea.Left}" />
+            <ColumnDefinition Width ="0" />
             <ColumnDefinition Width ="*" />
-            <ColumnDefinition Width ="{StaticResource Size.SafeArea.Right}" />
+            <ColumnDefinition Width ="0" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>

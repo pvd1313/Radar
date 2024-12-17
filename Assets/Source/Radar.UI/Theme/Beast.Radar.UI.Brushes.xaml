@@ -5,14 +5,17 @@
         <ResourceDictionary Source="Beast.Radar.UI.Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-
     <!-- colors-->
     <SolidColorBrush x:Key="Brush.Color.Solid" Color="{StaticResource Color.Solid}" />
     <SolidColorBrush x:Key="Brush.Color.Shadow" Color="{StaticResource Color.Shadow}" Opacity="0.3" />
     <SolidColorBrush x:Key="Brush.Color.Frame" Color="{StaticResource Color.Frame}" />
+
     <SolidColorBrush x:Key="Brush.Color.Text" Color="{StaticResource Color.Text}" />
+    <SolidColorBrush x:Key="Brush.Color.Text.Disable" Color="{StaticResource Color.Text.Disable}" />
+
     <SolidColorBrush x:Key="Brush.Color.Active" Color="{StaticResource Color.Active}" />
     <SolidColorBrush x:Key="Brush.Color.Active.Pressed" Color="{StaticResource Color.Active.Pressed}" />
+    <SolidColorBrush x:Key="Brush.Color.Active.Disable" Color="{StaticResource Color.Active.Disable}" />
 
     <!-- texure-->
     <ImageBrush x:Key="Brush.Texture.Rebar"
@@ -35,6 +38,7 @@
                 TileMode="Tile"
                 Viewport="0,0,32,32"
                 ViewportUnits="Absolute" />
+
 
 
 

@@ -7,9 +7,13 @@
     <Color x:Key="Color.Solid">#1A1A19</Color>
     <Color x:Key="Color.Shadow">#000000</Color>
     <Color x:Key="Color.Frame">#353535</Color>
+
     <Color x:Key="Color.Text">#F6FCDF</Color>
+    <Color x:Key="Color.Text.Disable">#5d6469</Color>
+
     <Color x:Key="Color.Active">#FD7014</Color>
-    <Color x:Key="Color.Active.Pressed">#FD7014</Color>
+    <Color x:Key="Color.Active.Pressed">#E04D05</Color>
+    <Color x:Key="Color.Active.Disable">#353535</Color>
 
 
     <!-- legacy -->

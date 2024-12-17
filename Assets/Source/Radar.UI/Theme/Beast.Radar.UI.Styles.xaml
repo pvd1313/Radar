@@ -9,22 +9,30 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <GridLength x:Key="Size.SafeArea.Left">0</GridLength>
-    <GridLength x:Key="Size.SafeArea.Right">0</GridLength>
 
     <sys:Double x:Key="Size.ScrollBar">17</sys:Double>
-    <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
 
-
-    <sys:Double x:Key="Size.Button.Scale.Small">40</sys:Double>
-    <sys:Double x:Key="Size.Button.Scale.Medium">50</sys:Double>
-    <GridLength x:Key="Size.Button.Height.GL">30</GridLength>
 
 
     <sys:Double x:Key="Size.Screen.Wight">1920</sys:Double>
     <sys:Double x:Key="Size.Screen.Height">1080</sys:Double>
 
+
+    <GridLength x:Key="Size.Button.Height.GL">30</GridLength>
+    <sys:Double x:Key="Size.Button.Height">30</sys:Double>
+    <GridLength x:Key="Size.Button.Icon.Height.GL">45</GridLength>
+    <sys:Double x:Key="Size.Button.Icon.Height">40</sys:Double>
+
+    <!-- legacy -->
+    <sys:Double x:Key="Size.Button.Scale.Small">40</sys:Double>
+    <sys:Double x:Key="Size.Button.Scale.Medium">50</sys:Double>
     <sys:Double x:Key="Size.Button.Border">2</sys:Double>
+
+
+    <sys:Double x:Key="Size.GroupBox.Border">1</sys:Double>
+
+
+
 
     <Thickness x:Key="Border.Normal">1</Thickness>
     <Thickness x:Key="Border.Box">1</Thickness>
