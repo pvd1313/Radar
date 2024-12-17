@@ -12,6 +12,7 @@
     <SolidColorBrush x:Key="Brush.Color.Frame" Color="{StaticResource Color.Frame}" />
     <SolidColorBrush x:Key="Brush.Color.Text" Color="{StaticResource Color.Text}" />
     <SolidColorBrush x:Key="Brush.Color.Active" Color="{StaticResource Color.Active}" />
+    <SolidColorBrush x:Key="Brush.Color.Active.Pressed" Color="{StaticResource Color.Active.Pressed}" />
 
     <!-- texure-->
     <ImageBrush x:Key="Brush.Texture.Rebar"
@@ -36,7 +37,7 @@
                 ViewportUnits="Absolute" />
 
 
-    
+
     <!-- legacy -->
 
     <SolidColorBrush x:Key="Brush.Text.Light.Normal" Color="{StaticResource Color.Gray3}" />

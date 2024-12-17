@@ -6,6 +6,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.xaml" />
+        <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 
@@ -18,57 +19,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <Grid Background="Transparent">
-                        <Border Background="{DynamicResource Brush.Thumb.Normal}" x:Name="Thumb" />
+                        <Border Background="{DynamicResource Brush.Color.Active}" x:Name="Thumb" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="Thumb" Value="{DynamicResource Brush.Thumb.Over}" />
-                        </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter Property="Background" TargetName="Thumb" Value="{DynamicResource Brush.Thumb.Pressed}" />
+                            <Setter Property="Background" TargetName="Thumb" Value="{DynamicResource Brush.Color.Active.Pressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" TargetName="Thumb" Value="{DynamicResource Brush.Thumb.Disabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!--  style: line button  -->
-    <!-- todo: refactoring -->
-    <Style BasedOn="{StaticResource {x:Type RepeatButton}}" TargetType="RepeatButton" x:Key="Style.ScrollBar.LineButton">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="ClickMode" Value="Press" />
-        <Setter Property="Delay" Value="250" />
-        <Setter Property="Interval" Value="100" />
-        <Setter Property="Width" Value="{DynamicResource Size.ScrollBar}" />
-        <Setter Property="Height" Value="{DynamicResource Size.ScrollBar}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="Transparent" x:Name="Border">
-                        <Path
-                            Data="{TemplateBinding Content}"
-                            HorizontalAlignment="Center"
-                            Stroke="{DynamicResource Brush.Glyph.Normal}"
-                            VerticalAlignment="Center"
-                            x:Name="Arrow" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Background.Normal}" />
-                            <Setter Property="Stroke" TargetName="Arrow" Value="{DynamicResource Brush.Glyph.Over}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="Border" Value="{DynamicResource Brush.Thumb.Pressed}" />
-                            <Setter Property="Stroke" TargetName="Arrow" Value="{DynamicResource Brush.Glyph.Pressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Stroke" TargetName="Arrow" Value="{DynamicResource Brush.Glyph.Disabled}" />
+                            <Setter Property="Background" TargetName="Thumb" Value="{DynamicResource Brush.Color.Active}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -94,20 +52,7 @@
                     Storyboard.TargetName="Background"
                     Storyboard.TargetProperty="Opacity"
                     To="1" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="LineLeftButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.1"
-                    Storyboard.TargetName="LineRightButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="1" />
+
                 <DoubleAnimation
                     DecelerationRatio="0.5"
                     Duration="0:0:0.1"
@@ -123,20 +68,7 @@
                     Storyboard.TargetName="Background"
                     Storyboard.TargetProperty="Opacity"
                     To="0" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="LineLeftButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
-                <DoubleAnimation
-                    AccelerationRatio="0.75"
-                    DecelerationRatio="0.25"
-                    Duration="0:0:0.15"
-                    Storyboard.TargetName="LineRightButton"
-                    Storyboard.TargetProperty="Opacity"
-                    To="0" />
+
                 <DoubleAnimation
                     DecelerationRatio="0.5"
                     Duration="0:0:0.15"
@@ -238,11 +170,12 @@
                 x:Name="PART_Track">
                 <Track.Thumb>
                     <Thumb
+                        Margin="0,5,0,5"
                         RenderTransformOrigin="0.1,0.5"
                         Style="{StaticResource Style.ScrollBar.Thumb}"
                         x:Name="Thumb">
                         <Thumb.RenderTransform>
-                            <ScaleTransform ScaleX="0.5" ScaleY="0.95"/>
+                            <ScaleTransform ScaleX="0.5" ScaleY="1"/>
                         </Thumb.RenderTransform>
                     </Thumb>
                 </Track.Thumb>
@@ -284,6 +217,7 @@
                     IsEnabled="False"
                     Opacity="0"
                     x:Name="Corner" />
+
                 <ScrollBar
                     Grid.Column="0"
                     Grid.Row="1"
@@ -296,18 +230,7 @@
                     ViewportSize="{TemplateBinding ViewportWidth}"
                     Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
                     x:Name="PART_HorizontalScrollBar" />
-                <ScrollBar
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    MaxWidth="{TemplateBinding MinWidth}"
-                    Maximum="{TemplateBinding ScrollableHeight}"
-                    Minimum="0"
-                    Opacity="1"
-                    Orientation="Vertical"
-                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                    ViewportSize="{TemplateBinding ViewportHeight}"
-                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                    x:Name="PART_VerticalScrollBar" />
+
             </Grid>
         </Border>
     </ControlTemplate>

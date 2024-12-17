@@ -24,6 +24,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Text.xaml" />
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Scroll.xaml" />
                 <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -66,15 +67,14 @@
             </Grid.RowDefinitions>
 
             <ScrollViewer Grid.Column="1" Grid.RowSpan="3"
-
                           Style="{DynamicResource  Style.ScrollView.Vertical}"
                           VerticalScrollBarVisibility="Visible"
                           Background="Transparent"  Padding="5">
+                <StackPanel x:Name="stack_updates" Margin="10,5,10,5">
+                    <TextBlock Style="{StaticResource Style.Text.Light.Header}" Text="dsdasdadas">
 
-                <StackPanel Grid.Row="1" Margin="10,5,10,5">
-
+                    </TextBlock>
                 </StackPanel>
-
             </ScrollViewer>
 
 

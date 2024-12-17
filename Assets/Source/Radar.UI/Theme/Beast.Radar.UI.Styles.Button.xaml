@@ -12,8 +12,6 @@
 
     <!--=== TEMPLATE ===-->
 
-
-
     <!--  template: button & repeatButton  -->
     <ControlTemplate TargetType="ButtonBase" x:Key="Template.ButtonBase">
         <Grid RenderTransformOrigin="0.5,0.5" x:Name="TemplateRoot">
@@ -484,7 +482,7 @@
                                 Background="{DynamicResource Brush.Texture.Rebar}" Opacity="0.3"/>
 
                         <TextBlock Grid.RowSpan="1"
-                                   FontSize="20"
+                                   FontSize="{StaticResource Font.Size.Normal}"
                                    HorizontalAlignment="Center"
                                    RenderTransformOrigin="0.5,0.5"
                                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"

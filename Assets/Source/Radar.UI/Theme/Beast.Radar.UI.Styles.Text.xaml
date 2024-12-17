@@ -5,13 +5,27 @@
     <!--  TextBox  -->
     <Style TargetType="TextBlock" x:Key="Style.Text.Light.Normal">
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Normal}" />
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Normal}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Color.Text}" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="Style.Text.Light.Header">
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Light.Normal}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Color.Text}" />
     </Style>
+
+
+    <Style TargetType="TextBlock" x:Key="Style.Text.Active.Normal">
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Normal}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Color.Active}" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="Style.Text.Active.Header">
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
+        <Setter Property="Foreground" Value="{StaticResource Brush.Color.Active}" />
+    </Style>
+
+
+
 
     <Style TargetType="TextBlock" x:Key="Style.Text.Dark.Header">
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Header}" />
