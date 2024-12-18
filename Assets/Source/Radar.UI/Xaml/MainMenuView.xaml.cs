@@ -1,91 +1,56 @@
-﻿using System.Collections.Generic;
-using Beast.Claw.UI;
+﻿using Beast.Claw.UI;
 using Noesis;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace Beast.Radar.UI
 {
     public class MainMenuView : BeastControl
     {
-        public StackPanel scroll_items;
+        public Button button_discord;
+        public Button button_youtube;
+        public Button button_continue;
+        public Button button_newGame;
+        public Button button_options;
+        public Button button_about;
 
-
+        private StackPanel _scroll_items;
         private Style _versionStyle;
         private Style _descriptionStyle;
+
         public override void BindElements()
         {
             _versionStyle = (Style)Resources["Style.Text.Active.Header"];
             _descriptionStyle = (Style)Resources["Style.Text.Light.Normal"];
             
-            _find("stack_updates", out  scroll_items);
+            _find("button_discord", out button_discord);
+            _find("button_youtube", out button_youtube);
+            _find("button_continue", out button_continue);
+            _find("button_new_game", out button_newGame);
+            _find("button_options", out button_options);
+            _find("button_about", out button_about);
+            _find("stack_updates", out _scroll_items);
             
-            var versionChanges = new List<VersionChange>
-            {
-                new VersionChange { Version = "v1.0", Description = "Initial release with basic features." },
-                new VersionChange { Version = "v1.1", Description = "Bug fixes and performance improvements." },
-                new VersionChange { Version = "v2.0", Description = "Major update with new UI redesign." }
-            };
-            
-            AddVersionDescription("-v.1","\tdsajdjasl");
-            AddVersionDescription("-v.2","\tdafasdfdsfs\n\tfdfds");
-            AddVersionDescription("-v.3","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.4","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");         AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-            AddVersionDescription("-v.5","\tdafasdfdsfs \n\tfdfds");
-
-            Debug.Log($"{scroll_items.Children.Count}");
+            _find("grid_window", out Grid grid_window);
+            _updateSafeArea(grid_window);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="description">max 55 chars in line</param>
         public void AddVersionDescription(string version, string description)
         {
-            TextBlock versionText = new TextBlock()
+            _scroll_items.Children.Add(new TextBlock()
             {
                 Text = version,
-               Style = _versionStyle
-            };
+                Style = _versionStyle
+            });
             
-            scroll_items.Children.Add(versionText);
-            Panel.SetZIndex(versionText,2);
-            
-            scroll_items.Children.Add(new TextBlock()
+            _scroll_items.Children.Add(new TextBlock()
             {
                 Text = description,
                 Style = _descriptionStyle
             });
         }
-    }
-    
-    public class VersionChange
-    {
-        public string Version { get; set; }
-        public string Description { get; set; }
     }
 }

@@ -51,34 +51,28 @@ namespace Beast.Radar.Core
                 
                 await _save.LoadAsync(_integratedSave.gameModel);
 
-                await _windowManager.Open.HUD();
+                //todo https://risenbeast.youtrack.cloud/issue/R-114/UI-on-boot
+                //await _windowManager.Open.HUD();
+          
+                await _windowManager.Open.MainMenu(new MainMenuWindowInput
+                {
+                    //isSaveExist = ?
+                });
             
                 return;
             }
-
-            Action nextAction;
-
+            
             bool saveExists = _save.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                
+            
+            EActionStatus result = EActionStatus.Invalid;
+            
             if (saveExists)
             {
                 await tracker.Next("Loading game save");
-                EActionStatus result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-
-                if (result == EActionStatus.Success)
-                {
-                    nextAction = () => _windowManager.Open.HUD();
-                }
-                else
-                {
-                    nextAction = () => _windowManager.Open.MapGeneration();
-                }
+           
+                result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             }
-            else
-            {
-                nextAction = () => _windowManager.Open.MapGeneration();
-            }
-
+            
             await tracker.Next("Waiting for player input");
 
             await _windowManager.Open.LoadingScreen(new LoadingWindowInput
@@ -86,7 +80,10 @@ namespace Beast.Radar.Core
                 clearLastProgress = false,
                 currentProgress = 1,
                 progressTracker = null,
-                nextAction = nextAction
+                nextAction = () => _windowManager.Open.MainMenu(new MainMenuWindowInput
+                {
+                    isSaveExist = result == EActionStatus.Success
+                })
             });
         }
     }
