@@ -43,8 +43,10 @@ namespace Beast.Claw.Common
         public async UniTask Next(string stepName)
         {
             bool delayFrame = false;
+
+            float progress01 = BMath.Lerp(_progressMin, _progressMax, _currentStep / (float)_stageStepCount);
             
-            if (_timer.ElapsedMilliseconds > FRAME_UPDATE_TRIGGER_MS || _currentStep == 0)
+            if (_timer.ElapsedMilliseconds > FRAME_UPDATE_TRIGGER_MS || _currentStep == 0 || progress01 >= 1)
             {
                 delayFrame = true;
                 
@@ -54,7 +56,7 @@ namespace Beast.Claw.Common
             _listener?.UpdateProgress(new ProgressTrackerInfo
             {
                 currentStepName = stepName,
-                progress01 = BMath.Lerp(_progressMin, _progressMax, _currentStep / (float)_stageStepCount),
+                progress01 = progress01,
                 updateDisplay = delayFrame
             });
 

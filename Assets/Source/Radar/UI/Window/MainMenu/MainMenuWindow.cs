@@ -84,7 +84,10 @@ namespace Beast.Radar.UI
             
             _view.buttonNewGame.Click += (_, _) =>
             {
-                _windowManager.Open.MapGeneration();
+                _windowManager.Open.MapGeneration(new MapGenerationWindowData
+                {
+                    cancelAction = () => _windowManager.Open.MainMenu()
+                });
             };
 
             // TODO: https://risenbeast.youtrack.cloud/issue/R-115/Options-and-about-UI-windows
