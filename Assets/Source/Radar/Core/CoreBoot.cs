@@ -14,8 +14,8 @@ namespace Beast.Radar.Core
 {
     public class CoreBoot : Controller, ICoreBoot
     {
-        [Required] private readonly IWindowManager _windowManager;
-        [Required] private readonly ISaveManager _save;
+        [Required] private readonly IWindowManager _window;
+        [Required] private readonly ISaveManager _saveManager;
         [Required] private readonly IntegratedSave _integratedSave;
         [Required] private readonly IGameLoop _gameLoop;
         [Required] private readonly IWorldManager _worldManager;
@@ -49,42 +49,14 @@ namespace Beast.Radar.Core
                 
                 _worldManager.AddWorld(_integratedSave.worldData);
                 
-                await _save.LoadAsync(_integratedSave.gameModel);
-
-                //todo https://risenbeast.youtrack.cloud/issue/R-114/UI-on-boot
-                //await _windowManager.Open.HUD();
-          
-                await _windowManager.Open.MainMenu(new MainMenuWindowInput
-                {
-                    //isSaveExist = ?
-                });
+                await _saveManager.LoadAsync(_integratedSave.gameModel);
+            
+                await _window.Open.HUD();
             
                 return;
             }
-            
-            bool saveExists = _save.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-            
-            EActionStatus result = EActionStatus.Invalid;
-            
-            if (saveExists)
-            {
-                await tracker.Next("Loading game save");
-           
-                result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-            }
-            
-            await tracker.Next("Waiting for player input");
 
-            await _windowManager.Open.LoadingScreen(new LoadingWindowInput
-            {
-                clearLastProgress = false,
-                currentProgress = 1,
-                progressTracker = null,
-                nextAction = () => _windowManager.Open.MainMenu(new MainMenuWindowInput
-                {
-                    isSaveExist = result == EActionStatus.Success
-                })
-            });
+            await _window.Open.MainMenu();
         }
     }
 }

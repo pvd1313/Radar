@@ -9,7 +9,7 @@ namespace Beast.Radar.UI
         private readonly IWindowHandle<Empty> _hud;
         private readonly IWindowHandle<Empty> _pause;
         private readonly IWindowHandle<Empty> _mapGeneration;
-        private readonly IWindowHandle<MainMenuWindowInput> _mainMenu;
+        private readonly IWindowHandle<Empty> _mainMenu;
 
         public WindowOpener(IWindowManager manager)
         {
@@ -17,7 +17,7 @@ namespace Beast.Radar.UI
             _hud = manager.GetHandle<Empty>(this, WindowID.HUD);
             _pause = manager.GetHandle<Empty>(this, WindowID.PAUSE);
             _mapGeneration = manager.GetHandle<Empty>(this, WindowID.MAP_GENERATION);
-            _mainMenu = manager.GetHandle<MainMenuWindowInput>(this, WindowID.MAIN_MENU);
+            _mainMenu = manager.GetHandle<Empty>(this, WindowID.MAIN_MENU);
         }
 
         public UniTask LoadingScreen(LoadingWindowInput input)
@@ -40,9 +40,9 @@ namespace Beast.Radar.UI
             return _hud.Open(default);
         }
         
-        public UniTask MainMenu(MainMenuWindowInput data)
+        public UniTask MainMenu()
         {
-            return _mainMenu.Open(data);
+            return _mainMenu.Open(default);
         }
     }
 }

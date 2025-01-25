@@ -1,21 +1,24 @@
 ﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
+using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using Noesis;
 using UnityEngine;
 
 namespace Beast.Radar.UI
 {
-    public class MainMenuWindow : Actor, IWindow<MainMenuWindowInput>
+    public class MainMenuWindow : Actor, IWindow<Empty>
     {
         [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly UIConfig _config;
+        [Required] private readonly ISaveManager _saveManager;
 
         private MainMenuView _view;
         
-        public UniTask Open(MainMenuWindowInput data)
+        public UniTask Open(Empty data)
         {
-            _view.button_continue.IsEnabled = data.isSaveExist;
+            _view.buttonContinue.IsEnabled = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
             
             _view.Visibility = Visibility.Visible;
             
@@ -48,31 +51,47 @@ namespace Beast.Radar.UI
 
         private void _subscribe()
         {
-            _view.button_youtube.Click += (_, _) =>
+            _view.buttonYoutube.Click += (_, _) =>
             {
                 Application.OpenURL("https://www.youtube.com/@risenbeast-xxx");
             };
             
-            _view.button_discord.Click += (_, _) =>
+            _view.buttonDiscord.Click += (_, _) =>
             {
                 Application.OpenURL("https://discord.gg/wV97uSE5Cs");
             };
 
-            _view.button_continue.Click += (_, _) =>
+            _view.buttonContinue.Click += async (_, _) =>
             {
-                _windowManager.Open.HUD();
+                ProgressTracker tracker = new ();
+
+                tracker.Begin(1, 1);
+                
+                await _windowManager.Open.LoadingScreen(new LoadingWindowInput
+                {
+                    clearLastProgress = true,
+                    currentProgress = 0,
+                    nextAction = () => _windowManager.Open.HUD(),
+                    progressTracker = tracker
+                });
+                
+                await tracker.Next("Loading game save");
+                
+                await _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+                
+                await tracker.Next("Waiting for player input");
             };
             
-            _view.button_newGame.Click += (_, _) =>
+            _view.buttonNewGame.Click += (_, _) =>
             {
                 _windowManager.Open.MapGeneration();
             };
 
-            //todo: https://risenbeast.youtrack.cloud/issue/R-115/Options-and-about-UI-windows
-            _view.button_options.IsEnabled = false;
+            // TODO: https://risenbeast.youtrack.cloud/issue/R-115/Options-and-about-UI-windows
+            _view.buttonOptions.IsEnabled = false;
             
-            //todo: https://risenbeast.youtrack.cloud/issue/R-115/Options-and-about-UI-windows
-            _view.button_about.IsEnabled = false;
+            // TODO: https://risenbeast.youtrack.cloud/issue/R-115/Options-and-about-UI-windows
+            _view.buttonAbout.IsEnabled = false;
         }
     }
 }
