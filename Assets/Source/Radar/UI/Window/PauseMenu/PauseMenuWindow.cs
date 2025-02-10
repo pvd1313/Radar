@@ -1,6 +1,5 @@
 ﻿using Beast.Claw.Attributes;
 using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
@@ -103,9 +102,16 @@ namespace Beast.Radar.UI
 
             _view.buttonNewGame.Click += (_, _) =>
             {
-                _windowManager.Open.MapGeneration();
+                _windowManager.Open.MapGeneration(new MapGenerationWindowData
+                {
+                    cancelAction = () => _windowManager.Open.HUD()
+                });
             };
 
+            _view.buttonMainMenu.Click += (_, _) =>
+            {
+                _windowManager.Open.MainMenu();
+            };
             
             _view.buttonNextMovement.Click += (_, _) =>
             {

@@ -1,0 +1,134 @@
+﻿<UserControl
+    x:Class="Beast.Radar.UI.MainMenuView"
+    d:DesignHeight="{StaticResource Size.Screen.Height}"
+    d:DesignWidth="{StaticResource Size.Screen.Wight}"
+    mc:Ignorable ="d"
+    xmlns:local="clr-namespace:Beast.Radar.UI"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions">
+
+    <noesis:Xaml.Dependencies>
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\Screen\screen_mainMenu.png"  />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_Main\icon_discord.png"  />
+        <noesis:Dependency Source="..\..\..\Texture\Sprite\UI_Main\icon_youtube.png"  />
+    </noesis:Xaml.Dependencies>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Text.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Scroll.xaml" />
+                <ResourceDictionary Source="..\Theme\Beast.Radar.UI.Styles.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <sys:String x:Key="Path.Screen">Assets/Texture/Sprite/Screen/screen_mainMenu.png</sys:String>
+            <sys:String x:Key="Path.Icon.Discord">Assets/Texture/Sprite/UI_main/icon_discord.png</sys:String>
+            <sys:String x:Key="Path.Icon.Youtube">Assets/Texture/Sprite/UI_main/icon_youtube.png</sys:String>
+
+            <Thickness x:Key="Margin.Buttons.Down">0 0 15 0</Thickness>
+            <Thickness x:Key="Margin.Buttons.Top">0 0 10 0</Thickness>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <Grid x:Name="grid_window">
+        <Grid.Background>
+            <ImageBrush ImageSource="..\..\..\Texture\Sprite\Screen\screen_mainMenu.png" Stretch="Fill"/>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="0"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="0"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid Grid.Column="2" Grid.Row="2" >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.4*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{StaticResource Size.Button.Icon.Height.GL}"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="{StaticResource Size.Button.Height.GL}"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Grid.Column="1" Grid.RowSpan="3"
+                          Style="{DynamicResource  Style.ScrollView.Vertical}"
+                          VerticalScrollBarVisibility="Visible"
+                          Background="Transparent"  Padding="5">
+                <StackPanel x:Name="stack_updates" Margin="10,5,10,5">
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- down buttons -->
+            <Grid Grid.Column="0" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="button_continue"
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="CONTINUE"/>
+
+                <Button x:Name="button_new_game" Grid.Column="1"
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="NEW GAME"/>
+
+                <Button x:Name="button_options" Grid.Column="2"
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="OPTIONS"/>
+
+                <Button x:Name="button_about" Grid.Column="3"
+                        Style="{StaticResource Style.Button.Main.Text}" Margin="{StaticResource Margin.Buttons.Down}"  Tag="ABOUT"/>
+
+            </Grid>
+
+            <!-- top buttons -->
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5.8*"/>
+                    <ColumnDefinition Width="0.9*"/>
+                    <ColumnDefinition Width="0.9*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="button_youtube" Grid.Column="1"
+                        Style="{StaticResource Style.Button.Main.Icon}"
+                        Margin="{StaticResource Margin.Buttons.Top}"
+                        Tag="{StaticResource Path.Icon.Youtube}"/>
+
+                <Button x:Name="button_discord" Grid.Column="2"
+                        Style="{StaticResource Style.Button.Main.Icon}"
+                        Margin="{StaticResource Margin.Buttons.Top}"
+                        Tag="{StaticResource Path.Icon.Discord}"/>
+
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+
+</UserControl>

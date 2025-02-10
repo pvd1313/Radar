@@ -7,7 +7,6 @@ using Beast.Radar.Player;
 using Beast.Radar.GameTime;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using Rect = UnityEngine.Rect;
 
 namespace Beast.Radar.UI
 {

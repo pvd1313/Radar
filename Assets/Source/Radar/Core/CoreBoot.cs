@@ -14,8 +14,8 @@ namespace Beast.Radar.Core
 {
     public class CoreBoot : Controller, ICoreBoot
     {
-        [Required] private readonly IWindowManager _windowManager;
-        [Required] private readonly ISaveManager _save;
+        [Required] private readonly IWindowManager _window;
+        [Required] private readonly ISaveManager _saveManager;
         [Required] private readonly IntegratedSave _integratedSave;
         [Required] private readonly IGameLoop _gameLoop;
         [Required] private readonly IWorldManager _worldManager;
@@ -49,45 +49,14 @@ namespace Beast.Radar.Core
                 
                 _worldManager.AddWorld(_integratedSave.worldData);
                 
-                await _save.LoadAsync(_integratedSave.gameModel);
-
-                await _windowManager.Open.HUD();
+                await _saveManager.LoadAsync(_integratedSave.gameModel);
+            
+                await _window.Open.HUD();
             
                 return;
             }
 
-            Action nextAction;
-
-            bool saveExists = _save.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                
-            if (saveExists)
-            {
-                await tracker.Next("Loading game save");
-                EActionStatus result = await _save.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-
-                if (result == EActionStatus.Success)
-                {
-                    nextAction = () => _windowManager.Open.HUD();
-                }
-                else
-                {
-                    nextAction = () => _windowManager.Open.MapGeneration();
-                }
-            }
-            else
-            {
-                nextAction = () => _windowManager.Open.MapGeneration();
-            }
-
-            await tracker.Next("Waiting for player input");
-
-            await _windowManager.Open.LoadingScreen(new LoadingWindowInput
-            {
-                clearLastProgress = false,
-                currentProgress = 1,
-                progressTracker = null,
-                nextAction = nextAction
-            });
+            await _window.Open.MainMenu();
         }
     }
 }

@@ -4,10 +4,8 @@
     mc:Ignorable="d"
     x:Class="Beast.Radar.UI.MainHUDView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -37,9 +35,9 @@
 
     <Grid x:Name="grid_window">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width ="{StaticResource Size.SafeArea.Left}" />
+            <ColumnDefinition Width ="0" />
             <ColumnDefinition Width ="*" />
-            <ColumnDefinition Width ="{StaticResource Size.SafeArea.Right}" />
+            <ColumnDefinition Width ="0" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>

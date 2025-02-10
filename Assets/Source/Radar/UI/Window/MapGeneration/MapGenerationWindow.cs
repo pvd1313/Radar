@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -12,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Beast.Radar.UI
 {
-    public class MapGenerationWindow : Actor, IWindow<Empty>
+    public class MapGenerationWindow : Actor, IWindow<MapGenerationWindowData>
     {
         [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly MapGenerationWindowConfig _generationConfig;
@@ -28,14 +29,17 @@ namespace Beast.Radar.UI
         private ImageBrush _terrainBrush;
         private TextureSource _terrainTextureSource;
         private int _seedIndex;
+        private Action _cancelAction;
 
-        public UniTask Open(Empty data)
+        public UniTask Open(MapGenerationWindowData data)
         {
             _configureView();
 
             _drawTexture();
 
             _view.Visibility = Visibility.Visible;
+
+            _cancelAction = data.cancelAction;
 
             return UniTask.CompletedTask;
         }
@@ -100,17 +104,19 @@ namespace Beast.Radar.UI
             _view.buttonCreate.Click += (_, _) =>
             {
                 _newGameSetup.StartNewGame(_terrainData);
+                
                 _windowManager.Open.HUD();
             };
 
             _view.buttonClose.Click += (_, _) =>
             {
-                _windowManager.Open.HUD();
+                _cancelAction?.Invoke();
             };
 
             _view.buttonNextSeed.Click += (_, _) =>
             {
                 _seedIndex++;
+                
                 if (_seedIndex == _generationConfig.seeds.Length)
                 {
                     _seedIndex = 0;
@@ -163,7 +169,7 @@ namespace Beast.Radar.UI
             {
                 _terrainData.biomeSize01 = args.NewValue / 100;
                 _drawTexture();
-                BDebug.Track(this, "biome size", _terrainData.biomeSize01);
+                BDebug.Track(this, "biome_size", _terrainData.biomeSize01);
             };
         }
         
