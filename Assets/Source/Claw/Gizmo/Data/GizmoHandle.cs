@@ -1,6 +1,4 @@
-﻿using System;
-using Beast.Claw.Common;
-using Beast.Claw.Jobs;
+﻿using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -10,19 +8,18 @@ namespace Beast.Claw.Gizmo
 {
     public class GizmoHandle : IGizmoHandle
     {
-        private const int POINT_PIXEL_SIZE = 4;
+        private const int POINT_SIZE = 4;
         
         public bool IsDisposed { get; private set; }
-        
-        public NativeArray<ushort> buffer;
-        public int shapeCount;
+
+        public PixelStream pixelStream;
 
         private ushort _colorX;
         private ushort _colorY;
 
-        public GizmoHandle()
+        public GizmoHandle(int pixelPerEntity)
         {
-            _ensureCapacity(128);
+            pixelStream = new PixelStream(pixelPerEntity, Allocator.Persistent, false);
             
             BConvert.ColorToHalf2(Color.white, out _colorX, out _colorY);
         }
@@ -34,92 +31,55 @@ namespace Beast.Claw.Gizmo
 
         public void Clear()
         {
-            shapeCount = 0;
+            pixelStream.Clear();
         }
 
         public void AddPoint(float2 position)
         {
-            AddPoint(position, POINT_PIXEL_SIZE);
+            AddPoint(position, POINT_SIZE);
         }
         
         // In the future we will probably create NativeBinaryStream,
         // so we will have to forget about this byte boilerplate.
         public void AddPoint(float2 position, float pixelSize)
         {
-            _ensureCapacity(shapeCount + 1);
+            NativeSlice<ushort> buffer = pixelStream.WriteNextEntity();
             
-            int offset = shapeCount * BGizmo.FLOAT_PER_SHAPE;
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
             
-            buffer[offset + 0] = BConvert.FloatToHalf(0);
-            buffer[offset + 1] = BConvert.FloatToHalf(pixelSize);
-            buffer[offset + 2] = _colorX;
-            buffer[offset + 3] = _colorY;
-            buffer[offset + 4] = px0;
-            buffer[offset + 5] = px1;
-            buffer[offset + 6] = py0;
-            buffer[offset + 7] = py1;
-
-            shapeCount++;
-        }
-
-        public void OverrideLastPoint(float2 position, float size)
-        {
-            if (shapeCount == 0)
-            {
-                throw new InvalidOperationException("No shapes. Nothing to override");
-            }
-
-            shapeCount--;
-
-            AddPoint(position, size);
+            buffer[0] = BConvert.FloatToHalf(0);
+            buffer[1] = BConvert.FloatToHalf(pixelSize);
+            buffer[2] = _colorX;
+            buffer[3] = _colorY;
+            buffer[4] = px0;
+            buffer[5] = px1;
+            buffer[6] = py0;
+            buffer[7] = py1;
         }
 
         public void AddQuad(float2 position, float worldSize)
         {
-            _ensureCapacity(shapeCount + 1);
+            NativeSlice<ushort> buffer = pixelStream.WriteNextEntity();
             
-            int offset = shapeCount * BGizmo.FLOAT_PER_SHAPE;
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
             
-            buffer[offset + 0] = BConvert.FloatToHalf(1);
-            buffer[offset + 1] = BConvert.FloatToHalf(worldSize);
-            buffer[offset + 2] = _colorX;
-            buffer[offset + 3] = _colorY;
-            buffer[offset + 4] = px0;
-            buffer[offset + 5] = px1;
-            buffer[offset + 6] = py0;
-            buffer[offset + 7] = py1;
-
-            shapeCount++;
-        }
-
-        private void _ensureCapacity(int targetCapacity)
-        {
-            if (buffer.IsCreated && buffer.Length > targetCapacity * BGizmo.FLOAT_PER_SHAPE)
-            {
-                return;
-            }
-
-            int newCapacity = BMath.CeilToInt(targetCapacity * BGizmo.FLOAT_PER_SHAPE / 128.0f) * 128;
-            NativeArray<ushort> newBuffer = BNative.PermArray<ushort>(newCapacity);
-
-            if (buffer.IsCreated)
-            {
-                newBuffer.CopyFromDifferenceSize(buffer);
-                buffer.Dispose();
-            }
-
-            buffer = newBuffer;
+            buffer[0] = BConvert.FloatToHalf(1);
+            buffer[1] = BConvert.FloatToHalf(worldSize);
+            buffer[2] = _colorX;
+            buffer[3] = _colorY;
+            buffer[4] = px0;
+            buffer[5] = px1;
+            buffer[6] = py0;
+            buffer[7] = py1;
         }
 
         public void Dispose()
         {
             IsDisposed = true;
             
-            buffer.Dispose();
+            pixelStream.Dispose();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Gizmo
@@ -13,8 +12,6 @@ namespace Beast.Claw.Gizmo
         void AddPoint(float2 position);
         
         void AddPoint(float2 position, float size);
-
-        void OverrideLastPoint(float2 position, float size);
         
         void AddQuad(float2 position, float worldSize);
 

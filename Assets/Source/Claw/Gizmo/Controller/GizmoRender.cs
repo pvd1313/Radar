@@ -24,6 +24,7 @@ namespace Beast.Claw.Gizmo
         }
 
         private const int MAX_TEXTURE_SIZE = 128;
+        private const int PIXEL_PER_ENTITY = 2;
         
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly IScreen _screen;
@@ -36,7 +37,7 @@ namespace Beast.Claw.Gizmo
         private Material _shapeMaterial;
 
         private Texture2D[] _texturePool;
-        private NativeArray<ushort> _floatBuffer;
+        private PixelStream _pixelStream;
 
         private CommandBuffer _commandBuffer;
 
@@ -49,7 +50,7 @@ namespace Beast.Claw.Gizmo
 
             HandleInfo info = new ()
             {
-                handle = new GizmoHandle(),
+                handle = new GizmoHandle(PIXEL_PER_ENTITY),
                 owner = owner,
             };
 
@@ -85,6 +86,8 @@ namespace Beast.Claw.Gizmo
             _commandBuffer = new CommandBuffer();
 
             _canvas = _setupCanvas(_screen.Size);
+
+            _pixelStream = new PixelStream(PIXEL_PER_ENTITY, Allocator.Persistent, true);
             
             return UniTask.CompletedTask;
         }
@@ -98,9 +101,9 @@ namespace Beast.Claw.Gizmo
                 _canvas = _setupCanvas(_screen.Size);
             }
 
-            int shapeCount = 0;
+            Profiler.BeginSample("UnionBuffers");
+            _pixelStream.Clear();
             
-            Profiler.BeginSample("CreateFloatBuffer");
             for (int i = 0; i < _handles.Count; i++)
             {
                 HandleInfo handle = _handles[i];
@@ -111,27 +114,21 @@ namespace Beast.Claw.Gizmo
                     continue;
                 }
 
-                int handleShapeCount = handle.handle.shapeCount;
-                if (handleShapeCount == 0)
+                if (handle.handle.pixelStream.EntityCount == 0)
                 {
                     continue;
                 }
-                
-                BGizmo.EnsureCapacity(ref _floatBuffer, shapeCount + handleShapeCount);
-                
-                _floatBuffer.Slice(shapeCount * BGizmo.FLOAT_PER_SHAPE, handleShapeCount * BGizmo.FLOAT_PER_SHAPE)
-                    .CopyFrom(handle.handle.buffer.Slice(0, handleShapeCount * BGizmo.FLOAT_PER_SHAPE));
 
-                shapeCount += handleShapeCount;
+                _pixelStream.AddEntitiesFrom(handle.handle.pixelStream);
             }
             Profiler.EndSample();
 
-            if (shapeCount == 0)
+            if (_pixelStream.EntityCount == 0)
             {
                 return;
             }
 
-            int textureSize = BMath.CeilToInt(BMath.Sqrt(_floatBuffer.Length / 4.0f));
+            int textureSize = _pixelStream.GetRequiredTextureSize();
             if (textureSize > MAX_TEXTURE_SIZE)
             {
                 BDebug.LogError(this, $"Too big gizmo buffer: ({textureSize * textureSize})");
@@ -142,8 +139,7 @@ namespace Beast.Claw.Gizmo
             Texture2D texture = _texturePool[texturePower2];
                 
             Profiler.BeginSample("SetPixelData");
-            texture.SetPixelData(_floatBuffer, 0);
-            texture.Apply();
+            _pixelStream.CopyToTexture(texture);
             Profiler.EndSample();
 
             if (_prevTexturePower != texturePower2)
@@ -168,14 +164,14 @@ namespace Beast.Claw.Gizmo
             
             GL.Clear(true, true, Color.clear);
 
-            if (_prevShapeCount != shapeCount)
+            if (_prevShapeCount != _pixelStream.EntityCount)
             {
                 Profiler.BeginSample("SetCommandBufferParams");
                 _commandBuffer.Clear();
                 _commandBuffer.SetRenderTarget(_canvas);
-                _commandBuffer.DrawMeshInstancedProcedural(_config.quadMesh, 0, _shapeMaterial, 0, shapeCount);
+                _commandBuffer.DrawMeshInstancedProcedural(_config.quadMesh, 0, _shapeMaterial, 0, _pixelStream.EntityCount);
                 Profiler.EndSample();
-                _prevShapeCount = shapeCount;
+                _prevShapeCount = _pixelStream.EntityCount;
             }
 
             Profiler.BeginSample("ExecuteCommandBuffer");
@@ -255,7 +251,7 @@ namespace Beast.Claw.Gizmo
                 BGraphic.Dispose(texture);
             }
 
-            _floatBuffer.Dispose();
+            _pixelStream.Dispose();
             _commandBuffer.Dispose();
 
             BGraphic.Dispose(_canvasMaterial);
