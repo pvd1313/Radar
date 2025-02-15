@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
-    public struct PixelStream
+    public struct HalfStream
     {
         public int EntityCount => _entityCount;
         
@@ -20,7 +20,7 @@ namespace Beast.Claw.Graphic
         private NativeArray<ushort> _buffer;
         private int _entityCount;
         
-        public PixelStream(int pixelPerEntity, Allocator allocator, bool usePotResize)
+        public HalfStream(int pixelPerEntity, Allocator allocator, bool usePotResize)
         {
             if (pixelPerEntity < 0 || pixelPerEntity > 63)
             {
@@ -56,7 +56,7 @@ namespace Beast.Claw.Graphic
             return _buffer.Slice((_entityCount - 1) * _halfPerEntity, _halfPerEntity);
         }
 
-        public void AddEntitiesFrom(PixelStream source)
+        public void AddStream(HalfStream source)
         {
             if (_halfPerEntity != source._halfPerEntity)
             {
@@ -74,6 +74,25 @@ namespace Beast.Claw.Graphic
             targetSlice.CopyFrom(sourceSlice);
             
             _entityCount += source._entityCount;
+        }
+
+        public void AddSlice(NativeSlice<ushort> source)
+        {
+            if (source.Length % _halfPerEntity != 0)
+            {
+                throw new InvalidOperationException("Source slice has invalid entity count");
+            }
+
+            int sourceEntityCount = source.Length / _halfPerEntity;
+
+            _ensureCapacity(_entityCount + sourceEntityCount);
+            
+            NativeSlice<ushort> targetSlice =
+                _buffer.Slice(_entityCount * _halfPerEntity, sourceEntityCount * _halfPerEntity);
+            
+            targetSlice.CopyFrom(source);
+            
+            _entityCount += sourceEntityCount;
         }
 
         public void Clear()

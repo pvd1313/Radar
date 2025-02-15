@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.ECS;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphy;
 using Beast.Radar.Cinematic;
@@ -9,6 +10,7 @@ using Beast.Radar.GameTime;
 using Beast.Radar.NewGame;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
+using Beast.Radar.Sprite;
 using Beast.Radar.Terrain;
 using Beast.Radar.UI;
 using Beast.Radar.UI.Player;
@@ -37,6 +39,9 @@ namespace Beast.Radar.Core
             yield return typeof(NewGameSetup);
             yield return typeof(WorldManager);
             yield return typeof(RadarGraphyManager);
+            
+            yield return typeof(EntityManager);
+            yield return typeof(SpriteRender);
 
             // Windows
             yield return typeof(MainMenuWindow);
@@ -54,7 +59,10 @@ namespace Beast.Radar.Core
             yield return typeof(TerrainPreviewRender);
             yield return typeof(TerrainBakedBiome);
             yield return typeof(TerrainBiomeTest);
+            
+            // City
             yield return typeof(CitySpawner);
+            yield return typeof(CitySpriteManager);
             
             // Player
             yield return typeof(WorldElementCanvas);

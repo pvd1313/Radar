@@ -130,15 +130,15 @@
                 return input.noiseColor;
 #endif
                 
-                half3 mainColor = tex2D(_TileAtlas, input.mainUV);
+                float3 mainColor = tex2D(_TileAtlas, input.mainUV);
 
-                clip(mainColor.r + mainColor.g + mainColor.b - 0.01f);
+                beast_clip_black_color(mainColor);
 
-                half3 centerColor = tex2D(_TileAtlas, input.centerUV);
+                float3 centerColor = tex2D(_TileAtlas, input.centerUV);
                 
                 mainColor = lerp(mainColor, centerColor, input.blendPower);
                 
-                return half4(mainColor.r, mainColor.g, mainColor.b, 1);
+                return float4(mainColor.r, mainColor.g, mainColor.b, 1);
             }
             
             ENDCG

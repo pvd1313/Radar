@@ -8,6 +8,16 @@ struct BeastIsometricTile
     float isInner01;
 };
 
+struct BeastWorld2ClipMatrix
+{
+    float4 viewMatrix0;
+    float4 viewMatrix1;
+    float projectionScale;
+    float2 renderCenter;
+    float renderDistance;
+    float2 screenSize;
+};
+
 // 0 1 2
 //  3 4
 // 5 6 7
@@ -80,6 +90,30 @@ inline float4 beast_tex2Dlod(sampler2D text, float2 uv, float lod)
     return tex2Dlod(text, uvLod);
 }
 
+inline void beast_get_data_vector(
+    sampler2D dataTexture,
+    float dataTextureSize,
+    uint index,
+    out half h0,
+    out half h1,
+    out half h2,
+    out half h3)
+{
+    float texelSize = 1.0f / dataTextureSize;
+                
+    uint x = index % (uint) dataTextureSize;
+    uint y = index / (uint) dataTextureSize;
+                
+    float2 uv = float2(x, y) * texelSize + texelSize * 0.5f;
+
+    half4 color = beast_tex2Dlod(dataTexture, uv, 0);
+
+    h0 = color.r;
+    h1 = color.g;
+    h2 = color.b;
+    h3 = color.a;
+}
+
 float4 beast_half2_to_rgba(half half0, half half1)
 {
     float u0 = (float)f32tof16(half0);
@@ -90,6 +124,29 @@ float4 beast_half2_to_rgba(half half0, half half1)
     float b = floor(u1 / 128.0);
     float a = u1 - (b * 128.0);
     return float4(r, g, b, a) / 127.0;
+}
+
+inline void beast_clip_black_color(float3 color)
+{
+    clip(color.r + color.g + color.b - 0.01);
+}
+
+float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos)
+{
+    float aspect = mat.screenSize.x / mat.screenSize.y;
+
+    worldPos = worldPos - mat.renderCenter;
+                
+    worldPos = mul(float2x2(mat.viewMatrix0), worldPos);
+    worldPos = mul(float2x2(mat.viewMatrix1), worldPos);
+                
+    worldPos /= mat.renderDistance;
+    worldPos.x /= aspect;
+    worldPos *= mat.projectionScale;
+
+    worldPos.y *= _ProjectionParams.x;
+                
+    return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE, 1.0f);
 }
 
 float beast_half2_to_float(half half0, half half1)

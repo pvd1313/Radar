@@ -12,14 +12,14 @@ namespace Beast.Claw.Gizmo
         
         public bool IsDisposed { get; private set; }
 
-        public PixelStream pixelStream;
+        public HalfStream halfStream;
 
         private ushort _colorX;
         private ushort _colorY;
 
         public GizmoHandle(int pixelPerEntity)
         {
-            pixelStream = new PixelStream(pixelPerEntity, Allocator.Persistent, false);
+            halfStream = new HalfStream(pixelPerEntity, Allocator.Persistent, false);
             
             BConvert.ColorToHalf2(Color.white, out _colorX, out _colorY);
         }
@@ -31,7 +31,7 @@ namespace Beast.Claw.Gizmo
 
         public void Clear()
         {
-            pixelStream.Clear();
+            halfStream.Clear();
         }
 
         public void AddPoint(float2 position)
@@ -43,7 +43,7 @@ namespace Beast.Claw.Gizmo
         // so we will have to forget about this byte boilerplate.
         public void AddPoint(float2 position, float pixelSize)
         {
-            NativeSlice<ushort> buffer = pixelStream.WriteNextEntity();
+            NativeSlice<ushort> buffer = halfStream.WriteNextEntity();
             
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
@@ -60,7 +60,7 @@ namespace Beast.Claw.Gizmo
 
         public void AddQuad(float2 position, float worldSize)
         {
-            NativeSlice<ushort> buffer = pixelStream.WriteNextEntity();
+            NativeSlice<ushort> buffer = halfStream.WriteNextEntity();
             
             BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
             BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
@@ -79,7 +79,7 @@ namespace Beast.Claw.Gizmo
         {
             IsDisposed = true;
             
-            pixelStream.Dispose();
+            halfStream.Dispose();
         }
     }
 }

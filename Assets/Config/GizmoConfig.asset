@@ -15,3 +15,4 @@ MonoBehaviour:
   canvasShader: {fileID: 4800000, guid: 7d280ee9b1890d54ea81a80c221b6813, type: 3}
   shapeShader: {fileID: 4800000, guid: 27ad613794a6e694c9f9c6fa499692a6, type: 3}
   quadMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  entityTextureMaxSize: 128

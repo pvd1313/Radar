@@ -11,6 +11,7 @@ namespace Beast.Claw.Gizmo
         public Shader canvasShader;
         public Shader shapeShader;
         public Mesh quadMesh;
+        public int entityTextureMaxSize;
         
         public override IEnumerable<IConfig> Bind()
         {

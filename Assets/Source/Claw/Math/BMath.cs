@@ -279,6 +279,12 @@ namespace Beast.Claw.Math
         {
             return math.floorlog2(a);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int IntCeilLog2(int a)
+        {
+            return math.ceillog2(a);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double2 Floor(double2 vector)

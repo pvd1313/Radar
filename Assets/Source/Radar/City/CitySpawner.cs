@@ -14,8 +14,6 @@ using Unity.Mathematics;
 using UnityEngine.Profiling;
 
 using Color = UnityEngine.Color;
-using Random = Unity.Mathematics.Random;
-using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
@@ -33,7 +31,7 @@ namespace Beast.Radar.City
 
         private IGizmoHandle _gizmo;
         private NativeList<CityInfo> _cities;
-
+        
         private TerrainData _bakedForTerrain;
 
         protected override UniTask _warmup(ConcurrentContext context)
@@ -69,7 +67,7 @@ namespace Beast.Radar.City
             _cities = BNative.PermList<CityInfo>(maxCityCount);
 
             using NativeHashSet<short2> majorCities = 
-                BNative.TempHashSet<short2>(majorCityCountX * majorCityCountX);
+                BNative.TempJobHashSet<short2>(majorCityCountX * majorCityCountX);
 
             CitySpawnJob majorCitySpawnJob = new ()
             {
@@ -120,7 +118,7 @@ namespace Beast.Radar.City
                 inTerrain1KM = _biome.Terrain1kmCell,
                 inTerrain8KM = _biome.Terrain8kmCell,
                 inMajorRoadSpawnPriority = _config.majorRoadSpawnPriority,
-                outRoadCells8KM = BNative.TempList<int2>(1024),
+                outRoadCells8KM = BNative.TempJobList<int2>(1024),
             };
             _config.roadBuildCost.ToByteArray(out roadJob.inCellBiomeCost, out roadJob.inCellFeatureCost);
             
