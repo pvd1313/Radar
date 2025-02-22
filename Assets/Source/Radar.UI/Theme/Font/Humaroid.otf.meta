@@ -13,7 +13,8 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontNames: []
+  fontNames:
+  - Humaroid
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Object = UnityEngine.Object;
 namespace Beast.Radar.Editor.Atlas
 {
     [Serializable]
-    public class TextureHelper
+    public class TextureHelper : Controller
     {
         public float GetSpriteHeight(Texture texture)
         {

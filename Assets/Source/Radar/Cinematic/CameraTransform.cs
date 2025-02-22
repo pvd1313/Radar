@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Xml.Schema;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
@@ -118,6 +119,22 @@ namespace Beast.Radar.Cinematic
             float2 screen = bottomLeft + _localToWorld(viewport * new float2(_screen.Aspect, 1) * viewDistance);
 
             return new float2(screen.x, screen.y);
+        }
+
+        public Bounds2D GetViewBounds()
+        {
+            float2 pos0 = ViewportToWorld(new float2(0, 0));
+            float2 pos1 = ViewportToWorld(new float2(0, 1));
+            float2 pos2 = ViewportToWorld(new float2(1, 0));
+            float2 pos3 = ViewportToWorld(new float2(1, 1));
+
+            float xMin = BMath.Min(BMath.Min(pos0.x, pos1.x), BMath.Min(pos2.x, pos3.x));
+            float xMax = BMath.Max(BMath.Max(pos0.x, pos1.x), BMath.Max(pos2.x, pos3.x));
+
+            float yMin = BMath.Min(BMath.Min(pos0.y, pos1.y), BMath.Min(pos2.y, pos3.y));
+            float yMax = BMath.Max(BMath.Max(pos0.y, pos1.y), BMath.Max(pos2.y, pos3.y));
+            
+            return new Bounds2D(xMin, xMax, yMin, yMax);
         }
 
         public float2 WorldToViewport(float2 worldPoint)

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math.CCL;
 using Beast.Radar.Terrain;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Beast.Radar.City
 {
-    public class DebugBiomeCCLExporter
+    public class DebugBiomeCCLExporter : Controller
     {
         [Conditional("DEVELOPMENT")]
         public void Export(AveragePixelCountTexture<TerrainCell> texture, string path)

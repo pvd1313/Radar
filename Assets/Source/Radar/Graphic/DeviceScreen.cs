@@ -19,6 +19,7 @@ namespace Beast.Radar.Graphic
         {
             BDebug.Track(this, nameof(Size), Size);
             BDebug.Track(this, nameof(Aspect), Aspect);
+            BDebug.Track(this, nameof(Dpi), Dpi);
         }
     }
 }

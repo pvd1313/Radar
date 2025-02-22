@@ -109,6 +109,8 @@ namespace Beast.Claw.ECS
         protected override void _dispose(BlockingContext obj)
         {
             _world.EntityManager.DestroyAndResetAllEntities();
+            
+            _world.Dispose();
         }
     }
 }

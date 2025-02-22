@@ -30,11 +30,17 @@ namespace Beast.Radar.Sprite
 
             for (int i = 0; i < chunk.Count; i++)
             {
-                float2 position = positions[i].value;
                 ushort spriteID = sprites[i].value;
 
-                SpriteInfo sprite = spritesData[spriteID];
+                if (spriteID == 0)
+                {
+                    continue;
+                }
+                
+                float2 position = positions[i].value;
 
+                SpriteInfo sprite = spritesData[spriteID];
+                
                 BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
                 BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
 

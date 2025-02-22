@@ -11,13 +11,13 @@ namespace Beast.Claw.Graphic
         {
             renderTexture.ValidateNotNullThrowException(nameof(renderTexture));
 
-            if (PERMANENT_TEXTURES.Remove(renderTexture))
+            if (_permRenderTexture.Remove(renderTexture))
             {
                 renderTexture.Release();
                 return;
             }
 
-            if (TEMPORARY_TEXTURES.Remove(renderTexture))
+            if (_tempRenderTexture.Remove(renderTexture))
             {
                 RenderTexture.ReleaseTemporary(renderTexture);
                 return;
@@ -37,6 +37,8 @@ namespace Beast.Claw.Graphic
         {
             texture.ValidateNotNullThrowException(nameof(texture));
 
+            _texture2D.Remove(texture);
+
             Object.Destroy(texture);
         }
         
@@ -52,10 +54,26 @@ namespace Beast.Claw.Graphic
                 return false;
             }
 
+            _texture2D.Remove(texture);
+
             Object.Destroy(texture);
 
             texture = null;
 
+            return true;
+        }
+
+        public static bool TryDispose(ref Mesh mesh)
+        {
+            if (mesh == null)
+            {
+                return false;
+            }
+
+            Object.Destroy(mesh);
+
+            mesh = null;
+            
             return true;
         }
 
@@ -66,14 +84,14 @@ namespace Beast.Claw.Graphic
                 return false;
             }
 
-            if (PERMANENT_TEXTURES.Remove(renderTexture))
+            if (_permRenderTexture.Remove(renderTexture))
             {
                 renderTexture.Release();
                 renderTexture = null;
                 return true;
             }
 
-            if (TEMPORARY_TEXTURES.Remove(renderTexture))
+            if (_tempRenderTexture.Remove(renderTexture))
             {
                 RenderTexture.ReleaseTemporary(renderTexture);
                 renderTexture = null;

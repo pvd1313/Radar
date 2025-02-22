@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
 using Beast.Claw.Debug;
 using Beast.Claw.Editor.Validation;
@@ -65,6 +66,11 @@ namespace Beast.Claw.Editor.Validation
         {
             if (Property.BaseValueEntry.ValueState == PropertyValueState.NullReference)
             {
+                if (Property.GetAttribute<CanBeNullAttribute>() != null)
+                {
+                    return false;
+                }
+                
                 result.ResultType = ValidationResultType.Error;
 
                 StringBuilder builder = BUILDER_POOL.Next().Clear();

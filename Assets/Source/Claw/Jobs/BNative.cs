@@ -14,7 +14,13 @@ namespace Beast.Claw.Jobs
         {
             return new NativeArray<T>(length, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
         }
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeArray<T> TempArray<T>(int length) where T : unmanaged
+        {
+            return new NativeArray<T>(length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeArray<T> PermArray<T>(int length) where T : unmanaged
         {

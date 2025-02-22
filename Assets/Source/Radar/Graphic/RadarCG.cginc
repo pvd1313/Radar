@@ -92,17 +92,17 @@ inline float4 beast_tex2Dlod(sampler2D text, float2 uv, float lod)
 
 inline void beast_get_data_vector(
     sampler2D dataTexture,
-    float dataTextureSize,
+    float2 dataTextureSize,
     uint index,
     out half h0,
     out half h1,
     out half h2,
     out half h3)
 {
-    float texelSize = 1.0f / dataTextureSize;
+    float2 texelSize = 1.0f / dataTextureSize;
                 
-    uint x = index % (uint) dataTextureSize;
-    uint y = index / (uint) dataTextureSize;
+    uint x = index % (uint) dataTextureSize.x;
+    uint y = index / (uint) dataTextureSize.x;
                 
     float2 uv = float2(x, y) * texelSize + texelSize * 0.5f;
 

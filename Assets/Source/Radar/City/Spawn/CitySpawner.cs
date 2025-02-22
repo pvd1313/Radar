@@ -152,21 +152,13 @@ namespace Beast.Radar.City
             
             foreach (CityInfo cityInfo in _cities)
             {
-                int size = cityInfo.size;
-                
-                float2 position = cityInfo.position + new float2(0.5f);
-
-                if (size >= 4)
+                if (MAJOR_CITY_SIZE.Contains(cityInfo.size))
                 {
                     majorCount++;
-                    _gizmo.SetColor(Color.cyan);
-                    _gizmo.AddPoint(position, 12);
                 }
                 else
                 {
                     minorCount++;
-                    _gizmo.SetColor(Color.red);
-                    _gizmo.AddPoint(position, 8);
                 }
             }
 

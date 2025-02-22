@@ -20,8 +20,8 @@ namespace Beast.Claw.Editor.UI.Profiling
         [SerializeField] private float2 _scrollPosition;
 
         private Style _buttonStyleNormal;
-        private Style _labelStyle;
         private Style _buttonStyleSelected;
+        private Style _labelStyle;
         private InjectionReference<IGameLoop> _gameCycle;
         private ProfilerTreeGUI _treeView;
         private List<ProfilerNode> _nodesBuffer;
@@ -40,8 +40,8 @@ namespace Beast.Claw.Editor.UI.Profiling
         {
             _gameCycle = new InjectionReference<IGameLoop>();
             _treeView = new ProfilerTreeGUI();
-            _buttonStyleNormal = _rectUI.Style.Button;
             _labelStyle = _rectUI.Style.Label;
+            _buttonStyleNormal = _rectUI.Style.Button;
             _buttonStyleSelected = _rectUI.Style.Button.Clone();
             _buttonStyleSelected.Scheme.normal.textColor = Color.yellow;
             _tickRateBar.Warmup();

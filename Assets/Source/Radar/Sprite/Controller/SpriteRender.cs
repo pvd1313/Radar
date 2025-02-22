@@ -16,6 +16,8 @@ namespace Beast.Radar.Sprite
 {
     public class SpriteRender : Actor, ISpriteAtlas
     {
+        public ushort EmptySpriteID { get; } = 0;
+        
         public const int PIXEL_PER_SPRITE = 2;
         public const int HALF_PER_SPRITE = PIXEL_PER_SPRITE * 4;
         
@@ -29,7 +31,7 @@ namespace Beast.Radar.Sprite
         private NativeList<SpriteInfo> _sprites;
         private EntityQuery _entityQuery;
         private HalfStream _halfStream;
-        private HalfTexturePool _halfTexturePool;
+        private HalfTextureProvider _halfTextureProvider;
         private Material _renderMaterial;
         
         private int2 _nextSpriteOffset;
@@ -38,12 +40,16 @@ namespace Beast.Radar.Sprite
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _atlas = BGraphic.CreateTexture2D(this, _config.atlasTexture);
+            
             _sprites = BNative.PermList<SpriteInfo>(128);
+            _sprites.Add(default);
+            _nextSpriteID = 1;
+            
             _entityQuery = _entityManager.CreateEntityQuery(
                 typeof(PositionComponent), 
                 typeof(SpriteComponent));
             _halfStream = new HalfStream(PIXEL_PER_SPRITE, Allocator.Persistent, true);
-            _halfTexturePool = new HalfTexturePool(this, _config.entityTextureMaxSize);
+            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture");
             _renderMaterial = BGraphic.CreateMaterial(this, _config.renderShader);
             
             return UniTask.CompletedTask;
@@ -116,14 +122,18 @@ namespace Beast.Radar.Sprite
             Profiler.BeginSample("UnionHalfStream");
             _halfStream.Clear();
 
+            entityCount = 0;
+
             for (int i = 0; i < chunks.Length; i++)
             {
                 int offset = writeOffsets[i] * HALF_PER_SPRITE;
-                int count = entityCounters[i] * HALF_PER_SPRITE;
+                int entityInChunk = entityCounters[i];
 
-                NativeSlice<ushort> slice = pixels.Slice(offset, count);
+                NativeSlice<ushort> slice = pixels.Slice(offset, entityInChunk * HALF_PER_SPRITE);
 
                 _halfStream.AddSlice(slice);
+
+                entityCount += entityInChunk;
             }
 
             pixels.Dispose();
@@ -131,6 +141,13 @@ namespace Beast.Radar.Sprite
             writeOffsets.Dispose();
             entityCounters.Dispose();
             Profiler.EndSample();
+
+            BDebug.Track(this, "EntityCount", entityCount);
+
+            if (entityCount == 0)
+            {
+                return;
+            }
 
             World2ClipMatrix matrix = new()
             {
@@ -144,15 +161,15 @@ namespace Beast.Radar.Sprite
             matrix.Apply(_renderMaterial);
             Profiler.EndSample();
 
-            int textureSize = _halfStream.GetRequiredTextureSize();
-            Texture2D dataTexture = _halfTexturePool.GetTexture(textureSize);
+            int2 textureSize = _halfStream.GetRequiredTextureSize();
+            Texture2D dataTexture = _halfTextureProvider.GetTexture(textureSize);
 
             Profiler.BeginSample("ApplyPixelTexture");
             _halfStream.CopyToTexture(dataTexture);
             Profiler.EndSample();
 
             _renderMaterial.SetTexture("_DataTexture", dataTexture);
-            _renderMaterial.SetFloat("_DataTextureSize", textureSize);
+            _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
 
             _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlas.width);
             _renderMaterial.SetTexture("_AtlasTexture", _atlas);
@@ -177,7 +194,7 @@ namespace Beast.Radar.Sprite
             _entityQuery.Dispose();
             _sprites.Dispose();
             _halfStream.Dispose();
-            _halfTexturePool.Dispose();
+            _halfTextureProvider.Dispose();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Beast.Claw.Gizmo
         private Material _canvasMaterial;
         private Material _shapeMaterial;
 
-        private HalfTexturePool _halfTexturePool;
+        private HalfTextureProvider _halfTextureProvider;
         private HalfStream _halfStream;
 
         private CommandBuffer _commandBuffer;
@@ -59,7 +59,7 @@ namespace Beast.Claw.Gizmo
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _halfTexturePool = new HalfTexturePool(this, _config.entityTextureMaxSize);
+            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture");
             
             _handles = new List<HandleInfo>(64);
             
@@ -110,9 +110,9 @@ namespace Beast.Claw.Gizmo
                 return;
             }
 
-            int textureSize = _halfStream.GetRequiredTextureSize();
+            int2 textureSize = _halfStream.GetRequiredTextureSize();
 
-            Texture2D texture = _halfTexturePool.GetTexture(textureSize);
+            Texture2D texture = _halfTextureProvider.GetTexture(textureSize);
             
             Profiler.BeginSample("SetPixelData");
             _halfStream.CopyToTexture(texture);
@@ -120,7 +120,7 @@ namespace Beast.Claw.Gizmo
 
             Profiler.BeginSample("SetShapeDataTexture");
             _shapeMaterial.SetTexture("_DataTexture", texture);
-            _shapeMaterial.SetFloat("_DataTextureSize", textureSize);
+            _shapeMaterial.SetFloat2("_DataTextureSize", textureSize);
             Profiler.EndSample();
             
             Profiler.BeginSample("SetShapeMaterialMatrix");
@@ -208,7 +208,7 @@ namespace Beast.Claw.Gizmo
 
             _halfStream.Dispose();
             _commandBuffer.Dispose();
-            _halfTexturePool.Dispose();
+            _halfTextureProvider.Dispose();
 
             BGraphic.Dispose(_canvasMaterial);
             BGraphic.Dispose(_shapeMaterial);

@@ -2,6 +2,7 @@ using System;
 using Beast.Claw.Common;
 using Beast.Claw.Math;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Graphic
@@ -36,9 +37,9 @@ namespace Beast.Claw.Graphic
             _ensureCapacity(BUFFER_CHUNK_SIZE);
         }
 
-        public int GetRequiredTextureSize()
+        public int2 GetRequiredTextureSize()
         {
-            return BMath.CeilToInt(BMath.Sqrt(_buffer.Length / 4.0f));
+            return BGraphic.GetDataTextureSize(_buffer.Length / 4);
         }
 
         public void CopyToTexture(Texture2D targetTexture)
@@ -111,10 +112,7 @@ namespace Beast.Claw.Graphic
 
             if (_usePotResize)
             {
-                newSize = BMath.CeilToInt(BMath.Sqrt(targetCapacity * _halfPerEntity));
-                newSize = 1 << BMath.CeilToInt(BMath.Log2(newSize));
-                newSize *= newSize;
-                
+                newSize = (1 << BMath.IntCeilLog2(targetCapacity)) * _halfPerEntity;
             }
             else
             {

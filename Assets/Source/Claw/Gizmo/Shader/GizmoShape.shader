@@ -32,7 +32,7 @@
             float _RenderDistance;
 
             sampler2D _DataTexture;
-            float _DataTextureSize;
+            float2 _DataTextureSize;
             float2 _ScreenSize;
             
             FragmentInput vertex(appdata_base input, uint instanceID : SV_InstanceID)

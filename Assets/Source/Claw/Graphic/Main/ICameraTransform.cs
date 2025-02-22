@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Math;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace Beast.Claw.Graphic
         
         float2 ScreenToWorld(float2 screenPoint);
         float2 ViewportToWorld(float2 viewport);
+        Bounds2D GetViewBounds();
         float2 WorldToViewport(float2 worldPoint);
         public float2 WorldToScreen(float2 worldPoint);
         void AddPosition(float2 delta, Space space);
