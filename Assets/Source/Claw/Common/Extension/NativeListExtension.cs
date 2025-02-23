@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Attributes.Annotation;
+using PlasticPipe.PlasticProtocol.Messages;
 using Unity.Collections;
 
 namespace Beast.Claw.Common
@@ -22,6 +23,21 @@ namespace Beast.Claw.Common
             {
                 list.Add(source[i]);
             }
+        }
+
+        public static bool RemoveValue<T>(this NativeList<T> list, T value) where T : unmanaged
+        {
+            for (int i = 0; i < list.Length; i++)
+            {
+                if (list[i].Equals(value))
+                {
+                    list.RemoveAt(i);
+                    
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

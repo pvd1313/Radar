@@ -28,22 +28,18 @@ namespace Beast.Radar.Sprite
         [Required] private readonly GraphicLibrary _library;
 
         private Texture2D _atlas;
-        private NativeList<SpriteInfo> _sprites;
         private EntityQuery _entityQuery;
         private HalfStream _halfStream;
         private HalfTextureProvider _halfTextureProvider;
         private Material _renderMaterial;
-        
-        private int2 _nextSpriteOffset;
-        private int _nextSpriteID;
 
+        private SpriteAtlasManager _atlasManager;
+        
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _atlas = BGraphic.CreateTexture2D(this, _config.atlasTexture);
             
-            _sprites = BNative.PermList<SpriteInfo>(128);
-            _sprites.Add(default);
-            _nextSpriteID = 1;
+            _atlasManager = new SpriteAtlasManager(_config.atlasTexture.size);
             
             _entityQuery = _entityManager.CreateEntityQuery(
                 typeof(PositionComponent), 
@@ -59,6 +55,8 @@ namespace Beast.Radar.Sprite
         {
             int2 spriteSize = spriteSetup.sourceTexture.Size();
 
+            _atlasManager.Allocate(spriteSize, out ushort spriteIndex, out SpriteInfo spriteInfo);
+
             Graphics.CopyTexture(
                 spriteSetup.sourceTexture,
                 0,
@@ -70,19 +68,15 @@ namespace Beast.Radar.Sprite
                 _atlas,
                 0,
                 0,
-                _nextSpriteOffset.x,
-                _nextSpriteOffset.y);
+                spriteInfo.atlasOffset.x,
+                spriteInfo.atlasOffset.y);
 
-            _sprites.Add(new SpriteInfo
-            {
-                offset = _nextSpriteOffset,
-                size = spriteSize
-            });
+            return spriteIndex;
+        }
 
-            // TODO : #2 This is not effective and should be replaced asap.
-            _nextSpriteOffset += spriteSize;
-            
-            return (ushort) _nextSpriteID++;
+        public void DeleteSprite(ushort index)
+        {
+            _atlasManager.Release(index);
         }
 
         protected override void _render(BlockingContext context)
@@ -108,7 +102,7 @@ namespace Beast.Radar.Sprite
                 inWriteOffset = writeOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(true),
-                spritesData = _sprites,
+                spritesData = _atlasManager.Sprites,
                 outEntityCounters = entityCounters,
                 outData = pixels
             };
@@ -192,7 +186,7 @@ namespace Beast.Radar.Sprite
             BGraphic.TryDispose(ref _atlas);
             BGraphic.TryDispose(ref _renderMaterial);
             _entityQuery.Dispose();
-            _sprites.Dispose();
+            _atlasManager.Dispose();
             _halfStream.Dispose();
             _halfTextureProvider.Dispose();
         }

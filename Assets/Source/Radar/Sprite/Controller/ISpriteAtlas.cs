@@ -5,5 +5,7 @@ namespace Beast.Radar.Sprite
         ushort EmptySpriteID { get; }
         
         ushort CreateSprite(SpriteSetup spriteSetup);
+        
+        void DeleteSprite(ushort index);
     }
 }

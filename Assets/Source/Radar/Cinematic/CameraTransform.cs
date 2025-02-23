@@ -122,10 +122,14 @@ namespace Beast.Radar.Cinematic
 
         public Bounds2D GetViewBounds()
         {
-            float2 pos0 = ViewportToWorld(new float2(0, 0));
-            float2 pos1 = ViewportToWorld(new float2(0, 1));
-            float2 pos2 = ViewportToWorld(new float2(1, 0));
-            float2 pos3 = ViewportToWorld(new float2(1, 1));
+            float distance = _viewDistance * _yScaleRollCos;
+            float2 offset = _localToWorld(new float2(_screen.Aspect, 1) * distance * 0.5f);
+            float2 center = (float2)_position;
+
+            float2 pos0 = center + offset;
+            float2 pos1 = center - offset;
+            float2 pos2 = center + offset.yx;
+            float2 pos3 = center - offset.yx;
 
             float xMin = BMath.Min(BMath.Min(pos0.x, pos1.x), BMath.Min(pos2.x, pos3.x));
             float xMax = BMath.Max(BMath.Max(pos0.x, pos1.x), BMath.Max(pos2.x, pos3.x));

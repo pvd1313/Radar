@@ -48,8 +48,8 @@ namespace Beast.Radar.Sprite
                 outData[writeOffset + 1] = px1;
                 outData[writeOffset + 2] = py0;
                 outData[writeOffset + 3] = py1;
-                outData[writeOffset + 4] = BConvert.FloatToHalf(sprite.offset.x);
-                outData[writeOffset + 5] = BConvert.FloatToHalf(sprite.offset.y);
+                outData[writeOffset + 4] = BConvert.FloatToHalf(sprite.atlasOffset.x);
+                outData[writeOffset + 5] = BConvert.FloatToHalf(sprite.atlasOffset.y);
                 outData[writeOffset + 6] = BConvert.FloatToHalf(sprite.size.x);
                 outData[writeOffset + 7] = BConvert.FloatToHalf(sprite.size.y);
                 

@@ -1,10 +1,11 @@
-using Unity.Mathematics;
+using Beast.Claw.Math;
 
 namespace Beast.Radar.Sprite
 {
     public struct SpriteInfo
     {
-        public int2 size;
-        public int2 offset;
+        public short2 size;
+        public short2 atlasOffset;
+        public byte lineIndex;
     }
 }

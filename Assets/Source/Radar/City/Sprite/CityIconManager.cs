@@ -12,6 +12,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
@@ -116,16 +117,13 @@ namespace Beast.Radar.City
         {
             NativeArray<ArchetypeChunk> chunks = _iconQuery.ToArchetypeChunkArray(Allocator.TempJob);
 
-            _resolveTargetCityIcons(_camera.ViewDistance, out ushort minorIconID, out ushort majorIconID);
-
             CityIconSwitchJob iconSwitchJob = new()
             {
                 inChunks = chunks,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 cityHandle = _entityManager.GetComponentTypeHandle<CityComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(false),
-                inMinorCitySpriteID = minorIconID,
-                inMajorCitySpriteID = majorIconID,
+                inIconSwitchLod = _resolveIconLod(_camera.ViewDistance),
                 inCities = _citySpawner.Cities,
                 inCameraViewBounds = _camera.GetViewBounds()
             };
@@ -135,19 +133,21 @@ namespace Beast.Radar.City
             chunks.Dispose();
         }
 
-        private void _resolveTargetCityIcons(float viewDistance, out ushort minorIconID, out ushort majorIconID)
+        private CityIconSwitchJobLod _resolveIconLod(float viewDistance)
         {
-            minorIconID = 0;
-            majorIconID = 0;
-
             foreach (CityIconLod iconLod in _config.iconLods)
             {
                 if (iconLod.viewDistance.Contains(viewDistance))
                 {
-                    minorIconID = _getTextureID(iconLod.minorCityIcon);
-                    majorIconID = _getTextureID(iconLod.majorCityIcon);
+                    return new CityIconSwitchJobLod
+                    {
+                        majorCityIconID = _getTextureID(iconLod.majorCityIcon),
+                        minorCityIconID = _getTextureID(iconLod.minorCityIcon)
+                    };
                 }
             }
+
+            return default;
         }
 
         private ushort _getTextureID(Texture2D texture)

@@ -12,8 +12,7 @@ namespace Beast.Radar.City
     public struct CityIconSwitchJob : IJobParallelFor
     {
         [ReadOnly] public NativeList<CityInfo> inCities;
-        [ReadOnly] public ushort inMajorCitySpriteID;
-        [ReadOnly] public ushort inMinorCitySpriteID;
+        [ReadOnly] public CityIconSwitchJobLod inIconSwitchLod;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
@@ -41,11 +40,11 @@ namespace Beast.Radar.City
                 {
                     if (CitySpawner.MAJOR_CITY_SIZE.Contains(citySize))
                     {
-                        targetSpriteIndex = inMajorCitySpriteID;
+                        targetSpriteIndex = inIconSwitchLod.majorCityIconID;
                     }
                     else
                     {
-                        targetSpriteIndex = inMinorCitySpriteID;
+                        targetSpriteIndex = inIconSwitchLod.minorCityIconID;
                     }
                 }
 
