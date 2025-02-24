@@ -14,7 +14,7 @@ namespace Beast.Radar.Sprite
         [ReadOnly] public NativeArray<int> inWriteOffset;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<SpriteComponent> spriteHandle;
-        [ReadOnly] public NativeList<SpriteInfo> spritesData;
+        [ReadOnly] public NativeSlice<SpriteInfo> spritesData;
         
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ushort> outData;
         [WriteOnly] public NativeArray<int> outEntityCounters;

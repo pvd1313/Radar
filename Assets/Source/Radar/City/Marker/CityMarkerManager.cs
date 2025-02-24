@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
+using Beast.Claw.Jobs;
 using Beast.Claw.Text.Baking;
 using Beast.Radar.Sprite;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -17,18 +18,18 @@ using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class CityIconManager : Actor
+    public class CityMarkerManager : Actor
     {
         [Required] private readonly IEntityManager _entityManager;
         [Required] private readonly ICitySpawner _citySpawner;
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly ISpriteAtlas _spriteAtlas;
-        [Required] private readonly CityIconConfig _config;
+        [Required] private readonly CityMarkerConfig _config;
         [Required] private readonly ICameraTransform _camera;
         
         private TerrainData _bakedForTerrain;
         private EntityArchetype _iconArchetype;
-        private EntityQuery _iconQuery;
+        private EntityQuery _markerQuery;
         private NativeArray<Entity> _icons;
         private TextBaker _textBaker;
         private Dictionary<Texture2D, ushort> _textureID;
@@ -42,17 +43,17 @@ namespace Beast.Radar.City
             ComponentType[] iconComponents = {
                 typeof(PositionComponent),
                 typeof(SpriteComponent),
-                typeof(CityComponent)
+                typeof(CityIDComponent)
             };
             
             _iconArchetype = _entityManager.CreateArchetype(iconComponents);
-            _iconQuery = _entityManager.CreateEntityQuery(iconComponents);
+            _markerQuery = _entityManager.CreateEntityQuery(iconComponents);
 
             _textureID = new Dictionary<Texture2D, ushort>();
-            foreach (CityIconLod iconLod in _config.iconLods)
+            foreach (CityMarkerLod iconLod in _config.iconLods)
             {
-                _tryAddTextureToAtlas(iconLod.minorCityIcon);
-                _tryAddTextureToAtlas(iconLod.majorCityIcon);
+                _tryAddTextureToAtlas(iconLod.minorIcon);
+                _tryAddTextureToAtlas(iconLod.majorIcon);
             }
 
             _textBaker = new TextBaker(_config.textConfig);
@@ -95,7 +96,7 @@ namespace Beast.Radar.City
                 _icons.Dispose();
             }
 
-            NativeList<CityInfo> cities = _citySpawner.Cities;
+            NativeSlice<CityInfo> cities = _citySpawner.Cities;
 
             _icons = _entityManager.CreateEntity(_iconArchetype, cities.Length, Allocator.Persistent);
 
@@ -106,8 +107,7 @@ namespace Beast.Radar.City
                 float2 position = city.position + new float2(0.5f, 0.5f);
                 
                 _entityManager.SetComponentData(entity, new PositionComponent(position));
-                _entityManager.SetComponentData(entity, new SpriteComponent(_spriteAtlas.EmptySpriteID));
-                _entityManager.SetComponentData(entity, new CityComponent((ushort)i));
+                _entityManager.SetComponentData(entity, new CityIDComponent((ushort)i));
             }
             
             return UniTask.CompletedTask;
@@ -115,34 +115,42 @@ namespace Beast.Radar.City
         
         protected override void _tick(BlockingContext context)
         {
-            NativeArray<ArchetypeChunk> chunks = _iconQuery.ToArchetypeChunkArray(Allocator.TempJob);
+            NativeArray<ArchetypeChunk> chunks = _markerQuery.ToArchetypeChunkArray(Allocator.TempJob);
 
-            CityIconSwitchJob iconSwitchJob = new()
+            CityMarkerJob markerJob = new()
             {
                 inChunks = chunks,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
-                cityHandle = _entityManager.GetComponentTypeHandle<CityComponent>(true),
+                cityIDHandle = _entityManager.GetComponentTypeHandle<CityIDComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(false),
-                inIconSwitchLod = _resolveIconLod(_camera.ViewDistance),
+                entityHandle = _entityManager.GetEntityTypeHandle(),
+                inIconSwitchLodNative = _resolveLod(_camera.ViewDistance),
                 inCities = _citySpawner.Cities,
-                inCameraViewBounds = _camera.GetViewBounds()
+                inCameraViewBounds = _camera.GetViewBounds(),
+                inSprites = _spriteAtlas.Sprites,
+                outLabelCommands = BNative.TempJobArray<CityLabelCommand>(chunks.Length * CityMarkerJob.MAX_COMMAND_COUNT),
+                outLabelCommandCounters = BNative.TempJobArray<byte>(chunks.Length)
             };
 
-            iconSwitchJob.Schedule(chunks.Length, 2).Complete();
+            markerJob.ExecuteOn(chunks);
 
             chunks.Dispose();
+            markerJob.outLabelCommands.Dispose();
+            markerJob.outLabelCommandCounters.Dispose();
         }
 
-        private CityIconSwitchJobLod _resolveIconLod(float viewDistance)
+        private CityMarkerLodNative _resolveLod(float viewDistance)
         {
-            foreach (CityIconLod iconLod in _config.iconLods)
+            foreach (CityMarkerLod lod in _config.iconLods)
             {
-                if (iconLod.viewDistance.Contains(viewDistance))
+                if (lod.viewDistance.Contains(viewDistance))
                 {
-                    return new CityIconSwitchJobLod
+                    return new CityMarkerLodNative
                     {
-                        majorCityIconID = _getTextureID(iconLod.majorCityIcon),
-                        minorCityIconID = _getTextureID(iconLod.minorCityIcon)
+                        majorCityIconID = _getTextureID(lod.majorIcon),
+                        minorCityIconID = _getTextureID(lod.minorIcon),
+                        minorLabelSize = lod.minorLabelSize,
+                        majorLabelSize = lod.majorLabelSize
                     };
                 }
             }
@@ -167,7 +175,7 @@ namespace Beast.Radar.City
                 _icons.Dispose();
             }
             
-            _iconQuery.Dispose();
+            _markerQuery.Dispose();
             _textBaker.Dispose();
         }
     }

@@ -1,4 +1,5 @@
 using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
@@ -7,7 +8,6 @@ using Beast.Claw.Jobs;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -16,8 +16,8 @@ namespace Beast.Radar.Sprite
 {
     public class SpriteRender : Actor, ISpriteAtlas
     {
-        public ushort EmptySpriteID { get; } = 0;
-        
+        public NativeSlice<SpriteInfo> Sprites => _atlasManager.Sprites;
+
         public const int PIXEL_PER_SPRITE = 2;
         public const int HALF_PER_SPRITE = PIXEL_PER_SPRITE * 4;
         
@@ -27,7 +27,7 @@ namespace Beast.Radar.Sprite
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly GraphicLibrary _library;
 
-        private Texture2D _atlas;
+        private Texture2D _atlasTexture;
         private EntityQuery _entityQuery;
         private HalfStream _halfStream;
         private HalfTextureProvider _halfTextureProvider;
@@ -37,7 +37,7 @@ namespace Beast.Radar.Sprite
         
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _atlas = BGraphic.CreateTexture2D(this, _config.atlasTexture);
+            _atlasTexture = BGraphic.CreateTexture2D(this, _config.atlasTexture);
             
             _atlasManager = new SpriteAtlasManager(_config.atlasTexture.size);
             
@@ -65,7 +65,7 @@ namespace Beast.Radar.Sprite
                 0,
                 spriteSize.x,
                 spriteSize.y,
-                _atlas,
+                _atlasTexture,
                 0,
                 0,
                 spriteInfo.atlasOffset.x,
@@ -110,7 +110,7 @@ namespace Beast.Radar.Sprite
             Profiler.EndSample();
 
             Profiler.BeginSample("SpriteRenderPrepareJob");
-            job.Schedule(chunks.Length, 2).Complete();
+            job.ExecuteOn(chunks);
             Profiler.EndSample();
 
             Profiler.BeginSample("UnionHalfStream");
@@ -165,8 +165,8 @@ namespace Beast.Radar.Sprite
             _renderMaterial.SetTexture("_DataTexture", dataTexture);
             _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
 
-            _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlas.width);
-            _renderMaterial.SetTexture("_AtlasTexture", _atlas);
+            _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlasTexture.width);
+            _renderMaterial.SetTexture("_AtlasTexture", _atlasTexture);
 
             RenderParams renderParams = new()
             {
@@ -175,6 +175,7 @@ namespace Beast.Radar.Sprite
             };
 
             BDebug.Track(this, "EntityCount", entityCount);
+            BDebug.Track(this, "DataTextureSize", textureSize);
 
             Profiler.BeginSample("RenderMeshPrimitives");
             Graphics.RenderMeshPrimitives(renderParams, _library.quad, 0, entityCount);
@@ -183,7 +184,7 @@ namespace Beast.Radar.Sprite
 
         protected override void _dispose(BlockingContext obj)
         {
-            BGraphic.TryDispose(ref _atlas);
+            BGraphic.TryDispose(ref _atlasTexture);
             BGraphic.TryDispose(ref _renderMaterial);
             _entityQuery.Dispose();
             _atlasManager.Dispose();

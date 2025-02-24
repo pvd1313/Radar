@@ -1,8 +1,10 @@
+using Unity.Collections;
+
 namespace Beast.Radar.Sprite
 {
     public interface ISpriteAtlas
     {
-        ushort EmptySpriteID { get; }
+        public NativeSlice<SpriteInfo> Sprites { get; }
         
         ushort CreateSprite(SpriteSetup spriteSetup);
         

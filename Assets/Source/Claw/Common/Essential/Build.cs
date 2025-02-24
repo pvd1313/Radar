@@ -6,6 +6,8 @@ namespace Beast.Claw.Common
     public static class Build
     {
         public const int SMALL_ARRAY_SAFE_CAPACITY = 64;
+
+        public const int ECS_PARALLEL_JOB_INNER_LOOP_BATCH_COUNT = 4;
             
 #if DEVELOPMENT
         public static readonly bool IS_DEVELOPMENT = true;

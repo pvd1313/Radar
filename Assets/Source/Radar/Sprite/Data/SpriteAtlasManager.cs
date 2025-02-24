@@ -10,7 +10,7 @@ namespace Beast.Radar.Sprite
 {
     public class SpriteAtlasManager
     {
-        public NativeList<SpriteInfo> Sprites => _sprites;
+        public NativeSlice<SpriteInfo> Sprites => _sprites.AsArray().Slice();
         
         private readonly int2 _atlasSize;
         private readonly List<SpriteAtlasLine> _lines;

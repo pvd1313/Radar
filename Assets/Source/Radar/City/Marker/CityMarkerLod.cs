@@ -6,10 +6,12 @@ using UnityEngine;
 namespace Beast.Radar.City
 {
     [Serializable]
-    public struct CityIconLod
+    public struct CityMarkerLod
     {
         public FloatMinMax viewDistance;
-        [CanBeNull] public Texture2D minorCityIcon;
-        [CanBeNull] public Texture2D majorCityIcon;
+        [CanBeNull] public Texture2D minorIcon;
+        [CanBeNull] public Texture2D majorIcon;
+        public int minorLabelSize;
+        public int majorLabelSize;
     }
 }

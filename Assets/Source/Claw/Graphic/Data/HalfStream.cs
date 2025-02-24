@@ -1,5 +1,6 @@
 using System;
 using Beast.Claw.Common;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -15,6 +16,7 @@ namespace Beast.Claw.Graphic
         private const int BUFFER_CHUNK_SIZE = 128;
         
         private readonly byte _halfPerEntity;
+        private readonly byte _pixelPerEntity;
         private readonly bool _usePotResize;
         private readonly Allocator _allocator;
         
@@ -29,7 +31,8 @@ namespace Beast.Claw.Graphic
             }
 
             _usePotResize = usePotResize;
-            _halfPerEntity = (byte) (pixelPerEntity * HALF_PER_PIXEL);
+            _pixelPerEntity =  (byte) pixelPerEntity;
+            _halfPerEntity = (byte) (_pixelPerEntity * HALF_PER_PIXEL);
             _entityCount = 0;
             _buffer = default;
             _allocator = allocator;
@@ -39,12 +42,32 @@ namespace Beast.Claw.Graphic
 
         public int2 GetRequiredTextureSize()
         {
-            return BGraphic.GetDataTextureSize(_buffer.Length / 4);
+            return BGraphic.GetDataTextureSize(_entityCount * _pixelPerEntity);
         }
 
         public void CopyToTexture(Texture2D targetTexture)
         {
-            targetTexture.SetPixelData(_buffer, 0);
+            int dataSize = targetTexture.width * targetTexture.height * _halfPerEntity;
+
+            if (dataSize == _buffer.Length)
+            {
+                targetTexture.SetPixelData(_buffer, 0);
+            }
+            else
+            {
+                NativeArray<ushort> tempBuffer = BNative.TempArray<ushort>(dataSize);
+
+                int minLength = BMath.Min(tempBuffer.Length, _buffer.Length);
+
+                NativeSlice<ushort> source = _buffer.Slice(0, minLength);
+                NativeSlice<ushort> target = tempBuffer.Slice(0, minLength);
+                target.CopyFrom(source);
+                
+                targetTexture.SetPixelData(tempBuffer, 0);
+
+                tempBuffer.Dispose();
+            }
+            
             targetTexture.Apply();
         }
 
@@ -112,7 +135,7 @@ namespace Beast.Claw.Graphic
 
             if (_usePotResize)
             {
-                newSize = (1 << BMath.IntCeilLog2(targetCapacity)) * _halfPerEntity;
+                newSize = _getPotSize(targetCapacity);
             }
             else
             {
@@ -120,7 +143,7 @@ namespace Beast.Claw.Graphic
                 newSize *= _halfPerEntity;
             }
 
-            NativeArray<ushort> newBuffer = new NativeArray<ushort>(newSize, _allocator);
+            NativeArray<ushort> newBuffer = new (newSize, _allocator);
 
             if (_buffer.IsCreated)
             {
@@ -129,6 +152,11 @@ namespace Beast.Claw.Graphic
             }
             
             _buffer = newBuffer;
+        }
+
+        private int _getPotSize(int entityCount)
+        {
+            return (1 << BMath.IntCeilLog2(entityCount)) * _halfPerEntity;
         }
 
         public void Dispose()

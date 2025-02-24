@@ -62,7 +62,7 @@ namespace Beast.Radar.Core
             
             // City
             yield return typeof(CitySpawner);
-            yield return typeof(CityIconManager);
+            yield return typeof(CityMarkerManager);
             
             // Player
             yield return typeof(WorldElementCanvas);

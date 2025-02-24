@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Beast.Claw.Graphic
 {
-    public struct HalfTextureProvider
+    public readonly struct HalfTextureProvider
     {
         private readonly Dictionary<int2, Texture2D> _pool;
         private readonly string _textureName;
@@ -33,7 +33,7 @@ namespace Beast.Claw.Graphic
                 mipChain = false,
                 filterMode = FilterMode.Point,
                 wrapMode = TextureWrapMode.Clamp,
-                name = _textureName,
+                name = _textureName + "(" + textureSize.x + "," + + textureSize.y + ")",
                 size = textureSize
             });
 

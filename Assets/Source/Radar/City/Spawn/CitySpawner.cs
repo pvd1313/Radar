@@ -22,7 +22,7 @@ namespace Beast.Radar.City
         public static readonly FloatMinMax MAJOR_CITY_SIZE = new (4, 5);
         public static readonly FloatMinMax MINOR_CITY_SIZE = new (0, 3);
         
-        public NativeList<CityInfo> Cities => _cities;
+        public NativeSlice<CityInfo> Cities => _cities.AsArray().Slice();
         
         [Required] private readonly IGizmoManager _gizmoManager;
         [Required] private readonly ITerrainBackedBiome _biome;
@@ -37,6 +37,7 @@ namespace Beast.Radar.City
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _gizmo = _gizmoManager.CreateHandle(this);
+            _cities = BNative.PermList<CityInfo>(1024);
             
             return UniTask.CompletedTask;
         }
@@ -52,19 +53,13 @@ namespace Beast.Radar.City
 
             _bakedForTerrain = terrain;
 
-            if (_cities.IsCreated)
-            {
-                _cities.Dispose();
-            }
-
             float majorGridSize = _config.majorCityGridSize;
             int majorCityCountX = BMath.CeilToInt(terrain.terrainSize / majorGridSize);
             
             float minorGridSize = _config.minorCityGridSize;
             int minorCityCountX = BMath.CeilToInt(terrain.terrainSize / minorGridSize);
 
-            int maxCityCount = majorCityCountX * majorCityCountX + minorCityCountX * minorCityCountX;
-            _cities = BNative.PermList<CityInfo>(maxCityCount);
+            _cities.Clear();
 
             using NativeHashSet<short2> majorCities = 
                 BNative.TempJobHashSet<short2>(majorCityCountX * majorCityCountX);
@@ -171,11 +166,7 @@ namespace Beast.Radar.City
 
         protected override void _dispose(BlockingContext context)
         {
-            if (_cities.IsCreated)
-            {
-                _cities.Dispose();
-            }
-            
+            _cities.Dispose();
             _gizmo.Dispose();
         }
 

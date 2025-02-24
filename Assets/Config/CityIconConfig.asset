@@ -19,15 +19,21 @@ MonoBehaviour:
   - viewDistance:
       min: 0
       max: 512
-    minorCityIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
-    majorCityIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
+    minorIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
+    majorIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
+    minorLabelSize: 16
+    majorLabelSize: 24
   - viewDistance:
       min: 512
       max: 1024
-    minorCityIcon: {fileID: 2800000, guid: 91cf7ac106ae0654289eda742d73bfd0, type: 3}
-    majorCityIcon: {fileID: 2800000, guid: def01386d2608eb4fbd03a949cf1f63d, type: 3}
+    minorIcon: {fileID: 2800000, guid: 91cf7ac106ae0654289eda742d73bfd0, type: 3}
+    majorIcon: {fileID: 2800000, guid: def01386d2608eb4fbd03a949cf1f63d, type: 3}
+    minorLabelSize: 0
+    majorLabelSize: 24
   - viewDistance:
       min: 1024
       max: 4096
-    minorCityIcon: {fileID: 0}
-    majorCityIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
+    minorIcon: {fileID: 0}
+    majorIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
+    minorLabelSize: 0
+    majorLabelSize: 16
