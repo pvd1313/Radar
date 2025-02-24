@@ -8,5 +8,6 @@ namespace Beast.Radar.City
         public ECityLabelCommandType commandType;
         public ushort spriteID;
         public byte labelSize;
+        public ushort cityID;
     }
 }

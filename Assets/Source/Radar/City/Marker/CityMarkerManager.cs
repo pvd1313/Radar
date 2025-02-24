@@ -26,27 +26,35 @@ namespace Beast.Radar.City
         [Required] private readonly ISpriteAtlas _spriteAtlas;
         [Required] private readonly CityMarkerConfig _config;
         [Required] private readonly ICameraTransform _camera;
-        
+
         private TerrainData _bakedForTerrain;
         private EntityArchetype _iconArchetype;
+        private EntityArchetype _labelArchetype;
         private EntityQuery _markerQuery;
         private NativeArray<Entity> _icons;
+        private NativeArray<Entity> _labels;
         private TextBaker _textBaker;
         private Dictionary<Texture2D, ushort> _textureID;
 
-        private ushort _majorCitySpriteID;
-        private ushort _minorCitySpriteID;
-        private ushort _dotSpriteID;
-        
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            ComponentType[] iconComponents = {
+            ComponentType[] iconComponents =
+            {
                 typeof(PositionComponent),
                 typeof(SpriteComponent),
                 typeof(CityIDComponent)
             };
-            
+
+            ComponentType[] labelComponents =
+            {
+                typeof(PositionComponent),
+                typeof(SpriteComponent),
+                typeof(CityIDComponent),
+                typeof(CityLabelComponent)
+            };
+
             _iconArchetype = _entityManager.CreateArchetype(iconComponents);
+            _labelArchetype = _entityManager.CreateArchetype(labelComponents);
             _markerQuery = _entityManager.CreateEntityQuery(iconComponents);
 
             _textureID = new Dictionary<Texture2D, ushort>();
@@ -57,9 +65,7 @@ namespace Beast.Radar.City
             }
 
             _textBaker = new TextBaker(_config.textConfig);
-            
-            _textBaker.Bake("Maggyletean - Диспот");
-            
+
             return UniTask.CompletedTask;
         }
 
@@ -77,7 +83,9 @@ namespace Beast.Radar.City
 
             _textureID[texture] = _spriteAtlas.CreateSprite(new SpriteSetup
             {
-                sourceTexture = texture
+                sourceTexture = texture,
+                textureSize = texture.Size(),
+                textureOffset = 0
             });
         }
 
@@ -90,29 +98,30 @@ namespace Beast.Radar.City
                 return UniTask.CompletedTask;
             }
 
-            if (_icons.IsCreated)
-            {
-                _entityManager.DestroyEntity(_icons);
-                _icons.Dispose();
-            }
+            _disposeEntities();
 
             NativeSlice<CityInfo> cities = _citySpawner.Cities;
 
             _icons = _entityManager.CreateEntity(_iconArchetype, cities.Length, Allocator.Persistent);
+            _labels = _entityManager.CreateEntity(_labelArchetype, cities.Length, Allocator.Persistent);
 
             for (int i = 0; i < cities.Length; i++)
             {
                 CityInfo city = cities[i];
-                Entity entity = _icons[i];
                 float2 position = city.position + new float2(0.5f, 0.5f);
                 
-                _entityManager.SetComponentData(entity, new PositionComponent(position));
-                _entityManager.SetComponentData(entity, new CityIDComponent((ushort)i));
+                Entity icon = _icons[i];
+                _entityManager.SetComponentData(icon, new PositionComponent(position));
+                _entityManager.SetComponentData(icon, new CityIDComponent((ushort)i));
+
+                Entity label = _labels[i];
+                _entityManager.SetComponentData(label, new PositionComponent(position));
+                _entityManager.SetComponentData(label, new CityIDComponent((ushort)i));
             }
-            
+
             return UniTask.CompletedTask;
         }
-        
+
         protected override void _tick(BlockingContext context)
         {
             NativeArray<ArchetypeChunk> chunks = _markerQuery.ToArchetypeChunkArray(Allocator.TempJob);
@@ -128,15 +137,64 @@ namespace Beast.Radar.City
                 inCities = _citySpawner.Cities,
                 inCameraViewBounds = _camera.GetViewBounds(),
                 inSprites = _spriteAtlas.Sprites,
-                outLabelCommands = BNative.TempJobArray<CityLabelCommand>(chunks.Length * CityMarkerJob.MAX_COMMAND_COUNT),
+                outLabelCommands =
+                    BNative.TempJobArray<CityLabelCommand>(chunks.Length * CityMarkerJob.MAX_COMMAND_COUNT),
                 outLabelCommandCounters = BNative.TempJobArray<byte>(chunks.Length)
             };
 
             markerJob.ExecuteOn(chunks);
 
+            for (int i = 0; i < markerJob.outLabelCommandCounters.Length; i++)
+            {
+                int cmdCount = markerJob.outLabelCommandCounters[i];
+                int cmdOffset = i * CityMarkerJob.MAX_COMMAND_COUNT;
+
+                for (int j = 0; j < cmdCount; j++)
+                {
+                    CityLabelCommand command = markerJob.outLabelCommands[cmdOffset + j];
+
+                    _applyLabelCommand(command);
+                }
+            }
+
             chunks.Dispose();
             markerJob.outLabelCommands.Dispose();
             markerJob.outLabelCommandCounters.Dispose();
+        }
+
+        private void _applyLabelCommand(CityLabelCommand command)
+        {
+            switch (command.commandType)
+            {
+                case ECityLabelCommandType.CreateLabel:
+                    _setupLabel(command);
+                    break;
+
+                case ECityLabelCommandType.ReleaseLabel:
+                    _spriteAtlas.ReleaseSprite(command.spriteID);
+                    _entityManager.SetComponentData(command.targetEntity, new SpriteComponent());
+                    break;
+
+                case ECityLabelCommandType.ChangeLabelResolution:
+                    _spriteAtlas.ReleaseSprite(command.spriteID);
+                    _setupLabel(command);
+                    break;
+            }
+        }
+
+        private void _setupLabel(CityLabelCommand command)
+        {
+            string cityName = _citySpawner.GetCityName(command.cityID);
+            TextBakeResult bakedText = _textBaker.Bake(cityName, command.labelSize);
+
+            ushort spriteID = _spriteAtlas.CreateSprite(new SpriteSetup
+            {
+                sourceTexture = bakedText.texture,
+                textureSize = bakedText.size,
+                textureOffset = bakedText.offset
+            });
+
+            _entityManager.SetComponentData(command.targetEntity, new SpriteComponent(spriteID));
         }
 
         private CityMarkerLodNative _resolveLod(float viewDistance)
@@ -170,13 +228,22 @@ namespace Beast.Radar.City
 
         protected override void _dispose(BlockingContext obj)
         {
-            if (_icons.IsCreated)
-            {
-                _icons.Dispose();
-            }
-            
+            _disposeEntities();
+
             _markerQuery.Dispose();
             _textBaker.Dispose();
+        }
+
+        private void _disposeEntities()
+        {
+            if (_icons.IsCreated)
+            {
+                _entityManager.DestroyEntity(_icons);
+                _entityManager.DestroyEntity(_labels);
+
+                _icons.Dispose();
+                _labels.Dispose();
+            }
         }
     }
 }

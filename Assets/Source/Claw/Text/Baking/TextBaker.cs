@@ -2,19 +2,21 @@ using System.Collections.Generic;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
+using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.U2D;
 
 namespace Beast.Claw.Text.Baking
 {
     public class TextBaker : Actor
     {
         private readonly TextGenerator _generator;
-        private readonly TextGenerationSettings _generatorSettings;
-        private readonly Font _font;
+        private readonly int2 _textureSize;
+        private readonly Vector3 _vertexOffset;
 
+        private TextGenerationSettings _generatorSettings;
+        private Material _fontMaterial;
         private Texture2D _texture2D;
         private RenderTexture _renderTexture;
         private Mesh _textMesh;
@@ -23,40 +25,46 @@ namespace Beast.Claw.Text.Baking
         {
             _generator = new TextGenerator();
 
-            _font = config.fontAsset;
+            _textureSize = config.textureSize;
+
+            _vertexOffset = new Vector3(config.vertexOffset.x, config.vertexOffset.y, 0);
+            
+            _fontMaterial = new Material(config.fontShader);
+            _fontMaterial.mainTexture = config.fontAsset.material.mainTexture;
+            _fontMaterial.color = config.fontColor;
+            _fontMaterial.SetColor("_BackgroundColor", config.backgroundColor);
             
             _generatorSettings = new TextGenerationSettings
             {
-                fontSize = config.fontSize,
                 color = Color.white,
-                scaleFactor = 1f,
+                scaleFactor = config.fontScale,
                 font = config.fontAsset,
                 generateOutOfBounds = true,
                 resizeTextForBestFit = false, 
-                generationExtents = new Vector2(256, 16),
-                textAnchor = TextAnchor.LowerLeft
+                generationExtents = new Vector2(_textureSize.x, _textureSize.y),
+                textAnchor = TextAnchor.LowerLeft,
             };
             
             _texture2D = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {
+                size = _textureSize,
                 isLinear = true,
                 createInitialized = false,
                 filterMode = FilterMode.Point,
                 format = TextureFormat.RGB24,
                 mipChain = false,
                 name = "Text2TextureBaker_2D",
-                size = new int2(128, 16),
-                wrapMode = TextureWrapMode.Clamp
+                wrapMode = TextureWrapMode.Clamp,
             });
             
             _renderTexture = BGraphic.CreatePermRenderTexture(this, new RenderTextureData
             {
-                size = new int2(128, 16),
+                size = _textureSize,
                 antiAliasing = 1,
                 filterMode = FilterMode.Point,
                 name = "Text2TextureBaker_RT",
                 wrapMode = TextureWrapMode.Clamp,
-                format = RenderTextureFormat.R8
+                format = RenderTextureFormat.ARGB32
             });
 
             _textMesh = new Mesh
@@ -65,33 +73,55 @@ namespace Beast.Claw.Text.Baking
             };
         }
 
-        public void Bake(string text)
+        public TextBakeResult Bake(string text, int fontSize)
         {
+            _generatorSettings.fontSize = fontSize;
+            
             _generator.Populate(text, _generatorSettings);
 
-            _setupMesh(_generator, _textMesh);
+            Bounds2D meshBounds = _setupMesh(_generator, _textMesh);
+            meshBounds.x.min = BMath.Max(0, meshBounds.x.min);
+            meshBounds.y.min = BMath.Max(0, meshBounds.y.min);
+            meshBounds.y.max = fontSize;
             
-            _renderMesh();
+            int2 textureOffset = new ((int)meshBounds.x.min, (int)meshBounds.y.min);
+            int2 textureSize = new ((int)meshBounds.x.GetRange(), (int)meshBounds.y.GetRange());
+            
+            _renderMesh(textureOffset, textureSize);
+
+            return new TextBakeResult
+            {
+                texture = _texture2D,
+                offset = textureOffset,
+                size = textureSize
+            };
         }
 
-        private void _renderMesh()
+        private void _renderMesh(int2 textureOffset, int2 textureSize)
         {
             RenderTexture bakTexture = RenderTexture.active;
 
             RenderTexture.active = _renderTexture;
             
             GL.PushMatrix();
-            GL.LoadPixelMatrix(0, 128, 0, 16);
+            GL.LoadPixelMatrix(0, _textureSize.x, 0, _textureSize.y);
 
-            _font.material.SetPass(0);
+            _fontMaterial.SetPass(0);
+            
+            GL.Clear(true, true, Color.clear);
 
             Graphics.DrawMeshNow(_textMesh, Matrix4x4.identity);
+
+            Rect rect = new (textureOffset.x, textureOffset.y, textureSize.x, textureSize.y);
+
+            _texture2D.ReadPixels(rect, 0, 0);
+            _texture2D.Apply();
             
             GL.PopMatrix();
             RenderTexture.active = bakTexture;
         }
 
-        private static void _setupMesh(TextGenerator generator, Mesh meshToSetup)
+        private Bounds2D _setupMesh(TextGenerator generator, Mesh meshToSetup)
         {
             meshToSetup.Clear();
 
@@ -100,10 +130,15 @@ namespace Beast.Claw.Text.Baking
             NativeArray<float3> meshVertices = BNative.TempArray<float3>(uiVertices.Count);
             NativeArray<float2> meshUV = BNative.TempArray<float2>(uiVertices.Count);
             NativeArray<ushort> meshIndexes = BNative.TempArray<ushort>(uiVertices.Count / 4 * 6);
+
+            Bounds2D meshBounds = default;
             
             for (int i = 0; i < meshVertices.Length; i++)
             {
-                meshVertices[i] = uiVertices[i].position;
+                Vector3 vertex = uiVertices[i].position + _vertexOffset;
+                meshVertices[i] = vertex;
+                meshBounds = meshBounds.EnsureContains(vertex.XY());
+                
                 meshUV[i] = ((float4)uiVertices[i].uv0).xy;
             }
             
@@ -128,6 +163,8 @@ namespace Beast.Claw.Text.Baking
             meshVertices.Dispose();
             meshUV.Dispose();
             meshIndexes.Dispose();
+
+            return meshBounds;
         }
 
         public void Dispose()
@@ -135,6 +172,7 @@ namespace Beast.Claw.Text.Baking
             BGraphic.TryDispose(ref _texture2D);
             BGraphic.TryDispose(ref _renderTexture);
             BGraphic.TryDispose(ref _textMesh);
+            BGraphic.TryDispose(ref _fontMaterial);
         }
     }
 }

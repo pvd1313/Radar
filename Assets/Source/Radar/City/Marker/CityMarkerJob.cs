@@ -61,7 +61,8 @@ namespace Beast.Radar.City
                         {
                             commandType = ECityLabelCommandType.CreateLabel,
                             targetEntity = entities[entityIndex],
-                            labelSize = (byte) targetLabelSize
+                            labelSize = (byte) targetLabelSize,
+                            cityID = cityID
                         });
                         
                         continue;
@@ -74,7 +75,8 @@ namespace Beast.Radar.City
                             commandType = ECityLabelCommandType.ChangeLabelResolution,
                             targetEntity = entities[entityIndex],
                             labelSize = (byte) targetLabelSize,
-                            spriteID = currentSpriteID
+                            spriteID = currentSpriteID,
+                            cityID = cityID
                         });
                     }
                     

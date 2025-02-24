@@ -152,6 +152,23 @@ namespace Beast.Claw.Graphic
             };
         }
 
+        public static void CopyTexture(TextureCopyParameters parameters)
+        {
+            Graphics.CopyTexture(
+                parameters.sourceTexture,
+                parameters.sourceElement,
+                parameters.sourceMip,
+                parameters.sourceOffset.x,
+                parameters.sourceOffset.y,
+                parameters.sourceSize.x,
+                parameters.sourceSize.y,
+                parameters.targetTexture,
+                parameters.targetElement,
+                parameters.targetMip,
+                parameters.targetOffset.x,
+                parameters.targetOffset.y);
+        }
+
         public static Texture2D CreateTexture2D(IController owner, Texture2DParameters input)
         {
             owner.ValidateNotNullThrowException(nameof(owner));

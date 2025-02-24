@@ -1,28 +1,37 @@
 using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Radar.Sprite
 {
     public class SpriteAtlasManager
     {
         public NativeSlice<SpriteInfo> Sprites => _sprites.AsArray().Slice();
-        
-        private readonly int2 _atlasSize;
+        public Texture2D AtlasTexture => _atlasTexture;
+
         private readonly List<SpriteAtlasLine> _lines;
         private readonly List<ushort> _freeSpriteIndexList;
-        
+
+        private Texture2D _atlasTexture;
+        private Texture2D _bufferTexture;
         private NativeList<SpriteInfo> _sprites;
         private HashSet<ushort> _linesWithGaps;
         private ushort _freeYOffset;
         
-        public SpriteAtlasManager(int2 atlasSize)
+        public SpriteAtlasManager(IController owner, Texture2DParameters atlasParams)
         {
-            _atlasSize = atlasSize;
+            _atlasTexture = BGraphic.CreateTexture2D(owner, atlasParams);
+
+            atlasParams.size = 256;
+            atlasParams.name = "Buffer";
+            _bufferTexture = BGraphic.CreateTexture2D(owner, atlasParams);
+            
             _lines = new List<SpriteAtlasLine>(64);
             _freeSpriteIndexList = new List<ushort>(128);
             _linesWithGaps = new HashSet<ushort>(64);
@@ -31,11 +40,11 @@ namespace Beast.Radar.Sprite
             _sprites.Add(default);
         }
 
-        public void Allocate(int2 spriteSize, out ushort spriteIndex, out SpriteInfo spriteInfo)
+        public ushort Create(SpriteSetup setup)
         {
-            int lineHeight = _spriteHeightToLineHeight(spriteSize.y);
+            int lineHeight = _spriteHeightToLineHeight(setup.textureSize.y);
 
-            int lineIndex = _findLine(spriteSize.x, lineHeight);
+            int lineIndex = _findLine(setup.textureSize.x, lineHeight);
             
             if (lineIndex == -1)
             {
@@ -43,6 +52,7 @@ namespace Beast.Radar.Sprite
             }
 
             int lastIndex = _freeSpriteIndexList.Count - 1;
+            ushort spriteIndex;
 
             if (lastIndex >= 0)
             {
@@ -59,18 +69,26 @@ namespace Beast.Radar.Sprite
 
             line.sprites.Add(spriteIndex);
 
-            spriteInfo = new SpriteInfo
+            _sprites[spriteIndex] = new SpriteInfo
             {
                 atlasOffset = new short2(line.freeXOffset, line.yOffset),
-                size = (short2)spriteSize,
+                size = (short2)setup.textureSize,
                 lineIndex = (byte) lineIndex
             };
+            
+            BGraphic.CopyTexture(new TextureCopyParameters
+            {
+                sourceTexture = setup.sourceTexture,
+                sourceOffset = setup.textureOffset,
+                sourceSize = setup.textureSize,
+                targetTexture = _atlasTexture,
+                targetOffset = new short2(line.freeXOffset, line.yOffset)
+            });
 
-            _sprites[spriteIndex] = spriteInfo;
-
-            line.freeXOffset =  (ushort)(line.freeXOffset + spriteSize.x);
-
+            line.freeXOffset = (ushort)(line.freeXOffset + setup.textureSize.x);
             _lines[lineIndex] = line;
+
+            return spriteIndex;
         }
 
         public void Release(ushort spriteIndex)
@@ -84,6 +102,54 @@ namespace Beast.Radar.Sprite
             _lines[sprite.lineIndex] = line;
 
             _linesWithGaps.Add(sprite.lineIndex);
+        }
+
+        public void PackGaps()
+        {
+            foreach (ushort lineIndex in _linesWithGaps)
+            {
+                SpriteAtlasLine line = _lines[lineIndex];
+
+                int xOffset = 0;
+
+                for (int i = 0; i < line.sprites.Length; i++)
+                {
+                    ushort spriteID = line.sprites[i];
+                    SpriteInfo sprite = _sprites[spriteID];
+                    
+                    // Has gap.
+                    if (xOffset < sprite.atlasOffset.x)
+                    {
+                        BGraphic.CopyTexture(new TextureCopyParameters
+                        {
+                            sourceTexture = _atlasTexture,
+                            targetTexture = _bufferTexture,
+                            sourceSize = sprite.size,
+                            sourceOffset = sprite.atlasOffset,
+                        });
+                        
+                        BGraphic.CopyTexture(new TextureCopyParameters
+                        {
+                            sourceTexture = _bufferTexture,
+                            targetTexture = _atlasTexture,
+                            sourceSize = sprite.size,
+                            targetOffset = new int2(xOffset, sprite.atlasOffset.y)
+                        });
+
+                        sprite.atlasOffset.x = (short)xOffset;
+
+                        _sprites[spriteID] = sprite;
+                    }
+
+                    xOffset += sprite.size.x;
+                }
+
+                line.freeXOffset = (ushort)xOffset;
+
+                _lines[lineIndex] = line;
+            }
+            
+            _linesWithGaps.Clear();
         }
 
         /// <returns>8, 16, 24, 32, 48, 64, 96, 128...</returns>
@@ -105,7 +171,7 @@ namespace Beast.Radar.Sprite
 
         private int _createLine(ushort ySize)
         {
-            int freeSpace = _atlasSize.y - _freeYOffset;
+            int freeSpace = _atlasTexture.height - _freeYOffset;
 
             if (freeSpace < ySize)
             {
@@ -130,7 +196,7 @@ namespace Beast.Radar.Sprite
         private int _findLine(int requiredWidth, int lineHeight)
         {
             int lineIndex = -1;
-            int atlasWidth = _atlasSize.x;
+            int atlasWidth = _atlasTexture.width;
             
             for (int i = 0; i < _lines.Count; i++)
             {
@@ -160,6 +226,9 @@ namespace Beast.Radar.Sprite
             
             _lines.Clear();
             _sprites.Dispose();
+            
+            BGraphic.TryDispose(ref _atlasTexture);
+            BGraphic.TryDispose(ref _bufferTexture);
         }
     }
 }

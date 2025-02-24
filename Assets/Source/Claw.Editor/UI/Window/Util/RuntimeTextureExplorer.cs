@@ -98,6 +98,10 @@ namespace Beast.Claw.Editor.UI
 
                     ui.GenericField("Size", _selectedTexture.Size());
 
+                    GraphicsFormat format = _selectedTexture.graphicsFormat;
+                    
+                    ui.EnumSingleField("Format", ref format);
+
                     ui.TexturePreview(_selectedTexture, 256);
                 });
             }

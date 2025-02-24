@@ -34,6 +34,14 @@ namespace Beast.Radar.City
         
         private TerrainData _bakedForTerrain;
 
+        public string GetCityName(int cityID)
+        {
+            // TODO : Not correct.
+            UnityEngine.Random.InitState(cityID);
+
+            return ((int)(UnityEngine.Random.value * int.MaxValue)).ToString("X");
+        }
+
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _gizmo = _gizmoManager.CreateHandle(this);

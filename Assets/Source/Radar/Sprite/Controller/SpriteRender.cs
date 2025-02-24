@@ -27,7 +27,6 @@ namespace Beast.Radar.Sprite
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly GraphicLibrary _library;
 
-        private Texture2D _atlasTexture;
         private EntityQuery _entityQuery;
         private HalfStream _halfStream;
         private HalfTextureProvider _halfTextureProvider;
@@ -37,9 +36,7 @@ namespace Beast.Radar.Sprite
         
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _atlasTexture = BGraphic.CreateTexture2D(this, _config.atlasTexture);
-            
-            _atlasManager = new SpriteAtlasManager(_config.atlasTexture.size);
+            _atlasManager = new SpriteAtlasManager(this, _config.atlasTexture);
             
             _entityQuery = _entityManager.CreateEntityQuery(
                 typeof(PositionComponent), 
@@ -53,30 +50,17 @@ namespace Beast.Radar.Sprite
 
         public ushort CreateSprite(SpriteSetup spriteSetup)
         {
-            int2 spriteSize = spriteSetup.sourceTexture.Size();
-
-            _atlasManager.Allocate(spriteSize, out ushort spriteIndex, out SpriteInfo spriteInfo);
-
-            Graphics.CopyTexture(
-                spriteSetup.sourceTexture,
-                0,
-                0,
-                0,
-                0,
-                spriteSize.x,
-                spriteSize.y,
-                _atlasTexture,
-                0,
-                0,
-                spriteInfo.atlasOffset.x,
-                spriteInfo.atlasOffset.y);
-
-            return spriteIndex;
+            return _atlasManager.Create(spriteSetup);
         }
 
-        public void DeleteSprite(ushort index)
+        public void ReleaseSprite(ushort index)
         {
             _atlasManager.Release(index);
+        }
+
+        protected override void _tick(BlockingContext context)
+        {
+            _atlasManager.PackGaps();
         }
 
         protected override void _render(BlockingContext context)
@@ -165,8 +149,8 @@ namespace Beast.Radar.Sprite
             _renderMaterial.SetTexture("_DataTexture", dataTexture);
             _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
 
-            _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlasTexture.width);
-            _renderMaterial.SetTexture("_AtlasTexture", _atlasTexture);
+            _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlasManager.AtlasTexture.width);
+            _renderMaterial.SetTexture("_AtlasTexture", _atlasManager.AtlasTexture);
 
             RenderParams renderParams = new()
             {
@@ -184,8 +168,8 @@ namespace Beast.Radar.Sprite
 
         protected override void _dispose(BlockingContext obj)
         {
-            BGraphic.TryDispose(ref _atlasTexture);
             BGraphic.TryDispose(ref _renderMaterial);
+            
             _entityQuery.Dispose();
             _atlasManager.Dispose();
             _halfStream.Dispose();
