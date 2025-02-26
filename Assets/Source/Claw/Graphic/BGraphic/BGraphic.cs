@@ -152,21 +152,33 @@ namespace Beast.Claw.Graphic
             };
         }
 
-        public static void CopyTexture(TextureCopyParameters parameters)
+        public static void DrawTextureToRenderTexture(TextureToRenderTextureData parameters)
         {
-            Graphics.CopyTexture(
-                parameters.sourceTexture,
-                parameters.sourceElement,
-                parameters.sourceMip,
-                parameters.sourceOffset.x,
-                parameters.sourceOffset.y,
-                parameters.sourceSize.x,
-                parameters.sourceSize.y,
-                parameters.targetTexture,
-                parameters.targetElement,
-                parameters.targetMip,
+            RenderTexture bak = RenderTexture.active;
+            
+            RenderTexture.active = parameters.targetTexture;
+
+            GL.PushMatrix();
+            
+            GL.LoadPixelMatrix(0, parameters.targetTexture.width, parameters.targetTexture.height, 0);
+            
+            Rect targetRect = new(
                 parameters.targetOffset.x,
-                parameters.targetOffset.y);
+                parameters.targetTexture.height - parameters.targetOffset.y - parameters.sourceSize.y,
+                parameters.sourceSize.x,
+                parameters.sourceSize.y);
+            
+            Rect sourceRect = new(
+                parameters.sourceOffset.x / (float)parameters.sourceTexture.width,
+                parameters.sourceOffset.y / (float)parameters.sourceTexture.height,
+                parameters.sourceSize.x / (float)parameters.sourceTexture.width,
+                parameters.sourceSize.y / (float)parameters.sourceTexture.height);
+
+            Graphics.DrawTexture(targetRect, parameters.sourceTexture, sourceRect, 0, 0, 0, 0);
+
+            GL.PopMatrix();
+            
+            RenderTexture.active = bak;
         }
 
         public static Texture2D CreateTexture2D(IController owner, Texture2DParameters input)

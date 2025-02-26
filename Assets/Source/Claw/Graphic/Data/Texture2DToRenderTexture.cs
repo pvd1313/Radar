@@ -7,7 +7,7 @@ namespace Beast.Claw.Graphic
     public struct Texture2DToRenderTexture : IValidatable
     {
         public RenderTexture targetTexture;
-        public Texture2D sourceTexture;
+        public Texture sourceTexture;
         public float2 targetTexturePixelOffset;
         
         public string Validate()

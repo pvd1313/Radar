@@ -74,7 +74,7 @@ namespace Beast.Claw.Text.Baking
             int2 textureOffset = new ((int)meshBounds.x.min, (int)meshBounds.y.min);
             int2 textureSize = new ((int)meshBounds.x.GetRange(), (int)meshBounds.y.GetRange());
             
-            _renderMesh(textureOffset, textureSize);
+            _renderMesh();
 
             return new TextBakeResult
             {
@@ -84,7 +84,7 @@ namespace Beast.Claw.Text.Baking
             };
         }
 
-        private void _renderMesh(int2 textureOffset, int2 textureSize)
+        private void _renderMesh()
         {
             RenderTexture bakTexture = RenderTexture.active;
 

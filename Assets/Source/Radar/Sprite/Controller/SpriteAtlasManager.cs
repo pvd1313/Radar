@@ -18,11 +18,11 @@ namespace Beast.Radar.Sprite
 
         private readonly List<SpriteAtlasLine> _lines;
         private readonly List<ushort> _freeSpriteIndexList;
+        private readonly HashSet<ushort> _linesWithGaps;
 
         private RenderTexture _atlasTexture;
         private RenderTexture _bufferTexture;
         private NativeList<SpriteInfo> _sprites;
-        private HashSet<ushort> _linesWithGaps;
         private ushort _freeYOffset;
         
         public SpriteAtlasManager(IController owner, RenderTextureData atlasParams)
@@ -79,7 +79,7 @@ namespace Beast.Radar.Sprite
                 lineIndex = (byte) lineIndex
             };
             
-            BGraphic.CopyTexture(new TextureCopyParameters
+            BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
             {
                 sourceTexture = setup.sourceTexture,
                 sourceOffset = setup.textureOffset,
@@ -125,7 +125,9 @@ namespace Beast.Radar.Sprite
                     // Has gap.
                     if (xOffset < sprite.atlasOffset.x)
                     {
-                        BGraphic.CopyTexture(new TextureCopyParameters
+                        BGraphic.ClearTexture(_bufferTexture);
+                        
+                        BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
                         {
                             sourceTexture = _atlasTexture,
                             targetTexture = _bufferTexture,
@@ -133,7 +135,7 @@ namespace Beast.Radar.Sprite
                             sourceOffset = sprite.atlasOffset,
                         });
                         
-                        BGraphic.CopyTexture(new TextureCopyParameters
+                        BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
                         {
                             sourceTexture = _bufferTexture,
                             targetTexture = _atlasTexture,
