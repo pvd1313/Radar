@@ -17,7 +17,6 @@ namespace Beast.Claw.Text.Baking
 
         private TextGenerationSettings _generatorSettings;
         private Material _fontMaterial;
-        private Texture2D _texture2D;
         private RenderTexture _renderTexture;
         private Mesh _textMesh;
         
@@ -44,18 +43,6 @@ namespace Beast.Claw.Text.Baking
                 generationExtents = new Vector2(_textureSize.x, _textureSize.y),
                 textAnchor = TextAnchor.LowerLeft,
             };
-            
-            _texture2D = BGraphic.CreateTexture2D(this, new Texture2DParameters
-            {
-                size = _textureSize,
-                isLinear = true,
-                createInitialized = false,
-                filterMode = FilterMode.Point,
-                format = TextureFormat.RGB24,
-                mipChain = false,
-                name = "Text2TextureBaker_2D",
-                wrapMode = TextureWrapMode.Clamp,
-            });
             
             _renderTexture = BGraphic.CreatePermRenderTexture(this, new RenderTextureData
             {
@@ -91,7 +78,7 @@ namespace Beast.Claw.Text.Baking
 
             return new TextBakeResult
             {
-                texture = _texture2D,
+                texture = _renderTexture,
                 offset = textureOffset,
                 size = textureSize
             };
@@ -112,12 +99,8 @@ namespace Beast.Claw.Text.Baking
 
             Graphics.DrawMeshNow(_textMesh, Matrix4x4.identity);
 
-            Rect rect = new (textureOffset.x, textureOffset.y, textureSize.x, textureSize.y);
-
-            _texture2D.ReadPixels(rect, 0, 0);
-            _texture2D.Apply();
-            
             GL.PopMatrix();
+            
             RenderTexture.active = bakTexture;
         }
 
@@ -169,7 +152,6 @@ namespace Beast.Claw.Text.Baking
 
         public void Dispose()
         {
-            BGraphic.TryDispose(ref _texture2D);
             BGraphic.TryDispose(ref _renderTexture);
             BGraphic.TryDispose(ref _textMesh);
             BGraphic.TryDispose(ref _fontMaterial);

@@ -14,24 +14,24 @@ namespace Beast.Radar.Sprite
     public class SpriteAtlasManager
     {
         public NativeSlice<SpriteInfo> Sprites => _sprites.AsArray().Slice();
-        public Texture2D AtlasTexture => _atlasTexture;
+        public RenderTexture AtlasTexture => _atlasTexture;
 
         private readonly List<SpriteAtlasLine> _lines;
         private readonly List<ushort> _freeSpriteIndexList;
 
-        private Texture2D _atlasTexture;
-        private Texture2D _bufferTexture;
+        private RenderTexture _atlasTexture;
+        private RenderTexture _bufferTexture;
         private NativeList<SpriteInfo> _sprites;
         private HashSet<ushort> _linesWithGaps;
         private ushort _freeYOffset;
         
-        public SpriteAtlasManager(IController owner, Texture2DParameters atlasParams)
+        public SpriteAtlasManager(IController owner, RenderTextureData atlasParams)
         {
-            _atlasTexture = BGraphic.CreateTexture2D(owner, atlasParams);
+            _atlasTexture = BGraphic.CreatePermRenderTexture(owner, atlasParams);
 
             atlasParams.size = 256;
             atlasParams.name = "Buffer";
-            _bufferTexture = BGraphic.CreateTexture2D(owner, atlasParams);
+            _bufferTexture = BGraphic.CreatePermRenderTexture(owner, atlasParams);
             
             _lines = new List<SpriteAtlasLine>(64);
             _freeSpriteIndexList = new List<ushort>(128);
@@ -114,9 +114,9 @@ namespace Beast.Radar.Sprite
             foreach (ushort lineIndex in _linesWithGaps)
             {
                 SpriteAtlasLine line = _lines[lineIndex];
-
+        
                 int xOffset = 0;
-
+        
                 for (int i = 0; i < line.sprites.Length; i++)
                 {
                     ushort spriteID = line.sprites[i];
@@ -140,17 +140,17 @@ namespace Beast.Radar.Sprite
                             sourceSize = sprite.size,
                             targetOffset = new int2(xOffset, sprite.atlasOffset.y)
                         });
-
+        
                         sprite.atlasOffset.x = (short)xOffset;
-
+        
                         _sprites[spriteID] = sprite;
                     }
-
+        
                     xOffset += sprite.size.x;
                 }
-
+        
                 line.freeXOffset = (ushort)xOffset;
-
+        
                 _lines[lineIndex] = line;
             }
             

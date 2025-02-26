@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: SpriteRenderConfig
   m_EditorClassIdentifier: 
   atlasTexture:
-    name: sprite_atlas_2D
+    name: sprite_atlas_RT
     size:
       x: 1024
       y: 1024
-    format: 3
+    format: 0
     wrapMode: 1
     filterMode: 0
-    mipChain: 0
-    isLinear: 1
-    createInitialized: 0
-  entityTextureMaxSize: 128
+    depth: 0
+    mipCount: 0
+    antiAliasing: 1
+    readWrite: 1
+    memoryless: 0
+    vrUsage: 0
   renderShader: {fileID: 4800000, guid: 54034985d89e40b38db1a82abb2a8880, type: 3}

@@ -7,8 +7,7 @@ namespace Beast.Radar.Sprite
 {
     public class SpriteRenderConfig : ScriptableConfig
     {
-        public Texture2DParameters atlasTexture;
-        public int entityTextureMaxSize;
+        public RenderTextureData atlasTexture;
         public Shader renderShader;
         
         public override IEnumerable<IConfig> Bind()
