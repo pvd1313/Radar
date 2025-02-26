@@ -22,6 +22,8 @@ namespace Beast.Claw.Math
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void FloatToHalf2(float value, out ushort half0, out ushort half1)
         {
+            value = BMath.Clamp(value, -32767, 32767);
+            
             uint sign = value < 0 ? 32767u : 0;
             
             half0 = (ushort)(BMath.FloorToInt(BMath.Abs(value)) + sign);
@@ -31,6 +33,27 @@ namespace Beast.Claw.Math
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort FloatToHalf(float value)
         {
+            return Mathf.FloatToHalf(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort SByte2ToHalf(int x, int y)
+        {
+            x = BMath.Clamp(x, -63, +63);
+            y = BMath.Clamp(y, -63, +63);
+            
+            if (x < 0)
+            {
+                x = x * -1 + 63;
+            }
+
+            if (y < 0)
+            {
+                y = y * -1 + 63;
+            }
+            
+            float value = x + y / 128.0f;
+
             return Mathf.FloatToHalf(value);
         }
     }

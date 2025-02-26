@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Attributes.Annotation;
-using PlasticPipe.PlasticProtocol.Messages;
 using Unity.Collections;
 
 namespace Beast.Claw.Common

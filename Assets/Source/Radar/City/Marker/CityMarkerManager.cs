@@ -13,7 +13,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-
+using UnityEngine.Profiling;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
@@ -50,7 +50,8 @@ namespace Beast.Radar.City
                 typeof(PositionComponent),
                 typeof(SpriteComponent),
                 typeof(CityIDComponent),
-                typeof(CityLabelComponent)
+                typeof(CityLabelComponent),
+                typeof(SpriteOffsetComponent)
             };
 
             _iconArchetype = _entityManager.CreateArchetype(iconComponents);
@@ -132,8 +133,9 @@ namespace Beast.Radar.City
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 cityIDHandle = _entityManager.GetComponentTypeHandle<CityIDComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(false),
+                spriteOffsetHandle = _entityManager.GetComponentTypeHandle<SpriteOffsetComponent>(false),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                inIconSwitchLodNative = _resolveLod(_camera.ViewDistance),
+                inIconLod = _resolveLod(_camera.ViewDistance),
                 inCities = _citySpawner.Cities,
                 inCameraViewBounds = _camera.GetViewBounds(),
                 inSprites = _spriteAtlas.Sprites,
@@ -167,17 +169,23 @@ namespace Beast.Radar.City
             switch (command.commandType)
             {
                 case ECityLabelCommandType.CreateLabel:
+                    Profiler.BeginSample("CreateLabel()");
                     _setupLabel(command);
+                    Profiler.EndSample();
                     break;
 
                 case ECityLabelCommandType.ReleaseLabel:
+                    Profiler.BeginSample("ReleaseLabel()");
                     _spriteAtlas.ReleaseSprite(command.spriteID);
                     _entityManager.SetComponentData(command.targetEntity, new SpriteComponent());
+                    Profiler.EndSample();
                     break;
 
                 case ECityLabelCommandType.ChangeLabelResolution:
+                    Profiler.BeginSample("ChangeLabelResolution()");
                     _spriteAtlas.ReleaseSprite(command.spriteID);
                     _setupLabel(command);
+                    Profiler.EndSample();
                     break;
             }
         }
@@ -208,7 +216,9 @@ namespace Beast.Radar.City
                         majorCityIconID = _getTextureID(lod.majorIcon),
                         minorCityIconID = _getTextureID(lod.minorIcon),
                         minorLabelSize = lod.minorLabelSize,
-                        majorLabelSize = lod.majorLabelSize
+                        majorLabelSize = lod.majorLabelSize,
+                        minorLabelOffset = lod.minorLabelOffset,
+                        majorLabelOffset = lod.majorLabelOffset,
                     };
                 }
             }

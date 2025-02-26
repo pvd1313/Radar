@@ -131,8 +131,10 @@ inline void beast_clip_black_color(float3 color)
     clip(color.r + color.g + color.b - 0.01);
 }
 
-float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos)
+float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos, float2 screenOffset)
 {
+    float2 screenTexelSize = 1.0 / mat.screenSize;
+    
     float aspect = mat.screenSize.x / mat.screenSize.y;
 
     worldPos = worldPos - mat.renderCenter;
@@ -143,6 +145,8 @@ float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos)
     worldPos /= mat.renderDistance;
     worldPos.x /= aspect;
     worldPos *= mat.projectionScale;
+
+    worldPos += screenTexelSize * screenOffset * 2;
 
     worldPos.y *= _ProjectionParams.x;
                 
@@ -156,6 +160,17 @@ float beast_half2_to_float(half half0, half half1)
     float mainFloat = mainUInt >= 32767u ? (mainUInt - 32767.0f) * -1.0f : mainUInt;
     
     return mainFloat + (float)half1;
+}
+
+float2 beast_half_to_sbyte2(half value)
+{
+    uint a = (uint)value;
+    uint b = (uint)((value - a) * 128.0 + 0.5);
+
+    float aFloat = a >= 63u ? (a - 63) * -1.0f : a;
+    float bFloat = b >= 63u ? (b - 63) * -1.0f : b;
+
+    return float2(aFloat, bFloat);
 }
 
 inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
@@ -260,34 +275,6 @@ float beast_rect(float2 uv,
     
     return color;
 }
-
-// half beast_encode_RG(float r, float g)
-// {
-//     return (half)(r * 255.0) + (half)(g * 255.0 / 256.0);
-// }
-//
-// float2 beast_decode_RG(half x)
-// {
-//     float a = frac(x) * 255.0 / 255.0;
-//     float b = floor(x * 256.0) / 255.0;
-//     
-//     return float2(b, a); 
-// }
-//
-// // float2 beast_decode_RG(half x)
-// // {
-// //     return float2(floor(x) / 255.0, (x - floor(x)) * 256.0 / 255.0); 
-// // }
-//
-// void shadergraph_encode_RG_float(in float R, in float G, out half Result)
-// {
-//     Result = beast_encode_RG(R, G);
-// }
-//
-// void shadergraph_decode_RG_float(in half X, out float2 Result)
-// {
-//     Result = beast_decode_RG(X);
-// }
 
 void shadergraph_epsilon_step_float(in float X, out float Y)
 {

@@ -13,5 +13,7 @@ namespace Beast.Radar.City
         [CanBeNull] public Texture2D majorIcon;
         public int minorLabelSize;
         public int majorLabelSize;
+        public int minorLabelOffset;
+        public int majorLabelOffset;
     }
 }

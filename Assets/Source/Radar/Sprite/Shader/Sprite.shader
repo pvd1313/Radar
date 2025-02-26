@@ -57,13 +57,14 @@
                 // World point, with screen based size.
                 float posX = beast_half2_to_float(v0, v1);
                 float posY = beast_half2_to_float(v2, v3);
-                float2 spriteSize = float2(v6, v7);
+                float2 spriteSize = beast_half_to_sbyte2(v6) * 4;
+                float2 screenOffset = beast_half_to_sbyte2(v7);
                 float2 size = input.vertex.xy * (spriteSize / _ScreenSize * 2);
                 float4 screenSize = float4(size.x, size.y, 0, 0);
                 float2 worldPos = float2(posX, posY);
 
                 float2 spriteOffset = float2(v4, v5);
-                output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos) + screenSize;
+                output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos, screenOffset) + screenSize;
                 output.uv = (spriteOffset + spriteSize * input.vertex.xy + spriteSize * 0.5) * _AtlasTexelSize;
 
                 return output;

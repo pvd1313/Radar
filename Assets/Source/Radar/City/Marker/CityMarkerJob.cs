@@ -14,7 +14,7 @@ namespace Beast.Radar.City
         public const int MAX_COMMAND_COUNT = 4;
         
         [ReadOnly] public NativeSlice<CityInfo> inCities;
-        [ReadOnly] public CityMarkerLodNative inIconSwitchLodNative;
+        [ReadOnly] public CityMarkerLodNative inIconLod;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
@@ -22,6 +22,8 @@ namespace Beast.Radar.City
         [ReadOnly] public Bounds2D inCameraViewBounds;
         [ReadOnly] public EntityTypeHandle entityHandle;
         [ReadOnly] public NativeSlice<SpriteInfo> inSprites;
+        
+        public ComponentTypeHandle<SpriteOffsetComponent> spriteOffsetHandle;
 
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<CityLabelCommand> outLabelCommands;
         [WriteOnly] public NativeArray<byte> outLabelCommandCounters;
@@ -37,6 +39,7 @@ namespace Beast.Radar.City
             NativeArray<SpriteComponent> sprites = chunk.GetNativeArray(ref spriteHandle);
             NativeArray<CityIDComponent> cities = chunk.GetNativeArray(ref cityIDHandle);
             NativeArray<Entity> entities = chunk.GetNativeArray(entityHandle);
+            NativeArray<SpriteOffsetComponent> spriteOffsets = chunk.GetNativeArray(ref spriteOffsetHandle);
 
             bool isLabel = chunk.Has<CityLabelComponent>();
             _outLabelCommandCount = 0;
@@ -51,20 +54,21 @@ namespace Beast.Radar.City
 
                 if (isLabel)
                 {
-                    int targetLabelSize = isMajor ? inIconSwitchLodNative.majorLabelSize : inIconSwitchLodNative.minorLabelSize;
+                    int targetLabelSize =
+                        isMajor ? inIconLod.majorLabelSize : inIconLod.minorLabelSize;
 
                     bool labelMustBeVisible = inCameraViewBounds.Contains(position) && targetLabelSize > 0;
-                    
+
                     if (labelMustBeVisible && currentSpriteID == 0)
                     {
                         _addLabelCommand(chunkIndex, new CityLabelCommand
                         {
                             commandType = ECityLabelCommandType.CreateLabel,
                             targetEntity = entities[entityIndex],
-                            labelSize = (byte) targetLabelSize,
+                            labelSize = (byte)targetLabelSize,
                             cityID = cityID
                         });
-                        
+
                         continue;
                     }
 
@@ -74,12 +78,12 @@ namespace Beast.Radar.City
                         {
                             commandType = ECityLabelCommandType.ChangeLabelResolution,
                             targetEntity = entities[entityIndex],
-                            labelSize = (byte) targetLabelSize,
+                            labelSize = (byte)targetLabelSize,
                             spriteID = currentSpriteID,
                             cityID = cityID
                         });
                     }
-                    
+
                     if (!labelMustBeVisible && currentSpriteID != 0)
                     {
                         _addLabelCommand(chunkIndex, new CityLabelCommand
@@ -88,8 +92,20 @@ namespace Beast.Radar.City
                             targetEntity = entities[entityIndex],
                             spriteID = currentSpriteID
                         });
-                        
+
                         continue;
+                    }
+
+                    if (labelMustBeVisible)
+                    {
+                        int targetLabelOffset = isMajor ? inIconLod.majorLabelOffset : inIconLod.minorLabelOffset;
+                        
+                        SpriteOffsetComponent offset = spriteOffsets[entityIndex];
+
+                        if (offset.value.y != targetLabelOffset)
+                        {
+                            spriteOffsets[entityIndex] = new SpriteOffsetComponent(new sbyte2(0, targetLabelOffset));
+                        }
                     }
                 }
                 else
@@ -98,7 +114,7 @@ namespace Beast.Radar.City
 
                     if (inCameraViewBounds.Contains(position))
                     {
-                        targetSpriteIndex = isMajor ? inIconSwitchLodNative.majorCityIconID : inIconSwitchLodNative.minorCityIconID;
+                        targetSpriteIndex = isMajor ? inIconLod.majorCityIconID : inIconLod.minorCityIconID;
                     }
 
                     if (targetSpriteIndex != currentSpriteID)

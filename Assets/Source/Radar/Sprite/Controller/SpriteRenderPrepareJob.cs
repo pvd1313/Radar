@@ -15,6 +15,7 @@ namespace Beast.Radar.Sprite
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
         [ReadOnly] public ComponentTypeHandle<SpriteComponent> spriteHandle;
         [ReadOnly] public NativeSlice<SpriteInfo> spritesData;
+        [ReadOnly] public ComponentTypeHandle<SpriteOffsetComponent> spriteOffsetHandle;
         
         [WriteOnly, NativeDisableParallelForRestriction] public NativeArray<ushort> outData;
         [WriteOnly] public NativeArray<int> outEntityCounters;
@@ -24,25 +25,38 @@ namespace Beast.Radar.Sprite
             ArchetypeChunk chunk = inChunks[chunkIndex];
             NativeArray<PositionComponent> positions = chunk.GetNativeArray(ref positionHandle);
             NativeArray<SpriteComponent> sprites = chunk.GetNativeArray(ref spriteHandle);
+            NativeArray<SpriteOffsetComponent> spriteOffsets = chunk.GetNativeArray(ref spriteOffsetHandle);
+
+            bool hasScreenOffset = chunk.Has<SpriteOffsetComponent>();
 
             int writeOffset = inWriteOffset[chunkIndex] * SpriteRender.HALF_PER_SPRITE;
             int spriteCount = 0;
 
-            for (int i = 0; i < chunk.Count; i++)
+            for (int entityID = 0; entityID < chunk.Count; entityID++)
             {
-                ushort spriteID = sprites[i].value;
+                ushort spriteID = sprites[entityID].value;
 
                 if (spriteID == 0)
                 {
                     continue;
                 }
                 
-                float2 position = positions[i].value;
+                float2 position = positions[entityID].value;
 
                 SpriteInfo sprite = spritesData[spriteID];
                 
+                int2 screenOffset = int2.zero;
+
+                if (hasScreenOffset)
+                {
+                    screenOffset = spriteOffsets[entityID].value;
+                }
+                
                 BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
                 BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
+
+                int spriteSizeX = sprite.size.x >> 2;
+                int spriteSizeY = sprite.size.y >> 2;
 
                 outData[writeOffset + 0] = px0;
                 outData[writeOffset + 1] = px1;
@@ -50,8 +64,8 @@ namespace Beast.Radar.Sprite
                 outData[writeOffset + 3] = py1;
                 outData[writeOffset + 4] = BConvert.FloatToHalf(sprite.atlasOffset.x);
                 outData[writeOffset + 5] = BConvert.FloatToHalf(sprite.atlasOffset.y);
-                outData[writeOffset + 6] = BConvert.FloatToHalf(sprite.size.x);
-                outData[writeOffset + 7] = BConvert.FloatToHalf(sprite.size.y);
+                outData[writeOffset + 6] = BConvert.SByte2ToHalf(spriteSizeX, spriteSizeY);
+                outData[writeOffset + 7] = BConvert.SByte2ToHalf(screenOffset.x, screenOffset.y);
                 
                 spriteCount++;
                 writeOffset += SpriteRender.HALF_PER_SPRITE;

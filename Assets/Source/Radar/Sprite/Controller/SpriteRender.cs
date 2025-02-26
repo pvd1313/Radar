@@ -86,6 +86,7 @@ namespace Beast.Radar.Sprite
                 inWriteOffset = writeOffsets,
                 positionHandle = _entityManager.GetComponentTypeHandle<PositionComponent>(true),
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(true),
+                spriteOffsetHandle = _entityManager.GetComponentTypeHandle<SpriteOffsetComponent>(true),
                 spritesData = _atlasManager.Sprites,
                 outEntityCounters = entityCounters,
                 outData = pixels

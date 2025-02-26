@@ -20,7 +20,7 @@ MonoBehaviour:
     backgroundColor: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 1}
     fontColor: {r: 1, g: 1, b: 1, a: 1}
     fontShader: {fileID: 4800000, guid: 5f205e64ebb7d084181d500d8f9c1074, type: 3}
-    fontScale: 1.1
+    fontScale: 1.23
     vertexOffset:
       x: 1
       y: 0
@@ -32,6 +32,8 @@ MonoBehaviour:
     majorIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
     minorLabelSize: 24
     majorLabelSize: 32
+    minorLabelOffset: -19
+    majorLabelOffset: -30
   - viewDistance:
       min: 128
       max: 512
@@ -39,6 +41,8 @@ MonoBehaviour:
     majorIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
     minorLabelSize: 16
     majorLabelSize: 32
+    minorLabelOffset: -16
+    majorLabelOffset: -30
   - viewDistance:
       min: 512
       max: 1024
@@ -46,6 +50,8 @@ MonoBehaviour:
     majorIcon: {fileID: 2800000, guid: def01386d2608eb4fbd03a949cf1f63d, type: 3}
     minorLabelSize: 0
     majorLabelSize: 24
+    minorLabelOffset: 0
+    majorLabelOffset: -23
   - viewDistance:
       min: 1024
       max: 4096
@@ -53,3 +59,5 @@ MonoBehaviour:
     majorIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
     minorLabelSize: 0
     majorLabelSize: 16
+    minorLabelOffset: 0
+    majorLabelOffset: -16

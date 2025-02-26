@@ -60,7 +60,7 @@
                     float4 screenSize = float4(size.x, size.y, 0, 0);
                     float2 worldPos = float2(posX, posY);
                     
-                    output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos) + screenSize;
+                    output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos, 0) + screenSize;
                     output.color = beast_half2_to_rgba(v2, v3);
                 }
                 // World point, with world based size.
@@ -71,7 +71,7 @@
                     float2 size = float2(input.vertex.x, input.vertex.y) * v1;
                     float2 worldPos = float2(posX, posY);
                     
-                    output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos + size);
+                    output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos + size, 0);
                     output.color = beast_half2_to_rgba(v2, v3);
                 }
                 
