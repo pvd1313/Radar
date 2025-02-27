@@ -22,6 +22,7 @@ namespace Beast.Radar.City
     {
         [Required] private readonly IEntityManager _entityManager;
         [Required] private readonly ICitySpawner _citySpawner;
+        [Required] private readonly ICityNameGenerator _cityName;
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly ISpriteAtlas _spriteAtlas;
         [Required] private readonly CityMarkerConfig _config;
@@ -135,7 +136,7 @@ namespace Beast.Radar.City
                 spriteHandle = _entityManager.GetComponentTypeHandle<SpriteComponent>(false),
                 spriteOffsetHandle = _entityManager.GetComponentTypeHandle<SpriteOffsetComponent>(false),
                 entityHandle = _entityManager.GetEntityTypeHandle(),
-                inIconLod = _resolveLod(_camera.ViewDistance),
+                inMarkerLod = _resolveLod(_camera.ViewDistance),
                 inCities = _citySpawner.Cities,
                 inCameraViewBounds = _camera.GetViewBounds(),
                 inSprites = _spriteAtlas.Sprites,
@@ -192,7 +193,7 @@ namespace Beast.Radar.City
 
         private void _setupLabel(CityLabelCommand command)
         {
-            string cityName = _citySpawner.GetCityName(command.cityID);
+            string cityName = _cityName.GetCityName(command.cityID);
             TextBakeResult bakedText = _textBaker.Bake(cityName, command.labelSize);
 
             ushort spriteID = _spriteAtlas.CreateSprite(new SpriteSetup

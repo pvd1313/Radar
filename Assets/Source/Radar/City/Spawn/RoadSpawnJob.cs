@@ -177,7 +177,7 @@ namespace Beast.Radar.City
             
             foreach (CityInfo city in cities)
             {
-                if (CitySpawner.MAJOR_CITY_SIZE.Contains(city.size))
+                if (city.IsMajorCity())
                 {
                     major.Add(city);
                 }

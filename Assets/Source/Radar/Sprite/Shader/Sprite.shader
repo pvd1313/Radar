@@ -2,7 +2,7 @@
 {
     SubShader
     {
-        // Rendered to buffer.
+        // Rendered to camera.
         cull off
         zwrite on
         ztest on
@@ -57,7 +57,7 @@
                 // World point, with screen based size.
                 float posX = beast_half2_to_float(v0, v1);
                 float posY = beast_half2_to_float(v2, v3);
-                float2 spriteSize = beast_half_to_sbyte2(v6) * 4;
+                float2 spriteSize = beast_half_to_ubyte2(v6);
                 float2 screenOffset = beast_half_to_sbyte2(v7);
                 float2 size = input.vertex.xy * (spriteSize / _ScreenSize * 2);
                 float4 screenSize = float4(size.x, size.y, 0, 0);

@@ -55,16 +55,13 @@ namespace Beast.Radar.Sprite
                 BConvert.FloatToHalf2(position.x, out ushort px0, out ushort px1);
                 BConvert.FloatToHalf2(position.y, out ushort py0, out ushort py1);
 
-                int spriteSizeX = sprite.size.x >> 2;
-                int spriteSizeY = sprite.size.y >> 2;
-
                 outData[writeOffset + 0] = px0;
                 outData[writeOffset + 1] = px1;
                 outData[writeOffset + 2] = py0;
                 outData[writeOffset + 3] = py1;
                 outData[writeOffset + 4] = BConvert.FloatToHalf(sprite.atlasOffset.x);
                 outData[writeOffset + 5] = BConvert.FloatToHalf(sprite.atlasOffset.y);
-                outData[writeOffset + 6] = BConvert.SByte2ToHalf(spriteSizeX, spriteSizeY);
+                outData[writeOffset + 6] = BConvert.UByte2ToHalf(sprite.size.x, sprite.size.y);
                 outData[writeOffset + 7] = BConvert.SByte2ToHalf(screenOffset.x, screenOffset.y);
                 
                 spriteCount++;

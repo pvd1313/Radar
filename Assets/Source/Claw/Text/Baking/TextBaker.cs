@@ -19,6 +19,7 @@ namespace Beast.Claw.Text.Baking
         private Material _fontMaterial;
         private RenderTexture _renderTexture;
         private Mesh _textMesh;
+        private Color _backgroundColor;
         
         public TextBaker(TextBakerConfig config)
         {
@@ -27,11 +28,13 @@ namespace Beast.Claw.Text.Baking
             _textureSize = config.textureSize;
 
             _vertexOffset = new Vector3(config.vertexOffset.x, config.vertexOffset.y, 0);
+
+            _backgroundColor = config.backgroundColor;
             
             _fontMaterial = new Material(config.fontShader);
             _fontMaterial.mainTexture = config.fontAsset.material.mainTexture;
             _fontMaterial.color = config.fontColor;
-            _fontMaterial.SetColor("_BackgroundColor", config.backgroundColor);
+            _fontMaterial.SetColor("_BackgroundColor", _backgroundColor);
             
             _generatorSettings = new TextGenerationSettings
             {
@@ -70,6 +73,7 @@ namespace Beast.Claw.Text.Baking
             meshBounds.x.min = BMath.Max(0, meshBounds.x.min);
             meshBounds.y.min = BMath.Max(0, meshBounds.y.min);
             meshBounds.y.max = fontSize;
+            meshBounds.x.max = BMath.Ceil(meshBounds.x.max);
             
             int2 textureOffset = new ((int)meshBounds.x.min, (int)meshBounds.y.min);
             int2 textureSize = new ((int)meshBounds.x.GetRange(), (int)meshBounds.y.GetRange());
@@ -95,7 +99,7 @@ namespace Beast.Claw.Text.Baking
 
             _fontMaterial.SetPass(0);
             
-            GL.Clear(true, true, Color.clear);
+            GL.Clear(true, true, _backgroundColor);
 
             Graphics.DrawMeshNow(_textMesh, Matrix4x4.identity);
 

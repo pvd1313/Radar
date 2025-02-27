@@ -6,6 +6,11 @@ namespace Beast.Radar.City
     {
         public short2 position;
         public byte size;
+
+        public bool IsMajorCity()
+        {
+            return CitySpawner.MAJOR_CITY_SIZE.Contains(size);
+        }
         
         public override string ToString()
         {

@@ -34,14 +34,6 @@ namespace Beast.Radar.City
         
         private TerrainData _bakedForTerrain;
 
-        public string GetCityName(int cityID)
-        {
-            // TODO : Not correct.
-            UnityEngine.Random.InitState(cityID);
-
-            return ((int)(UnityEngine.Random.value * int.MaxValue)).ToString("X");
-        }
-
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _gizmo = _gizmoManager.CreateHandle(this);
@@ -148,14 +140,14 @@ namespace Beast.Radar.City
             
             _gizmo.SetColor(Color.black);
 
-            foreach (int2 position in roadCells8KM)
-            {
-                _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
-            }
+             foreach (int2 position in roadCells8KM)
+             {
+                 _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
+             }
             
-            foreach (CityInfo cityInfo in _cities)
+            foreach (CityInfo city in _cities)
             {
-                if (MAJOR_CITY_SIZE.Contains(cityInfo.size))
+                if (city.IsMajorCity())
                 {
                     majorCount++;
                 }

@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f93b579262e742edbe03382de061fe57, type: 3}
-  m_Name: CityIconConfig
+  m_Name: CityMarkerConfig
   m_EditorClassIdentifier: 
   textConfig:
     fontAsset: {fileID: 12800000, guid: 6b07a549354f95b4a8bb1624976af11f, type: 3}
     textureSize:
-      x: 256
+      x: 128
       y: 32
-    backgroundColor: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 1}
+    backgroundColor: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 1}
     fontColor: {r: 1, g: 1, b: 1, a: 1}
     fontShader: {fileID: 4800000, guid: 5f205e64ebb7d084181d500d8f9c1074, type: 3}
     fontScale: 1.23
@@ -32,17 +32,17 @@ MonoBehaviour:
     majorIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
     minorLabelSize: 24
     majorLabelSize: 32
-    minorLabelOffset: -19
-    majorLabelOffset: -30
+    minorLabelOffset: -20
+    majorLabelOffset: -32
   - viewDistance:
       min: 128
       max: 512
-    minorIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
+    minorIcon: {fileID: 2800000, guid: 20653bd6af686d54abe7db092704d626, type: 3}
     majorIcon: {fileID: 2800000, guid: f6ae0fc29731b334ab188dd350aae4d9, type: 3}
     minorLabelSize: 16
     majorLabelSize: 32
     minorLabelOffset: -16
-    majorLabelOffset: -30
+    majorLabelOffset: -32
   - viewDistance:
       min: 512
       max: 1024
@@ -51,12 +51,12 @@ MonoBehaviour:
     minorLabelSize: 0
     majorLabelSize: 24
     minorLabelOffset: 0
-    majorLabelOffset: -23
+    majorLabelOffset: -24
   - viewDistance:
       min: 1024
       max: 4096
     minorIcon: {fileID: 0}
-    majorIcon: {fileID: 2800000, guid: 041e420731440ef4d834511a7ad9fa7b, type: 3}
+    majorIcon: {fileID: 2800000, guid: 20653bd6af686d54abe7db092704d626, type: 3}
     minorLabelSize: 0
     majorLabelSize: 16
     minorLabelOffset: 0

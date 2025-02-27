@@ -52,9 +52,16 @@ namespace Beast.Claw.Math
                 y = y * -1 + 63;
             }
             
-            float value = x + y / 128.0f;
-
-            return Mathf.FloatToHalf(value);
+            return Mathf.FloatToHalf(x + y / 128.0f);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort UByte2ToHalf(int x, int y)
+        {
+            x = BMath.Clamp(x, 0, 127);
+            y = BMath.Clamp(y, 0, 127);
+            
+            return Mathf.FloatToHalf(x + y / 128.0f);
         }
     }
 }

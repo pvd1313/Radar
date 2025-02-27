@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Validation;
@@ -25,6 +24,21 @@ namespace Beast.Claw.Common
             return item;
         }
 
+        public static void Shuffle<T>(this List<T> list, int seed)
+        {
+            Unity.Mathematics.Random random = new ((uint)seed);
+
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                int j = random.NextInt(i, list.Count);
+
+                if (i != j)
+                {
+                    (list[i], list[j]) = (list[j], list[i]);
+                }
+            }
+        }
+
         public static bool IsNullOrEmpty<TValue>(this IList<TValue> list)
         {
             list.ValidateNotNullThrowException(nameof(list));
@@ -46,7 +60,7 @@ namespace Beast.Claw.Common
         {
             if (list.Count == 0)
             {
-                throw new InvalidOperationException("No items to pop in list");
+                throw new System.InvalidOperationException("No items to pop in list");
             }
             
             TValue item = list[^1];

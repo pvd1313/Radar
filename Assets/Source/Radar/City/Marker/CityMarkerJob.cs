@@ -14,7 +14,7 @@ namespace Beast.Radar.City
         public const int MAX_COMMAND_COUNT = 4;
         
         [ReadOnly] public NativeSlice<CityInfo> inCities;
-        [ReadOnly] public CityMarkerLodNative inIconLod;
+        [ReadOnly] public CityMarkerLodNative inMarkerLod;
 
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public ComponentTypeHandle<PositionComponent> positionHandle;
@@ -50,12 +50,11 @@ namespace Beast.Radar.City
                 float2 position = positions[entityIndex].value;
                 ushort currentSpriteID = sprites[entityIndex].value;
 
-                bool isMajor = CitySpawner.MAJOR_CITY_SIZE.Contains(inCities[cityID].size);
+                bool isMajor = inCities[cityID].IsMajorCity();
 
                 if (isLabel)
                 {
-                    int targetLabelSize =
-                        isMajor ? inIconLod.majorLabelSize : inIconLod.minorLabelSize;
+                    int targetLabelSize = isMajor ? inMarkerLod.majorLabelSize : inMarkerLod.minorLabelSize;
 
                     bool labelMustBeVisible = inCameraViewBounds.Contains(position) && targetLabelSize > 0;
 
@@ -98,7 +97,7 @@ namespace Beast.Radar.City
 
                     if (labelMustBeVisible)
                     {
-                        int targetLabelOffset = isMajor ? inIconLod.majorLabelOffset : inIconLod.minorLabelOffset;
+                        int targetLabelOffset = isMajor ? inMarkerLod.majorLabelOffset : inMarkerLod.minorLabelOffset;
                         
                         SpriteOffsetComponent offset = spriteOffsets[entityIndex];
 
@@ -114,7 +113,7 @@ namespace Beast.Radar.City
 
                     if (inCameraViewBounds.Contains(position))
                     {
-                        targetSpriteIndex = isMajor ? inIconLod.majorCityIconID : inIconLod.minorCityIconID;
+                        targetSpriteIndex = isMajor ? inMarkerLod.majorCityIconID : inMarkerLod.minorCityIconID;
                     }
 
                     if (targetSpriteIndex != currentSpriteID)

@@ -173,6 +173,14 @@ float2 beast_half_to_sbyte2(half value)
     return float2(aFloat, bFloat);
 }
 
+float2 beast_half_to_ubyte2(half value)
+{
+    uint a = (uint)value;
+    uint b = (uint)((value - a) * 128.0 + 0.5);
+
+    return float2(a, b);
+}
+
 inline float2 beast_isometric_screen_offset(BeastIsometricTile tile, uint gridSizeX)
 {
     float2 output = 0;
