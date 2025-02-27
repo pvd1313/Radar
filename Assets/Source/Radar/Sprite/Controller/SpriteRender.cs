@@ -58,9 +58,14 @@ namespace Beast.Radar.Sprite
             _atlasManager.Release(index);
         }
 
-        protected override void _tick(BlockingContext context)
+        public void UpdateAtlas()
         {
             _atlasManager.PackGaps();
+        }
+
+        protected override void _tick(BlockingContext context)
+        {
+            _atlasManager.PackGapsIterative();
         }
 
         protected override void _render(BlockingContext context)

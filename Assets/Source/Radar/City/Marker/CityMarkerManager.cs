@@ -100,7 +100,7 @@ namespace Beast.Radar.City
                 return UniTask.CompletedTask;
             }
 
-            _disposeEntities();
+            _disposeEntities(true);
 
             NativeSlice<CityInfo> cities = _citySpawner.Cities;
 
@@ -239,16 +239,31 @@ namespace Beast.Radar.City
 
         protected override void _dispose(BlockingContext obj)
         {
-            _disposeEntities();
+            _disposeEntities(false);
 
             _markerQuery.Dispose();
             _textBaker.Dispose();
         }
 
-        private void _disposeEntities()
+        private void _disposeEntities(bool releaseSprites)
         {
             if (_icons.IsCreated)
             {
+                if (releaseSprites)
+                {
+                    foreach (Entity entity in _labels)
+                    {
+                        ushort spriteIndex = _entityManager.GetComponentData<SpriteComponent>(entity).value;
+                        
+                        if (spriteIndex != 0)
+                        {
+                            _spriteAtlas.ReleaseSprite(spriteIndex);
+                        }
+                    }
+                    
+                    _spriteAtlas.UpdateAtlas();
+                }
+                
                 _entityManager.DestroyEntity(_icons);
                 _entityManager.DestroyEntity(_labels);
 

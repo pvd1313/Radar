@@ -9,5 +9,7 @@ namespace Beast.Radar.Sprite
         ushort CreateSprite(SpriteSetup spriteSetup);
         
         void ReleaseSprite(ushort index);
+
+        void UpdateAtlas();
     }
 }

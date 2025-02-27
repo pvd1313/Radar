@@ -114,7 +114,7 @@ namespace Beast.Radar.Sprite
             _linesWithGaps.Add(sprite.lineIndex);
         }
 
-        public void PackGaps()
+        public void PackGapsIterative()
         {
             if (_lineGapPackQueue.Count == 0 && _linesWithGaps.Count > 0)
             {
@@ -134,6 +134,22 @@ namespace Beast.Radar.Sprite
 
                 _linesWithGaps.Remove(lineIndex);
             }
+        }
+
+        public void PackGaps()
+        {
+            foreach (ushort lineIndex in _lineGapPackQueue)
+            {
+                _linesWithGaps.Add(lineIndex);
+            }
+
+            foreach (ushort lineIndex in _linesWithGaps)
+            {
+                _packLine(lineIndex);
+            }
+            
+            _linesWithGaps.Clear();
+            _lineGapPackQueue.Clear();
         }
 
         private void _packLine(ushort lineIndex)
