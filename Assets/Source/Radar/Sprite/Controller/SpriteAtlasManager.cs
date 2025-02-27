@@ -19,6 +19,7 @@ namespace Beast.Radar.Sprite
         private readonly List<SpriteAtlasLine> _lines;
         private readonly List<ushort> _freeSpriteIndexList;
         private readonly HashSet<ushort> _linesWithGaps;
+        private readonly List<ushort> _lineGapPackQueue;
 
         private RenderTexture _atlasTexture;
         private RenderTexture _bufferTexture;
@@ -34,6 +35,8 @@ namespace Beast.Radar.Sprite
             atlasParams.size = 256;
             atlasParams.name = "Buffer";
             _bufferTexture = BGraphic.CreatePermRenderTexture(owner, atlasParams);
+
+            _lineGapPackQueue = new List<ushort>(32);
             
             _lines = new List<SpriteAtlasLine>(64);
             _freeSpriteIndexList = new List<ushort>(128);
@@ -113,52 +116,69 @@ namespace Beast.Radar.Sprite
 
         public void PackGaps()
         {
-            foreach (ushort lineIndex in _linesWithGaps)
+            if (_lineGapPackQueue.Count == 0 && _linesWithGaps.Count > 0)
             {
-                SpriteAtlasLine line = _lines[lineIndex];
-        
-                int xOffset = 0;
-        
-                for (int i = 0; i < line.sprites.Length; i++)
+                foreach (ushort lineIndex in _linesWithGaps)
                 {
-                    ushort spriteID = line.sprites[i];
-                    SpriteInfo sprite = _sprites[spriteID];
+                    _lineGapPackQueue.Add(lineIndex);
+                }
+                
+                _linesWithGaps.Clear();
+            }
+
+            if (_lineGapPackQueue.Count > 0)
+            {
+                ushort lineIndex = _lineGapPackQueue.Pop();
+
+                _packLine(lineIndex);
+
+                _linesWithGaps.Remove(lineIndex);
+            }
+        }
+
+        private void _packLine(ushort lineIndex)
+        {
+            SpriteAtlasLine line = _lines[lineIndex];
+        
+            int xOffset = 0;
+        
+            for (int i = 0; i < line.sprites.Length; i++)
+            {
+                ushort spriteID = line.sprites[i];
+                SpriteInfo sprite = _sprites[spriteID];
                     
-                    // Has gap.
-                    if (xOffset < sprite.atlasOffset.x)
+                // Has gap.
+                if (xOffset < sprite.atlasOffset.x)
+                {
+                    BGraphic.ClearTexture(_bufferTexture);
+                        
+                    BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
                     {
-                        BGraphic.ClearTexture(_bufferTexture);
+                        sourceTexture = _atlasTexture,
+                        targetTexture = _bufferTexture,
+                        sourceSize = sprite.size,
+                        sourceOffset = sprite.atlasOffset,
+                    });
                         
-                        BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
-                        {
-                            sourceTexture = _atlasTexture,
-                            targetTexture = _bufferTexture,
-                            sourceSize = sprite.size,
-                            sourceOffset = sprite.atlasOffset,
-                        });
-                        
-                        BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
-                        {
-                            sourceTexture = _bufferTexture,
-                            targetTexture = _atlasTexture,
-                            sourceSize = sprite.size,
-                            targetOffset = new int2(xOffset, sprite.atlasOffset.y)
-                        });
+                    BGraphic.DrawTextureToRenderTexture(new TextureToRenderTextureData
+                    {
+                        sourceTexture = _bufferTexture,
+                        targetTexture = _atlasTexture,
+                        sourceSize = sprite.size,
+                        targetOffset = new int2(xOffset, sprite.atlasOffset.y)
+                    });
         
-                        sprite.atlasOffset.x = (short)xOffset;
+                    sprite.atlasOffset.x = (short)xOffset;
         
-                        _sprites[spriteID] = sprite;
-                    }
-        
-                    xOffset += sprite.size.x;
+                    _sprites[spriteID] = sprite;
                 }
         
-                line.freeXOffset = (ushort)xOffset;
-        
-                _lines[lineIndex] = line;
+                xOffset += sprite.size.x;
             }
-            
-            _linesWithGaps.Clear();
+        
+            line.freeXOffset = (ushort)xOffset;
+        
+            _lines[lineIndex] = line;
         }
 
         /// <returns>8, 16, 24, 32, 48, 64, 96, 128...</returns>
