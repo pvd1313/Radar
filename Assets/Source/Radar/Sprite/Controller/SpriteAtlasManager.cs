@@ -29,6 +29,8 @@ namespace Beast.Radar.Sprite
         {
             _atlasTexture = BGraphic.CreatePermRenderTexture(owner, atlasParams);
 
+            BGraphic.ClearTexture(_atlasTexture);
+
             atlasParams.size = 256;
             atlasParams.name = "Buffer";
             _bufferTexture = BGraphic.CreatePermRenderTexture(owner, atlasParams);
