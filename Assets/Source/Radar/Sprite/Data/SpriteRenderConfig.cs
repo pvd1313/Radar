@@ -9,6 +9,7 @@ namespace Beast.Radar.Sprite
     {
         public RenderTextureData atlasTexture;
         public Shader renderShader;
+        public float scalingReferencePPU;
         
         public override IEnumerable<IConfig> Bind()
         {

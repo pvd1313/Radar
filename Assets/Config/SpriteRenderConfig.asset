@@ -27,3 +27,4 @@ MonoBehaviour:
     memoryless: 0
     vrUsage: 0
   renderShader: {fileID: 4800000, guid: 54034985d89e40b38db1a82abb2a8880, type: 3}
+  scalingReferencePPU: 200

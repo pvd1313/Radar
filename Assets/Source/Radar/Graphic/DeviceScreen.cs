@@ -13,13 +13,13 @@ namespace Beast.Radar.Graphic
         
         public float Aspect => Screen.width / (float)Screen.height;
         
-        public float Dpi => Screen.dpi;
+        public float PPU => Screen.dpi;
         
         protected override void _tick(BlockingContext context)
         {
             BDebug.Track(this, nameof(Size), Size);
             BDebug.Track(this, nameof(Aspect), Aspect);
-            BDebug.Track(this, nameof(Dpi), Dpi);
+            BDebug.Track(this, nameof(PPU), PPU);
         }
     }
 }

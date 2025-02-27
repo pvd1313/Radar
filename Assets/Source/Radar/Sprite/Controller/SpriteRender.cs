@@ -5,6 +5,7 @@ using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
+using Beast.Claw.Math;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
@@ -133,9 +134,12 @@ namespace Beast.Radar.Sprite
                 return;
             }
 
+            float screenScale = Mathf.Round(_screen.PPU / _config.scalingReferencePPU);
+            screenScale = 1f / Mathf.Max(1, screenScale);
+
             World2ClipMatrix matrix = new()
             {
-                screenSize = _screen.Size,
+                screenSize = _screen.Size.Mul(screenScale),
                 cameraPosition = _camera.Position,
                 cameraViewDistance = _camera.ViewDistance,
                 cameraRotationRad = _camera.RotationRad

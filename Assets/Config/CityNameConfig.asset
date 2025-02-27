@@ -24,7 +24,7 @@ MonoBehaviour:
   - Quark
   - Bazon
   - Rock
-  - Job
+  - Stone
   - Flame
   - Acura
   - Razor
@@ -37,6 +37,11 @@ MonoBehaviour:
   - Pork
   - Dark
   - Axle
+  - Metro
+  - May
+  - Onyx
+  - Timber
+  - Anno
   minorNamePart0:
   - Aden
   - Pale

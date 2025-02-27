@@ -6,6 +6,6 @@ namespace Beast.Claw.Graphic
     {
         public int2 Size { get; }
         public float Aspect { get; }
-        public float Dpi { get; }
+        public float PPU { get; }
     }
 }
