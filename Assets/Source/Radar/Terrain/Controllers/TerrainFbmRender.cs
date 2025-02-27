@@ -29,7 +29,7 @@ namespace Beast.Radar.Terrain
             task.ValidateThrowException(nameof(task));
 
             Random random = new (task.terrain.seed);
-            float seedX = ((float)random.NextDouble() + 0.01f) * 10f - 5f;
+            float seedX = (float)random.NextDouble() + 0.01f;
             float seedY = seedX * -1f;
 
             float2 amount = new (task.terrain.water01, task.terrain.forest01);
