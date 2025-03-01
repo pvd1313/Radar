@@ -17,7 +17,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Radar/Graphic/RadarCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Radar.cginc"
             
             // #define DEBUG_DRAW_NOISE_ONLY
             // #define DEBUG_DRAW_TILES_ONE_SECOND

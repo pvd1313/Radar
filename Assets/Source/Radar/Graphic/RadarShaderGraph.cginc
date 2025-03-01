@@ -1,5 +1,5 @@
-﻿#ifndef RADAR_CG_INCLUDE
-#define RADAR_CG_INCLUDE
+﻿#ifndef RADAR_SHADER_GRAPH_CG_INCLUDE
+#define RADAR_SHADER_GRAPH_CG_INCLUDE
 
 struct BeastIsometricTile
 {
@@ -214,13 +214,24 @@ inline float2 beast_unpack_normal_2d(float2 color)
     return (color - 0.5) * 2;
 }
 
-// Ported : v.fuchadzhy@risenbeast.com
-// Source : https://www.notion.so/ShaderToy-2D-Clouds-10ca45ace92d805ea7abccb3823037d2
-//        : https://www.shadertoy.com/view/4tdSWr
-float2 beast_hash(float2 uv, float seed)
+// https://www.shadertoy.com/view/llGSzw
+float beast_hugo_hash(uint n) 
 {
-    uv = float2(dot(uv, float2(127.1, 311.7)), dot(uv, float2(269.5, 183.3)));
-    return -1.0 + 2.0 * frac(sin(uv * seed) * 43758.5453123);
+    // integer hash copied from Hugo Elias
+    n = (n << 13U) ^ n;
+    n = n * (n * n * 15731U + 789221U) + 1376312589U;
+    return float(n & uint(0x7fffffffU)) / float(0x7fffffffU);
+}
+
+float2 beast_int_hash(float2 uv, float seed)
+{
+    const uint prime0 = 73856093U;
+    const uint prime1 = 19349663U;
+    
+    uint a = (asuint(uv.x) * prime0) ^ (asuint(uv.y) * prime1) + asuint(seed);
+    uint b = (asuint(uv.x) * prime1) ^ (asuint(uv.y) * prime0) + asuint(seed);
+    
+    return -1.0 + 2.0 * float2(beast_hugo_hash(a), beast_hugo_hash(b));
 }
 
 // Ported : v.fuchadzhy@risenbeast.com
@@ -238,9 +249,9 @@ float beast_noise(float2 uv, float seed)
     float2 c = a - 1.0 + 2.0 * K2;
     float3 h = max(float3(0.5, 0.5, 0.5) - float3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
     float3 n = float3(
-        dot(a, beast_hash(i, seed)),
-        dot(b, beast_hash(i + o, seed)),
-        dot(c, beast_hash(i + 1, seed)));
+        dot(a, beast_int_hash(i, seed)),
+        dot(b, beast_int_hash(i + o, seed)),
+        dot(c, beast_int_hash(i + 1, seed)));
     
     return dot(h * h * h * h * n, 70.0);
 }
@@ -310,6 +321,14 @@ void shadergraph_rect_float(in float2 UV,
         Out = RGBA;
     }
 }
+
+void shadergraph_hash_float(in float2 UV,
+                      in float seed,
+                      out float2 RG)
+{
+    RG = beast_int_hash(UV, seed);
+}
+
 
 void shadergraph_noise_float(in float2 UV,
                       in float seed,

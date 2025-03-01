@@ -17,7 +17,7 @@
             #pragma fragment fragment
 
             #include "UnityCG.cginc"
-            #include "Assets/Source/Radar/Graphic/RadarCG.cginc"
+            #include "Assets/Source/Radar/Graphic/Radar.cginc"
 
             struct FragmentInput
             {

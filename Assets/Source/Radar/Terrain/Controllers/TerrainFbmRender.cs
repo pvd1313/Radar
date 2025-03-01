@@ -29,12 +29,11 @@ namespace Beast.Radar.Terrain
             task.ValidateThrowException(nameof(task));
 
             Random random = new (task.terrain.seed);
-            float seedX = (float)random.NextDouble() + 0.01f;
-            float seedY = seedX * -1f;
+            float seed = (float)random.NextDouble();
 
             float2 amount = new (task.terrain.water01, task.terrain.forest01);
             _material.SetFloat2("_Amount", amount);
-            _material.SetFloat2("_Seed", new float2(seedX, seedY));
+            _material.SetFloat("_Seed", seed);
             _material.SetTexture("_GradientTexture", _graphicLibrary.terrain.bakerGradient);
             _material.SetFloat("_BiomeSize01", task.terrain.biomeSize01);
             _material.SetFloat2("_TextureSize", task.outputTexture.Size());
