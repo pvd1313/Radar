@@ -165,7 +165,7 @@ namespace Beast.Radar.Player
             
             _stopwatch.Restart();
             Profiler.BeginSample("8km_job");
-            job.Schedule().Complete();
+            job.Run();
             Profiler.EndSample();
             _stopwatch.Stop();
             BDebug.Track(this, "8km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
@@ -220,7 +220,7 @@ namespace Beast.Radar.Player
             
             _stopwatch.Restart();
             Profiler.BeginSample("1km_job");
-            job.Schedule().Complete();
+            job.Run();
             Profiler.EndSample();
             _stopwatch.Stop();
             BDebug.Track(this, "1km_job_ms", _stopwatch.ElapsedMillisecondsFloat());

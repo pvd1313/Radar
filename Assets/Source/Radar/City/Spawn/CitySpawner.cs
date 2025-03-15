@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
-using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
@@ -14,8 +12,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine.Profiling;
-
-using Color = UnityEngine.Color;
 
 namespace Beast.Radar.City
 {
@@ -31,14 +27,12 @@ namespace Beast.Radar.City
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly CitySpawnConfig _config;
 
-        private IGizmoHandle _gizmo;
         private NativeList<CityInfo> _cities;
         
         private TerrainData _bakedForTerrain;
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _gizmo = _gizmoManager.CreateHandle(this);
             _cities = BNative.PermList<CityInfo>(1024);
             
             return UniTask.CompletedTask;
@@ -82,7 +76,7 @@ namespace Beast.Radar.City
             };
             
             Profiler.BeginSample("majorCitySpawnJob");
-            majorCitySpawnJob.Schedule().Complete();
+            majorCitySpawnJob.Run();
             Profiler.EndSample();
             
             for (int i = 0; i < _cities.Length; i++)
@@ -106,65 +100,20 @@ namespace Beast.Radar.City
             };
             
             Profiler.BeginSample("minorCitySpawnJob");
-            minorCitySpawnJob.Schedule().Complete();
+            minorCitySpawnJob.Run();
             Profiler.EndSample();
 
-            RoadSegment8KMJob roadJob = new()
-            {
-                inCities = _cities,
-                inOutTerrain8KM = _biome.Terrain8kmCell,
-                inMajorRoadSpawnPriority = _config.majorRoadSpawnPriority,
-                outPoints = BNative.TempJobList<ushort2>(2048),
-                outJunctions = new NativeHashMap<ushort2, ushort2>(256, Allocator.TempJob),
-                outSegments = BNative.TempJobList<ushort>(256),
-            };
-            
-            _config.roadBuildCost.ToByteArray(out roadJob.inCellBiomeCost, out roadJob.inCellFeatureCost);
-            
-            Profiler.BeginSample("RoadJob");
-            roadJob.Schedule().Complete();
-            Profiler.EndSample();
-
-            _drawCityGizmo(roadJob);
-
-            roadJob.outPoints.Dispose();
-            roadJob.outJunctions.Dispose();
-            roadJob.outSegments.Dispose();
+            _debugTrack();
             
             return UniTask.CompletedTask;
         }
 
         [Conditional("DEVELOPMENT")]
-        private void _drawCityGizmo(RoadSegment8KMJob roadJob)
+        private void _debugTrack()
         {
             int minorCount = 0;
             int majorCount = 0;
-
-            _gizmo.Clear();
-
-            int cellSize8KM = _biome.Terrain8kmCell.cellSize;
-
-            _gizmo.SetColor(Color.black.WithAlpha(0.8f));
-
-            HashSet<int2> addedPoints = new(roadJob.outPoints.Length);
-
-            foreach (int2 position in roadJob.outPoints)
-            {
-                if (addedPoints.Add(position))
-                {
-                    _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
-                }
-            }
-            
-            _gizmo.SetColor(Color.red.WithAlpha(0.8f));
-
-            foreach (KVPair<ushort2,ushort2> kvp in roadJob.outJunctions)
-            {
-                int2 position = kvp.Value;
-                
-                _gizmo.AddQuad((float2)position + 0.5f, 1f);
-            }
-
+        
             foreach (CityInfo city in _cities)
             {
                 if (city.IsMajorCity())
@@ -177,19 +126,14 @@ namespace Beast.Radar.City
                 }
             }
 
-            BDebug.Track(this, "RoadPointCount", roadJob.outPoints.Length);
-            BDebug.Track(this, "RoadJunctionCount", roadJob.outJunctions.Count);
-            BDebug.Track(this, "RoadSegmentCount", roadJob.outSegments.Length);
-            BDebug.Track(this, "TotalCity", _cities.Length);
-            BDebug.Track(this, "MajorCity", majorCount);
-            BDebug.Track(this, "MinorCity", minorCount);
+            BDebug.Track(this, "Total", _cities.Length);
+            BDebug.Track(this, "Major", majorCount);
+            BDebug.Track(this, "Minor", minorCount);
         }
 
         protected override void _dispose(BlockingContext context)
         {
             _cities.Dispose();
-            _gizmo.Dispose();
         }
-
     }
 }

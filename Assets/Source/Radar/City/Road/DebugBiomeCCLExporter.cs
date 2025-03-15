@@ -23,7 +23,7 @@ namespace Beast.Radar.City
                 outLabeledTexture = new NativeArray<ushort>(textureSizeX * textureSizeX, Allocator.TempJob)
             };
 			
-            recognitionJob.Schedule().Complete();
+            recognitionJob.Run();
 
             Texture2D cclTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {

@@ -34,3 +34,4 @@ MonoBehaviour:
     - feature: 1
       cost: 1
   majorRoadSpawnPriority: 1
+  maxRoadSegmentLength: 128

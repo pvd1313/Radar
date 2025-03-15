@@ -16,11 +16,11 @@ namespace Beast.Radar.City
     [Unity.Burst.BurstCompile]
     public struct RoadSegment8KMJob : IJob
     {
-        public NativeList<CityInfo> inCities;
+        public NativeSlice<CityInfo> inCities;
         public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;
         public ByteArray16 inCellBiomeCost;
         public ByteArray16 inCellFeatureCost;
-        public ERoadSpawnPriority inMajorRoadSpawnPriority;
+        public ERoadSpawnPriority inSpawnPriority;
         
         public NativeList<ushort2> outPoints;
         public NativeHashMap<ushort2, ushort2> outJunctions;
@@ -80,7 +80,7 @@ namespace Beast.Radar.City
                 _endSample();
 
                 _beginSample("_createRoadQueue");
-                using NativePriorityQueue<ushort2> roadQueue = _createRoadQueue(hubCity, majorCities, inMajorRoadSpawnPriority);
+                using NativePriorityQueue<ushort2> roadQueue = _createRoadQueue(hubCity, majorCities, inSpawnPriority);
                 _endSample();
 
                 _buildRoads(hubCity, roadQueue, pathJobBuffer);
@@ -151,14 +151,7 @@ namespace Beast.Radar.City
 
                 if (!outJunctions.TryGetValue(lastPoint, out _))
                 {
-                    int2 lastPointJunction = lastPoint * inOutTerrain8KM.cellSize;
-                    
-                    // For now, we are using central point.
-                    int halfCellSize = inOutTerrain8KM.cellSize / 2 - 1;
-
-                    lastPointJunction += halfCellSize;
-
-                    outJunctions[lastPoint] = (ushort2)lastPointJunction;
+                    outJunctions[lastPoint] = RoadUtil.SelectJunctionForCell(lastPoint, inOutTerrain8KM.cellSize);
                 }
             }
         }
