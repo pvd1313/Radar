@@ -19,7 +19,7 @@ namespace Beast.Radar.City
         public TextureWithBlocks<TerrainCell> terrain1KM;
         public FloatMinMax citySizeRange;
         public bool useCityPositionCorrection;
-        public NativeHashSet<short2> excludePositions;
+        public NativeHashSet<ushort2> excludePositions;
         
         public NativeList<CityInfo> outputCities;
         
@@ -56,7 +56,7 @@ namespace Beast.Radar.City
                         continue;
                     }
 
-                    if (hasExcludePositions && excludePositions.Contains((short2)finalPosition))
+                    if (hasExcludePositions && excludePositions.Contains((ushort2)finalPosition))
                     {
                         continue;
                     }
@@ -66,7 +66,7 @@ namespace Beast.Radar.City
                     
                     outputCities.Add(new CityInfo
                     {
-                        position = (short2) finalPosition,
+                        position = (ushort2) finalPosition,
                         size = (byte) BMath.Round(BMath.Lerp(citySizeRange, randomFloat2.x))
                     });       
                 }

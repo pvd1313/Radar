@@ -4,7 +4,7 @@ namespace Beast.Radar.City
 {
     public struct CityInfo
     {
-        public short2 position;
+        public ushort2 position;
         public byte size;
 
         public bool IsMajorCity()

@@ -19,6 +19,11 @@ namespace Beast.Claw.Math
             return a + (float2)b;
         }
         
+        public static int2 operator *(short2 a, int b)
+        {
+            return new int2(a.x * b, a.y * b);
+        }
+        
         public static implicit operator int2(short2 vector)
         {
             return new int2(vector.x, vector.y);

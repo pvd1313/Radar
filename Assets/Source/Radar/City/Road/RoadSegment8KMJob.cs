@@ -14,24 +14,25 @@ using Unity.Mathematics;
 namespace Beast.Radar.City
 {
     [Unity.Burst.BurstCompile]
-    public struct RoadSpawnJob : IJob
+    public struct RoadSegment8KMJob : IJob
     {
         public NativeList<CityInfo> inCities;
-        public TextureWithBlocks<TerrainCell> inTerrain1KM;
-        public AveragePixelCountTexture<TerrainCell> inTerrain8KM;
+        public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;
         public ByteArray16 inCellBiomeCost;
         public ByteArray16 inCellFeatureCost;
         public ERoadSpawnPriority inMajorRoadSpawnPriority;
         
-        public NativeList<int2> outRoadCells8KM;
+        public NativeList<ushort2> outPoints;
+        public NativeHashMap<ushort2, ushort2> outJunctions;
+        public NativeList<ushort> outSegments;
 
         public void Execute()
         {
-            int textureSizeX = inTerrain8KM.cellCountX;
+            int textureSizeX = inOutTerrain8KM.cellCountX;
 
             CCLTextureJob<BiomeCCLTexture> cclJob = new()
             {
-                inTexture = new BiomeCCLTexture(inTerrain8KM.texture, textureSizeX),
+                inTexture = new BiomeCCLTexture(inOutTerrain8KM.texture, textureSizeX),
                 outLabeledTexture = new NativeArray<ushort>(textureSizeX * textureSizeX, Allocator.Temp)
             };
             
@@ -79,51 +80,86 @@ namespace Beast.Radar.City
                 _endSample();
 
                 _beginSample("_createRoadQueue");
-                using NativePriorityQueue<short2> roadQueue = _createRoadQueue(hubCity, majorCities, inMajorRoadSpawnPriority);
+                using NativePriorityQueue<ushort2> roadQueue = _createRoadQueue(hubCity, majorCities, inMajorRoadSpawnPriority);
                 _endSample();
 
                 _buildRoads(hubCity, roadQueue, pathJobBuffer);
             }
         }
 
-        private void _buildRoads(CityInfo hubCity, NativePriorityQueue<short2> queue, PathJobBuffer pathBuffer)
+        private void _buildRoads(CityInfo hubCity, NativePriorityQueue<ushort2> queue, PathJobBuffer pathBuffer)
         {
+            int2 hubCityPos8K = _cityToTexture8KMPosition(hubCity.position);
+            outJunctions[(ushort2)hubCityPos8K] = hubCity.position;
+            
             while (queue.Count > 0)
             {
-                FindPathJob<AverageBiomeTexture> job = new()
+                ushort2 currentCityPos = queue.Dequeue();
+                int2 currentCityPos8K = _cityToTexture8KMPosition(currentCityPos);
+                outJunctions[(ushort2)currentCityPos8K] = currentCityPos;
+                
+                FindPathJob<AverageBiomeTexture> pathJob = new()
                 {
-                    searchBounds = new Bounds2D(0, inTerrain8KM.cellCountX - 1),
-                    startPosition = _cityToTexture8KMPosition(queue.Dequeue()),
-                    endPosition = _cityToTexture8KMPosition(hubCity.position),
+                    searchBounds = new Bounds2D(0, inOutTerrain8KM.cellCountX - 1),
+                    startPosition = currentCityPos8K,
+                    endPosition = hubCityPos8K,
                     buffer = pathBuffer,
                     cellBiomeCost = inCellBiomeCost,
                     cellFeatureCost = inCellFeatureCost,
-                    texture = new AverageBiomeTexture(inTerrain8KM)
+                    texture = new AverageBiomeTexture(inOutTerrain8KM)
                 };
                 
                 _beginSample("FindPathJob<AverageBiomeTexture>.Execute()");
-                job.Execute();
+                pathJob.Execute();
                 _endSample();
+
+                int pointCount = 0;
 
                 _beginSample("for pathBuffer.outputPathReversed");
                 for (int i = pathBuffer.outputPathReversed.Length - 1; i >= 0; i--)
                 {
                     int2 position = pathBuffer.outputPathReversed[i];
+                    int cellIndex = inOutTerrain8KM.cellCountX * position.y + position.x;
+                    TerrainCell cell = inOutTerrain8KM.texture[cellIndex];
 
-                    int cellIndex = inTerrain8KM.cellCountX * position.y + position.x;
-
-                    TerrainCell cell = inTerrain8KM.texture[cellIndex];
+                    pointCount++;
 
                     if (cell.HasFeature(ETerrainFeature.Road))
                     {
                         break;
                     }
 
-                    outRoadCells8KM.Add(position);
-
-                    inTerrain8KM.texture[cellIndex] = cell.AddFeature(ETerrainFeature.Road);
+                    inOutTerrain8KM.texture[cellIndex] = cell.AddFeature(ETerrainFeature.Road);
                 }
                 _endSample();
+
+                if (pointCount < 2)
+                {
+                    continue;
+                }
+
+                outSegments.Add((ushort)pointCount);
+
+                for (int i = 0; i < pointCount; i++)
+                {
+                    int2 position = pathBuffer.outputPathReversed[^ (i + 1)];
+
+                    outPoints.Add((ushort2)position);
+                }
+
+                ushort2 lastPoint = outPoints[^1];
+
+                if (!outJunctions.TryGetValue(lastPoint, out _))
+                {
+                    int2 lastPointJunction = lastPoint * inOutTerrain8KM.cellSize;
+                    
+                    // For now, we are using central point.
+                    int halfCellSize = inOutTerrain8KM.cellSize / 2 - 1;
+
+                    lastPointJunction += halfCellSize;
+
+                    outJunctions[lastPoint] = (ushort2)lastPointJunction;
+                }
             }
         }
 
@@ -139,7 +175,7 @@ namespace Beast.Radar.City
             return bounds;
         }
         
-        private NativePriorityQueue<short2> _createRoadQueue(
+        private NativePriorityQueue<ushort2> _createRoadQueue(
             CityInfo hubCity, 
             NativeList<CityInfo> otherCities, 
             ERoadSpawnPriority priorityMethod)
@@ -149,7 +185,7 @@ namespace Beast.Radar.City
                 throw new ArgumentException("priorityMethod");
             }
             
-            NativePriorityQueue<short2> roadQueue = new(otherCities.Length, Allocator.Temp);
+            NativePriorityQueue<ushort2> roadQueue = new(otherCities.Length, Allocator.Temp);
 
             foreach (CityInfo city in otherCities)
             {
@@ -238,9 +274,9 @@ namespace Beast.Radar.City
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int2 _cityToTexture8KMPosition(short2 cityPosition)
+        private int2 _cityToTexture8KMPosition(ushort2 cityPosition)
         {
-            return (int2)cityPosition / inTerrain8KM.cellSize;
+            return (int2)cityPosition / inOutTerrain8KM.cellSize;
         }
 
         [Conditional("ROAD_PROFILING")]

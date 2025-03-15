@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
+using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
@@ -61,8 +63,8 @@ namespace Beast.Radar.City
 
             _cities.Clear();
 
-            using NativeHashSet<short2> majorCities = 
-                BNative.TempJobHashSet<short2>(majorCityCountX * majorCityCountX);
+            using NativeHashSet<ushort2> majorCities = 
+                BNative.TempJobHashSet<ushort2>(majorCityCountX * majorCityCountX);
 
             CitySpawnJob majorCitySpawnJob = new ()
             {
@@ -107,44 +109,62 @@ namespace Beast.Radar.City
             minorCitySpawnJob.Schedule().Complete();
             Profiler.EndSample();
 
-            RoadSpawnJob roadJob = new()
+            RoadSegment8KMJob roadJob = new()
             {
                 inCities = _cities,
-                inTerrain1KM = _biome.Terrain1kmCell,
-                inTerrain8KM = _biome.Terrain8kmCell,
+                inOutTerrain8KM = _biome.Terrain8kmCell,
                 inMajorRoadSpawnPriority = _config.majorRoadSpawnPriority,
-                outRoadCells8KM = BNative.TempJobList<int2>(1024),
+                outPoints = BNative.TempJobList<ushort2>(2048),
+                outJunctions = new NativeHashMap<ushort2, ushort2>(256, Allocator.TempJob),
+                outSegments = BNative.TempJobList<ushort>(256),
             };
+            
             _config.roadBuildCost.ToByteArray(out roadJob.inCellBiomeCost, out roadJob.inCellFeatureCost);
             
             Profiler.BeginSample("RoadJob");
             roadJob.Schedule().Complete();
             Profiler.EndSample();
 
-            _drawCityGizmo(roadJob.outRoadCells8KM);
+            _drawCityGizmo(roadJob);
 
-            roadJob.outRoadCells8KM.Dispose();
+            roadJob.outPoints.Dispose();
+            roadJob.outJunctions.Dispose();
+            roadJob.outSegments.Dispose();
             
             return UniTask.CompletedTask;
         }
 
         [Conditional("DEVELOPMENT")]
-        private void _drawCityGizmo(NativeList<int2> roadCells8KM)
+        private void _drawCityGizmo(RoadSegment8KMJob roadJob)
         {
             int minorCount = 0;
             int majorCount = 0;
-            
+
             _gizmo.Clear();
 
             int cellSize8KM = _biome.Terrain8kmCell.cellSize;
-            
-            _gizmo.SetColor(Color.black);
 
-             foreach (int2 position in roadCells8KM)
-             {
-                 _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
-             }
+            _gizmo.SetColor(Color.black.WithAlpha(0.8f));
+
+            HashSet<int2> addedPoints = new(roadJob.outPoints.Length);
+
+            foreach (int2 position in roadJob.outPoints)
+            {
+                if (addedPoints.Add(position))
+                {
+                    _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
+                }
+            }
             
+            _gizmo.SetColor(Color.red.WithAlpha(0.8f));
+
+            foreach (KVPair<ushort2,ushort2> kvp in roadJob.outJunctions)
+            {
+                int2 position = kvp.Value;
+                
+                _gizmo.AddQuad((float2)position + 0.5f, 1f);
+            }
+
             foreach (CityInfo city in _cities)
             {
                 if (city.IsMajorCity())
@@ -157,8 +177,9 @@ namespace Beast.Radar.City
                 }
             }
 
-
-            BDebug.Track(this, "RoadSegment", roadCells8KM.Length);
+            BDebug.Track(this, "RoadPointCount", roadJob.outPoints.Length);
+            BDebug.Track(this, "RoadJunctionCount", roadJob.outJunctions.Count);
+            BDebug.Track(this, "RoadSegmentCount", roadJob.outSegments.Length);
             BDebug.Track(this, "TotalCity", _cities.Length);
             BDebug.Track(this, "MajorCity", majorCount);
             BDebug.Track(this, "MinorCity", minorCount);
