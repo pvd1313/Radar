@@ -4,6 +4,7 @@ using Beast.Claw.Common;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Beast.Radar.Navigation;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

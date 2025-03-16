@@ -49,7 +49,7 @@ namespace Beast.Radar.City
             {
                 CityInfo city = cities[i];
 
-                if (city.IsMajorCity())
+                if (city.IsMajor())
                 {
                     _cityNames[i] = majorNames[majorIndex % majorNames.Count];
                     majorIndex++;

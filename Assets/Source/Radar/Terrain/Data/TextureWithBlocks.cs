@@ -19,6 +19,8 @@ namespace Beast.Radar.Terrain
     /// </summary>
     public struct TextureWithBlocks<TValue> where TValue : unmanaged
     {
+        public int TextureSize => blockSize * blockCountX;
+        
         public NativeArray<TValue> texture;
         public int blockSize;
         public int blockCountX;

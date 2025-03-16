@@ -44,9 +44,9 @@ namespace Beast.Radar.Terrain
             return BMath.FloorToInt(worldPosition / cellSize);
         }
         
-        public readonly int2 CellToWorldPoint(int2 cell)
+        public readonly float2 GetCellCenterWorld(int2 cellIndex8KM)
         {
-            return BMath.FloorToInt(cell.Mul(cellSize));
+            return (float2)cellIndex8KM * cellSize + cellSize * 0.5f;
         }
 
         public static AveragePixelCountTexture<TerrainCell> FromTextureWithBlocks(TextureWithBlocks<TerrainCell> texture, int cellSize)

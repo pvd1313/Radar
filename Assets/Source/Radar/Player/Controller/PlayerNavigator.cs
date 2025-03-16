@@ -178,35 +178,15 @@ namespace Beast.Radar.Player
         {
             int2 startCell = _biome.Terrain1kmCell.WorldPositionToCell(start);
             int2 finishCell = _biome.Terrain1kmCell.WorldPositionToCell(finish);
-
-            Bounds2D searchBounds = Bounds2D.FromTwoPoints(startCell, finishCell);
-
-            float searchRangeX = searchBounds.x.GetRange();
-            float searchRangeY = searchBounds.y.GetRange();
-
-            float deltaRangeHalf = BMath.Ceil((searchRangeY - searchRangeX) * 0.5f);
-
-            // This will make search bounds to be a square.
-            if (deltaRangeHalf > 0)
-            {
-                searchBounds.x = searchBounds.x.Expand(deltaRangeHalf);
-            }
-            else
-            {
-                searchBounds.y = searchBounds.y.Expand(deltaRangeHalf * -1);
-            }
-
-            float km8Radius = _biome.Terrain8kmCell.cellSize * 0.5f;
-            foreach (float2 point8KM in _consumed8KMPoints)
-            {
-                Bounds2D pointBounds = Bounds2D.FromPointWithRadius(point8KM, km8Radius);
-                searchBounds = searchBounds.EnsureContains(pointBounds);
-            }
             
-            int textureSize = _biome.Terrain1kmCell.blockSize * _biome.Terrain1kmCell.blockCountX;
-            Bounds2D textureBounds = new (0, textureSize - 1);
-
-            searchBounds = searchBounds.EnsureInside(textureBounds);
+            Bounds2D searchBounds = BNavigation.CreateSearchBounds(new NavigationPathSearchBounds
+            {
+                startCell = startCell,
+                finishCell = finishCell,
+                terrainSize = _biome.Terrain1kmCell.TextureSize,
+                cell8KMSize = _biome.Terrain8kmCell.cellSize,
+                include8KMWorldPoints = _consumed8KMPoints.AsArray()
+            });
             
             FindPathJob<BiomeTextureWithBlocks> job = new()
             {

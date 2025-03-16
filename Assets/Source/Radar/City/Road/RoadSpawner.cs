@@ -7,6 +7,7 @@ using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Beast.Radar.Navigation;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
@@ -20,8 +21,10 @@ using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class RoadSpawner : Actor
+    public class RoadSpawner : Actor, IRoadSpawner
     {
+        public NativeSlice<RoadInfo> Roads => _roads.Slice();
+        
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly ITerrainBackedBiome _biome;
         [Required] private readonly ICitySpawner _citySpawner;
@@ -30,6 +33,8 @@ namespace Beast.Radar.City
         
         private TerrainData _bakedForTerrain;
         private IGizmoHandle _gizmo;
+        private NativeArray<ushort2> _roadPoints;
+        private NativeArray<RoadInfo> _roads;
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
@@ -48,9 +53,19 @@ namespace Beast.Radar.City
             }
 
             _bakedForTerrain = terrain;
-            
-            RoadSegment8KMJob road8KmJob = new()
+
+            if (_roads.IsCreated)
             {
+                _roads.Dispose();
+                _roadPoints.Dispose();
+            }
+            
+            _config.buildCost.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
+            
+            Road8KMJob road8KMJob = new()
+            {
+                inCellBiomeCost = cellBiomeCost,
+                inCellFeatureCost = cellFeatureCost,
                 inCities = _citySpawner.Cities,
                 inOutTerrain8KM = _biome.Terrain8kmCell,
                 inSpawnPriority = _config.spawnPriority,
@@ -59,36 +74,100 @@ namespace Beast.Radar.City
                 outSegments = BNative.TempJobList<ushort>(256),
             };
             
-            _config.buildCost.ToByteArray(out road8KmJob.inCellBiomeCost, out road8KmJob.inCellFeatureCost);
-            
             Profiler.BeginSample("RoadSegment8KMJob");
-            road8KmJob.Run();
+            road8KMJob.Run();
+            Profiler.EndSample();
+            
+            int maxSegmentSize8KM = BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
+
+            NativeList<RoadSegment> segmentsToSearch = _processSegments8KM(
+                road8KMJob, 
+                _biome.Terrain1kmCell.TextureSize, 
+                maxSegmentSize8KM);
+
+            int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 1.5f);
+            
+            Road1KMJob road1KMJob = new()
+            {
+                inCellBiomeCost = cellBiomeCost,
+                inCellFeatureCost = cellFeatureCost,
+                inTerrainCells1KM = _biome.Terrain1kmCell,
+                inSegments = segmentsToSearch.AsArray(),
+                inMaxPointPerSegment = maxPointPerSegment,
+                outPoints = BNative.TempJobArray<ushort2>(maxPointPerSegment * segmentsToSearch.Length),
+                outSegments = BNative.PermArray<RoadSegment>(segmentsToSearch.Length),
+                outSegmentPointCount = BNative.TempJobArray<int>(segmentsToSearch.Length)
+            };
+            
+            Profiler.BeginSample("RoadSegment1KMJob");
+            road1KMJob.Schedule(segmentsToSearch.Length, 8).Complete();
             Profiler.EndSample();
 
-            NativeList<RoadSegment> segments = _collectRoadSegments(road8KmJob);
+            Profiler.BeginSample("CollectRoads");
+            int totalPointCount = 0;
+            foreach (int segmentPointCount in road1KMJob.outSegmentPointCount)
+            {
+                totalPointCount += segmentPointCount;
+            }
+
+            NativeArray<ushort2> points = BNative.PermArray<ushort2>(totalPointCount);
+            NativeArray<RoadInfo> roads = BNative.PermArray<RoadInfo>(road1KMJob.outSegments.Length);
             
+            int writeOffset = 0;
+            int readOffset = 0;
+            for (int i = 0; i < road1KMJob.outSegments.Length; i++)
+            {
+                RoadSegment segment = road1KMJob.outSegments[i];
+                int segmentPointCount = road1KMJob.outSegmentPointCount[i];
+
+                NativeSlice<ushort2> target = points.Slice(writeOffset, segmentPointCount);
+                NativeSlice<ushort2> source = road1KMJob.outPoints.Slice(readOffset, segmentPointCount);
+                
+                target.CopyFrom(source);
+
+                roads[i] = new RoadInfo
+                {
+                    points = target,
+                    startPoint = segment.point0,
+                    endPoint = segment.point1,
+                    bounds = segment.bounds,
+                };
+                
+                writeOffset += segmentPointCount;
+                readOffset += maxPointPerSegment;
+            }
+            Profiler.EndSample();
+
+            BDebug.Track(this, "RoadCount", roads.Length);
+            BDebug.Track(this, "PointCount", points.Length);
+
             _gizmo.Clear();
 
-            _debugDrawPoints8KM(road8KmJob.outPoints);
+            _debugDrawPoints8KM(road8KMJob.outPoints);
 
-            _debugDrawSegments(segments);
+            _debugDrawRoads(roads);
 
-            road8KmJob.outPoints.Dispose();
-            road8KmJob.outJunctions.Dispose();
-            road8KmJob.outSegments.Dispose();
-            segments.Dispose();
+            road8KMJob.outPoints.Dispose();
+            road8KMJob.outJunctions.Dispose();
+            road8KMJob.outSegments.Dispose();
+            segmentsToSearch.Dispose();
+
+            road1KMJob.outPoints.Dispose();
+            road1KMJob.outSegmentPointCount.Dispose();
+            road1KMJob.outSegments.Dispose();
+
+            _roads = roads;
+            _roadPoints = points;
             
             return UniTask.CompletedTask;
         }
         
-        private NativeList<RoadSegment> _collectRoadSegments(RoadSegment8KMJob job)
+        private NativeList<RoadSegment> _processSegments8KM(Road8KMJob job, int terrainSize, int maxSegmentSize)
         {
             NativeList<RoadSegment> resultSegments = BNative.TempJobList<RoadSegment>(256);
-            
-            int maxSegSize = BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
 
-            BDebug.Track(this, "MaxSegmentSize", maxSegSize);
-            
+            using NativeList<float2> km8Points = BNative.TempJobList<float2>(16);
+
             int pointOffset = 0;
             
             for (int segID = 0; segID < job.outSegments.Length; segID++)
@@ -96,7 +175,11 @@ namespace Beast.Radar.City
                 int segPointCount = job.outSegments[segID];
                 
                 int pointIndex0 = pointOffset;
-                ushort2 junction0 = job.outJunctions[job.outPoints[pointIndex0]];
+                ushort2 startPoint8KM = job.outPoints[pointIndex0];
+                ushort2 junction0 = job.outJunctions[startPoint8KM];
+                
+                km8Points.Clear();
+                km8Points.Add(job.inOutTerrain8KM.GetCellCenterWorld(startPoint8KM));
                 
                 int pointIndex1 = pointIndex0 + 1;
                 
@@ -107,20 +190,31 @@ namespace Beast.Radar.City
                     int pointCount = pointIndex1 - pointIndex0;
 
                     ushort2 endPoint8K = job.outPoints[pointIndex1];
+                    km8Points.Add(job.inOutTerrain8KM.GetCellCenterWorld(endPoint8K));
                     
                     bool endIsJunction = job.outJunctions.TryGetValue(endPoint8K, out ushort2 junction1);
 
-                    if (pointCount >= BMath.Min(maxSegSize, segPointCount) || endIsJunction)
+                    if (pointCount >= BMath.Min(maxSegmentSize, segPointCount) || endIsJunction)
                     {
                         if (!endIsJunction)
                         {
                             junction1 = RoadUtil.SelectJunctionForCell(endPoint8K, job.inOutTerrain8KM.cellSize);
                         }
+
+                        Bounds2D searchBounds = BNavigation.CreateSearchBounds(new NavigationPathSearchBounds
+                        {
+                            startCell = junction0,
+                            finishCell = junction1,
+                            cell8KMSize = job.inOutTerrain8KM.cellSize,
+                            include8KMWorldPoints = km8Points.AsArray(),
+                            terrainSize = terrainSize
+                        });
                         
                         resultSegments.Add(new RoadSegment
                         {
                             point0 = junction0,
-                            point1 = junction1
+                            point1 = junction1,
+                            bounds = searchBounds
                         });
                         
                         pointIndex0 = pointIndex1;
@@ -146,41 +240,37 @@ namespace Beast.Radar.City
             {
                 if (addedPoints.Add(position))
                 {
-                    _gizmo.AddQuad((float2)position * cellSize8KM + cellSize8KM * 0.5f, cellSize8KM);
+                    float2 cellCenter = _biome.Terrain8kmCell.GetCellCenterWorld(position);
+                    
+                    _gizmo.AddQuad(cellCenter, cellSize8KM);
                 }
             }
         }
 
         [Conditional("DEVELOPMENT")]
-        private void _debugDrawSegments(NativeList<RoadSegment> segments)
+        private void _debugDrawRoads(NativeSlice<RoadInfo> roads)
         {
-            HashSet<ushort2> drawnPoints = new (1024);
+            HashSet<ushort2> junctionPoints = new (1024);
             
-            foreach (RoadSegment roadSegment in segments)
+            foreach (RoadInfo road in roads)
             {
                 _gizmo.SetColor(Color.red.WithAlpha(0.8f));
                 
-                float2 p0 = roadSegment.point0 + new float2(0.5f, 0.5f);
-                float2 p1 = roadSegment.point1 + new float2(0.5f, 0.5f);
-                
-                if (drawnPoints.Add(roadSegment.point0))
+                if (junctionPoints.Add(road.startPoint))
                 {
-                    _gizmo.AddPoint(p0, 8f);
+                    _gizmo.AddPoint(road.startPoint + new float2(0.5f, 0.5f), 8f);
                 }
-                
-                if (drawnPoints.Add(roadSegment.point1))
+
+                if (junctionPoints.Add(road.endPoint))
                 {
-                    _gizmo.AddPoint(p1, 8f);
+                    _gizmo.AddPoint(road.endPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
                 _gizmo.SetColor(Color.green.WithAlpha(0.8f));
 
-                for (int i = 1; i < 10; i++)
+                for (int i = 1; i < road.points.Length - 1; i++)
                 {
-                    float t = i / 10.0f;
-                    float2 pos = BMath.Lerp(p0, p1, t);
-
-                    _gizmo.AddPoint(pos, 4f);
+                    _gizmo.AddPoint(road.points[i] + new float2(0.5f, 0.5f), 4f);
                 }
             }
         }
@@ -188,6 +278,12 @@ namespace Beast.Radar.City
         protected override void _dispose(BlockingContext obj)
         {
             _gizmo.Dispose();
+            
+            if (_roads.IsCreated)
+            {
+                _roads.Dispose();
+                _roadPoints.Dispose();
+            }
         }
     }
 }

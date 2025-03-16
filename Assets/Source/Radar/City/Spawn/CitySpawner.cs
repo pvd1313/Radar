@@ -116,7 +116,7 @@ namespace Beast.Radar.City
         
             foreach (CityInfo city in _cities)
             {
-                if (city.IsMajorCity())
+                if (city.IsMajor())
                 {
                     majorCount++;
                 }

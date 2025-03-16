@@ -6,5 +6,6 @@ namespace Beast.Radar.City
     {
         public ushort2 point0;
         public ushort2 point1;
+        public Bounds2D bounds;
     }
 }

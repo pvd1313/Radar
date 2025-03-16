@@ -14,7 +14,7 @@ using Unity.Mathematics;
 namespace Beast.Radar.City
 {
     [Unity.Burst.BurstCompile]
-    public struct RoadSegment8KMJob : IJob
+    public struct Road8KMJob : IJob
     {
         public NativeSlice<CityInfo> inCities;
         public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;
@@ -206,7 +206,7 @@ namespace Beast.Radar.City
             
             foreach (CityInfo city in cities)
             {
-                if (city.IsMajorCity())
+                if (city.IsMajor())
                 {
                     major.Add(city);
                 }

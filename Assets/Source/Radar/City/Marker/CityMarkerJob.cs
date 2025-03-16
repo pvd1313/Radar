@@ -50,7 +50,7 @@ namespace Beast.Radar.City
                 float2 position = positions[entityIndex].value;
                 ushort currentSpriteID = sprites[entityIndex].value;
 
-                bool isMajor = inCities[cityID].IsMajorCity();
+                bool isMajor = inCities[cityID].IsMajor();
 
                 if (isLabel)
                 {
