@@ -7,6 +7,7 @@ using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Beast.Claw.Math.CCL;
 using Beast.Radar.Navigation;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
@@ -85,13 +86,21 @@ namespace Beast.Radar.City
                 _biome.Terrain1kmCell.TextureSize, 
                 maxSegmentSize8KM);
 
-            int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 1.5f);
-            
+            int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 2f);
+
             Road1KMJob road1KMJob = new()
             {
-                inCellBiomeCost = cellBiomeCost,
-                inCellFeatureCost = cellFeatureCost,
-                inTerrainCells1KM = _biome.Terrain1kmCell,
+                motionCost = new TerrainMotionCostComputer
+                {
+                    cellBiomeCost = cellBiomeCost,
+                    cellFeatureCost = cellFeatureCost,
+                    terrain1KMTexture = _biome.Terrain1kmCell,
+                    use8KMTerrainTexture = false,
+                    useNoiseTexture = true,
+                    noiseTexture = new NativeTexture<byte>(_config.noiseTexture),
+                    noiseStrength = _config.noiseStrength,
+                    noiseRange = _config.noiseRange
+                },
                 inSegments = segmentsToSearch.AsArray(),
                 inMaxPointPerSegment = maxPointPerSegment,
                 outPoints = BNative.TempJobArray<ushort2>(maxPointPerSegment * segmentsToSearch.Length),
@@ -143,7 +152,7 @@ namespace Beast.Radar.City
 
             _gizmo.Clear();
 
-            _debugDrawPoints8KM(road8KMJob.outPoints);
+            // _debugDrawPoints8KM(road8KMJob.outPoints);
 
             _debugDrawRoads(roads);
 
@@ -260,17 +269,17 @@ namespace Beast.Radar.City
                 {
                     _gizmo.AddPoint(road.startPoint + new float2(0.5f, 0.5f), 8f);
                 }
-
+                
                 if (junctionPoints.Add(road.endPoint))
                 {
                     _gizmo.AddPoint(road.endPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
-                _gizmo.SetColor(Color.green.WithAlpha(0.8f));
+                _gizmo.SetColor(Color.black);
 
-                for (int i = 1; i < road.points.Length - 1; i++)
+                for (int i = 0; i < road.points.Length; i++)
                 {
-                    _gizmo.AddPoint(road.points[i] + new float2(0.5f, 0.5f), 4f);
+                    _gizmo.AddPoint(road.points[i] + new float2(0.5f, 0.5f), 2f);
                 }
             }
         }

@@ -153,15 +153,22 @@ namespace Beast.Radar.Player
         {
             int textureSize = _biome.Terrain8kmCell.cellCountX;
             
-            FindPathJob<AverageBiomeTexture> job = new ()
+            _config.cellMovementCostConfig.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
+            
+            FindPathJob<TerrainMotionCostComputer> job = new ()
             {
+                costComputer = new TerrainMotionCostComputer
+                {
+                    terrain8KMTexture = _biome.Terrain8kmCell,
+                    cellBiomeCost = cellBiomeCost,
+                    cellFeatureCost = cellFeatureCost,
+                    use8KMTerrainTexture = true
+                },
                 startPosition = _biome.Terrain8kmCell.WorldPositionToCell(start),
                 endPosition = _biome.Terrain8kmCell.WorldPositionToCell(finish),
-                texture = new AverageBiomeTexture(_biome.Terrain8kmCell),
                 buffer = _pathJobBuffer,
                 searchBounds = new Bounds2D(0, textureSize - 1)
             };
-            _config.cellMovementCostConfig.ToByteArray(out job.cellBiomeCost, out job.cellFeatureCost);
             
             _stopwatch.Restart();
             Profiler.BeginSample("8km_job");
@@ -188,15 +195,22 @@ namespace Beast.Radar.Player
                 include8KMWorldPoints = _consumed8KMPoints.AsArray()
             });
             
-            FindPathJob<BiomeTextureWithBlocks> job = new()
+            _config.cellMovementCostConfig.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
+            
+            FindPathJob<TerrainMotionCostComputer> job = new()
             {
+                costComputer = new TerrainMotionCostComputer
+                {
+                    terrain1KMTexture = _biome.Terrain1kmCell,
+                    cellBiomeCost = cellBiomeCost,
+                    cellFeatureCost = cellFeatureCost,
+                    use8KMTerrainTexture = false,
+                },
                 startPosition = startCell,
                 endPosition = finishCell,
-                texture = new BiomeTextureWithBlocks(_biome.Terrain1kmCell),
                 buffer = _pathJobBuffer,
                 searchBounds = searchBounds,
             };
-            _config.cellMovementCostConfig.ToByteArray(out job.cellBiomeCost, out job.cellFeatureCost);
             
             _stopwatch.Restart();
             Profiler.BeginSample("1km_job");

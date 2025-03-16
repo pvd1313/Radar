@@ -1,6 +1,5 @@
 using Beast.Claw.Math;
 using Beast.Radar.Navigation;
-using Beast.Radar.Terrain;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -12,10 +11,8 @@ namespace Beast.Radar.City
     public struct Road1KMJob : IJobParallelFor
     {
         [ReadOnly] public NativeSlice<RoadSegment> inSegments;
-        [ReadOnly] public TextureWithBlocks<TerrainCell> inTerrainCells1KM;
         [ReadOnly] public int inMaxPointPerSegment;
-        [ReadOnly] public ByteArray16 inCellBiomeCost;
-        [ReadOnly] public ByteArray16 inCellFeatureCost;
+        [ReadOnly] public TerrainMotionCostComputer motionCost;
 
         [NativeDisableParallelForRestriction] public NativeArray<ushort2> outPoints;
         [NativeDisableParallelForRestriction] public NativeArray<RoadSegment> outSegments;
@@ -26,15 +23,13 @@ namespace Beast.Radar.City
             PathJobBuffer pathBuffer = PathJobBuffer.Create(4096, Allocator.TempJob);
             RoadSegment segment = inSegments[segmentIndex];
 
-            FindPathJob<BiomeTextureWithBlocks> pathJob = new()
+            FindPathJob<TerrainMotionCostComputer> pathJob = new()
             {
                 startPosition = segment.point0,
                 endPosition = segment.point1,
-                texture = new BiomeTextureWithBlocks(inTerrainCells1KM),
+                costComputer = motionCost,
                 buffer = pathBuffer,
                 searchBounds = segment.bounds,
-                cellBiomeCost = inCellBiomeCost,
-                cellFeatureCost = inCellFeatureCost
             };
             
             pathJob.Execute();

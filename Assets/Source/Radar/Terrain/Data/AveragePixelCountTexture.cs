@@ -18,7 +18,7 @@ namespace Beast.Radar.Terrain
         public int cellCountX;
         public NativeArray<TValue> texture;
 
-        public readonly TValue GetPixelClamped(int2 worldPosition)
+        public readonly TValue GetPixelClampedWorld(int2 worldPosition)
         {
             int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
             cellPosition.x = BMath.Clamp(cellPosition.x, 0, cellCountX - 1);
@@ -27,11 +27,16 @@ namespace Beast.Radar.Terrain
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
 
-        public readonly TValue GetPixel(int2 worldPosition)
+        public readonly TValue GetPixelWorld(int2 worldPosition)
         {
             int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
             
             return texture[cellPosition.y * cellCountX + cellPosition.x];
+        }
+        
+        public readonly TValue GetPixel(int2 cellIndex)
+        {
+            return texture[cellIndex.y * cellCountX + cellIndex.x];
         }
 
         public readonly int2 FloorToCellWorldPosition(int2 worldPosition)

@@ -98,15 +98,19 @@ namespace Beast.Radar.City
                 int2 currentCityPos8K = _cityToTexture8KMPosition(currentCityPos);
                 outJunctions[(ushort2)currentCityPos8K] = currentCityPos;
                 
-                FindPathJob<AverageBiomeTexture> pathJob = new()
+                FindPathJob<TerrainMotionCostComputer> pathJob = new()
                 {
                     searchBounds = new Bounds2D(0, inOutTerrain8KM.cellCountX - 1),
                     startPosition = currentCityPos8K,
                     endPosition = hubCityPos8K,
                     buffer = pathBuffer,
-                    cellBiomeCost = inCellBiomeCost,
-                    cellFeatureCost = inCellFeatureCost,
-                    texture = new AverageBiomeTexture(inOutTerrain8KM)
+                    costComputer = new TerrainMotionCostComputer
+                    {
+                        cellFeatureCost = inCellFeatureCost,
+                        cellBiomeCost = inCellBiomeCost,
+                        terrain8KMTexture = inOutTerrain8KM,
+                        use8KMTerrainTexture = true
+                    }
                 };
                 
                 _beginSample("FindPathJob<AverageBiomeTexture>.Execute()");

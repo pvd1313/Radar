@@ -52,6 +52,12 @@ namespace Beast.Claw.Math
         {
             return math.abs(a);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int2 Abs(int2 a)
+        {
+            return math.abs(a);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Abs(float a)

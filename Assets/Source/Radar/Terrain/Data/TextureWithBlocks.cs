@@ -87,10 +87,10 @@ namespace Beast.Radar.Terrain
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly TValue GetPixel(int2 position)
+        public readonly TValue GetPixel(int2 pixelIndex)
         {
-            int blockOffset = GetBlockOffset(position);
-            int innerOffset = GetInnerOffset(position);
+            int blockOffset = GetBlockOffset(pixelIndex);
+            int innerOffset = GetInnerOffset(pixelIndex);
             
             return texture[blockOffset + innerOffset];
         }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Beast.Claw.Math;
-using Beast.Radar.Terrain;
+﻿using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -9,16 +7,14 @@ using Unity.Mathematics;
 namespace Beast.Radar.Navigation
 {
     [BurstCompile]
-    public struct FindPathJob<TBiomeTexture> : IJob 
-        where TBiomeTexture : IBiomeTexture     
+    public struct FindPathJob<TCostComputer> : IJob 
+        where TCostComputer : IMotionCostComputer     
     {
         public int2 startPosition;
         public int2 endPosition;
-        public TBiomeTexture texture;
+        public TCostComputer costComputer;
         public Bounds2D searchBounds;
         public PathJobBuffer buffer;
-        public ByteArray16 cellBiomeCost;
-        public ByteArray16 cellFeatureCost;
 
         public void Execute()
         {
@@ -105,25 +101,22 @@ namespace Beast.Radar.Navigation
             int currentNodeIndex,
             int siblingNodeIndex)
         {
-            PathNode siblingNode = pathNodeList[siblingNodeIndex];
-            TerrainCell siblingCell = texture.GetPixel(siblingNode.position);
-            int siblingCost = cellBiomeCost.GetByte((byte)siblingCell.Biome);
-            siblingCost = BMath.Min(siblingCost, siblingCell.GetFeatureMinCost(cellFeatureCost));
-            
             PathNode currentNode = pathNodeList[currentNodeIndex];
-            TerrainCell currentCell = texture.GetPixel(currentNode.position);
-            int currentCost = cellBiomeCost.GetByte((byte)currentCell.Biome);
-            currentCost = BMath.Min(currentCost, currentCell.GetFeatureMinCost(cellBiomeCost));
+            PathNode siblingNode = pathNodeList[siblingNodeIndex];
             
-            float distanceCost = _calcDistanceCost(currentNode.position, siblingNode.position);
-            float movementCost = BMath.Max(1, siblingCost) * distanceCost * 0.5f;
-            movementCost += BMath.Max(1, currentCost) * distanceCost * 0.5f;
-              
+            float movementCost = costComputer.ComputeCost(new MotionCostInput
+            {
+                motionStartPoint = currentNode.position,
+                motionEndPoint = siblingNode.position,
+                pathStartPoint = startPosition,
+                pathEndPoint = endPosition
+            });
+            
             return currentNode.gCost + movementCost;
         }
 
         private int _createOrGetPathNode(
-            int2 position, 
+            int2 position,
             ref NativeList<PathNode> pathNodeList,
             ref NativeHashMap<int2, int> positionToIndexMap)
         {
@@ -140,19 +133,13 @@ namespace Beast.Radar.Navigation
                 position = position,
                 index = newIndex,
                 gCost = int.MaxValue,
-                hCost = _calcDistanceCost(position, endPosition),
+                hCost = BMath.Distance(position, endPosition),
                 cameFromNodeIndex = -1
             });
 
             pathNodeList[newIndex].CalculateFCost();
             
             return newIndex;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private float _calcDistanceCost(int2 start, int2 end)
-        {
-            return BMath.Distance(start, end);
         }
 
         private void _buildPath(NativeList<PathNode> pathNodes, PathNode endNode)

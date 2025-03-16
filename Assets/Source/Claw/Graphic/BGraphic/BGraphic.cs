@@ -61,6 +61,8 @@ namespace Beast.Claw.Graphic
                     new(128, 128), // 16384 | 2^14
                     new(256, 128), // 32768 | 2^15
                     new(256, 256), // 65536 | 2^16
+                    new(512, 256), // oh
+                    new(512, 512)  // no
                 };
             }
             catch (Exception e)

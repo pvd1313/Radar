@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Graphic;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Beast.Claw.Math.CCL
 {
@@ -11,10 +13,16 @@ namespace Beast.Claw.Math.CCL
         public NativeArray<TValue> texture;
         public int2 size;
 
-        public NativeTexture(NativeArray<TValue> source, int2 size)
+        public NativeTexture(Texture2D texture2D)
+        {
+            texture = texture2D.GetRawTextureData<TValue>();
+            size = texture2D.Size();
+        }
+
+        public NativeTexture(NativeArray<TValue> source, int2 textureSize)
         {
             texture = source;
-            this.size = size;
+            size = textureSize;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

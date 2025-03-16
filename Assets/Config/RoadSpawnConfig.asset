@@ -33,3 +33,10 @@ MonoBehaviour:
       cost: 1
   spawnPriority: 1
   maxSegmentLength: 128
+  noiseTexture: {fileID: 2800000, guid: 9fd1b1826dab85b4b8db176148e0b4e8, type: 3}
+  noiseStrength:
+    min: 1
+    max: 5
+  noiseRange:
+    min: 4
+    max: 16

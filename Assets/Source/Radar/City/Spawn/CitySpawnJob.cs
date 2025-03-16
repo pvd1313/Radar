@@ -94,7 +94,7 @@ namespace Beast.Radar.City
                     {
                         int2 position = center + delta * terrain8KM.cellSize;
                         if (!mapBounds.Contains(position) ||
-                            terrain8KM.GetPixel(position).Biome != ETerrainBiome.Shallow ||
+                            terrain8KM.GetPixelWorld(position).Biome != ETerrainBiome.Shallow ||
                             !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                         {
                             continue;
@@ -124,7 +124,7 @@ namespace Beast.Radar.City
                     int2 position = center + delta * terrain8KM.cellSize;
 
                     if (!mapBounds.Contains(position) || 
-                        terrain8KM.GetPixel(position).Biome == ETerrainBiome.Deep ||
+                        terrain8KM.GetPixelWorld(position).Biome == ETerrainBiome.Deep ||
                         !_tryFindValidPlaceInCell8km(position, out int2 newPosition))
                     {
                         continue;
