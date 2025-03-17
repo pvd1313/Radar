@@ -62,13 +62,15 @@ namespace Beast.Radar.City
             }
             
             _config.buildCost.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
+
+            AveragePixelCountTexture<TerrainCell> terrain8KMClone = _biome.Terrain8kmCell.Clone(Allocator.TempJob);
             
             Road8KMJob road8KMJob = new()
             {
                 inCellBiomeCost = cellBiomeCost,
                 inCellFeatureCost = cellFeatureCost,
                 inCities = _citySpawner.Cities,
-                inOutTerrain8KM = _biome.Terrain8kmCell,
+                inOutTerrain8KM = terrain8KMClone,
                 inSpawnPriority = _config.spawnPriority,
                 outPoints = BNative.TempJobList<ushort2>(2048),
                 outJunctions = new NativeHashMap<ushort2, ushort2>(256, Allocator.TempJob),
@@ -78,6 +80,8 @@ namespace Beast.Radar.City
             Profiler.BeginSample("RoadSegment8KMJob");
             road8KMJob.Run();
             Profiler.EndSample();
+            
+            terrain8KMClone.Dispose();
             
             int maxSegmentSize8KM = BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
 
@@ -136,9 +140,8 @@ namespace Beast.Radar.City
 
                 roads[i] = new RoadInfo
                 {
-                    points = target,
-                    startPoint = segment.point0,
-                    endPoint = segment.point1,
+                    startPointIndex = (ushort) writeOffset,
+                    pointCount = (ushort) segmentPointCount,
                     bounds = segment.bounds,
                 };
                 
@@ -146,15 +149,30 @@ namespace Beast.Radar.City
                 readOffset += maxPointPerSegment;
             }
             Profiler.EndSample();
+            
+            _roads = roads;
+            _roadPoints = points;
+            
+            Profiler.BeginSample("RoadCellFeatureSetJob");
+            RoadCellFeatureSetJob featureSetJob = new()
+            {
+                inRoads = _roads,
+                inRoadPoints = _roadPoints,
+                inOutTerrain1KM = _biome.Terrain1kmCell,
+                inOutTerrain8KM = _biome.Terrain8kmCell
+            };
 
-            BDebug.Track(this, "RoadCount", roads.Length);
-            BDebug.Track(this, "PointCount", points.Length);
+            featureSetJob.Schedule(_roads.Length, 8).Complete();
+            Profiler.EndSample();
+
+            BDebug.Track(this, "RoadCount", _roads.Length);
+            BDebug.Track(this, "PointCount", _roadPoints.Length);
 
             _gizmo.Clear();
 
             // _debugDrawPoints8KM(road8KMJob.outPoints);
-
-            _debugDrawRoads(roads);
+            
+            _debugDrawRoads();
 
             road8KMJob.outPoints.Dispose();
             road8KMJob.outJunctions.Dispose();
@@ -164,9 +182,6 @@ namespace Beast.Radar.City
             road1KMJob.outPoints.Dispose();
             road1KMJob.outSegmentPointCount.Dispose();
             road1KMJob.outSegments.Dispose();
-
-            _roads = roads;
-            _roadPoints = points;
             
             return UniTask.CompletedTask;
         }
@@ -257,29 +272,34 @@ namespace Beast.Radar.City
         }
 
         [Conditional("DEVELOPMENT")]
-        private void _debugDrawRoads(NativeSlice<RoadInfo> roads)
+        private void _debugDrawRoads()
         {
             HashSet<ushort2> junctionPoints = new (1024);
             
-            foreach (RoadInfo road in roads)
+            foreach (RoadInfo road in _roads)
             {
                 _gizmo.SetColor(Color.red.WithAlpha(0.8f));
+
+                ushort2 startPoint = _roadPoints[road.startPointIndex];
+                ushort2 endPoint = _roadPoints[road.startPointIndex + road.pointCount - 1];
                 
-                if (junctionPoints.Add(road.startPoint))
+                if (junctionPoints.Add(startPoint))
                 {
-                    _gizmo.AddPoint(road.startPoint + new float2(0.5f, 0.5f), 8f);
+                    _gizmo.AddPoint(startPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
-                if (junctionPoints.Add(road.endPoint))
+                if (junctionPoints.Add(endPoint))
                 {
-                    _gizmo.AddPoint(road.endPoint + new float2(0.5f, 0.5f), 8f);
+                    _gizmo.AddPoint(endPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
                 _gizmo.SetColor(Color.black);
 
-                for (int i = 0; i < road.points.Length; i++)
+                for (int i = 1; i < road.pointCount - 1; i++)
                 {
-                    _gizmo.AddPoint(road.points[i] + new float2(0.5f, 0.5f), 2f);
+                    ushort2 point = _roadPoints[road.startPointIndex + i];
+                    
+                    _gizmo.AddPoint(point + new float2(0.5f, 0.5f), 2f);
                 }
             }
         }

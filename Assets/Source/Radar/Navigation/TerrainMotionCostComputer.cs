@@ -33,7 +33,7 @@ namespace Beast.Radar.Navigation
         private float _getCellCost(int2 cellIndex, MotionCostInput motionInput)
         {
             TerrainCell cell = use8KMTerrainTexture
-                ? terrain8KMTexture.GetPixel(cellIndex)
+                ? terrain8KMTexture.GetPixel8KM(cellIndex)
                 : terrain1KMTexture.GetPixel(cellIndex);
 
             float cost = cellBiomeCost.GetByte((byte)cell.Biome);

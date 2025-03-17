@@ -96,6 +96,15 @@ namespace Beast.Radar.Terrain
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly int GetPixelOffset(int2 pixelIndex)
+        {
+            int blockOffset = GetBlockOffset(pixelIndex);
+            int innerOffset = GetInnerOffset(pixelIndex);
+
+            return blockOffset + innerOffset;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly int GetBlockOffset(int2 absolutePosition)
         {
             int2 blockXY = absolutePosition / blockSize;

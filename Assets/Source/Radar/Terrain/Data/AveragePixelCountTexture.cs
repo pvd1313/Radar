@@ -27,21 +27,38 @@ namespace Beast.Radar.Terrain
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
 
-        public readonly TValue GetPixelWorld(int2 worldPosition)
+        public readonly AveragePixelCountTexture<TValue> Clone(Allocator allocator)
         {
-            int2 cellPosition = BMath.FloorToInt(worldPosition.Div(cellSize));
+            return new AveragePixelCountTexture<TValue>
+            {
+                cellSize = cellSize,
+                cellCountX = cellCountX,
+                texture = new NativeArray<TValue>(texture, allocator)
+            };
+        }
+
+        public readonly TValue GetPixel1KM(int2 cellIndex1KM)
+        {
+            int2 cellPosition = BMath.FloorToInt(cellIndex1KM.Div(cellSize));
             
             return texture[cellPosition.y * cellCountX + cellPosition.x];
         }
-        
-        public readonly TValue GetPixel(int2 cellIndex)
+
+        public readonly int GetPixelOffset1KM(int2 cellIndex1KM)
         {
-            return texture[cellIndex.y * cellCountX + cellIndex.x];
+            int2 cellPosition = BMath.FloorToInt(cellIndex1KM.Div(cellSize));
+
+            return cellPosition.y * cellCountX + cellPosition.x;
+        }
+        
+        public readonly TValue GetPixel8KM(int2 cellIndex8KM)
+        {
+            return texture[cellIndex8KM.y * cellCountX + cellIndex8KM.x];
         }
 
-        public readonly int2 FloorToCellWorldPosition(int2 worldPosition)
+        public readonly int2 SnapPixelToGrid1KM(int2 cellIndex1KM)
         {
-            return BMath.FloorToInt(worldPosition.Div(cellSize)) * cellSize;
+            return BMath.FloorToInt(cellIndex1KM.Div(cellSize)) * cellSize;
         }
         
         public readonly int2 WorldPositionToCell(float2 worldPosition)
