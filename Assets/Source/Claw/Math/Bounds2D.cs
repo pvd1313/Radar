@@ -1,10 +1,11 @@
+using Beast.Claw.Serialization;
 using Beast.Claw.Validation;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Beast.Claw.Math
 {
-    public struct Bounds2D
+    public struct Bounds2D : ISerializable
     {
         public FloatMinMax x;
         public FloatMinMax y;
@@ -126,6 +127,18 @@ namespace Beast.Claw.Math
             size.ValidateIsZeroOrGreaterThrowException(nameof(size));
             
             return new Bounds2D(x.Expand(size), y.Expand(size));
+        }
+
+        public void Serialize(IBinaryWriter stream)
+        {
+            stream.Write(x);
+            stream.Write(y);
+        }
+
+        public void Deserialize(IBinaryReader stream)
+        {
+            stream.Read(ref x);
+            stream.Read(ref y);
         }
     }
 }

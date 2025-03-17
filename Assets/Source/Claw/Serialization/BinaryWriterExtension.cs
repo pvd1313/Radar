@@ -40,6 +40,22 @@ namespace Beast.Claw.Serialization
             }
         }
 
+        public static void WriteNativeArrayAndLength<TData>(this IBinaryWriter stream, NativeArray<TData> array)
+            where TData : struct, ISerializable
+        {
+            if (array.Length == 0)
+            {
+                stream.WriteInt32(0);
+                return;
+            }
+
+            stream.WriteInt32(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i].Serialize(stream);
+            }
+        }
+
         public static void WriteNativeBytesAndLength(this IBinaryWriter stream, NativeArray<byte> bytes)
         {
             if (!bytes.IsCreated)

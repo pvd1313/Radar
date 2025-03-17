@@ -54,6 +54,29 @@ namespace Beast.Claw.Serialization
             return array;
         }
 
+        public static NativeArray<TData> ReadNativeArrayAndLength<TData>(this IBinaryReader stream, Allocator allocator)
+            where TData : unmanaged, ISerializable
+        {
+            int itemCount = stream.ReadInt32();
+            if (itemCount == 0)
+            {
+                return new NativeArray<TData>(0, allocator);
+            }
+
+            NativeArray<TData> array = new (itemCount, allocator, NativeArrayOptions.UninitializedMemory);
+
+            for (int i = 0; i < itemCount; i++)
+            {
+                TData data = new();
+                
+                data.Deserialize(stream);
+
+                array[i] = data;
+            }
+
+            return array;
+        }
+
         public static NativeArray<byte> ReadNativeBytesAndLength(this IBinaryReader stream, Allocator allocator)
         {
             int byteCount = stream.ReadInt32();

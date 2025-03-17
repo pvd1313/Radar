@@ -1,9 +1,10 @@
 ﻿using System;
+using Beast.Claw.Serialization;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Math
 {
-    public struct ushort2 : IEquatable<ushort2>
+    public struct ushort2 : IEquatable<ushort2>, ISerializable
     {
         public ushort x;
         public ushort y;
@@ -52,6 +53,18 @@ namespace Beast.Claw.Math
         public override int GetHashCode()
         {
             return (int)math.hash(this);
+        }
+
+        public void Serialize(IBinaryWriter stream)
+        {
+            stream.WriteUInt16(x);
+            stream.WriteUInt16(y);
+        }
+
+        public void Deserialize(IBinaryReader stream)
+        {
+            x = stream.ReadUInt16();
+            y = stream.ReadUInt16();
         }
     }
 }

@@ -8,7 +8,9 @@ using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Claw.Math.CCL;
+using Beast.Claw.Serialization;
 using Beast.Radar.Navigation;
+using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
@@ -24,7 +26,7 @@ namespace Beast.Radar.City
 {
     public class RoadSpawner : Actor, IRoadSpawner
     {
-        public NativeSlice<RoadInfo> Roads => _roads.Slice();
+        public RoadMap RoadMap => _roadMap;
         
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly ITerrainBackedBiome _biome;
@@ -34,8 +36,8 @@ namespace Beast.Radar.City
         
         private TerrainData _bakedForTerrain;
         private IGizmoHandle _gizmo;
-        private NativeArray<ushort2> _roadPoints;
-        private NativeArray<RoadInfo> _roads;
+
+        private RoadMap _roadMap;
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
@@ -46,7 +48,8 @@ namespace Beast.Radar.City
 
         protected override UniTask _gameLoad(ConcurrentContext context)
         {
-            TerrainData terrain = _worldManager.GetCurrentWorld().terrain;
+            WorldData world = _worldManager.GetCurrentWorld();
+            TerrainData terrain = world.terrain;
 
             if (terrain.IsSame(_bakedForTerrain))
             {
@@ -54,134 +57,150 @@ namespace Beast.Radar.City
             }
 
             _bakedForTerrain = terrain;
+            
+            _roadMap.Dispose();
 
-            if (_roads.IsCreated)
+            bool roadMapCacheExists = _worldManager.CacheExists(world.guid, FileName.ROAD_MAP);
+
+            if (roadMapCacheExists)
             {
-                _roads.Dispose();
-                _roadPoints.Dispose();
-            }
-            
-            _config.buildCost.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
-
-            AveragePixelCountTexture<TerrainCell> terrain8KMClone = _biome.Terrain8kmCell.Clone(Allocator.TempJob);
-            
-            Road8KMJob road8KMJob = new()
-            {
-                inCellBiomeCost = cellBiomeCost,
-                inCellFeatureCost = cellFeatureCost,
-                inCities = _citySpawner.Cities,
-                inOutTerrain8KM = terrain8KMClone,
-                inSpawnPriority = _config.spawnPriority,
-                outPoints = BNative.TempJobList<ushort2>(2048),
-                outJunctions = new NativeHashMap<ushort2, ushort2>(256, Allocator.TempJob),
-                outSegments = BNative.TempJobList<ushort>(256),
-            };
-            
-            Profiler.BeginSample("RoadSegment8KMJob");
-            road8KMJob.Run();
-            Profiler.EndSample();
-            
-            terrain8KMClone.Dispose();
-            
-            int maxSegmentSize8KM = BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
-
-            NativeList<RoadSegment> segmentsToSearch = _processSegments8KM(
-                road8KMJob, 
-                _biome.Terrain1kmCell.TextureSize, 
-                maxSegmentSize8KM);
-
-            int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 2f);
-
-            Road1KMJob road1KMJob = new()
-            {
-                motionCost = new TerrainMotionCostComputer
-                {
-                    cellBiomeCost = cellBiomeCost,
-                    cellFeatureCost = cellFeatureCost,
-                    terrain1KMTexture = _biome.Terrain1kmCell,
-                    use8KMTerrainTexture = false,
-                    useNoiseTexture = true,
-                    noiseTexture = new NativeTexture<byte>(_config.noiseTexture),
-                    noiseStrength = _config.noiseStrength,
-                    noiseRange = _config.noiseRange
-                },
-                inSegments = segmentsToSearch.AsArray(),
-                inMaxPointPerSegment = maxPointPerSegment,
-                outPoints = BNative.TempJobArray<ushort2>(maxPointPerSegment * segmentsToSearch.Length),
-                outSegments = BNative.PermArray<RoadSegment>(segmentsToSearch.Length),
-                outSegmentPointCount = BNative.TempJobArray<int>(segmentsToSearch.Length)
-            };
-            
-            Profiler.BeginSample("RoadSegment1KMJob");
-            road1KMJob.Schedule(segmentsToSearch.Length, 8).Complete();
-            Profiler.EndSample();
-
-            Profiler.BeginSample("CollectRoads");
-            int totalPointCount = 0;
-            foreach (int segmentPointCount in road1KMJob.outSegmentPointCount)
-            {
-                totalPointCount += segmentPointCount;
-            }
-
-            NativeArray<ushort2> points = BNative.PermArray<ushort2>(totalPointCount);
-            NativeArray<RoadInfo> roads = BNative.PermArray<RoadInfo>(road1KMJob.outSegments.Length);
-            
-            int writeOffset = 0;
-            int readOffset = 0;
-            for (int i = 0; i < road1KMJob.outSegments.Length; i++)
-            {
-                RoadSegment segment = road1KMJob.outSegments[i];
-                int segmentPointCount = road1KMJob.outSegmentPointCount[i];
-
-                NativeSlice<ushort2> target = points.Slice(writeOffset, segmentPointCount);
-                NativeSlice<ushort2> source = road1KMJob.outPoints.Slice(readOffset, segmentPointCount);
+                Profiler.BeginSample("ReadRoadCache");
                 
-                target.CopyFrom(source);
+                using IBinaryReader reader = _worldManager.OpenCacheForReading(world.guid, FileName.ROAD_MAP);
 
-                roads[i] = new RoadInfo
+                _roadMap.Deserialize(reader);
+                
+                Profiler.EndSample();
+            }
+            else
+            {
+                _config.buildCost.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
+
+                AveragePixelCountTexture<TerrainCell> terrain8KMClone = _biome.Terrain8kmCell.Clone(Allocator.TempJob);
+
+                Road8KMJob road8KMJob = new()
                 {
-                    startPointIndex = (ushort) writeOffset,
-                    pointCount = (ushort) segmentPointCount,
-                    bounds = segment.bounds,
+                    inCellBiomeCost = cellBiomeCost,
+                    inCellFeatureCost = cellFeatureCost,
+                    inCities = _citySpawner.Cities,
+                    inOutTerrain8KM = terrain8KMClone,
+                    inSpawnPriority = _config.spawnPriority,
+                    outPoints = BNative.TempJobList<ushort2>(2048),
+                    outJunctions = new NativeHashMap<ushort2, ushort2>(256, Allocator.TempJob),
+                    outSegments = BNative.TempJobList<ushort>(256),
                 };
+
+                Profiler.BeginSample("RoadSegment8KMJob");
+                road8KMJob.Run();
+                Profiler.EndSample();
+
+                terrain8KMClone.Dispose();
+
+                int maxSegmentSize8KM =
+                    BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
+
+                NativeList<RoadSegment> segmentsToSearch = _processSegments8KM(
+                    road8KMJob,
+                    _biome.Terrain1kmCell.TextureSize,
+                    maxSegmentSize8KM);
+
+                int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 2f);
+
+                Road1KMJob road1KMJob = new()
+                {
+                    motionCost = new TerrainMotionCostComputer
+                    {
+                        cellBiomeCost = cellBiomeCost,
+                        cellFeatureCost = cellFeatureCost,
+                        terrain1KMTexture = _biome.Terrain1kmCell,
+                        use8KMTerrainTexture = false,
+                        useNoiseTexture = true,
+                        noiseTexture = new NativeTexture<byte>(_config.noiseTexture),
+                        noiseStrength = _config.noiseStrength,
+                        noiseRange = _config.noiseRange
+                    },
+                    inSegments = segmentsToSearch.AsArray(),
+                    inMaxPointPerSegment = maxPointPerSegment,
+                    outPoints = BNative.TempJobArray<ushort2>(maxPointPerSegment * segmentsToSearch.Length),
+                    outSegments = BNative.PermArray<RoadSegment>(segmentsToSearch.Length),
+                    outSegmentPointCount = BNative.TempJobArray<int>(segmentsToSearch.Length)
+                };
+
+                Profiler.BeginSample("RoadSegment1KMJob");
+                road1KMJob.Schedule(segmentsToSearch.Length, 8).Complete();
+                Profiler.EndSample();
+
+                Profiler.BeginSample("CollectRoads");
+                int totalPointCount = 0;
+                foreach (int segmentPointCount in road1KMJob.outSegmentPointCount)
+                {
+                    totalPointCount += segmentPointCount;
+                }
+
+                NativeArray<ushort2> roadPoints = BNative.PermArray<ushort2>(totalPointCount);
+                NativeArray<RoadInfo> roads = BNative.PermArray<RoadInfo>(road1KMJob.outSegments.Length);
+
+                int writeOffset = 0;
+                int readOffset = 0;
+                for (int i = 0; i < road1KMJob.outSegments.Length; i++)
+                {
+                    RoadSegment segment = road1KMJob.outSegments[i];
+                    int segmentPointCount = road1KMJob.outSegmentPointCount[i];
+
+                    NativeSlice<ushort2> target = roadPoints.Slice(writeOffset, segmentPointCount);
+                    NativeSlice<ushort2> source = road1KMJob.outPoints.Slice(readOffset, segmentPointCount);
+
+                    target.CopyFrom(source);
+
+                    roads[i] = new RoadInfo
+                    {
+                        startPointIndex = (ushort)writeOffset,
+                        pointCount = (ushort)segmentPointCount,
+                        bounds = segment.bounds,
+                    };
+
+                    writeOffset += segmentPointCount;
+                    readOffset += maxPointPerSegment;
+                }
+
+                Profiler.EndSample();
+
+                _roadMap = new RoadMap
+                {
+                    roads = roads,
+                    roadPoints = roadPoints
+                };
+
+                using IBinaryWriter writer = _worldManager.OpenCacheForWriting(world.guid, FileName.ROAD_MAP);
+                _roadMap.Serialize(writer);
                 
-                writeOffset += segmentPointCount;
-                readOffset += maxPointPerSegment;
+                road8KMJob.outPoints.Dispose();
+                road8KMJob.outJunctions.Dispose();
+                road8KMJob.outSegments.Dispose();
+                segmentsToSearch.Dispose();
+
+                road1KMJob.outPoints.Dispose();
+                road1KMJob.outSegmentPointCount.Dispose();
+                road1KMJob.outSegments.Dispose();
             }
-            Profiler.EndSample();
-            
-            _roads = roads;
-            _roadPoints = points;
             
             Profiler.BeginSample("RoadCellFeatureSetJob");
             RoadCellFeatureSetJob featureSetJob = new()
             {
-                inRoads = _roads,
-                inRoadPoints = _roadPoints,
+                inRoadMap = _roadMap,
                 inOutTerrain1KM = _biome.Terrain1kmCell,
                 inOutTerrain8KM = _biome.Terrain8kmCell
             };
 
-            featureSetJob.Schedule(_roads.Length, 8).Complete();
+            featureSetJob.Schedule(_roadMap.roads.Length, 8).Complete();
             Profiler.EndSample();
 
-            BDebug.Track(this, "RoadCount", _roads.Length);
-            BDebug.Track(this, "PointCount", _roadPoints.Length);
+            BDebug.Track(this, "RoadCount", _roadMap.roads.Length);
+            BDebug.Track(this, "PointCount", _roadMap.roadPoints.Length);
 
             _gizmo.Clear();
 
-            // _debugDrawPoints8KM(road8KMJob.outPoints);
-            
             _debugDrawRoads();
-
-            road8KMJob.outPoints.Dispose();
-            road8KMJob.outJunctions.Dispose();
-            road8KMJob.outSegments.Dispose();
-            segmentsToSearch.Dispose();
-
-            road1KMJob.outPoints.Dispose();
-            road1KMJob.outSegmentPointCount.Dispose();
-            road1KMJob.outSegments.Dispose();
             
             return UniTask.CompletedTask;
         }
@@ -252,36 +271,17 @@ namespace Beast.Radar.City
             return resultSegments;
         }
 
-        private void _debugDrawPoints8KM(NativeList<ushort2> points)
-        {
-            int cellSize8KM = _biome.Terrain8kmCell.cellSize;
-
-            _gizmo.SetColor(Color.black.WithAlpha(0.8f));
-
-            HashSet<ushort2> addedPoints = new(points.Length);
-
-            foreach (ushort2 position in points)
-            {
-                if (addedPoints.Add(position))
-                {
-                    float2 cellCenter = _biome.Terrain8kmCell.GetCellCenterWorld(position);
-                    
-                    _gizmo.AddQuad(cellCenter, cellSize8KM);
-                }
-            }
-        }
-
         [Conditional("DEVELOPMENT")]
         private void _debugDrawRoads()
         {
             HashSet<ushort2> junctionPoints = new (1024);
             
-            foreach (RoadInfo road in _roads)
+            foreach (RoadInfo road in _roadMap.roads)
             {
                 _gizmo.SetColor(Color.red.WithAlpha(0.8f));
 
-                ushort2 startPoint = _roadPoints[road.startPointIndex];
-                ushort2 endPoint = _roadPoints[road.startPointIndex + road.pointCount - 1];
+                ushort2 startPoint = _roadMap.roadPoints[road.startPointIndex];
+                ushort2 endPoint = _roadMap.roadPoints[road.startPointIndex + road.pointCount - 1];
                 
                 if (junctionPoints.Add(startPoint))
                 {
@@ -297,7 +297,7 @@ namespace Beast.Radar.City
 
                 for (int i = 1; i < road.pointCount - 1; i++)
                 {
-                    ushort2 point = _roadPoints[road.startPointIndex + i];
+                    ushort2 point = _roadMap.roadPoints[road.startPointIndex + i];
                     
                     _gizmo.AddPoint(point + new float2(0.5f, 0.5f), 2f);
                 }
@@ -307,12 +307,7 @@ namespace Beast.Radar.City
         protected override void _dispose(BlockingContext obj)
         {
             _gizmo.Dispose();
-            
-            if (_roads.IsCreated)
-            {
-                _roads.Dispose();
-                _roadPoints.Dispose();
-            }
+            _roadMap.Dispose();
         }
     }
 }

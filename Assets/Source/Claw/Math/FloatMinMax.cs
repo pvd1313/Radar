@@ -1,10 +1,11 @@
 ﻿using System;
+using Beast.Claw.Serialization;
 using Beast.Claw.Validation;
 
 namespace Beast.Claw.Math
 {
     [Serializable]
-    public struct FloatMinMax : IValidatable
+    public struct FloatMinMax : IValidatable, ISerializable
     {
         public float min;
         public float max;
@@ -88,6 +89,18 @@ namespace Beast.Claw.Math
         public override string ToString()
         {
             return $"[{min}, {max}]";
+        }
+
+        public void Serialize(IBinaryWriter stream)
+        {
+            stream.WriteFloat(min);
+            stream.WriteFloat(max);
+        }
+
+        public void Deserialize(IBinaryReader stream)
+        {
+            min = stream.ReadFloat();
+            max = stream.ReadFloat();
         }
     }
 }
