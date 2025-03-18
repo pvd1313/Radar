@@ -52,7 +52,7 @@
                 world2Clip.screenSize = _ScreenSize;
                 world2Clip.clipValue = _ClipValue;
 
-                float2 worldPos = input.vertexWS.xy + input.normalWS.xy;
+                float2 worldPos = input.vertexWS.xy + input.normalWS.xy * 0.5f;
                 output.positionCS = beast_world_to_clip_pos(world2Clip, worldPos, 0);
                 output.uv = input.uv;
 

@@ -63,19 +63,15 @@ namespace Beast.Radar.City
 
         private static void _buildMeshSkipPoints(RoadMeshTask task)
         {
-            // v1   v3
-            // p0   p1
-            // v0   v2
-            float3 point0 = _ushortPointToFloat(task.inPoints[0]);
-            float3 point1 = _ushortPointToFloat(task.inPoints[1]);
-            float3 normal0 = _getNormal(point0, point1);
-            float3 normal1 = normal0;
+            float2 point0 = task.inPoints[0] + new float2(0.5f);
+            float2 point1 = task.inPoints[1] + new float2(0.5f);
+            float2 normal = _getNormal(point0, point1);
             
-            task.outVertices[0] = point0;
-            task.outVertices[1] = point0;
+            task.outVertices[0] = point0.XY0();
+            task.outVertices[1] = point0.XY0();
 
-            task.outNormals[0] = normal0 * -1f;
-            task.outNormals[1] = normal0;
+            task.outNormals[0] = (normal * -1f).XY0();
+            task.outNormals[1] = normal.XY0();
             
             int vertexOffset = 2;
             int triangleOffset = 0;
@@ -87,17 +83,23 @@ namespace Beast.Radar.City
                     continue;
                 }
 
-                (point0, point1) = (point1, _ushortPointToFloat(task.inPoints[i + 1]));
+                float2 left = task.inPoints[i - 1] + new float2(0.5f);
+                float2 center = task.inPoints[i] + new float2(0.5f);
+                float2 right = task.inPoints[i + 1] + new float2(0.5f);
+                
+                task.outVertices[vertexOffset + 0] = center.XY0();
+                task.outVertices[vertexOffset + 1] = center.XY0();
 
-                normal1 = _getNormal(point0, point1);
+                float2 dir0 = BMath.Normalize(center - left);
+                float2 dir1 = BMath.Normalize(right - center);
+                float2 bisector = BMath.Normalize(dir0 + dir1);
+                float2 perp = new (bisector.y * -1.0f, bisector.x);
+                float miterScale = 1f / BMath.Max(0.01f, BMath.Dot(perp, new float2(dir1.y * -1.0f, dir1.x)));
 
-                task.outVertices[vertexOffset + 0] = point0;
-                task.outVertices[vertexOffset + 1] = point0;
-
-                float3 averageNormal = BMath.Normalize(normal0 + normal1);
-
-                task.outNormals[vertexOffset + 0] = averageNormal * -1f;
-                task.outNormals[vertexOffset + 1] = averageNormal;
+                normal = perp * miterScale;
+                
+                task.outNormals[vertexOffset + 0] = (normal * -1f).XY0();
+                task.outNormals[vertexOffset + 1] = normal.XY0();
 
                 task.outTriangleIndices[triangleOffset + 0] = vertexOffset - 2 + task.inFirstVertexIndex;
                 task.outTriangleIndices[triangleOffset + 1] = vertexOffset - 1 + task.inFirstVertexIndex;
@@ -109,14 +111,17 @@ namespace Beast.Radar.City
 
                 vertexOffset += 2;
                 triangleOffset += 6;
-                normal0 = normal1;
             }
+            
+            point0 = task.inPoints[^2] + new float2(0.5f);
+            point1 = task.inPoints[^1] + new float2(0.5f);
+            normal = _getNormal(point0, point1);
 
-            task.outVertices[vertexOffset + 0] = point1;
-            task.outVertices[vertexOffset + 1] = point1;
+            task.outVertices[vertexOffset + 0] = point1.XY0();
+            task.outVertices[vertexOffset + 1] = point1.XY0();
 
-            task.outNormals[vertexOffset + 0] = normal1 * -1f;
-            task.outNormals[vertexOffset + 1] = normal1;
+            task.outNormals[vertexOffset + 0] = (normal * -1f).XY0();
+            task.outNormals[vertexOffset + 1] = normal.XY0();
             
             task.outTriangleIndices[triangleOffset + 0] = vertexOffset - 2 + task.inFirstVertexIndex;
             task.outTriangleIndices[triangleOffset + 1] = vertexOffset - 1 + task.inFirstVertexIndex;
@@ -128,17 +133,10 @@ namespace Beast.Radar.City
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static float3 _ushortPointToFloat(ushort2 point)
+        private static float2 _getNormal(float2 point0, float2 point1)
         {
-            return new float3(point.x + 0.5f, point.y + 0.5f, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static float3 _getNormal(float3 point0, float3 point1)
-        {
-            float3 direction = BMath.Normalize(point1 - point0);
-
-            return new float3(direction.y * -1.0f, direction.x, 0);
+            float2 direction = BMath.Normalize(point1 - point0);
+            return new float2(direction.y * -1.0f, direction.x);
         }
     }
 }

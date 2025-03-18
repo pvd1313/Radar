@@ -84,6 +84,18 @@ namespace Beast.Claw.Math
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Dot(float3 a, float3 b)
+        {
+            return math.dot(a, b);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Dot(float2 a, float2 b)
+        {
+            return math.dot(a, b);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float2 a, float2 b)
         {
             return Mathf.Approximately(a.x, b.x) &&
