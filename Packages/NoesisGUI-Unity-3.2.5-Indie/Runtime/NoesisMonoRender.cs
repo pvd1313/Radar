@@ -114,12 +114,12 @@ public class NoesisMonoRender : MonoBehaviour
         }
     }
 
-    private void _onPreRender(Camera cam)
+    private void _onPreRender(Camera targetCamera)
     {
         // In case there are several cameras rendering to the same texture (Camera Stacking),
         // the camera rendered first (less depth) is the one that must apply our offscreen phase
         // to avoid inefficient Load/Store in Tiled architectures
-        if (_updatePending && cam.targetTexture == _camera.targetTexture && cam.depth <= _camera.depth)
+        if (_updatePending && targetCamera == _camera)
         {
             if (_uiView != null)
             {
@@ -137,19 +137,22 @@ public class NoesisMonoRender : MonoBehaviour
         }
     }
 
-    private void _onPostRender(Camera cam)
+    private void _onPostRender(Camera targetCamera)
     {
-        _commandBuffer.name = Profiling.RenderOnScreen;
+        if (targetCamera == _camera)
+        {
+            _commandBuffer.name = Profiling.RenderOnScreen;
 
-        NoesisRenderer.RenderOnscreen(_uiView, false, _commandBuffer, false, _clearStencil);
+            NoesisRenderer.RenderOnscreen(_uiView, false, _commandBuffer, false, _clearStencil);
 
-        Graphics.ExecuteCommandBuffer(_commandBuffer);
+            Graphics.ExecuteCommandBuffer(_commandBuffer);
 
-        _commandBuffer.Clear();
+            _commandBuffer.Clear();
 
-        GL.InvalidateState();
+            GL.InvalidateState();
 
-        _updatePending = true;
+            _updatePending = true;
+        }
     }
 
     private static void _forceRestoreCameraRenderTarget()
