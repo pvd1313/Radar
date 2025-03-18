@@ -142,7 +142,8 @@ namespace Beast.Radar.Sprite
                 screenSize = _screen.Size.Mul(screenScale),
                 cameraPosition = _camera.Position,
                 cameraViewDistance = _camera.ViewDistance,
-                cameraRotationRad = _camera.RotationRad
+                cameraRotationRad = _camera.RotationRad,
+                zOrder = RenderZOrder.SPRITE
             };
 
             Profiler.BeginSample("ApplyWorld2ClipMatrix");
@@ -150,6 +151,8 @@ namespace Beast.Radar.Sprite
             Profiler.EndSample();
 
             int2 textureSize = _halfStream.GetRequiredTextureSize();
+            BDebug.Track(this, "DataTextureSize", textureSize);
+            
             Texture2D dataTexture = _halfTextureProvider.GetTexture(textureSize);
 
             Profiler.BeginSample("ApplyPixelTexture");
@@ -161,15 +164,12 @@ namespace Beast.Radar.Sprite
 
             _renderMaterial.SetFloat("_AtlasTexelSize", 1f / _atlasManager.AtlasTexture.width);
             _renderMaterial.SetTexture("_AtlasTexture", _atlasManager.AtlasTexture);
-
+            
             RenderParams renderParams = new()
             {
                 material = _renderMaterial,
                 worldBounds = new Bounds(Vector3.zero, Vector3.one)
             };
-
-            BDebug.Track(this, "EntityCount", entityCount);
-            BDebug.Track(this, "DataTextureSize", textureSize);
 
             Profiler.BeginSample("RenderMeshPrimitives");
             Graphics.RenderMeshPrimitives(renderParams, _library.quad, 0, entityCount);

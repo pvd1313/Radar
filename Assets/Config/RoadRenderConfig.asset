@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b580fc0cac64f15b93c492c204f77de, type: 3}
+  m_Name: RoadRenderConfig
+  m_EditorClassIdentifier: 
+  lod0SkipPointsValue: 1
+  renderShader: {fileID: 4800000, guid: c3a4f86b63e03944b9a5d25cb80f876c, type: 3}

@@ -16,6 +16,7 @@ struct BeastWorld2ClipMatrix
     float2 renderCenter;
     float renderDistance;
     float2 screenSize;
+    float clipValue;
 };
 
 // 0 1 2
@@ -150,7 +151,7 @@ float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos, float
 
     worldPos.y *= _ProjectionParams.x;
                 
-    return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE, 1.0);
+    return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE * mat.clipValue, 1.0);
 }
 
 float beast_half2_to_float(half half0, half half1)

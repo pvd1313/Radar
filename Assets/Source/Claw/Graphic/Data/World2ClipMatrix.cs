@@ -10,12 +10,14 @@ namespace Beast.Claw.Graphic
         public float cameraViewDistance;
         public float2 screenSize;
         public IsometricCameraRotation cameraRotationRad;
+        public float zOrder;
 
         public void Apply(Material material)
         {
             material.SetFloat2("_RenderCenter", cameraPosition);
             material.SetFloat("_RenderDistance", cameraViewDistance);
             material.SetFloat2("_ScreenSize", screenSize);
+            material.SetFloat("_ClipValue", zOrder * -1f);
 
             if (cameraRotationRad.IsZero())
             {

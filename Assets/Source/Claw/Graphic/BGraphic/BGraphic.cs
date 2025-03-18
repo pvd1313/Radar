@@ -270,7 +270,7 @@ namespace Beast.Claw.Graphic
                 input.material,
                 input.layer,
                 input.targetCamera,
-                input.layer,
+                input.subMeshIndex,
                 input.materialProperties);
         }
 

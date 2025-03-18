@@ -30,6 +30,7 @@
             float _ProjectionScale;
             float2 _RenderCenter;
             float _RenderDistance;
+            float _ClipValue;
 
             sampler2D _DataTexture;
             float2 _DataTextureSize;
@@ -50,6 +51,7 @@
                 world2Clip.viewMatrix0 = _ViewMatrix0;
                 world2Clip.viewMatrix1 = _ViewMatrix1;
                 world2Clip.screenSize = _ScreenSize;
+                world2Clip.clipValue = _ClipValue;
 
                 // World point, with screen based size.
                 if (v0 == 0)

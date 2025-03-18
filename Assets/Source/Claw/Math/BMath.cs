@@ -166,10 +166,15 @@ namespace Beast.Claw.Math
         {
             return math.min(x, y);
         }
-
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 Normalize(float2 x)
+        {
+            return math.normalize(x);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float3 Normalize(float3 x)
         {
             return math.normalize(x);
         }

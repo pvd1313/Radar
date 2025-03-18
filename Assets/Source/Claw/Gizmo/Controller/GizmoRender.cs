@@ -129,7 +129,8 @@ namespace Beast.Claw.Gizmo
                 screenSize = _screen.Size,
                 cameraPosition = _camera.Position,
                 cameraViewDistance = _camera.ViewDistance,
-                cameraRotationRad = _camera.RotationRad
+                cameraRotationRad = _camera.RotationRad,
+                zOrder = RenderZOrder.GIZMO
             };
 
             matrix.Apply(_shapeMaterial);
@@ -168,7 +169,7 @@ namespace Beast.Claw.Gizmo
                 {
                     rotation = Quaternion.identity,
                     scale = new float3(_screen.Aspect, 1, 1),
-                    translation = new float3(0, 0, RenderOrderZ.GIZMO)
+                    translation = new float3(0, 0, RenderZOrder.GIZMO)
                 },
                 mesh = _config.quadMesh
             });

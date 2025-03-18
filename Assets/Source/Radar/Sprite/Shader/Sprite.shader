@@ -30,6 +30,7 @@
             float _ProjectionScale;
             float2 _RenderCenter;
             float _RenderDistance;
+            float _ClipValue;
 
             float _AtlasTexelSize;
             sampler2D _AtlasTexture;
@@ -53,6 +54,7 @@
                 world2Clip.viewMatrix0 = _ViewMatrix0;
                 world2Clip.viewMatrix1 = _ViewMatrix1;
                 world2Clip.screenSize = _ScreenSize;
+                world2Clip.clipValue = _ClipValue;
                 
                 // World point, with screen based size.
                 float posX = beast_half2_to_float(v0, v1);

@@ -177,7 +177,7 @@ namespace Beast.Radar.Terrain
                 material = _tileBlitMaterial, 
                 matrix = new Float4x4TRS
                 {
-                    translation = new float3(0, 0, RenderOrderZ.TERRAIN_TILE_RENDER),
+                    translation = new float3(0, 0, RenderZOrder.TERRAIN_TILE_RENDER),
                     rotation = quaternion.identity,
                     scale = new float3(_screen.Aspect, 1, 1)
                 }
