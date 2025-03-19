@@ -132,26 +132,25 @@ inline void beast_clip_black_color(float3 color)
     clip(color.r + color.g + color.b - 0.01);
 }
 
-float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix mat, float2 worldPos, float2 screenOffset)
+float4 beast_world_to_clip_pos(BeastWorld2ClipMatrix world2Clip, float2 worldPos, float2 screenOffset)
 {
-    float2 screenTexelSize = 1.0 / mat.screenSize;
-    
-    float aspect = mat.screenSize.x / mat.screenSize.y;
+    float aspect = world2Clip.screenSize.x / world2Clip.screenSize.y;
 
-    worldPos = worldPos - mat.renderCenter;
+    worldPos = worldPos - world2Clip.renderCenter;
                 
-    worldPos = mul(float2x2(mat.viewMatrix0), worldPos);
-    worldPos = mul(float2x2(mat.viewMatrix1), worldPos);
+    worldPos = mul(float2x2(world2Clip.viewMatrix0), worldPos);
+    worldPos = mul(float2x2(world2Clip.viewMatrix1), worldPos);
                 
-    worldPos /= mat.renderDistance;
+    worldPos /= world2Clip.renderDistance;
     worldPos.x /= aspect;
-    worldPos *= mat.projectionScale;
+    worldPos *= world2Clip.projectionScale;
 
+    float2 screenTexelSize = 1.0 / world2Clip.screenSize;
     worldPos += screenTexelSize * screenOffset * 2;
 
     worldPos.y *= _ProjectionParams.x;
                 
-    return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE * mat.clipValue, 1.0);
+    return float4(worldPos.x, worldPos.y, UNITY_NEAR_CLIP_VALUE * world2Clip.clipValue, 1.0);
 }
 
 float beast_half2_to_float(half half0, half half1)

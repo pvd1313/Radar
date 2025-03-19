@@ -299,7 +299,7 @@ namespace Beast.Radar.City
                 {
                     ushort2 point = _roadMap.roadPoints[road.startPointIndex + i];
                     
-                    _gizmo.AddPoint(point + new float2(0.5f, 0.5f), 2f);
+                    _gizmo.AddPoint(point + new float2(0.5f, 0.5f), 4f);
                 }
             }
         }
