@@ -84,7 +84,7 @@ namespace Beast.Radar.City
             
             left = task.inPoints[^2] + new float2(0.5f);
             center = task.inPoints[^1] + new float2(0.5f);
-            right = center + BMath.Normalize(right - center);
+            right = center + BMath.Normalize(center - left);
 
             _writeQuad(task, vertexOffset, ref triangleOffset);
             
