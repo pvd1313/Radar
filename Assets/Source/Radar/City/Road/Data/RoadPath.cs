@@ -3,7 +3,7 @@ using Beast.Claw.Serialization;
 
 namespace Beast.Radar.City
 {
-    public struct RoadInfo : ISerializable
+    public struct RoadPath : ISerializable
     {
         public ushort startPointIndex;
         public ushort pointCount;

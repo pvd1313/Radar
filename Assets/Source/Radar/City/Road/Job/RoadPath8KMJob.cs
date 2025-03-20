@@ -14,7 +14,7 @@ using Unity.Mathematics;
 namespace Beast.Radar.City
 {
     [Unity.Burst.BurstCompile]
-    public struct Road8KMJob : IJob
+    public struct RoadPath8KMJob : IJob
     {
         public NativeSlice<CityInfo> inCities;
         public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;

@@ -8,7 +8,7 @@ using Unity.Mathematics;
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct Road1KMJob : IJobParallelFor
+    public struct RoadPath1KMJob : IJobParallelFor
     {
         [ReadOnly] public NativeSlice<RoadSegment> inSegments;
         [ReadOnly] public int inMaxPointPerSegment;

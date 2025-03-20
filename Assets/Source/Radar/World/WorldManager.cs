@@ -52,7 +52,7 @@ namespace Beast.Radar.World
             return _fileManager.Exists(FolderName.WORLD, fileName);
         }
 
-        public IBinaryReader OpenCacheForReading(Guid worldGuid, string cacheId)
+        public IBinaryReader StartCacheReading(Guid worldGuid, string cacheId)
         {
             string fileName = _cacheIdToFileName(worldGuid, cacheId);
 
@@ -61,7 +61,7 @@ namespace Beast.Radar.World
             return new BinaryReader(stream.stream);
         }
 
-        public IBinaryWriter OpenCacheForWriting(Guid worldGuid, string cacheId)
+        public IBinaryWriter StartCacheWriting(Guid worldGuid, string cacheId)
         {
             string fileName = _cacheIdToFileName(worldGuid, cacheId);
 

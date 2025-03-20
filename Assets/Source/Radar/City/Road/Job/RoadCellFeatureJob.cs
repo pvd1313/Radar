@@ -6,21 +6,24 @@ using Unity.Jobs;
 
 namespace Beast.Radar.City
 {
+    /// <summary>
+    /// Add ETerrainFeature.Road to cells containing roads.
+    /// </summary>
     [BurstCompile]
-    public struct RoadCellFeatureSetJob : IJobParallelFor
+    public struct RoadCellFeatureJob : IJobParallelFor
     {
-        [ReadOnly] public RoadMap inRoadMap;
+        [ReadOnly] public RoadPathMap inRoadMap;
 
         [NativeDisableParallelForRestriction] public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;
         [NativeDisableParallelForRestriction] public TextureWithBlocks<TerrainCell> inOutTerrain1KM;
         
         public void Execute(int roadIndex)
         {
-            RoadInfo road = inRoadMap.roads[roadIndex];
+            RoadPath roadPath = inRoadMap.roads[roadIndex];
 
-            for (int i = 0; i < road.pointCount; i++)
+            for (int i = 0; i < roadPath.pointCount; i++)
             {
-                ushort2 roadPoint = inRoadMap.roadPoints[road.startPointIndex + i];
+                ushort2 roadPoint = inRoadMap.roadPoints[roadPath.startPointIndex + i];
 
                 int pixelOffset = inOutTerrain1KM.GetPixelOffset(roadPoint);
                 TerrainCell cell = inOutTerrain1KM.texture[pixelOffset];

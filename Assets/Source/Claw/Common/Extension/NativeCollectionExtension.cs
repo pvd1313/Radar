@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Beast.Claw.Attributes.Annotation;
 using Unity.Collections;
 
@@ -15,6 +16,15 @@ namespace Beast.Claw.Common
             }
             
             target.Slice(0, source.Length).CopyFrom(source.Slice(0, source.Length));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void DisposeIfCreated<T>(this NativeArray<T> target) where T : unmanaged
+        {
+            if (target.IsCreated)
+            {
+                target.Dispose();
+            }
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Beast.Radar.World
 
         bool CacheExists(Guid worldGuid, string cacheName);
         
-        IBinaryReader OpenCacheForReading(Guid worldGuid, string cacheId);
+        IBinaryReader StartCacheReading(Guid worldGuid, string cacheId);
         
-        IBinaryWriter OpenCacheForWriting(Guid worldGuid, string cacheId);
+        IBinaryWriter StartCacheWriting(Guid worldGuid, string cacheId);
     }
 }

@@ -94,6 +94,20 @@ namespace Beast.Claw.Jobs
             permArray = newArray;
         }
 
+        public static void Copy<T>(
+            NativeArray<T> read,
+            NativeArray<T> write,
+            int readOffset,
+            int writeOffset,
+            int dataCount)
+            where T : unmanaged
+        {
+            NativeSlice<T> source = read.Slice(readOffset, dataCount);
+            NativeSlice<T> target = write.Slice(writeOffset, dataCount);
+
+            target.CopyFrom(source);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MaintainPermArrayLength<T>(ref NativeArray<T> array, ArrayMaintenanceData rule) 
             where T : unmanaged

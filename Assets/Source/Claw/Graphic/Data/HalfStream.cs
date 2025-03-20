@@ -161,10 +161,7 @@ namespace Beast.Claw.Graphic
 
         public void Dispose()
         {
-            if (_buffer.IsCreated)
-            {
-                _buffer.Dispose();
-            }
+            _buffer.DisposeIfCreated();
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Beast.Radar.Terrain
 
             if (fbmCacheExists)
             {
-                using IBinaryReader reader = _worldManager.OpenCacheForReading(world.guid, FileName.TERRAIN_FBM);
+                using IBinaryReader reader = _worldManager.StartCacheReading(world.guid, FileName.TERRAIN_FBM);
                 
                 Profiler.BeginSample("ReadTextureCache");
                 NativeArray<byte> bytes = reader.ReadNativeBytesAndLength(Allocator.Temp);
@@ -117,7 +117,7 @@ namespace Beast.Radar.Terrain
                 return;
             }
 
-            using IBinaryWriter writer = _worldManager.OpenCacheForWriting(world.guid, FileName.TERRAIN_FBM);
+            using IBinaryWriter writer = _worldManager.StartCacheWriting(world.guid, FileName.TERRAIN_FBM);
             
             writer.WriteNativeBytesAndLength(_texture.GetPixelData<byte>(0));
         }

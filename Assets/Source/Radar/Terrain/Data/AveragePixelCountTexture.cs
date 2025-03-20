@@ -106,10 +106,7 @@ namespace Beast.Radar.Terrain
 
         public void Dispose()
         {
-            if (texture.IsCreated)
-            {
-                texture.Dispose();
-            }
+            texture.DisposeIfCreated();
         }
     }
 }

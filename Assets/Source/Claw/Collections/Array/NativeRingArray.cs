@@ -1,4 +1,5 @@
 ﻿using System;
+using Beast.Claw.Common;
 using Beast.Claw.Validation;
 using Unity.Collections;
 
@@ -53,10 +54,7 @@ namespace Beast.Claw.Collections
 
         public void Dispose()
         {
-            if (_array.IsCreated)
-            {
-                _array.Dispose();
-            }
+            _array.DisposeIfCreated();
         }
     }
 }
