@@ -100,6 +100,8 @@ namespace Beast.Radar.City
                 return UniTask.CompletedTask;
             }
 
+            _bakedForTerrain = terrain;
+
             _disposeEntities(true);
 
             NativeSlice<CityInfo> cities = _citySpawner.Cities;
@@ -266,7 +268,7 @@ namespace Beast.Radar.City
                 
                 _entityManager.DestroyEntity(_icons);
                 _entityManager.DestroyEntity(_labels);
-
+                
                 _icons.Dispose();
                 _labels.Dispose();
             }
