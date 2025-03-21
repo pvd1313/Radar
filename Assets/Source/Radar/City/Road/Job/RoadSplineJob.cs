@@ -37,17 +37,16 @@ namespace Beast.Radar.City
             {
                 if (pointIndex == _roadPath.pointCount - 1)
                 {
-                    outRoadSplinePoints[writeOffset + splinePointCount] = _getRoadPoint(pointIndex) + new float2(0.5f);
-
-                    splinePointCount++;
+                    float2 endPoint = _getRoadPoint(pointIndex) + new float2(0.5f);
+                    outRoadSplinePoints[writeOffset + splinePointCount - 1] = endPoint;
                     
                     break;
                 }
                 
-                int endPointIndex = _skipPointsUntilStraightLineBreak(pointIndex);
+                int endPointIndex = _getLineEndPoint(pointIndex);
 
                 float2 lineStart = _getRoadPoint(pointIndex) + new float2(0.5f);
-                float2 lineEnd = _getRoadPoint(endPointIndex) + new float2(0.5f);;
+                float2 lineEnd = _getRoadPoint(endPointIndex) + new float2(0.5f);
                 
                 if (pointIndex == 0)
                 {
@@ -70,9 +69,11 @@ namespace Beast.Radar.City
                     
                     continue;
                 }
-
-                outRoadSplinePoints[writeOffset + splinePointCount] = (lineStart + lineEnd) * 0.5f;
-                outRoadSplineHandles[writeOffset + splinePointCount] = lineEnd;
+                else
+                {
+                    outRoadSplinePoints[writeOffset + splinePointCount] = (lineStart + lineEnd) * 0.5f;
+                    outRoadSplineHandles[writeOffset + splinePointCount] = lineEnd;
+                }
 
                 splinePointCount++;
                 pointIndex = endPointIndex;
@@ -81,7 +82,7 @@ namespace Beast.Radar.City
             outRoadSplinePointCount[roadIndex] = splinePointCount;
         }
 
-        private int _skipPointsUntilStraightLineBreak(int pointIndex)
+        private int _getLineEndPoint(int pointIndex)
         {
             int2 point0 = _getRoadPoint(pointIndex);
 
