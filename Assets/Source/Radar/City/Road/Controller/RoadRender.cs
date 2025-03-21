@@ -97,7 +97,10 @@ namespace Beast.Radar.City
             BDebug.Track(this, "RoadCount", _splineMap.roads.Length);
             
             // RoadDebug.DrawRoadSplineMap(_gizmo, _splineMap);
-            RoadDebug.DrawRoadSpline(_gizmo, _splineMap, 0, 0.1f);
+            if (_splineMap.roads.Length > 0)
+            {
+                RoadDebug.DrawRoadSpline(_gizmo, _splineMap, 0, 0.1f);
+            }
 
             splineJob.outRoadSplineHandles.Dispose();
             splineJob.outRoadSplinePoints.Dispose();
