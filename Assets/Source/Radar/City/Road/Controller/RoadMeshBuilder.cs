@@ -6,38 +6,11 @@ namespace Beast.Radar.City
 {
     public static class RoadMeshBuilder
     {
-        public static void GetMeshSize(
-            int roadPointCount, 
-            ERoadMeshBuildingMode mode, 
-            int modeValue,
-            out int vertexCount,
-            out int triangleCount)
+        public static void GetMeshSize(int roadPointCount, out int vertexCount, out int triangleCount)
         {
             if (roadPointCount < 2)
             {
                 throw new ArgumentException("roadPointCount must be >= 2");
-            }
-
-            switch (mode)
-            {
-                case ERoadMeshBuildingMode.SkipPoints:
-                    if (modeValue < 1)
-                    {
-                        throw new ArgumentException("modeValue must be >= 1 when skipping points");
-                    }
-                    roadPointCount = (roadPointCount - 2) / modeValue + 2;
-                    break;
-                
-                case ERoadMeshBuildingMode.ExtraPoints:
-                    if (modeValue < 0)
-                    {
-                        throw new AggregateException("modeValue must be >= 0 when adding extra points");
-                    }
-                    roadPointCount += (roadPointCount - 1) * modeValue;
-                    break;
-                
-                default:
-                    throw new ArgumentException("Invalid mode: " + mode);
             }
             
             vertexCount = roadPointCount * 2;
@@ -45,22 +18,6 @@ namespace Beast.Radar.City
         }
 
         public static void BuildMesh(RoadMeshTask task)
-        {
-            switch (task.inMode)
-            {
-                case ERoadMeshBuildingMode.SkipPoints:
-                    _buildMeshSkipPoints(task);
-                    return;
-                
-                case ERoadMeshBuildingMode.ExtraPoints:
-                    throw new NotImplementedException();
-                
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
-        private static void _buildMeshSkipPoints(RoadMeshTask task)
         {
             float2 center = task.inPoints[0] + new float2(0.5f);
             float2 right = task.inPoints[1] + new float2(0.5f);;

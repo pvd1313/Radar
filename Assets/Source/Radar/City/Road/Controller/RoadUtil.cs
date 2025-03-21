@@ -77,7 +77,7 @@ namespace Beast.Radar.City
 
                 roads[i] = new RoadSpline
                 {
-                    startPointIndex = (ushort)writeOffset,
+                    firstPointIndex = (ushort)writeOffset,
                     pointCount = (ushort)pointCount,
                     bounds = pathMap.roads[i].bounds,
                     length = job.outRoadLength[i]

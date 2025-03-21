@@ -119,12 +119,7 @@ namespace Beast.Radar.City
             {
                 RoadPath roadPath = roadPathMap.roads[i];
                 
-                RoadMeshBuilder.GetMeshSize(
-                    roadPath.pointCount, 
-                    ERoadMeshBuildingMode.SkipPoints, 
-                    1, 
-                    out int roadVertexCount,
-                    out int roadTriangleCount);
+                RoadMeshBuilder.GetMeshSize(roadPath.pointCount, out int roadVertexCount, out int roadTriangleCount);
 
                 vertexCount += roadVertexCount;
                 triangleCount += roadTriangleCount;
@@ -142,22 +137,14 @@ namespace Beast.Radar.City
             {
                 RoadPath roadPath = roadPathMap.roads[i];
                 
-                RoadMeshBuilder.GetMeshSize(
-                    roadPath.pointCount, 
-                    ERoadMeshBuildingMode.SkipPoints, 
-                    1, 
-                    out int roadVertexCount,
-                    out int roadTriangleCount);
+                RoadMeshBuilder.GetMeshSize(roadPath.pointCount, out int roadVertexCount, out int roadTriangleCount);
                 
                 RoadMeshBuilder.BuildMesh(new RoadMeshTask
                 {
                     inPoints = roadPathMap.roadPoints.Slice(roadPath.startPointIndex, roadPath.pointCount),
-                    inModeValue = 1,
-                    inMode = ERoadMeshBuildingMode.SkipPoints,
                     inFirstVertexIndex = vertexCount,
                     outTriangleIndices = triangles.Slice(triangleCount * 3, roadTriangleCount * 3),
                     outVertices = vertices.Slice(vertexCount, roadVertexCount),
-                    outUVs = uvs.Slice(vertexCount, roadVertexCount),
                     outNormals = normals.Slice(vertexCount, roadVertexCount)
                 });
 
@@ -168,7 +155,6 @@ namespace Beast.Radar.City
             roadMesh.Clear();
             roadMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
             roadMesh.SetNormals(normals);
-            roadMesh.SetUVs(0, uvs);
             roadMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
         }
 
