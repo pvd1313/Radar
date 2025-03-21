@@ -80,7 +80,9 @@ namespace Beast.Radar.City
                 inMaxPointCountPerRoad = maxRoadPointCount,
                 outRoadSplinePoints = BNative.TempJobArray<float2>(maxRoadPointCount * roadCount),
                 outRoadSplineHandles = BNative.TempJobArray<float2>(maxRoadPointCount * roadCount),
+                outRoadCurveLengths = BNative.TempJobArray<float>(maxRoadPointCount * roadCount),
                 outRoadSplinePointCount = BNative.TempJobArray<int>(roadCount),
+                outRoadLength = BNative.TempJobArray<float>(roadCount),
             };
             
             Profiler.BeginSample("RoadSplineJob");
@@ -95,11 +97,13 @@ namespace Beast.Radar.City
             BDebug.Track(this, "RoadCount", _splineMap.roads.Length);
             
             // RoadDebug.DrawRoadSplineMap(_gizmo, _splineMap);
-            RoadDebug.DrawRoadSpline(_gizmo, _splineMap, 0, 64);
+            RoadDebug.DrawRoadSpline(_gizmo, _splineMap, 0, 0.1f);
 
             splineJob.outRoadSplineHandles.Dispose();
             splineJob.outRoadSplinePoints.Dispose();
+            splineJob.outRoadCurveLengths.Dispose();
             splineJob.outRoadSplinePointCount.Dispose();
+            splineJob.outRoadLength.Dispose();
 
             return UniTask.CompletedTask;
         }
@@ -191,6 +195,7 @@ namespace Beast.Radar.City
             BGraphic.TryDispose(ref _roadMesh);
             BGraphic.TryDispose(ref _renderMaterial);
             _splineMap.Dispose();
+            _gizmo.Dispose();
         }
     }
 }

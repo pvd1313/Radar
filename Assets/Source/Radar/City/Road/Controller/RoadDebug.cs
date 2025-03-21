@@ -3,7 +3,9 @@ using System.Diagnostics;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Graphic;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -54,47 +56,54 @@ namespace Beast.Radar.City
 
             foreach (RoadSpline road in roadMap.roads)
             {
-                gizmo.SetColor(Color.red);
-                
-                for (int i = 0; i < road.pointCount; i++)
-                {
-                    gizmo.AddPoint(roadMap.roadPoints[road.startPointIndex + i], 4);
-                }
-                
-                gizmo.SetColor(Color.gray);
-                
-                for (int i = 0; i < road.pointCount - 1; i++)
-                {
-                    gizmo.AddPoint(roadMap.roadHandles[road.startPointIndex + i], 4);
-                }
+                _drawSplineControlPoints(gizmo, roadMap, road);
             }
         }
 
         [Conditional("DEVELOPMENT")]
-        public static void DrawRoadSpline(IGizmoHandle gizmo, RoadSplineMap roadMap, int roadIndex, int pointsPerCurve)
+        public static void DrawRoadSpline(IGizmoHandle gizmo, RoadSplineMap roadMap, int roadIndex, float segmentLength)
         {
+            const int LENGTH_TABLE_MULTIPLIER = 3;
+            
             gizmo.Clear();
 
             RoadSpline road = roadMap.roads[roadIndex];
-            
-            gizmo.SetColor(Color.red);
-                
-            for (int i = 0; i < road.pointCount; i++)
-            {
-                gizmo.AddPoint(roadMap.roadPoints[road.startPointIndex + i], 4);
-            }
-                
-            gizmo.SetColor(Color.gray);
-                
+
+            int maxCurvePointCount = 0;
             for (int i = 0; i < road.pointCount - 1; i++)
             {
-                gizmo.AddPoint(roadMap.roadHandles[road.startPointIndex + i], 4);
+                float curveLength = roadMap.curveLengths[road.startPointIndex + i];
+
+                int curvePointCount = BMath.CeilToInt(curveLength / segmentLength);
+
+                maxCurvePointCount = BMath.Max(curvePointCount, maxCurvePointCount);
             }
+
+            maxCurvePointCount++;
+
+            NativeArray<float> lengthBuffer = BNative.TempArray<float>(maxCurvePointCount * LENGTH_TABLE_MULTIPLIER);
+            
+            _drawSplineControlPoints(gizmo, roadMap, road);
             
             gizmo.SetColor(Color.blue);
 
-            for (int splineIndex = 0; splineIndex < road.pointCount; splineIndex++)
+            float nextPointDistance = segmentLength;
+
+            for (int splineIndex = 0; splineIndex < road.pointCount - 1; splineIndex++)
             {
+                float curveLength = roadMap.curveLengths[road.startPointIndex + splineIndex];
+
+                if (nextPointDistance > curveLength)
+                {
+                    nextPointDistance -= curveLength;
+                    continue;
+                }
+
+                float splineOffset = nextPointDistance;
+                int splinePointCount = BMath.FloorToInt((curveLength - splineOffset) / segmentLength) + 1;
+                float splineRemainingDistance = curveLength - (splinePointCount - 1) * segmentLength - splineOffset;
+                nextPointDistance = segmentLength - splineRemainingDistance;
+                
                 BezierCurve2D curve = new ()
                 {
                     point0 = roadMap.roadPoints[road.startPointIndex + splineIndex],
@@ -103,14 +112,39 @@ namespace Beast.Radar.City
                     handle1 = roadMap.roadHandles[road.startPointIndex + splineIndex]
                 };
 
-                for (int i = 0; i < pointsPerCurve; i++)
+                BezierCurveLengthTable lengthTable = BezierCurveLengthTable.Create(
+                    curve,
+                    lengthBuffer,
+                    splinePointCount * LENGTH_TABLE_MULTIPLIER,
+                    EPrecisionMode.Double);
+
+                for (int i = 0; i < splinePointCount; i++)
                 {
-                    float t = (i + 1.0f) / (pointsPerCurve + 1.0f);
+                    float pointTime = lengthTable.FindTimeForLength(splineOffset + i * segmentLength);
+                    
+                    double2 point = curve.ComputePointDouble(pointTime);
 
-                    float2 point = curve.ComputePoint(t);
-
-                    gizmo.AddPoint(point, 2);
+                    gizmo.AddPoint((float2)point, 4f);
                 }
+            }
+
+            lengthBuffer.Dispose();
+        }
+
+        private static void _drawSplineControlPoints(IGizmoHandle gizmo, RoadSplineMap roadMap, RoadSpline road)
+        {
+            gizmo.SetColor(Color.red);
+                
+            for (int i = 0; i < road.pointCount; i++)
+            {
+                gizmo.AddPoint(roadMap.roadPoints[road.startPointIndex + i], 8);
+            }
+                
+            gizmo.SetColor(Color.gray);
+                
+            for (int i = 0; i < road.pointCount - 1; i++)
+            {
+                gizmo.AddPoint(roadMap.roadHandles[road.startPointIndex + i], 4);
             }
         }
     }

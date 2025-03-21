@@ -10,12 +10,14 @@ namespace Beast.Radar.City
         public NativeArray<RoadSpline> roads;
         public NativeArray<float2> roadPoints;
         public NativeArray<float2> roadHandles;
+        public NativeArray<float> curveLengths;
 
         public void Dispose()
         {
             roads.DisposeIfCreated();
             roadPoints.DisposeIfCreated();
             roadHandles.DisposeIfCreated();
+            curveLengths.DisposeIfCreated();
         }
     }
 }

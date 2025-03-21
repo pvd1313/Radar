@@ -196,6 +196,12 @@ namespace Beast.Claw.Math
         {
             return math.length(vector);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Length(double2 vector)
+        {
+            return math.length(vector);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float2 NormalizeSafe(float2 x)
@@ -205,6 +211,12 @@ namespace Beast.Claw.Math
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Distance(float2 a,float2 b)
+        {
+            return math.distance(a,b);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Distance(double2 a, double2 b)
         {
             return math.distance(a,b);
         }
@@ -329,6 +341,12 @@ namespace Beast.Claw.Math
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int FloorToInt(float a)
+        {
+            return (int)math.floor(a);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FloorToInt(double a)
         {
             return (int)math.floor(a);
         }

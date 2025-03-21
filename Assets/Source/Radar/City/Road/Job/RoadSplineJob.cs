@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using Beast.Claw.Math;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -10,7 +9,6 @@ namespace Beast.Radar.City
     /// <summary>
     /// Converts road paths to bezier splines.
     /// </summary>
-    [BurstCompile]
     public struct RoadSplineJob : IJobParallelFor
     {
         [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<ushort2> inRoadPathPoints;
@@ -19,7 +17,9 @@ namespace Beast.Radar.City
 
         [NativeDisableParallelForRestriction] public NativeArray<float2> outRoadSplinePoints;
         [NativeDisableParallelForRestriction] public NativeArray<float2> outRoadSplineHandles;
+        [NativeDisableParallelForRestriction] public NativeArray<float> outRoadCurveLengths;
         public NativeArray<int> outRoadSplinePointCount;
+        public NativeArray<float> outRoadLength;
 
         private RoadPath _roadPath;
         
@@ -63,11 +63,6 @@ namespace Beast.Radar.City
 
                     outRoadSplinePoints[writeOffset] = lineStart;
                     outRoadSplineHandles[writeOffset] = lineEnd;
-
-                    splinePointCount++;
-                    pointIndex = endPointIndex;
-                    
-                    continue;
                 }
                 else
                 {
@@ -80,6 +75,26 @@ namespace Beast.Radar.City
             }
 
             outRoadSplinePointCount[roadIndex] = splinePointCount;
+
+            float roadLength = 0;
+            for (int i = 0; i < splinePointCount - 1; i++)
+            {
+                BezierCurve2D curve = new()
+                {
+                    point0 = outRoadSplinePoints[writeOffset + i],
+                    point1 = outRoadSplinePoints[writeOffset + i + 1],
+                    handle0 = outRoadSplineHandles[writeOffset + i],
+                    handle1 = outRoadSplineHandles[writeOffset + i]
+                };
+
+                float curveLength = curve.ComputeLength();
+
+                outRoadCurveLengths[writeOffset + i] = curveLength;
+                
+                roadLength += curveLength;
+            }
+
+            outRoadLength[roadIndex] = roadLength;
         }
 
         private int _getLineEndPoint(int pointIndex)

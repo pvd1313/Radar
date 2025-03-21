@@ -10,7 +10,21 @@ namespace Beast.Radar.City
         public float2 handle0;
         public float2 handle1;
 
-        public float2 ComputePoint(float t)
+        public double2 ComputePointDouble(double t)
+        {
+            double u = 1 - t;
+            double uu = u * u;
+            double uuu = uu * u;
+            double tt = t * t;
+            double ttt = tt * t;
+
+            return (uuu * (double2)point0) + 
+                   (3 * uu * t * (double2)handle0) + 
+                   (3 * u * tt * (double2)handle1) + 
+                   (ttt * (double2)point1);
+        }
+        
+        public float2 ComputePointFloat(float t)
         {
             float u = 1 - t;
             float uu = u * u;
@@ -24,15 +38,7 @@ namespace Beast.Radar.City
                    (ttt * point1);
         }
         
-        public float2 ComputeDerivative(float t)
-        {
-            float u = 1 - t;
-            return (3 * u * u) * (handle0 - point0) + 
-                   (6 * u * t) * (handle1 - handle0) + 
-                   (3 * t * t) * (point1 - handle1);
-        }
-        
-        public float2 ComputeLength()
+        public float ComputeLength()
         {
             float length = 0;
 
@@ -49,11 +55,24 @@ namespace Beast.Radar.City
         {
             float t = (point + 1.0f) * 0.5f;
             
-            float2 velocity = ComputeDerivative(t);
+            float2 velocity = _computeDerivative(t);
 
             float speed = BMath.Length(velocity);
 
             length += weight * speed;
+        }
+        
+        private float2 _computeDerivative(float t)
+        {
+            float u = 1 - t;
+            return (3 * u * u) * (handle0 - point0) + 
+                   (6 * u * t) * (handle1 - handle0) + 
+                   (3 * t * t) * (point1 - handle1);
+        }
+
+        public override string ToString()
+        {
+            return $"{{P0:{point0}; P1:{point1}; H0:{handle0}; H1:{handle1}}}";
         }
     }
 }

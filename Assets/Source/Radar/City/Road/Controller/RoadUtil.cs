@@ -62,6 +62,7 @@ namespace Beast.Radar.City
 
             NativeArray<float2> roadPoints = new(totalPointCount, allocator);
             NativeArray<float2> roadHandles = new(totalPointCount, allocator);
+            NativeArray<float> curveLengths = new(totalPointCount, allocator);
             NativeArray<RoadSpline> roads = new(pathMap.roads.Length, allocator);
 
             int writeOffset = 0;
@@ -72,12 +73,14 @@ namespace Beast.Radar.City
 
                 BNative.Copy(job.outRoadSplinePoints, roadPoints, readOffset, writeOffset, pointCount);
                 BNative.Copy(job.outRoadSplineHandles, roadHandles, readOffset, writeOffset, pointCount);
+                BNative.Copy(job.outRoadCurveLengths, curveLengths, readOffset, writeOffset, pointCount);
 
                 roads[i] = new RoadSpline
                 {
                     startPointIndex = (ushort)writeOffset,
                     pointCount = (ushort)pointCount,
-                    bounds = pathMap.roads[i].bounds
+                    bounds = pathMap.roads[i].bounds,
+                    length = job.outRoadLength[i]
                 };
                 
                 writeOffset += pointCount;
@@ -89,6 +92,7 @@ namespace Beast.Radar.City
                 roadPoints = roadPoints,
                 roadHandles = roadHandles,
                 roads = roads,
+                curveLengths = curveLengths
             };
         }
         
