@@ -1,4 +1,3 @@
-using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -6,7 +5,7 @@ namespace Beast.Radar.City
 {
     public struct RoadMeshTask
     {
-        public NativeSlice<ushort2> inPoints;
+        public NativeSlice<float2> inPoints;
         public int inFirstVertexIndex;
         
         public NativeSlice<float3> outVertices;

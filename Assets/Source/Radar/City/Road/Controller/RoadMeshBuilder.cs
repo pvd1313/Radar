@@ -1,9 +1,18 @@
 using System;
+using Beast.Claw.Attributes.Annotation;
+using Beast.Claw.Gizmo;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 
 namespace Beast.Radar.City
 {
+    [StaticUtility]
     public static class RoadMeshBuilder
     {
         public static void GetMeshSize(int roadPointCount, out int vertexCount, out int triangleCount)
@@ -16,11 +25,99 @@ namespace Beast.Radar.City
             vertexCount = roadPointCount * 2;
             triangleCount = (roadPointCount - 1) * 2;
         }
+        
+        public static void BuildAllRoadMesh(RoadSplineMap roadSplineMap, Mesh roadMesh, float segmentLength, IGizmoHandle gizmo)
+        {
+            if (segmentLength < 0.1f)
+            {
+                throw new ArgumentException($"segmentLength is too small ({segmentLength})");
+            }
+
+            int totalPointCount = 0;
+
+            NativeArray<int> pointCount = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
+            NativeArray<int> pointOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
+
+            for (int i = 0; i < roadSplineMap.roads.Length; i++)
+            {
+                RoadSpline road = roadSplineMap.roads[i];
+
+                int roadPointCount = ContinuousRoadSplinePointComputer.ComputeSplinePointCount(road.length, segmentLength);
+
+                pointCount[i] = roadPointCount;
+                pointOffset[i] = totalPointCount;
+
+                totalPointCount += roadPointCount;
+            }
+
+            using NativeArray<float2> roadPoints = BNative.TempJobArray<float2>(totalPointCount);
+
+            ContinuousRoadSplinePointsJob splinePointsJob = new()
+            {
+                inSegmentLength = segmentLength,
+                inPointCount = pointCount,
+                inPointsOffset = pointOffset,
+                inRoadMap = roadSplineMap,
+                inPrecisionMode = EPrecisionMode.Float,
+                outPoints = roadPoints
+            };
+
+            Profiler.BeginSample("ContinuousRoadSplinePointsJob");
+            splinePointsJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
+            Profiler.EndSample();
+            
+            int vertexCount = 0;
+            int triangleCount = 0;
+            NativeArray<int> vertexOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
+            NativeArray<int> triangleOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
+            for (int i = 0; i < roadSplineMap.roads.Length; i++)
+            {
+                int roadPointCount = pointCount[i];
+
+                vertexOffset[i] = vertexCount;
+                triangleOffset[i] = triangleCount * 3;
+                
+                GetMeshSize(roadPointCount, out int roadVertexCount, out int roadTriangleCount);
+
+                vertexCount += roadVertexCount;
+                triangleCount += roadTriangleCount;
+            }
+
+            using NativeArray<float3> vertices = BNative.TempJobArray<float3>(vertexCount);
+            using NativeArray<float3> normals = BNative.TempJobArray<float3>(vertexCount); 
+            using NativeArray<int> triangles = BNative.TempJobArray<int>(triangleCount * 3);
+
+            RoadMeshJob meshJob = new()
+            {
+                inPoints = roadPoints,
+                inPointCount = pointCount,
+                inPointOffset = pointOffset,
+                inTriangleOffset = triangleOffset,
+                inVertexOffset = vertexOffset,
+                outTriangles = triangles,
+                outVertices = vertices,
+                outNormals = normals
+            };
+            
+            Profiler.BeginSample("RoadMeshJob");
+            meshJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
+            Profiler.EndSample();
+
+            pointOffset.Dispose();
+            pointCount.Dispose();
+            triangleOffset.Dispose();
+            vertexOffset.Dispose();
+            
+            roadMesh.Clear();
+            roadMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
+            roadMesh.SetNormals(normals);
+            roadMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
+        }
 
         public static void BuildMesh(RoadMeshTask task)
         {
-            float2 center = task.inPoints[0] + new float2(0.5f);
-            float2 right = task.inPoints[1] + new float2(0.5f);;
+            float2 center = task.inPoints[0];
+            float2 right = task.inPoints[1];
             float2 left = center + BMath.Normalize(center - right);
 
             int triangleOffset = 0;
@@ -30,17 +127,17 @@ namespace Beast.Radar.City
 
             for (int i = 1; i < task.inPoints.Length - 1; i++)
             {
-                left = task.inPoints[i - 1] + new float2(0.5f);
-                center = task.inPoints[i] + new float2(0.5f);
-                right = task.inPoints[i + 1] + new float2(0.5f);
+                left = task.inPoints[i - 1];
+                center = task.inPoints[i];
+                right = task.inPoints[i + 1];
                 
                 _writeQuad(task, vertexOffset, ref triangleOffset);
                 
                 _writeMiter(task, left, center, right, ref vertexOffset);
             }
             
-            left = task.inPoints[^2] + new float2(0.5f);
-            center = task.inPoints[^1] + new float2(0.5f);
+            left = task.inPoints[^2];
+            center = task.inPoints[^1];
             right = center + BMath.Normalize(center - left);
 
             _writeQuad(task, vertexOffset, ref triangleOffset);

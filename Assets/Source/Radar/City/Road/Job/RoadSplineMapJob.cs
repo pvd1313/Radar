@@ -9,7 +9,7 @@ namespace Beast.Radar.City
     /// <summary>
     /// Converts road paths to bezier splines.
     /// </summary>
-    public struct RoadSplineJob : IJobParallelFor
+    public struct RoadSplineMapJob : IJobParallelFor
     {
         [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<ushort2> inRoadPathPoints;
         [ReadOnly] public NativeArray<RoadPath> inRoadPaths;

@@ -10,6 +10,8 @@ namespace Beast.Radar.City
     [StaticUtility]
     public static class RoadUtil
     {
+        public const int ROAD_LENGTH_TABLE_SCALE = 3;
+        
         public static RoadPathMap CreateRoadPathMap(RoadPath1KMJob job, int maxPointPerRoad, Allocator allocator)
         {
             int totalPointCount = 0;
@@ -50,12 +52,12 @@ namespace Beast.Radar.City
 
         public static RoadSplineMap CreateRoadSplineMap(
             RoadPathMap pathMap,
-            RoadSplineJob job, 
+            RoadSplineMapJob mapJob, 
             int maxPointPerRoad, 
             Allocator allocator)
         {
             int totalPointCount = 0;
-            foreach (int pointCount in job.outRoadSplinePointCount)
+            foreach (int pointCount in mapJob.outRoadSplinePointCount)
             {
                 totalPointCount += pointCount;
             }
@@ -67,20 +69,20 @@ namespace Beast.Radar.City
 
             int writeOffset = 0;
             int readOffset = 0;
-            for (int i = 0; i < job.outRoadSplinePointCount.Length; i++)
+            for (int i = 0; i < mapJob.outRoadSplinePointCount.Length; i++)
             {
-                int pointCount = job.outRoadSplinePointCount[i];
+                int pointCount = mapJob.outRoadSplinePointCount[i];
 
-                BNative.Copy(job.outRoadSplinePoints, roadPoints, readOffset, writeOffset, pointCount);
-                BNative.Copy(job.outRoadSplineHandles, roadHandles, readOffset, writeOffset, pointCount);
-                BNative.Copy(job.outRoadCurveLengths, curveLengths, readOffset, writeOffset, pointCount);
+                BNative.Copy(mapJob.outRoadSplinePoints, roadPoints, readOffset, writeOffset, pointCount);
+                BNative.Copy(mapJob.outRoadSplineHandles, roadHandles, readOffset, writeOffset, pointCount);
+                BNative.Copy(mapJob.outRoadCurveLengths, curveLengths, readOffset, writeOffset, pointCount);
 
                 roads[i] = new RoadSpline
                 {
                     firstPointIndex = (ushort)writeOffset,
                     pointCount = (ushort)pointCount,
                     bounds = pathMap.roads[i].bounds,
-                    length = job.outRoadLength[i]
+                    length = mapJob.outRoadLength[i]
                 };
                 
                 writeOffset += pointCount;

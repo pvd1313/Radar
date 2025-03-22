@@ -1,23 +1,22 @@
-using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
+using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
-    public static class RoadSplineBuilder
+    /// <summary>
+    /// All road splines assumed to be connected. So points evently distribute along road.
+    /// </summary>
+    public static class ContinuousRoadSplinePointComputer
     {
-        public static int GetSplinePointCount(RoadSplineTask task)
+        public static int ComputeSplinePointCount(float roadLength, float segmentLength)
         {
-            RoadSpline road = task.inRoadMap.roads[task.inRoadIndex];
-
-            return BMath.FloorToInt(road.length / task.inSegmentLength) + 2;
+            return BMath.Max(2, BMath.FloorToInt(roadLength / segmentLength) + 1);
         }
 
-        public static void BuildSpline(RoadSplineTask task)
+        public static void BuildSpline(ContinuousRoadSplineTask task)
         {
-            const int LENGTH_TABLE_MUL = 3;
-
             RoadSplineMap roadMap = task.inRoadMap;
             RoadSpline road = roadMap.roads[task.inRoadIndex];
             float segmentLength = task.inSegmentLength;
@@ -33,11 +32,13 @@ namespace Beast.Radar.City
             }
 
             maxCurvePointCount++;
+
+            Allocator allocator = JobsUtility.IsExecutingJob ? Allocator.Temp : Allocator.TempJob;
+            NativeArray<float> lengthBuffer = new(maxCurvePointCount * RoadUtil.ROAD_LENGTH_TABLE_SCALE, allocator);
             
-            NativeArray<float> lengthBuffer = BNative.TempArray<float>(maxCurvePointCount * LENGTH_TABLE_MUL);
             float nextPointDistance = segmentLength;
 
-            int maxPointCount = GetSplinePointCount(task);
+            int maxPointCount = task.inRoadPointCount;
 
             task.outPoints[0] = roadMap.roadPoints[road.firstPointIndex];
             int writtenPointCount = 1;
@@ -68,7 +69,7 @@ namespace Beast.Radar.City
                 BezierCurveLengthTable lengthTable = BezierCurveLengthTable.Create(
                     curve,
                     lengthBuffer,
-                    splinePointCount * LENGTH_TABLE_MUL,
+                    splinePointCount * RoadUtil.ROAD_LENGTH_TABLE_SCALE,
                     task.precisionMode);
 
                 for (int i = 0; i < splinePointCount && writtenPointCount < maxPointCount; i++)

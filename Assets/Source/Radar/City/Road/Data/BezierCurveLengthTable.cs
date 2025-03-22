@@ -104,7 +104,9 @@ namespace Beast.Radar.City
             float len1 = lengthTable[low - 1];
             float len2 = lengthTable[low];
 
-            return t1 + (t2 - t1) * ((targetLength - len1) / (len2 - len1));
+            float time = t1 + (t2 - t1) * ((targetLength - len1) / (len2 - len1));
+
+            return BMath.Clamp01(time);
         }
     }
 }

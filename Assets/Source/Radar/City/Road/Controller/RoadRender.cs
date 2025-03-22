@@ -11,7 +11,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 using Profiler = UnityEngine.Profiling.Profiler;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
@@ -29,7 +28,7 @@ namespace Beast.Radar.City
 
         private RoadSplineMap _splineMap;
         private TerrainData _bakedForTerrain;
-        private Mesh _roadMesh;
+        private Mesh _roadMeshLOD2;
         private Material _renderMaterial;
         private IGizmoHandle _gizmo;
 
@@ -37,9 +36,9 @@ namespace Beast.Radar.City
         {
             _gizmo = _gizmoManager.CreateHandle(this);
             
-            _roadMesh = new Mesh();
-            _roadMesh.name = nameof(RoadRender);
-            _roadMesh.bounds = new Bounds(Vector3.zero, Vector3.one);
+            _roadMeshLOD2 = new Mesh();
+            _roadMeshLOD2.name = nameof(RoadRender) + "_LOD2";
+            _roadMeshLOD2.bounds = new Bounds(Vector3.zero, Vector3.one);
 
             _renderMaterial = BGraphic.CreateMaterial(this, _config.renderShader);
             
@@ -58,10 +57,6 @@ namespace Beast.Radar.City
             _bakedForTerrain = terrain;
 
             RoadPathMap roadPathMap = _roadSpawner.RoadMap;
-
-            Profiler.BeginSample("_buildRoadMesh");
-            _buildRoadMesh(_roadSpawner.RoadMap, _roadMesh);
-            Profiler.EndSample();
             
             _splineMap.Dispose();
 
@@ -73,7 +68,7 @@ namespace Beast.Radar.City
 
             int roadCount = roadPathMap.roads.Length;
 
-            RoadSplineJob splineJob = new()
+            RoadSplineMapJob splineMapJob = new()
             {
                 inRoadPaths = roadPathMap.roads,
                 inRoadPathPoints = roadPathMap.roadPoints,
@@ -86,76 +81,35 @@ namespace Beast.Radar.City
             };
             
             Profiler.BeginSample("RoadSplineJob");
-            splineJob.Schedule(roadCount, 8).Complete();
+            splineMapJob.Schedule(roadCount, 8).Complete();
             Profiler.EndSample();
 
             Profiler.BeginSample("RoadUtil.CreateRoadSplineMap");
-            _splineMap = RoadUtil.CreateRoadSplineMap(roadPathMap, splineJob, maxRoadPointCount, Allocator.Persistent);
+            _splineMap = RoadUtil.CreateRoadSplineMap(roadPathMap, splineMapJob, maxRoadPointCount, Allocator.Persistent);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("RoadMeshBuilder.BuildAllRoadMesh");
+            RoadMeshBuilder.BuildAllRoadMesh(_splineMap, _roadMeshLOD2, _config.lod2SegmentLength, _gizmo);
             Profiler.EndSample();
 
             BDebug.Track(this, "SplinePointCount", _splineMap.roadPoints.Length);
             BDebug.Track(this, "RoadCount", _splineMap.roads.Length);
-            
-            // RoadDebug.DrawRoadSplineMap(_gizmo, _splineMap);
+            BDebug.Track(this, "LOD2VertexCount", _roadMeshLOD2.vertexCount);
+            BDebug.Track(this, "LOD2TriangleCount", _roadMeshLOD2.triangles.Length);
+
+            //RoadDebug.DrawRoadSplineMap(_gizmo, _splineMap);
             if (_splineMap.roads.Length > 0)
             {
                 RoadDebug.DrawRoadSpline(_gizmo, _splineMap, 0, 0.1f);
             }
 
-            splineJob.outRoadSplineHandles.Dispose();
-            splineJob.outRoadSplinePoints.Dispose();
-            splineJob.outRoadCurveLengths.Dispose();
-            splineJob.outRoadSplinePointCount.Dispose();
-            splineJob.outRoadLength.Dispose();
+            splineMapJob.outRoadSplineHandles.Dispose();
+            splineMapJob.outRoadSplinePoints.Dispose();
+            splineMapJob.outRoadCurveLengths.Dispose();
+            splineMapJob.outRoadSplinePointCount.Dispose();
+            splineMapJob.outRoadLength.Dispose();
 
             return UniTask.CompletedTask;
-        }
-
-        private static void _buildRoadMesh(RoadPathMap roadPathMap, Mesh roadMesh)
-        {
-            int vertexCount = 0;
-            int triangleCount = 0;
-            for (int i = 0; i < roadPathMap.roads.Length; i++)
-            {
-                RoadPath roadPath = roadPathMap.roads[i];
-                
-                RoadMeshBuilder.GetMeshSize(roadPath.pointCount, out int roadVertexCount, out int roadTriangleCount);
-
-                vertexCount += roadVertexCount;
-                triangleCount += roadTriangleCount;
-            }
-
-            using NativeArray<float3> vertices = BNative.TempArray<float3>(vertexCount);
-            using NativeArray<float2> uvs = BNative.TempArray<float2>(vertexCount);
-            using NativeArray<float3> normals = BNative.TempArray<float3>(vertexCount); 
-            using NativeArray<int> triangles = BNative.TempArray<int>(triangleCount * 3);
-
-            vertexCount = 0;
-            triangleCount = 0;
-            
-            for (int i = 0; i < roadPathMap.roads.Length; i++)
-            {
-                RoadPath roadPath = roadPathMap.roads[i];
-                
-                RoadMeshBuilder.GetMeshSize(roadPath.pointCount, out int roadVertexCount, out int roadTriangleCount);
-                
-                RoadMeshBuilder.BuildMesh(new RoadMeshTask
-                {
-                    inPoints = roadPathMap.roadPoints.Slice(roadPath.startPointIndex, roadPath.pointCount),
-                    inFirstVertexIndex = vertexCount,
-                    outTriangleIndices = triangles.Slice(triangleCount * 3, roadTriangleCount * 3),
-                    outVertices = vertices.Slice(vertexCount, roadVertexCount),
-                    outNormals = normals.Slice(vertexCount, roadVertexCount)
-                });
-
-                vertexCount += roadVertexCount;
-                triangleCount += roadTriangleCount;
-            }
-            
-            roadMesh.Clear();
-            roadMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
-            roadMesh.SetNormals(normals);
-            roadMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
         }
 
         protected override void _render(BlockingContext context)
@@ -175,13 +129,13 @@ namespace Beast.Radar.City
             {
                 material = _renderMaterial,
                 matrix = float4x4.identity,
-                mesh = _roadMesh,
+                mesh = _roadMeshLOD2,
             });
         }
 
         protected override void _dispose(BlockingContext obj)
         {
-            BGraphic.TryDispose(ref _roadMesh);
+            BGraphic.TryDispose(ref _roadMeshLOD2);
             BGraphic.TryDispose(ref _renderMaterial);
             _splineMap.Dispose();
             _gizmo.Dispose();

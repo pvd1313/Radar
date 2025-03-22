@@ -6,7 +6,7 @@ namespace Beast.Radar.City
 {
     public class RoadRenderConfig : ScriptableConfig
     {
-        public int lod0SkipPointsValue;
+        public float lod2SegmentLength;
         public Shader renderShader;
         
         public override IEnumerable<IConfig> Bind()

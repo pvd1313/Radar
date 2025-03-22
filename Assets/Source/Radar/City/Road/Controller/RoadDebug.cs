@@ -69,21 +69,20 @@ namespace Beast.Radar.City
             
             _drawSplineControlPoints(gizmo, roadMap, road);
 
-            RoadSplineTask splineTask = new ()
+            ContinuousRoadSplineTask task = new ()
             {
                 inRoadIndex = roadIndex,
                 inRoadMap = roadMap,
                 inSegmentLength = segmentLength,
-                precisionMode = EPrecisionMode.Double
+                precisionMode = EPrecisionMode.Double,
+                inRoadPointCount = ContinuousRoadSplinePointComputer.ComputeSplinePointCount(road.length, segmentLength)
             };
 
-            int pointCount = RoadSplineBuilder.GetSplinePointCount(splineTask);
+            using NativeArray<float2> points = BNative.TempJobArray<float2>(task.inRoadPointCount);
 
-            NativeArray<float2> points = BNative.TempJobArray<float2>(pointCount);
+            task.outPoints = points;
 
-            splineTask.outPoints = points;
-
-            RoadSplineBuilder.BuildSpline(splineTask);
+            ContinuousRoadSplinePointComputer.BuildSpline(task);
             
             gizmo.SetColor(Color.blue);
 
@@ -91,8 +90,6 @@ namespace Beast.Radar.City
             {
                 gizmo.AddPoint(point);
             }
-
-            points.Dispose();
         }
 
         private static void _drawSplineControlPoints(IGizmoHandle gizmo, RoadSplineMap roadMap, RoadSpline road)
