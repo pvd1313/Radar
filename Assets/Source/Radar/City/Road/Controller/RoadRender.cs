@@ -123,6 +123,19 @@ namespace Beast.Radar.City
                 zOrder = RenderZOrder.TERRAIN_ROAD
             };
 
+            float segmentLength = _config.lod2SegmentLength;
+
+            float minSegmentLength = _config.roadPixelSize.min / _screen.Height();
+            float maxSegmentLength = _config.roadPixelSize.max / _screen.Height();
+
+            FloatMinMax segmentRange = _config.roadPixelSize / _screen.Height();
+            
+            float lineWidth = BMath.Clamp(segmentLength / _camera.ViewDistance, minSegmentLength, maxSegmentLength);
+            float contrast = 2f - BMath.InverseLerp(segmentRange, lineWidth);
+
+            _renderMaterial.SetFloat("_LineWidth", lineWidth);
+            _renderMaterial.SetTexture("_Texture", _config.texture);
+            _renderMaterial.SetFloat("_TextureContrast", contrast);
             matrix.Apply(_renderMaterial);
             
             BGraphic.DrawMeshDelayed(new DrawMeshTask

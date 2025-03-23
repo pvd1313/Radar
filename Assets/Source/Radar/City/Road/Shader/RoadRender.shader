@@ -22,7 +22,6 @@
             {
                 float3 vertex : POSITION;
                 float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;
             };
 
             struct FragmentInput
@@ -38,6 +37,10 @@
             float _RenderDistance;
             float2 _ScreenSize;
             float _ClipValue;
+            
+            sampler2D _Texture;
+            float _LineWidth;
+            float _TextureContrast;
             
             FragmentInput vertex(VertexInput input, uint vertexID : SV_VertexID)
             {
@@ -66,24 +69,31 @@
                 float2 perp = float2(bisector.y * -1.0, bisector.x);
                 float miterScale = 1.0 / max(0.01, dot(perp, float2(dir1.y * -1.0, dir1.x)));
 
-                const float width = 0.01f;
-                float leftOrRight = lerp(-1, +1, vertexID % 2u);
+                float bottomOrTop01 = vertexID % 2u;
 
-                float2 offset = perp * (leftOrRight * width * miterScale);
+                float2 offset = perp * (lerp(-1, +1, bottomOrTop01) * _LineWidth * miterScale);
 
                 float screenAspect = _ScreenSize.x / _ScreenSize.y;
                 offset.x /= screenAspect;
                 center.xy += offset;
 
+                float2 uv;
+                uv.y = bottomOrTop01;
+                uv.x = saturate(vertexID % 4 - 1);
+
                 output.positionCS = center;
-                output.uv = input.uv;
+                output.uv = uv;
 
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                return 1;
+                float4 color = tex2D(_Texture, input.uv);
+
+                color = (color - 0.5f) * _TextureContrast + 0.5f; 
+                
+                return color;
             }
             
             ENDCG

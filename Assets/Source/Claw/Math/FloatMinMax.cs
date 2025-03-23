@@ -26,6 +26,16 @@ namespace Beast.Claw.Math
             return x >= min && x <= max;
         }
 
+        public static FloatMinMax operator /(FloatMinMax range, float scale)
+        {
+            return new FloatMinMax(range.min / scale, range.max / scale);
+        }
+        
+        public static FloatMinMax operator *(FloatMinMax range, float scale)
+        {
+            return new FloatMinMax(range.min * scale, range.max * scale);
+        }
+
         public readonly bool IsOnBorder(float x)
         {
             return BMath.Approximately(x, min) || BMath.Approximately(x, max);
