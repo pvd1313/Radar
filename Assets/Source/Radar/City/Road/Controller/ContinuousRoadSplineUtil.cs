@@ -8,14 +8,14 @@ namespace Beast.Radar.City
     /// <summary>
     /// All road splines assumed to be connected. So points evently distribute along road.
     /// </summary>
-    public static class ContinuousRoadSplinePointComputer
+    public static class ContinuousRoadSplineUtil
     {
-        public static int ComputeSplinePointCount(float roadLength, float segmentLength)
+        public static int GetPointCount(float roadLength, float segmentLength)
         {
             return BMath.Max(2, BMath.FloorToInt(roadLength / segmentLength) + 1);
         }
 
-        public static void BuildSpline(ContinuousRoadSplineTask task)
+        public static void Build(RoadContinuousSplineTask task)
         {
             RoadSplineMap roadMap = task.inRoadMap;
             RoadSpline road = roadMap.roads[task.inRoadIndex];
@@ -70,13 +70,13 @@ namespace Beast.Radar.City
                     curve,
                     lengthBuffer,
                     splinePointCount * RoadUtil.ROAD_LENGTH_TABLE_SCALE,
-                    task.precisionMode);
+                    task.inPrecision);
 
                 for (int i = 0; i < splinePointCount && writtenPointCount < maxPointCount; i++)
                 {
                     float pointTime = lengthTable.FindTimeForLength(splineOffset + i * segmentLength);
 
-                    if (task.precisionMode == EPrecisionMode.Float)
+                    if (task.inPrecision == EPrecisionMode.Float)
                     {
                         task.outPoints[writtenPointCount] = curve.ComputePointFloat(pointTime);
                     }

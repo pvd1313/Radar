@@ -33,6 +33,13 @@ namespace Beast.Claw.Graphic
             Object.Destroy(material);
         }
         
+        public static void Dispose(Mesh mesh)
+        {
+            mesh.ValidateNotNullThrowException(nameof(mesh));
+
+            Object.Destroy(mesh);
+        }
+        
         public static void Dispose(Texture2D texture)
         {
             texture.ValidateNotNullThrowException(nameof(texture));

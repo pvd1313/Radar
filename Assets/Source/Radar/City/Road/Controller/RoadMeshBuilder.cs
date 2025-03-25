@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Beast.Claw.Attributes.Annotation;
+using Beast.Claw.Collections;
 using Beast.Claw.Gizmo;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
@@ -28,11 +30,6 @@ namespace Beast.Radar.City
         
         public static void BuildAllRoadMesh(RoadSplineMap roadSplineMap, Mesh roadMesh, float segmentLength, IGizmoHandle gizmo)
         {
-            if (segmentLength < 0.1f)
-            {
-                throw new ArgumentException($"segmentLength is too small ({segmentLength})");
-            }
-
             int totalPointCount = 0;
 
             NativeArray<int> pointCount = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
@@ -42,7 +39,7 @@ namespace Beast.Radar.City
             {
                 RoadSpline road = roadSplineMap.roads[i];
 
-                int roadPointCount = ContinuousRoadSplinePointComputer.ComputeSplinePointCount(road.length, segmentLength);
+                int roadPointCount = ContinuousRoadSplineUtil.GetPointCount(road.length, segmentLength);
 
                 pointCount[i] = roadPointCount;
                 pointOffset[i] = totalPointCount;
@@ -52,13 +49,13 @@ namespace Beast.Radar.City
 
             using NativeArray<float2> roadPoints = BNative.TempJobArray<float2>(totalPointCount);
 
-            ContinuousRoadSplinePointsJob splinePointsJob = new()
+            RoadContinuousSplinePointsJob splinePointsJob = new()
             {
                 inSegmentLength = segmentLength,
                 inPointCount = pointCount,
                 inPointsOffset = pointOffset,
                 inRoadMap = roadSplineMap,
-                inPrecisionMode = EPrecisionMode.Float,
+                inPrecision = EPrecisionMode.Float,
                 outPoints = roadPoints
             };
 
@@ -70,12 +67,14 @@ namespace Beast.Radar.City
             int triangleCount = 0;
             NativeArray<int> vertexOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
             NativeArray<int> triangleOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
+            NativeArray<int> vertexIndexOffset = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
             for (int i = 0; i < roadSplineMap.roads.Length; i++)
             {
                 int roadPointCount = pointCount[i];
 
                 vertexOffset[i] = vertexCount;
                 triangleOffset[i] = triangleCount * 3;
+                vertexIndexOffset[i] = vertexCount;
                 
                 GetMeshSize(roadPointCount, out int roadVertexCount, out int roadTriangleCount);
 
@@ -94,6 +93,7 @@ namespace Beast.Radar.City
                 inPointOffset = pointOffset,
                 inTriangleOffset = triangleOffset,
                 inVertexOffset = vertexOffset,
+                inVertexIndexOffset = vertexIndexOffset,
                 outTriangles = triangles,
                 outVertices = vertices,
                 outNormals = normals
@@ -107,11 +107,226 @@ namespace Beast.Radar.City
             pointCount.Dispose();
             triangleOffset.Dispose();
             vertexOffset.Dispose();
+            vertexIndexOffset.Dispose();
             
             roadMesh.Clear();
             roadMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
             roadMesh.SetNormals(normals);
             roadMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
+        }
+
+        public static Dictionary<int2, Mesh> BuildRoadGridMeshes(
+            IGizmoHandle gizmo,
+            RoadSplineMap roadMap,
+            string meshNamePrefix,
+            CellGrid<int> roadGrid, 
+            float terrainSize,
+            float segmentLength)
+        {
+            const int MAX_SLICE_PER_CELL = 16;
+            
+            int cellCountX = BMath.CeilToInt(terrainSize / roadGrid.cellSize);
+            int cellTotal = cellCountX * cellCountX;
+
+            Profiler.BeginSample("Prepare cellBounds");
+            NativeArray<Bounds2D> cellBounds = BNative.TempJobArray<Bounds2D>(cellTotal);
+            for (int i = 0; i < cellTotal; i++)
+            {
+                int2 cellIndex = new (i % cellCountX, i / cellCountX);
+
+                float xMin = cellIndex.x * roadGrid.cellSize;
+                float yMin = cellIndex.y * roadGrid.cellSize;
+                
+                cellBounds[i] = new Bounds2D(xMin, xMin + roadGrid.cellSize, yMin, yMin + roadGrid.cellSize);
+            }
+            Profiler.EndSample();
+            
+            RoadSliceSplinesJob sliceJob = new()
+            {
+                inSegmentLength = segmentLength,
+                inRoadMap = roadMap,
+                inRoadGrid = roadGrid,
+                inMaxSliceCount = MAX_SLICE_PER_CELL,
+                inBounds = cellBounds,
+                outSlicePointCount = BNative.TempJobArray<int>(cellTotal * MAX_SLICE_PER_CELL),
+                outSlices = BNative.TempJobArray<RoadSplineSlice>(cellTotal * MAX_SLICE_PER_CELL),
+                outSliceCount = BNative.TempJobArray<int>(cellTotal),
+            };
+            
+            Profiler.BeginSample("RoadSliceSplinesJob");
+            sliceJob.Schedule(cellTotal, 16).Complete();
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Compute sliceCountTotal");
+            int sliceCountTotal = 0;
+            for (int i = 0; i < cellTotal; i++)
+            {
+                sliceCountTotal += sliceJob.outSliceCount[i];
+            }
+            Profiler.EndSample();
+
+            NativeArray<int> pointOffsets = BNative.TempJobArray<int>(sliceCountTotal);
+            NativeArray<int2> cellIndices = BNative.TempJobArray<int2>(sliceCountTotal);
+            NativeArray<int> pointCounts = BNative.TempJobArray<int>(sliceCountTotal);
+            NativeArray <RoadSplineSlice> slices = BNative.TempJobArray<RoadSplineSlice>(sliceCountTotal);
+            
+            Profiler.BeginSample("Prepare points buffer");
+            int sliceIndex = 0;
+            int estimatedPointCount = 0;
+            int meshCount = 0;
+            for (int i = 0; i < cellTotal; i++)
+            {
+                int sliceCount = sliceJob.outSliceCount[i];
+                if (sliceCount == 0)
+                {
+                    continue;
+                }
+
+                int2 cellIndex = new (i % cellCountX, i / cellCountX);
+                for (int j = 0; j < sliceCount; j++)
+                {
+                    int slicePointCount = sliceJob.outSlicePointCount[i * MAX_SLICE_PER_CELL + j];
+
+                    pointCounts[sliceIndex] = slicePointCount;
+                    pointOffsets[sliceIndex] = estimatedPointCount;
+                    cellIndices[sliceIndex] = cellIndex;
+                    slices[sliceIndex] = sliceJob.outSlices[i * MAX_SLICE_PER_CELL + j];
+
+                    sliceIndex++;
+                    estimatedPointCount += slicePointCount;
+                }
+
+                meshCount++;
+            }
+            Profiler.EndSample();
+
+            RoadSlicedSplinePointsJob pointsJob = new() 
+            {
+                inRoadMap = roadMap,
+                inSegmentLength = segmentLength,
+                inPrecision = EPrecisionMode.Float,
+                inRoadSlices = slices,
+                inPointCount = pointCounts,
+                inPointOffset = pointOffsets,
+                outPoints = BNative.TempJobArray<float2>(estimatedPointCount),
+                outPointCount = BNative.TempJobArray<int>(sliceCountTotal)
+            };
+            
+            Profiler.BeginSample("RoadSlicedSplinePointsJob");
+            pointsJob.Schedule(sliceCountTotal, 8).Complete();
+            Profiler.EndSample();
+
+            NativeArray<int> vertexOffsets = BNative.TempJobArray<int>(sliceCountTotal);
+            NativeArray<int> triangleOffsets = BNative.TempJobArray<int>(sliceCountTotal);
+            NativeArray<int> vertexIndexOffsets = BNative.TempJobArray<int>(sliceCountTotal);
+
+            Profiler.BeginSample("Prepare vertex buffer");
+            int totalVertexCount = 0;
+            int totalTriangleCount = 0;
+            int vertexIndex = 0;
+            int2 prevCell = new (int.MaxValue, int.MaxValue);
+            for (int i = 0; i < sliceCountTotal; i++)
+            {
+                int pointCount = pointsJob.outPointCount[i];
+                
+                GetMeshSize(pointCount, out int vertexCount, out int triangleCount);
+
+                vertexOffsets[i] = totalVertexCount;
+                triangleOffsets[i] = totalTriangleCount * 3;
+
+                int2 cellIndex = cellIndices[i];
+
+                if (cellIndex.Equals(prevCell))
+                {
+                    vertexIndexOffsets[i] = vertexIndex;
+                }
+                else
+                {
+                    vertexIndexOffsets[i] = 0;
+                    vertexIndex = 0;
+                }
+
+                vertexIndex += vertexCount;
+                totalVertexCount += vertexCount;
+                totalTriangleCount += triangleCount;
+                prevCell = cellIndex;
+            }
+            Profiler.EndSample();
+
+            using NativeArray<float3> vertices = BNative.TempJobArray<float3>(totalVertexCount);
+            using NativeArray<float3> normals = BNative.TempJobArray<float3>(totalVertexCount);
+            using NativeArray<int> triangles = BNative.TempJobArray<int>(totalTriangleCount * 3);
+            
+            RoadMeshJob meshJob = new()
+            {
+                inPoints = pointsJob.outPoints,
+                inPointOffset = pointOffsets,
+                inPointCount = pointCounts,
+                inVertexIndexOffset = vertexIndexOffsets,
+                outVertices = vertices,
+                outNormals = normals,
+                outTriangles = triangles,
+                inVertexOffset = vertexOffsets,
+                inTriangleOffset = triangleOffsets
+            };
+            
+            Profiler.BeginSample("RoadMeshJob");
+            meshJob.Schedule(sliceCountTotal, 8).Complete();
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Create meshes");
+            
+            Dictionary<int2, Mesh> gridMeshes = new(meshCount);
+
+            for (int i = 0; i < sliceCountTotal;)
+            {
+                int2 cellIndex = cellIndices[i];
+                int vertexOffset = vertexOffsets[i];
+                int triangleOffset = triangleOffsets[i];
+                
+                GetMeshSize(pointsJob.outPointCount[i], out int meshVertexCount, out int meshTriangleCount);
+
+                int j = i + 1;
+
+                for (; j < sliceCountTotal && cellIndices[j].Equals(cellIndex); j++)
+                {
+                    GetMeshSize(pointsJob.outPointCount[j], out int vertexCount, out int triangleCount);
+
+                    meshVertexCount += vertexCount;
+                    meshTriangleCount += triangleCount;
+                }
+                
+                Mesh mesh = new();
+                mesh.bounds = new Bounds(Vector3.zero, Vector3.one);
+                mesh.name = meshNamePrefix + " (" + cellIndex.x + "," + cellIndex.y + ")";
+                
+                mesh.SetVertices(vertices, vertexOffset, meshVertexCount, MeshUpdateFlags.DontRecalculateBounds);
+                mesh.SetNormals(normals, vertexOffset, meshVertexCount);
+                mesh.SetIndices(triangles, triangleOffset, meshTriangleCount * 3, MeshTopology.Triangles, 0, false);
+
+                gridMeshes[cellIndex] = mesh;
+
+                i = j;
+            }
+            Profiler.EndSample();
+
+            vertexOffsets.Dispose();
+            triangleOffsets.Dispose();
+            pointOffsets.Dispose();
+            pointCounts.Dispose();
+            vertexIndexOffsets.Dispose();
+            cellBounds.Dispose();
+            slices.Dispose();
+            cellIndices.Dispose();
+
+            pointsJob.outPoints.Dispose();
+            pointsJob.outPointCount.Dispose();
+                
+            sliceJob.outSlices.Dispose();
+            sliceJob.outSliceCount.Dispose();
+            sliceJob.outSlicePointCount.Dispose();
+
+            return gridMeshes;
         }
 
         public static void BuildMesh(RoadMeshTask task)

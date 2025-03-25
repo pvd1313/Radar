@@ -12,24 +12,25 @@ namespace Beast.Radar.City
         [ReadOnly] public NativeArray<int> inPointCount;
         [ReadOnly] public NativeArray<int> inPointOffset;
         [ReadOnly] public NativeArray<int> inVertexOffset;
+        [ReadOnly] public NativeArray<int> inVertexIndexOffset;
         [ReadOnly] public NativeArray<int> inTriangleOffset;
 
         [NativeDisableParallelForRestriction] public NativeArray<float3> outVertices;
         [NativeDisableParallelForRestriction] public NativeArray<float3> outNormals;
         [NativeDisableParallelForRestriction] public NativeArray<int> outTriangles;
         
-        public void Execute(int pointGroupIndex)
+        public void Execute(int jobIndex)
         {
-            int currentPointCount = inPointCount[pointGroupIndex];
-            int vertexOffset = inVertexOffset[pointGroupIndex];
-            int triangleOffset = inTriangleOffset[pointGroupIndex];
+            int currentPointCount = inPointCount[jobIndex];
+            int vertexOffset = inVertexOffset[jobIndex];
+            int triangleOffset = inTriangleOffset[jobIndex];
             
             RoadMeshBuilder.GetMeshSize(currentPointCount, out int currentVertexCount, out int currentTriangleCount);
             
             RoadMeshBuilder.BuildMesh(new RoadMeshTask
             {
-                inPoints = inPoints.Slice(inPointOffset[pointGroupIndex], currentPointCount),
-                inFirstVertexIndex = vertexOffset,
+                inPoints = inPoints.Slice(inPointOffset[jobIndex], currentPointCount),
+                inFirstVertexIndex = inVertexIndexOffset[jobIndex],
                 outVertices = outVertices.Slice(vertexOffset, currentVertexCount),
                 outNormals = outNormals.Slice(vertexOffset, currentVertexCount),
                 outTriangleIndices = outTriangles.Slice(triangleOffset, currentTriangleCount * 3)

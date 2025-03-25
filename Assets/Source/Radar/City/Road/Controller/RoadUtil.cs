@@ -50,54 +50,6 @@ namespace Beast.Radar.City
             };
         }
 
-        public static RoadSplineMap CreateRoadSplineMap(
-            RoadPathMap pathMap,
-            RoadSplineMapJob mapJob, 
-            int maxPointPerRoad, 
-            Allocator allocator)
-        {
-            int totalPointCount = 0;
-            foreach (int pointCount in mapJob.outRoadSplinePointCount)
-            {
-                totalPointCount += pointCount;
-            }
-
-            NativeArray<float2> roadPoints = new(totalPointCount, allocator);
-            NativeArray<float2> roadHandles = new(totalPointCount, allocator);
-            NativeArray<float> curveLengths = new(totalPointCount, allocator);
-            NativeArray<RoadSpline> roads = new(pathMap.roads.Length, allocator);
-
-            int writeOffset = 0;
-            int readOffset = 0;
-            for (int i = 0; i < mapJob.outRoadSplinePointCount.Length; i++)
-            {
-                int pointCount = mapJob.outRoadSplinePointCount[i];
-
-                BNative.Copy(mapJob.outRoadSplinePoints, roadPoints, readOffset, writeOffset, pointCount);
-                BNative.Copy(mapJob.outRoadSplineHandles, roadHandles, readOffset, writeOffset, pointCount);
-                BNative.Copy(mapJob.outRoadCurveLengths, curveLengths, readOffset, writeOffset, pointCount);
-
-                roads[i] = new RoadSpline
-                {
-                    firstPointIndex = (ushort)writeOffset,
-                    pointCount = (ushort)pointCount,
-                    bounds = pathMap.roads[i].bounds,
-                    length = mapJob.outRoadLength[i]
-                };
-                
-                writeOffset += pointCount;
-                readOffset += maxPointPerRoad;
-            }
-
-            return new RoadSplineMap
-            {
-                roadPoints = roadPoints,
-                roadHandles = roadHandles,
-                roads = roads,
-                curveLengths = curveLengths
-            };
-        }
-        
         public static NativeList<RoadSegment> CreateRoadSegments(
             RoadPath8KMJob job, 
             int terrainSize, 

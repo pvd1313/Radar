@@ -6,10 +6,10 @@ using Unity.Mathematics;
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct ContinuousRoadSplinePointsJob : IJobParallelFor
+    public struct RoadContinuousSplinePointsJob : IJobParallelFor
     {
         [ReadOnly] public RoadSplineMap inRoadMap;
-        [ReadOnly] public EPrecisionMode inPrecisionMode;
+        [ReadOnly] public EPrecisionMode inPrecision;
         [ReadOnly] public float inSegmentLength;
         [ReadOnly] public NativeArray<int> inPointCount;
         [ReadOnly] public NativeArray<int> inPointsOffset;
@@ -20,13 +20,13 @@ namespace Beast.Radar.City
         {
             int roadPointCount = inPointCount[roadIndex];
 
-            ContinuousRoadSplinePointComputer.BuildSpline(new ContinuousRoadSplineTask
+            ContinuousRoadSplineUtil.Build(new RoadContinuousSplineTask
             {
                 inRoadIndex = roadIndex,
                 inRoadMap = inRoadMap,
                 inSegmentLength = inSegmentLength,
                 outPoints = outPoints.Slice(inPointsOffset[roadIndex], roadPointCount),
-                precisionMode = inPrecisionMode,
+                inPrecision = inPrecision,
                 inRoadPointCount = roadPointCount
             });
         }

@@ -3,14 +3,14 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
-    public struct ContinuousRoadSplineTask
+    public struct RoadSlicedSplineTask
     {
         public RoadSplineMap inRoadMap;
-        public int inRoadIndex;
+        public RoadSplineSlice inRoadSlice;
         public float inSegmentLength;
-        public EPrecisionMode precisionMode;
+        public EPrecisionMode inPrecision;
         public int inRoadPointCount;
-        
+
         public NativeSlice<float2> outPoints;
     }
 }

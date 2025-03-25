@@ -28,6 +28,21 @@ namespace Beast.Claw.Math
             y = new FloatMinMax(min, max);
         }
 
+        public float2 GetMinPosition()
+        {
+            return new float2(x.min, y.min);
+        }
+
+        public float2 GetMaxPosition()
+        {
+            return new float2(x.max, y.max);
+        }
+
+        public float2 GetCenter()
+        {
+            return new float2(x.max + x.min, y.max + y.min) * 0.5f;
+        }
+
         public static Bounds2D FromTwoPoints(float2 point0, float2 point1)
         {
             Bounds2D bounds;

@@ -36,7 +36,7 @@ namespace Beast.Radar.City
 
             RoadSegment newSegment = default;
             newSegment.point0 = segment.point0;
-            newSegment.bounds = Bounds2D.FromPoint(segment.point0);
+            newSegment.bounds = Bounds2D.FromPoint(segment.point0 + new float2(0.5f));
 
             int pointCount = (ushort)BMath.Min(inMaxPointPerSegment, pathJob.buffer.outputPathReversed.Length);
 
@@ -46,7 +46,7 @@ namespace Beast.Radar.City
             {
                 int2 point = pathJob.buffer.outputPathReversed[^(i + 1)];
 
-                newSegment.bounds = newSegment.bounds.EnsureContains(point);
+                newSegment.bounds = newSegment.bounds.EnsureContains(point + new float2(0.5f));
                 
                 outPoints[writeOffset + i] = (ushort2)point;
             }
