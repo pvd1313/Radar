@@ -122,6 +122,24 @@ namespace Beast.Radar.City
 
         protected override void _render(BlockingContext context)
         {
+            World2ClipMatrix matrix = new()
+            {
+                screenSize = _screen.Size,
+                cameraPosition = _camera.Position,
+                cameraViewDistance = _camera.ViewDistance,
+                cameraRotationRad = _camera.RotationRad,
+                zOrder = RenderZOrder.TERRAIN_ROAD
+            };
+
+            float distanceFactor = BMath.Clamp01(_camera.ViewDistance / _config.lod1ActivationDistance);
+            float pixelSize = BMath.Lerp(_config.roadPixelSize, 1f - distanceFactor);
+            
+            _renderMaterial.SetFloat("_LineWidth", pixelSize / _screen.Height());
+            _renderMaterial.SetTexture("_Texture", _config.texture);
+            matrix.Apply(_renderMaterial);
+
+            BDebug.Track(this, "pixelSize", pixelSize);
+            
             if (_camera.ViewDistance > _config.lod1ActivationDistance)
             {
                 _renderLOD2();
@@ -134,8 +152,6 @@ namespace Beast.Radar.City
 
         private void _renderLOD1()
         {
-            _setupRenderMaterial(_config.lod1SegmentLength);
-            
             _roadGrid.GetCellBounds(_camera.GetViewBounds(), out int2 lowerBound, out int2 upperBound);
 
             int vertexCount = 0;
@@ -165,8 +181,6 @@ namespace Beast.Radar.City
 
         private void _renderLOD2()
         {
-            _setupRenderMaterial(_config.lod2SegmentLength);
-            
             BGraphic.DrawMeshDelayed(new DrawMeshTask
             {
                 material = _renderMaterial,
@@ -182,31 +196,6 @@ namespace Beast.Radar.City
             BDebug.Track(this, "Rendered_LOD", lodIndex);
             BDebug.Track(this, "Rendered_MeshCount", meshCount);
             BDebug.Track(this, "Rendered_VertexCount", vertexCount);
-        }
-
-        private void _setupRenderMaterial(float segmentLength)
-        {
-            World2ClipMatrix matrix = new()
-            {
-                screenSize = _screen.Size,
-                cameraPosition = _camera.Position,
-                cameraViewDistance = _camera.ViewDistance,
-                cameraRotationRad = _camera.RotationRad,
-                zOrder = RenderZOrder.TERRAIN_ROAD
-            };
-            
-            float minSegmentLength = _config.roadPixelSize.min / _screen.Height();
-            float maxSegmentLength = _config.roadPixelSize.max / _screen.Height();
-
-            FloatMinMax segmentRange = _config.roadPixelSize / _screen.Height();
-            
-            float lineWidth = BMath.Clamp(segmentLength / _camera.ViewDistance, minSegmentLength, maxSegmentLength);
-            float contrast = 2f - BMath.InverseLerp(segmentRange, lineWidth);
-
-            _renderMaterial.SetFloat("_LineWidth", lineWidth);
-            _renderMaterial.SetTexture("_Texture", _config.texture);
-            _renderMaterial.SetFloat("_TextureContrast", contrast);
-            matrix.Apply(_renderMaterial);
         }
 
         private void _disposeGridMeshes()

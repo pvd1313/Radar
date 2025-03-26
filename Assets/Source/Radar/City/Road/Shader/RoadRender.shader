@@ -4,8 +4,12 @@
     {
         // Rendered to camera.
         cull off
-        zwrite on
+        zwrite off
         ztest on
+        
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -40,7 +44,6 @@
             
             sampler2D _Texture;
             float _LineWidth;
-            float _TextureContrast;
             
             FragmentInput vertex(VertexInput input, uint vertexID : SV_VertexID)
             {
@@ -77,23 +80,20 @@
                 offset.x /= screenAspect;
                 center.xy += offset;
 
+                // Flipping UV logic.
                 float2 uv;
                 uv.y = bottomOrTop01;
                 uv.x = saturate(vertexID % 4 - 1);
-
-                output.positionCS = center;
                 output.uv = uv;
+                
+                output.positionCS = center;
 
                 return output;
             }
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                float4 color = tex2D(_Texture, input.uv);
-
-                color = (color - 0.5f) * _TextureContrast + 0.5f; 
-                
-                return color;
+                return tex2D(_Texture, input.uv);
             }
             
             ENDCG
