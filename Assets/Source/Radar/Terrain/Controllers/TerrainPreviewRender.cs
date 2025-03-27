@@ -1,5 +1,4 @@
-﻿using Beast.Claw;
-using Beast.Claw.Common;
+﻿using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Claw.Text;
@@ -29,8 +28,7 @@ namespace Beast.Radar.Terrain
             _config = config;
         }
         
-        public TerrainPreviewTexture CreateTexture<TOwner>(TOwner owner, int2 pixelSize) 
-            where TOwner: class
+        public TerrainPreviewTexture CreateTexture(IController owner, int2 pixelSize) 
         {
             owner.ValidateNotNullThrowException(nameof(owner));
 

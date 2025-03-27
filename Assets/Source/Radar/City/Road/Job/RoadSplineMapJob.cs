@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Beast.Claw.Math;
+using Beast.Radar.Graphic;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -37,7 +38,7 @@ namespace Beast.Radar.City
             {
                 if (pointIndex == _roadPath.pointCount - 1)
                 {
-                    float2 endPoint = _getRoadPoint(pointIndex) + new float2(0.5f);
+                    float2 endPoint = _roadPointToWorld(_getRoadPoint(pointIndex));
                     outRoadSplinePoints[writeOffset + splinePointCount - 1] = endPoint;
                     
                     break;
@@ -45,8 +46,8 @@ namespace Beast.Radar.City
                 
                 int endPointIndex = _getLineEndPoint(pointIndex);
 
-                float2 lineStart = _getRoadPoint(pointIndex) + new float2(0.5f);
-                float2 lineEnd = _getRoadPoint(endPointIndex) + new float2(0.5f);
+                float2 lineStart = _roadPointToWorld(_getRoadPoint(pointIndex));
+                float2 lineEnd = _roadPointToWorld(_getRoadPoint(endPointIndex));
                 
                 if (pointIndex == 0)
                 {
@@ -127,6 +128,14 @@ namespace Beast.Radar.City
         private ushort2 _getRoadPoint(int pointIndex)
         {
             return inRoadPathPoints[_roadPath.startPointIndex + pointIndex];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static float2 _roadPointToWorld(int2 roadPoint)
+        {
+            const float TILE_OFFSET = 0.5f - 0.5f / BWorld.TILES_PER_CELL;
+            
+            return roadPoint + new float2(TILE_OFFSET);
         }
     }
 }

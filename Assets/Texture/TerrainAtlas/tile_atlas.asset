@@ -122,6 +122,19 @@ MonoBehaviour:
         max: 1
       isBiomeTile: 1
       index: 7
+    - texture: {fileID: 2800000, guid: 58bc66e2b2d647c418faaf83e6875c99, type: 3}
+      name: tile_road
+      averageColor: {r: 0.37859225, g: 0.37859225, b: 0.37859225, a: 1}
+      yCropHeight: 0.515625
+      yBlendCenter: 0.2421875
+      biomeWaterRange:
+        min: 0
+        max: 0
+      biomeForestRange:
+        min: 0
+        max: 0
+      isBiomeTile: 0
+      index: 8
     tileCount:
       x: 4
       y: 4

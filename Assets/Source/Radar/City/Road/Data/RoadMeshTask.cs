@@ -10,6 +10,6 @@ namespace Beast.Radar.City
         
         public NativeSlice<float3> outVertices;
         public NativeSlice<float3> outNormals;
-        public NativeSlice<int> outTriangleIndices;
+        public NativeSlice<int> outTriangles;
     }
 }

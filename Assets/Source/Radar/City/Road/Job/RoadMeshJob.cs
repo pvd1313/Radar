@@ -33,7 +33,7 @@ namespace Beast.Radar.City
                 inFirstVertexIndex = inVertexIndexOffset[jobIndex],
                 outVertices = outVertices.Slice(vertexOffset, currentVertexCount),
                 outNormals = outNormals.Slice(vertexOffset, currentVertexCount),
-                outTriangleIndices = outTriangles.Slice(triangleOffset, currentTriangleCount * 3)
+                outTriangles = outTriangles.Slice(triangleOffset, currentTriangleCount * 3)
             });
         }
     }

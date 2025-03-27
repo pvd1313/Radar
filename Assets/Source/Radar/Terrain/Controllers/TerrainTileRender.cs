@@ -12,8 +12,10 @@ using UnityEngine.Rendering;
 
 namespace Beast.Radar.Terrain
 {
-    public class TerrainTileRender : Actor
+    public class TerrainTileRender : Actor, ITerrainTileRender 
     {
+        public float TileAlpha01 => _tileAlpha01;
+        
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly GraphicLibrary _library;
         [Required] private readonly IScreen _screen;
@@ -29,7 +31,7 @@ namespace Beast.Radar.Terrain
         private float _tilePixelSize;
         private int _tileCount;
         private int2 _gridSize;
-        private float _blitTextureAlpha01;
+        private float _tileAlpha01;
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
@@ -45,6 +47,8 @@ namespace Beast.Radar.Terrain
 
         protected override void _render(BlockingContext context)
         {
+            _tileAlpha01 = 0;
+            
             if (!_terrainBiome.IsReady)
             {
                 return;
@@ -56,11 +60,6 @@ namespace Beast.Radar.Terrain
                 _warmup(default);
             }
             
-            // if (Time.time % 1 > 0.5f)
-            // {
-            //     return;
-            // }
-
             _tileHeight = 1f / _camera.ViewDistance / BWorld.TILES_PER_CELL;
             _tilePixelSize = _tileHeight * _screen.Height();
             if (_tilePixelSize < _config.minPixelSize)
@@ -91,7 +90,7 @@ namespace Beast.Radar.Terrain
             // Fade
             float tileCountFade = BMath.InverseLerp(_config.fadeInCount, _config.maxCount, _tileCount);
             float pixelSizeFade = BMath.InverseLerp(_config.fadeInPixelSize, _config.minPixelSize, _tilePixelSize);
-            _blitTextureAlpha01 = 1.0f - BMath.Clamp01(BMath.Max(tileCountFade, pixelSizeFade));
+            _tileAlpha01 = 1.0f - BMath.Clamp01(BMath.Max(tileCountFade, pixelSizeFade));
             
             RenderTexture solverTexture = _runTileSolver(worldPoint, _gridSize);
             
@@ -167,7 +166,7 @@ namespace Beast.Radar.Terrain
 
         private void _blitTileBufferToScreen()
         {
-            _tileBlitMaterial.SetFloat("_Alpha", _blitTextureAlpha01);
+            _tileBlitMaterial.SetFloat("_Alpha", _tileAlpha01);
             _tileBlitMaterial.SetFloat2("_OutputSize", _screen.Size);
             _tileBlitMaterial.SetTexture("_MainTexture", _tileToScreenBuffer);
             
@@ -202,7 +201,7 @@ namespace Beast.Radar.Terrain
             BDebug.Track(this, nameof(_tileHeight), _tileHeight);
             BDebug.Track(this, nameof(_tileCount), _tileCount);
             BDebug.Track(this, nameof(_gridSize), _gridSize);
-            BDebug.Track(this, nameof(_blitTextureAlpha01), _blitTextureAlpha01);
+            BDebug.Track(this, nameof(_tileAlpha01), _tileAlpha01);
             BDebug.Track(this, nameof(_tilePixelSize), _tilePixelSize);
         }
     }

@@ -15,6 +15,8 @@
         {
             CGPROGRAM
 
+            #pragma multi_compile MODE_TEXTURE MODE_BIOME
+
             #pragma target 2.0
             
             #pragma vertex vertex
@@ -43,7 +45,17 @@
             float _ClipValue;
             
             sampler2D _Texture;
+            float _TextureAlpha;
             float _LineWidth;
+            float _BiomeIndex;
+
+            float4 stick_to_grid(float4 clipPos)
+            {
+                float2 gridSize = 1 / _ScreenSize;
+                clipPos.xy = floor(clipPos.xy / gridSize) * gridSize;
+
+                return clipPos;
+            }
             
             FragmentInput vertex(VertexInput input, uint vertexID : SV_VertexID)
             {
@@ -93,7 +105,17 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-                return tex2D(_Texture, input.uv);
+#if MODE_TEXTURE
+                float4 color = tex2D(_Texture, input.uv);
+                color.a *= _TextureAlpha;
+
+                return color;
+#endif
+                
+#if MODE_BIOME
+                return float4(f16tof32((uint)_BiomeIndex), 0, 0, 1);
+#endif
+                
             }
             
             ENDCG

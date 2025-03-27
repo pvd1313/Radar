@@ -89,7 +89,7 @@ namespace Beast.Claw.Graphic
             return _dataTextureSizeTable[BMath.IntCeilLog2(dataCount)];
         }
 
-        public static RenderTexture CreatePermRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
+        public static RenderTexture CreatePermRenderTexture(IController owner, RenderTextureData input)
         {
             input.ValidateThrowException(nameof(input));
 
@@ -100,7 +100,7 @@ namespace Beast.Claw.Graphic
                 input.format,
                 input.mipCount)
             {
-                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+                name = owner.Meta.name + "_" + input.name,
                 filterMode = input.filterMode,
                 wrapMode = input.wrapMode
             };
@@ -110,7 +110,7 @@ namespace Beast.Claw.Graphic
             return texture;
         }
 
-        public static RenderTexture CreateTempRenderTexture<TOwner>(TOwner owner, RenderTextureData input)
+        public static RenderTexture CreateTempRenderTexture(IController owner, RenderTextureData input)
         {
             input.ValidateThrowException(nameof(input));
 
@@ -132,25 +132,32 @@ namespace Beast.Claw.Graphic
             return texture;
         }
 
-        public static Material CreateMaterial<TOwner>(TOwner owner, MaterialParameters input) where TOwner : class
+        public static Material CreateMaterial(IController owner, MaterialParameters input)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             input.ValidateThrowException(nameof(input));
 
             return new Material(input.shader)
             {
-                name = TypeStorage<TOwner>.FullNameWithPostfixOrFullName(input.name),
+                name = owner.Meta.name + "_" + input.name
             };
         }
 
-        public static Material CreateMaterial<TOwner>(TOwner owner, Shader shader) where TOwner : class
+        public static Mesh CreateMesh(IController owner)
+        {
+            owner.ValidateNotNullThrowException(nameof(owner));
+
+            return new Mesh();
+        }
+
+        public static Material CreateMaterial(IController owner, Shader shader)
         {
             owner.ValidateNotNullThrowException(nameof(owner));
             shader.ValidateNotNullThrowException(nameof(shader));
 
             return new Material(shader)
             {
-                name = TypeStorage<TOwner>.FULL_NAME
+                name = owner.Meta.name
             };
         }
 

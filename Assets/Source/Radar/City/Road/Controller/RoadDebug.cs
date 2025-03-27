@@ -75,14 +75,14 @@ namespace Beast.Radar.City
                 inRoadMap = roadMap,
                 inSegmentLength = segmentLength,
                 inPrecision = EPrecisionMode.Double,
-                inRoadPointCount = ContinuousRoadSplineUtil.GetPointCount(road.length, segmentLength)
+                inRoadPointCount = RoadContinuousSplineUtil.GetPointCount(road.length, segmentLength)
             };
 
             using NativeArray<float2> points = BNative.TempJobArray<float2>(task.inRoadPointCount);
 
             task.outPoints = points;
 
-            ContinuousRoadSplineUtil.Build(task);
+            RoadContinuousSplineUtil.Build(task);
             
             gizmo.SetColor(Color.blue);
 

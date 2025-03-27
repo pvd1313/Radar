@@ -20,7 +20,7 @@ namespace Beast.Radar.City
         {
             int roadPointCount = inPointCount[roadIndex];
 
-            ContinuousRoadSplineUtil.Build(new RoadContinuousSplineTask
+            RoadContinuousSplineUtil.Build(new RoadContinuousSplineTask
             {
                 inRoadIndex = roadIndex,
                 inRoadMap = inRoadMap,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
@@ -9,17 +10,17 @@ using UnityEngine;
 
 namespace Beast.Claw.Text.Baking
 {
-    public class TextBaker : Actor
+    public class TextBaker : Controller
     {
         private readonly TextGenerator _generator;
         private readonly int2 _textureSize;
         private readonly Vector3 _vertexOffset;
+        private readonly Color _backgroundColor;
 
         private TextGenerationSettings _generatorSettings;
         private Material _fontMaterial;
         private RenderTexture _renderTexture;
         private Mesh _textMesh;
-        private Color _backgroundColor;
         
         public TextBaker(TextBakerConfig config)
         {
@@ -57,10 +58,8 @@ namespace Beast.Claw.Text.Baking
                 format = RenderTextureFormat.ARGB32
             });
 
-            _textMesh = new Mesh
-            {
-                name = "TextBakerMesh"
-            };
+            _textMesh = BGraphic.CreateMesh(this);
+            _textMesh.name = "TextBakerMesh";
         }
 
         public TextBakeResult Bake(string text, int fontSize)

@@ -9,6 +9,7 @@
         Shallow = 3,
         Deep = 4,
         Grass = 5,
-        Forest = 7
+        Forest = 7,
+        Road = 8,
     }
 }

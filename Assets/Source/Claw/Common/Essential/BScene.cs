@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Beast.Claw.Attributes.Annotation;
-using Beast.Claw.Reflection;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,9 +8,9 @@ namespace Beast.Claw.Common
     [StaticUtility]
     public static class BScene
     {
-        public static GameObject CreateGameObject<TOwner>(TOwner owner)
+        public static GameObject CreateGameObject(IController owner)
         {
-            GameObject gameObject = new (TypeStorage<TOwner>.FULL_NAME);
+            GameObject gameObject = new (owner.Meta.name);
 
             return gameObject;
         }

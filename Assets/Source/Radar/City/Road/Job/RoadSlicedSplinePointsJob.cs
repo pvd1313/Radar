@@ -24,7 +24,7 @@ namespace Beast.Radar.City
         {
             int pointCount = inPointCount[sliceIndex];
 
-            RoadSplineSliceUtil.Build(new RoadSlicedSplineTask
+            RoadSlicedSplineUtil.Build(new RoadSlicedSplineTask
                 {
                     inRoadMap = inRoadMap,
                     inPrecision = inPrecision,

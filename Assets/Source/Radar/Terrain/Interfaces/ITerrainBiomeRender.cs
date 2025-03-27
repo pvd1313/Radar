@@ -10,6 +10,9 @@ namespace Beast.Radar.Terrain
         Texture Texture { get; }
         public float2 TexelSize { get; }
         float ViewDistance { get; }
+        
         public float2 WorldToUVOffset(float2 worldPoint);
+
+        public void RegisterPostProcessor(ITerrainBiomePostProcessor processor, ETerrainBiomePostProcessorPriority priority);
     }
 }

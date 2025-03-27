@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
-    public static class RoadSplineSliceUtil
+    public static class RoadSlicedSplineUtil
     {
         public static void CutAABB(
             RoadSplineMap roadMap, 

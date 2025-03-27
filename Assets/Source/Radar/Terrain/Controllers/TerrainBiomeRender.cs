@@ -1,6 +1,5 @@
-﻿using Beast.Claw;
+﻿using System.Collections.Generic;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -15,16 +14,10 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainBiomeRender : Actor, ITerrainBiomeRender
     {
-        private struct RenderResult
+        private struct PostProcessor
         {
-            public float2 renderPosition;
-            public float viewDistance;
-            public float textureYScale;
-            public float cellPixelSize;
-            public float snapGridSize;
-            public float renderDistance;
-            public float texelSize;
-            public float noiseSamplerLOD;
+            public ITerrainBiomePostProcessor processor;
+            public int priority;
         }
         
         public bool IsReady => _isReady;
@@ -42,7 +35,8 @@ namespace Beast.Radar.Terrain
         private Material _renderMaterial;
         private RenderTexture _biomeTexture;
         private int2 _renderTextureForScreenSize;
-        private RenderResult _renderResult;
+        private TerrainBiomeRenderResult _renderResult;
+        private List<PostProcessor> _postProcessors;
         
         private bool _isReady;
 
@@ -60,11 +54,31 @@ namespace Beast.Radar.Terrain
             return (offset + 1) * 0.5f;
         }
 
+        public void RegisterPostProcessor(ITerrainBiomePostProcessor processor, ETerrainBiomePostProcessorPriority priority)
+        {
+            int i = 0;
+            for (; i < _postProcessors.Count; i++)
+            {
+                if (_postProcessors[i].priority < (int)priority)
+                {
+                    break;
+                }
+            }
+            
+            _postProcessors.Insert(i, new PostProcessor
+            {
+                priority = (int) priority,
+                processor = processor
+            });
+        }
+
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _renderMaterial = BGraphic.CreateMaterial(this, _library.terrain.biomeRender);
 
             _renderTextureForScreenSize = _screen.Size;
+
+            _postProcessors ??= new List<PostProcessor>();
 
             int textureSize = (int)BMath.Max(_screen.Width(), _screen.Height());
 
@@ -114,6 +128,7 @@ namespace Beast.Radar.Terrain
                 screenSize = _screen.Size,
                 viewDistance = _camera.ViewDistance,
                 useDynamicConstraints = true,
+                usePostProcessors = true,
             });
             
             _debugTrack(_renderResult);
@@ -121,21 +136,24 @@ namespace Beast.Radar.Terrain
             _isReady = true;
         }
 
-        private RenderResult _renderBiome(TerrainBiomeRenderTask task)
+        private TerrainBiomeRenderResult _renderBiome(TerrainBiomeRenderTask task)
         {
             task.ValidateThrowException(nameof(task));
 
-            RenderResult data;
+            TerrainBiomeRenderResult data;
             
             data.textureYScale = task.outputBiomeTexture.height / (float)task.screenSize.y;
             data.viewDistance = task.viewDistance;
             data.cellPixelSize = task.outputBiomeTexture.height / data.viewDistance / data.textureYScale;
+
+            bool isCloseRendering = false;
             
             // Upscale when very close to terrain.
             if (task.useDynamicConstraints && data.cellPixelSize > BWorld.TILES_PER_CELL)
             {
                 data.viewDistance *= data.cellPixelSize / BWorld.TILES_PER_CELL;
                 data.cellPixelSize = BWorld.TILES_PER_CELL;
+                isCloseRendering = true;
             }
 
             // Snap to grid.
@@ -195,6 +213,19 @@ namespace Beast.Radar.Terrain
                 targetTexture = task.outputBiomeTexture
             });
 
+            if (task.usePostProcessors && isCloseRendering)
+            {
+                foreach (PostProcessor postProcessor in _postProcessors)
+                {
+                    postProcessor.processor.Render(new TerrainBiomePostProcess
+                    {
+                        viewDistance = data.renderDistance,
+                        renderPosition = data.renderPosition,
+                        biomeTexture = task.outputBiomeTexture
+                    });
+                }
+            }
+
             return data;
         }
 
@@ -215,7 +246,7 @@ namespace Beast.Radar.Terrain
             BGraphic.TryDispose(ref _biomeTexture);
         }
         
-        private void _debugTrack(RenderResult stack)
+        private void _debugTrack(TerrainBiomeRenderResult stack)
         {
             BDebug.Track(this, "biomeTextureSize", _biomeTexture.Size());
             BDebug.Track(this, "terrainTextureSize", _bakedTerrain.Texture.Size());

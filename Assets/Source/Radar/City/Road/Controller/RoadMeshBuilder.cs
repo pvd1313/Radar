@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
-using Beast.Claw.Gizmo;
+using Beast.Claw.Common;
+using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
@@ -27,8 +28,12 @@ namespace Beast.Radar.City
             vertexCount = roadPointCount * 2;
             triangleCount = (roadPointCount - 1) * 2;
         }
-        
-        public static void BuildAllRoadMesh(RoadSplineMap roadSplineMap, Mesh roadMesh, float segmentLength, IGizmoHandle gizmo)
+
+        public static void BuildAllRoadMesh(
+            RoadSplineMap roadSplineMap, 
+            Mesh outputMesh, 
+            float segmentLength,
+            EPrecisionMode precision)
         {
             int totalPointCount = 0;
 
@@ -39,7 +44,7 @@ namespace Beast.Radar.City
             {
                 RoadSpline road = roadSplineMap.roads[i];
 
-                int roadPointCount = ContinuousRoadSplineUtil.GetPointCount(road.length, segmentLength);
+                int roadPointCount = RoadContinuousSplineUtil.GetPointCount(road.length, segmentLength);
 
                 pointCount[i] = roadPointCount;
                 pointOffset[i] = totalPointCount;
@@ -55,7 +60,7 @@ namespace Beast.Radar.City
                 inPointCount = pointCount,
                 inPointsOffset = pointOffset,
                 inRoadMap = roadSplineMap,
-                inPrecision = EPrecisionMode.Float,
+                inPrecision = precision,
                 outPoints = roadPoints
             };
 
@@ -109,19 +114,20 @@ namespace Beast.Radar.City
             vertexOffset.Dispose();
             vertexIndexOffset.Dispose();
             
-            roadMesh.Clear();
-            roadMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
-            roadMesh.SetNormals(normals);
-            roadMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
+            outputMesh.Clear();
+            outputMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
+            outputMesh.SetNormals(normals);
+            outputMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
         }
 
         public static Dictionary<int2, Mesh> BuildRoadGridMeshes(
-            IGizmoHandle gizmo,
+            IController owner,
             RoadSplineMap roadMap,
             string meshNamePrefix,
             CellGrid<int> roadGrid, 
             float terrainSize,
-            float segmentLength)
+            float segmentLength,
+            EPrecisionMode precision)
         {
             const int MAX_SLICE_PER_CELL = 16;
             
@@ -204,7 +210,7 @@ namespace Beast.Radar.City
             {
                 inRoadMap = roadMap,
                 inSegmentLength = segmentLength,
-                inPrecision = EPrecisionMode.Float,
+                inPrecision = precision,
                 inRoadSlices = slices,
                 inPointCount = pointCounts,
                 inPointOffset = pointOffsets,
@@ -295,8 +301,8 @@ namespace Beast.Radar.City
                     meshVertexCount += vertexCount;
                     meshTriangleCount += triangleCount;
                 }
-                
-                Mesh mesh = new();
+
+                Mesh mesh = BGraphic.CreateMesh(owner);
                 mesh.bounds = new Bounds(Vector3.zero, Vector3.one);
                 mesh.name = meshNamePrefix + " (" + cellIndex.x + "," + cellIndex.y + ")";
                 
@@ -362,13 +368,13 @@ namespace Beast.Radar.City
 
         private static void _writeQuad(RoadMeshTask task, int vertexOffset, ref int triangleOffset)
         {
-            task.outTriangleIndices[triangleOffset + 0] = vertexOffset - 2 + task.inFirstVertexIndex;
-            task.outTriangleIndices[triangleOffset + 1] = vertexOffset - 1 + task.inFirstVertexIndex;
-            task.outTriangleIndices[triangleOffset + 2] = vertexOffset + 1 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 0] = vertexOffset - 2 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 1] = vertexOffset - 1 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 2] = vertexOffset + 1 + task.inFirstVertexIndex;
 
-            task.outTriangleIndices[triangleOffset + 3] = vertexOffset - 2 + task.inFirstVertexIndex;
-            task.outTriangleIndices[triangleOffset + 4] = vertexOffset + 1 + task.inFirstVertexIndex;
-            task.outTriangleIndices[triangleOffset + 5] = vertexOffset + 0 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 3] = vertexOffset - 2 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 4] = vertexOffset + 1 + task.inFirstVertexIndex;
+            task.outTriangles[triangleOffset + 5] = vertexOffset + 0 + task.inFirstVertexIndex;
 
             triangleOffset += 6;
         }

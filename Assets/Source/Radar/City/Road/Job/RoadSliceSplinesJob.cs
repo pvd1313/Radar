@@ -34,7 +34,7 @@ namespace Beast.Radar.City
             {
                 int firstSliceIndex = inMaxSliceCount * jobIndex + totalSliceCount;
                 
-                RoadSplineSliceUtil.CutAABB(
+                RoadSlicedSplineUtil.CutAABB(
                     inRoadMap, 
                     roads[i], 
                     jobBounds, 
@@ -43,7 +43,7 @@ namespace Beast.Radar.City
 
                 for (int j = 0; j < sliceCount; j++)
                 {
-                    outSlicePointCount[firstSliceIndex + j] = RoadSplineSliceUtil.GetPointCount(
+                    outSlicePointCount[firstSliceIndex + j] = RoadSlicedSplineUtil.GetPointCount(
                         inRoadMap, 
                         inSegmentLength, 
                         outSlices[firstSliceIndex + j]);

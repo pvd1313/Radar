@@ -8,7 +8,7 @@ namespace Beast.Radar.City
     /// <summary>
     /// All road splines assumed to be connected. So points evently distribute along road.
     /// </summary>
-    public static class ContinuousRoadSplineUtil
+    public static class RoadContinuousSplineUtil
     {
         public static int GetPointCount(float roadLength, float segmentLength)
         {
