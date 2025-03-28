@@ -50,8 +50,11 @@
 
             float _NoiseSamplerLOD;
             
-            #define NOISE_OFFSET float2(8, 8)
-            #define NOISE_POWER float2(0.075, 0.1) * 1.5f
+            #define NOISE_POWER_0 float2(1, 1)
+            #define NOISE_SCALE_0 16.0
+
+            #define NOISE_POWER_1 float2(0.15, 0.15)
+            #define NOISE_SCALE_1 64.0
 
             float2 screen_to_world_uv(float2 uv, float2 mapSize)
             {
@@ -72,11 +75,20 @@
                 return output;
             }
 
-            float4 noise_shift(float2 mainUV, float2 noiseUV, float2 offset, float2 power)
+            float2 sample_noise(float2 noiseUV)
             {
-                float2 noiseRG = tex2D(_NoiseMap, noiseUV * offset).rg;
-                float2 noise = beast_unpack_normal_2d(noiseRG) * power;
-                mainUV = mainUV + noise * offset / _TerrainTextureSize;
+                float2 noiseRG = tex2D(_NoiseMap, noiseUV).rg;
+                float2 noise = beast_unpack_normal_2d(noiseRG);
+
+                return noise / _TerrainTextureSize;
+            }
+
+            float4 noise_shift(float2 mainUV, float2 noiseUV, float noisePower)
+            {
+                float2 noise0 = sample_noise(noiseUV * NOISE_SCALE_0) * NOISE_POWER_0;
+                float2 noise1 = sample_noise(noiseUV * NOISE_SCALE_1) * NOISE_POWER_1;
+                
+                mainUV = mainUV + (noise0 + noise1) * noisePower * 1;
                 
                 return tex2D(_TerrainTexture, mainUV);
             }
@@ -84,10 +96,10 @@
             float4 fragment(FragmentInput input) : SV_Target
             {
 #ifdef NOISE_SAMPLER_LOD_0
-                float4 noiseColor = noise_shift(input.mainUV, input.noiseUV, NOISE_OFFSET, NOISE_POWER);
-                float4 terrainColor = tex2D(_TerrainTexture, input.mainUV);
-                float4 finalColor = lerp(terrainColor, noiseColor, 1.0f);
-                float4 terrainColorRGBA = lerp(terrainColor, finalColor, 1 - _NoiseSamplerLOD);
+                float lodValue = 1 - _NoiseSamplerLOD;
+
+                float4 terrainColorRGBA = noise_shift(input.mainUV, input.noiseUV, lodValue);
+
 #endif
 
 #ifdef NOISE_SAMPLER_LOD_1
