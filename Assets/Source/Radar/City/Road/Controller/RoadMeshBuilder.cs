@@ -29,12 +29,17 @@ namespace Beast.Radar.City
             triangleCount = (roadPointCount - 1) * 2;
         }
 
-        public static void BuildAllRoadMesh(
+        public static Mesh BuildGlobalRoadMesh(
+            IController owner,
+            string meshName,
             RoadSplineMap roadSplineMap, 
-            Mesh outputMesh, 
             float segmentLength,
             EPrecisionMode precision)
         {
+            Mesh mesh = BGraphic.CreateMesh(owner);
+            mesh.name = meshName;
+            mesh.bounds = new Bounds(Vector3.zero, Vector3.one);
+            
             int totalPointCount = 0;
 
             NativeArray<int> pointCount = BNative.TempJobArray<int>(roadSplineMap.roads.Length);
@@ -114,10 +119,12 @@ namespace Beast.Radar.City
             vertexOffset.Dispose();
             vertexIndexOffset.Dispose();
             
-            outputMesh.Clear();
-            outputMesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
-            outputMesh.SetNormals(normals);
-            outputMesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
+            mesh.Clear();
+            mesh.SetVertices(vertices, 0, vertices.Length, MeshUpdateFlags.DontRecalculateBounds);
+            mesh.SetNormals(normals);
+            mesh.SetIndices(triangles, MeshTopology.Triangles, 0, false);
+
+            return mesh;
         }
 
         public static Dictionary<int2, Mesh> BuildRoadGridMeshes(

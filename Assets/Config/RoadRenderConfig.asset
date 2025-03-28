@@ -12,12 +12,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b580fc0cac64f15b93c492c204f77de, type: 3}
   m_Name: RoadRenderConfig
   m_EditorClassIdentifier: 
-  lod2SegmentLength: 4
-  lod1CellSize: 256
-  lod1SegmentLength: 0.2
-  lod1ActivationDistance: 256
   renderShader: {fileID: 4800000, guid: c3a4f86b63e03944b9a5d25cb80f876c, type: 3}
   texture: {fileID: 2800000, guid: 72703299a1b04b249bf079c1eced45a0, type: 3}
-  roadPixelSize:
-    min: 4
-    max: 8
+  lods:
+  - cellSize: 64
+    isGlobalLOD: 0
+    segmentLength: 0.1
+    activationDistance: 64
+  - cellSize: 256
+    isGlobalLOD: 0
+    segmentLength: 1
+    activationDistance: 256
+  - cellSize: 4096
+    isGlobalLOD: 1
+    segmentLength: 4
+    activationDistance: 4096
+  viewDistanceToPixelSizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 32
+      value: 8
+      inSlope: -0
+      outSlope: -0.017857144
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.15340573
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 256
+      value: 4
+      inSlope: -0.017857144
+      outSlope: -0.017857144
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
