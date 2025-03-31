@@ -274,7 +274,7 @@ namespace Beast.Radar.City
             {
                 inPoints = pointsJob.outPoints,
                 inPointOffset = pointOffsets,
-                inPointCount = pointCounts,
+                inPointCount = pointsJob.outPointCount,
                 inVertexIndexOffset = vertexIndexOffsets,
                 outVertices = vertices,
                 outNormals = normals,
