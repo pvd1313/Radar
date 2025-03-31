@@ -60,7 +60,8 @@ namespace Beast.Radar.City
                 BGraphic.DrawMeshDelayed(new DrawMeshTask
                 {
                     material = material,
-                    mesh = _globalMesh
+                    mesh = _globalMesh,
+                    matrix = float4x4.identity
                 });
 
                 return new RoadRenderLODResult(1, _globalMesh.vertexCount);
@@ -78,7 +79,8 @@ namespace Beast.Radar.City
                     BGraphic.DrawMeshDelayed(new DrawMeshTask
                     {
                         material = material,
-                        mesh = mesh
+                        mesh = mesh,
+                        matrix = float4x4.identity
                     });
 
                     renderResult.renderedMeshCount++;
