@@ -1,5 +1,6 @@
 using Beast.Claw.Attributes;
 using Beast.Claw.Collections;
+using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -90,7 +91,7 @@ namespace Beast.Radar.City
             Profiler.BeginSample("RoadTileRender.Render(TerrainBiomePostProcess task)");
             
             RoadSplineMap splineMap = _roadSplineRender.RoadMap;
-            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, task.viewDistance);
+            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, task.renderDistance * 0.5f);
             NativeArray<int> roadsBuffer = BNative.TempJobArray<int>(16);
             NativeSlice<int> roads = _roadGrid.GetItems(viewBounds, roadsBuffer);
             NativeArray<RoadSplineSlice> roadSlices = BNative.TempJobArray<RoadSplineSlice>(roads.Length * 16);
@@ -154,7 +155,7 @@ namespace Beast.Radar.City
                 inTextureSize = task.biomeTexture.Size(),
                 inOffsets = curveOffsets,
                 inBufferLimits = curveBufferLimits,
-                inCurveOffset = task.renderPosition - new float2(task.viewDistance * 0.5f),
+                inCurveOffset = task.renderPosition - new float2(task.renderDistance * 0.5f),
                 inRoadMap = splineMap,
                 inHalfPerPixel = HALF_PER_PIXEL,
                 outPixelHalfs = BNative.TempJobArray<ushort>(estimatedPixelCount * HALF_PER_PIXEL),
