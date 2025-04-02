@@ -15,8 +15,6 @@
         {
             CGPROGRAM
 
-            #pragma multi_compile MODE_TEXTURE MODE_BIOME
-
             #pragma target 2.0
             
             #pragma vertex vertex
@@ -47,7 +45,6 @@
             sampler2D _Texture;
             float _TextureAlpha;
             float _LineWidth;
-            float _BiomeIndex;
 
             float4 stick_to_grid(float4 clipPos)
             {
@@ -105,17 +102,10 @@
 
             float4 fragment(FragmentInput input) : SV_Target
             {
-#if MODE_TEXTURE
                 float4 color = tex2D(_Texture, input.uv);
                 color.a *= _TextureAlpha;
 
                 return color;
-#endif
-                
-#if MODE_BIOME
-                return float4(f16tof32((uint)_BiomeIndex), 0, 0, 1);
-#endif
-                
             }
             
             ENDCG

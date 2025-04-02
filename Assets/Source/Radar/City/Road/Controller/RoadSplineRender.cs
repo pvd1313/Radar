@@ -123,7 +123,6 @@ namespace Beast.Radar.City
             {
                 lineWidth = lineWidth / _screen.Height(),
                 texture = _config.texture,
-                shaderMode = ERoadShaderMode.Texture,
                 textureAlpha = alpha
             };
 
