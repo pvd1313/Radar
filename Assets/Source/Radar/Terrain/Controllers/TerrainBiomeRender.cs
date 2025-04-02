@@ -220,6 +220,7 @@ namespace Beast.Radar.Terrain
                     postProcessor.processor.Render(new TerrainBiomePostProcess
                     {
                         renderDistance = data.renderDistance,
+                        viewDistance = data.viewDistance,
                         renderPosition = data.renderPosition,
                         biomeTexture = task.outputBiomeTexture
                     });

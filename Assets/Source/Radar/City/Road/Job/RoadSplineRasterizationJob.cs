@@ -1,3 +1,4 @@
+using Beast.Claw.Math;
 using Beast.Radar.Graphic;
 using Unity.Burst;
 using Unity.Collections;
@@ -12,7 +13,7 @@ namespace Beast.Radar.City
         [ReadOnly] public NativeArray<int> inCurves;
         [NativeDisableParallelForRestriction, ReadOnly] public RoadSplineMap inRoadMap;
         [ReadOnly] public float2 inCurveOffset;
-        [ReadOnly] public int2 inTextureSize;
+        [ReadOnly] public Bounds2D inTextureBounds;
         [ReadOnly] public int inHalfPerPixel;
 
         [ReadOnly] public NativeArray<int> inOffsets;
@@ -34,7 +35,7 @@ namespace Beast.Radar.City
                 plotter = new TexturePixelPlotterForHalfStream
                 {
                     writtenPixelCount = 0,
-                    textureSize = inTextureSize,
+                    textureBounds = inTextureBounds,
                     halfPerPixel = inHalfPerPixel,
                     output = outPixelHalfs.Slice(inOffsets[jobIndex], inBufferLimits[jobIndex]),
                 }

@@ -91,7 +91,11 @@ namespace Beast.Radar.City
             Profiler.BeginSample("RoadTileRender.Render(TerrainBiomePostProcess task)");
             
             RoadSplineMap splineMap = _roadSplineRender.RoadMap;
-            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, task.renderDistance * 0.5f);
+
+            float viewRadius = task.viewDistance * 0.5f;
+
+            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, viewRadius);
+            
             NativeArray<int> roadsBuffer = BNative.TempJobArray<int>(16);
             NativeSlice<int> roads = _roadGrid.GetItems(viewBounds, roadsBuffer);
             NativeArray<RoadSplineSlice> roadSlices = BNative.TempJobArray<RoadSplineSlice>(roads.Length * 16);
@@ -149,10 +153,16 @@ namespace Beast.Radar.City
             }
             Profiler.EndSample();
 
+            // Only visible pixels
+            float textureOffset0 = (task.renderDistance * 0.5f - viewRadius) / task.renderDistance;
+            float textureOffset1 = (task.renderDistance * 0.5f + viewRadius) / task.renderDistance;
+            float2 textureMin = BMath.FloorToInt(task.biomeTexture.Size().Mul(textureOffset0));
+            float2 textureMax = BMath.FloorToInt(task.biomeTexture.Size().Mul(textureOffset1));
+
             RoadSplineRasterizationJob rasterizationJob = new()
             {
                 inCurves = curves,
-                inTextureSize = task.biomeTexture.Size(),
+                inTextureBounds = Bounds2D.FromTwoPoints(textureMin, textureMax),
                 inOffsets = curveOffsets,
                 inBufferLimits = curveBufferLimits,
                 inCurveOffset = task.renderPosition - new float2(task.renderDistance * 0.5f),
@@ -163,7 +173,7 @@ namespace Beast.Radar.City
             };
             
             Profiler.BeginSample("RoadSplineRasterizationJob");
-            rasterizationJob.Schedule(totalCurveCount, 4).Complete();
+            rasterizationJob.SmartExecute(totalCurveCount, 4);
             Profiler.EndSample();
 
             Profiler.BeginSample("MemCopyPixelBuffer");
@@ -173,65 +183,71 @@ namespace Beast.Radar.City
                 totalPixelCount += rasterizationJob.outPixelCount[i];
             }
 
-            int2 textureSize = BGraphic.GetDataTextureSize(totalPixelCount);
-            NativeArray<ushort> pixelsRaw =
-                BNative.TempJobArray<ushort>(textureSize.x * textureSize.y * HALF_PER_PIXEL);
-            
-            int writeOffset = 0;
-            
-            for (int i = 0; i < totalCurveCount; i++)
+            int2 textureSize = 0;
+
+            if (totalPixelCount > 0)
             {
-                int halfCount = rasterizationJob.outPixelCount[i] * HALF_PER_PIXEL;
+                textureSize = BGraphic.GetDataTextureSize(totalPixelCount);
+                NativeArray<ushort> pixelsRaw =
+                    BNative.TempJobArray<ushort>(textureSize.x * textureSize.y * HALF_PER_PIXEL);
                 
-                BNative.Copy(
-                    rasterizationJob.outPixelHalfs,
-                    pixelsRaw, 
-                    curveOffsets[i], 
-                    writeOffset, 
-                    halfCount);
+                int writeOffset = 0;
+                
+                for (int i = 0; i < totalCurveCount; i++)
+                {
+                    int halfCount = rasterizationJob.outPixelCount[i] * HALF_PER_PIXEL;
+                
+                    BNative.Copy(
+                        rasterizationJob.outPixelHalfs,
+                        pixelsRaw, 
+                        curveOffsets[i], 
+                        writeOffset, 
+                        halfCount);
 
-                writeOffset += halfCount;
+                    writeOffset += halfCount;
+                }
+                Profiler.EndSample();
+
+                Profiler.BeginSample("ApplyTexture");
+                HalfStream stream = HalfStream.CreateReadOnly(pixelsRaw, totalPixelCount, HALF_PER_PIXEL, 1);
+                Texture2D texture = _textureProvider.GetTexture(textureSize);
+                stream.CopyToTexture(texture);
+                Profiler.EndSample();
+            
+                Profiler.BeginSample("SetupMaterial");
+                _renderMaterial.SetTexture("_DataTexture", texture);
+                _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
+                _renderMaterial.SetFloat("_PixelColor", (int)ETerrainTile.Road);
+                Profiler.EndSample();
+            
+                Profiler.BeginSample("SetupCommandBuffer");
+                _commandBuffer.Clear();
+                _commandBuffer.SetRenderTarget(task.biomeTexture);
+
+                float4x4 projection =
+                    float4x4.OrthoOffCenter(
+                        0, 
+                        task.biomeTexture.width, 
+                        0, 
+                        task.biomeTexture.height, 
+                        0, 
+                        1);
+            
+                _commandBuffer.SetViewProjectionMatrices(Matrix4x4.identity, projection);
+                _commandBuffer.DrawMeshInstancedProcedural(_library.quad, 0, _renderMaterial, 0, totalPixelCount);
+                Profiler.EndSample();
+            
+                Profiler.BeginSample("ExecuteCommandBuffer");
+                BGraphic.ExecuteBuffer(_commandBuffer);
+                Profiler.EndSample();
+                
+                pixelsRaw.Dispose();
             }
-            Profiler.EndSample();
-
-            Profiler.BeginSample("ApplyTexture");
-            HalfStream stream = HalfStream.CreateReadOnly(pixelsRaw, totalPixelCount, HALF_PER_PIXEL, 1);
-            Texture2D texture = _textureProvider.GetTexture(textureSize);
-            stream.CopyToTexture(texture);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("SetupMaterial");
-            _renderMaterial.SetTexture("_DataTexture", texture);
-            _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
-            _renderMaterial.SetFloat("_PixelColor", (int)ETerrainTile.Road);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("SetupCommandBuffer");
-            _commandBuffer.Clear();
-            _commandBuffer.SetRenderTarget(task.biomeTexture);
-
-            float4x4 projection =
-                float4x4.OrthoOffCenter(
-                    0, 
-                    task.biomeTexture.width, 
-                    0, 
-                    task.biomeTexture.height, 
-                    0, 
-                    1);
-            
-            _commandBuffer.SetViewProjectionMatrices(Matrix4x4.identity, projection);
-            _commandBuffer.DrawMeshInstancedProcedural(_library.quad, 0, _renderMaterial, 0, totalPixelCount);
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("ExecuteCommandBuffer");
-            BGraphic.ExecuteBuffer(_commandBuffer);
-            Profiler.EndSample();
 
             curves.Dispose();
             curveOffsets.Dispose();
             roadsBuffer.Dispose();
             curveBufferLimits.Dispose();
-            pixelsRaw.Dispose();
             roadSlices.Dispose();
 
             rasterizationJob.outPixelHalfs.Dispose();

@@ -87,6 +87,11 @@ namespace Beast.Claw.Graphic
 
         public static int2 GetDataTextureSize(int pixelCount)
         {
+            if (pixelCount <= 0)
+            {
+                throw new ArgumentException("pixelCount must be > 0");
+            }
+            
             return _dataTextureSizeTable[BMath.IntCeilLog2(pixelCount)];
         }
 
