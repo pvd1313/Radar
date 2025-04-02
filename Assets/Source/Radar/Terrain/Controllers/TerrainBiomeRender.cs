@@ -9,6 +9,7 @@ using Beast.Radar.Graphic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
@@ -217,6 +218,8 @@ namespace Beast.Radar.Terrain
             {
                 foreach (PostProcessor postProcessor in _postProcessors)
                 {
+                    Profiler.BeginSample(postProcessor.processor.Meta.name);
+                    
                     postProcessor.processor.Render(new TerrainBiomePostProcess
                     {
                         renderDistance = data.renderDistance,
@@ -224,6 +227,8 @@ namespace Beast.Radar.Terrain
                         renderPosition = data.renderPosition,
                         biomeTexture = task.outputBiomeTexture
                     });
+                    
+                    Profiler.EndSample();
                 }
             }
 

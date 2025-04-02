@@ -88,42 +88,25 @@ namespace Beast.Radar.City
 
         public void Render(TerrainBiomePostProcess task)
         {
-            Profiler.BeginSample("RoadTileRender.Render(TerrainBiomePostProcess task)");
-            
             RoadSplineMap splineMap = _roadSplineRender.RoadMap;
 
-            float viewRadius = task.viewDistance * 0.5f;
-
-            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, viewRadius);
-            
-            NativeArray<int> roadsBuffer = BNative.TempJobArray<int>(16);
-            NativeSlice<int> roads = _roadGrid.GetItems(viewBounds, roadsBuffer);
-            NativeArray<RoadSplineSlice> roadSlices = BNative.TempJobArray<RoadSplineSlice>(roads.Length * 16);
-
-            int totalCurveCount = 0;
-            int totalSliceCount = 0;
-            
-            Profiler.BeginSample("SliceRoads");
-            for (int i = 0; i < roads.Length; i++)
+            RoadBoundsSliceJob roadBoundsSliceJob = new()
             {
-                RoadSlicedSplineUtil.CutAABB(
-                    splineMap, 
-                    roads[i], 
-                    viewBounds,
-                    roadSlices.Slice(totalSliceCount, 16), 
-                    out int sliceCount);
-                
-                for (int j = 0; j < sliceCount; j++)
-                {
-                    RoadSplineSlice slice = roadSlices[totalSliceCount + j];
-
-                    totalCurveCount += slice.pointCount - 1;
-                }
-                
-                totalSliceCount += sliceCount;
-            }
+                inRoadMap = splineMap,
+                inBounds = Bounds2D.FromPointWithRadius(task.renderPosition, task.viewDistance * 0.5f),
+                inRoadGrid = _roadGrid,
+                outRoadSliceCount = BNative.TempJobReference<int>(),
+                outRoadCurveCount = BNative.TempJobReference<int>(),
+                outRoadSlices = BNative.TempJobArray<RoadSplineSlice>(16)
+            };
+            
+            Profiler.BeginSample(nameof(RoadBoundsSliceJob));
+            roadBoundsSliceJob.Run();
             Profiler.EndSample();
 
+            int totalCurveCount = roadBoundsSliceJob.outRoadCurveCount.Value;
+            int totalSliceCount = roadBoundsSliceJob.outRoadSliceCount.Value;
+            
             Profiler.BeginSample("PrepareCurves");
             NativeArray<int> curves = BNative.TempJobArray<int>(totalCurveCount);
             NativeArray<int> curveOffsets = BNative.TempJobArray<int>(totalCurveCount);
@@ -133,7 +116,7 @@ namespace Beast.Radar.City
             
             for (int i = 0; i < totalSliceCount; i++)
             {
-                RoadSplineSlice roadSlice = roadSlices[i];
+                RoadSplineSlice roadSlice = roadBoundsSliceJob.outRoadSlices[i];
                 RoadSpline road = splineMap.roads[roadSlice.roadIndex];
                 int firstPointIndex = roadSlice.firstPointIndex + road.firstPointIndex;
 
@@ -154,6 +137,7 @@ namespace Beast.Radar.City
             Profiler.EndSample();
 
             // Only visible pixels
+            float viewRadius = task.viewDistance * 0.5f;
             float textureOffset0 = (task.renderDistance * 0.5f - viewRadius) / task.renderDistance;
             float textureOffset1 = (task.renderDistance * 0.5f + viewRadius) / task.renderDistance;
             float2 textureMin = BMath.FloorToInt(task.biomeTexture.Size().Mul(textureOffset0));
@@ -166,7 +150,7 @@ namespace Beast.Radar.City
                 inOffsets = curveOffsets,
                 inBufferLimits = curveBufferLimits,
                 inCurveOffset = task.renderPosition - new float2(task.renderDistance * 0.5f),
-                inRoadMap = splineMap,
+                inRoadMap = _roadSplineRender.RoadMap,
                 inHalfPerPixel = HALF_PER_PIXEL,
                 outPixelHalfs = BNative.TempJobArray<ushort>(estimatedPixelCount * HALF_PER_PIXEL),
                 outPixelCount = BNative.TempJobArray<int>(totalCurveCount)
@@ -244,19 +228,18 @@ namespace Beast.Radar.City
                 pixelsRaw.Dispose();
             }
 
+            roadBoundsSliceJob.outRoadCurveCount.Dispose();
+            roadBoundsSliceJob.outRoadSliceCount.Dispose();
+            roadBoundsSliceJob.outRoadSlices.Dispose();
+
             curves.Dispose();
             curveOffsets.Dispose();
-            roadsBuffer.Dispose();
             curveBufferLimits.Dispose();
-            roadSlices.Dispose();
 
             rasterizationJob.outPixelHalfs.Dispose();
             rasterizationJob.outPixelCount.Dispose();
             
-            Profiler.EndSample();
-            
             BDebug.Track(this, "CurveCount", totalCurveCount);
-            BDebug.Track(this, "VisibleRoads", roads.Length);
             BDebug.Track(this, "EstimatedPixelCount", estimatedPixelCount);
             BDebug.Track(this, "TotalPixelCount", totalPixelCount);
             BDebug.Track(this, "TextureSize", textureSize);
