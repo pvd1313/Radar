@@ -51,10 +51,10 @@ namespace Beast.Radar.Terrain
             // 1 km
             int2 worldPoint1km = BMath.FloorToInt(worldPoint);
             _gizmo.SetColor(Color.red);
-            _gizmo.AddPoint(worldPoint1km);
-            _gizmo.AddPoint(worldPoint1km + new float2(0, 1));
-            _gizmo.AddPoint(worldPoint1km + new float2(1, 0));
-            _gizmo.AddPoint(worldPoint1km + new float2(1, 1));
+            _gizmo.AddScreenPoint(worldPoint1km);
+            _gizmo.AddScreenPoint(worldPoint1km + new float2(0, 1));
+            _gizmo.AddScreenPoint(worldPoint1km + new float2(1, 0));
+            _gizmo.AddScreenPoint(worldPoint1km + new float2(1, 1));
             
             BDebug.Track(this, "WorldPoint_1KM", worldPoint1km);
             
@@ -68,10 +68,10 @@ namespace Beast.Radar.Terrain
             
             int2 worldPoint8km = BMath.FloorToInt(worldPoint / cellSize) * cellSize;
             _gizmo.SetColor(Color.green);
-            _gizmo.AddPoint(worldPoint8km);
-            _gizmo.AddPoint(worldPoint8km + new float2(0, cellSize));
-            _gizmo.AddPoint(worldPoint8km + new float2(cellSize, 0));
-            _gizmo.AddPoint(worldPoint8km + new float2(cellSize, cellSize));
+            _gizmo.AddScreenPoint(worldPoint8km);
+            _gizmo.AddScreenPoint(worldPoint8km + new float2(0, cellSize));
+            _gizmo.AddScreenPoint(worldPoint8km + new float2(cellSize, 0));
+            _gizmo.AddScreenPoint(worldPoint8km + new float2(cellSize, cellSize));
             
             BDebug.Track(this, "WorldPoint_8KM", worldPoint8km);
             

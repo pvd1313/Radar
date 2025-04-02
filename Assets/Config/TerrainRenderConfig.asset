@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af59f56e7cb14ac29b5d0ed47509621f, type: 3}
+  m_Name: TerrainRenderConfig
+  m_EditorClassIdentifier: 
+  noiseSamplerLOD1: 4
+  noiseSamplerLOD0: 16
+  fbmRenderTexture:
+    name: terrain_fbm_RT
+    size:
+      x: 1
+      y: 1
+    format: 25
+    wrapMode: 1
+    filterMode: 1
+    depth: 0
+    mipCount: 0
+    antiAliasing: 1
+    readWrite: 1
+    memoryless: 0
+    vrUsage: 0
+  fbmTexture2D:
+    name: terrain_biome_Texture2D
+    size:
+      x: 1
+      y: 1
+    format: 62
+    wrapMode: 1
+    filterMode: 1
+    mipChain: 0
+    isLinear: 1
+    createInitialized: 0
+  biomeRenderTexture:
+    name: terrain_biome_RT
+    size:
+      x: 1
+      y: 1
+    format: 15
+    wrapMode: 1
+    filterMode: 0
+    depth: 0
+    mipCount: 0
+    antiAliasing: 1
+    readWrite: 1
+    memoryless: 0
+    vrUsage: 0
+  biomeTexture2D:
+    name: terrain_biome_Texture2D
+    size:
+      x: 1
+      y: 1
+    format: 15
+    wrapMode: 1
+    filterMode: 0
+    mipChain: 0
+    isLinear: 1
+    createInitialized: 0
+  colorRenderTexture:
+    name: color_RT
+    size:
+      x: 1
+      y: 1
+    format: 0
+    wrapMode: 1
+    filterMode: 0
+    depth: 0
+    mipCount: 0
+    antiAliasing: 1
+    readWrite: 1
+    memoryless: 0
+    vrUsage: 0

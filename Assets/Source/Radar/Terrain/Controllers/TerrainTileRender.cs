@@ -14,13 +14,13 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainTileRender : Actor, ITerrainTileRender 
     {
-        public float TileAlpha01 => _tileAlpha01;
+        public float TilePixelSize => _tilePixelSize;
         
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly GraphicLibrary _library;
         [Required] private readonly IScreen _screen;
         [Required] private readonly ITerrainBiomeRender _terrainBiome;
-        [Required] private readonly TileRenderConfig _config;
+        [Required] private readonly TerrainTileRenderConfig _config;
         [Required] private readonly TerrainAtlas _atlas;
 
         private RenderTexture _tileToScreenBuffer;

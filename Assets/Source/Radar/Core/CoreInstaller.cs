@@ -63,7 +63,8 @@ namespace Beast.Radar.Core
             // City
             yield return typeof(CitySpawner);
             yield return typeof(RoadSpawner);
-            yield return typeof(RoadRender);
+            yield return typeof(RoadSplineRender);
+            yield return typeof(RoadTileRender);
             yield return typeof(CityNameGenerator);
             yield return typeof(CityMarkerManager);
             

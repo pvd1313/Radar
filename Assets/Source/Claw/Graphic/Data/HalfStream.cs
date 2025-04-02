@@ -12,18 +12,36 @@ namespace Beast.Claw.Graphic
     {
         public int EntityCount => _entityCount;
         
-        private const int HALF_PER_PIXEL = 4;
         private const int BUFFER_CHUNK_SIZE = 128;
         
         private readonly byte _halfPerEntity;
         private readonly byte _pixelPerEntity;
         private readonly bool _usePotResize;
         private readonly Allocator _allocator;
+        private readonly bool _isReadOnly;
         
         private NativeArray<ushort> _buffer;
         private int _entityCount;
+
+        public static HalfStream CreateReadWrite(
+            int pixelComponentCount,
+            int pixelPerEntity,
+            Allocator allocator,
+            bool usePotResize)
+        {
+            return new HalfStream(pixelComponentCount, pixelPerEntity, allocator, usePotResize);
+        }
+
+        public static HalfStream CreateReadOnly(
+            NativeArray<ushort> entityBuffer,
+            int entityCount,
+            int pixelComponentCount,
+            int pixelPerEntity)
+        {
+            return new HalfStream(entityBuffer, entityCount, pixelComponentCount, pixelPerEntity);
+        }
         
-        public HalfStream(int pixelPerEntity, Allocator allocator, bool usePotResize)
+        private HalfStream(int pixelComponentCount, int pixelPerEntity, Allocator allocator, bool usePotResize)
         {
             if (pixelPerEntity < 0 || pixelPerEntity > 63)
             {
@@ -32,14 +50,26 @@ namespace Beast.Claw.Graphic
 
             _usePotResize = usePotResize;
             _pixelPerEntity =  (byte) pixelPerEntity;
-            _halfPerEntity = (byte) (_pixelPerEntity * HALF_PER_PIXEL);
+            _halfPerEntity = (byte) (_pixelPerEntity * pixelComponentCount);
             _entityCount = 0;
             _buffer = default;
             _allocator = allocator;
+            _isReadOnly = false;
 
             _ensureCapacity(BUFFER_CHUNK_SIZE);
         }
 
+        private HalfStream(NativeArray<ushort> entityBuffer, int entityCount, int pixelComponentCount, int pixelPerEntity)
+        {
+            _usePotResize = false;
+            _pixelPerEntity = (byte)pixelPerEntity;
+            _halfPerEntity = (byte)(_pixelPerEntity * pixelComponentCount);
+            _entityCount = entityCount;
+            _buffer = entityBuffer;
+            _allocator = Allocator.Invalid;
+            _isReadOnly = true;
+        }
+        
         public int2 GetRequiredTextureSize()
         {
             return BGraphic.GetDataTextureSize(_entityCount * _pixelPerEntity);
@@ -73,6 +103,11 @@ namespace Beast.Claw.Graphic
 
         public NativeSlice<ushort> WriteNextEntity()
         {
+            if (_isReadOnly)
+            {
+                throw new InvalidOperationException("HalfStream is readonly");
+            }
+            
             _ensureCapacity(_entityCount + 1);
             
             _entityCount++;
@@ -82,6 +117,11 @@ namespace Beast.Claw.Graphic
 
         public void AddStream(HalfStream source)
         {
+            if (_isReadOnly)
+            {
+                throw new InvalidOperationException("HalfStream is readonly");
+            }
+            
             if (_halfPerEntity != source._halfPerEntity)
             {
                 throw new InvalidOperationException(
@@ -102,6 +142,11 @@ namespace Beast.Claw.Graphic
 
         public void AddSlice(NativeSlice<ushort> source)
         {
+            if (_isReadOnly)
+            {
+                throw new InvalidOperationException("HalfStream is readonly");
+            }
+            
             if (source.Length % _halfPerEntity != 0)
             {
                 throw new InvalidOperationException("Source slice has invalid entity count");
@@ -121,6 +166,11 @@ namespace Beast.Claw.Graphic
 
         public void Clear()
         {
+            if (_isReadOnly)
+            {
+                throw new InvalidOperationException("HalfStream is readonly");
+            }
+            
             _entityCount = 0;
         }
 

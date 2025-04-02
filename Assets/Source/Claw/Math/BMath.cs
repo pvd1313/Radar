@@ -64,6 +64,12 @@ namespace Beast.Claw.Math
         {
             return math.abs(a);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Abs(long a)
+        {
+            return math.abs(a);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(float a, float b)

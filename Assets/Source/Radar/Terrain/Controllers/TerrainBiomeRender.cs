@@ -30,7 +30,7 @@ namespace Beast.Radar.Terrain
         [Required] private readonly ITerrainBakedFbm _bakedTerrain;
         [Required] private readonly GraphicLibrary _library;
         [Required] private readonly ICameraTransform _camera;
-        [Required] private readonly GraphicConfig _config;
+        [Required] private readonly TerrainRenderConfig _config;
 
         private Material _renderMaterial;
         private RenderTexture _biomeTexture;
@@ -92,7 +92,7 @@ namespace Beast.Radar.Terrain
             // Will not work when aspect < 1.5
             textureSize = BMath.CeilToInt(textureSize / (float)BWorld.TILES_PER_CELL) * BWorld.TILES_PER_CELL;
 
-            RenderTextureData textureData = _config.terrain.biomeRenderTexture.WithSize(textureSize);
+            RenderTextureData textureData = _config.biomeRenderTexture.WithSize(textureSize);
             _biomeTexture = BGraphic.CreatePermRenderTexture(this, textureData);
 
             return UniTask.CompletedTask;
@@ -172,13 +172,13 @@ namespace Beast.Radar.Terrain
             data.texelSize = 1f / data.renderDistance / BWorld.TILES_PER_CELL;
             
             // LODs.
-            if (!task.useDynamicConstraints || data.cellPixelSize < _config.terrain.noiseSamplerLOD1)
+            if (!task.useDynamicConstraints || data.cellPixelSize < _config.noiseSamplerLOD1)
             {
                 data.noiseSamplerLOD = 1;
             }
             else
             {
-                FloatMinMax minMax = new(_config.terrain.noiseSamplerLOD1, _config.terrain.noiseSamplerLOD0);
+                FloatMinMax minMax = new(_config.noiseSamplerLOD1, _config.noiseSamplerLOD0);
                 data.noiseSamplerLOD = BMath.Max(0, 1 - BMath.InverseLerp(minMax, data.cellPixelSize));
             }
             

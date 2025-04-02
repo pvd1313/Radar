@@ -6,11 +6,11 @@ using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.Profiling;
 
 namespace Beast.Radar.City
 {
-    public class RoadRenderLOD : Controller
+    public class RoadSplineRenderLOD : Controller
     {
         public RoadRenderLODConfig Config => _config;
 
@@ -20,7 +20,7 @@ namespace Beast.Radar.City
         private Dictionary<int2, Mesh> _gridMeshes;
         private Mesh _globalMesh;
 
-        public RoadRenderLOD(float terrainSize, int lodIndex, RoadRenderLODConfig config, RoadSplineMap roadMap)
+        public RoadSplineRenderLOD(float terrainSize, int lodIndex, RoadRenderLODConfig config, RoadSplineMap roadMap)
         {
             _config = config;
             
@@ -36,12 +36,16 @@ namespace Beast.Radar.City
                 return;
             }
 
+            Profiler.BeginSample("_roadGrid");
+            
             _roadGrid = new CellGrid<int>(_config.cellSize, 256, Allocator.Persistent);
             
             for (int i = 0; i < roadMap.roads.Length; i++)
             {
                 _roadGrid.AddItem(i, roadMap.roads[i].bounds);
             }
+            
+            Profiler.EndSample();
 
             _gridMeshes = RoadMeshBuilder.BuildRoadGridMeshes(
                 this,
@@ -82,33 +86,6 @@ namespace Beast.Radar.City
                         mesh = mesh,
                         matrix = float4x4.identity
                     });
-
-                    renderResult.renderedMeshCount++;
-                    renderResult.renderedVertexCount += mesh.vertexCount;
-                }
-            }
-
-            return renderResult;
-        }
-
-        public RoadRenderLODResult RenderToCommandBuffer(CommandBuffer buffer, Material material, Bounds2D viewBounds)
-        {
-            if (_config.isGlobalLOD)
-            {
-                buffer.DrawMesh(_globalMesh, Matrix4x4.identity, material);
-
-                return new RoadRenderLODResult(1, _globalMesh.vertexCount);
-            }
-            RoadRenderLODResult renderResult = default;
-            
-            _roadGrid.GetCellBounds(viewBounds, out int2 lowerBound, out int2 upperBound);
-            
-            for (int x = lowerBound.x; x <= upperBound.x; x++)
-            for (int y = lowerBound.y; y <= upperBound.y; y++)
-            {
-                if (_gridMeshes.TryGetValue(new int2(x, y), out Mesh mesh))
-                {
-                    buffer.DrawMesh(mesh, Matrix4x4.identity, material);
 
                     renderResult.renderedMeshCount++;
                     renderResult.renderedVertexCount += mesh.vertexCount;

@@ -23,7 +23,7 @@ namespace Beast.Radar.Terrain
         [Required] private readonly ITerrainBakedFbm _bakedTerrain;
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
-        [Required] private readonly GraphicConfig _graphicConfig;
+        [Required] private readonly TerrainRenderConfig _config;
         
         private TextureWithBlocks<TerrainCell> _biomeWithBlocks;
         private AveragePixelCountTexture<TerrainCell> _biomePacked;
@@ -43,7 +43,7 @@ namespace Beast.Radar.Terrain
             _dispose(default);
             
             Profiler.BeginSample("CreateTempRenderTexture");
-            RenderTextureData renderTextureData = _graphicConfig.terrain.biomeRenderTexture.WithSize(terrain.terrainSize);
+            RenderTextureData renderTextureData = _config.biomeRenderTexture.WithSize(terrain.terrainSize);
             RenderTexture biomeRenderTexture = BGraphic.CreateTempRenderTexture(this, renderTextureData);
             Profiler.EndSample();
             
@@ -60,7 +60,7 @@ namespace Beast.Radar.Terrain
             Profiler.EndSample();
 
             Profiler.BeginSample("CreateTexture2D");
-            Texture2DParameters textureParams = _graphicConfig.terrain.biomeTexture2D.WithSize(terrain.terrainSize);
+            Texture2DParameters textureParams = _config.biomeTexture2D.WithSize(terrain.terrainSize);
             Texture2D biomeTexture2D = BGraphic.CreateTexture2D(this, textureParams);
             BGraphic.BlitRenderTextureTo2D(biomeRenderTexture, biomeTexture2D);
             Profiler.EndSample();

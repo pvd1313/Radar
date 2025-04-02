@@ -24,6 +24,7 @@ namespace Beast.Claw.Gizmo
         }
 
         private const int PIXEL_PER_ENTITY = 2;
+        private const int HALF_PER_PIXEL = 4;
         
         [Required] private readonly ICameraTransform _camera;
         [Required] private readonly IScreen _screen;
@@ -48,7 +49,7 @@ namespace Beast.Claw.Gizmo
 
             HandleInfo info = new ()
             {
-                handle = new GizmoHandle(PIXEL_PER_ENTITY),
+                handle = new GizmoHandle(HALF_PER_PIXEL, PIXEL_PER_ENTITY),
                 owner = owner,
             };
 
@@ -59,17 +60,17 @@ namespace Beast.Claw.Gizmo
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
-            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture");
+            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture", HALF_PER_PIXEL);
             
             _handles = new List<HandleInfo>(64);
             
             _canvasMaterial = BGraphic.CreateMaterial(this, _config.canvasShader);
             _shapeMaterial = BGraphic.CreateMaterial(this, _config.shapeShader);
-            _commandBuffer = new CommandBuffer();
+            _commandBuffer = BGraphic.CreateCommandBuffer(this, nameof(GizmoRender));
 
             _canvas = _setupCanvas(_screen.Size);
 
-            _halfStream = new HalfStream(PIXEL_PER_ENTITY, Allocator.Persistent, true);
+            _halfStream = HalfStream.CreateReadWrite(HALF_PER_PIXEL, PIXEL_PER_ENTITY, Allocator.Persistent, true);
             
             return UniTask.CompletedTask;
         }

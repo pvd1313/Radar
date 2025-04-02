@@ -19,7 +19,7 @@ namespace Beast.Radar.Terrain
         public Texture Texture => _texture;
 
         [Required] private readonly ITerrainFbmRender _fbmRender;
-        [Required] private readonly GraphicConfig _config;
+        [Required] private readonly TerrainRenderConfig _config;
         [Required] private readonly IWorldManager _worldManager;
         
         private Texture2D _texture;
@@ -54,7 +54,7 @@ namespace Beast.Radar.Terrain
 
             if (!fbmCacheExists)
             {
-                RenderTextureData tempData = _config.terrain.fbmRenderTexture.WithSize(terrain.terrainSize);
+                RenderTextureData tempData = _config.fbmRenderTexture.WithSize(terrain.terrainSize);
             
                 Profiler.BeginSample("CreateTempRenderTexture");
                 renderTexture = BGraphic.CreateTempRenderTexture(this, tempData);
@@ -72,7 +72,7 @@ namespace Beast.Radar.Terrain
 
             if (_texture == null)
             {
-                Texture2DParameters permData = _config.terrain.fbmTexture2D.WithSize(terrain.terrainSize);
+                Texture2DParameters permData = _config.fbmTexture2D.WithSize(terrain.terrainSize);
             
                 Profiler.BeginSample("CreateTexture2D");
                 _texture = BGraphic.CreateTexture2D(this, permData);

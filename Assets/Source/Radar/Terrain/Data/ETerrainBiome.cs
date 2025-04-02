@@ -10,6 +10,5 @@
         Deep = 4,
         Grass = 5,
         Forest = 7,
-        Road = 8,
     }
 }

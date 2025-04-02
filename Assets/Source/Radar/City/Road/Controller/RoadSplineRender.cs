@@ -10,16 +10,18 @@ using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
+
 using Profiler = UnityEngine.Profiling.Profiler;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
 {
-    public class RoadRender : Actor, ITerrainBiomePostProcessor
+    public class RoadSplineRender : Actor, IRoadSplineRender
     {
+        public RoadSplineMap RoadMap => _roadSplineMap;
+        
         [Required] private readonly IWorldManager _worldManager;
-        [Required] private readonly RoadRenderConfig _config;
+        [Required] private readonly RoadSplineRenderConfig _config;
         [Required] private readonly IRoadSpawner _roadSpawner;
         [Required] private readonly IScreen _screen;
         [Required] private readonly ICameraTransform _camera;
@@ -31,22 +33,15 @@ namespace Beast.Radar.City
         private TerrainData _bakedForTerrain;
         private Material _renderMaterial;
         private IGizmoHandle _gizmo;
-        private CommandBuffer _biomeBuffer;
-        private Material _biomeMaterial;
-        private List<RoadRenderLOD> _lods;
+        private List<RoadSplineRenderLOD> _lods;
 
         protected override UniTask _warmup(ConcurrentContext context)
         {
             _gizmo = _gizmoManager.CreateHandle(this);
 
-            _lods = new List<RoadRenderLOD>();
-            _terrainBiomeRender.RegisterPostProcessor(this, ETerrainBiomePostProcessorPriority.Road);
+            _lods = new List<RoadSplineRenderLOD>();
 
             _renderMaterial = BGraphic.CreateMaterial(this, _config.renderShader);
-            
-            _biomeMaterial = BGraphic.CreateMaterial(this, _config.renderShader);
-            _biomeBuffer = new CommandBuffer();
-            _biomeBuffer.name = "RoadRenderBiomeBuffer";
             
             return UniTask.CompletedTask;
         }
@@ -73,7 +68,7 @@ namespace Beast.Radar.City
             Profiler.BeginSample("CreateLODs");
             for (int i = 0; i < _config.lods.Length; i++)
             {
-                RoadRenderLOD lod = new (terrain.terrainSize, i, _config.lods[i], _roadSplineMap);
+                RoadSplineRenderLOD lod = new (terrain.terrainSize, i, _config.lods[i], _roadSplineMap);
 
                 _lods.Add(lod);
             }
@@ -81,56 +76,13 @@ namespace Beast.Radar.City
             
             BDebug.Track(this, "SplinePointCount", _roadSplineMap.roadPoints.Length);
             BDebug.Track(this, "RoadCount", _roadSplineMap.roads.Length);
-
+            
             return UniTask.CompletedTask;
-        }
-        
-        public void Render(TerrainBiomePostProcess task)
-        {
-            Profiler.BeginSample("RoadRender.Render(TerrainBiomePostProcess)");
-
-            if (_lods.Count == 0)
-            {
-                return;
-            }
-            
-            _biomeBuffer.Clear();
-            _biomeBuffer.SetRenderTarget(task.biomeTexture);
-
-            World2ClipMatrix matrix = new ()
-            {
-                screenSize = task.biomeTexture.Size(),
-                cameraPosition = task.renderPosition,
-                cameraViewDistance = task.viewDistance,
-                cameraRotationRad = default,
-                zOrder = RenderZOrder.TERRAIN_ROAD
-            };
-
-            RoadRenderMaterialSetup materialSetup = new()
-            {
-                shaderMode = ERoadShaderMode.Biome,
-                biomeIndex = ETerrainBiome.Road,
-                lineWidth = 1f / task.biomeTexture.height,
-            };
-            
-            matrix.Apply(_biomeMaterial);
-            materialSetup.Apply(_biomeMaterial);
-
-            Bounds2D viewBounds = Bounds2D.FromPointWithRadius(task.renderPosition, task.viewDistance);
-
-            RoadRenderLODResult renderResult = _lods[0].RenderToCommandBuffer(_biomeBuffer, _biomeMaterial, viewBounds);
-
-            BDebug.Track(this, "Biome_mesh_count", renderResult.renderedMeshCount);
-            BDebug.Track(this, "Biome_vertex_count", renderResult.renderedVertexCount);
-
-            BGraphic.ExecuteBuffer(_biomeBuffer);
-            
-            Profiler.EndSample();
         }
 
         protected override void _render(BlockingContext context)
         {
-            RoadRenderLOD activeLod = null;
+            RoadSplineRenderLOD activeLod = null;
 
             float cameraViewDistance = _camera.ViewDistance;
 
@@ -159,16 +111,20 @@ namespace Beast.Radar.City
                 zOrder = RenderZOrder.TERRAIN_ROAD
             };
 
-            float pixelSize = _config.viewDistanceToPixelSizeCurve.Evaluate(cameraViewDistance);
-
-            BDebug.Track(this, "PixelSize", pixelSize);
+            float lineWidth = _config.viewDistanceToPixelSizeCurve.Evaluate(cameraViewDistance);
+            
+            float alpha = 1f - BMath.InverseLerp(_config.alphaFadeTilePixelSize, _terrainTileRender.TilePixelSize);
+            alpha = BMath.Clamp01(alpha);
+            
+            BDebug.Track(this, "LineWidth", lineWidth);
+            BDebug.Track(this, "Alpha", alpha);
 
             RoadRenderMaterialSetup materialSetup = new()
             {
-                lineWidth = pixelSize / _screen.Height(),
+                lineWidth = lineWidth / _screen.Height(),
                 texture = _config.texture,
                 shaderMode = ERoadShaderMode.Texture,
-                textureAlpha = 1f - _terrainTileRender.TileAlpha01
+                textureAlpha = alpha
             };
 
             materialSetup.Apply(_renderMaterial);
@@ -184,7 +140,7 @@ namespace Beast.Radar.City
 
         private void _disposeLODs()
         {
-            foreach (RoadRenderLOD lod in _lods)
+            foreach (RoadSplineRenderLOD lod in _lods)
             {
                 lod.Dispose();
             }
@@ -197,9 +153,6 @@ namespace Beast.Radar.City
             _disposeLODs();
             
             BGraphic.TryDispose(ref _renderMaterial);
-            BGraphic.TryDispose(ref _biomeMaterial);
-            
-            _biomeBuffer.Dispose();
             
             _roadSplineMap.Dispose();
             _gizmo.Dispose();

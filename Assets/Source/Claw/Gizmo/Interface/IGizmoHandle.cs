@@ -9,11 +9,11 @@ namespace Beast.Claw.Gizmo
         
         void Clear();
         
-        void AddPoint(float2 position);
+        void AddScreenPoint(float2 position);
         
-        void AddPoint(float2 position, float size);
+        void AddScreenPoint(float2 position, float size);
         
-        void AddQuad(float2 position, float worldSize);
+        void AddWorldQuad(float2 position, float worldSize);
 
         void Dispose();
     }

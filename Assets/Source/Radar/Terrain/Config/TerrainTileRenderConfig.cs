@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Graphic;
@@ -6,8 +5,7 @@ using UnityEngine;
 
 namespace Beast.Radar.Terrain
 {
-    [Serializable]
-    public class TileRenderConfig : IConfig
+    public class TerrainTileRenderConfig : ScriptableConfig
     {
         public int fadeInPixelSize;
         public int minPixelSize;
@@ -18,7 +16,7 @@ namespace Beast.Radar.Terrain
         public RenderTextureData renderTexture;
         public RenderTextureData solverTexture;
         
-        public IEnumerable<IConfig> Bind()
+        public override IEnumerable<IConfig> Bind()
         {
             yield break;
         }

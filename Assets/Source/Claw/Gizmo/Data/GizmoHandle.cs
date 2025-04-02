@@ -8,7 +8,7 @@ namespace Beast.Claw.Gizmo
 {
     public class GizmoHandle : IGizmoHandle
     {
-        private const int POINT_SIZE = 4;
+        private const int DEFAULT_SCREEN_POINT_SIZE = 4;
         
         public bool IsDisposed { get; private set; }
 
@@ -17,9 +17,9 @@ namespace Beast.Claw.Gizmo
         private ushort _colorX;
         private ushort _colorY;
 
-        public GizmoHandle(int pixelPerEntity)
+        public GizmoHandle(int pixelComponentCount, int pixelPerEntity)
         {
-            halfStream = new HalfStream(pixelPerEntity, Allocator.Persistent, false);
+            halfStream = HalfStream.CreateReadWrite(pixelComponentCount, pixelPerEntity, Allocator.Persistent, false);
             
             BConvert.ColorToHalf2(Color.white, out _colorX, out _colorY);
         }
@@ -34,14 +34,14 @@ namespace Beast.Claw.Gizmo
             halfStream.Clear();
         }
 
-        public void AddPoint(float2 position)
+        public void AddScreenPoint(float2 position)
         {
-            AddPoint(position, POINT_SIZE);
+            AddScreenPoint(position, DEFAULT_SCREEN_POINT_SIZE);
         }
         
         // In the future we will probably create NativeBinaryStream,
         // so we will have to forget about this byte boilerplate.
-        public void AddPoint(float2 position, float pixelSize)
+        public void AddScreenPoint(float2 position, float pixelSize)
         {
             NativeSlice<ushort> buffer = halfStream.WriteNextEntity();
             
@@ -58,7 +58,7 @@ namespace Beast.Claw.Gizmo
             buffer[7] = py1;
         }
 
-        public void AddQuad(float2 position, float worldSize)
+        public void AddWorldQuad(float2 position, float worldSize)
         {
             NativeSlice<ushort> buffer = halfStream.WriteNextEntity();
             

@@ -19,8 +19,9 @@ namespace Beast.Radar.Sprite
     {
         public NativeSlice<SpriteInfo> Sprites => _atlasManager.Sprites;
 
+        public const int HALF_PER_PIXEL = 4;
         public const int PIXEL_PER_SPRITE = 2;
-        public const int HALF_PER_SPRITE = PIXEL_PER_SPRITE * 4;
+        public const int HALF_PER_SPRITE = PIXEL_PER_SPRITE * HALF_PER_PIXEL;
         
         [Required] private readonly SpriteRenderConfig _config;
         [Required] private readonly IEntityManager _entityManager;
@@ -42,8 +43,8 @@ namespace Beast.Radar.Sprite
             _entityQuery = _entityManager.CreateEntityQuery(
                 typeof(PositionComponent), 
                 typeof(SpriteComponent));
-            _halfStream = new HalfStream(PIXEL_PER_SPRITE, Allocator.Persistent, true);
-            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture");
+            _halfStream = HalfStream.CreateReadWrite(HALF_PER_PIXEL, PIXEL_PER_SPRITE, Allocator.Persistent, true);
+            _halfTextureProvider = new HalfTextureProvider(this, "DataTexture", HALF_PER_PIXEL);
             _renderMaterial = BGraphic.CreateMaterial(this, _config.renderShader);
             
             return UniTask.CompletedTask;

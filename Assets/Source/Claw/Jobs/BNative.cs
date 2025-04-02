@@ -38,7 +38,7 @@ namespace Beast.Claw.Jobs
         {
             array = new NativeHashSet<T>(capacity, Allocator.Persistent);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeList<T> PermList<T>(int capacity) where T : unmanaged
         {

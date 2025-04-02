@@ -40,6 +40,19 @@ namespace Beast.Claw.Graphic
             Object.Destroy(mesh);
         }
         
+        public static void Dispose(CommandBuffer commandBuffer)
+        {
+            commandBuffer.Dispose();
+        }
+        
+        public static void TryDispose(ref CommandBuffer commandBuffer)
+        {
+            if (commandBuffer != null)
+            {
+                commandBuffer.Dispose();
+            }
+        }
+        
         public static void Dispose(Texture2D texture)
         {
             texture.ValidateNotNullThrowException(nameof(texture));

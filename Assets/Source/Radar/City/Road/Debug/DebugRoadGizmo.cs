@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Beast.Radar.City
 {
     [StaticUtility]
-    public static class RoadDebug
+    public static class DebugRoadGizmo
     {
         [Conditional("DEVELOPMENT")]
         public static void DrawRoadPathMap(IGizmoHandle gizmo, RoadPathMap roadMap)
@@ -30,12 +30,12 @@ namespace Beast.Radar.City
                 
                 if (junctionPoints.Add(startPoint))
                 {
-                    gizmo.AddPoint(startPoint + new float2(0.5f, 0.5f), 8f);
+                    gizmo.AddScreenPoint(startPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
                 if (junctionPoints.Add(endPoint))
                 {
-                    gizmo.AddPoint(endPoint + new float2(0.5f, 0.5f), 8f);
+                    gizmo.AddScreenPoint(endPoint + new float2(0.5f, 0.5f), 8f);
                 }
                 
                 gizmo.SetColor(Color.black);
@@ -44,7 +44,7 @@ namespace Beast.Radar.City
                 {
                     ushort2 point = roadMap.roadPoints[road.startPointIndex + i];
                     
-                    gizmo.AddPoint(point + new float2(0.5f, 0.5f), 4f);
+                    gizmo.AddScreenPoint(point + new float2(0.5f, 0.5f), 4f);
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace Beast.Radar.City
 
             foreach (float2 point in points)
             {
-                gizmo.AddPoint(point);
+                gizmo.AddScreenPoint(point);
             }
         }
 
@@ -98,14 +98,14 @@ namespace Beast.Radar.City
                 
             for (int i = 0; i < road.pointCount; i++)
             {
-                gizmo.AddPoint(roadMap.roadPoints[road.firstPointIndex + i], 8);
+                gizmo.AddScreenPoint(roadMap.roadPoints[road.firstPointIndex + i], 8);
             }
                 
             gizmo.SetColor(Color.gray);
                 
             for (int i = 0; i < road.pointCount - 1; i++)
             {
-                gizmo.AddPoint(roadMap.roadHandles[road.firstPointIndex + i], 4);
+                gizmo.AddScreenPoint(roadMap.roadHandles[road.firstPointIndex + i], 4);
             }
         }
     }

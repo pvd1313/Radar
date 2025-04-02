@@ -12,6 +12,7 @@ using Beast.Claw.Validation;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 namespace Beast.Claw.Graphic
 {
@@ -84,9 +85,9 @@ namespace Beast.Claw.Graphic
             }
         }
 
-        public static int2 GetDataTextureSize(int dataCount)
+        public static int2 GetDataTextureSize(int pixelCount)
         {
-            return _dataTextureSizeTable[BMath.IntCeilLog2(dataCount)];
+            return _dataTextureSizeTable[BMath.IntCeilLog2(pixelCount)];
         }
 
         public static RenderTexture CreatePermRenderTexture(IController owner, RenderTextureData input)
@@ -140,6 +141,14 @@ namespace Beast.Claw.Graphic
             return new Material(input.shader)
             {
                 name = owner.Meta.name + "_" + input.name
+            };
+        }
+
+        public static CommandBuffer CreateCommandBuffer(IController owner, string name)
+        {
+            return new CommandBuffer
+            {
+                name = name
             };
         }
 

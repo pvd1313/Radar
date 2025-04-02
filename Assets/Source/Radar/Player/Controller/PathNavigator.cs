@@ -53,7 +53,7 @@ namespace Beast.Radar.Player
                 {
                     float2 position = point.Mul(_cellSize) + cellSizeHalf;
                     
-                    gizmo.AddQuad(position, _cellSize);
+                    gizmo.AddWorldQuad(position, _cellSize);
                 }
             }
         }

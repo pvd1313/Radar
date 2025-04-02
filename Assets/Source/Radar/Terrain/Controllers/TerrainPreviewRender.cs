@@ -1,9 +1,9 @@
-﻿using Beast.Claw.Common;
+﻿using Beast.Claw.Attributes;
+using Beast.Claw.Common;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Beast.Claw.Text;
 using Beast.Claw.Validation;
-using Beast.Radar.Graphic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,22 +11,10 @@ namespace Beast.Radar.Terrain
 {
     public class TerrainPreviewRender : ITerrainPreviewRender
     {
-        private readonly IRender<TerrainFbmRenderTask> _fbmRender;
-        private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
-        private readonly IRender<TerrainColorRenderTask> _colorRender;
-        private readonly GraphicConfig _config;
-
-        public TerrainPreviewRender(
-            IRender<TerrainFbmRenderTask> fbmRender, 
-            IRender<TerrainBiomeRenderTask> biomeRender,
-            IRender<TerrainColorRenderTask> colorRender,
-            GraphicConfig config)
-        {
-            _fbmRender = fbmRender;
-            _biomeRender = biomeRender;
-            _colorRender = colorRender;
-            _config = config;
-        }
+        [Required] private readonly IRender<TerrainFbmRenderTask> _fbmRender;
+        [Required] private readonly IRender<TerrainBiomeRenderTask> _biomeRender;
+        [Required] private readonly IRender<TerrainColorRenderTask> _colorRender;
+        [Required] private readonly TerrainRenderConfig _config;
         
         public TerrainPreviewTexture CreateTexture(IController owner, int2 pixelSize) 
         {
@@ -41,9 +29,9 @@ namespace Beast.Radar.Terrain
                 }
             }
             
-            RenderTextureData bakerData = _config.terrain.fbmRenderTexture.WithSize(pixelSize);
-            RenderTextureData biomeData = _config.terrain.biomeRenderTexture.WithSize(pixelSize);
-            RenderTextureData colorData = _config.terrain.colorRenderTexture.WithSize(pixelSize);
+            RenderTextureData bakerData = _config.fbmRenderTexture.WithSize(pixelSize);
+            RenderTextureData biomeData = _config.biomeRenderTexture.WithSize(pixelSize);
+            RenderTextureData colorData = _config.colorRenderTexture.WithSize(pixelSize);
             colorData.filterMode = FilterMode.Bilinear;
 
             return new TerrainPreviewTexture
