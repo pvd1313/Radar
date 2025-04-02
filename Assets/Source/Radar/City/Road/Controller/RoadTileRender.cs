@@ -69,20 +69,6 @@ namespace Beast.Radar.City
                 _roadGrid.AddItem(i, splineMap.roads[i].bounds);
             }
 
-            RoadSplineVariantJob variantJob = new()
-            {
-                inSplineMap = splineMap,
-                outSplineMasks = BNative.TempJobHashSet<long>(splineMap.roadPoints.Length)
-            };
-            
-            Profiler.BeginSample("RoadSplineVariantJob");
-            variantJob.Run();
-            Profiler.EndSample();
-            
-            BDebug.Track(this, "SplineVariantCount", variantJob.outSplineMasks.Count);
-            
-            variantJob.outSplineMasks.Dispose();
-            
             return UniTask.CompletedTask;
         }
 
