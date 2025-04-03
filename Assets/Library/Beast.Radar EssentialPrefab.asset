@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d77c9998965345c495ac8ebdcc4d9ac5, type: 3}
-  m_Name: EssentialPrefabILibrary
+  m_Name: Beast.Radar EssentialPrefab
   m_EditorClassIdentifier: 
   camera: {fileID: 1245481504574553218, guid: fff9dba757b0b7744b4cf4134ae07e34, type: 3}
   canvas: {fileID: 5995632739960289764, guid: 2819355c00a7dca46807fcb3591cc28e, type: 3}

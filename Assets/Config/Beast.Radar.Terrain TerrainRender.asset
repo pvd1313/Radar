@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af59f56e7cb14ac29b5d0ed47509621f, type: 3}
-  m_Name: TerrainRenderConfig
+  m_Name: Beast.Radar.Terrain TerrainRender
   m_EditorClassIdentifier: 
   noiseSamplerLOD1: 4
   noiseSamplerLOD0: 16

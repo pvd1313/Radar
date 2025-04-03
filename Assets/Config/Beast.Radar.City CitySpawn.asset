@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0275bf768ac44509e92a24b40a3ed95, type: 3}
-  m_Name: CitySpawnConfig
+  m_Name: Beast.Radar.City CitySpawn
   m_EditorClassIdentifier: 
   majorCityGridSize: 256
   minorCityGridSize: 64

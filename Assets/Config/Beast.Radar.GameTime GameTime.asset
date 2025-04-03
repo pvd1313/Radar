@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d00694f2dc4f4fa79b709cb15ee52b41, type: 3}
-  m_Name: CameraConfig
+  m_Script: {fileID: 11500000, guid: 8dad44889f1840279c0d409a4fbdec87, type: 3}
+  m_Name: Beast.Radar.GameTime GameTime
   m_EditorClassIdentifier: 
-  transform:
-    isometricRotationDeg:
-      roll: 45
-      pitch: 60
-    minViewDistance: 0.05
-    plainModeViewDistance01: 1
-    enablePlanetMode: 0
-  zoomSmoothSpeed: 0.3
+  initialDate:
+    _dateString: 1 Jan 2048
+  playerIdleTimeScaleMinutesPerSecond: 0.25
+  playerWalkingTimeScaleMinutesPerSecond: 10

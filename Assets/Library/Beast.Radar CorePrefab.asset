@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc684d3e0d624c38a9ed5c2711908367, type: 3}
-  m_Name: CorePrefabLibrary
+  m_Name: Beast.Radar CorePrefab
   m_EditorClassIdentifier: 
   worldView: {fileID: -1277675084398546024, guid: 4d04b7825d838b64da1a038da4ccdef1, type: 3}
   city: {fileID: 5710242157538740328, guid: b0a3d4bb89bbe8b4698e740f3718865a, type: 3}

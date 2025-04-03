@@ -9,8 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8523486fa744649bcd563ed074140e1, type: 3}
-  m_Name: LoadingScreenConfig
+  m_Script: {fileID: 11500000, guid: 09725c04129443a6aa132f725231ce35, type: 3}
+  m_Name: Beast.Claw.GameLoop GameLoop
   m_EditorClassIdentifier: 
-  asset:
-    asset: {fileID: -8414808784256213763, guid: 262316ce30d78a24682627aa22e79071, type: 3}
+  exceptionStopsUpdates: 1
+  updateExceptionThreshold: 0
+  profiler:
+    customProfilingEnabled: 0
+    maxRecordCount: 128
+    stackSize: 16

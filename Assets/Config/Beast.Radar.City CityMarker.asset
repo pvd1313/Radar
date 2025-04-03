@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f93b579262e742edbe03382de061fe57, type: 3}
-  m_Name: CityMarkerConfig
+  m_Name: Beast.Radar.City CityMarker
   m_EditorClassIdentifier: 
   textConfig:
     fontAsset: {fileID: 12800000, guid: 6b07a549354f95b4a8bb1624976af11f, type: 3}

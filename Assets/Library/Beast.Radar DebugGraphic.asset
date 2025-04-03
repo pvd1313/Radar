@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d030767d256c40d4b4f807d609e5a395, type: 3}
-  m_Name: DebugGraphicLibrary
+  m_Name: Beast.Radar DebugGraphic
   m_EditorClassIdentifier: 
   bakedTerrain: {fileID: 2800000, guid: 58b335f725136d34f87e526fd13b0d9f, type: 3}
   terrainGrid: {fileID: 2800000, guid: 5cc3f77f81bfde1429e81d76a13605e0, type: 3}

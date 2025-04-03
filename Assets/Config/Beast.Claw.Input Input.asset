@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b941cd9dec954a259d1d16326b318895, type: 3}
-  m_Name: InputConfig
+  m_Name: Beast.Claw.Input Input
   m_EditorClassIdentifier: 
   touchScreen:
     discreteZoomMultiplier: 20

@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dad44889f1840279c0d409a4fbdec87, type: 3}
-  m_Name: WorldTimeConfig
+  m_Script: {fileID: 11500000, guid: 5e975fbe74db4c82b91491ee4365ef54, type: 3}
+  m_Name: Beast.Radar.City RoadTileRender
   m_EditorClassIdentifier: 
-  initialDate:
-    _dateString: 1 Jan 2048
-  playerIdleTimeScaleMinutesPerSecond: 0.25
-  playerWalkingTimeScaleMinutesPerSecond: 10
+  cellSize: 64
+  pixelPlotShader: {fileID: 4800000, guid: 6ff5adc7b9c6fc54d8de65602f0bb8e5, type: 3}

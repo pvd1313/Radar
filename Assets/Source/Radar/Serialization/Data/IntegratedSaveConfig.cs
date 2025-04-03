@@ -4,7 +4,7 @@ using Beast.Radar.World;
 
 namespace Beast.Radar.Serialization
 {
-    public class IntegratedSave : ScriptableConfig
+    public class IntegratedSaveConfig : ScriptableConfig
     {
         public GameModel gameModel;
         public WorldData worldData;

@@ -16,7 +16,7 @@ namespace Beast.Radar.Core
     {
         [Required] private readonly IWindowManager _window;
         [Required] private readonly ISaveManager _saveManager;
-        [Required] private readonly IntegratedSave _integratedSave;
+        [Required] private readonly IntegratedSaveConfig _integratedSave;
         [Required] private readonly IGameLoop _gameLoop;
         [Required] private readonly IWorldManager _worldManager;
         [Required] private readonly IObjectResolver _container;
