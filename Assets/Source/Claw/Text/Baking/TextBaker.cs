@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
@@ -8,7 +7,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Text.Baking
+namespace Beast.Claw.Text
 {
     public class TextBaker : Controller
     {

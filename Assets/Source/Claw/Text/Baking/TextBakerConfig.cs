@@ -2,7 +2,7 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Text.Baking
+namespace Beast.Claw.Text
 {
     [Serializable]
     public class TextBakerConfig

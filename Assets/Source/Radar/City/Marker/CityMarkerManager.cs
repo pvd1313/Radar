@@ -5,7 +5,7 @@ using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
-using Beast.Claw.Text.Baking;
+using Beast.Claw.Text;
 using Beast.Radar.Sprite;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;

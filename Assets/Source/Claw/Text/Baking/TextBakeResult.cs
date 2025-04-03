@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Beast.Claw.Text.Baking
+namespace Beast.Claw.Text
 {
     public struct TextBakeResult
     {
