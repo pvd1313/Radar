@@ -12,7 +12,6 @@ using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
-using Unity.Jobs;
 
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
@@ -84,9 +83,7 @@ namespace Beast.Radar.City
                     outSegments = BNative.TempJobList<ushort>(256),
                 };
 
-                BProfiler.BeginSample("roadPath8KMJob");
-                roadPath8KMJob.Run();
-                BProfiler.EndSample();
+                roadPath8KMJob.Invoke();
 
                 terrain8KMClone.Dispose();
 
@@ -123,9 +120,7 @@ namespace Beast.Radar.City
                     outSegmentPointCount = BNative.TempJobArray<int>(segmentsToSearch.Length)
                 };
 
-                BProfiler.BeginSample("roadPath1KMJob");
-                roadPath1KMJob.Schedule(segmentsToSearch.Length, 8).Complete();
-                BProfiler.EndSample();
+                roadPath1KMJob.Invoke(segmentsToSearch.Length, 8);
 
                 BProfiler.BeginSample("RoadUtil.CreateRoadPathMap");
                 _roadMap = RoadUtil.CreateRoadPathMap(roadPath1KMJob, maxPointPerSegment, Allocator.Persistent);
@@ -143,7 +138,6 @@ namespace Beast.Radar.City
                 roadPath1KMJob.outSegments.Dispose();
             }
             
-            BProfiler.BeginSample("RoadCellFeatureSetJob");
             RoadCellFeatureJob featureJob = new()
             {
                 inRoadMap = _roadMap,
@@ -151,8 +145,7 @@ namespace Beast.Radar.City
                 inOutTerrain8KM = _biome.Terrain8kmCell
             };
 
-            featureJob.Schedule(_roadMap.roads.Length, 8).Complete();
-            BProfiler.EndSample();
+            featureJob.Invoke(_roadMap.roads.Length, 8);
 
             BDebug.Track(this, "RoadCount", _roadMap.roads.Length);
             BDebug.Track(this, "PointCount", _roadMap.roadPoints.Length);

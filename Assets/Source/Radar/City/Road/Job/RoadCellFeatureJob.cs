@@ -1,8 +1,8 @@
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Radar.City
 {
@@ -10,7 +10,7 @@ namespace Beast.Radar.City
     /// Add ETerrainFeature.Road to cells containing roads.
     /// </summary>
     [BurstCompile]
-    public struct RoadCellFeatureJob : IJobParallelFor
+    public struct RoadCellFeatureJob : IMultiJob
     {
         [ReadOnly] public RoadPathMap inRoadMap;
 

@@ -3,12 +3,11 @@ using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct RoadBoundsSliceJob : IJob
+    public struct RoadBoundsSliceJob : ISingleJob
     {
         public Bounds2D inBounds;
         public CellGrid<int> inRoadGrid;

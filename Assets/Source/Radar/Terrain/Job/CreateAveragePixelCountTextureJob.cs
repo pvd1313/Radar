@@ -1,12 +1,12 @@
-﻿using Unity.Burst;
+﻿using Beast.Claw.Jobs;
+using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Terrain
 {
     [BurstCompile]
-    public struct CreateAveragePixelCountTextureJob : IJobParallelFor
+    public struct CreateAveragePixelCountTextureJob : IMultiJob
     {
         [ReadOnly] public TextureWithBlocks<TerrainCell> sourceTexture;
 

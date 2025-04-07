@@ -1,14 +1,14 @@
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct RoadSplineRasterizationJob : IJobParallelFor
+    public struct RoadSplineRasterizationJob : IMultiJob
     {
         [ReadOnly] public NativeArray<int> inCurves;
         [NativeDisableParallelForRestriction, ReadOnly] public RoadSplineMap inRoadMap;

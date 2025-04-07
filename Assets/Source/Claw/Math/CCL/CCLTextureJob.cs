@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Math.CCL
@@ -12,7 +12,7 @@ namespace Beast.Claw.Math.CCL
     /// Connected component labeling. 8 connections on 2D texture. Allows to recognize separate shapes.
     /// </summary>
     [BurstCompile]
-    public struct CCLTextureJob<TTexture> : IJob 
+    public struct CCLTextureJob<TTexture> : ISingleJob 
         where TTexture : ICCLTexture
     {
         public TTexture inTexture;

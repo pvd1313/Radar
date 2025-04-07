@@ -10,7 +10,6 @@ using Beast.Radar.Graphic;
 using Beast.Radar.Navigation;
 using Beast.Radar.Terrain;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -170,9 +169,7 @@ namespace Beast.Radar.Player
             };
             
             _stopwatch.Restart();
-            BProfiler.BeginSample("8km_job");
-            job.Run();
-            BProfiler.EndSample();
+            job.Invoke();
             _stopwatch.Stop();
             BDebug.Track(this, "8km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
 
@@ -212,10 +209,9 @@ namespace Beast.Radar.Player
             };
             
             _stopwatch.Restart();
-            BProfiler.BeginSample("1km_job");
-            job.Run();
-            BProfiler.EndSample();
+            job.Invoke();
             _stopwatch.Stop();
+            
             BDebug.Track(this, "1km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
             
             _path1KM.Setup(job.buffer.outputPathReversed, 1);

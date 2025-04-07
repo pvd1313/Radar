@@ -7,7 +7,6 @@ using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Claw.Validation;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -56,7 +55,7 @@ namespace Beast.Radar.Terrain
             };
             
             BProfiler.BeginSample("TextureToBlocksJob.Execute()");
-            job.Schedule(blockCountX * blockCountX, 32).Complete();
+            job.Invoke(blockCountX * blockCountX, 32);
             BProfiler.EndSample();
 
             return new TextureWithBlocks<TerrainCell>

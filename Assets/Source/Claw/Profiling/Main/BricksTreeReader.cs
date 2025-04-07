@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Validation;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Profiling
@@ -38,7 +37,7 @@ namespace Beast.Claw.Profiling
                 outTotalNodeCount = BNative.TempJobArray<int>(1),
                 outNodes = BNative.TempJobArray<BricksNativeNode>(count)
             };
-            job.Run();
+            job.Invoke();
             
             int nodeCount = job.outNodeCount[0];
             result.Clear();

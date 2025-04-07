@@ -1,6 +1,5 @@
 using Beast.Claw.Attributes;
 using Beast.Claw.Collections;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -11,7 +10,6 @@ using Beast.Radar.Terrain;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -85,9 +83,7 @@ namespace Beast.Radar.City
                 outRoadSlices = BNative.TempJobArray<RoadSplineSlice>(16)
             };
             
-            BProfiler.BeginSample(nameof(RoadBoundsSliceJob));
-            roadBoundsSliceJob.Run();
-            BProfiler.EndSample();
+            roadBoundsSliceJob.Invoke();
 
             int totalCurveCount = roadBoundsSliceJob.outRoadCurveCount.Value;
             int totalSliceCount = roadBoundsSliceJob.outRoadSliceCount.Value;
@@ -141,9 +137,7 @@ namespace Beast.Radar.City
                 outPixelCount = BNative.TempJobArray<int>(totalCurveCount)
             };
             
-            BProfiler.BeginSample("RoadSplineRasterizationJob");
-            rasterizationJob.SmartExecute(totalCurveCount, 4);
-            BProfiler.EndSample();
+            rasterizationJob.Invoke(totalCurveCount, 4);
 
             BProfiler.BeginSample("MemCopyPixelBuffer");
             int totalPixelCount = 0;

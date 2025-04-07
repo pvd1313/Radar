@@ -2,10 +2,10 @@
 using System.IO;
 using Beast.Claw.Common;
 using Beast.Claw.Graphic;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math.CCL;
 using Beast.Radar.Terrain;
 using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Beast.Radar.City
@@ -23,7 +23,7 @@ namespace Beast.Radar.City
                 outLabeledTexture = new NativeArray<ushort>(textureSizeX * textureSizeX, Allocator.TempJob)
             };
 			
-            recognitionJob.Run();
+            recognitionJob.Invoke();
 
             Texture2D cclTexture = BGraphic.CreateTexture2D(this, new Texture2DParameters
             {

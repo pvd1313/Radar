@@ -3,12 +3,11 @@ using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct RoadSliceSplinesJob : IJobParallelFor
+    public struct RoadSliceSplinesJob : IMultiJob
     {
         [ReadOnly, NativeDisableParallelForRestriction] public RoadSplineMap inRoadMap;
         [ReadOnly, NativeDisableParallelForRestriction] public CellGrid<int> inRoadGrid;

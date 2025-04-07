@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Graphic;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
@@ -10,7 +10,7 @@ namespace Beast.Radar.City
     /// <summary>
     /// Converts road paths to bezier splines.
     /// </summary>
-    public struct RoadSplineMapJob : IJobParallelFor
+    public struct RoadSplineMapJob : IMultiJob
     {
         [ReadOnly, NativeDisableParallelForRestriction] public NativeArray<ushort2> inRoadPathPoints;
         [ReadOnly] public NativeArray<RoadPath> inRoadPaths;

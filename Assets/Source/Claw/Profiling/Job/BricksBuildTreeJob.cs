@@ -1,13 +1,13 @@
 using System.Runtime.CompilerServices;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Claw.Profiling
 {
     [BurstCompile]
-    internal struct BricksBuildTreeJob : IJob
+    internal struct BricksBuildTreeJob : ISingleJob
     {
         [ReadOnly] public NativeArray<BricksRecord> inRecords;
         [ReadOnly] public int inRecordCount;

@@ -4,7 +4,6 @@ using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Terrain
@@ -92,9 +91,7 @@ namespace Beast.Radar.Terrain
             };
             BProfiler.EndSample();
             
-            BProfiler.BeginSample("CreateAveragePixelCountTextureJob.Execute()");
-            job.Schedule(texture.blockCountX * texture.blockCountX, 16).Complete();
-            BProfiler.EndSample();
+            job.Invoke(texture.blockCountX * texture.blockCountX, 16);
 
             return new AveragePixelCountTexture<TerrainCell>
             {

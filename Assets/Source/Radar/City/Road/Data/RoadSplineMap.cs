@@ -1,10 +1,8 @@
 using System;
 using Beast.Claw.Common;
-using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
@@ -38,9 +36,7 @@ namespace Beast.Radar.City
                 outRoadLength = BNative.TempJobArray<float>(roadCount),
             };
             
-            BProfiler.BeginSample("RoadSplineJob");
-            splineMapJob.Schedule(roadCount, 8).Complete();
-            BProfiler.EndSample();
+            splineMapJob.Invoke(roadCount, 8);
 
             int totalPointCount = 0;
             foreach (int pointCount in splineMapJob.outRoadSplinePointCount)

@@ -1,13 +1,13 @@
-﻿using Beast.Claw.Math;
+﻿using Beast.Claw.Jobs;
+using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Navigation
 {
     [BurstCompile]
-    public struct FindPathJob<TCostComputer> : IJob 
+    public struct FindPathJob<TCostComputer> : ISingleJob 
         where TCostComputer : IMotionCostComputer     
     {
         public int2 startPosition;

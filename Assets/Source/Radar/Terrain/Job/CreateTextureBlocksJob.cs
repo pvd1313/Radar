@@ -1,11 +1,11 @@
-﻿using Unity.Burst;
+﻿using Beast.Claw.Jobs;
+using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Radar.Terrain
 {
     [BurstCompile]
-    public struct CreateTextureBlocksJob<TValue, TConverter> : IJobParallelFor 
+    public struct CreateTextureBlocksJob<TValue, TConverter> : IMultiJob 
         where TValue : unmanaged
         where TConverter : unmanaged, IShortTextureConverter<TValue>
     {

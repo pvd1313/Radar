@@ -1,5 +1,4 @@
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
@@ -72,7 +71,6 @@ namespace Beast.Radar.Sprite
         protected override void _render(BlockingContext context)
         {
             BProfiler.BeginSample("PrepareBuffer");
-
             NativeArray<ArchetypeChunk> chunks = _entityQuery.ToArchetypeChunkArray(Allocator.TempJob);
             NativeArray<int> writeOffsets = BNative.TempJobArray<int>(chunks.Length);
 
@@ -97,12 +95,9 @@ namespace Beast.Radar.Sprite
                 outEntityCounters = entityCounters,
                 outData = pixels
             };
-
             BProfiler.EndSample();
 
-            BProfiler.BeginSample("SpriteRenderPrepareJob");
-            job.ExecuteOn(chunks);
-            BProfiler.EndSample();
+            job.Invoke(chunks);
 
             BProfiler.BeginSample("UnionHalfStream");
             _halfStream.Clear();

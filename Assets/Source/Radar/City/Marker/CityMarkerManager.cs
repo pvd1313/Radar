@@ -147,7 +147,7 @@ namespace Beast.Radar.City
                 outLabelCommandCounters = BNative.TempJobArray<byte>(chunks.Length)
             };
 
-            markerJob.ExecuteOn(chunks);
+            markerJob.Invoke(chunks);
 
             for (int i = 0; i < markerJob.outLabelCommandCounters.Length; i++)
             {

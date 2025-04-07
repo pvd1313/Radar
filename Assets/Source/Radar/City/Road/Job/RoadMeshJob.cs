@@ -1,12 +1,12 @@
+using Beast.Claw.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct RoadMeshJob : IJobParallelFor
+    public struct RoadMeshJob : IMultiJob
     {
         [NativeDisableParallelForRestriction, ReadOnly] public NativeArray<float2> inPoints;
         [ReadOnly] public NativeArray<int> inPointCount;

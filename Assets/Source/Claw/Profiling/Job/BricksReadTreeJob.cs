@@ -1,12 +1,12 @@
+using Beast.Claw.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Claw.Profiling
 {
     [BurstCompile]
-    internal struct BricksReadTreeJob : IJob
+    internal struct BricksReadTreeJob : ISingleJob
     {
         [ReadOnly] public NativeArray<ushort> inChilds;
         [ReadOnly] public NativeArray<ushort> inSiblings;

@@ -4,7 +4,6 @@ using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
 using Beast.Claw.Validation;
 using Unity.Collections;
-using Unity.Jobs;
 
 namespace Beast.Claw.Profiling
 {
@@ -90,11 +89,9 @@ namespace Beast.Claw.Profiling
                 nameHashStack = BNative.TempJobArray<int>(_config.stackSize)
             };
             
-            BProfiler.BeginSample("ProfilingManager.BuildTreeJob");
             _buildTreeJobTimer.Restart();
-            job.Run();
+            job.Invoke();
             _buildTreeJobTimer.Stop();
-            BProfiler.EndSample();
 
             float elapsedMS = _buildTreeJobTimer.ElapsedMillisecondsFloat();
             BDebug.Track(this, "BuildTreeJobMS", elapsedMS);

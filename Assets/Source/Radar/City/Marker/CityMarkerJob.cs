@@ -1,15 +1,15 @@
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Sprite;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct CityMarkerJob : IJobParallelFor
+    public struct CityMarkerJob : IMultiJob
     {
         public const int MAX_COMMAND_COUNT = 4;
         

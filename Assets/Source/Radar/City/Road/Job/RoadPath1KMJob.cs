@@ -1,14 +1,14 @@
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Radar.Navigation;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct RoadPath1KMJob : IJobParallelFor
+    public struct RoadPath1KMJob : IMultiJob
     {
         [ReadOnly] public NativeSlice<RoadSegment> inSegments;
         [ReadOnly] public int inMaxPointPerSegment;

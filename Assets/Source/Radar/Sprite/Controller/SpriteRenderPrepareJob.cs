@@ -1,14 +1,14 @@
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.Sprite
 {
     [BurstCompile]
-    public struct SpriteRenderPrepareJob : IJobParallelFor
+    public struct SpriteRenderPrepareJob : IMultiJob
     {
         [ReadOnly] public NativeArray<ArchetypeChunk> inChunks;
         [ReadOnly] public NativeArray<int> inWriteOffset;

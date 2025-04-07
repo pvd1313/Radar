@@ -8,7 +8,6 @@ using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -69,9 +68,7 @@ namespace Beast.Radar.City
                 outPoints = roadPoints
             };
 
-            BProfiler.BeginSample("ContinuousRoadSplinePointsJob");
-            splinePointsJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
-            BProfiler.EndSample();
+            splinePointsJob.Invoke(roadSplineMap.roads.Length, 8);
             
             int vertexCount = 0;
             int triangleCount = 0;
@@ -109,9 +106,7 @@ namespace Beast.Radar.City
                 outNormals = normals
             };
             
-            BProfiler.BeginSample("RoadMeshJob");
-            meshJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
-            BProfiler.EndSample();
+            meshJob.Invoke(roadSplineMap.roads.Length, 8);
 
             pointOffset.Dispose();
             pointCount.Dispose();
@@ -166,9 +161,7 @@ namespace Beast.Radar.City
                 outSliceCount = BNative.TempJobArray<int>(cellTotal),
             };
             
-            BProfiler.BeginSample("RoadSliceSplinesJob");
-            sliceJob.Schedule(cellTotal, 16).Complete();
-            BProfiler.EndSample();
+            sliceJob.Invoke(cellTotal, 16);
 
             BProfiler.BeginSample("Compute sliceCountTotal");
             int sliceCountTotal = 0;
@@ -225,9 +218,7 @@ namespace Beast.Radar.City
                 outPointCount = BNative.TempJobArray<int>(sliceCountTotal)
             };
             
-            BProfiler.BeginSample("RoadSlicedSplinePointsJob");
-            pointsJob.Schedule(sliceCountTotal, 8).Complete();
-            BProfiler.EndSample();
+            pointsJob.Invoke(sliceCountTotal, 8);
 
             NativeArray<int> vertexOffsets = BNative.TempJobArray<int>(sliceCountTotal);
             NativeArray<int> triangleOffsets = BNative.TempJobArray<int>(sliceCountTotal);
@@ -283,14 +274,10 @@ namespace Beast.Radar.City
                 inTriangleOffset = triangleOffsets
             };
             
-            BProfiler.BeginSample("RoadMeshJob");
-            meshJob.Schedule(sliceCountTotal, 8).Complete();
-            BProfiler.EndSample();
+            meshJob.Invoke(sliceCountTotal, 8);
 
             BProfiler.BeginSample("Create meshes");
-            
             Dictionary<int2, Mesh> gridMeshes = new(meshCount);
-
             for (int i = 0; i < sliceCountTotal;)
             {
                 int2 cellIndex = cellIndices[i];

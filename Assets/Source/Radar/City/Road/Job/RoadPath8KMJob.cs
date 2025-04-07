@@ -4,18 +4,18 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Debug;
+using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Claw.Math.CCL;
 using Beast.Radar.Navigation;
 using Beast.Radar.Terrain;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [Unity.Burst.BurstCompile]
-    public struct RoadPath8KMJob : IJob
+    public struct RoadPath8KMJob : ISingleJob
     {
         public NativeSlice<CityInfo> inCities;
         public AveragePixelCountTexture<TerrainCell> inOutTerrain8KM;

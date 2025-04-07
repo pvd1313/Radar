@@ -1,14 +1,14 @@
-﻿using Beast.Claw.Math;
+﻿using Beast.Claw.Jobs;
+using Beast.Claw.Math;
 using Beast.Radar.Terrain;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Beast.Radar.City
 {
     [BurstCompile]
-    public struct CitySpawnJob : IJob
+    public struct CitySpawnJob : ISingleJob
     {
         public int maxCityCountX;
         public float gridSize;

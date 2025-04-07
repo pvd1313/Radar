@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using Beast.Claw.Attributes.Annotation;
-using Beast.Claw.Math;
 using Unity.Collections;
 
 namespace Beast.Claw.Jobs
@@ -66,7 +65,7 @@ namespace Beast.Claw.Jobs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeReference<T> PermReference<T>(T withValue) where T : unmanaged
         {
-            NativeReference<T> reference = new NativeReference<T>(Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            NativeReference<T> reference = new(Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             reference.Value = withValue;
             return reference;
         }
@@ -75,23 +74,6 @@ namespace Beast.Claw.Jobs
         public static NativeReference<T> TempJobReference<T>() where T : unmanaged
         {
             return new NativeReference<T>(Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EnsureCapacity<T>(ref NativeArray<T> permArray, int requiredCapacity)
-            where T : unmanaged
-        {
-            if (permArray.Length >= requiredCapacity)
-            {
-                return;
-            }
-
-            int newSize = 1 << BMath.CeilToInt(BMath.Log2(requiredCapacity));
-            NativeArray<T> newArray = PermArray<T>(newSize);
-            NativeArray<T>.Copy(permArray, newArray, permArray.Length);
-            
-            permArray.Dispose();
-            permArray = newArray;
         }
 
         public static void Copy<T>(
@@ -106,29 +88,6 @@ namespace Beast.Claw.Jobs
             NativeSlice<T> target = write.Slice(writeOffset, dataCount);
 
             target.CopyFrom(source);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MaintainPermArrayLength<T>(ref NativeArray<T> array, ArrayMaintenanceData rule) 
-            where T : unmanaged
-        {
-            int requiredCapacity = rule.requiredCapacity;
-            if (array.Length >= requiredCapacity)
-            {
-                return;
-            }
-            
-            int itemsPerAllocation = rule.itemPerAllocation;
-            int chunkBasedLength = BMath.CeilToInt(requiredCapacity / (float) itemsPerAllocation) * itemsPerAllocation;
-            NativeArray<T> newArray = PermArray<T>(chunkBasedLength);
-
-            if (rule.copyOnResize)
-            {
-                NativeArray<T>.Copy(array, newArray, array.Length);
-            }
-            
-            array.Dispose();
-            array = newArray;
         }
     }
 }
