@@ -53,6 +53,9 @@ ExportedObj/
 *.csproj 
 *.sln
 
+# com.unity.performance.profile-analyzer
+/[Pp]rofile[Aa]nalyzer/
+
 # Noesis blend
 !Radar-blend.csproj
 !Radar-blend.sln

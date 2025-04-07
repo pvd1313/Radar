@@ -21,6 +21,7 @@
     "com.unity.memoryprofiler": "1.1.1",
     "com.unity.mobile.android-logcat": "1.4.3",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.performance.profile-analyzer": "1.2.3",
     "com.unity.shadergraph": "14.0.11",
     "com.unity.test-framework": "1.1.33",
     "com.unity.timeline": "1.7.6",
