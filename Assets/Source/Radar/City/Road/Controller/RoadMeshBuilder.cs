@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Beast.Claw.Attributes.Annotation;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
@@ -10,7 +11,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
 namespace Beast.Radar.City
@@ -69,9 +69,9 @@ namespace Beast.Radar.City
                 outPoints = roadPoints
             };
 
-            Profiler.BeginSample("ContinuousRoadSplinePointsJob");
+            BProfiler.BeginSample("ContinuousRoadSplinePointsJob");
             splinePointsJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             int vertexCount = 0;
             int triangleCount = 0;
@@ -109,9 +109,9 @@ namespace Beast.Radar.City
                 outNormals = normals
             };
             
-            Profiler.BeginSample("RoadMeshJob");
+            BProfiler.BeginSample("RoadMeshJob");
             meshJob.Schedule(roadSplineMap.roads.Length, 8).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             pointOffset.Dispose();
             pointCount.Dispose();
@@ -141,7 +141,7 @@ namespace Beast.Radar.City
             int cellCountX = BMath.CeilToInt(terrainSize / roadGrid.cellSize);
             int cellTotal = cellCountX * cellCountX;
 
-            Profiler.BeginSample("Prepare cellBounds");
+            BProfiler.BeginSample("Prepare cellBounds");
             NativeArray<Bounds2D> cellBounds = BNative.TempJobArray<Bounds2D>(cellTotal);
             for (int i = 0; i < cellTotal; i++)
             {
@@ -152,7 +152,7 @@ namespace Beast.Radar.City
                 
                 cellBounds[i] = new Bounds2D(xMin, xMin + roadGrid.cellSize, yMin, yMin + roadGrid.cellSize);
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             RoadSliceSplinesJob sliceJob = new()
             {
@@ -166,24 +166,24 @@ namespace Beast.Radar.City
                 outSliceCount = BNative.TempJobArray<int>(cellTotal),
             };
             
-            Profiler.BeginSample("RoadSliceSplinesJob");
+            BProfiler.BeginSample("RoadSliceSplinesJob");
             sliceJob.Schedule(cellTotal, 16).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("Compute sliceCountTotal");
+            BProfiler.BeginSample("Compute sliceCountTotal");
             int sliceCountTotal = 0;
             for (int i = 0; i < cellTotal; i++)
             {
                 sliceCountTotal += sliceJob.outSliceCount[i];
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             NativeArray<int> pointOffsets = BNative.TempJobArray<int>(sliceCountTotal);
             NativeArray<int2> cellIndices = BNative.TempJobArray<int2>(sliceCountTotal);
             NativeArray<int> pointCounts = BNative.TempJobArray<int>(sliceCountTotal);
             NativeArray <RoadSplineSlice> slices = BNative.TempJobArray<RoadSplineSlice>(sliceCountTotal);
             
-            Profiler.BeginSample("Prepare points buffer");
+            BProfiler.BeginSample("Prepare points buffer");
             int sliceIndex = 0;
             int estimatedPointCount = 0;
             int meshCount = 0;
@@ -211,7 +211,7 @@ namespace Beast.Radar.City
 
                 meshCount++;
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             RoadSlicedSplinePointsJob pointsJob = new() 
             {
@@ -225,15 +225,15 @@ namespace Beast.Radar.City
                 outPointCount = BNative.TempJobArray<int>(sliceCountTotal)
             };
             
-            Profiler.BeginSample("RoadSlicedSplinePointsJob");
+            BProfiler.BeginSample("RoadSlicedSplinePointsJob");
             pointsJob.Schedule(sliceCountTotal, 8).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             NativeArray<int> vertexOffsets = BNative.TempJobArray<int>(sliceCountTotal);
             NativeArray<int> triangleOffsets = BNative.TempJobArray<int>(sliceCountTotal);
             NativeArray<int> vertexIndexOffsets = BNative.TempJobArray<int>(sliceCountTotal);
 
-            Profiler.BeginSample("Prepare vertex buffer");
+            BProfiler.BeginSample("Prepare vertex buffer");
             int totalVertexCount = 0;
             int totalTriangleCount = 0;
             int vertexIndex = 0;
@@ -264,7 +264,7 @@ namespace Beast.Radar.City
                 totalTriangleCount += triangleCount;
                 prevCell = cellIndex;
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             using NativeArray<float3> vertices = BNative.TempJobArray<float3>(totalVertexCount);
             using NativeArray<float3> normals = BNative.TempJobArray<float3>(totalVertexCount);
@@ -283,11 +283,11 @@ namespace Beast.Radar.City
                 inTriangleOffset = triangleOffsets
             };
             
-            Profiler.BeginSample("RoadMeshJob");
+            BProfiler.BeginSample("RoadMeshJob");
             meshJob.Schedule(sliceCountTotal, 8).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("Create meshes");
+            BProfiler.BeginSample("Create meshes");
             
             Dictionary<int2, Mesh> gridMeshes = new(meshCount);
 
@@ -321,7 +321,7 @@ namespace Beast.Radar.City
 
                 i = j;
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             vertexOffsets.Dispose();
             triangleOffsets.Dispose();

@@ -24,7 +24,7 @@ namespace Beast.Claw.Editor.UI.Profiling
         private Style _labelStyle;
         private InjectionReference<IGameLoop> _gameCycle;
         private ProfilerTreeGUI _treeView;
-        private List<ProfilerNode> _nodesBuffer;
+        private List<BricksManagedNode> _nodesBuffer;
 
         private string _lastDrawnProfilerName;
 
@@ -32,7 +32,7 @@ namespace Beast.Claw.Editor.UI.Profiling
         {
             _tickRateBar = new RepaintTickRateBar(this);
             _profilerNameToIndex = new UnitySerializableDictionary<string, int>();
-            _nodesBuffer = new List<ProfilerNode>();
+            _nodesBuffer = new List<BricksManagedNode>();
             _selectedProfilerIndex = -1;
         }
         
@@ -86,14 +86,14 @@ namespace Beast.Claw.Editor.UI.Profiling
 
                 Rect uiRect = ui.AllocateRect(flex.TotalSize);
 
-                IProfiler selectedProfiler = null;
+                IBricksProfiler selectedProfiler = null;
 
                 foreach (string operationName in _gameCycle.Reference.AllOperations)
                 {
                     int profilerIndex = _profilerNameToIndex[operationName];
                     Style buttonStyle = _buttonStyleNormal;
 
-                    IProfiler profiler = _gameCycle.Reference.TryGetProfiler(operationName);
+                    IBricksProfiler profiler = _gameCycle.Reference.TryGetProfiler(operationName);
 
                     if (profilerIndex == _selectedProfilerIndex)
                     {
@@ -112,7 +112,7 @@ namespace Beast.Claw.Editor.UI.Profiling
 
                 _flow.Begin().If(selectedProfiler != null).Scroll(ref _scrollPosition).Draw(ui =>
                 {
-                    ProfilerTreeReader reader = selectedProfiler.Reader;
+                    BricksTreeReader reader = selectedProfiler.Reader;
 
                     selectedProfiler.Reader.Read(0, reader.NodeCount, _nodesBuffer, out _);
 

@@ -7,19 +7,19 @@ using NUnit.Framework;
 
 namespace Beast.Claw.Editor.UI.Profiling
 {
-    public class ProfilerTest
+    public class BricksProfilerTest
     {
-        private Claw.Profiling.Profiler _manager;
-        private ProfilerConfig _config;
-        private List<ProfilerNode> _nodes;
+        private Claw.Profiling.BricksProfiler _manager;
+        private BricksConfig _config;
+        private List<BricksManagedNode> _nodes;
         private int _totalNodeCount;
 
         [SetUp]
         public void SetUp()
         {
-            _nodes = new List<ProfilerNode>();
-            _config = new ProfilerConfig(true, 2, 2);
-            _manager = new Claw.Profiling.Profiler(_config);
+            _nodes = new List<BricksManagedNode>();
+            _config = new BricksConfig(true, 2, 2);
+            _manager = new Claw.Profiling.BricksProfiler(_config);
             _totalNodeCount = 0;
             _manager.Initialize();
         }

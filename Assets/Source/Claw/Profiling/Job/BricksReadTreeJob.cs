@@ -6,7 +6,7 @@ using Unity.Mathematics;
 namespace Beast.Claw.Profiling
 {
     [BurstCompile]
-    internal struct ReadTreeJob : IJob
+    internal struct BricksReadTreeJob : IJob
     {
         [ReadOnly] public NativeArray<ushort> inChilds;
         [ReadOnly] public NativeArray<ushort> inSiblings;
@@ -14,7 +14,7 @@ namespace Beast.Claw.Profiling
         [ReadOnly] public NativeArray<float> inTimes;
         [ReadOnly] public int2 inReadRange;
 
-        [WriteOnly] public NativeArray<NativeNode> outNodes;
+        [WriteOnly] public NativeArray<BricksNativeNode> outNodes;
         [WriteOnly] public NativeArray<int> outNodeCount;
         [WriteOnly] public NativeArray<int> outTotalNodeCount;
 
@@ -38,7 +38,7 @@ namespace Beast.Claw.Profiling
 
             if (_nodeIndexLinear >= inReadRange.x && _nodeIndexLinear <= inReadRange.y)
             {
-                outNodes[_bakedNodeCount++] = new NativeNode
+                outNodes[_bakedNodeCount++] = new BricksNativeNode
                 {
                     name = inNames[nodeIndex],
                     time = inTimes[nodeIndex],

@@ -1,8 +1,8 @@
 namespace Beast.Claw.Profiling
 {
-    internal struct TreeBuildState
+    internal struct BricksTreeBuildState
     {
-        public ETreeBuildCode code;
+        public EBricksTreeBuildCode code;
         public int stackLast;
         public int recordLast;
     }

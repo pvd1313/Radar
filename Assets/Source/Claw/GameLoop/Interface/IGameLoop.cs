@@ -13,7 +13,7 @@ namespace Beast.Claw.GameLoop
 
         public void RegisterActors(IReadOnlyList<IGameLoopActor> actors);
         
-        public IProfiler TryGetProfiler(string operationName);
+        public IBricksProfiler TryGetProfiler(string operationName);
 
         UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID);
 

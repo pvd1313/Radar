@@ -1,5 +1,4 @@
-﻿using Beast.Claw.Common;
-using Beast.Claw.ProgressTracker;
+﻿using Beast.Claw.ProgressTracker;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Radar.Core

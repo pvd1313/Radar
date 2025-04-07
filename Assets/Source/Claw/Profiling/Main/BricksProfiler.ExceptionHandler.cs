@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Beast.Claw.Profiling
 {
-    partial class Profiler
+    partial class BricksProfiler
     {
         private struct ExceptionHandler
         {
-            public void HandleJobState(IList<string> names, BuildTreeJob job)
+            public void HandleJobState(IList<string> names, BricksBuildTreeJob job)
             {
-                TreeBuildState state = job.outState[0];
+                BricksTreeBuildState state = job.outState[0];
 
-                if (state.code == ETreeBuildCode.Success)
+                if (state.code == EBricksTreeBuildCode.Success)
                 {
                     return;
                 }
@@ -19,16 +19,16 @@ namespace Beast.Claw.Profiling
                 string stackTrace = _buildPath(names, job, state.stackLast);
                 switch (state.code)
                 {
-                    case ETreeBuildCode.StackIsNotEmptyAfterJobComplete:
+                    case EBricksTreeBuildCode.StackIsNotEmptyAfterJobComplete:
                         throw new InvalidOperationException($"EndSample() was not called for {stackTrace}");
                     
-                    case ETreeBuildCode.StackOverflow:
+                    case EBricksTreeBuildCode.StackOverflow:
                         throw new StackOverflowException($"{stackTrace}{names[state.recordLast + 1]} caused stack overflow");
                     
-                    case ETreeBuildCode.StackUnderflow:
+                    case EBricksTreeBuildCode.StackUnderflow:
                         throw new InvalidOperationException($"BeginSample() is missing for {stackTrace}{names[state.recordLast + 1]}");
                     
-                    case ETreeBuildCode.NameMismatch:
+                    case EBricksTreeBuildCode.NameMismatch:
                         string newNodePath = _buildPath(names, job, state.stackLast - 1) + names[state.recordLast + 1];
                         throw new InvalidOperationException($"BeginSample({stackTrace}) does not match EndSample({newNodePath})");
                 }
@@ -36,7 +36,7 @@ namespace Beast.Claw.Profiling
                 throw new InvalidOperationException($"Error during tree building: {state.code}");
             }
             
-            private static string _buildPath(IList<string> names, BuildTreeJob job, int stackLast)
+            private static string _buildPath(IList<string> names, BricksBuildTreeJob job, int stackLast)
             {
                 string result = string.Empty;
 

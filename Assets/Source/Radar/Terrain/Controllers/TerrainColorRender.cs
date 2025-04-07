@@ -1,7 +1,5 @@
 ﻿using System;
-using Beast.Claw;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;

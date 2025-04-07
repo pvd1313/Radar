@@ -1,13 +1,11 @@
 ﻿using Beast.Claw.Attributes;
-using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
-using Beast.Radar.Graphic;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
@@ -42,12 +40,12 @@ namespace Beast.Radar.Terrain
             
             _dispose(default);
             
-            Profiler.BeginSample("CreateTempRenderTexture");
+            BProfiler.BeginSample("CreateTempRenderTexture");
             RenderTextureData renderTextureData = _config.biomeRenderTexture.WithSize(terrain.terrainSize);
             RenderTexture biomeRenderTexture = BGraphic.CreateTempRenderTexture(this, renderTextureData);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
-            Profiler.BeginSample("_biomeRender.Render");
+            BProfiler.BeginSample("_biomeRender.Render");
             _biomeRender.Render(new TerrainBiomeRenderTask
             {
                 screenSize = terrain.terrainSize,
@@ -57,27 +55,27 @@ namespace Beast.Radar.Terrain
                 viewDistance = terrain.terrainSize,
                 outputBiomeTexture = biomeRenderTexture
             });
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("CreateTexture2D");
+            BProfiler.BeginSample("CreateTexture2D");
             Texture2DParameters textureParams = _config.biomeTexture2D.WithSize(terrain.terrainSize);
             Texture2D biomeTexture2D = BGraphic.CreateTexture2D(this, textureParams);
             BGraphic.BlitRenderTextureTo2D(biomeRenderTexture, biomeTexture2D);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("TextureWithBlocks.FromBiomeTexture");
+            BProfiler.BeginSample("TextureWithBlocks.FromBiomeTexture");
             _biomeWithBlocks = TextureWithBlocks<TerrainCell>.FromBiomeTexture(biomeTexture2D, MAP_1KM_BLOCK_SIZE);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
+            BProfiler.BeginSample("AveragePixelCountTexture.FromTextureWithBlocks()");
             int cellSize = BMath.Clamp(terrain.terrainSize / 256, 8, 16);
             _biomePacked = AveragePixelCountTexture<TerrainCell>.FromTextureWithBlocks(_biomeWithBlocks, cellSize);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
-            Profiler.BeginSample("Dispose Textures");
+            BProfiler.BeginSample("Dispose Textures");
             BGraphic.Dispose(biomeRenderTexture);
             BGraphic.Dispose(biomeTexture2D);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             _bakedForTerrain = terrain;
 

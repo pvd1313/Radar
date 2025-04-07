@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Beast.Claw.Debug;
 using Beast.Claw.Math;
-using Profiler = UnityEngine.Profiling.Profiler;
 
 namespace Beast.Claw.Serialization
 {
@@ -19,7 +19,7 @@ namespace Beast.Claw.Serialization
 
         public void WriteBytes(Span<byte> buffer)
         {
-            Profiler.BeginSample("BinaryWriter.WriteBytes()");
+            BProfiler.BeginSample("BinaryWriter.WriteBytes()");
             
             const int BUFFER_LIMIT = 4096;
 
@@ -38,7 +38,7 @@ namespace Beast.Claw.Serialization
                 wroteCount += bufferSize;
             }
             
-            Profiler.EndSample();
+            BProfiler.EndSample();
         }
         
         public void WriteFloat(float x)

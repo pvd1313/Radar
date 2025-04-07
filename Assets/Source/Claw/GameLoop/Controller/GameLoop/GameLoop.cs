@@ -76,7 +76,7 @@ namespace Beast.Claw.GameLoop
             _isRegisteringActors = false;
         }
         
-        public IProfiler TryGetProfiler(string operationName)
+        public IBricksProfiler TryGetProfiler(string operationName)
         {
             if (!_runners.TryGetValue(operationName, out Runner runner))
             {

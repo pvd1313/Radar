@@ -1,45 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Math;
 using Beast.Claw.Validation;
 
 namespace Beast.Claw.Profiling
 {
-    public class ProfilerTreeStringBuilder
+    public class BricksTreeStringBuilder
     {
         private readonly StringBuilder _builder = new();
-        private readonly List<ProfilerNode> _nodes = new ();
+        private readonly List<BricksManagedNode> _nodes = new ();
         private readonly FloatToStringConverter _floatToString = new ("D");
 
-        public string ToString(ProfilerTreeReader reader, string header)
+        public string ToString(BricksTreeReader reader, string header)
         {
-            UnityEngine.Profiling.Profiler.BeginSample("ProfilerTreeStringBuilder.ToString()");
+            BProfiler.BeginSample("ProfilerTreeStringBuilder.ToString()");
             
             header.ValidateNotEmptyOrNullThrowException(nameof(header));
             
-            UnityEngine.Profiling.Profiler.BeginSample("ProfilerTreeReader.Read()");
+            BProfiler.BeginSample("ProfilerTreeReader.Read()");
             _nodes.Capacity = BMath.Max(_nodes.Capacity, reader.NodeCount);
             reader.Read(0, reader.NodeCount, _nodes, out int totalNodeCount);
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
 
-            UnityEngine.Profiling.Profiler.BeginSample("StringBuilderCommands");
-            
+            BProfiler.BeginSample("StringBuilderCommands");
             _builder.Clear();
-
             _builder.Append(header);
-
             _builder.Append(' ');
-
             _printTimeMS(_nodes[0].timeMS);
-
             _builder.Append(':');
-
             _builder.AppendLine();
-
             for (int i = 1; i < _nodes.Count; i++)
             {
-                ProfilerNode node = _nodes[i];
+                BricksManagedNode node = _nodes[i];
                 
                 _builder.Append(' ', node.deep * 4);
                 _builder.Append(node.name);
@@ -51,14 +45,13 @@ namespace Beast.Claw.Profiling
 
                 _builder.AppendLine();
             }
+            BProfiler.EndSample();
             
-            UnityEngine.Profiling.Profiler.EndSample();
-            
-            UnityEngine.Profiling.Profiler.BeginSample("Builder.ToString()");
+            BProfiler.BeginSample("Builder.ToString()");
             string text = _builder.ToString();
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
             
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
 
             return text;
         }

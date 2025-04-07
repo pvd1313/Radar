@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using Beast.Claw.Graphy.Modules;
-using Beast.Claw.UI;
 using Beast.Radar.Player;
 using Noesis;
 

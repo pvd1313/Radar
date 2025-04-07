@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Beast.Claw;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;

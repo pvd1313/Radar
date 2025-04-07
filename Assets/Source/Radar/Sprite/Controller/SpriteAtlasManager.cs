@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Sprite
 {
@@ -48,7 +48,7 @@ namespace Beast.Radar.Sprite
 
         public ushort Create(SpriteSetup setup)
         {
-            Profiler.BeginSample("SpriteAtlasManager.Create()");
+            BProfiler.BeginSample("SpriteAtlasManager.Create()");
             
             int lineHeight = _spriteHeightToLineHeight(setup.textureSize.y);
 
@@ -96,7 +96,7 @@ namespace Beast.Radar.Sprite
             line.freeXOffset = (ushort)(line.freeXOffset + setup.textureSize.x);
             _lines[lineIndex] = line;
             
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             return spriteIndex;
         }

@@ -6,8 +6,6 @@ using Beast.Claw.Text;
 using Beast.Radar.Player;
 using Cysharp.Threading.Tasks;
 using Noesis;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace Beast.Radar.UI.Player
 {

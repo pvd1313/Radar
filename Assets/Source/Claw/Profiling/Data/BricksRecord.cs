@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Beast.Claw.Profiling
 {
-    internal struct ProfilerRecord
+    internal struct BricksRecord
     {
         private const uint TIME_SAMPLES_MASK = 0x7FFFFFFF;
         private const uint COMMAND_TYPE_MASK = 0x80000000;

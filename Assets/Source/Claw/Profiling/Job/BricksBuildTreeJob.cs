@@ -7,9 +7,9 @@ using Unity.Jobs;
 namespace Beast.Claw.Profiling
 {
     [BurstCompile]
-    internal struct BuildTreeJob : IJob
+    internal struct BricksBuildTreeJob : IJob
     {
-        [ReadOnly] public NativeArray<ProfilerRecord> inRecords;
+        [ReadOnly] public NativeArray<BricksRecord> inRecords;
         [ReadOnly] public int inRecordCount;
         [ReadOnly] public long inFrequency;
 
@@ -22,14 +22,14 @@ namespace Beast.Claw.Profiling
         [WriteOnly] public NativeArray<ushort> outSiblings;
         [WriteOnly] public NativeArray<ushort> outNames;
         [WriteOnly] public NativeArray<float> outTimes;
-        [WriteOnly] public NativeArray<TreeBuildState> outState;
+        [WriteOnly] public NativeArray<BricksTreeBuildState> outState;
 
         private int _stackLast;
         private int _nodeCount;
         private int _stackMax;
         private long _ticksTotal;
         private float _ticksToMilliseconds;
-        private ETreeBuildCode _code;
+        private EBricksTreeBuildCode _code;
 
         public void Execute()
         {
@@ -43,16 +43,16 @@ namespace Beast.Claw.Profiling
             outNames[0] = 0;
             outSiblings[0] = 0;
             outTimes[0] = 0;
-            outState[0] = new TreeBuildState
+            outState[0] = new BricksTreeBuildState
             {
-                code = ETreeBuildCode.Unknown
+                code = EBricksTreeBuildCode.Unknown
             };
-            _code = ETreeBuildCode.Unknown;
+            _code = EBricksTreeBuildCode.Unknown;
             _stackMax = BMath.Min(parentStack.Length, siblingStack.Length);
             
             for (int i = 0; i < inRecordCount; i++)
             {
-                ProfilerRecord record = inRecords[i];
+                BricksRecord record = inRecords[i];
                 
                 record.Read(out int timeSamples, out bool isBeginSampleCommand, out int nameHash);
                 
@@ -65,9 +65,9 @@ namespace Beast.Claw.Profiling
                     FlushEndSample(timeSamples, nameHash);
                 }
 
-                if (_code != ETreeBuildCode.Unknown)
+                if (_code != EBricksTreeBuildCode.Unknown)
                 {
-                    outState[0] = new TreeBuildState
+                    outState[0] = new BricksTreeBuildState
                     {
                         code = _code,
                         stackLast = _stackLast,
@@ -80,9 +80,9 @@ namespace Beast.Claw.Profiling
 
             if (_stackLast != 0)
             {
-                outState[0] = new TreeBuildState
+                outState[0] = new BricksTreeBuildState
                 {
-                    code = ETreeBuildCode.StackIsNotEmptyAfterJobComplete,
+                    code = EBricksTreeBuildCode.StackIsNotEmptyAfterJobComplete,
                     stackLast = _stackLast
                 };
 
@@ -90,9 +90,9 @@ namespace Beast.Claw.Profiling
             }
 
             outTimes[0] = _ticksTotal * _ticksToMilliseconds;
-            outState[0] = new TreeBuildState
+            outState[0] = new BricksTreeBuildState
             {
-                code = ETreeBuildCode.Success
+                code = EBricksTreeBuildCode.Success
             };
         }
 
@@ -101,7 +101,7 @@ namespace Beast.Claw.Profiling
         {
             if (_stackLast + 1 >= _stackMax)
             {
-                _code = ETreeBuildCode.StackOverflow;
+                _code = EBricksTreeBuildCode.StackOverflow;
                 return;
             }
             
@@ -134,13 +134,13 @@ namespace Beast.Claw.Profiling
         {
             if (_stackLast == 0)
             {
-                _code = ETreeBuildCode.StackUnderflow;
+                _code = EBricksTreeBuildCode.StackUnderflow;
                 return;
             }
 
             if (nameHash != nameHashStack[_stackLast])
             {
-                _code = ETreeBuildCode.NameMismatch;
+                _code = EBricksTreeBuildCode.NameMismatch;
                 return;
             }
 

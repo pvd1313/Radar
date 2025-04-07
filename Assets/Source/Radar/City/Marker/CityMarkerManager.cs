@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Attributes;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.ECS;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
@@ -13,7 +14,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
@@ -172,23 +172,23 @@ namespace Beast.Radar.City
             switch (command.commandType)
             {
                 case ECityLabelCommandType.CreateLabel:
-                    Profiler.BeginSample("CreateLabel()");
+                    BProfiler.BeginSample("CreateLabel()");
                     _setupLabel(command);
-                    Profiler.EndSample();
+                    BProfiler.EndSample();
                     break;
 
                 case ECityLabelCommandType.ReleaseLabel:
-                    Profiler.BeginSample("ReleaseLabel()");
+                    BProfiler.BeginSample("ReleaseLabel()");
                     _spriteAtlas.ReleaseSprite(command.spriteID);
                     _entityManager.SetComponentData(command.targetEntity, new SpriteComponent());
-                    Profiler.EndSample();
+                    BProfiler.EndSample();
                     break;
 
                 case ECityLabelCommandType.ChangeLabelResolution:
-                    Profiler.BeginSample("ChangeLabelResolution()");
+                    BProfiler.BeginSample("ChangeLabelResolution()");
                     _spriteAtlas.ReleaseSprite(command.spriteID);
                     _setupLabel(command);
-                    Profiler.EndSample();
+                    BProfiler.EndSample();
                     break;
             }
         }

@@ -1,6 +1,6 @@
 namespace Beast.Claw.Profiling
 {
-    internal struct NativeNode
+    internal struct BricksNativeNode
     {
         public int name;
         public int deep;

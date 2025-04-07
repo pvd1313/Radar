@@ -13,7 +13,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Player
 {
@@ -171,9 +170,9 @@ namespace Beast.Radar.Player
             };
             
             _stopwatch.Restart();
-            Profiler.BeginSample("8km_job");
+            BProfiler.BeginSample("8km_job");
             job.Run();
-            Profiler.EndSample();
+            BProfiler.EndSample();
             _stopwatch.Stop();
             BDebug.Track(this, "8km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
 
@@ -213,9 +212,9 @@ namespace Beast.Radar.Player
             };
             
             _stopwatch.Restart();
-            Profiler.BeginSample("1km_job");
+            BProfiler.BeginSample("1km_job");
             job.Run();
-            Profiler.EndSample();
+            BProfiler.EndSample();
             _stopwatch.Stop();
             BDebug.Track(this, "1km_job_ms", _stopwatch.ElapsedMillisecondsFloat());
             

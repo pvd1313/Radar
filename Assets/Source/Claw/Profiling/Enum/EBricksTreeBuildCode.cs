@@ -1,6 +1,6 @@
 namespace Beast.Claw.Profiling
 {
-    public enum ETreeBuildCode
+    public enum EBricksTreeBuildCode
     {
         Success = 1,
         Unknown = 2,

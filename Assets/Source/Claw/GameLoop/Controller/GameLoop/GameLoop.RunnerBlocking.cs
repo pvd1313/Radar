@@ -11,36 +11,24 @@ namespace Beast.Claw.GameLoop
     {
         private struct RunnerBlocking
         {
-            public IController owner;
             public ManagedFixedList<Runner.Actor> allActors;
             public NativeHashMap<int, int> actorErrorCounters;
-            public string operationID;
             public int exceptionThreshold;
             public bool exceptionStopsExecution;
-            public Profiler profiler;
-            public bool enableClawProfiling;
-            public bool flushProfilerToConsole;
-            public ProfilerTreeStringBuilder treeStringBuilder;
-            public NativeFixedList<short> passedActors;
+            public NativeFixedList<short> activeActors;
+            public BricksProfiler.Handle profiler;
 
             public void Run()
             {
-                passedActors.Clear();
-
-                bool hasProfiler = profiler != null;
-                string listenerName = null;
-                Profiler.Handle handle = default;
+                activeActors.Clear();
 
                 for (int actorIndex = 0; actorIndex < allActors.Count; actorIndex++)
                 {
                     Runner.Actor actor = allActors[actorIndex];
+
+                    string actorName = actor.target.Meta.name;
                     
-                    if (hasProfiler)
-                    {
-                        handle = profiler.GetHandle(actor.target);
-                        listenerName = actor.target.Meta.name;
-                        handle.BeginSample(listenerName);
-                    }
+                    profiler.BeginSample(actorName);
 
                     try
                     {
@@ -48,7 +36,7 @@ namespace Beast.Claw.GameLoop
 
                         actor.blocking.Invoke(context);
 
-                        passedActors.Add((short)actorIndex);
+                        activeActors.Add((short)actorIndex);
                     }
                     catch (ActionAbortedException)
                     {
@@ -60,39 +48,19 @@ namespace Beast.Claw.GameLoop
 
                         if (!canContinue)
                         {
-                            passedActors.Clear();
+                            activeActors.Clear();
 
                             break;
                         }
                     }
                     finally
                     {
-                        if (hasProfiler)
-                        {
-                            handle.EndSample(listenerName);
-                        }
-                    }
-                }
-                
-                if (hasProfiler && enableClawProfiling)
-                {
-                    profiler.RebuildTree();
-                    
-                    if (flushProfilerToConsole)
-                    {
-                        string title = owner.Meta.name + ": " + operationID;
-                        string info = treeStringBuilder.ToString(profiler.Reader, title);
-
-                        BDebug.StaticLogInfo(info);
+                       profiler.EndSample(actorName);
                     }
                 }
             }
             
-            private void ProcessException(
-                Exception e, 
-                Runner.Actor actor,
-                int actorIndex,
-                out bool allIsBroken)
+            private void ProcessException(Exception e, Runner.Actor actor, int actorIndex, out bool allIsBroken)
             {
                 BDebug.LogException(e);
 
@@ -104,7 +72,7 @@ namespace Beast.Claw.GameLoop
 
                 if (errorCount <= exceptionThreshold)
                 {
-                    passedActors.Add((short)actorIndex);
+                    activeActors.Add((short)actorIndex);
                 }
                 else
                 {

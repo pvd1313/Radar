@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using Beast.Claw;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
@@ -10,7 +10,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
@@ -44,9 +43,9 @@ namespace Beast.Radar.Terrain
 
             int blockCountX = biomeTexture.width / blockSize;
             
-            Profiler.BeginSample("AllocateNativeArray");
+            BProfiler.BeginSample("AllocateNativeArray");
             NativeArray<TerrainCell> textureWithBlocks = BNative.PermArray<TerrainCell>(biomeTexture.width * biomeTexture.width);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             CreateTextureBlocksJob<TerrainCell, BiomeTextureConverter> job = new()
             {
@@ -56,9 +55,9 @@ namespace Beast.Radar.Terrain
                 outputTextureBlocks = textureWithBlocks,
             };
             
-            Profiler.BeginSample("TextureToBlocksJob.Execute()");
+            BProfiler.BeginSample("TextureToBlocksJob.Execute()");
             job.Schedule(blockCountX * blockCountX, 32).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             return new TextureWithBlocks<TerrainCell>
             {

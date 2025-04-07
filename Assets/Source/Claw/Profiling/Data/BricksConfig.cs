@@ -6,38 +6,23 @@ using Beast.Claw.Validation;
 namespace Beast.Claw.Profiling
 {
     [Serializable]
-    public class ProfilerConfig : IConfig, IValidatable
+    public class BricksConfig : IConfig, IValidatable
     {
         private const int MAX_RECORD_COUNT = (1 << 16) - 2;
 
-        public bool AnyProfilingActive
-        {
-            get
-            {
-#if UNITY_EDITOR
-                if (UnityEditorInternal.ProfilerDriver.enabled)
-                {
-                    return true;
-                }
-#endif
-
-                return customProfilingEnabled || UnityEngine.Profiling.Profiler.enabled;
-            }
-        }
-
-        public bool customProfilingEnabled;
+        public bool bricksEnabled;
         public int maxRecordCount;
         public int stackSize;
 
         // For Validator.
-        private ProfilerConfig()
+        private BricksConfig()
         {
             
         }
 
-        public ProfilerConfig(bool customProfilingEnabled, int maxRecordCount, int stackSize)
+        public BricksConfig(bool bricksEnabled, int maxRecordCount, int stackSize)
         {
-            this.customProfilingEnabled = customProfilingEnabled;
+            this.bricksEnabled = bricksEnabled;
             this.maxRecordCount = maxRecordCount;
             this.stackSize = stackSize;
         }

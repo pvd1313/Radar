@@ -1,6 +1,4 @@
-﻿using Beast.Claw;
-using Beast.Claw.Common;
-using Beast.Claw.Validation;
+﻿using Beast.Claw.Validation;
 using UnityEngine;
 
 namespace Beast.Radar.Terrain

@@ -5,7 +5,6 @@ using Beast.Claw.Common;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Math;
 using Beast.Claw.ProgressTracker;
-using Beast.Claw.UI;
 using Cysharp.Threading.Tasks;
 using Noesis;
 

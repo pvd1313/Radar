@@ -7,18 +7,18 @@ using Unity.Mathematics;
 
 namespace Beast.Claw.Profiling
 {
-    public readonly struct ProfilerTreeReader
+    public readonly struct BricksTreeReader
     {
         public int NodeCount => _tree.nodeCount;
         
-        private readonly ProfilerTree _tree;
+        private readonly BricksProfilerTree _tree;
 
-        public ProfilerTreeReader(ProfilerTree tree)
+        public BricksTreeReader(BricksProfilerTree tree)
         {
             _tree = tree;
         }
         
-        public void Read(int offset, int count, List<ProfilerNode> result, out int totalNodeCount)
+        public void Read(int offset, int count, List<BricksManagedNode> result, out int totalNodeCount)
         {
             _tree.ValidateThrowException(nameof(_tree));
             
@@ -27,7 +27,7 @@ namespace Beast.Claw.Profiling
             if (count > _tree.nodeCount) throw new AggregateException("Can not read more nodes than exists");
             if (result is null) throw new ArgumentNullException(nameof(result));
             
-            ReadTreeJob job = new ()
+            BricksReadTreeJob job = new ()
             {
                 inChilds = _tree.childs,
                 inNames = _tree.names,
@@ -36,7 +36,7 @@ namespace Beast.Claw.Profiling
                 inReadRange = new int2(offset, offset + count - 1),
                 outNodeCount = BNative.TempJobArray<int>(1),
                 outTotalNodeCount = BNative.TempJobArray<int>(1),
-                outNodes = BNative.TempJobArray<NativeNode>(count)
+                outNodes = BNative.TempJobArray<BricksNativeNode>(count)
             };
             job.Run();
             
@@ -45,9 +45,9 @@ namespace Beast.Claw.Profiling
             
             for (int i = 0; i < nodeCount; i++)
             {
-                NativeNode node = job.outNodes[i];
+                BricksNativeNode node = job.outNodes[i];
                 
-                result.Add(new ProfilerNode
+                result.Add(new BricksManagedNode
                 {
                     name = _tree.text[node.name],
                     deep = node.deep,

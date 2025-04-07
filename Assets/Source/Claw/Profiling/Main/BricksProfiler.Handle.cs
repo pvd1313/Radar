@@ -1,15 +1,15 @@
 namespace Beast.Claw.Profiling
 {
-    partial class Profiler
+    partial class BricksProfiler
     {
         public readonly struct Handle
         {
-            public static Handle Disabled { get; } = new (null, false);
+            public static Handle Disabled { get; } = default;
             
-            private readonly Profiler _manager;
+            private readonly BricksProfiler _manager;
             private readonly bool _isEnabled;
 
-            public Handle(Profiler manager, bool isEnabled)
+            public Handle(BricksProfiler manager, bool isEnabled)
             {
                 _manager = manager;
                 _isEnabled = isEnabled;

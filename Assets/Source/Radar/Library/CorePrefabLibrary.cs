@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
-using Beast.Radar.UI;
-using UnityEngine;
 
 namespace Beast.Radar
 {

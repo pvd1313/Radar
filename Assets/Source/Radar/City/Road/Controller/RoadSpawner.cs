@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Diagnostics;
 using Beast.Claw.Attributes;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;
-using Beast.Claw.Graphic;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Beast.Claw.Math.CCL;
@@ -16,9 +13,6 @@ using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.Profiling;
 
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
@@ -64,13 +58,13 @@ namespace Beast.Radar.City
             
             if (roadMapCacheExists)
             {
-                Profiler.BeginSample("ReadRoadCache");
+                BProfiler.BeginSample("ReadRoadCache");
                 
                 using IBinaryReader reader = _worldManager.StartCacheReading(world.guid, FileName.ROAD_MAP);
             
                 _roadMap.Deserialize(reader);
                 
-                Profiler.EndSample();
+                BProfiler.EndSample();
             }
             else
             {
@@ -90,22 +84,22 @@ namespace Beast.Radar.City
                     outSegments = BNative.TempJobList<ushort>(256),
                 };
 
-                Profiler.BeginSample("roadPath8KMJob");
+                BProfiler.BeginSample("roadPath8KMJob");
                 roadPath8KMJob.Run();
-                Profiler.EndSample();
+                BProfiler.EndSample();
 
                 terrain8KMClone.Dispose();
 
                 int maxSegmentSize8KM = 
                     BMath.CeilToInt(_config.maxSegmentLength / (float)_biome.Terrain8kmCell.cellSize);
 
-                Profiler.BeginSample("RoadUtil.CreateRoadSegments");
+                BProfiler.BeginSample("RoadUtil.CreateRoadSegments");
                 using NativeList<RoadSegment> segmentsToSearch = RoadUtil.CreateRoadSegments(
                     roadPath8KMJob,
                     _biome.Terrain1kmCell.TextureSize,
                     maxSegmentSize8KM,
                     Allocator.TempJob);
-                Profiler.EndSample();
+                BProfiler.EndSample();
 
                 int maxPointPerSegment = BMath.CeilToInt(maxSegmentSize8KM * _biome.Terrain8kmCell.cellSize * 2f);
 
@@ -129,13 +123,13 @@ namespace Beast.Radar.City
                     outSegmentPointCount = BNative.TempJobArray<int>(segmentsToSearch.Length)
                 };
 
-                Profiler.BeginSample("roadPath1KMJob");
+                BProfiler.BeginSample("roadPath1KMJob");
                 roadPath1KMJob.Schedule(segmentsToSearch.Length, 8).Complete();
-                Profiler.EndSample();
+                BProfiler.EndSample();
 
-                Profiler.BeginSample("RoadUtil.CreateRoadPathMap");
+                BProfiler.BeginSample("RoadUtil.CreateRoadPathMap");
                 _roadMap = RoadUtil.CreateRoadPathMap(roadPath1KMJob, maxPointPerSegment, Allocator.Persistent);
-                Profiler.EndSample();
+                BProfiler.EndSample();
 
                 using IBinaryWriter writer = _worldManager.StartCacheWriting(world.guid, FileName.ROAD_MAP);
                 _roadMap.Serialize(writer);
@@ -149,7 +143,7 @@ namespace Beast.Radar.City
                 roadPath1KMJob.outSegments.Dispose();
             }
             
-            Profiler.BeginSample("RoadCellFeatureSetJob");
+            BProfiler.BeginSample("RoadCellFeatureSetJob");
             RoadCellFeatureJob featureJob = new()
             {
                 inRoadMap = _roadMap,
@@ -158,7 +152,7 @@ namespace Beast.Radar.City
             };
 
             featureJob.Schedule(_roadMap.roads.Length, 8).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             BDebug.Track(this, "RoadCount", _roadMap.roads.Length);
             BDebug.Track(this, "PointCount", _roadMap.roadPoints.Length);

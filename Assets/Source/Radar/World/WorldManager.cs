@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beast.Claw.Attributes;
-using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Serialization;
 using Beast.Radar.Serialization;
 using Cysharp.Threading.Tasks;
 using BinaryReader = Beast.Claw.Serialization.BinaryReader;
 using BinaryWriter = Beast.Claw.Serialization.BinaryWriter;
-using Profiler = UnityEngine.Profiling.Profiler;
 
 namespace Beast.Radar.World
 {
@@ -147,16 +146,16 @@ namespace Beast.Radar.World
 
             _isDirty = false;
 
-            Profiler.BeginSample("_worlds.Values.ToArray();");
+            BProfiler.BeginSample("_worlds.Values.ToArray();");
             WorldData[] array = _worlds.Values.ToArray();
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             using StreamData stream = _fileManager.OpenToWrite(FolderName.WORLD, ROOT_FILE_NAME);
             BinaryWriter writer = new (stream.stream);
             
-            Profiler.BeginSample("writer.WriteArray(array);");
+            BProfiler.BeginSample("writer.WriteArray(array);");
             writer.WriteArrayAndLength(array);
-            Profiler.EndSample();
+            BProfiler.EndSample();
         }
     }
 }

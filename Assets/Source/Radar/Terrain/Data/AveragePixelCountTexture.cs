@@ -1,11 +1,11 @@
 ﻿using System;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Jobs;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
@@ -83,18 +83,18 @@ namespace Beast.Radar.Terrain
 
             int cellCountX = texture.blockCountX * (texture.blockSize / cellSize);
             
-            Profiler.BeginSample("AllocateCellArray");
+            BProfiler.BeginSample("AllocateCellArray");
             CreateAveragePixelCountTextureJob job = new()
             {
                 outputCellSize = cellSize,
                 sourceTexture = texture,
                 outputTexture = BNative.PermArray<TerrainCell>(cellCountX * cellCountX)
             };
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
-            Profiler.BeginSample("CreateAveragePixelCountTextureJob.Execute()");
+            BProfiler.BeginSample("CreateAveragePixelCountTextureJob.Execute()");
             job.Schedule(texture.blockCountX * texture.blockCountX, 16).Complete();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             return new AveragePixelCountTexture<TerrainCell>
             {

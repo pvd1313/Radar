@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Beast.Claw.Debug;
 using Beast.Claw.Math;
 using Beast.Claw.Math.CCL;
 using Beast.Radar.Navigation;
@@ -279,13 +280,13 @@ namespace Beast.Radar.City
         [Conditional("ROAD_PROFILING")]
         private static void _beginSample(string name)
         {
-            UnityEngine.Profiling.Profiler.BeginSample(name);
+            BProfiler.BeginSample(name);
         }
 
         [Conditional("ROAD_PROFILING")]
         private static void _endSample()
         {
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
         }
     }
 }

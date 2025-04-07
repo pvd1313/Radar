@@ -11,7 +11,6 @@ using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 
-using Profiler = UnityEngine.Profiling.Profiler;
 using TerrainData = Beast.Radar.Terrain.TerrainData;
 
 namespace Beast.Radar.City
@@ -59,20 +58,20 @@ namespace Beast.Radar.City
 
             _roadSplineMap.Dispose();
 
-            Profiler.BeginSample("RoadSplineMap.Create");
+            BProfiler.BeginSample("RoadSplineMap.Create");
             _roadSplineMap = RoadSplineMap.Create(_roadSpawner.RoadMap, Allocator.Persistent);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             _disposeLODs();
 
-            Profiler.BeginSample("CreateLODs");
+            BProfiler.BeginSample("CreateLODs");
             for (int i = 0; i < _config.lods.Length; i++)
             {
                 RoadSplineRenderLOD lod = new (terrain.terrainSize, i, _config.lods[i], _roadSplineMap);
 
                 _lods.Add(lod);
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             BDebug.Track(this, "SplinePointCount", _roadSplineMap.roadPoints.Length);
             BDebug.Track(this, "RoadCount", _roadSplineMap.roads.Length);

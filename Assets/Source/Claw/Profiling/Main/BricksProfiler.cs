@@ -8,15 +8,15 @@ using Unity.Jobs;
 
 namespace Beast.Claw.Profiling
 {
-    public partial class Profiler : IProfiler, IDisposable
+    public partial class BricksProfiler : IBricksProfiler, IDisposable
     {
-        public ProfilerTreeReader Reader => new (_profilingTree);
+        public BricksTreeReader Reader => new (_tree);
         
-        private readonly ProfilerConfig _config;
+        private readonly BricksConfig _config;
 
-        private bool _enableClawProfiling;
+        private bool _enableBricksProfiling;
         private bool _enableUnityProfiling;
-        private NativeArray<ProfilerRecord> _records;
+        private NativeArray<BricksRecord> _records;
         private int _recordCount;
         private int _maxRecordCount;
         private int _nameCount;
@@ -24,10 +24,10 @@ namespace Beast.Claw.Profiling
         private string[] _namesPassive;
         private Stopwatch _samplesTimer;
         private Stopwatch _buildTreeJobTimer;
-        private ProfilerTree _profilingTree;
+        private BricksProfilerTree _tree;
         private ExceptionHandler _exceptionHandler;
 
-        public Profiler(ProfilerConfig config)
+        public BricksProfiler(BricksConfig config)
         {
             config.ValidateThrowException(nameof(config));
             
@@ -36,10 +36,9 @@ namespace Beast.Claw.Profiling
 
         public void Initialize()
         {
-            _enableClawProfiling = _config.customProfilingEnabled;
             _buildTreeJobTimer = new Stopwatch();
             _maxRecordCount = _config.maxRecordCount;
-            _records = new NativeArray<ProfilerRecord>(_maxRecordCount, Allocator.Persistent);
+            _records = new NativeArray<BricksRecord>(_maxRecordCount, Allocator.Persistent);
             _recordCount = 0;
             _nameCount = 1;
             _namesActive = new string[_maxRecordCount + 1];
@@ -48,7 +47,7 @@ namespace Beast.Claw.Profiling
             _namesPassive[0] = "_root";
             _samplesTimer = new Stopwatch();
             _samplesTimer.Start();
-            _profilingTree = new ProfilerTree
+            _tree = new BricksProfilerTree
             {
                 childs = BNative.PermArray<ushort>(1),
                 names = BNative.PermArray<ushort>(1),
@@ -57,25 +56,25 @@ namespace Beast.Claw.Profiling
                 text = _namesActive,
                 nodeCount = 1
             };
-            _profilingTree.times[0] = 0;
-            _profilingTree.childs[0] = 0;
-            _profilingTree.names[0] = 0;
-            _profilingTree.siblings[0] = 0;
+            _tree.times[0] = 0;
+            _tree.childs[0] = 0;
+            _tree.names[0] = 0;
+            _tree.siblings[0] = 0;
         }
 
-        public void FetchConfig()
+        public void SetActive(bool isBricksProfilerActive, bool isUnityProfilerActive)
         {
-            _enableClawProfiling = _config.customProfilingEnabled;
-            _enableUnityProfiling = UnityEngine.Profiling.Profiler.enabled;
+            _enableBricksProfiling = isBricksProfilerActive;
+            _enableUnityProfiling = isUnityProfilerActive;
         }
 
         public void RebuildTree()
         {
-            _profilingTree.Dispose();
+            _tree.Dispose();
 
             int nodeCount = _recordCount / 2 + _recordCount % 2 + 1;
 
-            BuildTreeJob job = new ()
+            BricksBuildTreeJob job = new ()
             {
                 inRecords = _records,
                 inRecordCount = _recordCount,
@@ -84,18 +83,18 @@ namespace Beast.Claw.Profiling
                 outNames = BNative.PermArray<ushort>(nodeCount),
                 outSiblings = BNative.PermArray<ushort>(nodeCount),
                 outTimes = BNative.PermArray<float>(nodeCount),
-                outState = BNative.TempJobArray<TreeBuildState>(1),
+                outState = BNative.TempJobArray<BricksTreeBuildState>(1),
                 parentStack = BNative.TempJobArray<ushort>(_config.stackSize),
                 siblingStack = BNative.TempJobArray<ushort>(_config.stackSize),
                 timeStack = BNative.TempJobArray<int>(_config.stackSize),
                 nameHashStack = BNative.TempJobArray<int>(_config.stackSize)
             };
             
-            UnityEngine.Profiling.Profiler.BeginSample("ProfilingManager.BuildTreeJob");
+            BProfiler.BeginSample("ProfilingManager.BuildTreeJob");
             _buildTreeJobTimer.Restart();
             job.Run();
             _buildTreeJobTimer.Stop();
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
 
             float elapsedMS = _buildTreeJobTimer.ElapsedMillisecondsFloat();
             BDebug.Track(this, "BuildTreeJobMS", elapsedMS);
@@ -112,7 +111,7 @@ namespace Beast.Claw.Profiling
                 job.nameHashStack.Dispose();
                 job.outState.Dispose();
 
-                _profilingTree = new ProfilerTree
+                _tree = new BricksProfilerTree
                 {
                     childs = job.outChilds,
                     names = job.outNames,
@@ -136,7 +135,7 @@ namespace Beast.Claw.Profiling
         {
             if (owner is null) throw new ArgumentNullException(nameof(owner));
 
-            return new Handle(this, _enableUnityProfiling || _enableClawProfiling);
+            return new Handle(this, _enableUnityProfiling || _enableBricksProfiling);
         }
 
         private void _beginSample(string name)
@@ -145,10 +144,10 @@ namespace Beast.Claw.Profiling
 
             if (_enableUnityProfiling)
             {
-                UnityEngine.Profiling.Profiler.BeginSample(name);
+                BProfiler.BeginSample(name);
             }
 
-            if (!_enableClawProfiling)
+            if (!_enableBricksProfiling)
             {
                 return;
             }
@@ -159,7 +158,7 @@ namespace Beast.Claw.Profiling
                 throw new OutOfMemoryException(message);
             }
 
-            ProfilerRecord record = new ();
+            BricksRecord record = new ();
             record.Write((int) _samplesTimer.ElapsedTicks, true, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
@@ -171,10 +170,10 @@ namespace Beast.Claw.Profiling
 
             if (_enableUnityProfiling)
             {
-                UnityEngine.Profiling.Profiler.EndSample();
+                BProfiler.EndSample();
             }
 
-            if (!_enableClawProfiling)
+            if (!_enableBricksProfiling)
             {
                 return;
             }
@@ -185,7 +184,7 @@ namespace Beast.Claw.Profiling
                 throw new OutOfMemoryException(message);
             }
 
-            ProfilerRecord record = new ProfilerRecord();
+            BricksRecord record = new ();
             record.Write((int) _samplesTimer.ElapsedTicks, false, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
@@ -194,7 +193,7 @@ namespace Beast.Claw.Profiling
         public void Dispose()
         {
             _records.Dispose();
-            _profilingTree.Dispose();
+            _tree.Dispose();
         }
     }
 }

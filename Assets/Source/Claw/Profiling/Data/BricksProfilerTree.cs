@@ -4,7 +4,7 @@ using Unity.Collections;
 
 namespace Beast.Claw.Profiling
 {
-    public struct ProfilerTree : IValidatable, IDisposable
+    public struct BricksProfilerTree : IValidatable, IDisposable
     {
         public string[] text;
         public NativeArray<ushort> childs;

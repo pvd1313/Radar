@@ -1,4 +1,5 @@
 ﻿using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Input;
 using Beast.Claw.Math;
@@ -76,7 +77,7 @@ namespace Beast.Radar.UI
 
         private bool _hitTest(float2 position)
         {
-            UnityEngine.Profiling.Profiler.BeginSample("NoesisInputConsumer._hitTest()");
+            BProfiler.BeginSample("NoesisInputConsumer._hitTest()");
 
             Point point = _viewRoot.PointFromScreen(new Point(position.x, position.y));
             
@@ -84,7 +85,7 @@ namespace Beast.Radar.UI
 
             VisualTreeHelper.HitTest(_viewRoot, _hitTestFilter, _hitResult, new PointHitTestParameters(point));
             
-            UnityEngine.Profiling.Profiler.EndSample();
+            BProfiler.EndSample();
             
             return _gotHit;
         }

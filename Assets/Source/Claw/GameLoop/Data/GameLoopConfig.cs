@@ -8,7 +8,7 @@ namespace Beast.Claw.GameLoop
     {
         public bool exceptionStopsUpdates;
         public int updateExceptionThreshold;
-        public ProfilerConfig profiler;
+        public BricksConfig bricks;
         
         public override IEnumerable<IConfig> Bind()
         {

@@ -9,13 +9,13 @@ namespace Beast.Claw.Editor.UI.Profiling
     {
         private readonly FloatToStringConverter _converter = new("D2");
         
-        public void OnGUI(Rect rect, IEnumerable<ProfilerNode> nodes)
+        public void OnGUI(Rect rect, IEnumerable<BricksManagedNode> nodes)
         {
             rect.height = 20;
             Rect rectLeft = new (rect.width - 35, rect.y, 20, 20);
             Rect rectRight = new (rect.width - 19, rect.y, 25, 20);
             
-            foreach (ProfilerNode node in nodes)
+            foreach (BricksManagedNode node in nodes)
             {
                 rect.x = 20 * node.deep + 3;
 

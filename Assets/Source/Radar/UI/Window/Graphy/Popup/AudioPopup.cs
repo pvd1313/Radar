@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Common;
-using Beast.Claw.Graphy;
 using Beast.Claw.Graphy.Modules;
 using Beast.Claw.Math;
 using Beast.Claw.UI;

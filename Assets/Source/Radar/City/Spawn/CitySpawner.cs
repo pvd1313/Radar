@@ -11,7 +11,6 @@ using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.City
 {
@@ -75,9 +74,9 @@ namespace Beast.Radar.City
                 excludePositions = majorCities
             };
             
-            Profiler.BeginSample("majorCitySpawnJob");
+            BProfiler.BeginSample("majorCitySpawnJob");
             majorCitySpawnJob.Run();
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             for (int i = 0; i < _cities.Length; i++)
             {
@@ -99,9 +98,9 @@ namespace Beast.Radar.City
                 excludePositions = majorCities
             };
             
-            Profiler.BeginSample("minorCitySpawnJob");
+            BProfiler.BeginSample("minorCitySpawnJob");
             minorCitySpawnJob.Run();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             _debugTrack();
             

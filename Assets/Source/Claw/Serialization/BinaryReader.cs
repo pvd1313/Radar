@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using Beast.Claw.Debug;
 using Beast.Claw.Math;
-using UnityEngine.Profiling;
 
 namespace Beast.Claw.Serialization
 {
@@ -23,7 +23,7 @@ namespace Beast.Claw.Serialization
 
         public int ReadBytes(Span<byte> buffer)
         {
-            Profiler.BeginSample("BinaryReader.ReadBytes()");
+            BProfiler.BeginSample("BinaryReader.ReadBytes()");
             
             const int BUFFER_LIMIT = 4096;
 
@@ -41,7 +41,7 @@ namespace Beast.Claw.Serialization
                 readTotal += lastReadCount;
             }
             
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             return readTotal;
         }

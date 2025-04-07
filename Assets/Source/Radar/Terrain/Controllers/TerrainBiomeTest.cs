@@ -1,5 +1,4 @@
 ﻿using Beast.Claw.Attributes;
-using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Gizmo;

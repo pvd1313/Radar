@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Graphic;
 using Beast.Claw.Math;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.City
 {
@@ -36,16 +36,13 @@ namespace Beast.Radar.City
                 return;
             }
 
-            Profiler.BeginSample("_roadGrid");
-            
+            BProfiler.BeginSample("_roadGrid");
             _roadGrid = new CellGrid<int>(_config.cellSize, 256, Allocator.Persistent);
-            
             for (int i = 0; i < roadMap.roads.Length; i++)
             {
                 _roadGrid.AddItem(i, roadMap.roads[i].bounds);
             }
-            
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             _gridMeshes = RoadMeshBuilder.BuildRoadGridMeshes(
                 this,

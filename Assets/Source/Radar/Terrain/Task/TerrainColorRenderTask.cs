@@ -1,6 +1,4 @@
-﻿using Beast.Claw;
-using Beast.Claw.Common;
-using Beast.Claw.Graphic;
+﻿using Beast.Claw.Graphic;
 using Beast.Claw.Validation;
 using Unity.Mathematics;
 using UnityEngine;

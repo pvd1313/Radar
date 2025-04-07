@@ -1,15 +1,13 @@
 ﻿using Beast.Claw.Attributes;
-using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Graphic;
 using Beast.Claw.Serialization;
-using Beast.Radar.Graphic;
 using Beast.Radar.Serialization;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Terrain
 {
@@ -56,49 +54,49 @@ namespace Beast.Radar.Terrain
             {
                 RenderTextureData tempData = _config.fbmRenderTexture.WithSize(terrain.terrainSize);
             
-                Profiler.BeginSample("CreateTempRenderTexture");
+                BProfiler.BeginSample("CreateTempRenderTexture");
                 renderTexture = BGraphic.CreateTempRenderTexture(this, tempData);
-                Profiler.EndSample();
+                BProfiler.EndSample();
             
-                Profiler.BeginSample("fbmRender.Render");
+                BProfiler.BeginSample("fbmRender.Render");
                 _fbmRender.Render(new TerrainFbmRenderTask
                 {
                     terrain = terrain,
                     outputTexture = renderTexture,
                     quality01 = 1
                 });
-                Profiler.EndSample();
+                BProfiler.EndSample();
             }
 
             if (_texture == null)
             {
                 Texture2DParameters permData = _config.fbmTexture2D.WithSize(terrain.terrainSize);
             
-                Profiler.BeginSample("CreateTexture2D");
+                BProfiler.BeginSample("CreateTexture2D");
                 _texture = BGraphic.CreateTexture2D(this, permData);
-                Profiler.EndSample();
+                BProfiler.EndSample();
             }
 
             if (fbmCacheExists)
             {
                 using IBinaryReader reader = _worldManager.StartCacheReading(world.guid, FileName.TERRAIN_FBM);
                 
-                Profiler.BeginSample("ReadTextureCache");
+                BProfiler.BeginSample("ReadTextureCache");
                 NativeArray<byte> bytes = reader.ReadNativeBytesAndLength(Allocator.Temp);
-                Profiler.EndSample();
+                BProfiler.EndSample();
                 
-                Profiler.BeginSample("LoadRawTextureData");
+                BProfiler.BeginSample("LoadRawTextureData");
                 _texture.SetPixelData(bytes, 0);
                 _texture.Apply(_texture.mipmapCount > 0);
-                Profiler.EndSample();
+                BProfiler.EndSample();
                 
                 bytes.Dispose();
             }
             else
             {
-                Profiler.BeginSample("BlitRenderTextureTo2D");
+                BProfiler.BeginSample("BlitRenderTextureTo2D");
                 BGraphic.BlitRenderTextureTo2D(renderTexture, _texture);
-                Profiler.EndSample();
+                BProfiler.EndSample();
                 
                 BGraphic.Dispose(renderTexture);
             }

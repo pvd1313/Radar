@@ -11,7 +11,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Beast.Radar.Sprite
 {
@@ -72,7 +71,7 @@ namespace Beast.Radar.Sprite
 
         protected override void _render(BlockingContext context)
         {
-            Profiler.BeginSample("PrepareBuffer");
+            BProfiler.BeginSample("PrepareBuffer");
 
             NativeArray<ArchetypeChunk> chunks = _entityQuery.ToArchetypeChunkArray(Allocator.TempJob);
             NativeArray<int> writeOffsets = BNative.TempJobArray<int>(chunks.Length);
@@ -99,13 +98,13 @@ namespace Beast.Radar.Sprite
                 outData = pixels
             };
 
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("SpriteRenderPrepareJob");
+            BProfiler.BeginSample("SpriteRenderPrepareJob");
             job.ExecuteOn(chunks);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("UnionHalfStream");
+            BProfiler.BeginSample("UnionHalfStream");
             _halfStream.Clear();
 
             entityCount = 0;
@@ -126,7 +125,7 @@ namespace Beast.Radar.Sprite
             chunks.Dispose();
             writeOffsets.Dispose();
             entityCounters.Dispose();
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             BDebug.Track(this, "EntityCount", entityCount);
 
@@ -147,18 +146,18 @@ namespace Beast.Radar.Sprite
                 zOrder = RenderZOrder.SPRITE
             };
 
-            Profiler.BeginSample("ApplyWorld2ClipMatrix");
+            BProfiler.BeginSample("ApplyWorld2ClipMatrix");
             matrix.Apply(_renderMaterial);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             int2 textureSize = _halfStream.GetRequiredTextureSize();
             BDebug.Track(this, "DataTextureSize", textureSize);
             
             Texture2D dataTexture = _halfTextureProvider.GetTexture(textureSize);
 
-            Profiler.BeginSample("ApplyPixelTexture");
+            BProfiler.BeginSample("ApplyPixelTexture");
             _halfStream.CopyToTexture(dataTexture);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             _renderMaterial.SetTexture("_DataTexture", dataTexture);
             _renderMaterial.SetFloat2("_DataTextureSize", textureSize);
@@ -172,9 +171,9 @@ namespace Beast.Radar.Sprite
                 worldBounds = new Bounds(Vector3.zero, Vector3.one)
             };
 
-            Profiler.BeginSample("RenderMeshPrimitives");
+            BProfiler.BeginSample("RenderMeshPrimitives");
             Graphics.RenderMeshPrimitives(renderParams, _library.quad, 0, entityCount);
-            Profiler.EndSample();
+            BProfiler.EndSample();
         }
 
         protected override void _dispose(BlockingContext obj)

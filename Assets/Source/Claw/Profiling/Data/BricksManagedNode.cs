@@ -1,6 +1,6 @@
 namespace Beast.Claw.Profiling
 {
-    public struct ProfilerNode
+    public struct BricksManagedNode
     {
         public string name;
         public int deep;

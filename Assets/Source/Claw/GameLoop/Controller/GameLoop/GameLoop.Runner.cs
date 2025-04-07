@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Beast.Claw.Collections;
 using Beast.Claw.Common;
+using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Beast.Claw.GameLoop
                 public IController target;
             }
 
-            public Profiler Profiler => _profiler;
+            public BricksProfiler Profiler => _profiler;
 
             public ActionProperties Operation => _operation;
             
@@ -33,9 +34,9 @@ namespace Beast.Claw.GameLoop
             private NativeHashMap<int, int> _errorCounters;
             private ManagedFixedList<Actor> _allActors;
             private ManagedFixedList<Actor> _lastToFirstBuffer;
-            private NativeFixedList<short> _passedActorBuffer;
-            private ProfilerTreeStringBuilder _treeBuilder;
-            private Profiler _profiler;
+            private NativeFixedList<short> _activeActorsBuffer;
+            private BricksTreeStringBuilder _treeBuilder;
+            private BricksProfiler _profiler;
 
             public Runner(GameLoopConfig config, ActionProperties operationProperties)
             {
@@ -61,7 +62,7 @@ namespace Beast.Claw.GameLoop
                 }
                 
                 _allActors = new ManagedFixedList<Actor>(_operation.bufferCapacity);
-                _passedActorBuffer = new NativeFixedList<short>(_operation.bufferCapacity, Allocator.Persistent);
+                _activeActorsBuffer = new NativeFixedList<short>(_operation.bufferCapacity, Allocator.Persistent);
                 _passedActorContainer = new Container<NativeFixedList<short>>();
 
                 if (Build.IS_DEVELOPMENT)
@@ -132,26 +133,23 @@ namespace Beast.Claw.GameLoop
                     }
                 }
 
-                _maintainActorMainList();
+                _fetchActorList();
                 
                 RunnerConcurrent runner = new ()
                 {
-                    owner = owner,
-                    profiler = _setupProfiler(),
-                    treeStringBuilder = _treeBuilder,
+                    profiler = _setupProfiler(owner),
                     singleFiredObjects = _singleFireActors,
-                    operationID = _operation.id,
                     allActors = _allActors,
                     frequency = _operation.frequency,
-                    flushProfilerToConsole = _operation.flushProfilerToConsole,
-                    enableClawProfiling = _config.profiler.customProfilingEnabled,
-                    passedActorContainer = _passedActorContainer.SetData(_passedActorBuffer)
+                    activeActorsContainer = _passedActorContainer.SetData(_activeActorsBuffer),
                 };
 
                 EActionStatus result = await runner.Run();
 
-                _passedActorBuffer = _passedActorContainer.data;
-                _checkoutPassedActors();
+                _rebuildProfilerTree(owner);
+
+                _activeActorsBuffer = _passedActorContainer.data;
+                _removeDisabledActors();
 
                 return result;
             }
@@ -166,51 +164,48 @@ namespace Beast.Claw.GameLoop
                     }
                 }
 
-                _maintainActorMainList();
+                _fetchActorList();
 
                 RunnerBlocking runner = new()
                 {
-                    profiler = _setupProfiler(),
+                    profiler = _setupProfiler(owner),
                     allActors = _allActors,
                     exceptionStopsExecution = _config.exceptionStopsUpdates,
                     exceptionThreshold = _config.updateExceptionThreshold,
-                    operationID = _operation.id,
                     actorErrorCounters = _errorCounters,
-                    enableClawProfiling = _config.profiler.customProfilingEnabled,
-                    flushProfilerToConsole = _operation.flushProfilerToConsole, 
-                    treeStringBuilder = _treeBuilder,
-                    passedActors = _passedActorBuffer,
-                    owner = owner,
+                    activeActors = _activeActorsBuffer,
                 };
                 
                 runner.Run();
 
-                _passedActorBuffer = runner.passedActors;
-                _checkoutPassedActors();
+                _rebuildProfilerTree(owner);
+
+                _activeActorsBuffer = runner.activeActors;
+                _removeDisabledActors();
             }
             
-            private void _checkoutPassedActors()
+            private void _removeDisabledActors()
             {
-                if (_allActors.Count == _passedActorBuffer.Count)
+                if (_allActors.Count == _activeActorsBuffer.Count)
                 {
                     return;
                 }
 
                 ManagedFixedList<Actor> newBuffer = new(_operation.bufferCapacity);
 
-                for (int i = 0; i < _passedActorBuffer.Count; i++)
+                for (int i = 0; i < _activeActorsBuffer.Count; i++)
                 {
-                    int oldIndex = _passedActorBuffer[i];
+                    int oldIndex = _activeActorsBuffer[i];
                     
                     newBuffer.Add(_allActors[oldIndex]);
                 }
 
                 _allActors = newBuffer;
                 
-                _passedActorBuffer.Clear();
+                _activeActorsBuffer.Clear();
             }
 
-            private void _maintainActorMainList()
+            private void _fetchActorList()
             {
                 if (_operation.order == EActionOrder.FromLastToFirstBinded && 
                     _lastToFirstBuffer.Count > 0)
@@ -220,27 +215,44 @@ namespace Beast.Claw.GameLoop
                 }
             }
 
-            private Profiler _setupProfiler()
+            private BricksProfiler.Handle _setupProfiler(IController owner)
             {
-                if (_config.profiler.AnyProfilingActive)
+                if (_config.bricks.bricksEnabled || 
+                    BProfiler.UnityProfilerActive)
                 {
                     if (_operation.flushProfilerToConsole)
                     {
-                        _treeBuilder ??= new ProfilerTreeStringBuilder();
+                        _treeBuilder ??= new BricksTreeStringBuilder();
                     }
 
                     if (_profiler == null)
                     {
-                        _profiler = new Profiler(_config.profiler);
+                        _profiler = new BricksProfiler(_config.bricks);
                         _profiler.Initialize();
                     }
-                    
-                    _profiler.FetchConfig();
 
-                    return _profiler;
+                    _profiler.SetActive(_config.bricks.bricksEnabled, BProfiler.UnityProfilerActive);
+
+                    return _profiler.GetHandle(owner);
                 }
 
-                return null;
+                return BricksProfiler.Handle.Disabled;
+            }
+
+            private void _rebuildProfilerTree(IController owner)
+            {
+                if (_config.bricks.bricksEnabled)
+                {
+                    _profiler.RebuildTree();
+
+                    if (_operation.flushProfilerToConsole)
+                    {
+                        string title = owner.Meta.name + ": " + _operation.id;
+                        string info = _treeBuilder.ToString(_profiler.Reader, title);
+                        
+                        BDebug.StaticLogInfo(info);
+                    }
+                }
             }
             
             public void Dispose()
@@ -248,7 +260,7 @@ namespace Beast.Claw.GameLoop
                 _lastToFirstBuffer = default;
                 _allActors = default;
 
-                _passedActorBuffer.Dispose();
+                _activeActorsBuffer.Dispose();
 
                 if (_errorCounters.IsCreated)
                 {

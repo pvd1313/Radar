@@ -10,7 +10,6 @@ using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
 namespace Beast.Claw.Gizmo
@@ -84,7 +83,7 @@ namespace Beast.Claw.Gizmo
                 _canvas = _setupCanvas(_screen.Size);
             }
 
-            Profiler.BeginSample("UnionBuffers");
+            BProfiler.BeginSample("UnionBuffers");
             _halfStream.Clear();
             
             for (int i = 0; i < _handles.Count; i++)
@@ -104,7 +103,7 @@ namespace Beast.Claw.Gizmo
 
                 _halfStream.AddStream(handle.handle.halfStream);
             }
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             if (_halfStream.EntityCount == 0)
             {
@@ -115,16 +114,16 @@ namespace Beast.Claw.Gizmo
 
             Texture2D texture = _halfTextureProvider.GetTexture(textureSize);
             
-            Profiler.BeginSample("SetPixelData");
+            BProfiler.BeginSample("SetPixelData");
             _halfStream.CopyToTexture(texture);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
-            Profiler.BeginSample("SetShapeDataTexture");
+            BProfiler.BeginSample("SetShapeDataTexture");
             _shapeMaterial.SetTexture("_DataTexture", texture);
             _shapeMaterial.SetFloat2("_DataTextureSize", textureSize);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
-            Profiler.BeginSample("SetShapeMaterialMatrix");
+            BProfiler.BeginSample("SetShapeMaterialMatrix");
             World2ClipMatrix matrix = new ()
             {
                 screenSize = _screen.Size,
@@ -133,36 +132,35 @@ namespace Beast.Claw.Gizmo
                 cameraRotationRad = _camera.RotationRad,
                 zOrder = RenderZOrder.GIZMO
             };
-
             matrix.Apply(_shapeMaterial);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             _setupMaterialsRare();
             
-            Profiler.BeginSample("SetRenderTarget");
+            BProfiler.BeginSample("SetRenderTarget");
             Graphics.SetRenderTarget(_canvas);
-            Profiler.EndSample();
+            BProfiler.EndSample();
             
             GL.Clear(true, true, Color.clear);
 
             if (_prevShapeCount != _halfStream.EntityCount)
             {
-                Profiler.BeginSample("SetCommandBufferParams");
+                BProfiler.BeginSample("SetCommandBufferParams");
                 _commandBuffer.Clear();
                 _commandBuffer.SetRenderTarget(_canvas);
                 _commandBuffer.DrawMeshInstancedProcedural(_config.quadMesh, 0, _shapeMaterial, 0, _halfStream.EntityCount);
-                Profiler.EndSample();
+                BProfiler.EndSample();
                 
                 _prevShapeCount = _halfStream.EntityCount;
             }
 
-            Profiler.BeginSample("ExecuteCommandBuffer");
+            BProfiler.BeginSample("ExecuteCommandBuffer");
             BGraphic.ExecuteBuffer(_commandBuffer);
-            Profiler.EndSample();
+            BProfiler.EndSample();
 
             Graphics.SetRenderTarget(null);
             
-            Profiler.BeginSample("DrawCanvas");
+            BProfiler.BeginSample("DrawCanvas");
             BGraphic.DrawMeshDelayed(new DrawMeshTask
             {
                 material = _canvasMaterial,
@@ -174,7 +172,7 @@ namespace Beast.Claw.Gizmo
                 },
                 mesh = _config.quadMesh
             });
-            Profiler.EndSample();
+            BProfiler.EndSample();
         }
 
         private RenderTexture _setupCanvas(int2 screenSize)
@@ -197,11 +195,11 @@ namespace Beast.Claw.Gizmo
 
         private void _setupMaterialsRare()
         {
-            Profiler.BeginSample("_setupMaterialsRare");
+            BProfiler.BeginSample("_setupMaterialsRare");
             
             _canvasMaterial.SetTexture("_Texture", _canvas);
 
-            Profiler.EndSample();
+            BProfiler.EndSample();
         }
 
         protected override void _dispose(BlockingContext context)
