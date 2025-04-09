@@ -49,10 +49,6 @@ namespace Beast.Claw.GameLoop
 
                         _passedActors.Add((short)actorIndex);
                     }
-                    catch (ActionAbortedException)
-                    {
-                        
-                    }
                     catch (Exception e)
                     {
                         BDebug.LogException(e);

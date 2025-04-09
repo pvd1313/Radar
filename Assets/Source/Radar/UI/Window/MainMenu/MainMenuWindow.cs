@@ -46,7 +46,7 @@ namespace Beast.Radar.UI
 
             _subscribe();
 
-            return base._warmup(context);
+            return UniTask.CompletedTask;
         }
 
         private void _subscribe()

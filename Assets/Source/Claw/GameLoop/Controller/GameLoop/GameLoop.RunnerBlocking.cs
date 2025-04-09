@@ -38,10 +38,6 @@ namespace Beast.Claw.GameLoop
 
                         activeActors.Add((short)actorIndex);
                     }
-                    catch (ActionAbortedException)
-                    {
-                        
-                    }
                     catch (Exception e)
                     {
                         ProcessException(e, actor, actorIndex, out bool canContinue);

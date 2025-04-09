@@ -1,6 +1,6 @@
 ﻿namespace Beast.Claw.Common
 {
-    public class Controller : IController
+    public abstract class Controller : IController
     {
         public ControllerMeta Meta { get; }
         
