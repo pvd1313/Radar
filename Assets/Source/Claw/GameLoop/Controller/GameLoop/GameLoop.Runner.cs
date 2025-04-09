@@ -135,7 +135,7 @@ namespace Beast.Claw.GameLoop
 
                 _fetchActorList();
                 
-                RunnerConcurrent runner = new ()
+                RunnerConcurrent runner = new()
                 {
                     profiler = _setupProfiler(owner),
                     singleFiredObjects = _singleFireActors,

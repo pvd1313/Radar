@@ -7,7 +7,7 @@ namespace Beast.Claw.Editor.Fancy
 {
     internal class GUIStyleScannerWindow : EditorWindow
     {
-        private static readonly List<GUIStyle> STYLE_BUFFER = new ();
+        private static readonly List<GUIStyle> STYLE_BUFFER = new();
         
         private readonly SelectableListView<GUIStyle> _listView;
         private readonly RepaintEventsView _repaintEvents;

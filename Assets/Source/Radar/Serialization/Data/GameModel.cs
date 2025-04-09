@@ -24,8 +24,8 @@ namespace Beast.Radar.Serialization
         public void Deserialize(IBinaryReader stream)
         {
             world = stream.ReadGuid();
-            stream.Read(ref camera);
-            stream.Read(ref player);
+            stream.ReadStruct(ref camera);
+            stream.ReadStruct(ref player);
             timeMinutes = stream.ReadUInt64();
         }
     }

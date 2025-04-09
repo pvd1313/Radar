@@ -73,7 +73,7 @@ namespace Beast.Claw.Profiling
 
             int nodeCount = _recordCount / 2 + _recordCount % 2 + 1;
 
-            BricksBuildTreeJob job = new ()
+            BricksBuildTreeJob job = new()
             {
                 inRecords = _records,
                 inRecordCount = _recordCount,
@@ -155,7 +155,7 @@ namespace Beast.Claw.Profiling
                 throw new OutOfMemoryException(message);
             }
 
-            BricksRecord record = new ();
+            BricksRecord record = default;
             record.Write((int) _samplesTimer.ElapsedTicks, true, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;
@@ -181,7 +181,7 @@ namespace Beast.Claw.Profiling
                 throw new OutOfMemoryException(message);
             }
 
-            BricksRecord record = new ();
+            BricksRecord record = default;
             record.Write((int) _samplesTimer.ElapsedTicks, false, name.GetHashCode());
             _records[_recordCount++] = record;
             _namesActive[_nameCount++] = name;

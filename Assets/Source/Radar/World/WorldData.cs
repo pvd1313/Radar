@@ -19,7 +19,7 @@ namespace Beast.Radar.World
         public void Deserialize(IBinaryReader stream)
         {
             guid = stream.ReadGuid();
-            stream.Read(ref terrain);
+            stream.ReadStruct(ref terrain);
         }
     }
 }

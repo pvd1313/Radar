@@ -6,6 +6,6 @@ namespace Beast.Claw.Editor.Validation
 {
     public class ValidationConfig : ScriptableConfig
     {
-        public List<TypeAddress> excludeAssetType = new ();
+        public List<TypeAddress> excludeAssetType = new();
     }
 }

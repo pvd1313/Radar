@@ -22,7 +22,7 @@ namespace Beast.Claw.Common
                 }
             }
             
-            TObject obj = new ();
+            TObject obj = new();
 
             _container.Inject(obj);
             

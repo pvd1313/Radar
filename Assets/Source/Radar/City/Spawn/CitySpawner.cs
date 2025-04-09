@@ -58,7 +58,7 @@ namespace Beast.Radar.City
             using NativeHashSet<ushort2> majorCities = 
                 BNative.TempJobHashSet<ushort2>(majorCityCountX * majorCityCountX);
 
-            CitySpawnJob majorCitySpawnJob = new ()
+            CitySpawnJob majorCitySpawnJob = new()
             {
                 gridSize = majorGridSize,
                 collisionRadius = majorGridSize * 0.5f,

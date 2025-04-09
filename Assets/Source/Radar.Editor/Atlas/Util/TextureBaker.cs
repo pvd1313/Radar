@@ -141,7 +141,7 @@ namespace Beast.Radar.Editor.Atlas
             const int EMPTY_SPACE_TEXEL = 32;
             HashSet<int> emptySpaceX = new();
             HashSet<int> emptySpaceY = new();
-            List<float2> emptySpace = new ();
+            List<float2> emptySpace = new();
             int totalWrittenPixels = 0;
             
             for (int y = 0; y < INDEX_MAP_SIZE; y++)
@@ -188,7 +188,7 @@ namespace Beast.Radar.Editor.Atlas
 
             if (emptySpace.Count > 0)
             {
-                StringBuilder builder = new ();
+                StringBuilder builder = new();
                 builder.AppendLine("Found empty space during baking index map!");
                 builder.AppendLine("Total written pixels: " + totalWrittenPixels);
                 builder.AppendLine("Expected: " + INDEX_MAP_SIZE * INDEX_MAP_SIZE);

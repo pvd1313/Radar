@@ -69,7 +69,7 @@ namespace Beast.Radar.City
             
             _drawSplineControlPoints(gizmo, roadMap, road);
 
-            RoadContinuousSplineTask task = new ()
+            RoadContinuousSplineTask task = new()
             {
                 inRoadIndex = roadIndex,
                 inRoadMap = roadMap,

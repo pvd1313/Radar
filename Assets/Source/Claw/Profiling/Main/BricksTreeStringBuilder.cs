@@ -10,8 +10,8 @@ namespace Beast.Claw.Profiling
     public class BricksTreeStringBuilder
     {
         private readonly StringBuilder _builder = new();
-        private readonly List<BricksManagedNode> _nodes = new ();
-        private readonly FloatToStringConverter _floatToString = new ("D");
+        private readonly List<BricksManagedNode> _nodes = new();
+        private readonly FloatToStringConverter _floatToString = new("D");
 
         public string ToString(BricksTreeReader reader, string header)
         {

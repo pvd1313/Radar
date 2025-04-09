@@ -10,6 +10,6 @@ namespace Beast.Claw.Input
     [FlowControlException]
     public class AxisMutatedException : Exception
     {
-        public static AxisMutatedException Default { get; } = new ();
+        public static AxisMutatedException Default { get; } = new();
     }
 }

@@ -153,7 +153,7 @@ namespace Beast.Radar.Player
             
             _config.cellMovementCostConfig.ToByteArray(out ByteArray16 cellBiomeCost, out ByteArray16 cellFeatureCost);
             
-            FindPathJob<TerrainMotionCostComputer> job = new ()
+            FindPathJob<TerrainMotionCostComputer> job = new()
             {
                 costComputer = new TerrainMotionCostComputer
                 {

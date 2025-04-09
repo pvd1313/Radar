@@ -22,7 +22,7 @@ namespace Beast.Radar.Essential
 
         private ScriptableInstaller[] _coreInstallers;
 
-        public async UniTask StartAsync(CancellationToken cancellation = new ())
+        public async UniTask StartAsync(CancellationToken cancellation = new())
         {
             _gameLoop.Initialize(new GameLoopSetup
             {
@@ -40,7 +40,7 @@ namespace Beast.Radar.Essential
 
         private async UniTask _startupCore()
         {
-            ProgressTracker tracker = new ();
+            ProgressTracker tracker = new();
 
             await _windows.Open.LoadingScreen(new LoadingWindowInput
             {

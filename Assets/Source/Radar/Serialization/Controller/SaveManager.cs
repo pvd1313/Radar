@@ -30,7 +30,7 @@ namespace Beast.Radar.Serialization
             
             try
             {
-                MemoryStream memory = new ();
+                MemoryStream memory = new();
                 
                 BinaryWriter writer = new (memory);
                 model.Serialize(writer);
@@ -59,7 +59,7 @@ namespace Beast.Radar.Serialization
                 
                 BinaryReader binaryReader = new (streamData.stream);
 
-                binaryReader.Read(_gameModel);
+                binaryReader.ReadClass(_gameModel);
 
                 EActionStatus result = await _gameLoop.ExecuteConcurrent(this, ActionID.GAME_LOAD);
                 

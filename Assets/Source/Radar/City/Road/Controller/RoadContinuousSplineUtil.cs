@@ -58,7 +58,7 @@ namespace Beast.Radar.City
                 float splineRemainingDistance = curveLength - (splinePointCount - 1) * segmentLength - splineOffset;
                 nextPointDistance = segmentLength - splineRemainingDistance;
                 
-                BezierCurve2D curve = new ()
+                BezierCurve2D curve = new()
                 {
                     point0 = roadMap.roadPoints[road.firstPointIndex + splineIndex],
                     point1 = roadMap.roadPoints[road.firstPointIndex + splineIndex + 1],

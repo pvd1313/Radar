@@ -28,7 +28,7 @@ namespace Beast.Radar.NewGame
             
             _worldManager.Clean();
             
-            WorldData world = new ()
+            WorldData world = new()
             {
                 guid = Guid.NewGuid(),
                 terrain = terrain
@@ -36,7 +36,7 @@ namespace Beast.Radar.NewGame
             
             _worldManager.AddWorld(world);
 
-            GameModel model = new ()
+            GameModel model = new()
             {
                 camera = new CameraState
                 {

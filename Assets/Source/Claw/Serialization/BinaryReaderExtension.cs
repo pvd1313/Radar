@@ -9,26 +9,36 @@ namespace Beast.Claw.Serialization
     [ExtensionClass]
     public static class BinaryReaderExtension
     {
-        public static TData Read<TData>(this IBinaryReader stream) 
-            where TData : ISerializable, new()
+        public static TData ReadClass<TData>(this IBinaryReader stream) 
+            where TData : class, ISerializable, new()
         {
-            TData data = new TData();
+            TData data = new();
 
             data.Deserialize(stream);
 
             return data;
         }
 
-        public static void Read<TData>(this IBinaryReader stream, TData data) 
+        public static void ReadClass<TData>(this IBinaryReader stream, TData data) 
             where TData : class, ISerializable
         {
             data.Deserialize(stream);
         }
 
-        public static void Read<TData>(this IBinaryReader stream, ref TData data) 
+        public static void ReadStruct<TData>(this IBinaryReader stream, ref TData data) 
             where TData : struct, ISerializable
         {
             data.Deserialize(stream);
+        }
+        
+        public static TData ReadStruct<TData>(this IBinaryReader stream) 
+            where TData : unmanaged, ISerializable
+        {
+            TData data = default;
+
+            data.Deserialize(stream);
+
+            return data;
         }
 
         public static TData[] ReadArrayForStruct<TData>(this IBinaryReader stream) 

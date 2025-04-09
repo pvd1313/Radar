@@ -26,7 +26,7 @@ namespace Beast.Claw.Profiling
             if (count > _tree.nodeCount) throw new AggregateException("Can not read more nodes than exists");
             if (result is null) throw new ArgumentNullException(nameof(result));
             
-            BricksReadTreeJob job = new ()
+            BricksReadTreeJob job = new()
             {
                 inChilds = _tree.childs,
                 inNames = _tree.names,

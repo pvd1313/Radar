@@ -26,7 +26,7 @@ namespace Beast.Claw.Editor.GoogleSheet
                     array.Add(new JsonObject());
                 }
 
-                HeaderMeta arrayElementMeta = new ()
+                HeaderMeta arrayElementMeta = new()
                 {
                     parameterName = meta.parameterName
                 };

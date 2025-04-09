@@ -76,9 +76,9 @@ namespace Beast.Claw.Editor.GoogleSheet
             try
             {
                 List<string> metaRow = data.values[0];
-                List<JsonObject> objects = new ();
-                List<bool> headerExists = new ();
-                List<HeaderMeta> headersMeta = new ();
+                List<JsonObject> objects = new();
+                List<bool> headerExists = new();
+                List<HeaderMeta> headersMeta = new();
 
                 headerExists.Add(false);
                 headersMeta.Add(default);
@@ -100,7 +100,7 @@ namespace Beast.Claw.Editor.GoogleSheet
                 for (int row = fileMeta.rowCount; row < data.values.Count; row++)
                 {
                     List<string> currentRow = data.values[row];
-                    JsonObject jsonObject = new ();
+                    JsonObject jsonObject = new();
 
                     for (int col = 1; col < System.Math.Min(currentRow.Count, metaRow.Count); col++)
                     {
@@ -115,7 +115,7 @@ namespace Beast.Claw.Editor.GoogleSheet
                     objects.Add(jsonObject);
                 }
 
-                JsonOutput jsonOutput = new ()
+                JsonOutput jsonOutput = new()
                 {
                     stream = new StringBuilder(),
                     lineSeparator = "\r\n",

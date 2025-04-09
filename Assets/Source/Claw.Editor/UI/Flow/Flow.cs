@@ -18,7 +18,7 @@ namespace Beast.Claw.Editor.UI
         
         private readonly Stack<int> _commandStackSize = new();
         private readonly Stack<CommandUndo> _commands = new();
-        private readonly Empty _emptyFlow = new ();
+        private readonly Empty _emptyFlow = new();
         private readonly TempArrayStruct<GUILayoutOption> _layoutTempArray = new(TEMP_ARRAY_CAPACITY);
 
         private readonly RectUI _rectUI;

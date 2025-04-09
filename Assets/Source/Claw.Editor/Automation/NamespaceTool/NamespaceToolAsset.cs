@@ -16,7 +16,7 @@ namespace Beast.Claw.Editor.Automation.NamespaceTool
         {
             ConsoleUtil.ClearLog();
             
-            FolderScanner folderScanner = new ();
+            FolderScanner folderScanner = new();
             HashSet<FolderInfo> folders = folderScanner.Scan(_config);
 
             foreach (FolderInfo info in folders)

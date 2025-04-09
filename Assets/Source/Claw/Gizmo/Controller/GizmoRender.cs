@@ -46,7 +46,7 @@ namespace Beast.Claw.Gizmo
         {
             owner.ValidateNotNullThrowException(nameof(owner));
 
-            HandleInfo info = new ()
+            HandleInfo info = new()
             {
                 handle = new GizmoHandle(HALF_PER_PIXEL, PIXEL_PER_ENTITY),
                 owner = owner,
@@ -124,7 +124,7 @@ namespace Beast.Claw.Gizmo
             BProfiler.EndSample();
             
             BProfiler.BeginSample("SetShapeMaterialMatrix");
-            World2ClipMatrix matrix = new ()
+            World2ClipMatrix matrix = new()
             {
                 screenSize = _screen.Size,
                 cameraPosition = _camera.Position,

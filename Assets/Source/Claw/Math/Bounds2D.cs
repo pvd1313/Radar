@@ -152,8 +152,8 @@ namespace Beast.Claw.Math
 
         public void Deserialize(IBinaryReader stream)
         {
-            stream.Read(ref x);
-            stream.Read(ref y);
+            stream.ReadStruct(ref x);
+            stream.ReadStruct(ref y);
         }
     }
 }

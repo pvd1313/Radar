@@ -63,7 +63,7 @@ namespace Beast.Radar.UI
 
             _view.buttonContinue.Click += async (_, _) =>
             {
-                ProgressTracker tracker = new ();
+                ProgressTracker tracker = new();
 
                 tracker.Begin(1, 1);
                 

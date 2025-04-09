@@ -4,7 +4,7 @@ namespace Beast.Claw.Input
 {
     public struct DragAxis
     {
-        public static DragAxis Inactive { get; } = new ()
+        public static DragAxis Inactive { get; } = new()
         {
             startPosition = float2.zero,
             position = float2.zero,

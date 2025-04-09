@@ -20,7 +20,7 @@ namespace Beast.Radar.City
         {
             startPointIndex = stream.ReadUInt16();
             pointCount = stream.ReadUInt16();
-            stream.Read(ref bounds);
+            stream.ReadStruct(ref bounds);
         }
     }
 }
