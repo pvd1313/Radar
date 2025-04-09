@@ -57,14 +57,16 @@ namespace Beast.Claw.Math
 
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteUInt16(x);
-            stream.WriteUInt16(y);
+            int int32 = BConvert.UShort2ToInt(x, y);
+            
+            stream.WriteInt32(int32);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            x = stream.ReadUInt16();
-            y = stream.ReadUInt16();
+            int int32 = stream.ReadInt32();
+
+            BConvert.IntToUShort2(int32, out x, out y);
         }
     }
 }

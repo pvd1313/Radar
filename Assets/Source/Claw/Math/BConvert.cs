@@ -63,5 +63,18 @@ namespace Beast.Claw.Math
             
             return Mathf.FloatToHalf(x + y / 128.0f);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int UShort2ToInt(ushort a, ushort b)
+        {
+            return (a << 16) | b;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void IntToUShort2(int value, out ushort a, out ushort b)
+        {
+            a = (ushort)(value >> 16);
+            b = (ushort)(value & 0xFFFF);
+        }
     }
 }

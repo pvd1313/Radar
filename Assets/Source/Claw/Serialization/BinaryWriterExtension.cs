@@ -22,7 +22,7 @@ namespace Beast.Claw.Serialization
             data.Serialize(stream);
         }
 
-        public static void WriteArrayAndLength<TData>(this IBinaryWriter stream, TData[] array)
+        public static void WriteArray<TData>(this IBinaryWriter stream, TData[] array)
             where TData : ISerializable
         {
             array.ValidateNotNullThrowException(nameof(array));
@@ -40,7 +40,7 @@ namespace Beast.Claw.Serialization
             }
         }
 
-        public static void WriteNativeArrayAndLength<TData>(this IBinaryWriter stream, NativeArray<TData> array)
+        public static void WriteNativeArray<TData>(this IBinaryWriter stream, NativeArray<TData> array)
             where TData : struct, ISerializable
         {
             if (array.Length == 0)
@@ -56,7 +56,7 @@ namespace Beast.Claw.Serialization
             }
         }
 
-        public static void WriteNativeBytesAndLength(this IBinaryWriter stream, NativeArray<byte> bytes)
+        public static void WriteNativeBytes(this IBinaryWriter stream, NativeArray<byte> bytes)
         {
             if (!bytes.IsCreated)
             {

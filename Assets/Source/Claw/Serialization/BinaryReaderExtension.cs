@@ -31,8 +31,8 @@ namespace Beast.Claw.Serialization
             data.Deserialize(stream);
         }
 
-        public static TData[] ReadArrayAndLength<TData>(this IBinaryReader stream) 
-            where TData : ISerializable, new()
+        public static TData[] ReadArrayForStruct<TData>(this IBinaryReader stream) 
+            where TData : unmanaged, ISerializable
         {
             int itemCount = stream.ReadInt32();
             if (itemCount == 0)
@@ -44,7 +44,7 @@ namespace Beast.Claw.Serialization
 
             for (int i = 0; i < itemCount; i++)
             {
-                TData data = new();
+                TData data = default;
                 
                 data.Deserialize(stream);
                 
@@ -54,7 +54,7 @@ namespace Beast.Claw.Serialization
             return array;
         }
 
-        public static NativeArray<TData> ReadNativeArrayAndLength<TData>(this IBinaryReader stream, Allocator allocator)
+        public static NativeArray<TData> ReadNativeArray<TData>(this IBinaryReader stream, Allocator allocator)
             where TData : unmanaged, ISerializable
         {
             int itemCount = stream.ReadInt32();
@@ -67,7 +67,7 @@ namespace Beast.Claw.Serialization
 
             for (int i = 0; i < itemCount; i++)
             {
-                TData data = new();
+                TData data = default;
                 
                 data.Deserialize(stream);
 
@@ -92,6 +92,7 @@ namespace Beast.Claw.Serialization
             if (readCount != byteCount)
             {
                 string message = $"Read byte count ({readCount}) mismatches expected byte count ({byteCount})";
+                
                 throw new SerializationException(message);
             }
 

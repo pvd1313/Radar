@@ -117,7 +117,7 @@ namespace Beast.Radar.Terrain
 
             using IBinaryWriter writer = _worldManager.StartCacheWriting(world.guid, FileName.TERRAIN_FBM);
             
-            writer.WriteNativeBytesAndLength(_texture.GetPixelData<byte>(0));
+            writer.WriteNativeBytes(_texture.GetPixelData<byte>(0));
         }
 
         protected override void _dispose(BlockingContext context)

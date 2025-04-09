@@ -46,27 +46,54 @@ namespace Beast.Radar.World
 
         public bool CacheExists(Guid worldGuid, string cacheName)
         {
-            string fileName = _cacheIdToFileName(worldGuid, cacheName);
+            BProfiler.BeginSample("WorldManager.CacheExists");
 
-            return _fileManager.Exists(FolderName.WORLD, fileName);
+            try
+            {
+                string fileName = _cacheIdToFileName(worldGuid, cacheName);
+
+                return _fileManager.Exists(FolderName.WORLD, fileName);
+            }
+            finally
+            {
+                BProfiler.EndSample();
+            }
         }
 
         public IBinaryReader StartCacheReading(Guid worldGuid, string cacheId)
         {
-            string fileName = _cacheIdToFileName(worldGuid, cacheId);
+            BProfiler.BeginSample("WorldManager.StartCacheReading");
+            
+            try
+            {
+                string fileName = _cacheIdToFileName(worldGuid, cacheId);
 
-            StreamData stream = _fileManager.OpenToRead(FolderName.WORLD, fileName);
+                StreamData stream = _fileManager.OpenToRead(FolderName.WORLD, fileName);
 
-            return new BinaryReader(stream.stream);
+                return new BinaryReader(stream.stream);
+            }
+            finally
+            {
+                BProfiler.EndSample();
+            }
         }
 
         public IBinaryWriter StartCacheWriting(Guid worldGuid, string cacheId)
         {
-            string fileName = _cacheIdToFileName(worldGuid, cacheId);
+            BProfiler.BeginSample("WorldManager.StartCacheWriting");
+            
+            try
+            {
+                string fileName = _cacheIdToFileName(worldGuid, cacheId);
 
-            StreamData stream = _fileManager.OpenToWrite(FolderName.WORLD, fileName);
+                StreamData stream = _fileManager.OpenToWrite(FolderName.WORLD, fileName);
 
-            return new BinaryWriter(stream.stream);
+                return new BinaryWriter(stream.stream);
+            }
+            finally
+            {
+                BProfiler.EndSample();
+            }
         }
 
         public WorldData GetCurrentWorld()
@@ -91,7 +118,7 @@ namespace Beast.Radar.World
                 using StreamData stream = _fileManager.OpenToRead(FolderName.WORLD, ROOT_FILE_NAME);
                 BinaryReader reader = new (stream.stream);
 
-                WorldData[] worldArray = reader.ReadArrayAndLength<WorldData>();
+                WorldData[] worldArray = reader.ReadArrayForStruct<WorldData>();
 
                 foreach (WorldData world in worldArray)
                 {
@@ -154,7 +181,7 @@ namespace Beast.Radar.World
             BinaryWriter writer = new (stream.stream);
             
             BProfiler.BeginSample("writer.WriteArray(array);");
-            writer.WriteArrayAndLength(array);
+            writer.WriteArray(array);
             BProfiler.EndSample();
         }
     }

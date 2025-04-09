@@ -13,14 +13,14 @@ namespace Beast.Radar.City
 
         public void Serialize(IBinaryWriter stream)
         {
-            stream.WriteNativeArrayAndLength(roads);
-            stream.WriteNativeArrayAndLength(roadPoints);
+            stream.WriteNativeArray(roads);
+            stream.WriteNativeArray(roadPoints);
         }
 
         public void Deserialize(IBinaryReader stream)
         {
-            roads = stream.ReadNativeArrayAndLength<RoadPath>(Allocator.Persistent);
-            roadPoints = stream.ReadNativeArrayAndLength<ushort2>(Allocator.Persistent);
+            roads = stream.ReadNativeArray<RoadPath>(Allocator.Persistent);
+            roadPoints = stream.ReadNativeArray<ushort2>(Allocator.Persistent);
         }
         
         public void Dispose()
