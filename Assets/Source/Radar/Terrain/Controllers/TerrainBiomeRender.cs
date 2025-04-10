@@ -217,7 +217,7 @@ namespace Beast.Radar.Terrain
             {
                 foreach (PostProcessor postProcessor in _postProcessors)
                 {
-                    BProfiler.BeginSample(postProcessor.processor.Meta.name);
+                    BProfiler.BeginSample(postProcessor.processor.Meta.fullName);
                     
                     postProcessor.processor.Render(new TerrainBiomePostProcess
                     {

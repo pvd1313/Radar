@@ -12,6 +12,11 @@ namespace Beast.Radar.Serialization
         public CameraState camera;
         public PlayerGameData player;
         public ulong timeMinutes;
+
+        public bool HasWorld()
+        {
+            return world != Guid.Empty;
+        }
         
         public void Serialize(IBinaryWriter stream)
         {

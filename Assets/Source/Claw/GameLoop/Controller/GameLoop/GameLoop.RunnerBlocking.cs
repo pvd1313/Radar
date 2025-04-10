@@ -26,7 +26,7 @@ namespace Beast.Claw.GameLoop
                 {
                     Runner.Actor actor = allActors[actorIndex];
 
-                    string actorName = actor.target.Meta.name;
+                    string actorName = actor.target.Meta.fullName;
                     
                     profiler.BeginSample(actorName);
 

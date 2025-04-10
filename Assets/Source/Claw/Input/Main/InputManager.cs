@@ -55,12 +55,12 @@ namespace Beast.Claw.Input
             {
                 if (axisMask.value == 0)
                 {
-                    throw new ArgumentException($"Consumer ({consumer.Meta.name}) has unassigned  axis mask.");
+                    throw new ArgumentException($"Consumer ({consumer.Meta.fullName}) has unassigned  axis mask.");
                 }
 
                 if (axisMask.HitsButNotEqual(1 << AxisType.RAW_TOUCH.id))
                 {
-                    throw new ArgumentException($"Invalid axis mode. ({consumer.Meta.name}) Has RawTouch, " +
+                    throw new ArgumentException($"Invalid axis mode. ({consumer.Meta.fullName}) Has RawTouch, " +
                                                 $"but also other. This is not supported. " +
                                                 $"Consumer axis mask: ({axisMask})");
                 }

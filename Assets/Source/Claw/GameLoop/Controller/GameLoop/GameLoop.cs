@@ -4,6 +4,7 @@ using Beast.Claw.Attributes;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
+using Beast.Claw.ProgressTracker;
 using Beast.Claw.Text;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Beast.Claw.GameLoop
 
         private bool _initialized;
         private bool _isRegisteringActors;
+        private bool _isExecutingConcurrentAction;
 
         public void Initialize(GameLoopSetup input)
         {
@@ -86,7 +88,10 @@ namespace Beast.Claw.GameLoop
             return runner.Profiler;
         }
 
-        public async UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID) 
+        public async UniTask<EActionStatus> ExecuteConcurrent(
+            IController owner, 
+            string eventID, 
+            IProgressTracker progressTracker) 
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
@@ -96,18 +101,34 @@ namespace Beast.Claw.GameLoop
                 throw new InvalidOperationException("Tried to invoke operation during registration");
             }
 
+            if (_isExecutingConcurrentAction)
+            {
+                throw new InvalidOperationException("Tried to invoke concurrent action while another is active");
+            }
+
             if (!_runners.TryGetValue(eventID, out Runner runner))
             {
                 throw new InvalidOperationException($"Tried to invoke invalid operation {eventID.Q()}");
             }
 
-            return await runner.ExecuteConcurrent(owner);
+            _isExecutingConcurrentAction = true;
+            
+            EActionStatus result = await runner.ExecuteConcurrent(owner, progressTracker);
+
+            _isExecutingConcurrentAction = false;
+
+            return result;
         }
 
         public void ExecuteBlocking(IController owner, string eventID)
         {
             eventID.ValidateNotEmptyOrNullThrowException(nameof(eventID));
             owner.ValidateNotNullThrowException(nameof(owner));
+
+            if (_isExecutingConcurrentAction)
+            {
+                return;
+            }
             
             if (_isRegisteringActors)
             {

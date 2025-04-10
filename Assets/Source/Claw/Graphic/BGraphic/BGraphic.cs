@@ -106,7 +106,7 @@ namespace Beast.Claw.Graphic
                 input.format,
                 input.mipCount)
             {
-                name = owner.Meta.name + "_" + input.name,
+                name = owner.Meta.fullName + "_" + input.name,
                 filterMode = input.filterMode,
                 wrapMode = input.wrapMode
             };
@@ -145,7 +145,7 @@ namespace Beast.Claw.Graphic
 
             return new Material(input.shader)
             {
-                name = owner.Meta.name + "_" + input.name
+                name = owner.Meta.fullName + "_" + input.name
             };
         }
 
@@ -171,7 +171,7 @@ namespace Beast.Claw.Graphic
 
             return new Material(shader)
             {
-                name = owner.Meta.name
+                name = owner.Meta.fullName
             };
         }
 
@@ -217,7 +217,7 @@ namespace Beast.Claw.Graphic
                 input.isLinear,
                 input.createInitialized)
             {
-                name = owner.Meta.name + "." + input.name,
+                name = owner.Meta.fullName + "." + input.name,
                 filterMode = input.filterMode,
                 wrapMode = input.wrapMode
             };

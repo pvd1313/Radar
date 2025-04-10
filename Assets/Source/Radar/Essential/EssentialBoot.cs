@@ -33,7 +33,7 @@ namespace Beast.Radar.Essential
             
             _gameLoop.RegisterActors(actors);
 
-            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP, null);
 
             await _startupCore();
         }

@@ -8,7 +8,7 @@ namespace Beast.Claw.Graphic
     {
         public static CommandBuffer GetTempBuffer(IController owner)
         {
-            return CommandBufferPool.Get(owner.Meta.name);
+            return CommandBufferPool.Get(owner.Meta.fullName);
         }
 
         public static void ExecuteBuffer(CommandBuffer buffer)

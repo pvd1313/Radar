@@ -30,10 +30,10 @@ namespace Beast.Radar.Core
             _gameLoop.RegisterActors(actors);
 
             await tracker.Next("Core: Loading preferences");
-            await _gameLoop.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.PREFERENCES_LOAD, null);
 
             await tracker.Next("Core: Warmup");
-            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP);
+            await _gameLoop.ExecuteConcurrent(this, ActionID.WARMUP, null);
 
             BScene.CreateGameObject(this)
                 .AddComponent<GameLoopMono>()
@@ -49,7 +49,7 @@ namespace Beast.Radar.Core
                 
                 _worldManager.AddWorld(_integratedSave.worldData);
                 
-                await _saveManager.LoadAsync(_integratedSave.gameModel);
+                await _saveManager.LoadAsync(_integratedSave.gameModel, ESaveManagerFlags.Silent);
             
                 await _window.Open.HUD();
             

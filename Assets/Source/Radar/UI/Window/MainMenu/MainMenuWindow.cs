@@ -13,12 +13,14 @@ namespace Beast.Radar.UI
         [Required] private readonly IWindowManager _windowManager;
         [Required] private readonly UIConfig _config;
         [Required] private readonly ISaveManager _saveManager;
+        [Required] private readonly GameModel _game;
 
         private MainMenuView _view;
         
         public UniTask Open(Empty data)
         {
-            _view.buttonContinue.IsEnabled = _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+            _view.buttonContinue.IsEnabled = 
+                _saveManager.Exists(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE) || _game.HasWorld();
             
             _view.Visibility = Visibility.Visible;
             
@@ -63,28 +65,19 @@ namespace Beast.Radar.UI
 
             _view.buttonContinue.Click += async (_, _) =>
             {
-                ProgressTracker tracker = new();
-
-                tracker.Begin(1, 1);
-                
-                await _windowManager.Open.LoadingScreen(new LoadingWindowInput
+                if (_game.HasWorld())
                 {
-                    clearLastProgress = true,
-                    currentProgress = 0,
-                    nextAction = () => _windowManager.Open.HUD(),
-                    progressTracker = tracker
-                });
+                    _windowManager.Open.HUD();
+                    
+                    return;
+                }
                 
-                await tracker.Next("Loading game save");
-                
-                await _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                
-                await tracker.Next("Waiting for player input");
+                await _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE, ESaveManagerFlags.None);
             };
             
-            _view.buttonNewGame.Click += (_, _) =>
+            _view.buttonNewGame.Click += async (_, _) =>
             {
-                _windowManager.Open.MapGeneration(new MapGenerationWindowData
+                await _windowManager.Open.MapGeneration(new MapGenerationWindowData
                 {
                     cancelAction = () => _windowManager.Open.MainMenu()
                 });

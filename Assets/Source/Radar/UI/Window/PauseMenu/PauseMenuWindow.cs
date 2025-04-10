@@ -86,18 +86,20 @@ namespace Beast.Radar.UI
             
             _view.buttonLoadGame.Click += async (_, _) =>
             {
-                // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-                await _saveManager.LoadAsync(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-
-                await _windowManager.Open.HUD();
+                await _saveManager.LoadAsync(
+                    FolderName.DEFAULT_SAVE, 
+                    FileName.DEFAULT_SAVE,
+                    ESaveManagerFlags.AutoSkipWindow);
             };
 
             _view.buttonSaveGame.Click += (_, _) =>
             {
-                // TODO: https://risenbeast.youtrack.cloud/issue/R-64/Game-Loading-from-UI-block-or-new-window
-                // Also should block UI during save
-                _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-                _view.buttonLoadGame.IsEnabled = true;
+                EActionStatus status = _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
+
+                if (status == EActionStatus.Success)
+                {
+                    _view.buttonLoadGame.IsEnabled = true;
+                }
             };
 
             _view.buttonNewGame.Click += (_, _) =>

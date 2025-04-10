@@ -1,10 +1,12 @@
 ﻿using System;
+using Beast.Claw.Attributes;
 using Beast.Claw.GameLoop;
 using Beast.Claw.Validation;
 using Beast.Radar.Cinematic;
 using Beast.Radar.Player;
 using Beast.Radar.Serialization;
 using Beast.Radar.Terrain;
+using Beast.Radar.UI;
 using Beast.Radar.World;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -13,14 +15,9 @@ namespace Beast.Radar.NewGame
 {
     public class NewGameSetup : INewGameSetup
     {
-        private readonly ISaveManager _saveManager;
-        private readonly IWorldManager _worldManager;
-
-        public NewGameSetup(ISaveManager saveManager, IWorldManager worldManager)
-        {
-            _saveManager = saveManager;
-            _worldManager = worldManager;
-        }
+        [Required] private readonly ISaveManager _saveManager;
+        [Required] private readonly IWorldManager _worldManager;
+        [Required] private readonly IWindowManager _windowManager;
         
         public async UniTask StartNewGame(TerrainData terrain)
         {
@@ -52,16 +49,11 @@ namespace Beast.Radar.NewGame
                 world = world.guid
             };
 
-            EActionStatus result = await _saveManager.LoadAsync(model);
+            EActionStatus result = await _saveManager.LoadAsync(model, ESaveManagerFlags.None);
 
             if (result == EActionStatus.Success)
             {
                 _saveManager.Save(FolderName.DEFAULT_SAVE, FileName.DEFAULT_SAVE);
-            }
-            else
-            {
-                // TODO : https://risenbeast.youtrack.cloud/issue/R-89
-                //      : Move to the main menu if failed to start new game.
             }
         }
     }

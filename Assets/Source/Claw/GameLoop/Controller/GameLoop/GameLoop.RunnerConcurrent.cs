@@ -4,6 +4,7 @@ using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
+using Beast.Claw.ProgressTracker;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameLoop
@@ -17,6 +18,7 @@ namespace Beast.Claw.GameLoop
             public ManagedFixedList<Runner.Actor> allActors;
             public BricksProfiler.Handle profiler;
             public Container<NativeFixedList<short>> activeActorsContainer;
+            public IProgressTracker progressTracker;
 
             private NativeFixedList<short> _passedActors;
             
@@ -28,6 +30,8 @@ namespace Beast.Claw.GameLoop
 
                 _passedActors.Clear();
 
+                bool hasProgressTracker = progressTracker != null;
+
                 for (int actorIndex = 0; actorIndex < allActors.Count; actorIndex++)
                 {
                     Runner.Actor actor = allActors[actorIndex];
@@ -38,8 +42,14 @@ namespace Beast.Claw.GameLoop
                         continue;
                     }
 
-                    string actorName = actor.target.Meta.name;
-                    profiler.BeginSample(actorName);
+                    if (hasProgressTracker)
+                    {
+                        await progressTracker.Next(actor.target.Meta.shortName);
+                    }
+
+                    string actorFullName = actor.target.Meta.fullName;
+                    
+                    profiler.BeginSample(actorFullName);
 
                     try
                     {
@@ -57,7 +67,7 @@ namespace Beast.Claw.GameLoop
                     }
                     finally
                     {
-                       profiler.EndSample(actorName);
+                       profiler.EndSample(actorFullName);
                     }
                 }
 

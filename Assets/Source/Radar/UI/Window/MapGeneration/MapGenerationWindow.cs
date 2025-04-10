@@ -103,8 +103,6 @@ namespace Beast.Radar.UI
             _view.buttonCreate.Click += (_, _) =>
             {
                 _newGameSetup.StartNewGame(_terrainData);
-                
-                _windowManager.Open.HUD();
             };
 
             _view.buttonClose.Click += (_, _) =>

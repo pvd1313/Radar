@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Beast.Claw.Common;
 using Beast.Claw.Profiling;
+using Beast.Claw.ProgressTracker;
 using Cysharp.Threading.Tasks;
 
 namespace Beast.Claw.GameLoop
@@ -15,7 +16,7 @@ namespace Beast.Claw.GameLoop
         
         public IBricksProfiler TryGetProfiler(string operationName);
 
-        UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID);
+        UniTask<EActionStatus> ExecuteConcurrent(IController owner, string eventID, IProgressTracker progressTracker);
 
         public void ExecuteBlocking(IController owner, string eventID);
 

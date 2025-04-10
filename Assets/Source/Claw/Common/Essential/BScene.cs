@@ -10,7 +10,7 @@ namespace Beast.Claw.Common
     {
         public static GameObject CreateGameObject(IController owner)
         {
-            GameObject gameObject = new (owner.Meta.name);
+            GameObject gameObject = new (owner.Meta.fullName);
 
             return gameObject;
         }

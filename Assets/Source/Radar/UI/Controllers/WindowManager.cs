@@ -181,7 +181,7 @@ namespace Beast.Radar.UI
                 {
                     if (!_idToWindow.TryGetValue(record.windowID, out WindowData windowData))
                     {
-                        builder.Append(record.obtainedBy.Meta.name);
+                        builder.Append(record.obtainedBy.Meta.fullName);
                         builder.Append(": Unknown windowID (");
                         builder.Append(record.windowID);
                         builder.AppendLine(")");
@@ -192,7 +192,7 @@ namespace Beast.Radar.UI
 
                     if (windowData.dataType != record.dataType)
                     {
-                        builder.Append(record.obtainedBy.Meta.name);
+                        builder.Append(record.obtainedBy.Meta.fullName);
                         builder.Append(": Window data type mistmatch (");
                         builder.Append(windowData.windowID);
                         builder.Append(") Expected: (");

@@ -4,6 +4,7 @@ using Beast.Claw.Collections;
 using Beast.Claw.Common;
 using Beast.Claw.Debug;
 using Beast.Claw.Profiling;
+using Beast.Claw.ProgressTracker;
 using Beast.Claw.Validation;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
@@ -27,7 +28,7 @@ namespace Beast.Claw.GameLoop
             
             private readonly GameLoopConfig _config;
             private readonly ActionProperties _operation;
-            private readonly Container<NativeFixedList<short>> _passedActorContainer;
+            private readonly Container<NativeFixedList<short>> _activeActorContainer;
 
             private HashSet<object> _singleFireActors;
             private HashSet<object> _duplicateSubscriptionActors;
@@ -63,7 +64,7 @@ namespace Beast.Claw.GameLoop
                 
                 _allActors = new ManagedFixedList<Actor>(_operation.bufferCapacity);
                 _activeActorsBuffer = new NativeFixedList<short>(_operation.bufferCapacity, Allocator.Persistent);
-                _passedActorContainer = new Container<NativeFixedList<short>>();
+                _activeActorContainer = new Container<NativeFixedList<short>>();
 
                 if (Build.IS_DEVELOPMENT)
                 {
@@ -79,7 +80,7 @@ namespace Beast.Claw.GameLoop
                 {
                     if (!_duplicateSubscriptionActors.Add(actor.target))
                     {
-                        throw new InvalidOperationException($"'{actor.target.Meta.name}' " +
+                        throw new InvalidOperationException($"'{actor.target.Meta.fullName}' " +
                                                             $"is already listening to '{_operation.id}'");
                     }
                 }
@@ -121,7 +122,7 @@ namespace Beast.Claw.GameLoop
                 }
             }
 
-            public async UniTask<EActionStatus> ExecuteConcurrent(IController owner)
+            public async UniTask<EActionStatus> ExecuteConcurrent(IController owner, IProgressTracker progressTracker)
             {
                 owner.ValidateNotNullThrowException(nameof(owner));
                 
@@ -134,21 +135,34 @@ namespace Beast.Claw.GameLoop
                 }
 
                 _fetchActorList();
+
+                if (progressTracker != null)
+                {
+                    int actorCount = _allActors.Count;
+                    
+                    if (_operation.frequency == EActionFrequency.OncePerActorLife)
+                    {
+                        actorCount -= _singleFireActors.Count;
+                    }
+
+                    progressTracker.Begin(actorCount, 1);
+                }
                 
                 RunnerConcurrent runner = new()
                 {
                     profiler = _setupProfiler(owner),
+                    progressTracker = progressTracker,
                     singleFiredObjects = _singleFireActors,
                     allActors = _allActors,
                     frequency = _operation.frequency,
-                    activeActorsContainer = _passedActorContainer.SetData(_activeActorsBuffer),
+                    activeActorsContainer = _activeActorContainer.SetData(_activeActorsBuffer),
                 };
 
                 EActionStatus result = await runner.Run();
 
                 _rebuildProfilerTree(owner);
 
-                _activeActorsBuffer = _passedActorContainer.data;
+                _activeActorsBuffer = _activeActorContainer.data;
                 _removeDisabledActors();
 
                 return result;
@@ -247,7 +261,7 @@ namespace Beast.Claw.GameLoop
 
                     if (_operation.flushProfilerToConsole)
                     {
-                        string title = owner.Meta.name + ": " + _operation.id;
+                        string title = owner.Meta.fullName + ": " + _operation.id;
                         string info = _treeBuilder.ToString(_profiler.Reader, title);
                         
                         BDebug.StaticLogInfo(info);
